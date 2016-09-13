@@ -1,0 +1,4 @@
+recursive-include gem/i18n *.mo
+recursive-include gem/icons *.png
+recursive-include gem/icons/interface *.png
+recursive-include gem/config *.conf

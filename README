@@ -1,0 +1,47 @@
+
+= What is GEM ? =
+
+    GEM (Graphical Emulators Manager) is an interface which help you to manage
+    your ROMs and emulators.
+
+    GEM is distributed under GPLv3 License.
+
+= Authors =
+
+    Core:
+        PacMiam (Lubert Aurélien)
+
+    Translators:
+        Spanish     DarkNekros (José Luis)
+
+    Icons:
+        Tango       http://tango.freedesktop.org/Tango_Desktop_Project
+        Gelide      http://gelide.sourceforge.net/index.php?lang=en
+        Evan-Amos   https://commons.wikimedia.org/wiki/User:Evan-Amos
+
+= Depends =
+
+    - python3.4
+    - python3.4-gobject
+    - python3-setuptools
+    - pyxdg
+
+= Installation =
+
+    > ./install.sh
+
+= Emulators =
+
+    The default configuration allow you to use this emulators:
+    - Mame
+    - Mednafen
+    - Stella (Atari 2600)
+    - Hatari (Atari ST)
+    - Fceux (Nintendo NES)
+    - Zsnes (Nintendo SNES)
+    - Snes9x (Nintendo SNES)
+    - Mupen64plus (Nintendo 64)
+    - VisualBoyAdvance (Nintendo GBA)
+    - Desmume (Nintendo DS)
+    - Dolphin (Nintendo GameCube and Nintendo Wii)
+    - Gens (Sega Genesis)
