@@ -81,11 +81,11 @@ from xdg.BaseDirectory import xdg_config_home
 #   Modules - GEM
 # ------------------------------------------------------------------
 
-from utils import *
-from windows import *
-from database import Database
-from preferences import Preferences
-from configuration import Configuration
+from gem.utils import *
+from gem.windows import *
+from gem.database import Database
+from gem.preferences import Preferences
+from gem.configuration import Configuration
 
 # ------------------------------------------------------------------
 #   Translation
@@ -195,7 +195,7 @@ class Interface(Gtk.Builder):
 
         # Load glade file
         try:
-            self.add_from_file(path_join("ui", "interface.glade"))
+            self.add_from_file(get_data(path_join("ui", "interface.glade")))
 
         except OSError as error:
             logger.critical(_("Cannot open interface: %s" % error))
@@ -1963,7 +1963,7 @@ class Interface(Gtk.Builder):
         return str(play_time).split('.')[0].split()[-1]
 
 
-    def check_save_states(self, emulator, gamename):
+    def check_save_states(self, emulator, filename):
         """
         Check if a game has some save states
         """
@@ -1974,16 +1974,22 @@ class Interface(Gtk.Builder):
         if self.emulators.has_option(emulator, "save"):
             save_path = expanduser(self.emulators.get(emulator, "save"))
 
-            if emulator in self.emulators.sections():
-                pattern = save_path.replace("<name>", gamename)
+            if "<rom_path>" in save_path:
+                pattern = save_path.replace("<rom_path>",
+                    basename(self.selection["game"]))
 
-                if len(glob(pattern)) > 0:
-                    return True
+            if "<lname>" in save_path:
+                pattern = save_path.replace("<lname>", filename).lower()
+            else:
+                pattern = save_path.replace("<name>", filename)
+
+            if len(glob(pattern)) > 0:
+                return True
 
         return False
 
 
-    def check_screenshots(self, emulator, gamename):
+    def check_screenshots(self, emulator, filename):
         """
         Check if a game has some snaps
         """
@@ -1994,14 +2000,17 @@ class Interface(Gtk.Builder):
         if self.emulators.has_option(emulator, "snaps"):
             snaps_path = expanduser(self.emulators.get(emulator, "snaps"))
 
-            if emulator in self.emulators.sections():
-                if "<lname>" in snaps_path:
-                    pattern = snaps_path.replace("<lname>", gamename).lower()
-                else:
-                    pattern = snaps_path.replace("<name>", gamename)
+            if "<rom_path>" in snaps_path:
+                pattern = snaps_path.replace("<rom_path>",
+                    basename(self.selection["game"]))
 
-                if len(glob(pattern)) > 0:
-                    return True
+            if "<lname>" in snaps_path:
+                pattern = snaps_path.replace("<lname>", filename).lower()
+            else:
+                pattern = snaps_path.replace("<name>", filename)
+
+            if len(glob(pattern)) > 0:
+                return True
 
         return False
 
@@ -2072,7 +2081,7 @@ class Splash(object):
             builder = Gtk.Builder()
 
             # Properties
-            builder.add_from_file(path_join("ui", "interface.glade"))
+            builder.add_from_file(get_data(path_join("ui", "interface.glade")))
 
         except OSError as error:
             sys_exit(_("Cannot open interface: %s" % error))

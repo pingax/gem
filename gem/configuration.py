@@ -35,7 +35,7 @@ else:
     from ConfigParser import SafeConfigParser
 
 # Interface
-from utils import get_data
+from gem.utils import get_data
 
 # Translation
 from gettext import lgettext as _

@@ -47,9 +47,9 @@ from gettext import bindtextdomain
 #   Modules - GEM
 # ------------------------------------------------------------------
 
-from utils import *
-from windows import *
-from configuration import Configuration
+from gem.utils import *
+from gem.windows import *
+from gem.configuration import Configuration
 
 # ------------------------------------------------------------------
 #   Translation
@@ -73,7 +73,7 @@ class Preferences(Gtk.Builder):
 
         # Load glade file
         try:
-            self.add_from_file(path_join("ui", "preferences.glade"))
+            self.add_from_file(get_data(path_join("ui", "preferences.glade")))
 
         except OSError as error:
             sys_exit(_("Cannot open interface: %s" % error))
@@ -818,7 +818,8 @@ class Console(Gtk.Builder):
 
         # Load glade file
         try:
-            self.add_from_file(path_join("ui", "preferences_dialogs.glade"))
+            self.add_from_file(get_data(
+                path_join("ui", "preferences_dialogs.glade")))
 
         except OSError as error:
             raise IOError(_("Cannot open interface: %s" % error))
@@ -1083,7 +1084,8 @@ class Emulator(Gtk.Builder):
 
         # Load glade file
         try:
-            self.add_from_file(path_join("ui", "preferences_dialogs.glade"))
+            self.add_from_file(get_data(
+                path_join("ui", "preferences_dialogs.glade")))
 
         except OSError as error:
             raise IOError(_("Cannot open interface: %s" % error))

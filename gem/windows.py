@@ -42,7 +42,7 @@ from gettext import bindtextdomain
 #   Modules - GEM
 # ------------------------------------------------------------------
 
-from utils import *
+from gem.utils import *
 
 # ------------------------------------------------------------------
 #   Translation

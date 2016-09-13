@@ -53,8 +53,8 @@ from gettext import bindtextdomain
 #   Modules - GEM
 # ------------------------------------------------------------------
 
-from utils import *
-from configuration import Configuration
+from gem.utils import *
+from gem.configuration import Configuration
 
 # ------------------------------------------------------------------
 #   Translation
@@ -142,11 +142,11 @@ def main():
 
     try:
         if args.preferences:
-            from preferences import Preferences
+            from gem.preferences import Preferences
             Preferences(logger=logger)
 
         else:
-            from interface import launch_gem
+            from gem.interface import launch_gem
             launch_gem(logger, args.reconstruct)
 
     except ImportError as error:

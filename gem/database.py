@@ -30,7 +30,7 @@ from os.path import exists
 import sqlite3
 
 # Interface
-from configuration import Configuration
+from gem.configuration import Configuration
 
 # ------------------------------------------------------------------
 #   Class
