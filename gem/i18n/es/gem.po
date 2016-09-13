@@ -261,6 +261,11 @@ msgid "Fullscreen"
 msgstr "Pantalla completa"
 
 #
+# File: gem/interface.py, line: 937
+msgid "GEM"
+msgstr ""
+
+#
 # File: gem/interface.py, line: 1098
 msgid ""
 "GEM come with some emulators and consoles already configured. But the "
@@ -599,6 +604,11 @@ msgstr "Mostrar los números de línea"
 # File: gem/preferences.py, line: 331
 msgid "Show lines in games list"
 msgstr "Mostrar las líneas en la lista de juegos"
+
+#
+# File: gem/interface.py, line: 375
+msgid "Show main _log"
+msgstr ""
 
 #
 # File: gem/interface.py, line: 532

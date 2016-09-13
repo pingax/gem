@@ -683,7 +683,7 @@ class Preferences(Gtk.Builder):
 
             check, font = self.empty, Pango.Style.NORMAL
             if not exists(binary):
-                check = icon_load("dialog-error", 16, self.empty)
+                check = icon_load("dialog-warning", 16, self.empty)
                 font = Pango.Style.OBLIQUE
 
             self.model_emulators.append([image, name, binary, check, font])

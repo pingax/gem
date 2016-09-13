@@ -174,6 +174,8 @@ def launch_gem(logger, reconstruct_db=False):
     #   Launch interface
     # ------------------------------------
 
+    logger.info(_("Launch interface"))
+
     interface = Interface(logger, database)
 
     Gtk.main()
@@ -196,7 +198,8 @@ class Interface(Gtk.Builder):
             self.add_from_file(path_join("ui", "interface.glade"))
 
         except OSError as error:
-            sys_exit(_("Cannot open interface: %s" % error))
+            logger.critical(_("Cannot open interface: %s" % error))
+            sys_exit()
 
         # ------------------------------------
         #   Initialize variables
@@ -555,7 +558,10 @@ class Interface(Gtk.Builder):
                     if row[1] == console:
                         self.treeview_games.set_visible(True)
                         self.combo_consoles.set_active_iter(row.iter)
+
+                        self.logger.info(_("Load %s console") % console)
                         self.selection["console"] = console
+
                         break
 
         if bool(int(self.config.item("gem", "welcome", 1))):
@@ -588,11 +594,16 @@ class Interface(Gtk.Builder):
 
         row = self.combo_consoles.get_active_iter()
         if row is not None:
-            self.config.modify("gem", "last_console",
-                self.model_consoles.get_value(row, 1))
+            console = self.model_consoles.get_value(row, 1)
+
+            self.config.modify("gem", "last_console", console)
             self.config.update()
 
+            self.logger.info(_("Save %s for next startup") % console)
+
         Gtk.main_quit()
+
+        self.logger.info(_("Close interface"))
 
 
     def load_interface(self):
@@ -647,6 +658,12 @@ class Interface(Gtk.Builder):
         current_console = self.append_consoles()
 
         # ------------------------------------
+        #   Variables
+        # ------------------------------------
+
+        self.selection = dict(console=None, game=None, name=None)
+
+        # ------------------------------------
         #   Games
         # ------------------------------------
 
@@ -677,11 +694,9 @@ class Interface(Gtk.Builder):
 
         if current_console is None:
             self.model_games.clear()
-            self.selection = dict(console=None, game=None, name=None)
 
         else:
             self.combo_consoles.set_active_iter(current_console)
-            self.selection["game"] = None
 
 
     def sensitive_interface(self, status=False):
@@ -842,15 +857,15 @@ class Interface(Gtk.Builder):
         self.headerbar.set_subtitle(" - ".join(texts))
 
 
-    def set_error_message(self, message, message_type=Gtk.MessageType.ERROR):
+    def set_message(self, title, message, icon="dialog-error"):
         """
-        Show or hide informations bar when error occur
+        Show a dialog when an error occur.
         """
 
-        self.label_informations.set_markup(message)
-        self.informations.set_message_type(message_type)
+        dialog = Message(self, title, message, icon)
 
-        self.informations.show_all()
+        dialog.run()
+        dialog.destroy()
 
 
     def __on_show_about(self, widget=None, event=None):
@@ -1079,7 +1094,7 @@ class Interface(Gtk.Builder):
                     self.model_games.clear()
                     self.filter_games.refilter()
 
-                    self.set_error_message(message)
+                    self.set_message(console, message)
 
                 else:
                     if not self.list_thread == 0:
@@ -1378,11 +1393,23 @@ class Interface(Gtk.Builder):
 
         if emulator is not None and emulator in self.emulators.sections():
 
+            self.logger.info(_("Initialize %s") % filename)
+
             # ----------------------------
             #   Check emulator binary
             # ----------------------------
 
             binary = self.emulators.get(emulator, "binary")
+
+            if not exists(binary):
+                self.logger.error(_("Cannot found %s binary") % binary)
+
+                self.set_message(_("Missing binary"),
+                    _("Cannot found <b>%s</b> !" % binary))
+
+                return
+
+            self.logger.info(_("Set binary : %s") % binary)
 
             # ----------------------------
             #   Default arguments
@@ -1398,6 +1425,9 @@ class Interface(Gtk.Builder):
             if exceptions is not None and len(exceptions) > 0:
                 args = exceptions
 
+            if len(args) > 0:
+                self.logger.info(_("Set default arguments : %s") % args)
+
             # ----------------------------
             #   Set fullscreen mode
             # ----------------------------
@@ -1407,10 +1437,14 @@ class Interface(Gtk.Builder):
                 if self.emulators.has_option(emulator, "fullscreen"):
                     args += " %s" %self.emulators.get(emulator, "fullscreen")
 
+                    self.logger.info(_("Set mode : fullscreen"))
+
             # Windowed
             else:
                 if self.emulators.has_option(emulator, "windowed"):
                     args += " %s" %self.emulators.get(emulator, "windowed")
+
+                    self.logger.info(_("Set mode : windowed"))
 
             # ----------------------------
             #   Generate correct command
@@ -1437,21 +1471,19 @@ class Interface(Gtk.Builder):
             date_start = datetime.now()
 
             try:
+                self.logger.info(_("Launch"))
+
                 self.proc = Popen(command, stdout=PIPE, stdin=PIPE,
                     stderr=STDOUT, universal_newlines=True)
                 self.proc.wait()
 
+                self.logger.info(_("Terminate"))
+
             except OSError as error:
                 no_error = False
 
-                dialog = Message(self, _("Missing binary"),
-                    _("Cannot found <b>%s</b> !" % binary), "dialog-error")
-
-                dialog.run()
-                dialog.destroy()
-
             except KeyboardInterrupt as error:
-                pass
+                self.logger.info(_("Terminate by keyboard interrupt"))
 
             # ----------------------------
             #   Save game data
@@ -1461,6 +1493,8 @@ class Interface(Gtk.Builder):
                 output, error_output = self.proc.communicate()
 
                 log_path = path_join(expanduser(Path.Logs), "%s.log" % filename)
+
+                self.logger.info(_("Write output to %s") % log_path)
 
                 # Write output into game's log
                 with open(log_path, 'w') as pipe:
@@ -1556,9 +1590,16 @@ class Interface(Gtk.Builder):
                 self.model_games[treeiter][Columns.Name] = \
                     dialog.entry.get_text()
 
+                new_name = dialog.entry.get_text()
+
                 self.database.modify("games",
-                    { "name": dialog.entry.get_text() },
+                    { "name": new_name },
                     { "filename": gamefile })
+
+                self.selection["name"] = new_name
+                self.set_informations()
+
+                self.logger.info(_("Rename %s to %s") % (gamename, new_name))
 
         dialog.destroy()
 
@@ -1591,6 +1632,8 @@ class Interface(Gtk.Builder):
             self.model_games[treeiter][Columns.Except] = None
 
             self.database.remove("games", { "filename": gamefile })
+
+            self.logger.info(_("Remove %s from database") % gamefile)
 
         dialog.destroy()
 
@@ -1670,9 +1713,9 @@ class Interface(Gtk.Builder):
         if need_to_reload:
             self.load_interface()
 
-            dialog = Message(self,
+            self.set_message(
                 _("Remove %s") % self.model_games[treeiter][Columns.Name],
-                _("This game was removed successfully"))
+                _("This game was removed successfully"), "dialog-information")
 
             dialog.run()
             dialog.destroy()
@@ -1801,10 +1844,12 @@ class Interface(Gtk.Builder):
             startfile(path)
 
         elif system() == "Darwin":
-            Popen(["open", path])
+            Popen(["open", path], stdout=PIPE, stdin=PIPE,
+                stderr=STDOUT, universal_newlines=True)
 
         else:
-            Popen(["xdg-open", path])
+            Popen(["xdg-open", path], stdout=PIPE, stdin=PIPE,
+                stderr=STDOUT, universal_newlines=True)
 
 
     def __on_menu_show(self, treeview, event):

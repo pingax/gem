@@ -298,8 +298,10 @@ class DialogEditor(Dialog):
 
         self.text_editor.set_editable(self.editable)
         self.text_editor.set_monospace(True)
+        self.text_editor.set_top_margin(4)
         self.text_editor.set_left_margin(4)
         self.text_editor.set_right_margin(4)
+        self.text_editor.set_bottom_margin(4)
         self.text_editor.set_buffer(self.buffer_editor)
 
         # ------------------------------------
