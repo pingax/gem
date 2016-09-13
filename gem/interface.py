@@ -888,8 +888,15 @@ class Interface(Gtk.Builder):
         args = self.config.item("viewer", "options")
 
         if exists(viewer):
-            emulator = self.consoles.get(self.selection["console"], "emulator")
             gamename = basename(self.selection["game"]).split('.')[0]
+
+            data = self.database.get("games",
+                { "filename": basename(self.selection["game"]) })
+
+            emulator = self.consoles.get(self.selection["console"], "emulator")
+            if data is not None and len(data.get("emulator")) > 0:
+                if self.emulators.has_section(data.get("emulator")):
+                    emulator = data.get("emulator")
 
             if self.check_screenshots(emulator, gamename):
                 snaps_path = expanduser(self.emulators.get(emulator, "snaps"))
@@ -970,7 +977,13 @@ class Interface(Gtk.Builder):
         Show emulator's configuration file
         """
 
+        data = self.database.get("games",
+            { "filename": basename(self.selection["game"]) })
+
         emulator = self.consoles.get(self.selection["console"], "emulator")
+        if data is not None and len(data.get("emulator")) > 0:
+            if self.emulators.has_section(data.get("emulator")):
+                emulator = data.get("emulator")
 
         if self.emulators.has_option(emulator, "configuration"):
             path = self.emulators.get(emulator, "configuration")
@@ -1186,6 +1199,11 @@ class Interface(Gtk.Builder):
                         data = self.database.get("games",
                             { "filename": basename(game) })
 
+                        # Get specified emulator
+                        if data is not None and len(data.get("emulator")) > 0:
+                            if self.emulators.has_section(data.get("emulator")):
+                                emulator = data.get("emulator")
+
                         if data is not None:
 
                             # Favorite
@@ -1217,7 +1235,11 @@ class Interface(Gtk.Builder):
                                     data["play_time"])
 
                             # Exception
-                            if len(data["arguments"]) > 0 or \
+                            if data["arguments"] is not None and \
+                                len(data["arguments"]) > 0:
+                                row_data[Columns.Except] = self.icons["except"]
+
+                            elif data["emulator"] is not None and \
                                 len(data["emulator"]) > 0:
                                 row_data[Columns.Except] = self.icons["except"]
 
@@ -1386,10 +1408,10 @@ class Interface(Gtk.Builder):
 
         console = self.selection["console"]
 
-        if game is not None and len(game.get("emulator")) > 0:
-            emulator = game.get("emulator")
-        else:
-            emulator = self.consoles.get(console, "emulator")
+        emulator = self.consoles.get(console, "emulator")
+        if data is not None and len(game.get("emulator")) > 0:
+            if self.emulators.has_section(game.get("emulator")):
+                emulator = game.get("emulator")
 
         if emulator is not None and emulator in self.emulators.sections():
 
@@ -1748,9 +1770,13 @@ class Interface(Gtk.Builder):
             #   Update exceptions
             # ----------------------------
 
+            emulator = dialog.combo.get_active_id()
+            if emulator is None:
+                emulator = str()
+
             self.database.modify("games", {
                     "arguments": dialog.entry.get_text(),
-                    "emulator": dialog.combo.get_active_id()
+                    "emulator": emulator
                 }, { "filename": gamefile })
 
             # ----------------------------
@@ -1760,11 +1786,38 @@ class Interface(Gtk.Builder):
             result = self.database.select("games", ["arguments", "emulator"],
                 { "filename": gamefile })
 
-            if result is not None and \
-                (len(result[0]) > 0 or len(result[1]) > 0):
-                self.set_game_icon(Columns.Except, self.icons["except"])
+            # Fix in case of "None" instead of None
+            if result[1] == "None":
+                result[1] = None
+
+            # Parameters
+            if result is not None:
+                if result[0] is not None and len(result[0]) > 0:
+                    self.set_game_icon(Columns.Except, self.icons["except"])
+                elif result[1] is not None and len(result[1]) > 0:
+                    self.set_game_icon(Columns.Except, self.icons["except"])
+                else:
+                    self.set_game_icon(Columns.Except)
             else:
                 self.set_game_icon(Columns.Except)
+
+            if len(emulator) == 0:
+                emulator = self.consoles.get(
+                    self.selection["console"], "emulator")
+
+            # Snap
+            if self.check_screenshots(emulator, gamename):
+                self.set_game_icon(Columns.Snapshots, self.icons["snap"])
+                self.tool_item_screenshots.set_sensitive(True)
+            else:
+                self.set_game_icon(Columns.Snapshots)
+                self.tool_item_screenshots.set_sensitive(False)
+
+            # Save state
+            if self.check_save_states(emulator, gamename):
+                self.set_game_icon(Columns.Save, self.icons["save"])
+            else:
+                self.set_game_icon(Columns.Save)
 
         dialog.hide()
 

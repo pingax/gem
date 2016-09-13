@@ -392,6 +392,7 @@ class DialogParameters(Dialog):
         self.model.set_sort_column_id(0, Gtk.SortType.ASCENDING)
 
         self.combo.set_model(self.model)
+        self.combo.set_id_column(0)
         self.combo.pack_start(cell, True)
         self.combo.add_attribute(cell, "text", 0)
 
