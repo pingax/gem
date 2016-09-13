@@ -1025,26 +1025,27 @@ class Interface(Gtk.Builder):
             if self.consoles.has_option(console, "emulator"):
                 emulator = self.consoles.get(console, "emulator")
 
-                # Check if current emulator can be launched
-                binary = self.emulators.item(emulator, "binary")
-                if binary is not None and exists(binary):
-                    icon = icon_from_data(
-                        self.consoles.item(console, "icon"), self.empty)
+                # Check if console ROM path exist
+                path = self.consoles.item(console, "roms")
+                if path is not None and exists(path):
 
-                    row = self.model_consoles.append([icon, console])
+                    # Check if current emulator can be launched
+                    binary = self.emulators.item(emulator, "binary")
+                    if binary is not None and exists(binary):
 
-                    if self.selection.get("console") is not None and \
-                        self.selection.get("console") == console:
-                        item = row
+                        icon = icon_from_data(
+                            self.consoles.item(console, "icon"), self.empty)
 
-                    if emulator in self.available_configurators:
-                        configurator = self.available_configurators[emulator]
-                        self.configurators[console] = configurator(console)
+                        row = self.model_consoles.append([icon, console])
 
-                else:
-                    self.logger.warning(
-                        _("Cannot find %(binary)s for %(console)s" % dict(
-                        binary=binary, console=console)))
+                        if self.selection.get("console") is not None and \
+                            self.selection.get("console") == console:
+                            item = row
+
+                    else:
+                        self.logger.warning(
+                            _("Cannot find %(binary)s for %(console)s" % dict(
+                            binary=binary, console=console)))
 
         return item
 
@@ -1076,27 +1077,11 @@ class Interface(Gtk.Builder):
 
                 # Check emulator data
                 if not self.emulators.has_section(emulator):
-                    message = _("<b>%s</b> emulator not exist !") % (emulator)
-                    error = True
-
-                # Check binary
-                if not exists(self.emulators.item(emulator, "binary")):
-                    message = _("Cannot find <b>%s</b> !") % (
-                        self.emulators.item(emulator, "binary"))
-                    error = True
-
-                # Check ROMs path
-                if not exists(self.consoles.item(console, "roms")):
-                    message = _("Cannot find ROMs path <b>%s</b> !") % (
-                        self.consoles.item(console, "roms"))
+                    message = _("%s emulator not exist !") % (emulator)
                     error = True
 
                 # Check emulator configurator
-                if emulator in self.available_configurators.keys():
-                    self.selection["emulator"] = self.available_configurators[
-                        emulator]
-
-                elif exists(self.emulators.item(emulator, "configuration")):
+                if exists(self.emulators.item(emulator, "configuration")):
                     self.tool_item_properties.set_sensitive(True)
 
                 else:
