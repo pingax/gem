@@ -1510,7 +1510,11 @@ class IconViewer(Dialog):
         Initialize widgets signals
         """
 
-        self.combo_option.connect("changed", self.set_widgets_sensitive)
+        self.combo_option.connect(
+            "changed", self.set_widgets_sensitive)
+
+        self.view_icons.connect(
+            "item_activated", self.__on_selected_icon)
 
 
     def __start_interface(self):
@@ -1528,6 +1532,14 @@ class IconViewer(Dialog):
 
         if response == Gtk.ResponseType.OK:
             self.save_interface()
+
+
+    def __on_selected_icon(self, iconview, path):
+        """
+        Select an icon in treeview
+        """
+
+        self.response(Gtk.ResponseType.OK)
 
 
     def load_interface(self):
