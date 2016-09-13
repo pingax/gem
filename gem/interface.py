@@ -1424,7 +1424,7 @@ class Interface(Gtk.Builder):
 
                 return
 
-            self.logger.info(_("Set binary : %s") % binary)
+            # self.logger.info("%s : %s" % (_("Binary"), binary))
 
             # ----------------------------
             #   Default arguments
@@ -1440,9 +1440,6 @@ class Interface(Gtk.Builder):
             if exceptions is not None and len(exceptions) > 0:
                 args = exceptions
 
-            if len(args) > 0:
-                self.logger.info(_("Set default arguments : %s") % args)
-
             # ----------------------------
             #   Set fullscreen mode
             # ----------------------------
@@ -1452,14 +1449,10 @@ class Interface(Gtk.Builder):
                 if self.emulators.has_option(emulator, "fullscreen"):
                     args += " %s" %self.emulators.get(emulator, "fullscreen")
 
-                    self.logger.info(_("Set mode : fullscreen"))
-
             # Windowed
             else:
                 if self.emulators.has_option(emulator, "windowed"):
                     args += " %s" %self.emulators.get(emulator, "windowed")
-
-                    self.logger.info(_("Set mode : windowed"))
 
             # ----------------------------
             #   Generate correct command
@@ -1486,7 +1479,7 @@ class Interface(Gtk.Builder):
             date_start = datetime.now()
 
             try:
-                self.logger.info(_("Launch"))
+                self.logger.info(_("Start %s") % ' '.join(command))
 
                 self.proc = Popen(command, stdout=PIPE, stdin=PIPE,
                     stderr=STDOUT, universal_newlines=True)
@@ -1509,7 +1502,7 @@ class Interface(Gtk.Builder):
 
                 log_path = path_join(expanduser(Path.Logs), "%s.log" % filename)
 
-                self.logger.info(_("Write output to %s") % log_path)
+                self.logger.info(_("Log to %s") % log_path)
 
                 # Write output into game's log
                 with open(log_path, 'w') as pipe:
@@ -1614,7 +1607,8 @@ class Interface(Gtk.Builder):
                 self.selection["name"] = new_name
                 self.set_informations()
 
-                self.logger.info(_("Rename %s to %s") % (gamename, new_name))
+                self.logger.info(_("Rename %(old)s to %(new)s") % {
+                    "old": gamename, "new": new_name })
 
         dialog.destroy()
 

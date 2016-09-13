@@ -30,6 +30,12 @@ msgid "%d years ago"
 msgstr "hace %d años"
 
 #
+# File: gem/interface.py, line: 1354
+#, fuzzy, python-format
+msgid "%s emulator not exist !"
+msgstr "¡el emulador <b>%s</b> no existe!"
+
+#
 # File: gem/interface.py, line: 532
 #, python-format
 msgid "%s games availables"
@@ -40,12 +46,6 @@ msgstr ""
 #, python-format
 msgid "%s has been deleted from disk"
 msgstr ""
-
-#
-# File: gem/interface.py, line: 1354
-#, python-format
-msgid "<b>%s</b> emulator not exist !"
-msgstr "¡el emulador <b>%s</b> no existe!"
 
 #
 # File: gem/preferences.py, line: 1638
@@ -74,6 +74,11 @@ msgid "An error occur during program exec: %s"
 msgstr "Error durante la ejecución del programa:%s"
 
 #
+# File: gem/windows.py, line: 319
+msgid "Auto line break"
+msgstr ""
+
+#
 # File: gem/preferences.py, line: 142
 msgid "Behavior"
 msgstr ""
@@ -97,28 +102,22 @@ msgid "Cannot find %(binary)s for %(console)s"
 msgstr "No puedo encontrar el %(binary)s para la %(console)s"
 
 #
-# File: gem/interface.py, line: 1359
-#, python-format
-msgid "Cannot find <b>%s</b> !"
-msgstr "¡No puedo encontrar <b>%s</b>!"
-
-#
 # File: gem/interface.py, line: 2033
 #, python-format
 msgid "Cannot find <b>%s</b> viewer !"
 msgstr "¡No puedo encontrar el visor <b>%s</b>!"
 
 #
-# File: gem/interface.py, line: 1365
-#, python-format
-msgid "Cannot find ROMs path <b>%s</b> !"
-msgstr "¡No puedo encontar el camino hacia la ROM <b>%s</b>!"
-
-#
 # File: gem/interface.py, line: 1347
 #, python-format
 msgid "Cannot find emulator for %s"
 msgstr "No puedo encontrar el emulador para %s"
+
+#
+# File: gem/interface.py, line: 1892
+#, fuzzy, python-format
+msgid "Cannot found %s binary"
+msgstr "¡No se ha encontrado <b>%s</b>!"
 
 #
 # File: gem/interface.py, line: 1892
@@ -145,6 +144,12 @@ msgid "Cannot open interface: %s"
 msgstr "No puedo importar la interfaz: %s"
 
 #
+# File: gem/interface.py, line: 460
+#, fuzzy, python-format
+msgid "Change parameters for %s"
+msgstr "Ajustar los parametros para el juego seleccionado"
+
+#
 # File: gem/windows.py, line: 1122
 msgid "Choose an icon"
 msgstr "Elige un icono"
@@ -153,6 +158,12 @@ msgstr "Elige un icono"
 # File: gem/preferences.py, line: 1309
 msgid "Choose the ROMs folder"
 msgstr "Elige la carpeta de la ROM"
+
+#
+# File: gem/preferences.py, line: 268
+#, fuzzy
+msgid "Close interface"
+msgstr "Interfaz"
 
 #
 # File: gem/preferences.py, line: 434
@@ -305,6 +316,12 @@ msgid "Image file"
 msgstr "Archivo de imagen"
 
 #
+# File: gem/interface.py, line: 1411
+#, python-format
+msgid "Initialize %s"
+msgstr ""
+
+#
 # File: gem/interface.py, line: 664
 msgid "Installed"
 msgstr "Installado"
@@ -343,9 +360,27 @@ msgid "Launch game"
 msgstr "Lanzar un juego"
 
 #
+# File: gem/preferences.py, line: 84
+#, fuzzy
+msgid "Launch interface"
+msgstr "Lanzar un juego"
+
+#
+# File: gem/preferences.py, line: 988
+#, fuzzy, python-format
+msgid "Load %s console"
+msgstr "Nueva consola"
+
+#
 # File: gem/preferences.py, line: 304
 msgid "Load the last chosen console during startup"
 msgstr "Cargar la última consola utilizada durante el inicio"
+
+#
+# File: gem/interface.py, line: 1505
+#, python-format
+msgid "Log to %s"
+msgstr ""
 
 #
 # File: gem/preferences.py, line: 87
@@ -469,6 +504,12 @@ msgid "Remove %s"
 msgstr "Borrar %s"
 
 #
+# File: gem/interface.py, line: 411
+#, fuzzy, python-format
+msgid "Remove %s from database"
+msgstr "_Borrar de la base de datos"
+
+#
 # File: gem/preferences.py, line: 85
 #, fuzzy
 msgid "Remove a game from database"
@@ -499,6 +540,12 @@ msgid "Remove game's data from database"
 msgstr "Borrar un juego de la base de datos"
 
 #
+# File: gem/preferences.py, line: 1159
+#, fuzzy, python-format
+msgid "Rename %(old)s to %(new)s"
+msgstr "Renombrar %s"
+
+#
 # File: gem/preferences.py, line: 86
 msgid "Rename a game"
 msgstr "Renombrar un juego"
@@ -507,6 +554,12 @@ msgstr "Renombrar un juego"
 # File: gem/preferences.py, line: 1627
 msgid "Save"
 msgstr "Guardar"
+
+#
+# File: gem/interface.py, line: 602
+#, python-format
+msgid "Save %s for next startup"
+msgstr ""
 
 #
 # File: gem/windows.py, line: 915
@@ -622,6 +675,12 @@ msgid "Snapshots"
 msgstr "Capturas de pantalla"
 
 #
+# File: gem/interface.py, line: 1482
+#, python-format
+msgid "Start %s"
+msgstr ""
+
+#
 # File: gem/interface.py, line: 135
 msgid "Start database migration"
 msgstr "Comenzar la migración de la base de datos"
@@ -630,6 +689,16 @@ msgstr "Comenzar la migración de la base de datos"
 # File: gem/interface.py, line: 128
 #, python-format
 msgid "Switch version %(old)s to %(new)s."
+msgstr ""
+
+#
+# File: gem/interface.py, line: 1495
+msgid "Terminate"
+msgstr ""
+
+#
+# File: gem/interface.py, line: 1501
+msgid "Terminate by keyboard interrupt"
 msgstr ""
 
 #
@@ -657,6 +726,12 @@ msgstr ""
 # File: gem/interface.py, line: 2119
 msgid "Today"
 msgstr "Hoy"
+
+#
+# File: gem/preferences.py, line: 1602
+#, fuzzy, python-format
+msgid "Update %s configuration file"
+msgstr "Archivo de configuración"
 
 #
 # File: gem/interface.py, line: 109
@@ -817,9 +892,27 @@ msgstr "%s capturas de pantalla"
 #~ msgstr "Interpolacion bilinear"
 
 #
+# File: gem/preferences.py, line: 396
+# File: gem/preferences.py, line: 610
+# File: gem/preferences.py, line: 1576
+#, fuzzy
+#~ msgid "Binary : %s"
+#~ msgstr "Binario"
+
+#
 # File: gem/emulators.py, line: 454
 #~ msgid "Blur amount in accumulation mode"
 #~ msgstr "Cantidad de definción en modo de acumulación"
+
+#
+# File: gem/interface.py, line: 1359
+#~ msgid "Cannot find <b>%s</b> !"
+#~ msgstr "¡No puedo encontrar <b>%s</b>!"
+
+#
+# File: gem/interface.py, line: 1365
+#~ msgid "Cannot find ROMs path <b>%s</b> !"
+#~ msgstr "¡No puedo encontar el camino hacia la ROM <b>%s</b>!"
 
 #
 # File: gem/windows.py, line: 1122
@@ -856,6 +949,12 @@ msgstr "%s capturas de pantalla"
 # File: gem/interface.py, line: 477
 #~ msgid "Configure emulator"
 #~ msgstr "Configurar el emulador"
+
+#
+# File: gem/preferences.py, line: 1662
+#, fuzzy
+#~ msgid "Default arguments : %s"
+#~ msgstr "Opciones del emulador"
 
 #
 # File: gem/preferences.py, line: 405
@@ -916,19 +1015,32 @@ msgstr "%s capturas de pantalla"
 #~ msgstr "Último mes"
 
 #
+# File: gem/preferences.py, line: 84
+#, fuzzy
+#~ msgid "Launch"
+#~ msgstr "Lanzar un juego"
+
+#
 # File: gem/preferences.py, line: 271
 #~ msgid "Misc"
 #~ msgstr "Varios"
 
 #
+# File: gem/interface.py, line: 451
+#, fuzzy
+#~ msgid "Mode : fullscreen"
+#~ msgstr "Usar el modo de pantalla completa"
+
+#
+# File: gem/preferences.py, line: 1670
+#, fuzzy
+#~ msgid "Mode : windowed"
+#~ msgstr "Ventana"
+
+#
 # File: gem/interface.py, line: 529
 #~ msgid "Multiplayer"
 #~ msgstr "Multijugador"
-
-#
-# File: gem/preferences.py, line: 988
-#~ msgid "New console"
-#~ msgstr "Nueva consola"
 
 #
 # File: gem/emulators.py, line: 405
@@ -972,11 +1084,6 @@ msgstr "%s capturas de pantalla"
 # File: gem/preferences.py, line: 586
 #~ msgid "Rename"
 #~ msgstr "Renombrar"
-
-#
-# File: gem/preferences.py, line: 1159
-#~ msgid "Rename %s"
-#~ msgstr "Renombrar %s"
 
 #
 # File: gem/emulators.py, line: 302
@@ -1030,11 +1137,6 @@ msgstr "%s capturas de pantalla"
 #, fuzzy
 #~ msgid "Set game parameters"
 #~ msgstr "_Ajustar parametros"
-
-#
-# File: gem/interface.py, line: 460
-#~ msgid "Set parameters for selected game"
-#~ msgstr "Ajustar los parametros para el juego seleccionado"
 
 #
 # File: gem/interface.py, line: 2048
@@ -1146,11 +1248,6 @@ msgstr "%s capturas de pantalla"
 #~ msgstr "_Borrar entrada de la base de datos"
 
 #
-# File: gem/interface.py, line: 411
-#~ msgid "_Remove from database"
-#~ msgstr "_Borrar de la base de datos"
-
-#
 # File: gem/interface.py, line: 776
 #, fuzzy
 #~ msgid "_Remove from disk"
@@ -1176,3 +1273,15 @@ msgstr "%s capturas de pantalla"
 # File: gem/interface.py, line: 355
 #~ msgid "_System"
 #~ msgstr "_Sistema"
+
+#
+# File: gem/preferences.py, line: 1675
+#, fuzzy
+#~ msgid "fullscreen"
+#~ msgstr "Pantalla completa"
+
+#
+# File: gem/preferences.py, line: 1670
+#, fuzzy
+#~ msgid "windowed"
+#~ msgstr "Ventana"

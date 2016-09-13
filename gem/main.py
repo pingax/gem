@@ -87,8 +87,6 @@ def main():
             help="configure gem")
         parser.add_argument("-r", "--reconstruct", action="store_true",
             help="reconstruct gem db")
-        parser.add_argument("-d", "--debug", action="store_true",
-            help="start gem with debug mode")
 
         args = parser.parse_args()
 
@@ -132,9 +130,6 @@ def main():
     fileConfig(get_data(Conf.Log))
 
     logger = logging.getLogger("gem")
-
-    if args.debug:
-        logger.set_level(logging.DEBUG)
 
     # ------------------------------------
     #   Start main window

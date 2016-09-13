@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.5\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2016-09-13 09:04+0200\n"
+"PO-Revision-Date: 2016-09-13 17:57+0200\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -30,6 +30,12 @@ msgid "%d years ago"
 msgstr "Il y a %d ans"
 
 #
+# File: gem/interface.py, line: 936
+#, python-format
+msgid "%s emulator not exist !"
+msgstr "L'émulateur %s n'existe pas !"
+
+#
 # File: gem/interface.py, line: 532
 #, python-format
 msgid "%s games availables"
@@ -40,12 +46,6 @@ msgstr "%s jeux disponibles"
 #, python-format
 msgid "%s has been deleted from disk"
 msgstr "%s à été supprimé du disque"
-
-#
-# File: gem/interface.py, line: 936
-#, python-format
-msgid "<b>%s</b> emulator not exist !"
-msgstr "L'émulateur <b>%s</b> n'existe pas !"
 
 #
 # File: gem/preferences.py, line: 1372
@@ -69,6 +69,11 @@ msgstr "Toutes les icônes"
 #, python-format
 msgid "An error occur during program exec: %s"
 msgstr "Une erreur est survenue durant l'execution du programme: %s"
+
+#
+# File: gem/windows.py, line: 319
+msgid "Auto line break"
+msgstr "Retour à la ligne automatique"
 
 #
 # File: gem/preferences.py, line: 142
@@ -95,26 +100,20 @@ msgstr "Impossible de trouver %(binary)s pour %(console)s !"
 #
 # File: gem/interface.py, line: 942
 #, python-format
-msgid "Cannot find <b>%s</b> !"
-msgstr "Impossible de trouver <b>%s</b> !"
-
-#
-# File: gem/interface.py, line: 942
-#, python-format
 msgid "Cannot find <b>%s</b> viewer !"
 msgstr "Impossible de trouver le visionneur <b>%s</b> !"
-
-#
-# File: gem/interface.py, line: 942
-#, python-format
-msgid "Cannot find ROMs path <b>%s</b> !"
-msgstr "Impossible de trouver le chemin des ROMs <b>%s</b> !"
 
 #
 # File: gem/interface.py, line: 1097
 #, python-format
 msgid "Cannot find emulator for %s"
 msgstr "Impossible de trouver l'émulateur pour %s !"
+
+#
+# File: gem/interface.py, line: 942
+#, python-format
+msgid "Cannot found %s binary"
+msgstr "Impossible de trouver le binaire %s"
 
 #
 # File: gem/interface.py, line: 942
@@ -141,6 +140,12 @@ msgid "Cannot open interface: %s"
 msgstr "Impossible d'importer l'interface: %s"
 
 #
+# File: gem/interface.py, line: 477
+#, python-format
+msgid "Change parameters for %s"
+msgstr "Change les paramètres pour %s"
+
+#
 # File: gem/preferences.py, line: 102
 msgid "Choose an icon"
 msgstr "Choisir une icône"
@@ -149,6 +154,11 @@ msgstr "Choisir une icône"
 # File: gem/preferences.py, line: 908
 msgid "Choose the ROMs folder"
 msgstr "Choisir le dossier des ROMs"
+
+#
+# File: gem/preferences.py, line: 277
+msgid "Close interface"
+msgstr "Ferme l'interface"
 
 #
 # File: gem/preferences.py, line: 341
@@ -292,6 +302,12 @@ msgid "Image file"
 msgstr "Fichier image"
 
 #
+# File: gem/interface.py, line: 1411
+#, python-format
+msgid "Initialize %s"
+msgstr "Initialisation de %s"
+
+#
 # File: gem/interface.py, line: 646
 msgid "Installed"
 msgstr "Installé"
@@ -327,9 +343,25 @@ msgid "Launch game"
 msgstr "Lancer le jeu"
 
 #
+# File: src/window.py, line: 431
+msgid "Launch interface"
+msgstr "Lancement de l'interface"
+
+# File: src/window.py, line: 314
+#, python-format
+msgid "Load %s console"
+msgstr "Chargement de la console %s"
+
+#
 # File: gem/preferences.py, line: 263
 msgid "Load the last chosen console during startup"
 msgstr "Charger la dernière console choisie lors du démarrage"
+
+#
+# File: gem/interface.py, line: 1505
+#, python-format
+msgid "Log to %s"
+msgstr "Journalisation dans %s"
 
 #
 # File: src/window.py, line: 436
@@ -442,6 +474,12 @@ msgstr "Supprimer %s"
 
 #
 # File: src/window.py, line: 446
+#, python-format
+msgid "Remove %s from database"
+msgstr "Retire %s de la base de données"
+
+#
+# File: src/window.py, line: 446
 msgid "Remove a game from database"
 msgstr "Supprimer un jeu de la base de données"
 
@@ -466,6 +504,12 @@ msgid "Remove game's data from database"
 msgstr "Retirer les données du jeu de la base de données"
 
 #
+# File: src/window.py, line: 939
+#, fuzzy, python-format
+msgid "Rename %(old)s to %(new)s"
+msgstr "Renomme %(old)s en %(new)%s"
+
+#
 # File: src/window.py, line: 451
 msgid "Rename a game"
 msgstr "Renommer un jeu"
@@ -474,6 +518,12 @@ msgstr "Renommer un jeu"
 # File: gem/preferences.py, line: 1294
 msgid "Save"
 msgstr "Sauvegarde"
+
+#
+# File: gem/interface.py, line: 602
+#, python-format
+msgid "Save %s for next startup"
+msgstr "Sauvegarde %s pour le prochain lancement"
 
 #
 # File: gem/preferences.py, line: 1577
@@ -582,6 +632,12 @@ msgid "Snapshots"
 msgstr "Captures d'écran"
 
 #
+# File: gem/interface.py, line: 1482
+#, python-format
+msgid "Start %s"
+msgstr "Démarrage de %s"
+
+#
 # File: gem/interface.py, line: 107
 msgid "Start database migration"
 msgstr "Démarrage de la migration de la base de données"
@@ -591,6 +647,16 @@ msgstr "Démarrage de la migration de la base de données"
 #, python-format
 msgid "Switch version %(old)s to %(new)s."
 msgstr "Changement de version de %(old)s vers %(new)s."
+
+#
+# File: gem/interface.py, line: 1495
+msgid "Terminate"
+msgstr "Arrêt"
+
+#
+# File: gem/interface.py, line: 1501
+msgid "Terminate by keyboard interrupt"
+msgstr "Arrêt par interruption du clavier"
 
 #
 # File: gem/preferences.py, line: 1020
@@ -618,6 +684,12 @@ msgstr "Ce jeu à été supprimé avec succès"
 # File: src/window.py, line: 1066
 msgid "Today"
 msgstr "Aujourd'hui"
+
+#
+# File: gem/interface.py, line: 300
+#, python-format
+msgid "Update %s configuration file"
+msgstr "Mise à jour du fichier de configuration de %s"
 
 #
 # File: gem/interface.py, line: 109
@@ -763,6 +835,21 @@ msgstr "_Capture d'écran"
 #~ msgstr "Arguments"
 
 #
+# File: gem/interface.py, line: 1427
+#~ msgid "Binary : %s"
+#~ msgstr "Binaire: %s"
+
+#
+# File: gem/interface.py, line: 942
+#~ msgid "Cannot find <b>%s</b> !"
+#~ msgstr "Impossible de trouver <b>%s</b> !"
+
+#
+# File: gem/interface.py, line: 942
+#~ msgid "Cannot find ROMs path <b>%s</b> !"
+#~ msgstr "Impossible de trouver le chemin des ROMs <b>%s</b> !"
+
+#
 # File: gem/interface.py, line: 1816
 #~ msgid "Cannot found %s folder on your disk."
 #~ msgstr "Impossible de trouver le dossier %s sur le disque."
@@ -812,6 +899,12 @@ msgstr "_Capture d'écran"
 # File: gem/windows.py, line: 1141
 #~ msgid "Current file going to be saved in <b>%s</b>."
 #~ msgstr "Le fichier va être sauvegarder dans <b>%s</b>."
+
+#
+# File: gem/interface.py, line: 1286
+#, fuzzy
+#~ msgid "Default arguments : %s"
+#~ msgstr "Définir l'arguments par défaut: %s"
 
 #
 # File: gem/preferences.py, line: 1269
@@ -873,19 +966,38 @@ msgstr "_Capture d'écran"
 #~ msgstr "Dernier lancement"
 
 #
+# File: src/window.py, line: 431
+#~ msgid "Launch"
+#~ msgstr "Lancement"
+
+#
 # File: gem/preferences.py, line: 271
 #~ msgid "Misc"
 #~ msgstr "Divers"
+
+#
+# File: gem/interface.py, line: 1455
+# File: gem/interface.py, line: 1462
+#~ msgid "Mode"
+#~ msgstr "Mode"
+
+#
+# File: gem/interface.py, line: 290
+#, fuzzy
+#~ msgid "Mode : fullscreen"
+#~ msgstr "Définir le mode : plein écran"
+
+#
+# File: gem/interface.py, line: 1462
+#, fuzzy
+#~ msgid "Mode : windowed"
+#~ msgstr "Définir le mode : fenêtré"
 
 #
 # File: gem/interface.py, line: 251
 # File: gem/interface.py, line: 550
 #~ msgid "Multiplayer"
 #~ msgstr "Multi-joueurs"
-
-# File: src/window.py, line: 314
-#~ msgid "New console"
-#~ msgstr "Nouvelle console"
 
 #
 # File: src/window.py, line: 285
@@ -916,11 +1028,6 @@ msgstr "_Capture d'écran"
 # File: src/window.py, line: 451
 #~ msgid "Rename"
 #~ msgstr "Renommer"
-
-#
-# File: src/window.py, line: 939
-#~ msgid "Rename %s"
-#~ msgstr "Renommer %s"
 
 #
 # File: gem/emulators.py, line: 232
@@ -988,11 +1095,6 @@ msgstr "_Capture d'écran"
 # File: gem/interface.py, line: 336
 #~ msgid "Set game parameters"
 #~ msgstr "Définir des paramètres de jeu"
-
-#
-# File: gem/interface.py, line: 477
-#~ msgid "Set parameters for selected game"
-#~ msgstr "Définir des paramètres pour le jeu sélectionné"
 
 #
 # File: gem/preferences.py, line: 633
@@ -1071,6 +1173,11 @@ msgstr "_Capture d'écran"
 #~ msgstr "Vidéo"
 
 #
+# File: gem/interface.py, line: 1512
+#~ msgid "Write output to %s"
+#~ msgstr "Ecriture de la sortie sur %s"
+
+#
 # File: src/window.py, line: 940
 #~ msgid "You going to remove this game from disk."
 #~ msgstr "Vous allez supprimer ce jeu du disque."
@@ -1107,11 +1214,6 @@ msgstr "_Capture d'écran"
 
 #
 # File: src/window.py, line: 446
-#~ msgid "_Remove from database"
-#~ msgstr "_Retirer de la base de données"
-
-#
-# File: src/window.py, line: 446
 #~ msgid "_Remove from disk"
 #~ msgstr "_Supprimer du disque"
 
@@ -1134,3 +1236,13 @@ msgstr "_Capture d'écran"
 # File: gem/interface.py, line: 230
 #~ msgid "_System"
 #~ msgstr "_Système"
+
+#
+# File: gem/preferences.py, line: 1279
+#~ msgid "fullscreen"
+#~ msgstr "Plein écran"
+
+#
+# File: gem/preferences.py, line: 1274
+#~ msgid "windowed"
+#~ msgstr "Fenêtré"
