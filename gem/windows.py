@@ -251,6 +251,9 @@ class DialogEditor(Dialog):
         # Init widgets
         self.__init_widgets()
 
+        # Init signals
+        self.__init_signals()
+
         # Start interface
         self.__start_interface()
 
@@ -305,6 +308,16 @@ class DialogEditor(Dialog):
         self.text_editor.set_buffer(self.buffer_editor)
 
         # ------------------------------------
+        #   Back lines
+        # ------------------------------------
+
+        self.check_lines = Gtk.CheckButton()
+
+        # Properties
+        self.check_lines.set_label(_("Auto line break"))
+        self.check_lines.set_active(False)
+
+        # ------------------------------------
         #   Integrate widgets
         # ------------------------------------
 
@@ -312,6 +325,16 @@ class DialogEditor(Dialog):
 
         self.dialog_box.pack_start(self.entry_path, False, True, 0)
         self.dialog_box.pack_start(scroll_editor, True, True, 0)
+        self.dialog_box.pack_start(self.check_lines, False, True, 0)
+
+
+    def __init_signals(self):
+        """
+        Initialize widgets signals
+        """
+
+        self.check_lines.connect(
+            "toggled", self.__on_break_line)
 
 
     def __start_interface(self):
@@ -328,6 +351,17 @@ class DialogEditor(Dialog):
         self.show_all()
 
         self.text_editor.grab_focus()
+
+
+    def __on_break_line(self, widget):
+        """
+        Set break line mode for textview
+        """
+
+        if self.check_lines.get_active():
+            self.text_editor.set_wrap_mode(Gtk.WrapMode.WORD)
+        else:
+            self.text_editor.set_wrap_mode(Gtk.WrapMode.NONE)
 
 
 class DialogParameters(Dialog):

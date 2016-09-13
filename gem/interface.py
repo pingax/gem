@@ -977,13 +977,15 @@ class Interface(Gtk.Builder):
         Show emulator's configuration file
         """
 
-        data = self.database.get("games",
-            { "filename": basename(self.selection["game"]) })
-
         emulator = self.consoles.get(self.selection["console"], "emulator")
-        if data is not None and len(data.get("emulator")) > 0:
-            if self.emulators.has_section(data.get("emulator")):
-                emulator = data.get("emulator")
+
+        if self.selection["game"] is not None:
+            data = self.database.get("games",
+                { "filename": basename(self.selection["game"]) })
+
+            if data is not None and len(data.get("emulator")) > 0:
+                if self.emulators.has_section(data.get("emulator")):
+                    emulator = data.get("emulator")
 
         if self.emulators.has_option(emulator, "configuration"):
             path = self.emulators.get(emulator, "configuration")
@@ -999,6 +1001,9 @@ class Interface(Gtk.Builder):
                         pipe.write(dialog.buffer_editor.get_text(
                             dialog.buffer_editor.get_start_iter(),
                             dialog.buffer_editor.get_end_iter(), True))
+
+                    self.logger.info(
+                        _("Update %s configuration file") % emulator)
 
                 dialog.destroy()
 
@@ -1409,13 +1414,16 @@ class Interface(Gtk.Builder):
         console = self.selection["console"]
 
         emulator = self.consoles.get(console, "emulator")
-        if data is not None and len(game.get("emulator")) > 0:
+        if game is not None and len(game.get("emulator")) > 0:
             if self.emulators.has_section(game.get("emulator")):
                 emulator = game.get("emulator")
 
         if emulator is not None and emulator in self.emulators.sections():
+            title = filename
+            if self.selection["name"] is not None:
+                title = self.selection["name"]
 
-            self.logger.info(_("Initialize %s") % filename)
+            self.logger.info(_("Initialize %s") % title)
 
             # ----------------------------
             #   Check emulator binary
@@ -1778,6 +1786,8 @@ class Interface(Gtk.Builder):
                     "arguments": dialog.entry.get_text(),
                     "emulator": emulator
                 }, { "filename": gamefile })
+
+            self.logger.info(_("Change parameters for %s") % title)
 
             # ----------------------------
             #   Update data
