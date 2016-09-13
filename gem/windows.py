@@ -24,6 +24,7 @@
 # Interface
 from gi.repository import Gtk
 from gi.repository import Gdk
+from gi.repository import GLib
 from gi.repository import Pango
 
 from gi.repository.GdkPixbuf import Pixbuf
@@ -119,7 +120,8 @@ class Dialog(Gtk.Dialog):
 
         label_header.set_alignment(0, .5)
         label_header.set_use_markup(True)
-        label_header.set_markup("<span font='14'><b>%s</b></span>" % self.title)
+        label_header.set_markup("<span font='14'><b>%s</b></span>" % \
+            GLib.markup_escape_text(self.title, -1))
 
         # ------------------------------------
         #   Integrate widgets

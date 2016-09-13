@@ -1732,9 +1732,6 @@ class Interface(Gtk.Builder):
                 _("Remove %s") % self.model_games[treeiter][Columns.Name],
                 _("This game was removed successfully"), "dialog-information")
 
-            dialog.run()
-            dialog.destroy()
-
 
     def __on_game_parameters(self, widget):
         """
