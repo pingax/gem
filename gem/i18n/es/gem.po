@@ -48,14 +48,17 @@ msgid "%s has been deleted from disk"
 msgstr ""
 
 #
-# File: gem/interface.py, line: 2026
+# File: gem/interface.py, line: 2050
 #, python-format
-msgid "%s is already in the right folder. Cancel drop."
+msgid "%s is already in the roms folder. Cancel drop."
 msgstr ""
 
 #
 # File: gem/preferences.py, line: 1638
-msgid "<name> = ROM filename and <lname> = ROM lowercase filename"
+#, fuzzy
+msgid ""
+"<name> = ROM filename, <lname> = ROM lowercase filename\n"
+"<rom_path> = ROM folder"
 msgstr ""
 "<name> = nombre del fichero de la ROM y <lname> = nombre del fichero en "
 "minúsculas de la ROM"
@@ -225,6 +228,12 @@ msgstr "Nuevo emulador"
 # File: gem/preferences.py, line: 1665
 msgid "Default options"
 msgstr "Opciones por defecto"
+
+#
+# File: gem/interface.py, line: 2054
+#, python-format
+msgid "Destination %s not exist. Cancel drop."
+msgstr ""
 
 #
 # File: gem/interface.py, line: 2017
@@ -496,6 +505,11 @@ msgstr "Salir de la aplicación"
 # File: gem/preferences.py, line: 1342
 msgid "ROM's extensions"
 msgstr "Extensiones de las ROM"
+
+#
+# File: gem/preferences.py, line: 372
+msgid "ROMs path"
+msgstr ""
 
 #
 # File: gem/preferences.py, line: 1624

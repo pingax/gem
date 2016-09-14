@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.5\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2016-09-14 12:07+0200\n"
+"PO-Revision-Date: 2016-09-14 14:11+0200\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -50,13 +50,17 @@ msgstr "%s à été supprimé du disque"
 #
 # File: gem/interface.py, line: 2026
 #, python-format
-msgid "%s is already in the right folder. Cancel drop."
-msgstr "%s est déjà dans le bon dossier. Annulation de l'installation."
+msgid "%s is already in the roms folder. Cancel drop."
+msgstr "%s est déjà dans le dossier des roms. Annulation de l'installation."
 
 #
 # File: gem/preferences.py, line: 1372
-msgid "<name> = ROM filename and <lname> = ROM lowercase filename"
-msgstr "<name> = Nom de la ROM et <lname> = Nom de la ROM en minuscules"
+msgid ""
+"<name> = ROM filename, <lname> = ROM lowercase filename\n"
+"<rom_path> = ROM folder"
+msgstr ""
+"<name> = Nom de la ROM, <lname> = Nom de la ROM en minuscules\n"
+"<rom_path> = Dossier de la ROM"
 
 #
 # File: gem/preferences.py, line: 329
@@ -214,6 +218,12 @@ msgstr "Émulateur par défaut"
 # File: gem/preferences.py, line: 1269
 msgid "Default options"
 msgstr "Options par défaut"
+
+#
+# File: gem/interface.py, line: 2054
+#, python-format
+msgid "Destination %s not exist. Cancel drop."
+msgstr "La destination %s n'existe pas. Annulation de l'installation."
 
 #
 # File: gem/interface.py, line: 2017
@@ -467,6 +477,11 @@ msgstr "Quitter l'application"
 # File: gem/preferences.py, line: 938
 msgid "ROM's extensions"
 msgstr "Extensions des ROMs"
+
+#
+# File: gem/preferences.py, line: 372
+msgid "ROMs path"
+msgstr "Chemin des ROMs"
 
 #
 # File: gem/preferences.py, line: 1233
@@ -826,444 +841,3 @@ msgstr "_Renommer"
 # File: gem/preferences.py, line: 335
 msgid "_Screenshots"
 msgstr "_Capture d'écran"
-
-#
-# File: gem/preferences.py, line: 335
-#~ msgid "%s screenshots"
-#~ msgstr "Capture d'écran de %s"
-
-# File: src/window.py, line: 128
-#~ msgid "A graphical tool to manage emulators"
-#~ msgstr "Une interface graphique pour gérer les émulateurs"
-
-#
-# File: src/window.py, line: 282
-#~ msgid "About"
-#~ msgstr "À propos"
-
-#
-# File: src/window.py, line: 1135
-#~ msgid "Active developpers"
-#~ msgstr "Développeurs actifs"
-
-#
-# File: gem/windows.py, line: 909
-#~ msgid "Add a new ROM to disk."
-#~ msgstr "Ajout d'une nouvelle ROM au disque."
-
-#
-# File: gem/windows.py, line: 434
-#~ msgid "Arguments"
-#~ msgstr "Arguments"
-
-#
-# File: gem/interface.py, line: 1427
-#~ msgid "Binary : %s"
-#~ msgstr "Binaire: %s"
-
-#
-# File: gem/interface.py, line: 942
-#~ msgid "Cannot find <b>%s</b> !"
-#~ msgstr "Impossible de trouver <b>%s</b> !"
-
-#
-# File: gem/interface.py, line: 942
-#~ msgid "Cannot find ROMs path <b>%s</b> !"
-#~ msgstr "Impossible de trouver le chemin des ROMs <b>%s</b> !"
-
-#
-# File: gem/interface.py, line: 1816
-#~ msgid "Cannot found %s folder on your disk."
-#~ msgstr "Impossible de trouver le dossier %s sur le disque."
-
-#
-# File: gem/interface.py, line: 1815
-# File: gem/interface.py, line: 1819
-#~ msgid "Cannot install ROM"
-#~ msgstr "Impossible d'installer la ROM"
-
-#
-# File: gem/preferences.py, line: 102
-#~ msgid "Choose a file"
-#~ msgstr "Choisir un fichier"
-
-#
-# File: gem/preferences.py, line: 1209
-#~ msgid "Choose the configuration file"
-#~ msgstr "Choisir le fichier de configuration"
-
-#
-# File: gem/windows.py, line: 145
-#~ msgid "Choose the emulator"
-#~ msgstr "Choisir l'émulateur"
-
-#
-# File: gem/preferences.py, line: 317
-#~ msgid "Choose your viewer"
-#~ msgstr "Choisir le visualiseur"
-
-#
-# File: gem/preferences.py, line: 357
-#~ msgid "Columns"
-#~ msgstr "Colonnes"
-
-#
-# File: gem/windows.py, line: 145
-#~ msgid "Configure %s emulator"
-#~ msgstr "Configurer l'émulateur %s"
-
-#
-# File: gem/interface.py, line: 300
-#~ msgid "Configure emulator"
-#~ msgstr "Configurer l'émulateur"
-
-#
-# File: gem/windows.py, line: 1141
-#~ msgid "Current file going to be saved in <b>%s</b>."
-#~ msgstr "Le fichier va être sauvegarder dans <b>%s</b>."
-
-#
-# File: gem/interface.py, line: 1286
-#, fuzzy
-#~ msgid "Default arguments : %s"
-#~ msgstr "Définir l'arguments par défaut: %s"
-
-#
-# File: gem/preferences.py, line: 1269
-#~ msgid "Default font"
-#~ msgstr "Police de caractères par défaut"
-
-#
-# File: gem/emulators.py, line: 171
-#~ msgid "Enable sound output"
-#~ msgstr "Activer la sortie son"
-
-#
-# File: gem/interface.py, line: 463
-#~ msgid "Favorite"
-#~ msgstr "Favori"
-
-#
-# File: gem/windows.py, line: 982
-#~ msgid "File"
-#~ msgstr "Fichier"
-
-#
-# File: src/window.py, line: 306
-#~ msgid "Filters"
-#~ msgstr "Filtres"
-
-#
-# File: gem/emulators.py, line: 139
-#~ msgid "Force monophonic sound output"
-#~ msgstr "Forcer le son à sortir en mode mono"
-
-#
-# File: gem/interface.py, line: 220
-#~ msgid "Games"
-#~ msgstr "Jeux"
-
-# File: src/window.py, line: 128
-#~ msgid "Graphical Emulators Manager - 0.5 (Rich Duck)"
-#~ msgstr "Gestionnaire d’Émulateurs Malin"
-
-#
-# File: src/window.py, line: 1137
-#~ msgid "Icons"
-#~ msgstr "Icônes"
-
-#
-# File: gem/ui/preferences.glade, line: 365
-#~ msgid "Icons selector"
-#~ msgstr "Sélecteur d'icones"
-
-#
-# File: gem/ui/interface.glade, line: 618
-#~ msgid "Info"
-#~ msgstr "Info"
-
-#
-# File: gem/interface.py, line: 1336
-#~ msgid "Last launch"
-#~ msgstr "Dernier lancement"
-
-#
-# File: src/window.py, line: 431
-#~ msgid "Launch"
-#~ msgstr "Lancement"
-
-# File: src/window.py, line: 314
-#~ msgid "Load %s console"
-#~ msgstr "Chargement de la console %s"
-
-#
-# File: gem/preferences.py, line: 271
-#~ msgid "Misc"
-#~ msgstr "Divers"
-
-#
-# File: gem/interface.py, line: 1455
-# File: gem/interface.py, line: 1462
-#~ msgid "Mode"
-#~ msgstr "Mode"
-
-#
-# File: gem/interface.py, line: 290
-#, fuzzy
-#~ msgid "Mode : fullscreen"
-#~ msgstr "Définir le mode : plein écran"
-
-#
-# File: gem/interface.py, line: 1462
-#, fuzzy
-#~ msgid "Mode : windowed"
-#~ msgstr "Définir le mode : fenêtré"
-
-#
-# File: gem/interface.py, line: 251
-# File: gem/interface.py, line: 550
-#~ msgid "Multiplayer"
-#~ msgstr "Multi-joueurs"
-
-#
-# File: src/window.py, line: 285
-#~ msgid "Quit"
-#~ msgstr "Quitter"
-
-#
-# File: gem/interface.py, line: 934
-#~ msgid "ROM"
-#~ msgstr "ROM"
-
-#
-# File: gem/preferences.py, line: 912
-#~ msgid "ROM's folder"
-#~ msgstr "Dossier des ROMs"
-
-#
-# File: src/window.py, line: 446
-#~ msgid "Remove game save files from disk"
-#~ msgstr "Supprimer les sauvegardes de jeu du disque"
-
-#
-# File: src/window.py, line: 446
-#~ msgid "Remove game screenshots from disk"
-#~ msgstr "Supprimer les captures d'écran de jeu du disque"
-
-#
-# File: src/window.py, line: 451
-#~ msgid "Rename"
-#~ msgstr "Renommer"
-
-#
-# File: gem/emulators.py, line: 232
-#~ msgid "Resolution"
-#~ msgstr "Résolution"
-
-#
-# File: src/window.py, line: 272
-#~ msgid "Run selected game"
-#~ msgstr "Lancer le jeu sélectionné"
-
-#
-# File: gem/emulators.py, line: 254
-#~ msgid "Scaling factor (fullscreen)"
-#~ msgstr "Facteur de résolution (Plein écran)"
-
-#
-# File: gem/emulators.py, line: 242
-#~ msgid "Scaling factor (windowed)"
-#~ msgstr "Facteur de résolution (Fenêtré)"
-
-#
-# File: gem/preferences.py, line: 335
-#~ msgid "Screenshots viewer"
-#~ msgstr "Visualiseur de capture d'écran"
-
-#
-# File: gem/ui/interface.glade, line: 540
-#~ msgid "Search"
-#~ msgstr "Recherche"
-
-#
-# File: gem/preferences.py, line: 1577
-#~ msgid "Select sound driver"
-#~ msgstr "Choisir le pilote son"
-
-#
-# File: gem/emulators.py, line: 183
-#~ msgid "Select sound output device"
-#~ msgstr "Choisir le périphérique de sortie son"
-
-#
-# File: gem/windows.py, line: 1022
-#~ msgid ""
-#~ "Select the console which going to be used to store file. When you set "
-#~ "file from above, GEM check your configuration files to select console "
-#~ "from file extension."
-#~ msgstr ""
-#~ "Choisissez la console qui sera utilisée pour stocker le fichier. Quand "
-#~ "vouschoisissez un fichier au dessus, GEM va regarder vos fichiers de "
-#~ "configuration pour déterminer quelle console utiliser à partir de "
-#~ "l'extension du fichier."
-
-#
-# File: gem/windows.py, line: 988
-#~ msgid "Select the file to install from your disk."
-#~ msgstr "Choisir le fichier à installer sur votre disque."
-
-#
-# File: gem/interface.py, line: 1286
-#~ msgid "Set a new name"
-#~ msgstr "Définir un nouveau nom"
-
-#
-# File: gem/interface.py, line: 336
-#~ msgid "Set game parameters"
-#~ msgstr "Définir des paramètres de jeu"
-
-#
-# File: gem/preferences.py, line: 633
-#~ msgid "Set specific parameters for this ROM"
-#~ msgstr "Définir des paramètres particulier pour cette ROM"
-
-#
-# File: gem/preferences.py, line: 252
-#~ msgid "Show output tab"
-#~ msgstr "Afficher l'onglet Sortie"
-
-#
-# File: src/window.py, line: 279
-#~ msgid "Show selected game snapshots"
-#~ msgstr "Afficher les captures d'écran du jeu sélectionné"
-
-#
-# File: src/window.py, line: 441
-#~ msgid "Show statusbar"
-#~ msgstr "Afficher la barre d'état"
-
-#
-# File: gem/emulators.py, line: 128
-#~ msgid "Sound"
-#~ msgstr "Son"
-
-#
-# File: gem/emulators.py, line: 172
-#~ msgid "Sound quality"
-#~ msgstr "Qualité du son"
-
-#
-# File: gem/emulators.py, line: 187
-#~ msgid "Sound volume"
-#~ msgstr "Volume du son"
-
-#
-# File: gem/interface.py, line: 2280
-#~ msgid "Spanish"
-#~ msgstr "Espagnol"
-
-#
-# File: gem/emulators.py, line: 319
-#~ msgid "Stretch to fill screen"
-#~ msgstr "Étirer pour remplir l'écran"
-
-#
-# File: gem/preferences.py, line: 1020
-#~ msgid "This name is already used, please, choose another."
-#~ msgstr "Ce nom existe déjà, veuillez en choisir un autre"
-
-#
-# File: gem/interface.py, line: 1810
-#~ msgid "This rom has been installed successfully !"
-#~ msgstr "Cette ROM à été installée avec succès !"
-
-#
-# File: src/window.py, line: 380
-#~ msgid "Time played"
-#~ msgstr "Temps de jeu"
-
-#
-# File: gem/configuration.py, line: 144
-# File: gem/configuration.py, line: 301
-#~ msgid "Translators"
-#~ msgstr "Traducteurs"
-
-#
-# File: gem/emulators.py, line: 226
-#~ msgid "Video"
-#~ msgstr "Vidéo"
-
-#
-# File: gem/interface.py, line: 1512
-#~ msgid "Write output to %s"
-#~ msgstr "Ecriture de la sortie sur %s"
-
-#
-# File: src/window.py, line: 940
-#~ msgid "You going to remove this game from disk."
-#~ msgstr "Vous allez supprimer ce jeu du disque."
-
-#
-# File: gem/interface.py, line: 220
-#~ msgid "_Game"
-#~ msgstr "_Jeux"
-
-#
-# File: src/window.py, line: 244
-#~ msgid "_Help"
-#~ msgstr "_Aide"
-
-#
-# File: gem/interface.py, line: 646
-#~ msgid "_Install a ROM"
-#~ msgstr "_Installer une ROM"
-
-#
-# File: gem/interface.py, line: 336
-#~ msgid "_Modify parameters"
-#~ msgstr "_Modifier les paramètres"
-
-#
-# File: src/window.py, line: 375
-#~ msgid "_Play"
-#~ msgstr "_Jouer"
-
-#
-# File: src/window.py, line: 446
-#~ msgid "_Remove entry from database"
-#~ msgstr "_Retirer l'entrée de la base de données"
-
-#
-# File: src/window.py, line: 446
-#~ msgid "_Remove from disk"
-#~ msgstr "_Supprimer du disque"
-
-#
-# File: src/window.py, line: 451
-#~ msgid "_Rename game"
-#~ msgstr "_Renommer le jeu"
-
-#
-# File: src/window.py, line: 431
-#~ msgid "_Run"
-#~ msgstr "_Lancer"
-
-#
-# File: src/window.py, line: 441
-#~ msgid "_Show snapshots"
-#~ msgstr "Afficher les _captures d'écran"
-
-#
-# File: gem/interface.py, line: 230
-#~ msgid "_System"
-#~ msgstr "_Système"
-
-#
-# File: gem/preferences.py, line: 1279
-#~ msgid "fullscreen"
-#~ msgstr "Plein écran"
-
-#
-# File: gem/preferences.py, line: 1274
-#~ msgid "windowed"
-#~ msgstr "Fenêtré"

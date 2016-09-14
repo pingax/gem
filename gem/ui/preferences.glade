@@ -10,6 +10,8 @@
       <column type="gchararray"/>
       <!-- column-name column_consoles_emulator -->
       <column type="gchararray"/>
+      <!-- column-name column_consoles_check -->
+      <column type="GdkPixbuf"/>
     </columns>
   </object>
   <object class="GtkListStore" id="store_emulators">
@@ -940,6 +942,14 @@
                                       <object class="GtkCellRendererText" id="cell_consoles_emulator"/>
                                       <attributes>
                                         <attribute name="text">2</attribute>
+                                      </attributes>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCellRendererPixbuf" id="cell_consoles_check">
+                                        <property name="xalign">1</property>
+                                      </object>
+                                      <attributes>
+                                        <attribute name="pixbuf">3</attribute>
                                       </attributes>
                                     </child>
                                   </object>

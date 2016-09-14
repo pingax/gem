@@ -369,7 +369,7 @@ class Preferences(Gtk.Builder):
         column_consoles_name.set_title(_("Console"))
 
         column_consoles_emulator.set_expand(True)
-        column_consoles_emulator.set_title(_("Emulator"))
+        column_consoles_emulator.set_title(_("ROMs path"))
 
         self.button_console_modify.set_sensitive(False)
         self.button_console_remove.set_sensitive(False)
@@ -664,8 +664,13 @@ class Preferences(Gtk.Builder):
         for name in self.consoles.sections():
             image = icon_from_data(self.consoles.item(name, "icon"), self.empty)
 
-            self.model_consoles.append(
-                [image, name, self.consoles.item(name, "emulator")])
+            path = self.consoles.item(name, "roms")
+
+            check = self.empty
+            if not exists(path):
+                check = icon_load("dialog-warning", 16, self.empty)
+
+            self.model_consoles.append([image, name, path, check])
 
 
     def on_load_emulators(self):
@@ -1168,8 +1173,8 @@ class Emulator(Gtk.Builder):
         label_save.set_label(_("Save"))
         label_screenshots.set_label(_("Snapshots"))
         label_regex.set_markup("<i>%s</i>" % (
-            _("<name> = ROM filename and <lname> = ROM lowercase "
-            "filename").replace('>', "&gt;").replace('<', "&lt;")))
+            _("<name> = ROM filename, <lname> = ROM lowercase filename\n"
+            "<rom_path> = ROM folder").replace('>', "&gt;").replace('<', "&lt;")))
 
         # ------------------------------------
         #   Init widgets

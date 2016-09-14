@@ -254,7 +254,7 @@
   </object>
   <object class="GtkDialog" id="dialog_emulator">
     <property name="width_request">600</property>
-    <property name="height_request">570</property>
+    <property name="height_request">580</property>
     <property name="can_focus">False</property>
     <property name="type_hint">dialog</property>
     <child internal-child="vbox">
@@ -625,8 +625,10 @@
                                     <property name="halign">end</property>
                                     <property name="hexpand">True</property>
                                     <property name="label" translatable="yes">REGEX</property>
+                                    <property name="justify">right</property>
                                     <property name="wrap">True</property>
                                     <property name="wrap_mode">word-char</property>
+                                    <property name="xalign">1</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>

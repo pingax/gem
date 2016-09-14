@@ -55,6 +55,8 @@ from os.path import join as path_join
 
 from glob import glob
 
+import mimetypes
+
 from urllib.parse import urlparse
 from urllib.request import url2pathname
 
@@ -871,6 +873,13 @@ class Interface(Gtk.Builder):
         """
         Show a dialog when an error occur.
         """
+
+        if icon == "dialog-error":
+            self.logger.error(message)
+        elif icon == "dialog-warning":
+            self.logger.warning(message)
+        else:
+            self.logger.info(message)
 
         dialog = Message(self, title, message, icon)
 
@@ -1947,6 +1956,7 @@ class Interface(Gtk.Builder):
 
     def __on_dnd_get_data(self, widget, context, x, y, data, info, time):
         """
+        Install drop files
         """
 
         widget.stop_emission("drag_data_received")
@@ -1960,11 +1970,17 @@ class Interface(Gtk.Builder):
         for uri in data.get_uris():
             result = urlparse(uri)
 
+            console = None
+
             if result.scheme == "file":
                 path = expanduser(url2pathname(result.path))
 
                 if exists(path):
                     filename, ext = splitext(basename(path))
+
+                    # ----------------------------
+                    #   Get right console for rom
+                    # ----------------------------
 
                     consoles_list = list()
                     for console in self.consoles.keys():
@@ -1973,6 +1989,8 @@ class Interface(Gtk.Builder):
                         if exts is not None and ext[1:] in exts.split(';'):
                             consoles_list.append(console)
 
+                    console = None
+
                     if len(consoles_list) > 0:
                         console = consoles_list[0]
 
@@ -1980,7 +1998,6 @@ class Interface(Gtk.Builder):
                             dialog = DialogConsoles(self,
                                 basename(path), consoles_list, previous_console)
 
-                            console = None
                             if dialog.run() == Gtk.ResponseType.APPLY:
                                 console = dialog.current
 
@@ -1988,44 +2005,54 @@ class Interface(Gtk.Builder):
 
                             dialog.destroy()
 
-                        if console is not None and \
-                            self.consoles.has_section(console):
+            # ----------------------------
+            #   Check console
+            # ----------------------------
 
-                            rom_path = expanduser(
-                                self.consoles.item(console, "roms"))
+            if console is not None and self.consoles.has_section(console):
+                rom_path = expanduser(self.consoles.item(console, "roms"))
 
-                            if rom_path is not None and \
-                                not dirname(path) == rom_path:
-                                move = True
+                # ----------------------------
+                #   Install roms
+                # ----------------------------
 
-                                if exists(path_join(rom_path, basename(path))):
-                                    dialog = Question(self, basename(path),
-                                        _("This rom already exist in %s. Do "
-                                        "you want to replace it ?") % rom_path)
+                if rom_path is not None and not dirname(path) == rom_path and \
+                    exists(rom_path):
+                    move = True
 
-                                    move = False
-                                    if dialog.run() == Gtk.ResponseType.YES:
-                                        move = True
+                    if exists(path_join(rom_path, basename(path))):
+                        dialog = Question(self, basename(path),
+                            _("This rom already exist in %s. Do you want to "
+                            "replace it ?") % rom_path)
 
-                                        remove(path_join(
-                                            rom_path, basename(path)))
+                        move = False
+                        if dialog.run() == Gtk.ResponseType.YES:
+                            move = True
 
-                                    dialog.destroy()
+                            remove(path_join(rom_path, basename(path)))
 
-                                if move:
-                                    rename(path, rom_path)
+                        dialog.destroy()
 
-                                    self.logger.info(_("Drop %(rom)s to "
-                                        "%(path)s") % { "rom": basename(path),
-                                        "path": rom_path })
+                    if move:
+                        rename(path, rom_path)
 
-                                    if console == self.selection["console"]:
-                                        need_to_reload = True
+                        self.logger.info(_("Drop %(rom)s to %(path)s") % {
+                            "rom": basename(path), "path": rom_path })
 
-                            if dirname(path) == rom_path:
-                                self.logger.error(_("%s is already in the "
-                                    "right folder. Cancel drop.") % \
-                                    basename(path))
+                        if console == self.selection["console"]:
+                            need_to_reload = True
+
+                # ----------------------------
+                #   Errors
+                # ----------------------------
+
+                if dirname(path) == rom_path:
+                    self.set_message(basename(path), _("%s is already in the "
+                        "roms folder. Cancel drop.") % basename(path))
+
+                elif not exists(rom_path):
+                    self.set_message(basename(path), _("Destination %s not "
+                        "exist. Cancel drop.") % rom_path)
 
         if need_to_reload:
             self.load_interface()
