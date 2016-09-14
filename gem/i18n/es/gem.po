@@ -48,6 +48,12 @@ msgid "%s has been deleted from disk"
 msgstr ""
 
 #
+# File: gem/interface.py, line: 2026
+#, python-format
+msgid "%s is already in the right folder. Cancel drop."
+msgstr ""
+
+#
 # File: gem/preferences.py, line: 1638
 msgid "<name> = ROM filename and <lname> = ROM lowercase filename"
 msgstr ""

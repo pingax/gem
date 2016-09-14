@@ -428,8 +428,8 @@ class Interface(Gtk.Builder):
         self.treeview_games.set_model(self.filter_games)
         self.treeview_games.set_has_tooltip(True)
 
-        self.treeview_games.drag_dest_set(Gtk.DestDefaults.MOTION |
-            Gtk.DestDefaults.HIGHLIGHT | Gtk.DestDefaults.DROP, [
+        self.treeview_games.drag_dest_set(
+            Gtk.DestDefaults.MOTION | Gtk.DestDefaults.DROP, [
                 Gtk.TargetEntry.new("text/uri-list", 0, 1337)
             ], Gdk.DragAction.COPY)
 
@@ -1994,7 +1994,8 @@ class Interface(Gtk.Builder):
                             rom_path = expanduser(
                                 self.consoles.item(console, "roms"))
 
-                            if rom_path is not None:
+                            if rom_path is not None and \
+                                not dirname(path) == rom_path:
                                 move = True
 
                                 if exists(path_join(rom_path, basename(path))):
@@ -2011,7 +2012,7 @@ class Interface(Gtk.Builder):
 
                                     dialog.destroy()
 
-                                if move and not dirname(path) == rom_path:
+                                if move:
                                     rename(path, rom_path)
 
                                     self.logger.info(_("Drop %(rom)s to "
@@ -2020,6 +2021,11 @@ class Interface(Gtk.Builder):
 
                                     if console == self.selection["console"]:
                                         need_to_reload = True
+
+                            if dirname(path) == rom_path:
+                                self.logger.error(_("%s is already in the "
+                                    "right folder. Cancel drop.") % \
+                                    basename(path))
 
         if need_to_reload:
             self.load_interface()

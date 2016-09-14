@@ -28,6 +28,11 @@ msgstr  ""
 msgid   "%s has been deleted from disk"
 msgstr  ""
 #
+# File: gem/interface.py, line: 2026
+#, python-format
+msgid   "%s is already in the right folder. Cancel drop."
+msgstr  ""
+#
 # File: gem/preferences.py, line: 1171
 msgid   "<name> = ROM filename and <lname> = ROM lowercase filename"
 msgstr  ""
@@ -102,7 +107,7 @@ msgid   "Cannot open %s file"
 msgstr  ""
 #
 # File: gem/interface.py, line: 204
-# File: gem/interface.py, line: 2166
+# File: gem/interface.py, line: 2172
 # File: gem/preferences.py, line: 79
 # File: gem/preferences.py, line: 825
 # File: gem/preferences.py, line: 1091
@@ -171,7 +176,7 @@ msgstr  ""
 msgid   "Default options"
 msgstr  ""
 #
-# File: gem/interface.py, line: 2017
+# File: gem/interface.py, line: 2018
 #, python-format
 msgid   "Drop %(rom)s to %(path)s"
 msgstr  ""
@@ -312,7 +317,7 @@ msgstr  ""
 msgid   "Migrate old parameters system to database."
 msgstr  ""
 #
-# File: gem/interface.py, line: 2187
+# File: gem/interface.py, line: 2193
 msgid   "Migrating entries from old database"
 msgstr  ""
 #
@@ -555,7 +560,7 @@ msgstr  ""
 msgid   "This game was removed successfully"
 msgstr  ""
 #
-# File: gem/interface.py, line: 2002
+# File: gem/interface.py, line: 2003
 #, python-format
 msgid   "This rom already exist in %s. Do you want to replace it ?"
 msgstr  ""
