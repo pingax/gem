@@ -55,6 +55,9 @@ from os.path import join as path_join
 
 from glob import glob
 
+from urllib.parse import urlparse
+from urllib.request import url2pathname
+
 # System
 from sys import exit as sys_exit
 
@@ -425,6 +428,11 @@ class Interface(Gtk.Builder):
         self.treeview_games.set_model(self.filter_games)
         self.treeview_games.set_has_tooltip(True)
 
+        self.treeview_games.drag_dest_set(Gtk.DestDefaults.MOTION |
+            Gtk.DestDefaults.HIGHLIGHT | Gtk.DestDefaults.DROP, [
+                Gtk.TargetEntry.new("text/uri-list", 0, 1337)
+            ], Gdk.DragAction.COPY)
+
         self.column_game_name.set_title(_("Name"))
         self.column_game_play.set_title(_("Played"))
         self.column_game_last_play.set_title(_("Last play"))
@@ -540,6 +548,9 @@ class Interface(Gtk.Builder):
         self.treeview_games.connect(
             "key-release-event", self.__on_menu_show)
 
+        self.treeview_games.connect(
+            "drag-data-received", self.__on_dnd_get_data)
+
 
         self.filter_games.set_visible_func(self.filters_match)
 
@@ -559,7 +570,6 @@ class Interface(Gtk.Builder):
                         self.treeview_games.set_visible(True)
                         self.combo_consoles.set_active_iter(row.iter)
 
-                        self.logger.info(_("Load %s console") % console)
                         self.selection["console"] = console
 
                         break
@@ -1424,8 +1434,6 @@ class Interface(Gtk.Builder):
 
                 return
 
-            # self.logger.info("%s : %s" % (_("Binary"), binary))
-
             # ----------------------------
             #   Default arguments
             # ----------------------------
@@ -1935,6 +1943,86 @@ class Interface(Gtk.Builder):
         else:
             self.get_object("image_fullscreen").set_from_icon_name(
                 "view-restore", Gtk.IconSize.BUTTON)
+
+
+    def __on_dnd_get_data(self, widget, context, x, y, data, info, time):
+        """
+        """
+
+        widget.stop_emission("drag_data_received")
+
+        if not info == 1337:
+            return
+
+        previous_console = None
+        need_to_reload = False
+
+        for uri in data.get_uris():
+            result = urlparse(uri)
+
+            if result.scheme == "file":
+                path = expanduser(url2pathname(result.path))
+
+                if exists(path):
+                    filename, ext = splitext(basename(path))
+
+                    consoles_list = list()
+                    for console in self.consoles.keys():
+                        exts = self.consoles.item(console, "exts")
+
+                        if exts is not None and ext[1:] in exts.split(';'):
+                            consoles_list.append(console)
+
+                    if len(consoles_list) > 0:
+                        console = consoles_list[0]
+
+                        if len(consoles_list) > 1:
+                            dialog = DialogConsoles(self,
+                                basename(path), consoles_list, previous_console)
+
+                            console = None
+                            if dialog.run() == Gtk.ResponseType.APPLY:
+                                console = dialog.current
+
+                            previous_console = console
+
+                            dialog.destroy()
+
+                        if console is not None and \
+                            self.consoles.has_section(console):
+
+                            rom_path = expanduser(
+                                self.consoles.item(console, "roms"))
+
+                            if rom_path is not None:
+                                move = True
+
+                                if exists(path_join(rom_path, basename(path))):
+                                    dialog = Question(self, basename(path),
+                                        _("This rom already exist in %s. Do "
+                                        "you want to replace it ?") % rom_path)
+
+                                    move = False
+                                    if dialog.run() == Gtk.ResponseType.YES:
+                                        move = True
+
+                                        remove(path_join(
+                                            rom_path, basename(path)))
+
+                                    dialog.destroy()
+
+                                if move and not dirname(path) == rom_path:
+                                    rename(path, rom_path)
+
+                                    self.logger.info(_("Drop %(rom)s to "
+                                        "%(path)s") % { "rom": basename(path),
+                                        "path": rom_path })
+
+                                    if console == self.selection["console"]:
+                                        need_to_reload = True
+
+        if need_to_reload:
+            self.load_interface()
 
 
     def get_play_time(self, gamename, interval, total=True):

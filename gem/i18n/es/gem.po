@@ -221,6 +221,12 @@ msgid "Default options"
 msgstr "Opciones por defecto"
 
 #
+# File: gem/interface.py, line: 2017
+#, python-format
+msgid "Drop %(rom)s to %(path)s"
+msgstr ""
+
+#
 # File: gem/interface.py, line: 1257
 # File: gem/preferences.py, line: 547
 # File: gem/preferences.py, line: 1362
@@ -364,12 +370,6 @@ msgstr "Lanzar un juego"
 #, fuzzy
 msgid "Launch interface"
 msgstr "Lanzar un juego"
-
-#
-# File: gem/preferences.py, line: 988
-#, fuzzy, python-format
-msgid "Load %s console"
-msgstr "Nueva consola"
 
 #
 # File: gem/preferences.py, line: 304
@@ -712,6 +712,13 @@ msgid "This emulator already exist, please, choose another name"
 msgstr "Este emulador ya existe, por favor escoja otro nombre"
 
 #
+# File: gem/windows.py, line: 952
+msgid ""
+"This extension is available in multiple consoles. Which one GEM must use to "
+"move this file ?"
+msgstr ""
+
+#
 # File: gem/ui/interface.glade, line: 960
 msgid ""
 "This game going to be removed from your disk and this action is irreversible."
@@ -721,6 +728,12 @@ msgstr ""
 # File: gem/interface.py, line: 1218
 msgid "This game was removed successfully"
 msgstr ""
+
+#
+# File: gem/preferences.py, line: 1418
+#, fuzzy, python-format
+msgid "This rom already exist in %s. Do you want to replace it ?"
+msgstr "Esta consola ya existe, por favor escoja otro nombre"
 
 #
 # File: gem/interface.py, line: 2119
@@ -1021,6 +1034,12 @@ msgstr "%s capturas de pantalla"
 #~ msgstr "Lanzar un juego"
 
 #
+# File: gem/preferences.py, line: 988
+#, fuzzy
+#~ msgid "Load %s console"
+#~ msgstr "Nueva consola"
+
+#
 # File: gem/preferences.py, line: 271
 #~ msgid "Misc"
 #~ msgstr "Varios"
@@ -1182,12 +1201,6 @@ msgstr "%s capturas de pantalla"
 # File: gem/emulators.py, line: 389
 #~ msgid "Stretch to fill screen"
 #~ msgstr "Reducir hasta rellenar la pantalla"
-
-#
-# File: gem/preferences.py, line: 1418
-#, fuzzy
-#~ msgid "This file already exist. Did you want to erase it ?"
-#~ msgstr "Esta consola ya existe, por favor escoja otro nombre"
 
 #
 # File: gem/windows.py, line: 327

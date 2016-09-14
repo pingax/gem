@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.5\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2016-09-13 17:57+0200\n"
+"PO-Revision-Date: 2016-09-14 12:00+0200\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -210,6 +210,12 @@ msgid "Default options"
 msgstr "Options par défaut"
 
 #
+# File: gem/interface.py, line: 2017
+#, python-format
+msgid "Drop %(rom)s to %(path)s"
+msgstr "Déplace %(rom)s vers %(path)s"
+
+#
 # File: gem/configuration.py, line: 144
 # File: gem/configuration.py, line: 301
 msgid "Edit emulator"
@@ -346,11 +352,6 @@ msgstr "Lancer le jeu"
 # File: src/window.py, line: 431
 msgid "Launch interface"
 msgstr "Lancement de l'interface"
-
-# File: src/window.py, line: 314
-#, python-format
-msgid "Load %s console"
-msgstr "Chargement de la console %s"
 
 #
 # File: gem/preferences.py, line: 263
@@ -669,6 +670,15 @@ msgid "This emulator already exist, please, choose another name"
 msgstr "Cet émulateur existe déjà, veuillez choisir un autre nom"
 
 #
+# File: gem/windows.py, line: 952
+msgid ""
+"This extension is available in multiple consoles. Which one GEM must use to "
+"move this file ?"
+msgstr ""
+"Cette extension est disponible pour plusieurs consoles. Laquelle GEM doit "
+"utiliser pour ce fichier ?"
+
+#
 # File: gem/ui/interface.glade, line: 960
 msgid ""
 "This game going to be removed from your disk and this action is irreversible."
@@ -679,6 +689,12 @@ msgstr ""
 # File: gem/interface.py, line: 1882
 msgid "This game was removed successfully"
 msgstr "Ce jeu à été supprimé avec succès"
+
+#
+# File: gem/preferences.py, line: 1020
+#, python-format
+msgid "This rom already exist in %s. Do you want to replace it ?"
+msgstr "Cette ROM existe déjà dans %s. Voulez-vous la remplacer ?"
 
 #
 # File: src/window.py, line: 1066
@@ -970,6 +986,10 @@ msgstr "_Capture d'écran"
 #~ msgid "Launch"
 #~ msgstr "Lancement"
 
+# File: src/window.py, line: 314
+#~ msgid "Load %s console"
+#~ msgstr "Chargement de la console %s"
+
 #
 # File: gem/preferences.py, line: 271
 #~ msgid "Misc"
@@ -1140,11 +1160,6 @@ msgstr "_Capture d'écran"
 # File: gem/emulators.py, line: 319
 #~ msgid "Stretch to fill screen"
 #~ msgstr "Étirer pour remplir l'écran"
-
-#
-# File: gem/preferences.py, line: 1020
-#~ msgid "This file already exist. Did you want to erase it ?"
-#~ msgstr "Ce fichier existe déjà. Voulez-vous l'écraser ?"
 
 #
 # File: gem/preferences.py, line: 1020

@@ -120,6 +120,8 @@ class Dialog(Gtk.Dialog):
 
         label_header.set_alignment(0, .5)
         label_header.set_use_markup(True)
+        label_header.set_single_line_mode(True)
+        label_header.set_ellipsize(Pango.EllipsizeMode.END)
         label_header.set_markup("<span font='14'><b>%s</b></span>" % \
             GLib.markup_escape_text(self.title, -1))
 
@@ -170,20 +172,15 @@ class TemplateDialog(Dialog):
         #   Message
         # ------------------------------------
 
-        text = Gtk.TextView()
-        text_buffer = Gtk.TextBuffer()
+        text = Gtk.Label()
 
         # Properties
-        text.set_buffer(text_buffer)
-        text.set_editable(False)
-        text.set_can_focus(False)
-        text.set_justification(Gtk.Justification.FILL)
-        text.set_wrap_mode(Pango.WrapMode.WORD_CHAR)
-
-        text.override_background_color(
-            Gtk.StateFlags.NORMAL, Gdk.RGBA(0, 0, 0, 0))
-
-        text_buffer.set_text(self.message)
+        text.set_alignment(0, .5)
+        text.set_max_width_chars(10)
+        text.set_line_wrap(True)
+        text.set_use_markup(True)
+        text.set_justify(Gtk.Justification.FILL)
+        text.set_markup(self.message)
 
         # ------------------------------------
         #   Integrate widgets
@@ -889,3 +886,155 @@ class DialogViewer(Dialog):
         self.image.set_from_pixbuf(pixbuf.scale_simple(
             int(self.zoom_factor * width), int(self.zoom_factor * height),
              InterpType.TILES))
+
+
+class DialogConsoles(Dialog):
+
+    def __init__(self, parent, title, consoles, previous=None):
+        """
+        Constructor
+        """
+
+        Dialog.__init__(self, parent, title, "input-gaming")
+
+        # ------------------------------------
+        #   Initialize variables
+        # ------------------------------------
+
+        self.current = None
+
+        self.consoles = consoles
+        self.previous = previous
+
+        # ------------------------------------
+        #   Prepare interface
+        # ------------------------------------
+
+        # Init widgets
+        self.__init_widgets()
+
+        # Init signals
+        self.__init_signals()
+
+        # Start interface
+        self.__start_interface()
+
+
+    def __init_widgets(self):
+        """
+        Initialize interface widgets
+        """
+
+        self.set_default_size(500, 300)
+
+        self.add_buttons(
+            Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+            Gtk.STOCK_SAVE, Gtk.ResponseType.APPLY)
+
+        # ------------------------------------
+        #   Scroll
+        # ------------------------------------
+
+        scroll_consoles = Gtk.ScrolledWindow()
+        view_consoles = Gtk.Viewport()
+
+        # ------------------------------------
+        #   Description
+        # ------------------------------------
+
+        label_description = Gtk.Label()
+
+        # Properties
+        label_description.set_alignment(0, .5)
+        label_description.set_max_width_chars(10)
+        label_description.set_line_wrap(True)
+        label_description.set_justify(Gtk.Justification.FILL)
+        label_description.set_label(_("This extension is available in multiple "
+            "consoles. Which one GEM must use to move this file ?"))
+
+        # ------------------------------------
+        #   Consoles
+        # ------------------------------------
+
+        self.model_consoles = Gtk.ListStore(bool, str)
+        self.treeview_consoles = Gtk.TreeView()
+
+        column_consoles = Gtk.TreeViewColumn()
+
+        self.cell_consoles_status = Gtk.CellRendererToggle()
+        cell_consoles_name = Gtk.CellRendererText()
+
+        # Properties
+        self.model_consoles.set_sort_column_id(1, Gtk.SortType.ASCENDING)
+
+        self.treeview_consoles.set_model(self.model_consoles)
+        self.treeview_consoles.set_headers_visible(False)
+
+        column_consoles.set_expand(True)
+        column_consoles.pack_start(self.cell_consoles_status, False)
+        column_consoles.set_attributes(self.cell_consoles_status, active=0)
+        column_consoles.pack_start(cell_consoles_name, True)
+        column_consoles.set_attributes(cell_consoles_name, text=1)
+
+        self.cell_consoles_status.set_radio(True)
+        self.cell_consoles_status.set_activatable(True)
+
+        cell_consoles_name.set_padding(8, 0)
+        cell_consoles_name.set_alignment(0, .5)
+
+        self.treeview_consoles.append_column(column_consoles)
+
+        # ------------------------------------
+        #   Integrate widgets
+        # ------------------------------------
+
+        scroll_consoles.add(view_consoles)
+        view_consoles.add(self.treeview_consoles)
+
+        self.dialog_box.pack_start(label_description, False, True, 0)
+        self.dialog_box.pack_start(scroll_consoles, True, True, 0)
+
+
+    def __init_signals(self):
+        """
+        Initialize widgets signals
+        """
+
+        self.cell_consoles_status.connect(
+            "toggled", self.on_cell_toggled)
+
+
+    def __start_interface(self):
+        """
+        Load data and start interface
+        """
+
+        self.show_all()
+
+        self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
+
+        for console in self.consoles:
+            status = False
+            if self.previous is not None and self.previous == console:
+                status = True
+
+                self.current = console
+                self.set_response_sensitive(Gtk.ResponseType.APPLY, True)
+
+            self.model_consoles.append([status, console])
+
+
+    def on_cell_toggled(self, widget, path):
+        """
+        Toggled a radio cell in treeview
+        """
+
+        self.set_response_sensitive(Gtk.ResponseType.APPLY, True)
+
+        selected_path = Gtk.TreePath(path)
+
+        treeiter = self.model_consoles.get_iter(selected_path)
+        self.current = self.model_consoles.get_value(treeiter, 1)
+
+        for row in self.model_consoles:
+            row[0] = (row.path == selected_path)
