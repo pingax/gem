@@ -730,6 +730,8 @@ class Interface(Gtk.Builder):
         self.tool_item_parameters.set_sensitive(status)
         self.tool_item_screenshots.set_sensitive(status)
 
+        self.tool_item_properties.set_sensitive(status)
+
 
     def filters_update(self, widget=None):
         """
@@ -2253,4 +2255,3 @@ class Splash(object):
 
         while Gtk.events_pending():
             Gtk.main_iteration()
-
