@@ -987,7 +987,7 @@ class Interface(Gtk.Builder):
                 title = self.selection["name"]
 
         if path is not None and exists(expanduser(path)):
-            dialog = DialogEditor(self, title, path, False)
+            dialog = DialogEditor(self, title, expanduser(path), False)
 
             dialog.run()
             dialog.destroy()
@@ -1013,7 +1013,7 @@ class Interface(Gtk.Builder):
 
             if path is not None and exists(expanduser(path)):
                 dialog = DialogEditor(self,
-                    _("Configuration for %s") % emulator, path)
+                    _("Configuration for %s") % emulator, expanduser(path))
 
                 response = dialog.run()
 
@@ -1101,8 +1101,17 @@ class Interface(Gtk.Builder):
                     message = _("%s emulator not exist !") % (emulator)
                     error = True
 
+                # ------------------------------------
+                #   Set sensistive widgets
+                # ------------------------------------
+
+                self.sensitive_interface()
+
                 # Check emulator configurator
-                if exists(self.emulators.item(emulator, "configuration")):
+                configuration = self.emulators.item(emulator, "configuration")
+
+                if configuration is not None and \
+                    exists(expanduser(configuration)):
                     self.tool_item_properties.set_sensitive(True)
 
                 else:
@@ -1111,8 +1120,6 @@ class Interface(Gtk.Builder):
                 # ------------------------------------
                 #   Load game list
                 # ------------------------------------
-
-                self.sensitive_interface()
 
                 if error:
                     self.model_games.clear()
