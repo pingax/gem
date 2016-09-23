@@ -153,18 +153,6 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkFileChooserButton" id="file_console_folder">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="hexpand">True</property>
-                        <property name="action">select-folder</property>
-                      </object>
-                      <packing>
-                        <property name="left_attach">1</property>
-                        <property name="top_attach">1</property>
-                      </packing>
-                    </child>
-                    <child>
                       <object class="GtkLabel" id="label_console_extensions">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -236,6 +224,18 @@
                         <property name="left_attach">1</property>
                         <property name="top_attach">5</property>
                         <property name="width">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkFileChooserButton" id="file_console_folder">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="hexpand">True</property>
+                        <property name="action">select-folder</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="top_attach">1</property>
                       </packing>
                     </child>
                   </object>

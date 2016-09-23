@@ -147,12 +147,12 @@ def main():
     except ImportError as error:
         logger.critical(_("Cannot import interface: %s" % str(error)))
 
+    except KeyboardInterrupt as error:
+        logger.warning(_("Terminate by keyboard interrupt"))
+
     except Exception as error:
         logger.critical(
             _("An error occur during program exec: %s" % str(error)))
-
-    except KeyboardInterrupt:
-        pass
 
 
 if __name__ == "__main__":
