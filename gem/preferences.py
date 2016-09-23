@@ -942,36 +942,31 @@ class Console(Gtk.Builder):
         #   Init data
         # ------------------------------------
 
-        console = self.selection["console"]
+        self.console = self.selection["console"]
 
         if self.modify:
-            self.entry_name.set_text(console)
-            self.entry_name.set_editable(False)
-            self.entry_name.set_can_focus(False)
-            self.entry_name.set_has_frame(False)
-            self.entry_name.set_icon_from_icon_name(
-                Gtk.EntryIconPosition.SECONDARY, None)
+            self.entry_name.set_text(self.console)
 
             # Folder
-            folder = expanduser(self.consoles.item(console, "roms"))
+            folder = expanduser(self.consoles.item(self.console, "roms"))
             if exists(folder):
                 self.file_folder.set_current_folder(folder)
 
             # Extensions
             self.entry_extensions.set_text(
-                self.consoles.item(console, "exts", str()))
+                self.consoles.item(self.console, "exts", str()))
 
             # Icon
-            self.path = self.consoles.item(console, "icon")
+            self.path = self.consoles.item(self.console, "icon")
             self.image_console.set_from_pixbuf(
                 icon_from_data(self.path, self.empty, 64, 64))
 
             # Emulator
-            if self.consoles.item(console, "emulator") in \
+            if self.consoles.item(self.console, "emulator") in \
                 self.emulators.sections():
 
                 self.combo_emulators.set_active_id(
-                    self.consoles.item(console, "emulator"))
+                    self.consoles.item(self.console, "emulator"))
 
             self.window.set_response_sensitive(Gtk.ResponseType.APPLY, True)
 
@@ -990,6 +985,9 @@ class Console(Gtk.Builder):
             self.__on_save_data()
 
             if self.data is not None:
+                if not self.section == self.console:
+                    self.consoles.remove(self.console)
+
                 self.consoles.remove(self.section)
 
                 for (option, value) in self.data.items():
@@ -1041,10 +1039,11 @@ class Console(Gtk.Builder):
                 Gtk.EntryIconPosition.PRIMARY, None)
             self.entry_name.set_tooltip_text(None)
 
-        elif not self.modify:
+        else:
             section = self.consoles.has_section(self.entry_name.get_text())
 
-            if not section:
+            if (self.modify and self.entry_name.get_text() == self.console) or \
+                not section:
                 self.window.set_response_sensitive(
                     Gtk.ResponseType.APPLY, True)
 
@@ -1222,46 +1221,41 @@ class Emulator(Gtk.Builder):
         #   Init data
         # ------------------------------------
 
-        emulator = self.selection["emulator"]
+        self.emulator = self.selection["emulator"]
 
         if self.modify:
-            self.entry_name.set_text(emulator)
-            self.entry_name.set_editable(False)
-            self.entry_name.set_can_focus(False)
-            self.entry_name.set_has_frame(False)
-            self.entry_name.set_icon_from_icon_name(
-                Gtk.EntryIconPosition.SECONDARY, None)
+            self.entry_name.set_text(self.emulator)
 
             # Binary
             folder = expanduser(
-                self.emulators.item(emulator, "binary", str()))
+                self.emulators.item(self.emulator, "binary", str()))
             if exists(folder):
                 self.file_binary.set_filename(folder)
 
             # Configuration
             folder = expanduser(
-                self.emulators.item(emulator, "configuration", str()))
+                self.emulators.item(self.emulator, "configuration", str()))
             if exists(folder):
                 self.file_configuration.set_filename(folder)
 
             # Icon
-            self.path = self.emulators.item(emulator, "icon")
+            self.path = self.emulators.item(self.emulator, "icon")
             self.image_emulator.set_from_pixbuf(
                 icon_from_data(self.path, self.empty, 64, 64))
 
             # Regex
             self.entry_save.set_text(
-                self.emulators.item(emulator, "save", str()))
+                self.emulators.item(self.emulator, "save", str()))
             self.entry_screenshots.set_text(
-                self.emulators.item(emulator, "snaps", str()))
+                self.emulators.item(self.emulator, "snaps", str()))
 
             # Arguments
             self.entry_launch.set_text(
-                self.emulators.item(emulator, "default", str()))
+                self.emulators.item(self.emulator, "default", str()))
             self.entry_windowed.set_text(
-                self.emulators.item(emulator, "windowed", str()))
+                self.emulators.item(self.emulator, "windowed", str()))
             self.entry_fullscreen.set_text(
-                self.emulators.item(emulator, "fullscreen", str()))
+                self.emulators.item(self.emulator, "fullscreen", str()))
 
             self.window.set_response_sensitive(Gtk.ResponseType.APPLY, True)
 
@@ -1280,6 +1274,9 @@ class Emulator(Gtk.Builder):
             self.__on_save_data()
 
             if self.data is not None:
+                if not self.section == self.emulator:
+                    self.emulators.remove(self.emulator)
+
                 self.emulators.remove(self.section)
 
                 for (option, value) in self.data.items():
@@ -1335,10 +1332,12 @@ class Emulator(Gtk.Builder):
                 Gtk.EntryIconPosition.PRIMARY, None)
             self.entry_name.set_tooltip_text(None)
 
-        elif not self.modify:
+        # elif not self.modify:
+        else:
             section = self.emulators.has_section(self.entry_name.get_text())
 
-            if not section:
+            if (self.modify and self.entry_name.get_text() == self.emulator) or \
+                not section:
                 self.window.set_response_sensitive(
                     Gtk.ResponseType.APPLY, True)
 

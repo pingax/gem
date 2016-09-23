@@ -5,7 +5,9 @@
     - Add an entry in main menu to show GEM log.
     - Add an argument to specify rom path in snap and save regex.
     - Add a drag and drop system to install rom files.
+    - Restore the possibility to rename emulators and consoles from preferences.
     - Switch to GTK+3 and Python 3.x.
+    - Fix wrong paths for log and editor windows.
     - Fix wrong name in headerbar when rename a game.
     - Fix old selection remain when reload interface.
     - Fix hide output from xdg-open.
