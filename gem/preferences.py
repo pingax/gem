@@ -95,6 +95,7 @@ class Preferences(Gtk.Builder):
             "exceptions": [_("Set specific arguments for a game"), "F12"],
             "open": [_("Open selected game directory"), "<Control>O"],
             "copy": [_("Copy selected game path"), "<Control>C"],
+            "desktop": [_("Generate desktop entry for a game"), "<Control>G"],
             "preferences": [_("Open preferences"), "<Control>P"],
             "quit": [_("Quit application"), "<Control>Q"] }
 

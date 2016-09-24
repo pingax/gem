@@ -5,8 +5,12 @@
     - Add an entry in main menu to show GEM log.
     - Add an argument to specify rom path in snap and save regex.
     - Add a drag and drop system to install rom files.
+    - Add the possibility to use regex with filter entry.
+    - Add a multithreading support to launch multiple games as the same time.
+    - Add a desktop entry generator for games.
     - Restore the possibility to rename emulators and consoles from preferences.
     - Switch to GTK+3 and Python 3.x.
+    - Avoid to save as last console a console which is already save as last console.
     - Fix wrong paths for log and editor windows.
     - Fix wrong name in headerbar when rename a game.
     - Fix old selection remain when reload interface.

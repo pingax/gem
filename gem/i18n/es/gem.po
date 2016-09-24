@@ -153,6 +153,12 @@ msgid "Cannot open interface: %s"
 msgstr "No puedo importar la interfaz: %s"
 
 #
+# File: gem/interface.py, line: 2161
+#, python-format
+msgid "Cannot write into %s. Cancel drop."
+msgstr ""
+
+#
 # File: gem/interface.py, line: 460
 #, fuzzy, python-format
 msgid "Change parameters for %s"

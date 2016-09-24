@@ -59,7 +59,7 @@ from os.path import join as path_join
 
 from glob import glob
 
-import mimetypes
+from shutil import copy2 as copy
 
 from urllib.parse import urlparse
 from urllib.request import url2pathname
@@ -78,6 +78,9 @@ from datetime import time as dtime
 from subprocess import PIPE
 from subprocess import Popen
 from subprocess import STDOUT
+
+# Regex
+from re import match
 
 # Threading
 from threading import Thread
@@ -374,6 +377,7 @@ class Interface(Gtk.Builder):
         self.menu_item_parameters = self.get_object("menu_games_parameters")
         self.menu_item_copy = self.get_object("menu_games_copy")
         self.menu_item_open = self.get_object("menu_games_open")
+        self.menu_item_desktop = self.get_object("menu_games_desktop")
         self.menu_item_remove = self.get_object("menu_games_remove")
         self.menu_item_database = self.get_object("menu_games_database")
 
@@ -392,6 +396,7 @@ class Interface(Gtk.Builder):
         self.menu_item_parameters.set_label(_("_Parameters"))
         self.menu_item_copy.set_label(_("_Copy file path"))
         self.menu_item_open.set_label(_("_Open file path"))
+        self.menu_item_desktop.set_label(_("_Generate desktop entry"))
         self.menu_item_remove.set_label(_("_Remove game from disk"))
         self.menu_item_database.set_label(_("_Remove game from database"))
 
@@ -531,6 +536,8 @@ class Interface(Gtk.Builder):
             "activate", self.__on_game_copy)
         self.menu_item_open.connect(
             "activate", self.__on_game_open)
+        self.menu_item_desktop.connect(
+            "activate", self.__on_game_generate_desktop)
         self.menu_item_database.connect(
             "activate", self.__on_game_clean)
         self.menu_item_remove.connect(
@@ -635,10 +642,12 @@ class Interface(Gtk.Builder):
         if row is not None:
             console = self.model_consoles.get_value(row, 1)
 
-            self.config.modify("gem", "last_console", console)
-            self.config.update()
+            last_console = self.config.item("gem", "last_console", None)
+            if last_console is None or not last_console == console:
+                self.config.modify("gem", "last_console", console)
+                self.config.update()
 
-            self.logger.info(_("Save %s for next startup") % console)
+                self.logger.info(_("Save %s for next startup") % console)
 
         self.logger.info(_("Close interface"))
 
@@ -751,6 +760,7 @@ class Interface(Gtk.Builder):
         self.menu_item_log.set_sensitive(status)
         self.menu_item_copy.set_sensitive(status)
         self.menu_item_open.set_sensitive(status)
+        self.menu_item_desktop.set_sensitive(status)
         self.menu_item_remove.set_sensitive(status)
         self.menu_item_database.set_sensitive(status)
 
@@ -786,27 +796,30 @@ class Interface(Gtk.Builder):
         if name is not None:
             text = self.entry_filter.get_text()
 
+            found = False
+            if len(text) == 0 or match("%s$" % text, name) is not None or \
+                text.lower() in name.lower():
+                found = True
+
             # No flag
-            if not flag_favorite and not flag_multiplayer:
-                if len(text) == 0 or text.lower() in name.lower():
-                    return True
+            if not flag_favorite and not flag_multiplayer and found:
+                return True
 
             # Only favorite flag
-            if flag_favorite and data_favorite and not flag_multiplayer:
-                if len(text) == 0 or text.lower() in name.lower():
-                    return True
+            if flag_favorite and data_favorite and not flag_multiplayer and \
+                found:
+                return True
 
             # Only multiplayer flag
             if flag_multiplayer and not data_multiplayer == self.empty and \
-                not flag_favorite:
-                if len(text) == 0 or text.lower() in name.lower():
-                    return True
+                not flag_favorite and found:
+                return True
 
             # Both favorite and multiplayer flags
             if flag_favorite and data_favorite and \
-                flag_multiplayer and not data_multiplayer == self.empty:
-                if len(text) == 0 or text.lower() in name.lower():
-                    return True
+                flag_multiplayer and not data_multiplayer == self.empty and \
+                found:
+                return True
 
         return False
 
@@ -821,6 +834,8 @@ class Interface(Gtk.Builder):
                 self.config.item("keys", "open", "<Control>O"),
             self.menu_item_copy:
                 self.config.item("keys", "copy", "<Control>C"),
+            self.menu_item_desktop:
+                self.config.item("keys", "desktop", "<Control>G"),
             # self.item_install:
                 # self.config.item("keys", "install", "<Control>I"),
             self.tool_item_launch:
@@ -1485,75 +1500,90 @@ class Interface(Gtk.Builder):
             self.logger.info(_("Initialize %s") % title)
 
             # ----------------------------
-            #   Check emulator binary
-            # ----------------------------
-
-            binary = self.emulators.get(emulator, "binary")
-
-            if not exists(binary):
-                self.logger.error(_("Cannot found %s binary") % binary)
-
-                self.set_message(_("Missing binary"),
-                    _("Cannot found <b>%s</b> !" % binary))
-
-                return
-
-            # ----------------------------
-            #   Default arguments
-            # ----------------------------
-
-            args = str()
-
-            if self.emulators.has_option(emulator, "default"):
-                args = self.emulators.get(emulator, "default")
-
-            exceptions = self.database.select("games", "arguments",
-                { "filename": filename })
-            if exceptions is not None and len(exceptions) > 0:
-                args = exceptions
-
-            # ----------------------------
-            #   Set fullscreen mode
-            # ----------------------------
-
-            # Fullscreen
-            if self.tool_item_fullscreen.get_active():
-                if self.emulators.has_option(emulator, "fullscreen"):
-                    args += " %s" %self.emulators.get(emulator, "fullscreen")
-
-            # Windowed
-            else:
-                if self.emulators.has_option(emulator, "windowed"):
-                    args += " %s" %self.emulators.get(emulator, "windowed")
-
-            # ----------------------------
             #   Generate correct command
             # ----------------------------
 
-            command = list()
+            command = self.generate_command(emulator, filename)
 
-            # Append binaries
-            command.extend(shlex_split(binary))
+            if command is not None:
 
-            # Append arguments
-            if args is not None:
-                command.extend(shlex_split(args))
+                # ----------------------------
+                #   Run game
+                # ----------------------------
 
-            # Append game file
-            command.append(self.selection["game"])
+                self.threads[splitext(filename)[0]] = None
 
-            # ----------------------------
-            #   Run game
-            # ----------------------------
+                thread = Thread(
+                    target=self.launch_game, args=[emulator, filename, command])
+                thread.start()
 
-            self.threads[splitext(filename)[0]] = None
+                self.sensitive_interface()
 
-            # self.launch_game(emulator, filename, command)
-            thread = Thread(
-                target=self.launch_game, args=[emulator, filename, command])
-            thread.start()
 
-            self.sensitive_interface()
+    def generate_command(self, emulator, filename):
+        """
+        Generate a command for a game with a specific emulator
+        """
+
+        # ----------------------------
+        #   Check emulator binary
+        # ----------------------------
+
+        binary = self.emulators.get(emulator, "binary")
+
+        if not exists(binary):
+            self.logger.error(_("Cannot found %s binary") % binary)
+
+            self.set_message(_("Missing binary"),
+                _("Cannot found <b>%s</b> !" % binary))
+
+            return None
+
+        # ----------------------------
+        #   Default arguments
+        # ----------------------------
+
+        args = str()
+
+        if self.emulators.has_option(emulator, "default"):
+            args = self.emulators.get(emulator, "default")
+
+        exceptions = self.database.select("games", "arguments",
+            { "filename": filename })
+        if exceptions is not None and len(exceptions) > 0:
+            args = exceptions
+
+        # ----------------------------
+        #   Set fullscreen mode
+        # ----------------------------
+
+        # Fullscreen
+        if self.tool_item_fullscreen.get_active():
+            if self.emulators.has_option(emulator, "fullscreen"):
+                args += " %s" %self.emulators.get(emulator, "fullscreen")
+
+        # Windowed
+        else:
+            if self.emulators.has_option(emulator, "windowed"):
+                args += " %s" %self.emulators.get(emulator, "windowed")
+
+        # ----------------------------
+        #   Generate correct command
+        # ----------------------------
+
+        command = list()
+
+        # Append binaries
+        command.extend(shlex_split(binary))
+
+        # Append arguments
+        if args is not None:
+            command.extend(shlex_split(args))
+
+        # Append game file
+        command.append(self.selection["game"])
+
+        return command
 
 
     def launch_game(self, emulator, filename, command):
@@ -2003,6 +2033,77 @@ class Interface(Gtk.Builder):
                 stderr=STDOUT, universal_newlines=True)
 
 
+    def __on_game_generate_desktop(self, widget):
+        """
+        Mark or unmark a game as multiplayer
+        """
+
+        model, treeiter = self.treeview_games.get_selection().get_selected()
+
+        if treeiter is not None:
+            gamefile = basename(self.selection["game"])
+            gamename = splitext(gamefile)[0]
+
+            game = self.database.get("games", { "filename": gamefile })
+
+            # ----------------------------
+            #   Check emulator
+            # ----------------------------
+
+            console = self.selection["console"]
+
+            emulator = self.consoles.get(console, "emulator")
+            if game is not None and len(game.get("emulator")) > 0:
+                if self.emulators.has_section(game.get("emulator")):
+                    emulator = game.get("emulator")
+
+            if emulator is not None and emulator in self.emulators.sections():
+                name = "%s.desktop" % gamename
+
+                # ----------------------------
+                #   Fill template
+                # ----------------------------
+
+                title = gamename
+                if self.selection["name"] is not None:
+                    title = self.selection["name"]
+
+                icon = self.consoles.get(console, "icon")
+                if not exists(icon):
+                    icon = get_data(
+                        path_join("icons", "%s.%s" % (icon, Icons.Ext)))
+
+                values = {
+                    "%name%": title,
+                    "%icon%": icon,
+                    "%path%": dirname(self.selection["game"]),
+                    "%command%": ' '.join(
+                        self.generate_command(emulator, gamefile)) }
+
+                try:
+                    with open(get_data(Conf.Desktop), 'r') as pipe:
+                        template = pipe.readlines()
+
+                    content = str()
+
+                    for line in template:
+                        for key in values.keys():
+                            line = line.replace(key, values[key])
+
+                        content += line
+
+                    with open(path_join(Path.Apps, name), 'w') as pipe:
+                        pipe.write(content)
+
+                    self.set_message(
+                        _("Generate entry for %s") % title,
+                        _("%s was generated successfully")  % name,
+                        "dialog-information")
+
+                except OSError as error:
+                    pass
+
+
     def __on_menu_show(self, treeview, event):
         """
         Show a menu when user right-click in treeview
@@ -2224,6 +2325,16 @@ class Interface(Gtk.Builder):
                 return True
 
         return False
+
+
+    def check_desktop(self, filename):
+        """
+        Check if a game has already a desktop entry file
+        """
+
+        name, extension = splitext(filename)
+
+        return exists(path_join(Path.Apps, "%s.desktop" % name))
 
 
     def check_log(self):

@@ -10,6 +10,7 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="icon_name">emblem-favorite</property>
+    <property name="icon_size">1</property>
   </object>
   <object class="GtkImage" id="image2">
     <property name="visible">True</property>
@@ -78,55 +79,71 @@
       </object>
     </child>
   </object>
+  <object class="GtkImage" id="image3">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-page-setup</property>
+    <property name="icon_size">1</property>
+  </object>
   <object class="GtkImage" id="image_games_copy">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="stock">gtk-copy</property>
+    <property name="icon_size">1</property>
   </object>
   <object class="GtkImage" id="image_games_database">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="stock">gtk-clear</property>
+    <property name="icon_size">1</property>
   </object>
   <object class="GtkImage" id="image_games_launch">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="stock">gtk-media-play</property>
+    <property name="icon_size">1</property>
   </object>
   <object class="GtkImage" id="image_games_log">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="stock">gtk-file</property>
+    <property name="icon_size">1</property>
   </object>
   <object class="GtkImage" id="image_games_multiplayer">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="icon_name">system-users</property>
+    <property name="icon_size">1</property>
   </object>
   <object class="GtkImage" id="image_games_open">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="stock">gtk-open</property>
+    <property name="icon_size">1</property>
   </object>
   <object class="GtkImage" id="image_games_parameters">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="icon_name">emblem-important</property>
+    <property name="icon_size">1</property>
   </object>
   <object class="GtkImage" id="image_games_remove">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="stock">gtk-delete</property>
+    <property name="icon_size">1</property>
   </object>
   <object class="GtkImage" id="image_games_rename">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="stock">gtk-edit</property>
+    <property name="icon_size">1</property>
   </object>
   <object class="GtkImage" id="image_games_screenshots">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="icon_name">emblem-photos</property>
+    <property name="icon_size">1</property>
   </object>
   <object class="GtkMenu" id="menu_games">
     <property name="visible">True</property>
@@ -252,6 +269,16 @@
         <property name="image">image_games_open</property>
         <property name="use_stock">False</property>
         <accelerator key="o" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkImageMenuItem" id="menu_games_desktop">
+        <property name="label" translatable="yes">_Generate desktop entry</property>
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="use_underline">True</property>
+        <property name="image">image3</property>
+        <property name="use_stock">False</property>
       </object>
     </child>
     <child>

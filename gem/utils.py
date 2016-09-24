@@ -81,10 +81,12 @@ class Icons:
 class Path:
     User        = path_join(xdg_config_home, "gem")
     Data        = path_join(xdg_data_home, "gem")
+    Apps        = path_join(xdg_data_home, "applications")
     Logs        = path_join(xdg_data_home, "gem", "logs")
 
 class Conf:
     Log         = path_join("config", "log.conf")
+    Desktop     = path_join("config", "template.desktop")
     Default     = path_join("config", "gem.conf")
     Consoles    = path_join("config", "consoles.conf")
     Emulators   = path_join("config", "emulators.conf")
