@@ -45,6 +45,7 @@ from logging.config import fileConfig
 # Path
 from os import W_OK
 from os import walk
+from os import mkdir
 from os import access
 from os import remove
 from os import listdir
@@ -2091,6 +2092,8 @@ class Interface(Gtk.Builder):
                             line = line.replace(key, values[key])
 
                         content += line
+
+                    mkdir(Path.Apps)
 
                     with open(path_join(Path.Apps, name), 'w') as pipe:
                         pipe.write(content)
