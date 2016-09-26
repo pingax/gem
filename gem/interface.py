@@ -2093,7 +2093,8 @@ class Interface(Gtk.Builder):
 
                         content += line
 
-                    mkdir(Path.Apps)
+                    if not exists(Path.Apps):
+                        mkdir(Path.Apps)
 
                     with open(path_join(Path.Apps, name), 'w') as pipe:
                         pipe.write(content)
