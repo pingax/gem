@@ -128,7 +128,7 @@ def launch_gem(logger, reconstruct_db=False):
 
     # Rename old databases
     if exists(expanduser(path_join(Path.User, "games.db"))):
-        logger.info(_("Update v0.2 database to new format."))
+        logger.info(_("Update v0.2 database to new schema."))
         rename(expanduser(path_join(Path.User, "games.db")),
             expanduser(path_join(Path.User, "gem.db")))
 
@@ -147,7 +147,7 @@ def launch_gem(logger, reconstruct_db=False):
         if version is None:
             version = Gem.Version
 
-        logger.info(_("Switch version %(old)s to %(new)s.") % {
+        logger.info(_("Update v%(old)s database to v%(new)s.") % {
             "old": version, "new": Gem.Version })
 
         database.modify("gem",
@@ -352,10 +352,11 @@ class Interface(Gtk.Builder):
         self.tool_filter_multiplayer = self.get_object("tool_multiplayer")
 
         # Properties
-        self.tool_item_launch.set_tooltip_text(_("Launch game"))
-        self.tool_item_fullscreen.set_tooltip_text(_("Set fullscreen mode"))
-        self.tool_item_parameters.set_tooltip_text(_("Set parameters"))
-        self.tool_item_screenshots.set_tooltip_text(_("Show game screenshots"))
+        self.tool_item_launch.set_tooltip_text(_("Launch selected game"))
+        self.tool_item_fullscreen.set_tooltip_text(_("Switch fullscreen mode"))
+        self.tool_item_parameters.set_tooltip_text(_("Set custom parameters"))
+        self.tool_item_screenshots.set_tooltip_text(
+            _("Show selected game screenshots"))
 
         self.tool_item_properties.set_tooltip_text(_("Edit emulator"))
 
@@ -390,16 +391,16 @@ class Interface(Gtk.Builder):
         # Properties
         self.menu_item_launch.set_label(_("_Launch"))
         self.menu_item_rename.set_label(_("_Rename"))
+        self.menu_item_parameters.set_label(_("Custom _parameters"))
         self.menu_item_favorite.set_label(_("Mark as _favorite"))
         self.menu_item_multiplayer.set_label(_("Mark as _multiplayer"))
         self.menu_item_screenshots.set_label(_("_Screenshots"))
         self.menu_item_log.set_label(_("Output _log"))
-        self.menu_item_parameters.set_label(_("_Parameters"))
         self.menu_item_copy.set_label(_("_Copy file path"))
         self.menu_item_open.set_label(_("_Open file path"))
-        self.menu_item_desktop.set_label(_("_Generate desktop entry"))
+        self.menu_item_desktop.set_label(_("_Generate a menu entry"))
+        self.menu_item_database.set_label(_("_Reset game informations"))
         self.menu_item_remove.set_label(_("_Remove game from disk"))
-        self.menu_item_database.set_label(_("_Remove game from database"))
 
         self.menu_item_preferences.set_label(_("_Preferences"))
         self.menu_item_gem_log.set_label(_("Show main _log"))
@@ -458,8 +459,8 @@ class Interface(Gtk.Builder):
             ], Gdk.DragAction.COPY)
 
         self.column_game_name.set_title(_("Name"))
-        self.column_game_play.set_title(_("Played"))
-        self.column_game_last_play.set_title(_("Last play"))
+        self.column_game_play.set_title(_("Launch"))
+        self.column_game_last_play.set_title(_("Last launch"))
         self.column_game_play_time.set_title(_("Play time"))
         self.column_game_installed.set_title(_("Installed"))
         self.column_game_flags.set_title(_("Flags"))
@@ -849,6 +850,8 @@ class Interface(Gtk.Builder):
                 self.config.item("keys", "snapshots", "F5"),
             self.menu_item_screenshots:
                 self.config.item("keys", "snapshots", "F5"),
+            self.menu_item_log:
+                self.config.item("keys", "log", "F6"),
             self.tool_item_parameters:
                 self.config.item("keys", "exceptions", "F12"),
             self.menu_item_parameters:
@@ -859,6 +862,8 @@ class Interface(Gtk.Builder):
                 self.config.item("keys", "remove", "Delete"),
             self.menu_item_preferences:
                 self.config.item("keys", "preferences", "<Control>P"),
+            self.menu_item_gem_log:
+                self.config.item("keys", "gem", "<Control>L"),
             self.menu_item_quit:
                 self.config.item("keys", "quit", "<Control>Q") }
 
@@ -1512,8 +1517,8 @@ class Interface(Gtk.Builder):
 
                 self.threads[splitext(filename)[0]] = None
 
-                thread = Thread(
-                    target=self.launch_game, args=[emulator, filename, command])
+                thread = Thread(target=self.launch_game,
+                    args=[emulator, filename, command, title])
                 thread.start()
 
                 self.sensitive_interface()
@@ -1585,7 +1590,7 @@ class Interface(Gtk.Builder):
         return command
 
 
-    def launch_game(self, emulator, filename, command):
+    def launch_game(self, emulator, filename, command, title):
         """
         Launch a game with correct arguments and update game informations
         """
@@ -1597,7 +1602,7 @@ class Interface(Gtk.Builder):
         gamename = splitext(filename)[0]
 
         try:
-            self.logger.info(_("Start %s") % ' '.join(command))
+            self.logger.info(_("Launch %s") % ' '.join(command))
 
             proc = Popen(command, stdout=PIPE, stdin=PIPE,
                 stderr=STDOUT, universal_newlines=True)
@@ -1606,7 +1611,7 @@ class Interface(Gtk.Builder):
 
             output, error_output = proc.communicate()
 
-            self.logger.info(_("Terminate"))
+            self.logger.info(_("Close %s") % title)
 
         except OSError as error:
             no_error = False
@@ -1747,7 +1752,7 @@ class Interface(Gtk.Builder):
 
     def __on_game_clean(self, widget):
         """
-        Remove game entry from database
+        Reset game informations from database
         """
 
         gamefile = basename(self.selection["game"])
@@ -1759,8 +1764,8 @@ class Interface(Gtk.Builder):
         if self.selection["name"] is not None:
             title = self.selection["name"]
 
-        dialog = Question(self, title,
-            _("Would you really want to remove this game from database ?"))
+        dialog = Question(self, title, _("Would you really want to clean "
+            "informations for this game ?"))
 
         if dialog.run() == Gtk.ResponseType.YES:
             self.model_games[treeiter][Columns.Name] = gamename
@@ -1774,7 +1779,7 @@ class Interface(Gtk.Builder):
 
             self.database.remove("games", { "filename": gamefile })
 
-            self.logger.info(_("Remove %s from database") % gamefile)
+            self.logger.info(_("Clean %s informations") % gamefile)
 
         dialog.destroy()
 
@@ -1895,7 +1900,7 @@ class Interface(Gtk.Builder):
                     "emulator": emulator
                 }, { "filename": gamefile })
 
-            self.logger.info(_("Change parameters for %s") % title)
+            self.logger.info(_("Change custom parameters for %s") % title)
 
             # ----------------------------
             #   Update data
@@ -2098,14 +2103,14 @@ class Interface(Gtk.Builder):
                         pipe.write(content)
 
                     self.set_message(
-                        _("Generate entry for %s") % title,
+                        _("Generate menu entry for %s") % title,
                         _("%s was generated successfully")  % name,
                         "dialog-information")
 
                 except OSError as error:
                     self.set_message(
-                        _("Generate entry for %s") % title,
-                        _("An error occur during genheration, consult log for "
+                        _("Generate menu entry for %s") % title,
+                        _("An error occur during generation, consult log for "
                         "futher details."), "dialog-error")
 
 

@@ -156,7 +156,6 @@
         <property name="use_underline">True</property>
         <property name="image">image_games_launch</property>
         <property name="use_stock">False</property>
-        <accelerator key="Return" signal="activate"/>
       </object>
     </child>
     <child>
@@ -173,7 +172,6 @@
         <property name="use_underline">True</property>
         <property name="image">image_games_rename</property>
         <property name="use_stock">False</property>
-        <accelerator key="F2" signal="activate"/>
       </object>
     </child>
     <child>
@@ -184,7 +182,6 @@
         <property name="use_underline">True</property>
         <property name="image">image_games_parameters</property>
         <property name="use_stock">False</property>
-        <accelerator key="F8" signal="activate"/>
       </object>
     </child>
     <child>
@@ -201,7 +198,6 @@
         <property name="use_underline">True</property>
         <property name="image">image1</property>
         <property name="use_stock">False</property>
-        <accelerator key="F3" signal="activate"/>
       </object>
     </child>
     <child>
@@ -212,7 +208,6 @@
         <property name="use_underline">True</property>
         <property name="image">image_games_multiplayer</property>
         <property name="use_stock">False</property>
-        <accelerator key="F4" signal="activate"/>
       </object>
     </child>
     <child>
@@ -229,7 +224,6 @@
         <property name="use_underline">True</property>
         <property name="image">image_games_screenshots</property>
         <property name="use_stock">False</property>
-        <accelerator key="F5" signal="activate"/>
       </object>
     </child>
     <child>
@@ -240,7 +234,6 @@
         <property name="use_underline">True</property>
         <property name="image">image_games_log</property>
         <property name="use_stock">False</property>
-        <accelerator key="F6" signal="activate"/>
       </object>
     </child>
     <child>
@@ -257,7 +250,6 @@
         <property name="use_underline">True</property>
         <property name="image">image_games_copy</property>
         <property name="use_stock">False</property>
-        <accelerator key="c" signal="activate" modifiers="GDK_CONTROL_MASK"/>
       </object>
     </child>
     <child>
@@ -268,7 +260,6 @@
         <property name="use_underline">True</property>
         <property name="image">image_games_open</property>
         <property name="use_stock">False</property>
-        <accelerator key="o" signal="activate" modifiers="GDK_CONTROL_MASK"/>
       </object>
     </child>
     <child>
@@ -295,7 +286,6 @@
         <property name="use_underline">True</property>
         <property name="image">image_games_database</property>
         <property name="use_stock">False</property>
-        <accelerator key="Delete" signal="activate"/>
       </object>
     </child>
     <child>
@@ -306,7 +296,6 @@
         <property name="use_underline">True</property>
         <property name="image">image_games_remove</property>
         <property name="use_stock">False</property>
-        <accelerator key="Delete" signal="activate" modifiers="GDK_CONTROL_MASK"/>
       </object>
     </child>
   </object>

@@ -92,10 +92,12 @@ class Preferences(Gtk.Builder):
             "favorite": [_("Mark a game as favorite"), "F3"],
             "multiplayer": [_("Mark a game as multiplayer"), "F4"],
             "snapshots": [_("Show game snapshots"), "F5"],
+            "log": [_("Open a game log"), "F6"],
             "exceptions": [_("Set specific arguments for a game"), "F12"],
             "open": [_("Open selected game directory"), "<Control>O"],
             "copy": [_("Copy selected game path"), "<Control>C"],
             "desktop": [_("Generate desktop entry for a game"), "<Control>G"],
+            "gem": [_("Open main log"), "<Control>L"],
             "preferences": [_("Open preferences"), "<Control>P"],
             "quit": [_("Quit application"), "<Control>Q"] }
 
@@ -286,8 +288,8 @@ class Preferences(Gtk.Builder):
         self.combo_lines.pack_start(cell_lines, True)
         self.combo_lines.add_attribute(cell_lines, "text", 0)
 
-        self.check_play.set_label(_("Show \"Play\" column"))
-        self.check_last_play.set_label(_("Show \"Last play\" column"))
+        self.check_play.set_label(_("Show \"Launch\" column"))
+        self.check_last_play.set_label(_("Show \"Last launch\" column"))
         self.check_play_time.set_label(_("Show \"Play time\" column"))
         self.check_installed.set_label(_("Show \"Installed\" column"))
         self.check_flags.set_label(_("Show \"Flags\" column"))
@@ -666,6 +668,7 @@ class Preferences(Gtk.Builder):
             image = icon_from_data(self.consoles.item(name, "icon"), self.empty)
 
             path = self.consoles.item(name, "roms")
+            path = path.replace(expanduser('~'), '~')
 
             check = self.empty
             if not exists(path):
@@ -1417,7 +1420,7 @@ class IconViewer(Dialog):
         #   Interface
         # ------------------------------------
 
-        self.set_default_size(800, 600)
+        self.set_size(800, 600)
 
         self.add_buttons(
             Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,

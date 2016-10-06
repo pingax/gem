@@ -11,6 +11,9 @@
     - Restore the possibility to rename emulators and consoles from preferences.
     - Switch to GTK+3 and Python 3.x.
     - Avoid to save as last console a console which is already save as last console.
+
+    - Add nestopia to emulators.
+
     - Fix wrong paths for log and editor windows.
     - Fix wrong name in headerbar when rename a game.
     - Fix old selection remain when reload interface.

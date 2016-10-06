@@ -232,14 +232,6 @@ def string_from_date(date, date_format="%d-%m-%Y %H:%M:%S"):
     return None
 
 
-# def set_size_request(widget, allocation):
-    # """
-    # Set a new size for a specific widget
-    # """
-
-    # widget.set_size_request(allocation.width, -1)
-
-
 def on_entry_clear(widget, pos, event):
     """
     Reset entry filter when icon was clicked

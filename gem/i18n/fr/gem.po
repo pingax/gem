@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.5\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2016-09-23 23:50+0200\n"
+"PO-Revision-Date: 2016-10-06 11:55+0200\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -51,7 +51,13 @@ msgstr "%s à été supprimé du disque"
 # File: gem/interface.py, line: 2026
 #, python-format
 msgid "%s is already in the roms folder. Cancel drop."
-msgstr "%s est déjà dans le dossier des roms. Annulation de l'installation."
+msgstr "%s est déjà dans le dossier des roms. Annulation de l'ajout."
+
+#
+# File: gem/interface.py, line: 1882
+#, python-format
+msgid "%s was generated successfully"
+msgstr "%s à été généré avec succès"
 
 #
 # File: gem/preferences.py, line: 1372
@@ -73,6 +79,13 @@ msgstr "Actions"
 # File: gem/preferences.py, line: 1713
 msgid "All icons"
 msgstr "Toutes les icônes"
+
+#
+# File: gem/interface.py, line: 2112
+msgid "An error occur during generation, consult log for futher details."
+msgstr ""
+"Une erreur est survenu durant la génération, consultez le journal pour plus "
+"de détails."
 
 #
 # File: gem/main.py, line: 139
@@ -158,8 +171,8 @@ msgstr "Impossible d'écrire dans %s. Annulation de l'installation."
 #
 # File: gem/interface.py, line: 477
 #, python-format
-msgid "Change parameters for %s"
-msgstr "Changement de paramètres pour %s"
+msgid "Change custom parameters for %s"
+msgstr "Changement des paramètres personnalisés pour %s"
 
 #
 # File: gem/preferences.py, line: 102
@@ -172,9 +185,21 @@ msgid "Choose the ROMs folder"
 msgstr "Choisir le dossier des ROMs"
 
 #
+# File: gem/interface.py, line: 1782
+#, python-format
+msgid "Clean %s informations"
+msgstr "Nettoyage des informations de %s"
+
+#
+# File: gem/interface.py, line: 1614
+#, python-format
+msgid "Close %s"
+msgstr "Fermeture de %s"
+
+#
 # File: gem/preferences.py, line: 277
 msgid "Close interface"
-msgstr "Ferme l'interface"
+msgstr "Fermeture de l'interface"
 
 #
 # File: gem/preferences.py, line: 341
@@ -209,6 +234,11 @@ msgstr "Copier le chemin du jeu sélectionné"
 # File: gem/interface.py, line: 105
 msgid "Current database need to be updated"
 msgstr "La base de données courant à besoin d'être mise à jour"
+
+#
+# File: gem/interface.py, line: 336
+msgid "Custom _parameters"
+msgstr "Définir des _paramètres personnalisés"
 
 #
 # File: gem/interface.py, line: 1286
@@ -320,6 +350,17 @@ msgid "General"
 msgstr "Général"
 
 #
+# File: gem/preferences.py, line: 633
+msgid "Generate desktop entry for a game"
+msgstr "Générer une entrée de menu pour un jeu"
+
+#
+# File: gem/interface.py, line: 477
+#, python-format
+msgid "Generate menu entry for %s"
+msgstr "Générer une entrée de menu pour %s"
+
+#
 # File: gem/preferences.py, line: 98
 msgid "Horizontal"
 msgstr "Hozizontales"
@@ -346,14 +387,14 @@ msgid "Interface"
 msgstr "Interface"
 
 #
+# File: src/window.py, line: 380
+msgid "Last launch"
+msgstr "Dernier lancement"
+
+#
 # File: gem/interface.py, line: 1336
 msgid "Last month"
 msgstr "Le mois dernier"
-
-#
-# File: src/window.py, line: 380
-msgid "Last play"
-msgstr "Dernier lancement"
 
 #
 # File: src/window.py, line: 380
@@ -362,18 +403,29 @@ msgstr "L'an dernier"
 
 #
 # File: src/window.py, line: 431
+msgid "Launch"
+msgstr "Parties"
+
+#
+# File: src/window.py, line: 431
+#, python-format
+msgid "Launch %s"
+msgstr "Lancement de %s"
+
+#
+# File: src/window.py, line: 431
 msgid "Launch a game"
 msgstr "Lancer un jeu"
 
 #
 # File: src/window.py, line: 431
-msgid "Launch game"
-msgstr "Lancer le jeu"
+msgid "Launch interface"
+msgstr "Lancement de l'interface"
 
 #
 # File: src/window.py, line: 431
-msgid "Launch interface"
-msgstr "Lancement de l'interface"
+msgid "Launch selected game"
+msgstr "Lancer le jeu sélectionné"
 
 #
 # File: gem/preferences.py, line: 263
@@ -445,6 +497,16 @@ msgid "None"
 msgstr "Aucune"
 
 #
+# File: src/window.py, line: 451
+msgid "Open a game log"
+msgstr "Ouvrir le journal du jeu"
+
+#
+# File: gem/interface.py, line: 868
+msgid "Open main log"
+msgstr "Ouvrir le journal principal"
+
+#
 # File: gem/configuration.py, line: 100
 msgid "Open preferences"
 msgstr "Ouvrir les préférences"
@@ -463,11 +525,6 @@ msgstr "_Journal de sortie"
 # File: src/window.py, line: 375
 msgid "Play time"
 msgstr "Temps de jeu"
-
-#
-# File: src/window.py, line: 375
-msgid "Played"
-msgstr "Parties"
 
 #
 # File: gem/configuration.py, line: 100
@@ -502,12 +559,6 @@ msgstr "Supprimer %s"
 
 #
 # File: src/window.py, line: 446
-#, python-format
-msgid "Remove %s from database"
-msgstr "Retire %s de la base de données"
-
-#
-# File: src/window.py, line: 446
 msgid "Remove a game from database"
 msgstr "Supprimer un jeu de la base de données"
 
@@ -533,9 +584,9 @@ msgstr "Retirer les données du jeu de la base de données"
 
 #
 # File: src/window.py, line: 939
-#, fuzzy, python-format
+#, python-format
 msgid "Rename %(old)s to %(new)s"
-msgstr "Renomme %(old)s en %(new)%s"
+msgstr "Renomme %(old)s en %(new)s"
 
 #
 # File: src/window.py, line: 451
@@ -565,14 +616,9 @@ msgid "Set a custom name for %s"
 msgstr "Définir un nom personnalisé pour %s"
 
 #
-# File: gem/interface.py, line: 290
-msgid "Set fullscreen mode"
-msgstr "Définir le mode plein écran"
-
-#
 # File: gem/interface.py, line: 336
-msgid "Set parameters"
-msgstr "Définir des paramètres"
+msgid "Set custom parameters"
+msgstr "Définir des paramètres personnalisés"
 
 #
 # File: gem/preferences.py, line: 633
@@ -601,18 +647,18 @@ msgstr "Afficher la colonne « Installé »"
 
 #
 # File: gem/preferences.py, line: 265
-msgid "Show \"Last play\" column"
+msgid "Show \"Last launch\" column"
 msgstr "Afficher la colonne « Dernier lancement »"
+
+#
+# File: gem/preferences.py, line: 264
+msgid "Show \"Launch\" column"
+msgstr "Afficher la colonne « Parties »"
 
 #
 # File: gem/preferences.py, line: 266
 msgid "Show \"Play time\" column"
 msgstr "Afficher la colonne « Temps de jeu »"
-
-#
-# File: gem/preferences.py, line: 264
-msgid "Show \"Play\" column"
-msgstr "Afficher la colonne « Parties »"
 
 #
 # File: gem/preferences.py, line: 257
@@ -623,11 +669,6 @@ msgstr "Montrer les bouttons de fermeture dans la barre de titre"
 # File: src/window.py, line: 309
 msgid "Show favorite games"
 msgstr "Afficher les favoris"
-
-#
-# File: src/window.py, line: 441
-msgid "Show game screenshots"
-msgstr "Afficher les captures d'écran d'un jeu"
 
 #
 # File: src/window.py, line: 441
@@ -656,14 +697,13 @@ msgstr "Afficher les jeux multi-joueurs"
 
 #
 # File: src/window.py, line: 441
-msgid "Snapshots"
-msgstr "Captures d'écran"
+msgid "Show selected game screenshots"
+msgstr "Afficher les captures d'écran du jeu sélectionné"
 
 #
-# File: gem/interface.py, line: 1482
-#, python-format
-msgid "Start %s"
-msgstr "Démarrage de %s"
+# File: src/window.py, line: 441
+msgid "Snapshots"
+msgstr "Captures d'écran"
 
 #
 # File: gem/interface.py, line: 107
@@ -671,15 +711,9 @@ msgid "Start database migration"
 msgstr "Démarrage de la migration de la base de données"
 
 #
-# File: gem/interface.py, line: 128
-#, python-format
-msgid "Switch version %(old)s to %(new)s."
-msgstr "Changement de version de %(old)s vers %(new)s."
-
-#
-# File: gem/interface.py, line: 1495
-msgid "Terminate"
-msgstr "Arrêt"
+# File: gem/interface.py, line: 290
+msgid "Switch fullscreen mode"
+msgstr "Définir le mode plein écran"
 
 #
 # File: gem/interface.py, line: 1501
@@ -736,7 +770,13 @@ msgstr "Mise à jour du fichier de configuration de %s"
 
 #
 # File: gem/interface.py, line: 109
-msgid "Update v0.2 database to new format."
+#, fuzzy, python-format
+msgid "Update v%(old)s database to v%(new)s."
+msgstr "Mise à jour de la base de données v(old)s vers v%(new)s."
+
+#
+# File: gem/interface.py, line: 109
+msgid "Update v0.2 database to new schema."
 msgstr "Mise à jour des bases de données v0.2 vers le nouveau format."
 
 #
@@ -771,13 +811,13 @@ msgstr "Fenêtré"
 
 #
 # File: src/window.py, line: 940
-msgid "Would you really want to remove this entry ?"
-msgstr "Voulez-vous vraiment supprimer cette entrée ?"
+msgid "Would you really want to clean informations for this game ?"
+msgstr "Voulez-vous vraiment nettoyer les informations de ce jeu ?"
 
 #
 # File: src/window.py, line: 940
-msgid "Would you really want to remove this game from database ?"
-msgstr "Voulez-vous vraiment supprimer ce jeu de la base de données ?"
+msgid "Would you really want to remove this entry ?"
+msgstr "Voulez-vous vraiment supprimer cette entrée ?"
 
 #
 # File: src/window.py, line: 1062
@@ -804,6 +844,11 @@ msgid "_Copy file path"
 msgstr "_Copier le chemin du fichier"
 
 #
+# File: gem/interface.py, line: 400
+msgid "_Generate a menu entry"
+msgstr "_Générer une entrée de menu"
+
+#
 # File: src/window.py, line: 431
 msgid "_Launch"
 msgstr "_Lancer"
@@ -811,12 +856,7 @@ msgstr "_Lancer"
 #
 # File: gem/interface.py, line: 665
 msgid "_Open file path"
-msgstr "_Ouvrir le chemin du fichier"
-
-#
-# File: gem/interface.py, line: 396
-msgid "_Parameters"
-msgstr "_Paramètres"
+msgstr "_Ouvrir la destination du fichier"
 
 #
 # File: gem/configuration.py, line: 100
@@ -830,11 +870,6 @@ msgstr "_Quitter"
 
 #
 # File: src/window.py, line: 446
-msgid "_Remove game from database"
-msgstr "_Supprimer le jeu de la base de données"
-
-#
-# File: src/window.py, line: 446
 msgid "_Remove game from disk"
 msgstr "_Supprimer le jeu du disque"
 
@@ -844,6 +879,56 @@ msgid "_Rename"
 msgstr "_Renommer"
 
 #
+# File: src/window.py, line: 446
+msgid "_Reset game informations"
+msgstr "_Nettoyer les informations du jeu"
+
+#
 # File: gem/preferences.py, line: 335
 msgid "_Screenshots"
 msgstr "_Capture d'écran"
+
+#
+# File: src/window.py, line: 431
+#~ msgid "Launch game"
+#~ msgstr "Lancer le jeu"
+
+#
+# File: src/window.py, line: 375
+#~ msgid "Played"
+#~ msgstr "Parties"
+
+#
+# File: src/window.py, line: 446
+#~ msgid "Remove %s from database"
+#~ msgstr "Retire %s de la base de données"
+
+#
+# File: gem/interface.py, line: 1482
+#~ msgid "Start %s"
+#~ msgstr "Démarrage de %s"
+
+#
+# File: gem/interface.py, line: 128
+#~ msgid "Switch version %(old)s to %(new)s."
+#~ msgstr "Changement de version de %(old)s vers %(new)s."
+
+#
+# File: gem/interface.py, line: 1495
+#~ msgid "Terminate"
+#~ msgstr "Arrêt"
+
+#
+# File: src/window.py, line: 940
+#~ msgid "Would you really want to remove this game from database ?"
+#~ msgstr "Voulez-vous vraiment supprimer ce jeu de la base de données ?"
+
+#
+# File: gem/interface.py, line: 396
+#~ msgid "_Parameters"
+#~ msgstr "_Paramètres"
+
+#
+# File: src/window.py, line: 446
+#~ msgid "_Remove game from database"
+#~ msgstr "_Supprimer le jeu de la base de données"
