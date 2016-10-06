@@ -401,6 +401,10 @@ class DialogParameters(Dialog):
         if parameters is not None:
             self.arguments, self.emulator = parameters
 
+        # HACK: Create an empty image to avoid g_object_set_qdata warning
+        self.empty = Pixbuf.new(Colorspace.RGB, True, 8, 24, 24)
+        self.empty.fill(0x00000000)
+
         # ------------------------------------
         #   Prepare interface
         # ------------------------------------
@@ -432,21 +436,26 @@ class DialogParameters(Dialog):
 
         label_emulator = Gtk.Label()
 
-        self.model = Gtk.ListStore(str)
+        self.model = Gtk.ListStore(Pixbuf, str)
         self.combo = Gtk.ComboBox()
 
-        cell = Gtk.CellRendererText()
+        cell_icon = Gtk.CellRendererPixbuf()
+        cell_name = Gtk.CellRendererText()
 
         # Properties
         label_emulator.set_alignment(0, .5)
         label_emulator.set_text(_("Default emulator"))
 
-        self.model.set_sort_column_id(0, Gtk.SortType.ASCENDING)
+        self.model.set_sort_column_id(1, Gtk.SortType.ASCENDING)
 
         self.combo.set_model(self.model)
-        self.combo.set_id_column(0)
-        self.combo.pack_start(cell, True)
-        self.combo.add_attribute(cell, "text", 0)
+        self.combo.set_id_column(1)
+        self.combo.pack_start(cell_icon, False)
+        self.combo.add_attribute(cell_icon, "pixbuf", 0)
+        self.combo.pack_start(cell_name, True)
+        self.combo.add_attribute(cell_name, "text", 1)
+
+        cell_icon.set_padding(4, 0)
 
         # ------------------------------------
         #   Arguments
@@ -489,10 +498,13 @@ class DialogParameters(Dialog):
 
         self.show_all()
 
-        self.model.append([str()])
+        self.model.append([self.empty, str()])
 
         for emulator in self.interface.emulators.sections():
-            row = self.model.append([emulator])
+            icon = icon_from_data(self.interface.emulators.item(
+                emulator, "icon"), self.empty, 24, 24)
+
+            row = self.model.append([icon, emulator])
 
             if emulator == self.emulator:
                 self.combo.set_active_iter(row)
@@ -781,7 +793,7 @@ class DialogViewer(Dialog):
         Initialize widgets signals
         """
 
-        self.connect("key-release-event", self.change_screenshot)
+        self.connect("key-press-event", self.change_screenshot)
 
         self.tool_first.connect("clicked", self.change_screenshot)
         self.tool_previous.connect("clicked", self.change_screenshot)
@@ -821,10 +833,10 @@ class DialogViewer(Dialog):
             elif event.keyval == Gdk.KEY_Right:
                 self.index += 1
 
-            elif event.keyval == Gdk.KEY_KP_Subtract and self.zoom_factor > 1:
+            elif event.keyval == Gdk.KEY_KP_Subtract and self.zoom_factor > .1:
                 self.zoom_fit = False
                 self.zoom_factor -= .1
-            elif event.keyval == Gdk.KEY_KP_Add and self.zoom_factor < 5:
+            elif event.keyval == Gdk.KEY_KP_Add and self.zoom_factor < 20:
                 self.zoom_fit = False
                 self.zoom_factor += .1
 
@@ -856,10 +868,10 @@ class DialogViewer(Dialog):
         elif self.index > len(self.screenshots) - 1:
             self.index = len(self.screenshots) - 1
 
-        if self.zoom_factor < 1:
-            self.zoom_factor = 1
-        elif self.zoom_factor > 5:
-            self.zoom_factor = 5
+        if self.zoom_factor < .1:
+            self.zoom_factor = .1
+        elif self.zoom_factor > 20:
+            self.zoom_factor = 20
 
         self.update_screenshot()
         self.set_widgets_sensitive()

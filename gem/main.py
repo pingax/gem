@@ -126,6 +126,10 @@ def main():
     # Define log path with a global variable
     logging.log_path = expanduser(path_join(Path.Data, "gem.log"))
 
+    # Save older log file to ~/.local/share/gem/gem.log.old
+    if(exists(logging.log_path)):
+        copy(logging.log_path, expanduser(path_join(Path.Data, "gem.log.old")))
+
     # Generate logger from log.conf
     fileConfig(get_data(Conf.Log))
 

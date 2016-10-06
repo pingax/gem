@@ -27,6 +27,7 @@ from gi.repository import Gdk
 
 from gi.repository.Gdk import EventType
 
+from gi.repository.GdkPixbuf import Pixbuf
 from gi.repository.GdkPixbuf import Colorspace
 
 # Path
@@ -668,10 +669,14 @@ class Preferences(Gtk.Builder):
             image = icon_from_data(self.consoles.item(name, "icon"), self.empty)
 
             path = self.consoles.item(name, "roms")
-            path = path.replace(expanduser('~'), '~')
+
+            if path is not None:
+                path = path.replace(expanduser('~'), '~')
+            else:
+                path = ""
 
             check = self.empty
-            if not exists(path):
+            if not exists(expanduser(path)):
                 check = icon_load("dialog-warning", 16, self.empty)
 
             self.model_consoles.append([image, name, path, check])
@@ -691,7 +696,7 @@ class Preferences(Gtk.Builder):
             binary = self.emulators.item(name, "binary")
 
             check, font = self.empty, Pango.Style.NORMAL
-            if not exists(binary):
+            if not exists(expanduser(binary)):
                 check = icon_load("dialog-warning", 16, self.empty)
                 font = Pango.Style.OBLIQUE
 
@@ -907,18 +912,23 @@ class Console(Gtk.Builder):
         self.button_console = self.get_object("button_console_image")
         self.image_console = self.get_object("image_console")
 
-        self.model_emulators = Gtk.ListStore(str)
+        self.model_emulators = Gtk.ListStore(Pixbuf, str)
         self.combo_emulators = self.get_object("combo_emulators")
 
-        cell_emulators = Gtk.CellRendererText()
+        cell_emulators_icon = Gtk.CellRendererPixbuf()
+        cell_emulators_name = Gtk.CellRendererText()
 
         # Properties
-        self.model_emulators.set_sort_column_id(0, Gtk.SortType.ASCENDING)
+        self.model_emulators.set_sort_column_id(1, Gtk.SortType.ASCENDING)
 
         self.combo_emulators.set_model(self.model_emulators)
-        self.combo_emulators.set_id_column(0)
-        self.combo_emulators.pack_start(cell_emulators, True)
-        self.combo_emulators.add_attribute(cell_emulators, "text", 0)
+        self.combo_emulators.set_id_column(1)
+        self.combo_emulators.pack_start(cell_emulators_icon, False)
+        self.combo_emulators.add_attribute(cell_emulators_icon, "pixbuf", 0)
+        self.combo_emulators.pack_start(cell_emulators_name, True)
+        self.combo_emulators.add_attribute(cell_emulators_name, "text", 1)
+
+        cell_emulators_icon.set_padding(4, 0)
 
 
     def __init_signals(self):
@@ -939,8 +949,14 @@ class Console(Gtk.Builder):
         Load data and start interface
         """
 
+        emulators_rows = dict()
+
         for emulator in self.emulators.sections():
-            self.model_emulators.append([emulator])
+            icon = icon_from_data(self.emulators.item(emulator, "icon"),
+                self.empty, 24, 24)
+
+            emulators_rows[emulator] = self.model_emulators.append(
+                [icon, emulator])
 
         # ------------------------------------
         #   Init data
@@ -1020,13 +1036,17 @@ class Console(Gtk.Builder):
 
         self.section = self.entry_name.get_text()
 
-        path = self.path
-        if path is not None and \
-            path_join(get_data("icons"), basename(path)) == path:
-            path = splitext(basename(path))[0]
+        path_roms = self.file_folder.get_filename()
+        if path_roms is None or not exists(path_roms):
+            path_roms = expanduser(self.consoles.item(self.console, "roms"))
 
-        self.data["roms"] = self.file_folder.get_filename()
-        self.data["icon"] = path
+        path_icon = self.path
+        if path_icon is not None and \
+            path_join(get_data("icons"), basename(path_icon)) == path_icon:
+            path_icon = splitext(basename(path_icon))[0]
+
+        self.data["roms"] = path_roms
+        self.data["icon"] = path_icon
         self.data["exts"] = self.entry_extensions.get_text()
         self.data["emulator"] = self.combo_emulators.get_active_id()
 
@@ -1309,14 +1329,24 @@ class Emulator(Gtk.Builder):
 
         self.section = self.entry_name.get_text()
 
-        path = self.path
-        if path is not None and \
-            path_join(get_data("icons"), basename(path)) == path:
-            path = splitext(basename(path))[0]
+        path_binary = self.file_binary.get_filename()
+        if path_binary is None or not exists(path_binary):
+            path_binary = expanduser(
+                self.emulators.item(self.emulator, "binary", str()))
 
-        self.data["binary"] = self.file_binary.get_filename()
-        self.data["configuration"] = self.file_configuration.get_filename()
-        self.data["icon"] = path
+        path_configuration = self.file_configuration.get_filename()
+        if path_configuration is None or not exists(path_configuration):
+            path_configuration = expanduser(
+                self.emulators.item(self.emulator, "configuration", str()))
+
+        path_icon = self.path
+        if path_icon is not None and \
+            path_join(get_data("icons"), basename(path_icon)) == path_icon:
+            path_icon = splitext(basename(path_icon))[0]
+
+        self.data["binary"] = path_binary
+        self.data["configuration"] = path_configuration
+        self.data["icon"] = path_icon
         self.data["save"] = self.entry_save.get_text()
         self.data["snaps"] = self.entry_screenshots.get_text()
         self.data["default"] = self.entry_launch.get_text()

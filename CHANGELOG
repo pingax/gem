@@ -11,6 +11,8 @@
     - Restore the possibility to rename emulators and consoles from preferences.
     - Switch to GTK+3 and Python 3.x.
     - Avoid to save as last console a console which is already save as last console.
+    - Save previous log file to gem.log.old.
+    - Show emulators icons in parameters and console dialogs
 
     - Add nestopia to emulators.
 
@@ -21,6 +23,8 @@
     - Fix allow to validate an icon with double clicks in preferences.
     - Fix wrong dialog size in some distributions.
     - Fix cannot launch non native viewer if wrong binary.
+    - Fix hide error when use a wrong regex in filter entry.
+    - Fix write old value for emulators and consoles when a path not exists.
 
 ## Version 0.4 - Blue Bomber (20 Aug, 2016)
     - Add a native screenshots viewer.

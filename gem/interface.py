@@ -794,34 +794,38 @@ class Interface(Gtk.Builder):
         data_multiplayer = model.get_value(row, Columns.Multiplayer)
         flag_multiplayer = self.tool_filter_multiplayer.get_active()
 
-        name = model.get_value(row, Columns.Name)
-        if name is not None:
-            text = self.entry_filter.get_text()
+        try:
+            name = model.get_value(row, Columns.Name)
+            if name is not None:
+                text = self.entry_filter.get_text()
 
-            found = False
-            if len(text) == 0 or match("%s$" % text, name) is not None or \
-                text.lower() in name.lower():
-                found = True
+                found = False
+                if len(text) == 0 or match("%s$" % text, name) is not None or \
+                    text.lower() in name.lower():
+                    found = True
 
-            # No flag
-            if not flag_favorite and not flag_multiplayer and found:
-                return True
+                # No flag
+                if not flag_favorite and not flag_multiplayer and found:
+                    return True
 
-            # Only favorite flag
-            if flag_favorite and data_favorite and not flag_multiplayer and \
-                found:
-                return True
+                # Only favorite flag
+                if flag_favorite and data_favorite and not flag_multiplayer and \
+                    found:
+                    return True
 
-            # Only multiplayer flag
-            if flag_multiplayer and not data_multiplayer == self.empty and \
-                not flag_favorite and found:
-                return True
+                # Only multiplayer flag
+                if flag_multiplayer and not data_multiplayer == self.empty and \
+                    not flag_favorite and found:
+                    return True
 
-            # Both favorite and multiplayer flags
-            if flag_favorite and data_favorite and \
-                flag_multiplayer and not data_multiplayer == self.empty and \
-                found:
-                return True
+                # Both favorite and multiplayer flags
+                if flag_favorite and data_favorite and \
+                    flag_multiplayer and not data_multiplayer == self.empty and \
+                    found:
+                    return True
+
+        except:
+            pass
 
         return False
 
@@ -908,7 +912,10 @@ class Interface(Gtk.Builder):
         Update text from headerbar
         """
 
-        texts = [_("%s games availables") % len(self.model_games)]
+        if(len(self.model_games) == 1):
+            texts = [_("1 game available")]
+        elif(len(self.model_games) > 1):
+            texts = [_("%s games availables") % len(self.model_games)]
 
         if self.selection["name"] is not None:
             texts.append(self.selection["name"])
