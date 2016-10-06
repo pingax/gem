@@ -68,7 +68,6 @@ from urllib.request import url2pathname
 # System
 from sys import exit as sys_exit
 
-from copy import deepcopy
 from shlex import split as shlex_split
 from shutil import move as rename
 from platform import system
@@ -85,16 +84,11 @@ from re import match
 
 # Threading
 from threading import Thread
-from threading import enumerate as threading_enumerate
 
 # Translation
 from gettext import gettext as _
 from gettext import textdomain
 from gettext import bindtextdomain
-
-# XDG
-from xdg.BaseDirectory import xdg_data_home
-from xdg.BaseDirectory import xdg_config_home
 
 # ------------------------------------------------------------------
 #   Modules - GEM

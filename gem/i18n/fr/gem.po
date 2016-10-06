@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.5\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2016-10-06 11:55+0200\n"
+"PO-Revision-Date: 2016-10-06 18:54+0200\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -58,6 +58,11 @@ msgstr "%s est déjà dans le dossier des roms. Annulation de l'ajout."
 #, python-format
 msgid "%s was generated successfully"
 msgstr "%s à été généré avec succès"
+
+#
+# File: gem/interface.py, line: 532
+msgid "1 game available"
+msgstr "1 jeu disponible"
 
 #
 # File: gem/preferences.py, line: 1372

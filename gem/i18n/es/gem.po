@@ -60,6 +60,11 @@ msgid "%s was generated successfully"
 msgstr ""
 
 #
+# File: gem/interface.py, line: 910
+msgid "1 game available"
+msgstr ""
+
+#
 # File: gem/preferences.py, line: 1638
 #, fuzzy
 msgid ""

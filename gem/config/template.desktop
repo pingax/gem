@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Application
+Name=%name%
+GenericName=%name%
+Icon=%icon%
+Exec="%command%"
+Categories=Game;Emulator;
+Path=%path%
+StartupNotify=true
