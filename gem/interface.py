@@ -575,7 +575,7 @@ class Interface(Gtk.Builder):
             "key-release-event", self.__on_menu_show)
 
         self.treeview_games.connect(
-            "drag-data-received", self.__on_dnd_get_data)
+            "drag-data-received", self.__on_dnd_received_data)
 
 
         self.filter_games.set_visible_func(self.filters_match)
@@ -606,7 +606,7 @@ class Interface(Gtk.Builder):
                 "default paths may not work with your system.\n\nThe first "
                 "thing you may do, it's open the preferences window and "
                 "change paths for both consoles and emulators.\n\nEnjoy your "
-                "games :D"), "face-smile-big")
+                "games :D"), "face-smile-big", False)
 
             dialog.set_size_request(500, -1)
 
@@ -837,8 +837,6 @@ class Interface(Gtk.Builder):
                 self.config.item("keys", "copy", "<Control>C"),
             self.menu_item_desktop:
                 self.config.item("keys", "desktop", "<Control>G"),
-            # self.item_install:
-                # self.config.item("keys", "install", "<Control>I"),
             self.tool_item_launch:
                 self.config.item("keys", "start", "Return"),
             self.menu_item_rename:
@@ -952,65 +950,65 @@ class Interface(Gtk.Builder):
         viewer = self.config.get("viewer", "binary")
         args = self.config.item("viewer", "options")
 
-        if exists(viewer):
-            gamename = basename(self.selection["game"]).split('.')[0]
+        gamename = basename(self.selection["game"]).split('.')[0]
 
-            data = self.database.get("games",
-                { "filename": basename(self.selection["game"]) })
+        data = self.database.get("games",
+            { "filename": basename(self.selection["game"]) })
 
-            emulator = self.consoles.get(self.selection["console"], "emulator")
-            if data is not None and len(data.get("emulator")) > 0:
-                if self.emulators.has_section(data.get("emulator")):
-                    emulator = data.get("emulator")
+        emulator = self.consoles.get(self.selection["console"], "emulator")
+        if data is not None and len(data.get("emulator")) > 0:
+            if self.emulators.has_section(data.get("emulator")):
+                emulator = data.get("emulator")
 
-            if self.check_screenshots(emulator, gamename):
-                snaps_path = expanduser(self.emulators.get(emulator, "snaps"))
+        if self.check_screenshots(emulator, gamename):
+            snaps_path = expanduser(self.emulators.get(emulator, "snaps"))
 
-                if "<lname>" in snaps_path:
-                    path = glob(
-                        snaps_path.replace("<lname>", gamename).lower())
-                else:
-                    path = glob(snaps_path.replace("<name>", gamename))
+            if "<lname>" in snaps_path:
+                path = glob(
+                    snaps_path.replace("<lname>", gamename).lower())
+            else:
+                path = glob(snaps_path.replace("<name>", gamename))
 
-                # ----------------------------
-                #   Show screenshots viewer
-                # ----------------------------
+            # ----------------------------
+            #   Show screenshots viewer
+            # ----------------------------
 
-                title = gamename
-                if self.selection["name"] is not None:
-                    title = self.selection["name"]
+            title = gamename
+            if self.selection["name"] is not None:
+                title = self.selection["name"]
 
-                title = "%s (%s)" % (title, self.selection["console"])
+            title = "%s (%s)" % (title, self.selection["console"])
 
-                if bool(int(self.config.item("viewer", "native", '1'))):
-                    DialogViewer(self, title, path)
+            if bool(int(self.config.item("viewer", "native", '1'))):
+                DialogViewer(self, title, path)
 
-                else:
-                    command = list()
+            elif exists(viewer):
+                command = list()
 
-                    # Append binaries
-                    command.extend(shlex_split(viewer))
+                # Append binaries
+                command.extend(shlex_split(viewer))
 
-                    # Append arguments
-                    if args is not None:
-                        command.extend(shlex_split(args))
+                # Append arguments
+                if args is not None:
+                    command.extend(shlex_split(args))
 
-                    # Append game file
-                    command.extend(path)
+                # Append game file
+                command.extend(path)
 
-                    process = Popen(command)
-                    process.wait()
+                process = Popen(command)
+                process.wait()
 
-                # ----------------------------
-                #   Check snapshots
-                # ----------------------------
+            else:
+                self.set_message(_("Missing binary"),
+                    _("Cannot find <b>%s</b> viewer !" % viewer),
+                    "dialog-warning")
 
-                if not self.check_screenshots(emulator, gamename):
-                    self.set_game_data(Columns.Snapshots, self.empty, gamename)
+            # ----------------------------
+            #   Check snapshots
+            # ----------------------------
 
-        else:
-            self.set_error(_("Cannot find <b>%s</b> viewer !" % viewer),
-                Gtk.MessageType.WARNING)
+            if not self.check_screenshots(emulator, gamename):
+                self.set_game_data(Columns.Snapshots, self.empty, gamename)
 
 
     def __on_show_log(self, widget):
@@ -2105,7 +2103,10 @@ class Interface(Gtk.Builder):
                         "dialog-information")
 
                 except OSError as error:
-                    pass
+                    self.set_message(
+                        _("Generate entry for %s") % title,
+                        _("An error occur during genheration, consult log for "
+                        "futher details."), "dialog-error")
 
 
     def __on_menu_show(self, treeview, event):
@@ -2154,7 +2155,7 @@ class Interface(Gtk.Builder):
                 "view-restore", Gtk.IconSize.BUTTON)
 
 
-    def __on_dnd_get_data(self, widget, context, x, y, data, info, time):
+    def __on_dnd_received_data(self, widget, context, x, y, data, info, time):
         """
         Install drop files
         """

@@ -135,9 +135,18 @@ class Dialog(Gtk.Dialog):
         self.dialog_box.pack_start(grid_header, False, True, 0)
 
 
+    def set_size(self, width, height):
+        """
+        Set a new size for dialog
+        """
+
+        self.set_size_request(width, height)
+        self.set_default_size(width, height)
+
+
 class TemplateDialog(Dialog):
 
-    def __init__(self, parent, title, message, icon):
+    def __init__(self, parent, title, message, icon, center=True):
         """
         Constructor
         """
@@ -149,6 +158,8 @@ class TemplateDialog(Dialog):
         # ------------------------------------
 
         self.message = message
+
+        self.center = center
 
         # ------------------------------------
         #   Prepare interface
@@ -166,7 +177,7 @@ class TemplateDialog(Dialog):
         Initialize interface widgets
         """
 
-        self.set_size_request(500, -1)
+        self.set_size(500, -1)
 
         # ------------------------------------
         #   Message
@@ -175,12 +186,18 @@ class TemplateDialog(Dialog):
         text = Gtk.Label()
 
         # Properties
-        text.set_alignment(0, .5)
-        text.set_max_width_chars(10)
         text.set_line_wrap(True)
         text.set_use_markup(True)
-        text.set_justify(Gtk.Justification.FILL)
+        text.set_max_width_chars(10)
         text.set_markup(self.message)
+
+        if(self.center):
+            text.set_alignment(.5, .5)
+            text.set_justify(Gtk.Justification.CENTER)
+        else:
+            text.set_alignment(0, .5)
+            text.set_justify(Gtk.Justification.FILL)
+
 
         # ------------------------------------
         #   Integrate widgets
@@ -199,12 +216,13 @@ class TemplateDialog(Dialog):
 
 class Message(TemplateDialog):
 
-    def __init__(self, parent, title, message, icon="dialog-information"):
+    def __init__(self, parent, title, message, icon="dialog-information",
+        center=True):
         """
         Constructor
         """
 
-        TemplateDialog.__init__(self, parent, title, message, icon)
+        TemplateDialog.__init__(self, parent, title, message, icon, center)
 
         self.add_buttons(
             Gtk.STOCK_OK, Gtk.ResponseType.OK)
@@ -212,12 +230,13 @@ class Message(TemplateDialog):
 
 class Question(TemplateDialog):
 
-    def __init__(self, parent, title, message, icon="dialog-question"):
+    def __init__(self, parent, title, message, icon="dialog-question",
+        center=True):
         """
         Constructor
         """
 
-        TemplateDialog.__init__(self, parent, title, message, icon)
+        TemplateDialog.__init__(self, parent, title, message, icon, center)
 
         self.add_buttons(
             Gtk.STOCK_NO, Gtk.ResponseType.NO,
@@ -262,7 +281,7 @@ class DialogEditor(Dialog):
         Initialize interface widgets
         """
 
-        self.set_default_size(800, 600)
+        self.set_size(800, 600)
 
         if self.editable:
             self.add_buttons(
@@ -401,7 +420,7 @@ class DialogParameters(Dialog):
         Initialize interface widgets
         """
 
-        self.set_default_size(520, -1)
+        self.set_size(520, -1)
 
         self.add_buttons(
             Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
@@ -506,7 +525,7 @@ class DialogRemove(Dialog):
         Initialize interface widgets
         """
 
-        self.set_default_size(520, -1)
+        self.set_size(520, -1)
 
         self.add_buttons(
             Gtk.STOCK_NO, Gtk.ResponseType.NO,
@@ -596,7 +615,7 @@ class DialogRename(Dialog):
         Initialize interface widgets
         """
 
-        self.set_default_size(520, -1)
+        self.set_size(520, -1)
 
         self.add_buttons(
             Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
@@ -685,7 +704,7 @@ class DialogViewer(Dialog):
         Initialize interface widgets
         """
 
-        self.set_default_size(800, 600)
+        self.set_size(800, 600)
 
         # ------------------------------------
         #   Image
@@ -925,7 +944,7 @@ class DialogConsoles(Dialog):
         Initialize interface widgets
         """
 
-        self.set_default_size(500, 300)
+        self.set_size(500, 300)
 
         self.add_buttons(
             Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,

@@ -16,6 +16,8 @@
     - Fix old selection remain when reload interface.
     - Fix hide output from xdg-open.
     - Fix allow to validate an icon with double clicks in preferences.
+    - Fix wrong dialog size in some distributions.
+    - Fix cannot launch non native viewer if wrong binary.
 
 ## Version 0.4 - Blue Bomber (20 Aug, 2016)
     - Add a native screenshots viewer.
