@@ -1038,7 +1038,8 @@ class Console(Gtk.Builder):
 
         path_roms = self.file_folder.get_filename()
         if path_roms is None or not exists(path_roms):
-            path_roms = expanduser(self.consoles.item(self.console, "roms"))
+            path_roms = expanduser(
+                self.consoles.item(self.console, "roms", str()))
 
         path_icon = self.path
         if path_icon is not None and \
