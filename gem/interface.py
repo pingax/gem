@@ -141,8 +141,11 @@ def launch_gem(logger, reconstruct_db=False):
         if version is None:
             version = Gem.Version
 
-        logger.info(_("Update v%(old)s database to v%(new)s.") % {
-            "old": version, "new": Gem.Version })
+            logger.info(_("Generate a new database"))
+
+        else:
+            logger.info(_("Update v%(old)s database to v%(new)s.") % {
+                "old": version, "new": Gem.Version })
 
         database.modify("gem",
             { "version": Gem.Version, "codename": Gem.CodeName },
@@ -764,8 +767,6 @@ class Interface(Gtk.Builder):
         self.tool_item_parameters.set_sensitive(status)
         self.tool_item_screenshots.set_sensitive(status)
 
-        self.tool_item_properties.set_sensitive(status)
-
 
     def filters_update(self, widget=None):
         """
@@ -905,6 +906,8 @@ class Interface(Gtk.Builder):
         """
         Update text from headerbar
         """
+
+        texts = str()
 
         if(len(self.model_games) == 1):
             texts = [_("1 game available")]
@@ -1124,6 +1127,11 @@ class Interface(Gtk.Builder):
         Select a console in combobox and append console's games
         """
 
+        self.selection["name"] = None
+        self.selection["game"] = None
+
+        self.set_informations()
+
         error = False
 
         treeiter = self.combo_consoles.get_active_iter()
@@ -1199,13 +1207,13 @@ class Interface(Gtk.Builder):
 
         self.game_path = dict()
 
-        games_path = expanduser(self.consoles.get(console, "roms"))
-
         # ------------------------------------
         #   Load data
         # ------------------------------------
 
-        emulator = self.consoles.get(console, "emulator")
+        self.model_games.clear()
+
+        games_path = expanduser(self.consoles.get(console, "roms"))
 
         if exists(games_path) and access(games_path, W_OK):
             games_list = list()
@@ -1220,14 +1228,14 @@ class Interface(Gtk.Builder):
             #   Refresh treeview
             # ------------------------------------
 
-            self.model_games.clear()
-
             self.treeview_games.set_enable_search(False)
             self.treeview_games.freeze_child_notify()
 
             # ------------------------------------
             #   Load games
             # ------------------------------------
+
+            emulator = self.consoles.get(console, "emulator")
 
             for game in games_list:
 
@@ -1343,7 +1351,7 @@ class Interface(Gtk.Builder):
             self.treeview_games.set_enable_search(True)
             self.treeview_games.thaw_child_notify()
 
-            self.set_informations()
+        self.set_informations()
 
         # ------------------------------------
         #   Cannot read games path
@@ -1530,6 +1538,11 @@ class Interface(Gtk.Builder):
         Generate a command for a game with a specific emulator
         """
 
+        if not exists(filename):
+            self.set_message(_("Missing file"), _("Cannot found %s" % filename))
+
+            return None
+
         # ----------------------------
         #   Check emulator binary
         # ----------------------------
@@ -1537,10 +1550,7 @@ class Interface(Gtk.Builder):
         binary = self.emulators.get(emulator, "binary")
 
         if not exists(binary):
-            self.logger.error(_("Cannot found %s binary") % binary)
-
-            self.set_message(_("Missing binary"),
-                _("Cannot found <b>%s</b> !" % binary))
+            self.set_message(_("Missing binary"), _("Cannot found %s" % binary))
 
             return None
 

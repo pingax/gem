@@ -63,6 +63,12 @@ textdomain("gem")
 #   Class
 # ------------------------------------------------------------------
 
+class Manager(object):
+
+    CONSOLE  = 0
+    EMULATOR = 1
+
+
 class Preferences(Gtk.Builder):
 
     def __init__(self, widget=None, parent=None, logger=None):
@@ -375,9 +381,6 @@ class Preferences(Gtk.Builder):
         column_consoles_emulator.set_expand(True)
         column_consoles_emulator.set_title(_("ROMs path"))
 
-        self.button_console_modify.set_sensitive(False)
-        self.button_console_remove.set_sensitive(False)
-
         # ------------------------------------
         #   Emulators
         # ------------------------------------
@@ -400,9 +403,6 @@ class Preferences(Gtk.Builder):
 
         column_emulators_binary.set_expand(True)
         column_emulators_binary.set_title(_("Binary"))
-
-        self.button_emulator_modify.set_sensitive(False)
-        self.button_emulator_remove.set_sensitive(False)
 
         # ------------------------------------
         #   Buttons
@@ -445,32 +445,32 @@ class Preferences(Gtk.Builder):
         # ------------------------------------
 
         self.treeview_consoles.connect(
-            "button-press-event", self.__on_selected_treeview, "console")
+            "button-press-event", self.__on_selected_treeview, Manager.CONSOLE)
         self.treeview_consoles.connect(
-            "key-release-event", self.__on_selected_treeview, "console")
+            "key-release-event", self.__on_selected_treeview, Manager.CONSOLE)
 
         self.button_console_add.connect(
-            "clicked", Console, self, False)
+            "clicked", self.__on_modify_item, Manager.CONSOLE, False)
         self.button_console_modify.connect(
-            "clicked", Console, self, True)
+            "clicked", self.__on_modify_item, Manager.CONSOLE, True)
         self.button_console_remove.connect(
-            "clicked", self.__on_remove_item, "console")
+            "clicked", self.__on_remove_item, Manager.CONSOLE)
 
         # ------------------------------------
         #   Emulators
         # ------------------------------------
 
         self.treeview_emulators.connect(
-            "button-press-event", self.__on_selected_treeview, "emulator")
+            "button-press-event", self.__on_selected_treeview, Manager.EMULATOR)
         self.treeview_emulators.connect(
-            "key-release-event", self.__on_selected_treeview, "emulator")
+            "key-release-event", self.__on_selected_treeview, Manager.EMULATOR)
 
         self.button_emulator_add.connect(
-            "clicked", Emulator, self, False)
+            "clicked", self.__on_modify_item, Manager.EMULATOR, False)
         self.button_emulator_modify.connect(
-            "clicked", Emulator, self, True)
+            "clicked", self.__on_modify_item, Manager.EMULATOR, True)
         self.button_emulator_remove.connect(
-            "clicked", self.__on_remove_item, "emulator")
+            "clicked", self.__on_remove_item, Manager.EMULATOR)
 
         # ------------------------------------
         #   Buttons
@@ -665,6 +665,8 @@ class Preferences(Gtk.Builder):
 
         self.model_consoles.clear()
 
+        self.selection["console"] = None
+
         for name in self.consoles.sections():
             image = icon_from_data(self.consoles.item(name, "icon"), self.empty)
 
@@ -688,6 +690,8 @@ class Preferences(Gtk.Builder):
         """
 
         self.model_emulators.clear()
+
+        self.selection["emulator"] = None
 
         for name in self.emulators.sections():
             image = icon_from_data(
@@ -755,27 +759,47 @@ class Preferences(Gtk.Builder):
                 if event.button == 1 and event.type == EventType._2BUTTON_PRESS:
                     edit = True
 
-        if self.selection[manager] is not None:
-            if manager == "console":
-                self.button_console_modify.set_sensitive(True)
-                self.button_console_remove.set_sensitive(True)
-            elif manager == "emulator":
-                self.button_emulator_modify.set_sensitive(True)
-                self.button_emulator_remove.set_sensitive(True)
-
-        else:
-            if manager == "console":
-                self.button_console_modify.set_sensitive(False)
-                self.button_console_remove.set_sensitive(False)
-            elif manager == "emulator":
-                self.button_emulator_modify.set_sensitive(False)
-                self.button_emulator_remove.set_sensitive(False)
-
         if edit:
-            if manager == "console":
-                Console(None, self, True)
-            if manager == "emulator":
-                Emulator(None, self, True)
+            self.__on_modify_item(None, manager, True)
+
+
+    def __on_modify_item(self, widget, manager, modification):
+        """
+        Append or modify an item in the treeview
+        """
+
+        self.selection = {
+            "console": None,
+            "emulator": None }
+
+        if manager == Manager.CONSOLE:
+            config, treeview = self.consoles, self.treeview_consoles
+
+        elif manager == Manager.EMULATOR:
+            config, treeview = self.emulators, self.treeview_emulators
+
+        model, treeiter = treeview.get_selection().get_selected()
+
+        name = None
+        if treeiter is not None:
+            name = model.get_value(treeiter, 1)
+
+        if modification and name is None:
+            return False
+
+        if manager == Manager.CONSOLE:
+            if modification:
+                self.selection["console"] = name
+
+            Console(self, modification)
+
+        elif manager == Manager.EMULATOR:
+            if modification:
+                self.selection["emulator"] = name
+
+            Emulator(self, modification)
+
+        return True
 
 
     def __on_remove_item(self, widget, manager):
@@ -785,9 +809,10 @@ class Preferences(Gtk.Builder):
 
         name = None
 
-        if manager == "console":
+        if manager == Manager.CONSOLE:
             config, treeview = self.consoles, self.treeview_consoles
-        elif manager == "emulator":
+
+        elif manager == Manager.EMULATOR:
             config, treeview = self.emulators, self.treeview_emulators
 
         model, treeiter = treeview.get_selection().get_selected()
@@ -815,15 +840,15 @@ class Preferences(Gtk.Builder):
             dialog.destroy()
 
         if need_reload:
-            if manager == "console":
+            if manager == Manager.CONSOLE:
                 self.on_load_consoles()
-            elif manager == "emulator":
+            elif manager == Manager.EMULATOR:
                 self.on_load_emulators()
 
 
 class Console(Gtk.Builder):
 
-    def __init__(self, widget, parent, modify):
+    def __init__(self, parent, modify):
         """
         Constructor
         """
@@ -843,6 +868,8 @@ class Console(Gtk.Builder):
         # ------------------------------------
 
         self.path = None
+
+        self.error = False
 
         self.interface = parent
         self.modify = modify
@@ -939,6 +966,8 @@ class Console(Gtk.Builder):
         self.entry_name.connect("changed", self.__on_entry_update)
         self.entry_name.connect("icon-press", on_entry_clear)
 
+        self.file_folder.connect("file-set", self.__on_file_set)
+
         self.entry_extensions.connect("icon-press", on_entry_clear)
 
         self.button_console.connect("clicked", self.__on_select_icon)
@@ -968,7 +997,7 @@ class Console(Gtk.Builder):
             self.entry_name.set_text(self.console)
 
             # Folder
-            folder = expanduser(self.consoles.item(self.console, "roms"))
+            folder = expanduser(self.consoles.item(self.console, "roms", str()))
             if exists(folder):
                 self.file_folder.set_current_folder(folder)
 
@@ -982,11 +1011,11 @@ class Console(Gtk.Builder):
                 icon_from_data(self.path, self.empty, 64, 64))
 
             # Emulator
-            if self.consoles.item(self.console, "emulator") in \
+            if self.consoles.item(self.console, "emulator", str()) in \
                 self.emulators.sections():
 
                 self.combo_emulators.set_active_id(
-                    self.consoles.item(self.console, "emulator"))
+                    self.consoles.item(self.console, "emulator", str()))
 
             self.window.set_response_sensitive(Gtk.ResponseType.APPLY, True)
 
@@ -1057,6 +1086,10 @@ class Console(Gtk.Builder):
         Check if a value is not already used
         """
 
+        path = self.file_folder.get_filename()
+        if path is None or not exists(expanduser(path)):
+            path = None
+
         if len(self.entry_name.get_text()) == 0:
             self.window.set_response_sensitive(Gtk.ResponseType.APPLY, False)
 
@@ -1064,17 +1097,21 @@ class Console(Gtk.Builder):
                 Gtk.EntryIconPosition.PRIMARY, None)
             self.entry_name.set_tooltip_text(None)
 
+            self.error = True
+
         else:
             section = self.consoles.has_section(self.entry_name.get_text())
 
             if (self.modify and self.entry_name.get_text() == self.console) or \
-                not section:
+                (path is not None and not section):
                 self.window.set_response_sensitive(
                     Gtk.ResponseType.APPLY, True)
 
                 self.entry_name.set_icon_from_icon_name(
                     Gtk.EntryIconPosition.PRIMARY, None)
                 self.entry_name.set_tooltip_text(None)
+
+                self.error = False
 
             elif section:
                 self.window.set_response_sensitive(
@@ -1084,6 +1121,22 @@ class Console(Gtk.Builder):
                     Gtk.EntryIconPosition.PRIMARY, "dialog-error")
                 self.entry_name.set_tooltip_text(_("This console already"
                     " exist, please, choose another name"))
+
+                self.error = True
+
+
+    def __on_file_set(self, widget):
+        """
+        Change response button state when user set a file
+        """
+
+        path = widget.get_filename()
+
+        if path is None or not exists(expanduser(path)):
+            self.window.set_response_sensitive(Gtk.ResponseType.APPLY, False)
+
+        elif len(self.entry_name.get_text()) > 0 and not self.error:
+            self.window.set_response_sensitive(Gtk.ResponseType.APPLY, True)
 
 
     def __on_select_icon(self, widget):
@@ -1104,7 +1157,7 @@ class Console(Gtk.Builder):
 
 class Emulator(Gtk.Builder):
 
-    def __init__(self, widget, parent, modify):
+    def __init__(self, parent, modify):
         """
         Constructor
         """
@@ -1124,6 +1177,8 @@ class Emulator(Gtk.Builder):
         # ------------------------------------
 
         self.path = None
+
+        self.error = False
 
         self.interface = parent
         self.modify = modify
@@ -1227,6 +1282,8 @@ class Emulator(Gtk.Builder):
         self.entry_name.connect("changed", self.__on_entry_update)
         self.entry_name.connect("icon-press", on_entry_clear)
 
+        self.file_binary.connect("file-set", self.__on_file_set)
+
         self.entry_launch.connect("icon-press", on_entry_clear)
         self.entry_windowed.connect("icon-press", on_entry_clear)
         self.entry_fullscreen.connect("icon-press", on_entry_clear)
@@ -1299,10 +1356,11 @@ class Emulator(Gtk.Builder):
             self.__on_save_data()
 
             if self.data is not None:
-                if not self.section == self.emulator:
-                    self.emulators.remove(self.emulator)
+                if self.modify:
+                    if not self.section == self.emulator:
+                        self.emulators.remove(self.emulator)
 
-                self.emulators.remove(self.section)
+                    self.emulators.remove(self.section)
 
                 for (option, value) in self.data.items():
                     if value is None:
@@ -1360,6 +1418,10 @@ class Emulator(Gtk.Builder):
         Check if a value is not already used
         """
 
+        path = self.file_binary.get_filename()
+        if path is None or not exists(expanduser(path)):
+            path = None
+
         if len(self.entry_name.get_text()) == 0:
             self.window.set_response_sensitive(Gtk.ResponseType.APPLY, False)
 
@@ -1367,18 +1429,21 @@ class Emulator(Gtk.Builder):
                 Gtk.EntryIconPosition.PRIMARY, None)
             self.entry_name.set_tooltip_text(None)
 
-        # elif not self.modify:
+            self.error = True
+
         else:
             section = self.emulators.has_section(self.entry_name.get_text())
 
             if (self.modify and self.entry_name.get_text() == self.emulator) or \
-                not section:
+                (path is not None and not section):
                 self.window.set_response_sensitive(
                     Gtk.ResponseType.APPLY, True)
 
                 self.entry_name.set_icon_from_icon_name(
                     Gtk.EntryIconPosition.PRIMARY, None)
                 self.entry_name.set_tooltip_text(None)
+
+                self.error = False
 
             elif section:
                 self.window.set_response_sensitive(
@@ -1388,6 +1453,22 @@ class Emulator(Gtk.Builder):
                     Gtk.EntryIconPosition.PRIMARY, "dialog-error")
                 self.entry_name.set_tooltip_text(_("This emulator already"
                     " exist, please, choose another name"))
+
+                self.error = True
+
+
+    def __on_file_set(self, widget):
+        """
+        Change response button state when user set a file
+        """
+
+        path = widget.get_filename()
+
+        if path is None or not exists(expanduser(path)):
+            self.window.set_response_sensitive(Gtk.ResponseType.APPLY, False)
+
+        elif len(self.entry_name.get_text()) > 0 and not self.error:
+            self.window.set_response_sensitive(Gtk.ResponseType.APPLY, True)
 
 
     def __on_select_icon(self, widget):
@@ -1518,8 +1599,8 @@ class IconViewer(Dialog):
         # Properties
         self.view_icons.set_model(self.model_icons)
         self.view_icons.set_pixbuf_column(0)
-        self.view_icons.set_text_column(1)
-        self.view_icons.set_item_width(96)
+        self.view_icons.set_tooltip_column(1)
+        # self.view_icons.set_item_width(96)
         self.view_icons.set_selection_mode(Gtk.SelectionMode.SINGLE)
 
         self.model_icons.set_sort_column_id(1, Gtk.SortType.ASCENDING)
@@ -1600,7 +1681,7 @@ class IconViewer(Dialog):
             name = splitext(basename(icon))[0]
 
             self.icons_data[name] = self.model_icons.append([
-                icon_from_data(icon, self.empty, 48, 48), name])
+                icon_from_data(icon, self.empty, 72, 72), name])
 
         # Set filechooser or icons view selected item
         if self.path is not None:
