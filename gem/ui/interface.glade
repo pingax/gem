@@ -612,63 +612,6 @@
           </packing>
         </child>
         <child>
-          <object class="GtkInfoBar" id="infobar">
-            <property name="app_paintable">True</property>
-            <property name="can_focus">False</property>
-            <property name="margin_left">4</property>
-            <property name="margin_right">4</property>
-            <property name="margin_bottom">4</property>
-            <property name="homogeneous">True</property>
-            <property name="message_type">warning</property>
-            <child internal-child="action_area">
-              <object class="GtkButtonBox" id="action_infobar">
-                <property name="can_focus">False</property>
-                <property name="layout_style">end</property>
-                <child>
-                  <placeholder/>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child internal-child="content_area">
-              <object class="GtkBox" id="grid_infobar">
-                <property name="can_focus">False</property>
-                <property name="spacing">16</property>
-                <child>
-                  <object class="GtkLabel" id="label_infobar">
-                    <property name="can_focus">False</property>
-                    <property name="margin_left">4</property>
-                    <property name="margin_right">4</property>
-                    <property name="margin_top">4</property>
-                    <property name="margin_bottom">4</property>
-                    <property name="label" translatable="yes">Info</property>
-                    <property name="use_markup">True</property>
-                  </object>
-                  <packing>
-                    <property name="expand">True</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">2</property>
-          </packing>
-        </child>
-        <child>
           <object class="GtkScrolledWindow" id="scroll_games">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
@@ -847,6 +790,24 @@
           <packing>
             <property name="expand">True</property>
             <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkStatusbar" id="statusbar">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="margin_left">10</property>
+            <property name="margin_right">10</property>
+            <property name="margin_start">10</property>
+            <property name="margin_end">10</property>
+            <property name="margin_top">6</property>
+            <property name="margin_bottom">6</property>
+            <property name="spacing">2</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
             <property name="position">3</property>
           </packing>
         </child>
@@ -866,7 +827,7 @@
     <property name="version">0.5 (Rich Duck)</property>
     <property name="copyright">Copyleft 2016 - Kawa Team</property>
     <property name="comments" translatable="yes">A graphical tool to manage emulators</property>
-    <property name="website">https://pacmiam.tuxfamily.org</property>
+    <property name="website">https://gem.tuxfamily.org/</property>
     <property name="authors">Aurélien Lubert &lt;pacmiam@tuxfamily.org&gt;</property>
     <property name="translator_credits">José Luis &lt;darknekros@gmail.com&gt;</property>
     <property name="artists">Tango projects - GPLv3

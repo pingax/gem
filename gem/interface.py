@@ -255,8 +255,7 @@ class Interface(Gtk.Builder):
         # Get user icon theme
         self.icons_theme = Gtk.IconTheme.get_default()
 
-        self.icons_theme.append_search_path(
-            get_data(path_join("icons", "interface")))
+        self.icons_theme.append_search_path(get_data(path_join("ui", "icons")))
 
         self.icons_data = {
             "save": Icons.Save,
@@ -415,15 +414,6 @@ class Interface(Gtk.Builder):
         self.model_consoles.set_sort_column_id(1, Gtk.SortType.ASCENDING)
 
         # ------------------------------------
-        #   Informations bar
-        # ------------------------------------
-
-        self.informations = self.get_object("infobar")
-
-        # Properties
-        self.informations.set_no_show_all(True)
-
-        # ------------------------------------
         #   Games
         # ------------------------------------
 
@@ -471,6 +461,15 @@ class Interface(Gtk.Builder):
         # ------------------------------------
 
         self.menu_games = self.get_object("menu_games")
+
+        # ------------------------------------
+        #   Statusbar
+        # ------------------------------------
+
+        self.statusbar = self.get_object("statusbar")
+
+        # Properties
+        self.statusbar.set_no_show_all(True)
 
 
     def __init_signals(self):
@@ -683,10 +682,10 @@ class Interface(Gtk.Builder):
         #   Widgets
         # ------------------------------------
 
-        self.informations.hide()
-
         self.window.show_all()
         self.menu_games.show_all()
+
+        self.statusbar.hide()
 
         self.sensitive_interface()
 
@@ -1516,7 +1515,7 @@ class Interface(Gtk.Builder):
             #   Generate correct command
             # ----------------------------
 
-            command = self.generate_command(emulator, filename)
+            command = self.generate_command(emulator, self.selection["game"])
 
             if command is not None:
 
@@ -2092,8 +2091,8 @@ class Interface(Gtk.Builder):
                     "%name%": title,
                     "%icon%": icon,
                     "%path%": dirname(self.selection["game"]),
-                    "%command%": ' '.join(
-                        self.generate_command(emulator, gamefile)) }
+                    "%command%": ' '.join(self.generate_command(
+                        emulator, self.selection["game"])) }
 
                 try:
                     with open(get_data(Conf.Desktop), 'r') as pipe:

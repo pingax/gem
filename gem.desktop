@@ -1,6 +1,6 @@
 [Desktop Entry]
-Version=0.1
-Icon=joystick
+Version=0.5
+Icon=input-gaming
 Type=Application
 Categories=GTK;Game;Emulator;
 Name=GEM

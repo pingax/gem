@@ -141,13 +141,7 @@ msgstr "No puedo encontrar el emulador para %s"
 #
 # File: gem/interface.py, line: 1892
 #, fuzzy, python-format
-msgid "Cannot found %s binary"
-msgstr "¡No se ha encontrado <b>%s</b>!"
-
-#
-# File: gem/interface.py, line: 1892
-#, python-format
-msgid "Cannot found <b>%s</b> !"
+msgid "Cannot found %s"
 msgstr "¡No se ha encontrado <b>%s</b>!"
 
 #
@@ -369,6 +363,12 @@ msgid "General"
 msgstr "General"
 
 #
+# File: gem/interface.py, line: 460
+#, fuzzy
+msgid "Generate a new database"
+msgstr "Ajustar los parametros para el juego seleccionado"
+
+#
 # File: gem/preferences.py, line: 90
 #, fuzzy
 msgid "Generate desktop entry for a game"
@@ -506,6 +506,12 @@ msgstr "Migración finalizada"
 #
 # File: gem/interface.py, line: 1892
 msgid "Missing binary"
+msgstr "Falta binario"
+
+#
+# File: gem/interface.py, line: 1892
+#, fuzzy
+msgid "Missing file"
 msgstr "Falta binario"
 
 #
@@ -1003,6 +1009,11 @@ msgstr "%s capturas de pantalla"
 # File: gem/interface.py, line: 1365
 #~ msgid "Cannot find ROMs path <b>%s</b> !"
 #~ msgstr "¡No puedo encontar el camino hacia la ROM <b>%s</b>!"
+
+#
+# File: gem/interface.py, line: 1892
+#~ msgid "Cannot found <b>%s</b> !"
+#~ msgstr "¡No se ha encontrado <b>%s</b>!"
 
 #
 # File: gem/windows.py, line: 1122

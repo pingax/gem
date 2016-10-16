@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.5\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2016-10-06 18:54+0200\n"
+"PO-Revision-Date: 2016-10-08 12:16+0200\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -139,15 +139,8 @@ msgstr "Impossible de trouver l'émulateur pour %s !"
 
 #
 # File: gem/interface.py, line: 942
-#, python-format
-msgid "Cannot found %s binary"
-msgstr "Impossible de trouver le binaire %s"
-
-#
-# File: gem/interface.py, line: 942
-#, python-format
-msgid "Cannot found <b>%s</b> !"
-msgstr "Impossible de trouver <b>%s</b> !"
+msgid "Cannot found %s"
+msgstr "Impossible de trouver %s"
 
 #
 # File: gem/main.py, line: 136
@@ -355,6 +348,11 @@ msgid "General"
 msgstr "Général"
 
 #
+# File: gem/interface.py, line: 400
+msgid "Generate a new database"
+msgstr "Généreration d'une nouvelle base de données"
+
+#
 # File: gem/preferences.py, line: 633
 msgid "Generate desktop entry for a game"
 msgstr "Générer une entrée de menu pour un jeu"
@@ -484,6 +482,11 @@ msgstr "Migration terminée"
 # File: gem/interface.py, line: 1709
 msgid "Missing binary"
 msgstr "Binaire manquant"
+
+#
+# File: gem/interface.py, line: 1709
+msgid "Missing file"
+msgstr "Fichier manquant"
 
 #
 # File: gem/interface.py, line: 115
@@ -775,9 +778,8 @@ msgstr "Mise à jour du fichier de configuration de %s"
 
 #
 # File: gem/interface.py, line: 109
-#, fuzzy, python-format
 msgid "Update v%(old)s database to v%(new)s."
-msgstr "Mise à jour de la base de données v(old)s vers v%(new)s."
+msgstr "Mise à jour de la base de données v%(old)s vers v%(new)s."
 
 #
 # File: gem/interface.py, line: 109
@@ -892,6 +894,11 @@ msgstr "_Nettoyer les informations du jeu"
 # File: gem/preferences.py, line: 335
 msgid "_Screenshots"
 msgstr "_Capture d'écran"
+
+#
+# File: gem/interface.py, line: 942
+#~ msgid "Cannot found <b>%s</b> !"
+#~ msgstr "Impossible de trouver <b>%s</b> !"
 
 #
 # File: src/window.py, line: 431
