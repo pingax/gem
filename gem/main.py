@@ -91,74 +91,80 @@ def main():
 
         args = parser.parse_args()
 
-    # ------------------------------------
-    #   Create default folders
-    # ------------------------------------
-
-    # ~/.config/gem
-    if not exists(expanduser(Path.User)):
-        mkdir(expanduser(Path.User))
-
-    # ~/.local/share/gem
-    if not exists(expanduser(Path.Data)):
-        mkdir(expanduser(Path.Data))
-
-    # ~/.local/share/gem/logs
-    if not exists(path_join(expanduser(Path.Data), "logs")):
-        mkdir(path_join(expanduser(Path.Data), "logs"))
-
-    # ~/.local/share/gem/icons
-    # ~/.local/share/gem/icons/consoles
-    # ~/.local/share/gem/icons/emulators
-    if not exists(expanduser(Path.Icons)):
-        makedirs(expanduser(Path.Consoles))
-        mkdir(expanduser(Path.Emulators))
-
-        # Consoles icons
-        for filename in glob(path_join(get_data("icons"), "consoles", "*")):
-            copy(filename, Path.Consoles)
-
-        # Emulators icons
-        for filename in glob(path_join(get_data("icons"), "emulators", "*")):
-            copy(filename, Path.Emulators)
-
-    # ------------------------------------
-    #   Create default configuration files
-    # ------------------------------------
-
-    if not exists(expanduser(path_join(Path.User, "gem.conf"))):
-        copy(get_data(Conf.Default),
-            expanduser(path_join(Path.User, "gem.conf")))
-
-    if not exists(expanduser(path_join(Path.User, "consoles.conf"))):
-        copy(get_data(Conf.Consoles),
-            expanduser(path_join(Path.User, "consoles.conf")))
-
-    if not exists(expanduser(path_join(Path.User, "emulators.conf"))):
-        copy(get_data(Conf.Emulators),
-            expanduser(path_join(Path.User, "emulators.conf")))
-
-    # ------------------------------------
-    #   Launch logger
-    # ------------------------------------
-
-    # Define log path with a global variable
-    logging.log_path = expanduser(path_join(Path.Data, "gem.log"))
-
-    # Save older log file to ~/.local/share/gem/gem.log.old
-    if(exists(logging.log_path)):
-        copy(logging.log_path, expanduser(path_join(Path.Data, "gem.log.old")))
-
-    # Generate logger from log.conf
-    fileConfig(get_data(Conf.Log))
-
-    logger = logging.getLogger("gem")
-
-    # ------------------------------------
-    #   Start main window
-    # ------------------------------------
-
     try:
+        # ------------------------------------
+        #   Create default folders
+        # ------------------------------------
+
+        # ~/.config/gem
+        if not exists(expanduser(Path.User)):
+            mkdir(expanduser(Path.User))
+
+        # ~/.local/share/gem
+        if not exists(expanduser(Path.Data)):
+            mkdir(expanduser(Path.Data))
+
+        # ~/.local/share/gem/logs
+        if not exists(path_join(expanduser(Path.Data), "logs")):
+            mkdir(path_join(expanduser(Path.Data), "logs"))
+
+        # ~/.local/share/gem/icons
+        if not exists(expanduser(Path.Icons)):
+            mkdir(expanduser(Path.Icons))
+
+        # ~/.local/share/gem/icons/consoles
+        if not exists(expanduser(Path.Consoles)):
+            mkdir(expanduser(Path.Consoles))
+
+            for filename in glob(path_join(
+                get_data("icons"), "consoles", "*")):
+                copy(filename, Path.Consoles)
+
+        # ~/.local/share/gem/icons/emulators
+        if not exists(expanduser(Path.Emulators)):
+            mkdir(expanduser(Path.Emulators))
+
+            for filename in glob(path_join(
+                get_data("icons"), "emulators", "*")):
+                copy(filename, Path.Emulators)
+
+        # ------------------------------------
+        #   Create default configuration files
+        # ------------------------------------
+
+        if not exists(expanduser(path_join(Path.User, "gem.conf"))):
+            copy(get_data(Conf.Default),
+                expanduser(path_join(Path.User, "gem.conf")))
+
+        if not exists(expanduser(path_join(Path.User, "consoles.conf"))):
+            copy(get_data(Conf.Consoles),
+                expanduser(path_join(Path.User, "consoles.conf")))
+
+        if not exists(expanduser(path_join(Path.User, "emulators.conf"))):
+            copy(get_data(Conf.Emulators),
+                expanduser(path_join(Path.User, "emulators.conf")))
+
+        # ------------------------------------
+        #   Launch logger
+        # ------------------------------------
+
+        # Define log path with a global variable
+        logging.log_path = expanduser(path_join(Path.Data, "gem.log"))
+
+        # Save older log file to ~/.local/share/gem/gem.log.old
+        if(exists(logging.log_path)):
+            copy(logging.log_path, expanduser(
+                path_join(Path.Data, "gem.log.old")))
+
+        # Generate logger from log.conf
+        fileConfig(get_data(Conf.Log))
+
+        logger = logging.getLogger("gem")
+
+        # ------------------------------------
+        #   Start main window
+        # ------------------------------------
+
         if args.preferences:
             from gem.preferences import Preferences
             Preferences(logger=logger)

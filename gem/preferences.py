@@ -1091,39 +1091,42 @@ class Console(Gtk.Builder):
         if path is None or not exists(expanduser(path)):
             path = None
 
-        if len(self.entry_name.get_text()) == 0:
+        if len(widget.get_text()) == 0:
             self.window.set_response_sensitive(Gtk.ResponseType.APPLY, False)
 
-            self.entry_name.set_icon_from_icon_name(
+            widget.set_icon_from_icon_name(
                 Gtk.EntryIconPosition.PRIMARY, None)
-            self.entry_name.set_tooltip_text(None)
+            widget.set_tooltip_text(None)
 
             self.error = True
 
         else:
-            section = self.consoles.has_section(self.entry_name.get_text())
+            section = self.consoles.has_section(widget.get_text())
 
-            if (self.modify and self.entry_name.get_text() == self.console) or \
-                (path is not None and not section):
+            if (self.modify and widget.get_text() == self.console) or \
+                (not self.modify and path is not None and not section):
                 self.window.set_response_sensitive(
                     Gtk.ResponseType.APPLY, True)
 
-                self.entry_name.set_icon_from_icon_name(
-                    Gtk.EntryIconPosition.PRIMARY, None)
-                self.entry_name.set_tooltip_text(None)
-
                 self.error = False
 
-            elif section:
+            if section:
                 self.window.set_response_sensitive(
                     Gtk.ResponseType.APPLY, False)
 
-                self.entry_name.set_icon_from_icon_name(
+                widget.set_icon_from_icon_name(
                     Gtk.EntryIconPosition.PRIMARY, "dialog-error")
-                self.entry_name.set_tooltip_text(_("This console already"
+                widget.set_tooltip_text(_("This console already"
                     " exist, please, choose another name"))
 
                 self.error = True
+
+            else:
+                widget.set_icon_from_icon_name(
+                    Gtk.EntryIconPosition.PRIMARY, None)
+                widget.set_tooltip_text(None)
+
+                self.error = False
 
 
     def __on_file_set(self, widget):
@@ -1423,39 +1426,40 @@ class Emulator(Gtk.Builder):
         if path is None or not exists(expanduser(path)):
             path = None
 
-        if len(self.entry_name.get_text()) == 0:
+        if len(widget.get_text()) == 0:
             self.window.set_response_sensitive(Gtk.ResponseType.APPLY, False)
 
-            self.entry_name.set_icon_from_icon_name(
+            widget.set_icon_from_icon_name(
                 Gtk.EntryIconPosition.PRIMARY, None)
-            self.entry_name.set_tooltip_text(None)
+            widget.set_tooltip_text(None)
 
             self.error = True
 
         else:
-            section = self.emulators.has_section(self.entry_name.get_text())
+            section = self.emulators.has_section(widget.get_text())
 
-            if (self.modify and self.entry_name.get_text() == self.emulator) or \
-                (path is not None and not section):
+            if (self.modify and widget.get_text() == self.emulator) or \
+                (not self.modify and path is not None and not section):
                 self.window.set_response_sensitive(
                     Gtk.ResponseType.APPLY, True)
 
-                self.entry_name.set_icon_from_icon_name(
-                    Gtk.EntryIconPosition.PRIMARY, None)
-                self.entry_name.set_tooltip_text(None)
-
-                self.error = False
-
-            elif section:
+            if section:
                 self.window.set_response_sensitive(
                     Gtk.ResponseType.APPLY, False)
 
-                self.entry_name.set_icon_from_icon_name(
+                widget.set_icon_from_icon_name(
                     Gtk.EntryIconPosition.PRIMARY, "dialog-error")
-                self.entry_name.set_tooltip_text(_("This emulator already"
+                widget.set_tooltip_text(_("This emulator already"
                     " exist, please, choose another name"))
 
                 self.error = True
+
+            else:
+                widget.set_icon_from_icon_name(
+                    Gtk.EntryIconPosition.PRIMARY, None)
+                widget.set_tooltip_text(None)
+
+                self.error = False
 
 
     def __on_file_set(self, widget):
