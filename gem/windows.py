@@ -502,7 +502,7 @@ class DialogParameters(Dialog):
 
         for emulator in self.interface.emulators.sections():
             icon = icon_from_data(self.interface.emulators.item(
-                emulator, "icon"), self.empty, 24, 24)
+                emulator, "icon"), self.empty, 24, 24, "emulators")
 
             row = self.model.append([icon, emulator])
 

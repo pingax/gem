@@ -82,6 +82,9 @@ class Path:
     Data        = path_join(xdg_data_home, "gem")
     Apps        = path_join(xdg_data_home, "applications")
     Logs        = path_join(xdg_data_home, "gem", "logs")
+    Icons       = path_join(xdg_data_home, "gem", "icons")
+    Consoles    = path_join(xdg_data_home, "gem", "icons", "consoles")
+    Emulators   = path_join(xdg_data_home, "gem", "icons", "emulators")
 
 class Conf:
     Log         = path_join("config", "log.conf")
@@ -133,7 +136,7 @@ def get_data(path, egg="gem"):
         return None
 
 
-def icon_from_data(icon, default=None, width=24, height=24):
+def icon_from_data(icon, default=None, width=24, height=24, folder=None):
     """
     Load an icon or return an empty icon if not found
     """
@@ -143,7 +146,10 @@ def icon_from_data(icon, default=None, width=24, height=24):
 
         path = icon
         if not exists(expanduser(icon)):
-            path = get_data(path_join("icons", "%s.%s" % (icon, Icons.Ext)))
+            path = path_join(Path.Icons, "%s.%s" % (icon, Icons.Ext))
+            if folder is not None:
+                path = path_join(
+                    Path.Icons, folder, "%s.%s" % (icon, Icons.Ext))
 
         if path is not None and exists(expanduser(path)):
             try:

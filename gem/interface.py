@@ -1104,8 +1104,8 @@ class Interface(Gtk.Builder):
                     binary = self.emulators.item(emulator, "binary")
                     if binary is not None and exists(binary):
 
-                        icon = icon_from_data(
-                            self.consoles.item(console, "icon"), self.empty)
+                        icon = icon_from_data(self.consoles.item(
+                            console, "icon"), self.empty, folder="consoles")
 
                         row = self.model_consoles.append([icon, console])
 
@@ -2084,8 +2084,7 @@ class Interface(Gtk.Builder):
 
                 icon = self.consoles.get(console, "icon")
                 if not exists(icon):
-                    icon = get_data(
-                        path_join("icons", "%s.%s" % (icon, Icons.Ext)))
+                    icon = path_join(Path.Consoles, "%s.%s" % (icon, Icons.Ext))
 
                 values = {
                     "%name%": title,

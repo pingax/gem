@@ -144,7 +144,7 @@ class Preferences(Gtk.Builder):
             self.icons_theme = Gtk.IconTheme.get_default()
 
             self.icons_theme.append_search_path(
-                get_data(path_join("icons", "interface")))
+                get_data(path_join("ui", "icons")))
 
             # HACK: Create an empty image to avoid g_object_set_qdata warning
             self.empty = Pixbuf.new(Colorspace.RGB, True, 8, 24, 24)
@@ -668,7 +668,8 @@ class Preferences(Gtk.Builder):
         self.selection["console"] = None
 
         for name in self.consoles.sections():
-            image = icon_from_data(self.consoles.item(name, "icon"), self.empty)
+            image = icon_from_data(
+                self.consoles.item(name, "icon"), self.empty, folder="consoles")
 
             path = self.consoles.item(name, "roms")
 
@@ -694,8 +695,8 @@ class Preferences(Gtk.Builder):
         self.selection["emulator"] = None
 
         for name in self.emulators.sections():
-            image = icon_from_data(
-                self.emulators.item(name, "icon"), self.empty)
+            image = icon_from_data(self.emulators.item(name, "icon"),
+                self.empty, folder="emulators")
 
             binary = self.emulators.item(name, "binary")
 
@@ -982,7 +983,7 @@ class Console(Gtk.Builder):
 
         for emulator in self.emulators.sections():
             icon = icon_from_data(self.emulators.item(emulator, "icon"),
-                self.empty, 24, 24)
+                self.empty, 24, 24, "emulators")
 
             emulators_rows[emulator] = self.model_emulators.append(
                 [icon, emulator])
@@ -1008,7 +1009,7 @@ class Console(Gtk.Builder):
             # Icon
             self.path = self.consoles.item(self.console, "icon")
             self.image_console.set_from_pixbuf(
-                icon_from_data(self.path, self.empty, 64, 64))
+                icon_from_data(self.path, self.empty, 64, 64, "consoles"))
 
             # Emulator
             if self.consoles.item(self.console, "emulator", str()) in \
@@ -1144,11 +1145,11 @@ class Console(Gtk.Builder):
         Select a new icon
         """
 
-        dialog = IconViewer(self, _("Choose an icon"), self.path)
+        dialog = IconViewer(self, _("Choose an icon"), self.path, "consoles")
 
         if dialog.new_path is not None:
             self.image_console.set_from_pixbuf(
-                icon_from_data(dialog.new_path, self.empty, 64, 64))
+                icon_from_data(dialog.new_path, self.empty, 64, 64, "consoles"))
 
             self.path = dialog.new_path
 
@@ -1323,7 +1324,7 @@ class Emulator(Gtk.Builder):
             # Icon
             self.path = self.emulators.item(self.emulator, "icon")
             self.image_emulator.set_from_pixbuf(
-                icon_from_data(self.path, self.empty, 64, 64))
+                icon_from_data(self.path, self.empty, 64, 64, "emulators"))
 
             # Regex
             self.entry_save.set_text(
@@ -1476,11 +1477,12 @@ class Emulator(Gtk.Builder):
         Select a new icon
         """
 
-        dialog = IconViewer(self, _("Choose an icon"), self.path)
+        dialog = IconViewer(self, _("Choose an icon"), self.path, "emulators")
 
         if dialog.new_path is not None:
             self.image_emulator.set_from_pixbuf(
-                icon_from_data(dialog.new_path, self.empty, 64, 64))
+                icon_from_data(
+                    dialog.new_path, self.empty, 64, 64, "emulators"))
 
             self.path = dialog.new_path
 
@@ -1489,7 +1491,7 @@ class Emulator(Gtk.Builder):
 
 class IconViewer(Dialog):
 
-    def __init__(self, parent, title, path):
+    def __init__(self, parent, title, path, folder):
         """
         Constructor
         """
@@ -1502,6 +1504,8 @@ class IconViewer(Dialog):
 
         self.path = path
         self.new_path = None
+
+        self.folder = folder
 
         if parent is None:
             self.empty = Pixbuf(Colorspace.RGB, True, 8, 24, 24)
@@ -1677,18 +1681,20 @@ class IconViewer(Dialog):
         self.icons_data = dict()
 
         # Fill icons view
-        for icon in glob(path_join(get_data("icons"), "*.%s" % Icons.Ext)):
+        for icon in \
+            glob(path_join(Path.Icons, self.folder, "*.%s" % Icons.Ext)):
             name = splitext(basename(icon))[0]
 
             self.icons_data[name] = self.model_icons.append([
-                icon_from_data(icon, self.empty, 72, 72), name])
+                icon_from_data(icon, self.empty, 72, 72, self.folder), name])
 
         # Set filechooser or icons view selected item
         if self.path is not None:
 
             # Check if current path is a gem icons
-            data = path_join(
-                get_data("icons"), "%s.%s" % (self.path, Icons.Ext))
+            data = path_join(Path.Icons, self.folder,
+                "%s.%s" % (self.path, Icons.Ext))
+
             if data is not None and exists(data):
                 self.view_icons.select_path(
                     self.model_icons.get_path(self.icons_data[self.path]))

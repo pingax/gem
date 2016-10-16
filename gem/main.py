@@ -39,6 +39,8 @@ from os.path import join as path_join
 from os.path import exists
 from os.path import expanduser
 
+from glob import glob
+
 from shutil import copy2 as copy
 
 from argparse import ArgumentParser
@@ -98,9 +100,27 @@ def main():
         mkdir(expanduser(Path.User))
 
     # ~/.local/share/gem
-    # ~/.local/share/gem/logs
     if not exists(expanduser(Path.Data)):
-        makedirs(path_join(expanduser(Path.Data), "logs"))
+        mkdir(expanduser(Path.Data))
+
+    # ~/.local/share/gem/logs
+    if not exists(path_join(expanduser(Path.Data), "logs")):
+        mkdir(path_join(expanduser(Path.Data), "logs"))
+
+    # ~/.local/share/gem/icons
+    # ~/.local/share/gem/icons/consoles
+    # ~/.local/share/gem/icons/emulators
+    if not exists(expanduser(Path.Icons)):
+        makedirs(expanduser(Path.Consoles))
+        mkdir(expanduser(Path.Emulators))
+
+        # Consoles icons
+        for filename in glob(path_join(get_data("icons"), "consoles", "*")):
+            copy(filename, Path.Consoles)
+
+        # Emulators icons
+        for filename in glob(path_join(get_data("icons"), "emulators", "*")):
+            copy(filename, Path.Emulators)
 
     # ------------------------------------
     #   Create default configuration files
