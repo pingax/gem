@@ -793,6 +793,7 @@ class DialogViewer(Dialog):
         Initialize widgets signals
         """
 
+        # self.connect("size-allocate", self.update_screenshot)
         self.connect("key-press-event", self.change_screenshot)
 
         self.tool_first.connect("clicked", self.change_screenshot)
@@ -896,7 +897,7 @@ class DialogViewer(Dialog):
             self.tool_last.set_sensitive(False)
 
 
-    def update_screenshot(self):
+    def update_screenshot(self, widget=None, event=None):
         """
         Change current screenshot size
         """
