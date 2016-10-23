@@ -36,8 +36,7 @@ from gi.repository.GdkPixbuf import Pixbuf
 from gi.repository.GdkPixbuf import Colorspace
 
 # Package
-from pkg_resources import require
-from pkg_resources import _manager
+from pkg_resources import resource_filename
 from pkg_resources import DistributionNotFound
 
 # Translation
@@ -121,18 +120,17 @@ def get_data(path, egg="gem"):
     """
 
     try:
-        data = require(egg)[0].get_resource_filename(
-            _manager, path_join(*([egg, path])))
+        data = resource_filename(egg, path)
 
         if exists(data):
             return data
 
         return path
 
-    except DistributionNotFound:
+    except DistributionNotFound as error:
         return path
 
-    except KeyError:
+    except KeyError as error:
         return None
 
 

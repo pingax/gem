@@ -91,6 +91,23 @@ def main():
 
         args = parser.parse_args()
 
+    # ------------------------------------
+    #   Launch logger
+    # ------------------------------------
+
+    # Define log path with a global variable
+    logging.log_path = expanduser(path_join(Path.Data, "gem.log"))
+
+    # Save older log file to ~/.local/share/gem/gem.log.old
+    if(exists(logging.log_path)):
+        copy(logging.log_path, expanduser(
+            path_join(Path.Data, "gem.log.old")))
+
+    # Generate logger from log.conf
+    fileConfig(get_data(Conf.Log))
+
+    logger = logging.getLogger("gem")
+
     try:
         # ------------------------------------
         #   Create default folders
@@ -143,23 +160,6 @@ def main():
         if not exists(expanduser(path_join(Path.User, "emulators.conf"))):
             copy(get_data(Conf.Emulators),
                 expanduser(path_join(Path.User, "emulators.conf")))
-
-        # ------------------------------------
-        #   Launch logger
-        # ------------------------------------
-
-        # Define log path with a global variable
-        logging.log_path = expanduser(path_join(Path.Data, "gem.log"))
-
-        # Save older log file to ~/.local/share/gem/gem.log.old
-        if(exists(logging.log_path)):
-            copy(logging.log_path, expanduser(
-                path_join(Path.Data, "gem.log.old")))
-
-        # Generate logger from log.conf
-        fileConfig(get_data(Conf.Log))
-
-        logger = logging.getLogger("gem")
 
         # ------------------------------------
         #   Start main window

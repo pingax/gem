@@ -13,9 +13,7 @@
     - Avoid to save as last console a console which is already save as last console.
     - Save previous log file to gem.log.old.
     - Show emulators icons in parameters and console dialogs
-
     - Add nestopia to emulators.
-
     - Fix wrong paths for log and editor windows.
     - Fix wrong name in headerbar when rename a game.
     - Fix old selection remain when reload interface.
