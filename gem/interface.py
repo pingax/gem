@@ -662,8 +662,8 @@ class Interface(Gtk.Builder):
         #   Configuration
         # ------------------------------------
 
-        self.config = Configuration(expanduser(
-            path_join(Path.User, "gem.conf")))
+        self.config = Configuration(
+            expanduser(path_join(Path.User, "gem.conf")))
         self.config.add_missing_data(get_data(Conf.Default))
 
         self.emulators = Configuration(
