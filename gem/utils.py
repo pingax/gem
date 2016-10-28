@@ -53,8 +53,13 @@ from xdg.BaseDirectory import xdg_config_home
 # ------------------------------------------------------------------
 
 class Gem:
-    Version     = "0.5"
-    CodeName    = "Rich Duck"
+    Name        = "Graphical Emulators Manager"
+    Version     = "0.5.1"
+    CodeName    = "Magica DeSpell"
+    Website     = "https://gem.tuxfamily.org/"
+    Copyleft    = "Copyleft 2016 - Kawa Team"
+    Description = _("Manage your emulators easily and have fun")
+
     OldColumns  = dict(
         played="play",
         last_played="last_play",
@@ -80,6 +85,7 @@ class Path:
     User        = path_join(xdg_config_home, "gem")
     Data        = path_join(xdg_data_home, "gem")
     Apps        = path_join(xdg_data_home, "applications")
+    Roms        = path_join(xdg_data_home, "gem", "roms")
     Logs        = path_join(xdg_data_home, "gem", "logs")
     Icons       = path_join(xdg_data_home, "gem", "icons")
     Consoles    = path_join(xdg_data_home, "gem", "icons", "consoles")

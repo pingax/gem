@@ -1,6 +1,11 @@
 # GEM Changelog
 
-## Version 0.5 - Rich Duck
+## Version 0.5.1 - Magica DeSpell
+    - Change default rom folders for consoles.conf
+    - Fix use correct data for version and code name
+    - Fix command generator not use specific default argument
+
+## Version 0.5 - Rich Duck (25 Oct, 2016)
     - Add an entry in game and main menus to remove a ROM and his data.
     - Add an entry in main menu to show GEM log.
     - Add an argument to specify rom path in snap and save regex.

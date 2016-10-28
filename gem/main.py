@@ -31,10 +31,7 @@ import logging
 from logging.config import fileConfig
 
 # System
-from sys import argv
-
 from os import mkdir
-from os import makedirs
 from os.path import join as path_join
 from os.path import exists
 from os.path import expanduser
@@ -74,22 +71,20 @@ def main():
     #   Arguments
     # ------------------------------------
 
-    if len(argv) >= 1:
+    parser = ArgumentParser(
+        description="Graphical Emulators Manager",
+        epilog="Copyleft 2016 - Kawa Team",
+        conflict_handler="resolve")
 
-        parser = ArgumentParser(
-            description="Graphical Emulators Manager",
-            epilog="Copyleft 2016 - Kawa Team",
-            conflict_handler="resolve")
+    parser.add_argument("-v", "--version", action="version",
+        version="GEM %s (%s) - Licence GPLv3" % (Gem.Version, Gem.CodeName),
+        help="show the current version")
+    parser.add_argument("-p", "--preferences", action="store_true",
+        help="configure gem")
+    parser.add_argument("-r", "--reconstruct", action="store_true",
+        help="reconstruct gem db")
 
-        parser.add_argument("-v", "--version", action="version",
-            version="GEM %s (%s) - Licence GPLv3" % (Gem.Version, Gem.CodeName),
-            help="show the current version")
-        parser.add_argument("-p", "--preferences", action="store_true",
-            help="configure gem")
-        parser.add_argument("-r", "--reconstruct", action="store_true",
-            help="reconstruct gem db")
-
-        args = parser.parse_args()
+    args = parser.parse_args()
 
     # ------------------------------------
     #   Launch logger
@@ -113,21 +108,9 @@ def main():
         #   Create default folders
         # ------------------------------------
 
-        # ~/.config/gem
-        if not exists(expanduser(Path.User)):
-            mkdir(expanduser(Path.User))
-
-        # ~/.local/share/gem
-        if not exists(expanduser(Path.Data)):
-            mkdir(expanduser(Path.Data))
-
-        # ~/.local/share/gem/logs
-        if not exists(path_join(expanduser(Path.Data), "logs")):
-            mkdir(path_join(expanduser(Path.Data), "logs"))
-
-        # ~/.local/share/gem/icons
-        if not exists(expanduser(Path.Icons)):
-            mkdir(expanduser(Path.Icons))
+        for folder in [Path.User, Path.Data, Path.Logs, Path.Roms, Path.Icons]:
+            if not exists(expanduser(folder)):
+                mkdir(expanduser(folder))
 
         # ~/.local/share/gem/icons/consoles
         if not exists(expanduser(Path.Consoles)):

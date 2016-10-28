@@ -219,12 +219,7 @@ class Interface(Gtk.Builder):
         #   Initialize variables
         # ------------------------------------
 
-        self.application_title = "Graphical Emulators Manager"
-        self.application_version = "0.5"
-        self.application_version_name = "Rich Duck"
-
-        self.title = "%s - %s (%s)" % (self.application_title,
-            self.application_version, self.application_version_name)
+        self.title = "%s - %s (%s)" % (Gem.Name, Gem.Version, Gem.CodeName)
 
         self.list_thread = int()
 
@@ -944,10 +939,30 @@ class Interface(Gtk.Builder):
         Show about window
         """
 
-        about = self.get_object("window_about")
+        about = Gtk.AboutDialog()
+
+        about.set_transient_for(self.window)
+
+        about.set_program_name(Gem.Name)
+        about.set_version("%s (%s)" % (Gem.Version, Gem.CodeName))
+        about.set_logo_icon_name(Icons.Game)
+
+        about.set_authors([
+            "PacMiam (Lubert Aurélien)" ])
+        about.set_artists([
+            "Tango projects - GPLv3",
+            "Gelide projects - GPLv3",
+            "Evan-Amos - CC-by-SA 3.0" ])
+        about.set_translator_credits(_("translator-credits"))
+
+        about.set_website(Gem.Website)
+        about.set_comments(Gem.Description)
+        about.set_copyright(Gem.Copyleft)
+
+        about.set_license_type(Gtk.License.GPL_3_0)
 
         about.run()
-        about.hide()
+        about.destroy()
 
 
     def __on_show_viewer(self, widget):
@@ -1563,7 +1578,7 @@ class Interface(Gtk.Builder):
             args = self.emulators.get(emulator, "default")
 
         exceptions = self.database.select("games", "arguments",
-            { "filename": filename })
+            { "filename": basename(filename) })
         if exceptions is not None and len(exceptions) > 0:
             args = exceptions
 
@@ -1714,7 +1729,8 @@ class Interface(Gtk.Builder):
             self.menu_item_rename.set_sensitive(True)
 
         # Remove this game from threads list
-        del self.threads[gamename]
+        if gamename in self.threads:
+            del self.threads[gamename]
 
 
     def __on_game_renamed(self, widget):

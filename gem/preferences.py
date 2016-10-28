@@ -182,13 +182,11 @@ class Preferences(Gtk.Builder):
         self.window = self.get_object("window_preferences")
 
         # Properties
-        if self.interface is not None:
-            self.window.set_title("%s - %s" % (
-                self.interface.window.get_title(), _("Preferences")))
-            self.window.set_transient_for(self.interface.window)
+        self.window.set_title("%s - %s (%s) - %s" % (
+            Gem.Name, Gem.Version, Gem.CodeName, _("Preferences")))
 
-        else:
-            self.window.set_title(_("Preferences"))
+        if self.interface is not None:
+            self.window.set_transient_for(self.interface.window)
 
         self.window.set_default_icon_name("gtk-preferences")
 
