@@ -28,8 +28,24 @@ from os.path import exists
 # Database
 import sqlite3
 
-# Interface
+# Translation
+from gettext import gettext as _
+from gettext import textdomain
+from gettext import bindtextdomain
+
+# ------------------------------------------------------------------
+#   Modules - GEM
+# ------------------------------------------------------------------
+
+from gem.utils import *
 from gem.configuration import Configuration
+
+# ------------------------------------------------------------------
+#   Translation
+# ------------------------------------------------------------------
+
+bindtextdomain("gem", get_data("i18n"))
+textdomain("gem")
 
 # ------------------------------------------------------------------
 #   Class
@@ -474,7 +490,7 @@ class Database(object):
             columns_data[column] = str()
 
         if old_data is not None:
-            self.logger.info("Start to migrate %d entries" % len(old_data))
+            self.logger.info(_("Start to migrate %d entries" % len(old_data)))
 
             for row in old_data:
                 columns = deepcopy(columns_data)

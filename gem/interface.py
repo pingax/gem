@@ -120,18 +120,6 @@ def launch_gem(logger, reconstruct_db=False):
     #   Database
     # ------------------------------------
 
-    # Rename old databases
-    if exists(expanduser(path_join(Path.User, "games.db"))):
-        logger.info(_("Update v0.2 database to new schema."))
-        rename(expanduser(path_join(Path.User, "games.db")),
-            expanduser(path_join(Path.User, "gem.db")))
-
-    # Move databases from ~/.config/gem to ~/.local/share/gem
-    if exists(expanduser(path_join(Path.User, "gem.db"))):
-        logger.info(_("Move database to %s.") % Path.User)
-        rename(expanduser(path_join(Path.User, "gem.db")),
-            expanduser(path_join(Path.Data, "gem.db")))
-
     # Connect database
     database = Database(expanduser(path_join(Path.Data, "gem.db")),
         get_data(Conf.Databases), logger)
@@ -167,24 +155,6 @@ def launch_gem(logger, reconstruct_db=False):
             database.migrate("games", Gem.OldColumns)
 
         logger.info(_("Migration complete"))
-
-    # ------------------------------------
-    #   Exceptions
-    # ------------------------------------
-
-    # Migrate old exceptions system
-    if exists(expanduser(path_join(Path.User, "exceptions.conf"))):
-        logger.info(_("Migrate old parameters system to database."))
-
-        exceptions = Configuration(
-            expanduser(path_join(Path.User, "exceptions.conf")))
-
-        for section in exceptions.sections():
-            database.modify("games",
-                { "arguments": exceptions.get(section, "args") },
-                { "filename": section })
-
-        remove(expanduser(path_join(Path.User, "exceptions.conf")))
 
     # ------------------------------------
     #   Launch interface
@@ -1592,9 +1562,8 @@ class Interface(Gtk.Builder):
                 args += " %s" %self.emulators.get(emulator, "fullscreen")
 
         # Windowed
-        else:
-            if self.emulators.has_option(emulator, "windowed"):
-                args += " %s" %self.emulators.get(emulator, "windowed")
+        elif self.emulators.has_option(emulator, "windowed"):
+            args += " %s" %self.emulators.get(emulator, "windowed")
 
         # ----------------------------
         #   Generate correct command
@@ -1637,6 +1606,8 @@ class Interface(Gtk.Builder):
             output, error_output = proc.communicate()
 
             self.logger.info(_("Close %s") % title)
+
+            proc.terminate()
 
         except OSError as error:
             no_error = False
@@ -1790,8 +1761,8 @@ class Interface(Gtk.Builder):
         if self.selection["name"] is not None:
             title = self.selection["name"]
 
-        dialog = Question(self, title, _("Would you really want to clean "
-            "informations for this game ?"))
+        dialog = Question(self, title,
+            _("Would you really want to clean informations for this game ?"))
 
         if dialog.run() == Gtk.ResponseType.YES:
             self.model_games[treeiter][Columns.Name] = gamename

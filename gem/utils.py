@@ -60,10 +60,7 @@ class Gem:
     Copyleft    = "Copyleft 2016 - Kawa Team"
     Description = _("Manage your emulators easily and have fun")
 
-    OldColumns  = dict(
-        played="play",
-        last_played="last_play",
-        last_played_time="last_play_time" )
+    OldColumns  = dict()
 
 class Icons:
     Ext         = "png"
