@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.5\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2016-10-08 12:16+0200\n"
+"PO-Revision-Date: 2016-11-04 16:48+0100\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -50,8 +50,8 @@ msgstr "%s à été supprimé du disque"
 #
 # File: gem/interface.py, line: 2026
 #, python-format
-msgid "%s is already in the roms folder. Cancel drop."
-msgstr "%s est déjà dans le dossier des roms. Annulation de l'ajout."
+msgid "%s is already in the roms folder. Canceling operation."
+msgstr "%s est déjà dans le dossier des roms. Annulation de l'opération."
 
 #
 # File: gem/interface.py, line: 1882
@@ -139,6 +139,7 @@ msgstr "Impossible de trouver l'émulateur pour %s !"
 
 #
 # File: gem/interface.py, line: 942
+#, python-format
 msgid "Cannot found %s"
 msgstr "Impossible de trouver %s"
 
@@ -163,8 +164,8 @@ msgstr "Impossible d'importer l'interface: %s"
 #
 # File: gem/interface.py, line: 2054
 #, python-format
-msgid "Cannot write into %s. Cancel drop."
-msgstr "Impossible d'écrire dans %s. Annulation de l'installation."
+msgid "Cannot write into %s. Canceling operation."
+msgstr "Impossible d'écrire dans %s. Annulation de l'opération."
 
 #
 # File: gem/interface.py, line: 477
@@ -256,8 +257,8 @@ msgstr "Options par défaut"
 #
 # File: gem/interface.py, line: 2054
 #, python-format
-msgid "Destination %s not exist. Cancel drop."
-msgstr "La destination %s n'existe pas. Annulation de l'installation."
+msgid "Destination %s not exist. Canceling operation."
+msgstr "La destination %s n'existe pas. Annulation de l'opération."
 
 #
 # File: gem/interface.py, line: 2017
@@ -442,6 +443,11 @@ msgid "Log to %s"
 msgstr "Journalisation dans %s"
 
 #
+# File: gem/utils.py, line: 61
+msgid "Manage your emulators easily and have fun"
+msgstr "Gérer vos émulateurs facilement et amusez-vous"
+
+#
 # File: src/window.py, line: 436
 msgid "Mark a game as favorite"
 msgstr "Marquer un jeu comme favori"
@@ -465,11 +471,6 @@ msgstr "Marquer comme _multi-joueurs"
 
 #
 # File: src/window.py, line: 446
-msgid "Migrate old parameters system to database."
-msgstr "Migration de l'ancien système de paramètres vers la base de données."
-
-#
-# File: src/window.py, line: 446
 msgid "Migrating entries from old database"
 msgstr "Migration des données depuis l'ancienne base de données"
 
@@ -487,12 +488,6 @@ msgstr "Binaire manquant"
 # File: gem/interface.py, line: 1709
 msgid "Missing file"
 msgstr "Fichier manquant"
-
-#
-# File: gem/interface.py, line: 115
-#, python-format
-msgid "Move database to %s."
-msgstr "Déplacement de la base de données vers %s."
 
 #
 # File: src/window.py, line: 368
@@ -719,6 +714,12 @@ msgid "Start database migration"
 msgstr "Démarrage de la migration de la base de données"
 
 #
+# File: gem/database.py, line: 493
+#, python-format
+msgid "Start to migrate %d entries"
+msgstr "Début de la migration de %d entrées"
+
+#
 # File: gem/interface.py, line: 290
 msgid "Switch fullscreen mode"
 msgstr "Définir le mode plein écran"
@@ -750,7 +751,8 @@ msgstr ""
 #
 # File: gem/ui/interface.glade, line: 960
 msgid ""
-"This game going to be removed from your disk and this action is irreversible."
+"This game is going to be removed from your disk and this action is "
+"irreversible."
 msgstr ""
 "Ce jeu va être supprimé de votre disque et cette action est irréversible."
 
@@ -762,7 +764,7 @@ msgstr "Ce jeu à été supprimé avec succès"
 #
 # File: gem/preferences.py, line: 1020
 #, python-format
-msgid "This rom already exist in %s. Do you want to replace it ?"
+msgid "This rom already exists in %s. Do you want to replace it ?"
 msgstr "Cette ROM existe déjà dans %s. Voulez-vous la remplacer ?"
 
 #
@@ -778,13 +780,9 @@ msgstr "Mise à jour du fichier de configuration de %s"
 
 #
 # File: gem/interface.py, line: 109
+#, python-format
 msgid "Update v%(old)s database to v%(new)s."
 msgstr "Mise à jour de la base de données v%(old)s vers v%(new)s."
-
-#
-# File: gem/interface.py, line: 109
-msgid "Update v0.2 database to new schema."
-msgstr "Mise à jour des bases de données v0.2 vers le nouveau format."
 
 #
 # File: gem/preferences.py, line: 1050
@@ -896,51 +894,6 @@ msgid "_Screenshots"
 msgstr "_Capture d'écran"
 
 #
-# File: gem/interface.py, line: 942
-#~ msgid "Cannot found <b>%s</b> !"
-#~ msgstr "Impossible de trouver <b>%s</b> !"
-
-#
-# File: src/window.py, line: 431
-#~ msgid "Launch game"
-#~ msgstr "Lancer le jeu"
-
-#
-# File: src/window.py, line: 375
-#~ msgid "Played"
-#~ msgstr "Parties"
-
-#
-# File: src/window.py, line: 446
-#~ msgid "Remove %s from database"
-#~ msgstr "Retire %s de la base de données"
-
-#
-# File: gem/interface.py, line: 1482
-#~ msgid "Start %s"
-#~ msgstr "Démarrage de %s"
-
-#
-# File: gem/interface.py, line: 128
-#~ msgid "Switch version %(old)s to %(new)s."
-#~ msgstr "Changement de version de %(old)s vers %(new)s."
-
-#
-# File: gem/interface.py, line: 1495
-#~ msgid "Terminate"
-#~ msgstr "Arrêt"
-
-#
-# File: src/window.py, line: 940
-#~ msgid "Would you really want to remove this game from database ?"
-#~ msgstr "Voulez-vous vraiment supprimer ce jeu de la base de données ?"
-
-#
-# File: gem/interface.py, line: 396
-#~ msgid "_Parameters"
-#~ msgstr "_Paramètres"
-
-#
-# File: src/window.py, line: 446
-#~ msgid "_Remove game from database"
-#~ msgstr "_Supprimer le jeu de la base de données"
+# File: gem/interface.py, line: 926
+msgid "translator-credits"
+msgstr ""

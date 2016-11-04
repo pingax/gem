@@ -551,7 +551,7 @@ class DialogRemove(Dialog):
 
         # Properties
         label.set_alignment(0, .5)
-        label.set_text(_("This game going to be removed from your disk and "
+        label.set_text(_("This game is going to be removed from your disk and "
             "this action is irreversible."))
         label.set_line_wrap(True)
         label.set_single_line_mode(False)

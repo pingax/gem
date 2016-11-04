@@ -2224,7 +2224,7 @@ class Interface(Gtk.Builder):
 
                     if exists(path_join(rom_path, basename(path))):
                         dialog = Question(self, basename(path),
-                            _("This rom already exist in %s. Do you want to "
+                            _("This rom already exists in %s. Do you want to "
                             "replace it ?") % rom_path)
 
                         move = False
@@ -2250,15 +2250,15 @@ class Interface(Gtk.Builder):
 
                 if dirname(path) == rom_path:
                     self.set_message(basename(path), _("%s is already in the "
-                        "roms folder. Cancel drop.") % basename(path))
+                        "roms folder. Canceling operation.") % basename(path))
 
                 elif not exists(rom_path):
                     self.set_message(basename(path), _("Destination %s not "
-                        "exist. Cancel drop.") % rom_path)
+                        "exist. Canceling operation.") % rom_path)
 
                 elif not access(rom_path, W_OK):
                     self.set_message(basename(path), _("Cannot write into %s. "
-                        "Cancel drop.") % rom_path)
+                        "Canceling operation.") % rom_path)
 
         if need_to_reload:
             self.load_interface()
