@@ -801,6 +801,8 @@ class Interface(Gtk.Builder):
                 self.config.item("keys", "copy", "<Control>C"),
             self.menu_item_desktop:
                 self.config.item("keys", "desktop", "<Control>G"),
+            self.menu_item_launch:
+                self.config.item("keys", "start", "Return"),
             self.tool_item_launch:
                 self.config.item("keys", "start", "Return"),
             self.menu_item_rename:
