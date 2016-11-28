@@ -55,7 +55,7 @@ from xdg.BaseDirectory import xdg_config_home
 class Gem:
     Name        = "Graphical Emulators Manager"
     Version     = "0.5.1"
-    CodeName    = "Magica DeSpell"
+    CodeName    = "Magica De Spell"
     Website     = "https://gem.tuxfamily.org/"
     Copyleft    = "Copyleft 2016 - Kawa Team"
     Description = _("Manage your emulators easily and have fun")

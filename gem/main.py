@@ -33,6 +33,7 @@ from logging.config import fileConfig
 # System
 from os import mkdir
 from os.path import join as path_join
+from os.path import isfile
 from os.path import exists
 from os.path import expanduser
 
@@ -87,6 +88,14 @@ def main():
     args = parser.parse_args()
 
     # ------------------------------------
+    #   Create default folders
+    # ------------------------------------
+
+    for folder in [Path.User, Path.Data, Path.Logs, Path.Roms, Path.Icons]:
+        if not exists(expanduser(folder)):
+            mkdir(expanduser(folder))
+
+    # ------------------------------------
     #   Launch logger
     # ------------------------------------
 
@@ -105,12 +114,8 @@ def main():
 
     try:
         # ------------------------------------
-        #   Create default folders
+        #   Icons folders
         # ------------------------------------
-
-        for folder in [Path.User, Path.Data, Path.Logs, Path.Roms, Path.Icons]:
-            if not exists(expanduser(folder)):
-                mkdir(expanduser(folder))
 
         # ~/.local/share/gem/icons/consoles
         if not exists(expanduser(Path.Consoles)):
@@ -118,7 +123,8 @@ def main():
 
             for filename in glob(path_join(
                 get_data("icons"), "consoles", "*")):
-                copy(filename, Path.Consoles)
+                if isfile(filename):
+                    copy(filename, Path.Consoles)
 
         # ~/.local/share/gem/icons/emulators
         if not exists(expanduser(Path.Emulators)):
@@ -126,7 +132,8 @@ def main():
 
             for filename in glob(path_join(
                 get_data("icons"), "emulators", "*")):
-                copy(filename, Path.Emulators)
+                if isfile(filename):
+                    copy(filename, Path.Emulators)
 
         # ------------------------------------
         #   Create default configuration files

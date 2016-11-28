@@ -1035,35 +1035,36 @@ class Interface(Gtk.Builder):
         Show emulator's configuration file
         """
 
-        emulator = self.consoles.get(self.selection["console"], "emulator")
+        if self.selection["console"] is not None:
+            emulator = self.consoles.get(self.selection["console"], "emulator")
 
-        if self.selection["game"] is not None:
-            data = self.database.get("games",
-                { "filename": basename(self.selection["game"]) })
+            if self.selection["game"] is not None:
+                data = self.database.get("games",
+                    { "filename": basename(self.selection["game"]) })
 
-            if data is not None and len(data.get("emulator")) > 0:
-                if self.emulators.has_section(data.get("emulator")):
-                    emulator = data.get("emulator")
+                if data is not None and len(data.get("emulator")) > 0:
+                    if self.emulators.has_section(data.get("emulator")):
+                        emulator = data.get("emulator")
 
-        if self.emulators.has_option(emulator, "configuration"):
-            path = self.emulators.get(emulator, "configuration")
+            if self.emulators.has_option(emulator, "configuration"):
+                path = self.emulators.get(emulator, "configuration")
 
-            if path is not None and exists(expanduser(path)):
-                dialog = DialogEditor(self,
-                    _("Configuration for %s") % emulator, expanduser(path))
+                if path is not None and exists(expanduser(path)):
+                    dialog = DialogEditor(self,
+                        _("Configuration for %s") % emulator, expanduser(path))
 
-                response = dialog.run()
+                    response = dialog.run()
 
-                if response == Gtk.ResponseType.APPLY:
-                    with open(path, 'w') as pipe:
-                        pipe.write(dialog.buffer_editor.get_text(
-                            dialog.buffer_editor.get_start_iter(),
-                            dialog.buffer_editor.get_end_iter(), True))
+                    if response == Gtk.ResponseType.APPLY:
+                        with open(path, 'w') as pipe:
+                            pipe.write(dialog.buffer_editor.get_text(
+                                dialog.buffer_editor.get_start_iter(),
+                                dialog.buffer_editor.get_end_iter(), True))
 
-                    self.logger.info(
-                        _("Update %s configuration file") % emulator)
+                        self.logger.info(
+                            _("Update %s configuration file") % emulator)
 
-                dialog.destroy()
+                    dialog.destroy()
 
 
     def append_consoles(self):
