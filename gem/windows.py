@@ -384,7 +384,7 @@ class DialogEditor(Dialog):
 
 class DialogParameters(Dialog):
 
-    def __init__(self, parent, title, parameters):
+    def __init__(self, parent, title, parameters, default):
         """
         Constructor
         """
@@ -396,6 +396,8 @@ class DialogParameters(Dialog):
         # ------------------------------------
 
         self.interface = parent
+
+        self.default = default
 
         self.arguments, self.emulator = str(), str()
         if parameters is not None:
@@ -471,6 +473,7 @@ class DialogParameters(Dialog):
 
         self.entry.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, "gtk-clear")
+        self.entry.set_placeholder_text(self.default)
 
         # ------------------------------------
         #   Integrate widgets
@@ -510,6 +513,8 @@ class DialogParameters(Dialog):
                 self.combo.set_active_iter(row)
 
         self.entry.set_text(self.arguments)
+
+        self.combo.grab_focus()
 
 
 class DialogRemove(Dialog):

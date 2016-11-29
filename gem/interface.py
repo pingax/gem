@@ -1883,7 +1883,13 @@ class Interface(Gtk.Builder):
         if self.selection["name"] is not None:
             title = self.selection["name"]
 
-        dialog = DialogParameters(self, title, data)
+        # Default value
+        default = str()
+        if self.selection.get("console") is not None:
+            default = self.emulators.get(self.consoles.get(
+                self.selection.get("console"), "emulator"), "default")
+
+        dialog = DialogParameters(self, title, data, default)
 
         if dialog.run() == Gtk.ResponseType.OK:
 
