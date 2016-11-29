@@ -1885,9 +1885,17 @@ class Interface(Gtk.Builder):
 
         # Default value
         default = str()
-        if self.selection.get("console") is not None:
-            default = self.emulators.get(self.consoles.get(
-                self.selection.get("console"), "emulator"), "default")
+
+        # Use a specific emulator for this game
+        if len(data[1]) > 0:
+            if self.emulators.has_option(data[1], "default"):
+                default = self.emulators.get(data[1], "default")
+
+        # Use default parameters from default emulator
+        elif self.selection.get("console") is not None:
+            emulator = self.consoles.get(self.selection["console"], "emulator")
+            if self.emulators.has_option(emulator, "default"):
+                default = self.emulators.get(emulator, "default")
 
         dialog = DialogParameters(self, title, data, default)
 

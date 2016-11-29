@@ -491,6 +491,8 @@ class DialogParameters(Dialog):
         Initialize widgets signals
         """
 
+        self.combo.connect("changed", self.__on_selected_emulator)
+
         self.entry.connect("icon-press", on_entry_clear)
 
 
@@ -515,6 +517,22 @@ class DialogParameters(Dialog):
         self.entry.set_text(self.arguments)
 
         self.combo.grab_focus()
+
+
+    def __on_selected_emulator(self, widget=None):
+        """
+        Select an emulator in combobox and update parameters placeholder
+        """
+
+        default = str()
+
+        emulator = self.combo.get_active_id()
+
+        if emulator is not None:
+            if self.interface.emulators.has_option(emulator, "default"):
+                default = self.interface.emulators.get(emulator, "default")
+
+        self.entry.set_placeholder_text(default)
 
 
 class DialogRemove(Dialog):
