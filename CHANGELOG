@@ -1,6 +1,10 @@
 # GEM Changelog
 
-## Version 0.5.1 - Magica DeSpell
+## Version 0.5.2 - Flintheart Glomgold
+    - Fix cannot launch GEM from a fresh installation
+    - Fix show errors when use emulator configurator with missing binary
+
+## Version 0.5.1 - Magica De Spell (5 Nov, 2016)
     - Change default rom folders for consoles.conf
     - Change default shortcut for "Remove from database" from Delete to Control+D
     - Fix forget to set shortcut for "Launch" entry in game menu
