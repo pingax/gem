@@ -33,13 +33,20 @@ if(version_info[0] >= 3):
 else:
     from ConfigParser import SafeConfigParser
 
-# Interface
-from gem.utils import get_data
-
 # Translation
 from gettext import lgettext as _
 from gettext import textdomain
 from gettext import bindtextdomain
+
+# ------------------------------------------------------------------
+#   Modules - GEM
+# ------------------------------------------------------------------
+
+try:
+    from gem.utils import get_data
+
+except ImportError as error:
+    sys_exit("Cannot found gem module: %s" % str(error))
 
 # ------------------------------------------------------------------
 #   Translation
@@ -57,6 +64,8 @@ class Configuration(SafeConfigParser):
     def __init__(self, path):
         """
         Constructor
+
+        :param str path: Configuration file path
         """
 
         SafeConfigParser.__init__(self)
@@ -79,7 +88,14 @@ class Configuration(SafeConfigParser):
 
     def item(self, section, option, default=None):
         """
-        Get an item from configuration file
+        Return an item from configuration
+
+        :param str section: Section name
+        :param str option: Option name
+        :param str default: Default value to return
+
+        :return: Option value
+        :rtype: str/None
         """
 
         if self.has_section(section) and self.has_option(section, option):
@@ -90,7 +106,11 @@ class Configuration(SafeConfigParser):
 
     def append(self, section, option, value):
         """
-        Append a section to current configuration file
+        Append a new section to configuration
+
+        :param str section: Section name
+        :param str option: Option name
+        :param str value: Option value
         """
 
         if not self.has_section(section):
@@ -100,7 +120,11 @@ class Configuration(SafeConfigParser):
 
     def modify(self, section, option, value):
         """
-        Set a section to current configuration file
+        Modify a section from configuration
+
+        :param str section: Section name
+        :param str option: Option name
+        :param str value: Option value
         """
 
         if self.has_section(section):
@@ -112,7 +136,10 @@ class Configuration(SafeConfigParser):
 
     def rename(self, section, new_name):
         """
-        Rename a section from current configuration file
+        Rename a section from configuration
+
+        :param str section: Old section name
+        :param str new_name: New section name
         """
 
         if self.has_section(section) and not self.has_section(new_name):
@@ -125,7 +152,9 @@ class Configuration(SafeConfigParser):
 
     def remove(self, section):
         """
-        Remove a section from current configuration file
+        Remove a section from configuration
+
+        :param str section: Section name
         """
 
         if self.has_section(section):
@@ -134,21 +163,22 @@ class Configuration(SafeConfigParser):
 
     def update(self):
         """
-        Write the new values into configuration file
+        Write all data from cache into configuration file
         """
 
         with open(self.path, 'w') as pipe:
             self.write(pipe)
 
 
-    def add_missing_data(self, default_conf):
+    def add_missing_data(self, path):
         """
-        Append to the configuration file all the missing data from an original
-        configuration file
+        Append to configuration all missing data from another configuration
+
+        :param str path: Other configuration file path
         """
 
-        if exists(expanduser(default_conf)):
-            config = Configuration(default_conf)
+        if exists(expanduser(path)):
+            config = Configuration(path)
 
             for section in config.sections():
 

@@ -18,17 +18,8 @@
 # ------------------------------------------------------------------
 
 # ------------------------------------------------------------------
-#   Modules - System
+#   Modules
 # ------------------------------------------------------------------
-
-# Interface
-from gi.repository import Gtk
-from gi.repository import Gdk
-from gi.repository import GLib
-from gi.repository import Pango
-
-from gi.repository.GdkPixbuf import Pixbuf
-from gi.repository.GdkPixbuf import InterpType
 
 # Path
 from os.path import exists
@@ -40,10 +31,34 @@ from gettext import textdomain
 from gettext import bindtextdomain
 
 # ------------------------------------------------------------------
+#   Modules - Interface
+# ------------------------------------------------------------------
+
+try:
+    from gi import require_version
+
+    require_version("Gtk", "3.0")
+
+    from gi.repository import Gtk
+    from gi.repository import Gdk
+    from gi.repository import GLib
+    from gi.repository import Pango
+
+    from gi.repository.GdkPixbuf import Pixbuf
+    from gi.repository.GdkPixbuf import InterpType
+
+except ImportError as error:
+    sys_exit("Cannot found python3-gobject module: %s" % str(error))
+
+# ------------------------------------------------------------------
 #   Modules - GEM
 # ------------------------------------------------------------------
 
-from gem.utils import *
+try:
+    from gem.utils import *
+
+except ImportError as error:
+    sys_exit("Cannot found gem module: %s" % str(error))
 
 # ------------------------------------------------------------------
 #   Translation

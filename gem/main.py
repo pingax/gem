@@ -21,11 +21,6 @@
 #   Modules - System
 # ------------------------------------------------------------------
 
-# GI
-from gi import require_version
-
-require_version("Gtk", "3.0")
-
 # Logging
 import logging
 from logging.config import fileConfig
@@ -36,6 +31,8 @@ from os.path import join as path_join
 from os.path import isfile
 from os.path import exists
 from os.path import expanduser
+
+from sys import exit as sys_exit
 
 from glob import glob
 
@@ -49,11 +46,27 @@ from gettext import textdomain
 from gettext import bindtextdomain
 
 # ------------------------------------------------------------------
+#   Modules - Interface
+# ------------------------------------------------------------------
+
+try:
+    from gi import require_version
+
+    require_version("Gtk", "3.0")
+
+except ImportError as error:
+    sys_exit("Cannot found python3-gobject module: %s" % str(error))
+
+# ------------------------------------------------------------------
 #   Modules - GEM
 # ------------------------------------------------------------------
 
-from gem.utils import *
-from gem.configuration import Configuration
+try:
+    from gem.utils import *
+    from gem.configuration import Configuration
+
+except ImportError as error:
+    sys_exit("Cannot found gem module: %s" % str(error))
 
 # ------------------------------------------------------------------
 #   Translation

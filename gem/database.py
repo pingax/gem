@@ -37,8 +37,12 @@ from gettext import bindtextdomain
 #   Modules - GEM
 # ------------------------------------------------------------------
 
-from gem.utils import *
-from gem.configuration import Configuration
+try:
+    from gem.utils import *
+    from gem.configuration import Configuration
+
+except ImportError as error:
+    sys_exit("Cannot found gem module: %s" % str(error))
 
 # ------------------------------------------------------------------
 #   Translation
@@ -56,6 +60,10 @@ class Database(object):
     def __init__(self, db_path, configuration_path, logger):
         """
         Constructor
+
+        :param str db_path: Database path
+        :param str configuration_path: Database configuration path
+        :param logging.Logger logger: Logging object
         """
 
         # ------------------------------------
@@ -65,8 +73,13 @@ class Database(object):
         self.path = db_path
         self.configuration = Configuration(configuration_path)
 
-        self.sql_types = { "NULL": None, "BOOL": int, "INTEGER": int,
-            "REAL": float, "TEXT": str, "BLOB": memoryview }
+        self.sql_types = {
+            "NULL": None,
+            "BOOL": int,
+            "INTEGER": int,
+            "REAL": float,
+            "TEXT": str,
+            "BLOB": memoryview }
 
         # ------------------------------------
         #   Logger
@@ -93,7 +106,7 @@ class Database(object):
 
     def __generate_request(self, table, data):
         """
-        Generate a list which contain correct string for sql request
+        Generate a container with parameters which contains request strings
 
         :param str table: Table name
         :param dict data: Columns and values data (Dict keys are columns)
@@ -155,7 +168,7 @@ class Database(object):
 
     def __rename_table(self, table, name):
         """
-        Rename a database table
+        Rename a table from database
 
         :param str table: Table name
         :param str name: New table name
@@ -176,7 +189,7 @@ class Database(object):
 
     def __remove_table(self, table):
         """
-        Rename a database table
+        Remove a table from database
 
         :param str table: Table name
         """
@@ -196,7 +209,7 @@ class Database(object):
 
     def __add_column(self, table, name, sql_type):
         """
-        Add a column in the database
+        Add a new column into database
 
         :param str table: Table name
         :param str name: Column name
@@ -224,7 +237,7 @@ class Database(object):
 
         :param str table: Table name
 
-        :return: Table columns
+        :return: Columns list
         :rtype: list
         """
 
@@ -251,7 +264,7 @@ class Database(object):
 
     def __insert(self, table, data):
         """
-        Insert a data in database
+        Insert a new row into database
 
         :param str table: Table name
         :param dict data: Columns and values data (Dict keys are columns)
@@ -290,7 +303,7 @@ class Database(object):
 
     def __update(self, table, data, where):
         """
-        Insert a data in database
+        Update a row from database
 
         :param str table: Table name
         :param dict data: Columns and values data (Dict keys are columns)
@@ -317,14 +330,14 @@ class Database(object):
 
     def select(self, table, columns, where=None):
         """
-        Get a specific value from the database
+        Get rows from the database
 
         :param str table: Table name
         :param list columns: Columns name
         :param dict where: Search conditions (Dict keys are columns)
 
-        :return: Entry data
-        :rtype: str or bool or None
+        :return: Database rows
+        :rtype: str/bool/None
         """
 
         value = None
@@ -436,7 +449,7 @@ class Database(object):
 
     def check_integrity(self):
         """
-        Check if current database respect configuration schema
+        Check if database respect configuration schema
 
         :return: Integrity status
         :rtype: bool

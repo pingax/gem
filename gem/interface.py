@@ -18,25 +18,8 @@
 # ------------------------------------------------------------------
 
 # ------------------------------------------------------------------
-#   Modules - System
+#   Modules
 # ------------------------------------------------------------------
-
-# Interface
-from gi.repository import Gtk
-from gi.repository import Gdk
-
-from gi.repository.Gdk import EventType
-
-from gi.repository.GLib import idle_add
-from gi.repository.GLib import timeout_add
-from gi.repository.GLib import threads_init
-from gi.repository.GLib import source_remove
-
-from gi.repository.GObject import MainLoop
-
-from gi.repository.GdkPixbuf import Pixbuf
-from gi.repository.GdkPixbuf import InterpType
-from gi.repository.GdkPixbuf import Colorspace
 
 # Logging
 from logging import getLogger
@@ -91,14 +74,46 @@ from gettext import textdomain
 from gettext import bindtextdomain
 
 # ------------------------------------------------------------------
+#   Modules - Interface
+# ------------------------------------------------------------------
+
+try:
+    from gi import require_version
+
+    require_version("Gtk", "3.0")
+
+    from gi.repository import Gtk
+    from gi.repository import Gdk
+
+    from gi.repository.Gdk import EventType
+
+    from gi.repository.GLib import idle_add
+    from gi.repository.GLib import timeout_add
+    from gi.repository.GLib import threads_init
+    from gi.repository.GLib import source_remove
+
+    from gi.repository.GObject import MainLoop
+
+    from gi.repository.GdkPixbuf import Pixbuf
+    from gi.repository.GdkPixbuf import InterpType
+    from gi.repository.GdkPixbuf import Colorspace
+
+except ImportError as error:
+    sys_exit("Cannot found python3-gobject module: %s" % str(error))
+
+# ------------------------------------------------------------------
 #   Modules - GEM
 # ------------------------------------------------------------------
 
-from gem.utils import *
-from gem.windows import *
-from gem.database import Database
-from gem.preferences import Preferences
-from gem.configuration import Configuration
+try:
+    from gem.utils import *
+    from gem.windows import *
+    from gem.database import Database
+    from gem.preferences import Preferences
+    from gem.configuration import Configuration
+
+except ImportError as error:
+    sys_exit("Cannot found gem module: %s" % str(error))
 
 # ------------------------------------------------------------------
 #   Translation
@@ -1093,7 +1108,7 @@ class Interface(Gtk.Builder):
                     if binary is not None and exists(binary):
 
                         icon = icon_from_data(self.consoles.item(
-                            console, "icon"), self.empty, folder="consoles")
+                            console, "icon"), self.empty, subfolder="consoles")
 
                         row = self.model_consoles.append([icon, console])
 

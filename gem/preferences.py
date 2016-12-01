@@ -18,17 +18,8 @@
 # ------------------------------------------------------------------
 
 # ------------------------------------------------------------------
-#   Modules - System
+#   Modules
 # ------------------------------------------------------------------
-
-# Interface
-from gi.repository import Gtk
-from gi.repository import Gdk
-
-from gi.repository.Gdk import EventType
-
-from gi.repository.GdkPixbuf import Pixbuf
-from gi.repository.GdkPixbuf import Colorspace
 
 # Path
 from os.path import exists
@@ -45,12 +36,36 @@ from gettext import textdomain
 from gettext import bindtextdomain
 
 # ------------------------------------------------------------------
+#   Modules - Interface
+# ------------------------------------------------------------------
+
+try:
+    from gi import require_version
+
+    require_version("Gtk", "3.0")
+
+    from gi.repository import Gtk
+    from gi.repository import Gdk
+
+    from gi.repository.Gdk import EventType
+
+    from gi.repository.GdkPixbuf import Pixbuf
+    from gi.repository.GdkPixbuf import Colorspace
+
+except ImportError as error:
+    sys_exit("Cannot found python3-gobject module: %s" % str(error))
+
+# ------------------------------------------------------------------
 #   Modules - GEM
 # ------------------------------------------------------------------
 
-from gem.utils import *
-from gem.windows import *
-from gem.configuration import Configuration
+try:
+    from gem.utils import *
+    from gem.windows import *
+    from gem.configuration import Configuration
+
+except ImportError as error:
+    sys_exit("Cannot found gem module: %s" % str(error))
 
 # ------------------------------------------------------------------
 #   Translation
@@ -64,7 +79,6 @@ textdomain("gem")
 # ------------------------------------------------------------------
 
 class Manager(object):
-
     CONSOLE  = 0
     EMULATOR = 1
 
@@ -666,8 +680,8 @@ class Preferences(Gtk.Builder):
         self.selection["console"] = None
 
         for name in self.consoles.sections():
-            image = icon_from_data(
-                self.consoles.item(name, "icon"), self.empty, folder="consoles")
+            image = icon_from_data(self.consoles.item(name, "icon"),
+                self.empty, subfolder="consoles")
 
             path = self.consoles.item(name, "roms")
 
@@ -694,7 +708,7 @@ class Preferences(Gtk.Builder):
 
         for name in self.emulators.sections():
             image = icon_from_data(self.emulators.item(name, "icon"),
-                self.empty, folder="emulators")
+                self.empty, subfolder="emulators")
 
             binary = self.emulators.item(name, "binary")
 

@@ -30,23 +30,48 @@ from os.path import join as path_join
 
 from datetime import datetime
 
-# Interface
-from gi.repository import Gtk
-from gi.repository.GdkPixbuf import Pixbuf
-from gi.repository.GdkPixbuf import Colorspace
-
-# Package
-from pkg_resources import resource_filename
-from pkg_resources import DistributionNotFound
-
 # Translation
 from gettext import gettext as _
 from gettext import textdomain
 from gettext import bindtextdomain
 
-# XDG
-from xdg.BaseDirectory import xdg_data_home
-from xdg.BaseDirectory import xdg_config_home
+# ------------------------------------------------------------------
+#   Modules - Packages
+# ------------------------------------------------------------------
+
+try:
+    from pkg_resources import resource_filename
+    from pkg_resources import DistributionNotFound
+
+except ImportError as error:
+    sys_exit("Cannot found python3-pkg-resources module: %s" % str(error))
+
+# ------------------------------------------------------------------
+#   Modules - Interface
+# ------------------------------------------------------------------
+
+try:
+    from gi import require_version
+
+    require_version("Gtk", "3.0")
+
+    from gi.repository import Gtk
+    from gi.repository.GdkPixbuf import Pixbuf
+    from gi.repository.GdkPixbuf import Colorspace
+
+except ImportError as error:
+    sys_exit("Cannot found python3-gobject module: %s" % str(error))
+
+# ------------------------------------------------------------------
+#   Modules - XDG
+# ------------------------------------------------------------------
+
+try:
+    from xdg.BaseDirectory import xdg_data_home
+    from xdg.BaseDirectory import xdg_config_home
+
+except ImportError as error:
+    sys_exit("Cannot found pyxdg module: %s" % str(error))
 
 # ------------------------------------------------------------------
 #   Class
@@ -120,6 +145,12 @@ def get_data(path, egg="gem"):
     Provides easy access to data in a python egg
 
     Thanks Deluge :)
+
+    :param str path: File path
+    :param str egg: Python egg name
+
+    :return: Path
+    :rtype: str/None
     """
 
     try:
@@ -133,24 +164,33 @@ def get_data(path, egg="gem"):
     except DistributionNotFound as error:
         return path
 
-    except KeyError as error:
-        return None
+    return None
 
 
-def icon_from_data(icon, default=None, width=24, height=24, folder=None):
+def icon_from_data(icon, fallback=None, width=24, height=24, subfolder=None):
     """
     Load an icon or return an empty icon if not found
+
+    :param str icon: Icon path
+    :param GdkPixbuf.Pixbuf fallback: Fallback icon to return if wanted icon
+        was not found
+    :param int width: Icon width
+    :param int height: Icon height
+    :param str subfolder: Subfolder in Path.Icons
+
+    :return: Icon object
+    :rtype: GdkPixbuf.Pixbuf
     """
 
     if icon is not None:
-        icon_name = splitext(basename(icon))[0]
-
         path = icon
+
         if not exists(expanduser(icon)):
             path = path_join(Path.Icons, "%s.%s" % (icon, Icons.Ext))
-            if folder is not None:
+
+            if subfolder is not None:
                 path = path_join(
-                    Path.Icons, folder, "%s.%s" % (icon, Icons.Ext))
+                    Path.Icons, subfolder, "%s.%s" % (icon, Icons.Ext))
 
         if path is not None and exists(expanduser(path)):
             try:
@@ -159,16 +199,25 @@ def icon_from_data(icon, default=None, width=24, height=24, folder=None):
             except GError:
                 pass
 
-    if default is None:
-        default = Pixbuf.new(Colorspace.RGB, True, 8, width, height)
-        default.fill(0x00000000)
+    # Return an empty icon
+    if fallback is None:
+        fallback = Pixbuf.new(Colorspace.RGB, True, 8, width, height)
+        fallback.fill(0x00000000)
 
-    return default
+    return fallback
 
 
 def icon_load(name, size=16, fallback="image-missing"):
     """
     Get an icon from data folder
+
+    :param str name: Icon name in icons theme
+    :param int size: Icon width and height
+    :param str/GdkPixbuf.Pixbuf fallback: Fallback icon to return if wanted icon
+        was not found
+
+    :return: Icon from icons theme
+    :rtype: GdkPixbuf.Pixbuf
     """
 
     icons_theme = Gtk.IconTheme.get_default()
@@ -202,7 +251,13 @@ def icon_load(name, size=16, fallback="image-missing"):
 
 def string_from_date(date, date_format="%d-%m-%Y %H:%M:%S"):
     """
-    Get time since last play
+    Get a pretty string from the interval between NOW() and the wanted date
+
+    :param datetime date: Date to compare with NOW()
+    :param str date_format: Date string format
+
+    :return: Pretty string
+    :rtype: str/None
     """
 
     date_string = None
@@ -240,8 +295,22 @@ def string_from_date(date, date_format="%d-%m-%Y %H:%M:%S"):
 
 def on_entry_clear(widget, pos, event):
     """
-    Reset entry filter when icon was clicked
+    Reset an entry widget when specific icon is clicked
+
+    :param Gtk.Entry widget: Entry widget
+    :param Gtk.EntryIconPosition pos: Specific icon from entry widget
+    :param Gdk.Event event: Wdget event
+
+    :return: Function state
+    :rtype: bool
     """
+
+    if type(widget) is not Gtk.Entry:
+        return False
 
     if pos == Gtk.EntryIconPosition.SECONDARY and len(widget.get_text()) > 0:
         widget.set_text(str())
+
+        return True
+
+    return False
