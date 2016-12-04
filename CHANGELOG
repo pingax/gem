@@ -1,5 +1,8 @@
 # GEM Changelog
 
+## Version 0.6 - Magicball
+    - Add the possibility to switch ui theme between dark and light
+
 ## Version 0.5.2 - Flintheart Glomgold
     - Fix cannot launch GEM from a fresh installation
     - Fix show errors when use emulator configurator with missing binary

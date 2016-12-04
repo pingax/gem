@@ -361,6 +361,7 @@ class Interface(Gtk.Builder):
 
         self.menu_item_preferences = self.get_object("menu_preferences")
         self.menu_item_gem_log = self.get_object("menu_log")
+        self.menu_item_dark_theme = self.get_object("menu_dark_theme")
         self.menu_item_about = self.get_object("menu_about")
         self.menu_item_quit = self.get_object("menu_quit")
 
@@ -380,6 +381,7 @@ class Interface(Gtk.Builder):
 
         self.menu_item_preferences.set_label(_("_Preferences"))
         self.menu_item_gem_log.set_label(_("Show main _log"))
+        self.menu_item_dark_theme.set_label(_("Use dark theme"))
         self.menu_item_about.set_label(_("_About"))
         self.menu_item_quit.set_label(_("_Quit"))
 
@@ -525,6 +527,8 @@ class Interface(Gtk.Builder):
             "activate", Preferences, self, self.logger)
         self.menu_item_gem_log.connect(
             "activate", self.__on_show_log)
+        self.menu_item_dark_theme.connect(
+            "toggled", self.__on_activate_dark_theme)
         self.menu_item_about.connect(
             "activate", self.__on_show_about)
         self.menu_item_quit.connect(
@@ -657,6 +661,16 @@ class Interface(Gtk.Builder):
         # ------------------------------------
 
         self.__init_shortcuts()
+
+        # ------------------------------------
+        #   Theme
+        # ------------------------------------
+
+        dark_theme_status = bool(int(self.config.item("gem", "dark_theme", 0)))
+
+        on_change_theme(dark_theme_status)
+
+        self.menu_item_dark_theme.set_active(dark_theme_status)
 
         # ------------------------------------
         #   Widgets
@@ -2186,6 +2200,21 @@ class Interface(Gtk.Builder):
         else:
             self.get_object("image_fullscreen").set_from_icon_name(
                 "view-restore", Gtk.IconSize.BUTTON)
+
+
+    def __on_activate_dark_theme(self, widget):
+        """
+        Change ui theme between dark and light version
+        """
+
+        dark_theme_status = bool(int(self.config.item("gem", "dark_theme", 0)))
+
+        on_change_theme(not dark_theme_status)
+
+        self.config.modify("gem", "dark_theme", int(not dark_theme_status))
+        self.config.update()
+
+        self.menu_item_dark_theme.set_active(not dark_theme_status)
 
 
     def __on_dnd_received_data(self, widget, context, x, y, data, info, time):
