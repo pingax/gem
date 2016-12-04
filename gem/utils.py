@@ -260,37 +260,34 @@ def string_from_date(date, date_format="%d-%m-%Y %H:%M:%S"):
     :rtype: str/None
     """
 
-    date_string = None
+    if date is None:
+        return None
 
-    if date is not None:
+    if type(date) is str:
+        date = datetime.strptime(str(date), date_format)
 
-        now = datetime.now()
-        game_date = datetime.strptime(str(date), date_format)
+    days = (datetime.now() - date).days
 
-        value = (now - game_date).days
+    if days == 0:
+        return _("Today")
+    elif days == 1:
+        return _("Yesterday")
+    elif days < 30:
+        return _("%d days ago") % int(days)
 
-        if value == 0:
-            return _("Today")
-        elif value == 1:
-            return _("Yesterday")
-        elif value < 30:
-            return _("%d days ago") % int(value)
-        else:
-            months = int(value / 30)
+    months = int(days / 30)
 
-            if months == 1:
-                return _("Last month")
-            elif months < 12:
-                return _("%d months ago") % int(months)
-            else:
-                years = int(value / 365)
+    if months == 1:
+        return _("Last month")
+    elif months < 12:
+        return _("%d months ago") % int(months)
 
-                if years < 2:
-                    return _("Last year")
+    years = int(months / 12)
 
-                return _("%d years ago") % int(years)
+    if years < 2:
+        return _("Last year")
 
-    return None
+    return _("%d years ago") % int(years)
 
 
 def on_entry_clear(widget, pos, event):
@@ -314,3 +311,14 @@ def on_entry_clear(widget, pos, event):
         return True
 
     return False
+
+
+def on_change_theme(status=False):
+    """
+    Change dark status of interface theme
+
+    :param bool status: Use dark theme
+    """
+
+    Gtk.Settings.get_default().set_property(
+        "gtk-application-prefer-dark-theme", status)
