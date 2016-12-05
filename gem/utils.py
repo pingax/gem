@@ -79,8 +79,8 @@ except ImportError as error:
 
 class Gem:
     Name        = "Graphical Emulators Manager"
-    Version     = "0.5.2"
-    CodeName    = "Flintheart Glomgold"
+    Version     = "0.6"
+    CodeName    = "Magicball"
     Website     = "https://gem.tuxfamily.org/"
     Copyleft    = "Copyleft 2016 - Kawa Team"
     Description = _("Manage your emulators easily and have fun")
