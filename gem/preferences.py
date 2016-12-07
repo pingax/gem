@@ -713,7 +713,7 @@ class Preferences(Gtk.Builder):
             binary = self.emulators.item(name, "binary")
 
             check, font = self.empty, Pango.Style.NORMAL
-            if not exists(expanduser(binary)):
+            if len(get_binary_path(binary)) == 0:
                 check = icon_load("dialog-warning", 16, self.empty)
                 font = Pango.Style.OBLIQUE
 
@@ -1268,7 +1268,8 @@ class Emulator(Gtk.Builder):
         # ------------------------------------
 
         self.entry_name = self.get_object("entry_emulator_name")
-        self.file_binary = self.get_object("file_console_binary")
+        self.entry_binary = self.get_object("entry_emulator_binary")
+        self.button_binary = self.get_object("button_emulator_binary")
         self.file_configuration = self.get_object("file_emulator_configuration")
 
         self.button_emulator = self.get_object("button_emulator_image")
@@ -1290,7 +1291,8 @@ class Emulator(Gtk.Builder):
         self.entry_name.connect("changed", self.__on_entry_update)
         self.entry_name.connect("icon-press", on_entry_clear)
 
-        self.file_binary.connect("file-set", self.__on_file_set)
+        self.entry_binary.connect("changed", self.__on_entry_update)
+        self.entry_binary.connect("icon-press", on_entry_clear)
 
         self.entry_launch.connect("icon-press", on_entry_clear)
         self.entry_windowed.connect("icon-press", on_entry_clear)
@@ -1300,6 +1302,7 @@ class Emulator(Gtk.Builder):
         self.entry_screenshots.connect("icon-press", on_entry_clear)
 
         self.button_emulator.connect("clicked", self.__on_select_icon)
+        self.button_binary.connect("clicked", self.__on_file_set)
 
 
     def __start_interface(self):
@@ -1319,8 +1322,7 @@ class Emulator(Gtk.Builder):
             # Binary
             folder = expanduser(
                 self.emulators.item(self.emulator, "binary", str()))
-            if exists(folder):
-                self.file_binary.set_filename(folder)
+            self.entry_binary.set_text(folder)
 
             # Configuration
             folder = expanduser(
@@ -1396,8 +1398,8 @@ class Emulator(Gtk.Builder):
 
         self.section = self.entry_name.get_text()
 
-        path_binary = self.file_binary.get_filename()
-        if path_binary is None or not exists(path_binary):
+        path_binary = self.entry_binary.get_text()
+        if path_binary is None:
             path_binary = expanduser(
                 self.emulators.item(self.emulator, "binary", str()))
 
@@ -1426,36 +1428,65 @@ class Emulator(Gtk.Builder):
         Check if a value is not already used
         """
 
-        name = widget.get_text()
-
-        path = self.file_binary.get_filename()
-        if path is None or not exists(expanduser(path)):
-            path = None
-
         self.error = False
+
+        # ------------------------------------
+        #   Emulator name
+        # ------------------------------------
+
         icon, tooltip = None, None
 
-        if len(name) == 0:
+        name = self.entry_name.get_text()
+
+        if name is None or len(name) == 0:
             self.error = True
 
         elif self.emulators.has_section(name):
-            icon, tooltip = "dialog-error", _(
-                "This emulator already exist, please, choose another name")
 
-            if not self.modify:
+            if not self.modify or (self.modify and not name == self.emulator):
                 self.error = True
 
-            elif self.modify and not name == self.emulator:
-                self.error = True
+                icon = "dialog-error"
+                tooltip = _(
+                    "This emulator already exist, please, choose another name")
 
             else:
                 icon, tooltip = None, None
 
-        widget.set_icon_from_icon_name(Gtk.EntryIconPosition.PRIMARY, icon)
-        widget.set_tooltip_text(tooltip)
+        if widget == self.entry_name:
+            self.entry_name.set_icon_from_icon_name(
+                Gtk.EntryIconPosition.PRIMARY, icon)
+            self.entry_name.set_tooltip_text(tooltip)
 
-        if not self.error and path is not None:
+        # ------------------------------------
+        #   Emulator binary
+        # ------------------------------------
+
+        icon, tooltip = None, None
+
+        path = self.entry_binary.get_text()
+
+        if path is None or len(path) == 0:
+            self.error = True
+
+        elif len(get_binary_path(path)) == 0:
+            self.error = True
+
+            icon = "dialog-error"
+            tooltip = _("This binary not exist, please, check the path")
+
+        if widget == self.entry_binary:
+            self.entry_binary.set_icon_from_icon_name(
+                Gtk.EntryIconPosition.PRIMARY, icon)
+            self.entry_binary.set_tooltip_text(tooltip)
+
+        # ------------------------------------
+        #   Manage error
+        # ------------------------------------
+
+        if not self.error:
             self.window.set_response_sensitive(Gtk.ResponseType.APPLY, True)
+
         else:
             self.window.set_response_sensitive(Gtk.ResponseType.APPLY, False)
 
@@ -1465,13 +1496,15 @@ class Emulator(Gtk.Builder):
         Change response button state when user set a file
         """
 
-        path = widget.get_filename()
+        dialog = Gtk.FileChooserDialog(_("Select a binary"), self.window,
+            Gtk.FileChooserAction.OPEN,
+            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+             Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
 
-        if path is None or not exists(expanduser(path)):
-            self.window.set_response_sensitive(Gtk.ResponseType.APPLY, False)
+        if dialog.run() == Gtk.ResponseType.OK:
+            self.entry_binary.set_text(dialog.get_filename())
 
-        elif len(self.entry_name.get_text()) > 0 and not self.error:
-            self.window.set_response_sensitive(Gtk.ResponseType.APPLY, True)
+        dialog.destroy()
 
 
     def __on_select_icon(self, widget):

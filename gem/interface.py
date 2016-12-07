@@ -1573,7 +1573,7 @@ class Interface(Gtk.Builder):
 
         binary = self.emulators.get(emulator, "binary")
 
-        if not exists(binary):
+        if len(get_binary_path(binary)) == 0:
             self.set_message(_("Missing binary"), _("Cannot found %s" % binary))
 
             return None

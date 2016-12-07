@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.19.0 -->
+<!-- Generated with glade 3.18.3 -->
 <interface>
   <requires lib="gtk+" version="3.16"/>
   <object class="GtkDialog" id="dialog_console">
@@ -91,7 +91,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="row_spacing">8</property>
-                    <property name="column_spacing">16</property>
+                    <property name="column_spacing">8</property>
                     <child>
                       <object class="GtkButton" id="button_console_image">
                         <property name="width_request">64</property>
@@ -111,7 +111,7 @@
                         </child>
                       </object>
                       <packing>
-                        <property name="left_attach">2</property>
+                        <property name="left_attach">3</property>
                         <property name="top_attach">0</property>
                         <property name="height">2</property>
                       </packing>
@@ -174,7 +174,7 @@
                       <packing>
                         <property name="left_attach">1</property>
                         <property name="top_attach">2</property>
-                        <property name="width">2</property>
+                        <property name="width">3</property>
                       </packing>
                     </child>
                     <child>
@@ -187,18 +187,18 @@
                       <packing>
                         <property name="left_attach">0</property>
                         <property name="top_attach">3</property>
-                        <property name="width">3</property>
+                        <property name="width">4</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkSeparator" id="separator_console">
+                      <object class="GtkSeparator" id="separator_console_emulator">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
                         <property name="top_attach">4</property>
-                        <property name="width">3</property>
+                        <property name="width">4</property>
                       </packing>
                     </child>
                     <child>
@@ -223,7 +223,7 @@
                       <packing>
                         <property name="left_attach">1</property>
                         <property name="top_attach">5</property>
-                        <property name="width">2</property>
+                        <property name="width">3</property>
                       </packing>
                     </child>
                     <child>
@@ -236,6 +236,18 @@
                       <packing>
                         <property name="left_attach">1</property>
                         <property name="top_attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkSeparator" id="separator_console_icon">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="orientation">vertical</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">2</property>
+                        <property name="top_attach">0</property>
+                        <property name="height">2</property>
                       </packing>
                     </child>
                   </object>
@@ -342,7 +354,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="row_spacing">8</property>
-                    <property name="column_spacing">16</property>
+                    <property name="column_spacing">8</property>
                     <child>
                       <object class="GtkButton" id="button_emulator_image">
                         <property name="width_request">64</property>
@@ -362,7 +374,7 @@
                         </child>
                       </object>
                       <packing>
-                        <property name="left_attach">2</property>
+                        <property name="left_attach">4</property>
                         <property name="top_attach">0</property>
                         <property name="height">2</property>
                       </packing>
@@ -401,17 +413,7 @@
                       <packing>
                         <property name="left_attach">1</property>
                         <property name="top_attach">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkFileChooserButton" id="file_console_binary">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="hexpand">True</property>
-                      </object>
-                      <packing>
-                        <property name="left_attach">1</property>
-                        <property name="top_attach">1</property>
+                        <property name="width">2</property>
                       </packing>
                     </child>
                     <child>
@@ -427,14 +429,14 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkSeparator" id="separator_console1">
+                      <object class="GtkSeparator" id="separator_emulator_argument">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
                         <property name="top_attach">3</property>
-                        <property name="width">3</property>
+                        <property name="width">5</property>
                       </packing>
                     </child>
                     <child>
@@ -445,7 +447,7 @@
                       <packing>
                         <property name="left_attach">1</property>
                         <property name="top_attach">2</property>
-                        <property name="width">2</property>
+                        <property name="width">4</property>
                       </packing>
                     </child>
                     <child>
@@ -570,7 +572,7 @@
                       <packing>
                         <property name="left_attach">0</property>
                         <property name="top_attach">4</property>
-                        <property name="width">3</property>
+                        <property name="width">5</property>
                       </packing>
                     </child>
                     <child>
@@ -678,7 +680,49 @@
                       <packing>
                         <property name="left_attach">0</property>
                         <property name="top_attach">5</property>
-                        <property name="width">3</property>
+                        <property name="width">5</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="button_emulator_binary">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <child>
+                          <object class="GtkImage" id="image_emulator_binary">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="icon_name">document-open-symbolic</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="left_attach">2</property>
+                        <property name="top_attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkEntry" id="entry_emulator_binary">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="hexpand">True</property>
+                        <property name="secondary_icon_stock">gtk-clear</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="top_attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkSeparator" id="separator_emulator_icons">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="orientation">vertical</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">3</property>
+                        <property name="top_attach">0</property>
+                        <property name="height">2</property>
                       </packing>
                     </child>
                   </object>

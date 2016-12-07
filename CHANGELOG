@@ -2,6 +2,8 @@
 
 ## Version 0.6 - Magicball
     - Add the possibility to switch ui theme between dark and light
+    - Add an icon in consoles combobox to alert user when a binary is missing
+    - Add the possibility to use basename for emulator binary instead of full path
 
 ## Version 0.5.2 - Flintheart Glomgold
     - Fix cannot launch GEM from a fresh installation

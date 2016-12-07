@@ -22,6 +22,8 @@
 # ------------------------------------------------------------------
 
 # System
+from os import environ
+
 from os.path import exists
 from os.path import basename
 from os.path import splitext
@@ -324,3 +326,31 @@ def on_change_theme(status=False):
 
     Gtk.Settings.get_default().set_property(
         "gtk-application-prefer-dark-theme", status)
+
+
+def get_binary_path(binary):
+    """
+    Get a list of available binary paths from $PATH variable
+
+    :param str binary: Binary name or path
+
+    :return: List of available path
+    :rtype: list
+    """
+
+    available = list()
+
+    if len(binary) == 0:
+        return available
+
+    if exists(expanduser(binary)):
+        available.append(binary)
+        binary = basename(binary)
+
+    for path in set(environ["PATH"].split(':')):
+        binary_path = expanduser(path_join(path, binary))
+
+        if exists(binary_path) and not binary_path in available:
+            available.append(binary_path)
+
+    return available
