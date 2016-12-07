@@ -27,6 +27,8 @@ from logging.config import fileConfig
 
 # System
 from os import mkdir
+from os import makedirs
+
 from os.path import join as path_join
 from os.path import isfile
 from os.path import exists
@@ -107,6 +109,16 @@ def main():
     for folder in [Path.User, Path.Data, Path.Logs, Path.Roms, Path.Icons]:
         if not exists(expanduser(folder)):
             mkdir(expanduser(folder))
+
+    # Create roms folder based on default consoles.conf
+    default_consoles = Configuration(get_data(Conf.Consoles))
+
+    for console in default_consoles.sections():
+        path = default_consoles.item(console, "roms", None)
+
+        if path is not None and not exists(expanduser(path)):
+            makedirs(expanduser(path))
+
 
     # ------------------------------------
     #   Launch logger
