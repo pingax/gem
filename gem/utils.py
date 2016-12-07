@@ -90,6 +90,8 @@ class Gem:
 class Icons:
     Ext         = "png"
     Misc        = "applications-other"
+    Error       = "dialog-error"
+    Warning     = "dialog-warning"
     Snap        = "emblem-photos"
     Save        = "emblem-downloads"
     File        = "emblem-documents"

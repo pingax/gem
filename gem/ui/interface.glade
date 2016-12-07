@@ -374,6 +374,8 @@
       <column type="GdkPixbuf"/>
       <!-- column-name column_console_name -->
       <column type="gchararray"/>
+      <!-- column-name column_console_status -->
+      <column type="GdkPixbuf"/>
     </columns>
   </object>
   <object class="GtkWindow" id="window">
@@ -526,6 +528,14 @@
                       <object class="GtkCellRendererText" id="cell_consoles_name"/>
                       <attributes>
                         <attribute name="text">1</attribute>
+                      </attributes>
+                    </child>
+                    <child>
+                      <object class="GtkCellRendererPixbuf" id="cell_consoles_status">
+                        <property name="xpad">2</property>
+                      </object>
+                      <attributes>
+                        <attribute name="pixbuf">2</attribute>
                       </attributes>
                     </child>
                   </object>

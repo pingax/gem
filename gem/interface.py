@@ -241,6 +241,7 @@ class Interface(Gtk.Builder):
             "save": Icons.Save,
             "snap": Icons.Snap,
             "except": Icons.Except,
+            "warning": Icons.Warning,
             "favorite": Icons.Favorite,
             "multiplayer": Icons.Multiplayer }
 
@@ -1116,24 +1117,25 @@ class Interface(Gtk.Builder):
                 # Check if console ROM path exist
                 path = self.consoles.item(console, "roms")
                 if path is not None and exists(path):
+                    status = self.empty
 
                     # Check if current emulator can be launched
                     binary = self.emulators.item(emulator, "binary")
-                    if binary is not None and exists(binary):
+                    if binary is None or not exists(binary):
+                        status = self.icons["warning"]
 
-                        icon = icon_from_data(self.consoles.item(
-                            console, "icon"), self.empty, subfolder="consoles")
-
-                        row = self.model_consoles.append([icon, console])
-
-                        if self.selection.get("console") is not None and \
-                            self.selection.get("console") == console:
-                            item = row
-
-                    else:
                         self.logger.warning(
                             _("Cannot find %(binary)s for %(console)s" % dict(
                             binary=binary, console=console)))
+
+                    icon = icon_from_data(self.consoles.item(
+                        console, "icon"), self.empty, subfolder="consoles")
+
+                    row = self.model_consoles.append([icon, console, status])
+
+                    if self.selection.get("console") is not None and \
+                        self.selection.get("console") == console:
+                        item = row
 
         return item
 
