@@ -528,7 +528,7 @@ class Interface(Gtk.Builder):
             "activate", Preferences, self, self.logger)
         self.menu_item_gem_log.connect(
             "activate", self.__on_show_log)
-        self.menu_item_dark_theme.connect(
+        self.dark_theme_signal = self.menu_item_dark_theme.connect(
             "toggled", self.__on_activate_dark_theme)
         self.menu_item_about.connect(
             "activate", self.__on_show_about)
@@ -667,11 +667,17 @@ class Interface(Gtk.Builder):
         #   Theme
         # ------------------------------------
 
+        # Block signal to avoid stack overflow when toggled
+        self.menu_item_dark_theme.handler_block(self.dark_theme_signal)
+
         dark_theme_status = bool(int(self.config.item("gem", "dark_theme", 0)))
 
         on_change_theme(dark_theme_status)
 
         self.menu_item_dark_theme.set_active(dark_theme_status)
+
+        # Unblock signal
+        self.menu_item_dark_theme.handler_unblock(self.dark_theme_signal)
 
         # ------------------------------------
         #   Widgets
