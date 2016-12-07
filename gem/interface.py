@@ -1127,7 +1127,7 @@ class Interface(Gtk.Builder):
 
                     # Check if current emulator can be launched
                     binary = self.emulators.item(emulator, "binary")
-                    if binary is None or not exists(binary):
+                    if binary is None or len(get_binary_path(binary)) == 0:
                         status = self.icons["warning"]
 
                         self.logger.warning(

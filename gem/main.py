@@ -119,7 +119,6 @@ def main():
         if path is not None and not exists(expanduser(path)):
             makedirs(expanduser(path))
 
-
     # ------------------------------------
     #   Launch logger
     # ------------------------------------
