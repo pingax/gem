@@ -259,6 +259,12 @@ class Interface(Gtk.Builder):
         self.shortcuts_group = Gtk.AccelGroup()
 
         # ------------------------------------
+        #   Targets
+        # ------------------------------------
+
+        self.targets = [ Gtk.TargetEntry.new("text/uri-list", 0, 1337) ]
+
+        # ------------------------------------
         #   Prepare interface
         # ------------------------------------
 
@@ -423,10 +429,12 @@ class Interface(Gtk.Builder):
         self.treeview_games.set_model(self.filter_games)
         self.treeview_games.set_has_tooltip(True)
 
+        self.treeview_games.drag_source_set(
+            Gdk.ModifierType.BUTTON1_MASK, self.targets, Gdk.DragAction.COPY)
+
         self.treeview_games.drag_dest_set(
-            Gtk.DestDefaults.MOTION | Gtk.DestDefaults.DROP, [
-                Gtk.TargetEntry.new("text/uri-list", 0, 1337)
-            ], Gdk.DragAction.COPY)
+            Gtk.DestDefaults.MOTION | Gtk.DestDefaults.DROP, self.targets,
+            Gdk.DragAction.COPY)
 
         self.column_game_name.set_title(_("Name"))
         self.column_game_play.set_title(_("Launch"))
@@ -556,6 +564,8 @@ class Interface(Gtk.Builder):
         self.treeview_games.connect(
             "key-release-event", self.__on_menu_show)
 
+        self.treeview_games.connect(
+            "drag-data-get", self.__on_dnd_send_data)
         self.treeview_games.connect(
             "drag-data-received", self.__on_dnd_received_data)
 
@@ -2223,6 +2233,14 @@ class Interface(Gtk.Builder):
         self.config.update()
 
         self.menu_item_dark_theme.set_active(not dark_theme_status)
+
+
+    def __on_dnd_send_data(self, widget, context, data, target, time):
+        """
+        Send rom file path
+        """
+
+        data.set_uris([self.selection["game"]])
 
 
     def __on_dnd_received_data(self, widget, context, x, y, data, info, time):
