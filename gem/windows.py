@@ -277,6 +277,10 @@ class DialogEditor(Dialog):
         if type(self.editable) is not bool:
             raise TypeError("Wrong type for editable : bool wanted !")
 
+        self.founded_iter = list()
+        self.current_index = int()
+        self.previous_search = str()
+
         # ------------------------------------
         #   Prepare interface
         # ------------------------------------
@@ -306,6 +310,15 @@ class DialogEditor(Dialog):
         else:
             self.add_buttons(
                 Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE)
+
+        # ------------------------------------
+        #   Grid
+        # ------------------------------------
+
+        bottom_grid = Gtk.Box()
+
+        # Properties
+        bottom_grid.set_orientation(Gtk.Orientation.HORIZONTAL)
 
         # ------------------------------------
         #   Path
@@ -340,6 +353,10 @@ class DialogEditor(Dialog):
         self.text_editor.set_bottom_margin(4)
         self.text_editor.set_buffer(self.buffer_editor)
 
+        self.tag_found = self.buffer_editor.create_tag("found",
+            background="yellow", foreground="black")
+
+
         # ------------------------------------
         #   Back lines
         # ------------------------------------
@@ -351,14 +368,50 @@ class DialogEditor(Dialog):
         self.check_lines.set_active(False)
 
         # ------------------------------------
+        #   Search
+        # ------------------------------------
+
+        self.entry_search = Gtk.Entry()
+
+        self.image_up = Gtk.Image()
+        self.button_up = Gtk.Button()
+
+        self.image_bottom = Gtk.Image()
+        self.button_bottom = Gtk.Button()
+
+        # Properties
+        self.entry_search.set_placeholder_text(_("Search"))
+        self.entry_search.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.PRIMARY, "edit-find")
+        self.entry_search.set_icon_activatable(
+            Gtk.EntryIconPosition.PRIMARY, False)
+        self.entry_search.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.SECONDARY, "edit-clear")
+
+        self.image_up.set_from_icon_name("go-up", Gtk.IconSize.BUTTON)
+
+        self.button_up.set_label(str())
+        self.button_up.set_image(self.image_up)
+
+        self.image_bottom.set_from_icon_name("go-down", Gtk.IconSize.BUTTON)
+
+        self.button_bottom.set_label(str())
+        self.button_bottom.set_image(self.image_bottom)
+
+        # ------------------------------------
         #   Integrate widgets
         # ------------------------------------
 
         scroll_editor.add(self.text_editor)
 
+        bottom_grid.pack_start(self.check_lines, False, True, 0)
+        bottom_grid.pack_end(self.button_bottom, False, True, 0)
+        bottom_grid.pack_end(self.button_up, False, True, 4)
+        bottom_grid.pack_end(self.entry_search, False, True, 0)
+
         self.dialog_box.pack_start(self.entry_path, False, True, 0)
         self.dialog_box.pack_start(scroll_editor, True, True, 0)
-        self.dialog_box.pack_start(self.check_lines, False, True, 0)
+        self.dialog_box.pack_start(bottom_grid, False, True, 0)
 
 
     def __init_signals(self):
@@ -368,6 +421,12 @@ class DialogEditor(Dialog):
 
         self.check_lines.connect(
             "toggled", self.__on_break_line)
+
+        self.entry_search.connect("activate", self.__on_entry_update)
+        self.entry_search.connect("icon-press", on_entry_clear)
+
+        self.button_bottom.connect("clicked", self.__on_move_search)
+        self.button_up.connect("clicked", self.__on_move_search, True)
 
 
     def __start_interface(self):
@@ -395,6 +454,76 @@ class DialogEditor(Dialog):
             self.text_editor.set_wrap_mode(Gtk.WrapMode.WORD)
         else:
             self.text_editor.set_wrap_mode(Gtk.WrapMode.NONE)
+
+
+    def __on_move_search(self, widget, backward=False):
+        """
+        Move between search results
+        """
+
+        if len(self.founded_iter) > 0:
+
+            if backward:
+                self.current_index -= 1
+
+                if self.current_index == -1:
+                    self.current_index = len(self.founded_iter) - 1
+
+            else:
+                self.current_index += 1
+
+                if self.current_index == len(self.founded_iter):
+                    self.current_index = 0
+
+            self.text_editor.scroll_to_iter(
+                self.founded_iter[self.current_index], .25, False, .0, .0)
+
+
+    def __on_entry_update(self, widget, pos=None, event=None):
+        """
+        Search entry value in text buffer
+        """
+
+        text = widget.get_text()
+
+        if not text == self.previous_search:
+            self.founded_iter = list()
+            self.current_index = int()
+
+            if len(text) > 0:
+                self.buffer_editor.remove_all_tags(
+                    self.buffer_editor.get_start_iter(),
+                    self.buffer_editor.get_end_iter())
+
+                self.__on_search_and_mark(
+                    text, self.buffer_editor.get_start_iter())
+
+                self.text_editor.scroll_to_iter(
+                    self.founded_iter[self.current_index], .25, False, .0, .0)
+
+                self.previous_search = text
+
+        else:
+            self.__on_move_search(None)
+
+
+    def __on_search_and_mark(self, text, start):
+        """
+        Search a text and mark it
+        """
+
+        end = self.buffer_editor.get_end_iter()
+
+        match = start.forward_search(text, 0, end)
+
+        if match is not None:
+            match_start, match_end = match
+
+            self.founded_iter.append(match_start)
+
+            self.buffer_editor.apply_tag(self.tag_found, match_start, match_end)
+
+            self.__on_search_and_mark(text, match_end)
 
 
 class DialogParameters(Dialog):
