@@ -84,7 +84,7 @@ class Gem:
     Version     = "0.6"
     CodeName    = "Magicball"
     Website     = "https://gem.tuxfamily.org/"
-    Copyleft    = "Copyleft 2016 - Kawa Team"
+    Copyleft    = "Copyleft 2017 - Kawa Team"
     Description = _("Manage your emulators easily and have fun")
 
     OldColumns  = dict()
@@ -94,6 +94,7 @@ class Icons:
     Misc        = "applications-other"
     Error       = "dialog-error"
     Warning     = "dialog-warning"
+    Properties  = "document-properties"
     Snap        = "emblem-photos"
     Save        = "emblem-downloads"
     File        = "emblem-documents"

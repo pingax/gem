@@ -991,16 +991,21 @@ class Interface(Gtk.Builder):
         viewer = self.config.get("viewer", "binary")
         args = self.config.item("viewer", "options")
 
-        gamename = basename(self.selection["game"]).split('.')[0]
+        # Get rom name without extension
+        gamename, ext = splitext(basename(self.selection["game"]))
 
+        # Get rom data from database
         data = self.database.get("games",
             { "filename": basename(self.selection["game"]) })
 
+        # Get rom specified emulator
         emulator = self.consoles.get(self.selection["console"], "emulator")
+
         if data is not None and len(data.get("emulator")) > 0:
             if self.emulators.has_section(data.get("emulator")):
                 emulator = data.get("emulator")
 
+        # Check if rom has some screenshots
         if self.check_screenshots(emulator, gamename):
             snaps_path = expanduser(self.emulators.get(emulator, "snaps"))
 
@@ -1307,10 +1312,13 @@ class Interface(Gtk.Builder):
                         data = self.database.get("games",
                             { "filename": basename(game) })
 
-                        # Get specified emulator
+                        # Get global emulator
+                        rom_emulator = emulator
+
+                        # Set specified emulator is available
                         if data is not None and len(data.get("emulator")) > 0:
                             if self.emulators.has_section(data.get("emulator")):
-                                emulator = data.get("emulator")
+                                rom_emulator = data.get("emulator")
 
                         if data is not None:
 
@@ -1362,11 +1370,11 @@ class Interface(Gtk.Builder):
                             getctime(game)).strftime("%d-%m-%Y %H:%M:%S"))
 
                         # Snap
-                        if self.check_screenshots(emulator, filename):
+                        if self.check_screenshots(rom_emulator, filename):
                             row_data[Columns.Snapshots] = self.icons["snap"]
 
                         # Save state
-                        if self.check_save_states(emulator, filename):
+                        if self.check_save_states(rom_emulator, filename):
                             row_data[Columns.Save] = self.icons["save"]
 
                         row = self.model_games.append(row_data)
@@ -1934,7 +1942,7 @@ class Interface(Gtk.Builder):
         default = str()
 
         # Use a specific emulator for this game
-        if len(data[1]) > 0:
+        if data is not None and len(data[1]) > 0:
             if self.emulators.has_option(data[1], "default"):
                 default = self.emulators.get(data[1], "default")
 
