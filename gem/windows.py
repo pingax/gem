@@ -355,6 +355,8 @@ class DialogEditor(Dialog):
 
         self.tag_found = self.buffer_editor.create_tag("found",
             background="yellow", foreground="black")
+        self.tag_current = self.buffer_editor.create_tag("current",
+            background="cyan", foreground="black")
 
 
         # ------------------------------------
@@ -456,12 +458,15 @@ class DialogEditor(Dialog):
             self.text_editor.set_wrap_mode(Gtk.WrapMode.NONE)
 
 
-    def __on_move_search(self, widget, backward=False):
+    def __on_move_search(self, widget=None, backward=False):
         """
         Move between search results
         """
 
         if len(self.founded_iter) > 0:
+            match = self.founded_iter[self.current_index]
+            self.buffer_editor.remove_tag(self.tag_current, match[0], match[1])
+            self.buffer_editor.apply_tag(self.tag_found, match[0], match[1])
 
             if backward:
                 self.current_index -= 1
@@ -475,8 +480,10 @@ class DialogEditor(Dialog):
                 if self.current_index == len(self.founded_iter):
                     self.current_index = 0
 
-            self.text_editor.scroll_to_iter(
-                self.founded_iter[self.current_index], .25, False, .0, .0)
+            match = self.founded_iter[self.current_index]
+            self.buffer_editor.apply_tag(self.tag_current, match[0], match[1])
+
+            self.text_editor.scroll_to_iter(match[0], .25, False, .0, .0)
 
 
     def __on_entry_update(self, widget, pos=None, event=None):
@@ -498,13 +505,16 @@ class DialogEditor(Dialog):
                 self.__on_search_and_mark(
                     text, self.buffer_editor.get_start_iter())
 
-                self.text_editor.scroll_to_iter(
-                    self.founded_iter[self.current_index], .25, False, .0, .0)
+                match = self.founded_iter[self.current_index]
+                self.buffer_editor.apply_tag(
+                    self.tag_current, match[0], match[1])
+
+                self.text_editor.scroll_to_iter(match[0], .25, False, .0, .0)
 
                 self.previous_search = text
 
         else:
-            self.__on_move_search(None)
+            self.__on_move_search()
 
 
     def __on_search_and_mark(self, text, start):
@@ -512,18 +522,15 @@ class DialogEditor(Dialog):
         Search a text and mark it
         """
 
-        end = self.buffer_editor.get_end_iter()
+        match = start.forward_search(text, 0, self.buffer_editor.get_end_iter())
 
-        match = start.forward_search(text, 0, end)
+        while match is not None:
+            self.founded_iter.append(match)
 
-        if match is not None:
-            match_start, match_end = match
+            self.buffer_editor.apply_tag(self.tag_found, match[0], match[1])
 
-            self.founded_iter.append(match_start)
-
-            self.buffer_editor.apply_tag(self.tag_found, match_start, match_end)
-
-            self.__on_search_and_mark(text, match_end)
+            match = match[1].forward_search(
+                text, 0, self.buffer_editor.get_end_iter())
 
 
 class DialogParameters(Dialog):

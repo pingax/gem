@@ -1949,6 +1949,7 @@ class Interface(Gtk.Builder):
         # Use default parameters from default emulator
         elif self.selection.get("console") is not None:
             emulator = self.consoles.get(self.selection["console"], "emulator")
+
             if self.emulators.has_option(emulator, "default"):
                 default = self.emulators.get(emulator, "default")
 
