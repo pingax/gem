@@ -4,6 +4,10 @@
     - Add the possibility to switch ui theme between dark and light
     - Add an icon in consoles combobox to alert user when a binary is missing
     - Add the possibility to use basename for emulator binary instead of full path
+    - Fix cannot open viewer when rom filename has many dots
+    - Fix cannot open parameters dialog when data from database are empty
+    - Fix avoid RecursionError when use forward_search
+    - Fix cannot see roms folder with ~ in path
 
 ## Version 0.5.2 - Flintheart Glomgold (29 Nov, 2016)
     - Fix cannot launch GEM from a fresh installation

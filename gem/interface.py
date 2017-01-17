@@ -593,12 +593,10 @@ class Interface(Gtk.Builder):
                         break
 
         if bool(int(self.config.item("gem", "welcome", 1))):
-            dialog = Message(self, _("Welcome !"), _("GEM come with "
-                "some emulators and consoles already configured. But the "
-                "default paths may not work with your system.\n\nThe first "
-                "thing you may do, it's open the preferences window and "
-                "change paths for both consoles and emulators.\n\nEnjoy your "
-                "games :D"), "face-smile-big", False)
+            dialog = Message(self, _("Welcome !"), _("Welcome and thanks for "
+                "choosing GEM as emulators manager. Start using GEM by "
+                "droping some roms into interface.\n\nEnjoy and have fun :D"),
+                "face-smile-big", False)
 
             dialog.set_size_request(500, -1)
 
@@ -1137,7 +1135,7 @@ class Interface(Gtk.Builder):
 
                 # Check if console ROM path exist
                 path = self.consoles.item(console, "roms")
-                if path is not None and exists(path):
+                if path is not None and exists(expanduser(path)):
                     status = self.empty
 
                     # Check if current emulator can be launched
