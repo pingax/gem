@@ -5,10 +5,14 @@
     - Add an icon in consoles combobox to alert user when a binary is missing
     - Add the possibility to use basename for emulator binary instead of full path
     - Add <conf_path>, <rom_path>, <rom_name>, <rom_file> to default argument
+    - Add the possibility to create notes pad for a game
+    - Add translucent icons into games treeview
+    - Move some items in game menu to submenu
     - Fix cannot open viewer when rom filename has many dots
     - Fix cannot open parameters dialog when data from database are empty
     - Fix avoid RecursionError when use forward_search
     - Fix cannot see roms folder with ~ in path
+    - Fix set icons size to 22 pixels instead of 24 pixels
 
 ## Version 0.5.2 - Flintheart Glomgold (29 Nov, 2016)
     - Fix cannot launch GEM from a fresh installation

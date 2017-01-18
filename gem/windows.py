@@ -260,12 +260,13 @@ class Question(TemplateDialog):
 
 class DialogEditor(Dialog):
 
-    def __init__(self, parent, title, file_path, editable=True):
+    def __init__(self, parent, title, file_path, editable=True,
+        icon="gtk-file"):
         """
         Constructor
         """
 
-        Dialog.__init__(self, parent, title, "gtk-file")
+        Dialog.__init__(self, parent, title, icon)
 
         # ------------------------------------
         #   Initialize variables

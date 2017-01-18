@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.5\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2017-01-18 11:48+0100\n"
+"PO-Revision-Date: 2017-01-18 14:57+0100\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -811,6 +811,12 @@ msgid "Update %s configuration file"
 msgstr "Mise à jour du fichier de configuration de %s"
 
 #
+# File: gem/interface.py, line: 300
+#, python-format
+msgid "Update %s notes"
+msgstr "Mise à jour des notes de %s"
+
+#
 # File: gem/interface.py, line: 109
 #, python-format
 msgid "Update v%(old)s database to v%(new)s."
@@ -899,6 +905,11 @@ msgid "_Copy file path"
 msgstr "_Copier le chemin du fichier"
 
 #
+# File: gem/preferences.py, line: 336
+msgid "_Edit"
+msgstr "_Éditer"
+
+#
 # File: gem/interface.py, line: 400
 msgid "_Generate a menu entry"
 msgstr "_Générer une entrée de menu"
@@ -907,6 +918,11 @@ msgstr "_Générer une entrée de menu"
 # File: src/window.py, line: 431
 msgid "_Launch"
 msgstr "_Lancer"
+
+#
+# File: gem/interface.py, line: 384
+msgid "_Notes"
+msgstr "_Notes"
 
 #
 # File: gem/interface.py, line: 665

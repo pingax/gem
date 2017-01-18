@@ -106,7 +106,8 @@ def main():
     #   Create default folders
     # ------------------------------------
 
-    for folder in [Path.User, Path.Data, Path.Logs, Path.Roms, Path.Icons]:
+    for folder in [
+        Path.User, Path.Data, Path.Logs, Path.Roms, Path.Notes, Path.Icons]:
         if not exists(expanduser(folder)):
             mkdir(expanduser(folder))
 

@@ -60,6 +60,7 @@ try:
     from gi.repository import Gtk
     from gi.repository.GdkPixbuf import Pixbuf
     from gi.repository.GdkPixbuf import Colorspace
+    from gi.repository.GdkPixbuf import InterpType
 
 except ImportError as error:
     sys_exit("Cannot found python3-gobject module: %s" % str(error))
@@ -114,6 +115,7 @@ class Path:
     Apps        = path_join(xdg_data_home, "applications")
     Roms        = path_join(xdg_data_home, "gem", "roms")
     Logs        = path_join(xdg_data_home, "gem", "logs")
+    Notes       = path_join(xdg_data_home, "gem", "notes")
     Icons       = path_join(xdg_data_home, "gem", "icons")
     Consoles    = path_join(xdg_data_home, "gem", "icons", "consoles")
     Emulators   = path_join(xdg_data_home, "gem", "icons", "emulators")
@@ -252,6 +254,34 @@ def icon_load(name, size=16, fallback="image-missing"):
     # Instead, return default image
     return icons_theme.load_icon(
         "image-missing", size, Gtk.IconLookupFlags.FORCE_SVG)
+
+
+def set_pixbuf_opacity(pixbuf, opacity):
+    """
+    Changes the opacity of pixbuf by combining the pixbuf with an other pixbuf
+
+    Thanks to Rick Spencer:
+    https://theravingrick.blogspot.fr/2011/01/changing-opacity-of-gtkpixbuf.html
+
+    :param Pixbuf pixbuf: Original pixbuf
+    :param int opacity: The degree of desired opacity (between 0 and 255)
+
+    :return: Pixbuf with the transperancy
+    :rtype: GdkPixbuf.Pixbuf
+    """
+
+    width, height = pixbuf.get_width(), pixbuf.get_height()
+
+    new_pixbuf = Pixbuf.new(Colorspace.RGB, True, 8, width, height)
+    new_pixbuf.fill(0x00000000)
+
+    try:
+        pixbuf.composite(new_pixbuf, 0, 0, width, height, 0, 0, 1, 1,
+            InterpType.NEAREST, opacity)
+    except:
+        pass
+
+    return new_pixbuf
 
 
 def string_from_date(date, date_format="%d-%m-%Y %H:%M:%S"):

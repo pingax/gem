@@ -828,6 +828,12 @@ msgid "Update %s configuration file"
 msgstr "Actualizar el archivo de configuración de %s"
 
 #
+# File: gem/preferences.py, line: 1602
+#, fuzzy, python-format
+msgid "Update %s notes"
+msgstr "Actualizar el archivo de configuración de %s"
+
+#
 # File: gem/preferences.py, line: 1159
 #, python-format
 msgid "Update v%(old)s database to v%(new)s."
@@ -913,6 +919,12 @@ msgid "_Copy file path"
 msgstr "_Copiar la ruta del juego"
 
 #
+# File: gem/preferences.py, line: 429
+#, fuzzy
+msgid "_Edit"
+msgstr "Editor"
+
+#
 # File: gem/interface.py, line: 460
 msgid "_Generate a menu entry"
 msgstr "_Generar una entrada de menú"
@@ -921,6 +933,11 @@ msgstr "_Generar una entrada de menú"
 # File: gem/preferences.py, line: 84
 msgid "_Launch"
 msgstr "_Lanzar"
+
+#
+# File: gem/interface.py, line: 384
+msgid "_Notes"
+msgstr ""
 
 #
 # File: gem/interface.py, line: 406

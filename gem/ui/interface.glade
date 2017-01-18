@@ -87,7 +87,7 @@
       </object>
     </child>
   </object>
-  <object class="GtkImage" id="image3">
+  <object class="GtkImage" id="image_game_desktop">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="stock">gtk-page-setup</property>
@@ -153,25 +153,21 @@
     <property name="icon_name">emblem-photos</property>
     <property name="icon_size">1</property>
   </object>
-  <object class="GtkMenu" id="menu_games">
+  <object class="GtkImage" id="image_games_notes">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <child>
-      <object class="GtkImageMenuItem" id="menu_games_launch">
-        <property name="label">_Launch</property>
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="use_underline">True</property>
-        <property name="image">image_games_launch</property>
-        <property name="use_stock">False</property>
-      </object>
-    </child>
-    <child>
-      <object class="GtkSeparatorMenuItem" id="menu_games_separtator_rename">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-      </object>
-    </child>
+    <property name="icon_name">emblem-documents</property>
+    <property name="icon_size">1</property>
+  </object>
+  <object class="GtkImage" id="image_games_edit">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">preferences-desktop</property>
+    <property name="icon_size">1</property>
+  </object>
+  <object class="GtkMenu" id="submenu_edit">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
     <child>
       <object class="GtkImageMenuItem" id="menu_games_rename">
         <property name="label">_Rename</property>
@@ -189,6 +185,82 @@
         <property name="can_focus">False</property>
         <property name="use_underline">True</property>
         <property name="image">image_games_parameters</property>
+        <property name="use_stock">False</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkSeparatorMenuItem" id="menu_games_separator_copy">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkImageMenuItem" id="menu_games_copy">
+        <property name="label" translatable="yes">_Copy file path</property>
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="use_underline">True</property>
+        <property name="image">image_games_copy</property>
+        <property name="use_stock">False</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkImageMenuItem" id="menu_games_open">
+        <property name="label" translatable="yes">_Open file path</property>
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="use_underline">True</property>
+        <property name="image">image_games_open</property>
+        <property name="use_stock">False</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkImageMenuItem" id="menu_games_desktop">
+        <property name="label" translatable="yes">_Generate desktop entry</property>
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="use_underline">True</property>
+        <property name="image">image_game_desktop</property>
+        <property name="use_stock">False</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkSeparatorMenuItem" id="menu_games_separator_database">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkImageMenuItem" id="menu_games_database">
+        <property name="label" translatable="yes">_Remove from database</property>
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="use_underline">True</property>
+        <property name="image">image_games_database</property>
+        <property name="use_stock">False</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkImageMenuItem" id="menu_games_remove">
+        <property name="label" translatable="yes">_Remove from disk</property>
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="use_underline">True</property>
+        <property name="image">image_games_remove</property>
+        <property name="use_stock">False</property>
+      </object>
+    </child>
+  </object>
+  <object class="GtkMenu" id="menu_games">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <child>
+      <object class="GtkImageMenuItem" id="menu_games_launch">
+        <property name="label">_Launch</property>
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="use_underline">True</property>
+        <property name="image">image_games_launch</property>
         <property name="use_stock">False</property>
       </object>
     </child>
@@ -245,65 +317,30 @@
       </object>
     </child>
     <child>
-      <object class="GtkSeparatorMenuItem" id="menu_games_separator_copy">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-      </object>
-    </child>
-    <child>
-      <object class="GtkImageMenuItem" id="menu_games_copy">
-        <property name="label" translatable="yes">_Copy file path</property>
+      <object class="GtkImageMenuItem" id="menu_games_notes">
+        <property name="label" translatable="yes">_Notes</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="use_underline">True</property>
-        <property name="image">image_games_copy</property>
+        <property name="image">image_games_notes</property>
         <property name="use_stock">False</property>
       </object>
     </child>
     <child>
-      <object class="GtkImageMenuItem" id="menu_games_open">
-        <property name="label" translatable="yes">_Open file path</property>
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="use_underline">True</property>
-        <property name="image">image_games_open</property>
-        <property name="use_stock">False</property>
-      </object>
-    </child>
-    <child>
-      <object class="GtkImageMenuItem" id="menu_games_desktop">
-        <property name="label" translatable="yes">_Generate desktop entry</property>
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="use_underline">True</property>
-        <property name="image">image3</property>
-        <property name="use_stock">False</property>
-      </object>
-    </child>
-    <child>
-      <object class="GtkSeparatorMenuItem" id="menu_games_separator_database">
+      <object class="GtkSeparatorMenuItem" id="menu_games_separator_edit">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
       </object>
     </child>
     <child>
-      <object class="GtkImageMenuItem" id="menu_games_database">
-        <property name="label" translatable="yes">_Remove from database</property>
+      <object class="GtkImageMenuItem" id="menu_games_edit">
+        <property name="label">_Edit</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="use_underline">True</property>
-        <property name="image">image_games_database</property>
+        <property name="image">image_games_edit</property>
         <property name="use_stock">False</property>
-      </object>
-    </child>
-    <child>
-      <object class="GtkImageMenuItem" id="menu_games_remove">
-        <property name="label" translatable="yes">_Remove from disk</property>
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="use_underline">True</property>
-        <property name="image">image_games_remove</property>
-        <property name="use_stock">False</property>
+        <property name="submenu">submenu_edit</property>
       </object>
     </child>
   </object>
@@ -382,7 +419,7 @@
     <property name="width_request">1024</property>
     <property name="height_request">768</property>
     <property name="can_focus">False</property>
-    <property name="title" translatable="yes">Graphical Emulators Manager - 0.5 (Rich Duck)</property>
+    <property name="title" translatable="yes">Graphical Emulators Manager</property>
     <property name="window_position">center-always</property>
     <property name="default_width">1024</property>
     <property name="default_height">768</property>
@@ -775,7 +812,7 @@
                     </child>
                     <child>
                       <object class="GtkCellRendererPixbuf" id="cell_games_screenshots">
-                        <property name="xpad">4</property>
+                        <property name="xpad">2</property>
                         <property name="xalign">0</property>
                       </object>
                       <attributes>
@@ -784,7 +821,7 @@
                     </child>
                     <child>
                       <object class="GtkCellRendererPixbuf" id="cell_games_multiplayer">
-                        <property name="xpad">4</property>
+                        <property name="xpad">2</property>
                         <property name="xalign">0</property>
                       </object>
                       <attributes>
