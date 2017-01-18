@@ -1,719 +1,762 @@
-# File: gem/utils.py, line: 222
+# File: gem/utils.py, line: 281
 #, python-format
 msgid   "%d days ago"
 msgstr  ""
 #
-# File: gem/utils.py, line: 229
+# File: gem/utils.py, line: 330
+#, python-format
+msgid   "%d hour"
+msgstr  ""
+#
+# File: gem/utils.py, line: 332
+#, python-format
+msgid   "%d hours"
+msgstr  ""
+#
+# File: gem/utils.py, line: 325
+#, python-format
+msgid   "%d minute"
+msgstr  ""
+#
+# File: gem/utils.py, line: 327
+#, python-format
+msgid   "%d minutes"
+msgstr  ""
+#
+# File: gem/utils.py, line: 288
 #, python-format
 msgid   "%d months ago"
 msgstr  ""
 #
-# File: gem/utils.py, line: 236
+# File: gem/utils.py, line: 320
+#, python-format
+msgid   "%d second"
+msgstr  ""
+#
+# File: gem/utils.py, line: 322
+#, python-format
+msgid   "%d seconds"
+msgstr  ""
+#
+# File: gem/utils.py, line: 295
 #, python-format
 msgid   "%d years ago"
 msgstr  ""
 #
-# File: gem/interface.py, line: 1141
+# File: gem/interface.py, line: 1194
 #, python-format
 msgid   "%s emulator not exist !"
 msgstr  ""
 #
-# File: gem/interface.py, line: 879
+# File: gem/interface.py, line: 925
 #, python-format
 msgid   "%s games availables"
 msgstr  ""
 #
-# File: gem/interface.py, line: 1849
+# File: gem/interface.py, line: 1934
 #, python-format
 msgid   "%s has been deleted from disk"
 msgstr  ""
 #
-# File: gem/interface.py, line: 2252
+# File: gem/interface.py, line: 2375
 #, python-format
 msgid   "%s is already in the roms folder. Canceling operation."
 msgstr  ""
 #
-# File: gem/interface.py, line: 2103
+# File: gem/interface.py, line: 2203
 #, python-format
 msgid   "%s was generated successfully"
 msgstr  ""
 #
-# File: gem/interface.py, line: 877
+# File: gem/interface.py, line: 923
 msgid   "1 game available"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 1249
+# File: gem/preferences.py, line: 1263
 msgid   "<name> = ROM filename, <lname> = ROM lowercase filename\n"
         "<rom_path> = ROM folder"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 352
+# File: gem/preferences.py, line: 366
 msgid   "Action"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 1663
-# File: gem/preferences.py, line: 1693
-# File: gem/preferences.py, line: 1701
-# File: gem/preferences.py, line: 1719
+# File: gem/preferences.py, line: 1710
+# File: gem/preferences.py, line: 1740
+# File: gem/preferences.py, line: 1748
+# File: gem/preferences.py, line: 1766
 msgid   "All icons"
 msgstr  ""
 #
-# File: gem/interface.py, line: 2109
+# File: gem/interface.py, line: 2209
 msgid   "An error occur during generation, consult log for futher details."
 msgstr  ""
 #
-# File: gem/main.py, line: 167
+# File: gem/main.py, line: 198
 #, python-format
 msgid   "An error occur during program exec: %s"
 msgstr  ""
 #
-# File: gem/windows.py, line: 335
+# File: gem/windows.py, line: 369
 msgid   "Auto line break"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 228
+# File: gem/preferences.py, line: 242
 msgid   "Behavior"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 249
-# File: gem/preferences.py, line: 403
-# File: gem/preferences.py, line: 1237
+# File: gem/preferences.py, line: 263
+# File: gem/preferences.py, line: 417
+# File: gem/preferences.py, line: 1251
 msgid   "Binary"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 115
+# File: gem/preferences.py, line: 129
 msgid   "Both"
 msgstr  ""
 #
-# File: gem/interface.py, line: 1103
+# File: gem/interface.py, line: 1147
 #, python-format
 msgid   "Cannot find %(binary)s for %(console)s"
 msgstr  ""
 #
-# File: gem/interface.py, line: 996
+# File: gem/interface.py, line: 1047
 #, python-format
 msgid   "Cannot find <b>%s</b> viewer !"
 msgstr  ""
 #
-# File: gem/interface.py, line: 1134
+# File: gem/interface.py, line: 1187
 #, python-format
 msgid   "Cannot find emulator for %s"
 msgstr  ""
 #
-# File: gem/interface.py, line: 1526
-# File: gem/interface.py, line: 1537
+# File: gem/interface.py, line: 1584
+# File: gem/interface.py, line: 1595
 #, python-format
 msgid   "Cannot found %s"
 msgstr  ""
 #
-# File: gem/main.py, line: 160
+# File: gem/main.py, line: 191
 #, python-format
 msgid   "Cannot import interface: %s"
 msgstr  ""
 #
-# File: gem/configuration.py, line: 75
+# File: gem/configuration.py, line: 84
 #, python-format
 msgid   "Cannot open %s file"
 msgstr  ""
 #
-# File: gem/interface.py, line: 185
-# File: gem/interface.py, line: 2411
-# File: gem/preferences.py, line: 86
-# File: gem/preferences.py, line: 863
-# File: gem/preferences.py, line: 1167
+# File: gem/interface.py, line: 200
+# File: gem/interface.py, line: 2534
+# File: gem/preferences.py, line: 100
+# File: gem/preferences.py, line: 877
+# File: gem/preferences.py, line: 1181
 #, python-format
 msgid   "Cannot open interface: %s"
 msgstr  ""
 #
-# File: gem/interface.py, line: 2260
+# File: gem/interface.py, line: 2383
 #, python-format
 msgid   "Cannot write into %s. Canceling operation."
 msgstr  ""
 #
-# File: gem/interface.py, line: 1900
+# File: gem/interface.py, line: 2000
 #, python-format
 msgid   "Change custom parameters for %s"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 1141
-# File: gem/preferences.py, line: 1468
+# File: gem/preferences.py, line: 1155
+# File: gem/preferences.py, line: 1515
 msgid   "Choose an icon"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 925
+# File: gem/preferences.py, line: 939
 msgid   "Choose the ROMs folder"
 msgstr  ""
 #
-# File: gem/interface.py, line: 1779
+# File: gem/interface.py, line: 1864
 #, python-format
 msgid   "Clean %s informations"
 msgstr  ""
 #
-# File: gem/interface.py, line: 1608
+# File: gem/interface.py, line: 1693
 #, python-format
 msgid   "Close %s"
 msgstr  ""
 #
-# File: gem/interface.py, line: 615
+# File: gem/interface.py, line: 643
 msgid   "Close interface"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 321
+# File: gem/preferences.py, line: 335
 msgid   "Colorscheme"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 1238
+# File: gem/preferences.py, line: 1252
 msgid   "Configuration file"
 msgstr  ""
 #
-# File: gem/interface.py, line: 1051
+# File: gem/interface.py, line: 1103
 #, python-format
 msgid   "Configuration for %s"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 377
-# File: gem/preferences.py, line: 923
+# File: gem/preferences.py, line: 391
+# File: gem/preferences.py, line: 937
 msgid   "Console"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 216
+# File: gem/preferences.py, line: 230
 msgid   "Consoles"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 105
+# File: gem/preferences.py, line: 119
 msgid   "Copy selected game path"
 msgstr  ""
 #
-# File: gem/interface.py, line: 144
+# File: gem/interface.py, line: 159
 msgid   "Current database need to be updated"
 msgstr  ""
 #
-# File: gem/interface.py, line: 355
+# File: gem/interface.py, line: 378
 msgid   "Custom _parameters"
 msgstr  ""
 #
-# File: gem/windows.py, line: 470
+# File: gem/windows.py, line: 623
 msgid   "Default arguments"
 msgstr  ""
 #
-# File: gem/windows.py, line: 447
+# File: gem/windows.py, line: 600
 msgid   "Default emulator"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 250
-# File: gem/preferences.py, line: 1241
+# File: gem/preferences.py, line: 264
+# File: gem/preferences.py, line: 1255
 msgid   "Default options"
 msgstr  ""
 #
-# File: gem/interface.py, line: 2256
+# File: gem/interface.py, line: 2379
 #, python-format
 msgid   "Destination %s not exist. Canceling operation."
 msgstr  ""
 #
-# File: gem/interface.py, line: 2241
+# File: gem/interface.py, line: 2364
 #, python-format
 msgid   "Drop %(rom)s to %(path)s"
 msgstr  ""
 #
-# File: gem/interface.py, line: 322
+# File: gem/interface.py, line: 344
 msgid   "Edit emulator"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 320
+# File: gem/preferences.py, line: 334
 msgid   "Editor"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 400
-# File: gem/preferences.py, line: 928
-# File: gem/preferences.py, line: 1235
+# File: gem/preferences.py, line: 414
+# File: gem/preferences.py, line: 942
+# File: gem/preferences.py, line: 1249
 msgid   "Emulator"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 1240
+# File: gem/preferences.py, line: 1254
 msgid   "Emulator arguments"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 217
+# File: gem/preferences.py, line: 231
 msgid   "Emulators"
 msgstr  ""
 #
-# File: gem/interface.py, line: 328
+# File: gem/interface.py, line: 350
 msgid   "Filter"
 msgstr  ""
 #
-# File: gem/interface.py, line: 418
+# File: gem/interface.py, line: 444
 msgid   "Flags"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 322
+# File: gem/preferences.py, line: 336
 msgid   "Font"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 1243
+# File: gem/preferences.py, line: 1257
 msgid   "Fullscreen"
 msgstr  ""
 #
-# File: gem/interface.py, line: 1015
+# File: gem/interface.py, line: 1066
 msgid   "GEM"
 msgstr  ""
 #
-# File: gem/interface.py, line: 566
-msgid   "GEM come with some emulators and consoles already configured. But "
-        "the default paths may not work with your system.\n"
-        "\n"
-        "The first thing you may do, it's open the preferences window and "
-        "change paths for both consoles and emulators.\n"
-        "\n"
-        "Enjoy your games :D"
-msgstr  ""
-#
-# File: gem/preferences.py, line: 286
+# File: gem/preferences.py, line: 300
 msgid   "Games list"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 213
+# File: gem/preferences.py, line: 227
 msgid   "General"
 msgstr  ""
 #
-# File: gem/interface.py, line: 132
+# File: gem/interface.py, line: 147
 msgid   "Generate a new database"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 106
+# File: gem/preferences.py, line: 120
 msgid   "Generate desktop entry for a game"
 msgstr  ""
 #
-# File: gem/interface.py, line: 2102
-# File: gem/interface.py, line: 2108
+# File: gem/interface.py, line: 2202
+# File: gem/interface.py, line: 2208
 #, python-format
 msgid   "Generate menu entry for %s"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 113
+# File: gem/preferences.py, line: 127
 msgid   "Horizontal"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 1664
+# File: gem/preferences.py, line: 1711
 msgid   "Image file"
 msgstr  ""
 #
-# File: gem/interface.py, line: 1497
+# File: gem/interface.py, line: 1553
 #, python-format
 msgid   "Initialize %s"
 msgstr  ""
 #
-# File: gem/interface.py, line: 417
+# File: gem/interface.py, line: 443
 msgid   "Installed"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 214
-# File: gem/preferences.py, line: 263
+# File: gem/preferences.py, line: 228
+# File: gem/preferences.py, line: 277
 msgid   "Interface"
 msgstr  ""
 #
-# File: gem/interface.py, line: 415
+# File: gem/interface.py, line: 441
 msgid   "Last launch"
 msgstr  ""
 #
-# File: gem/utils.py, line: 227
+# File: gem/utils.py, line: 286
 msgid   "Last month"
 msgstr  ""
 #
-# File: gem/utils.py, line: 234
+# File: gem/utils.py, line: 293
 msgid   "Last year"
 msgstr  ""
 #
-# File: gem/interface.py, line: 414
+# File: gem/interface.py, line: 440
 msgid   "Launch"
 msgstr  ""
 #
-# File: gem/interface.py, line: 1599
+# File: gem/interface.py, line: 1684
 #, python-format
 msgid   "Launch %s"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 95
+# File: gem/preferences.py, line: 109
 msgid   "Launch a game"
 msgstr  ""
 #
-# File: gem/interface.py, line: 163
+# File: gem/interface.py, line: 178
 msgid   "Launch interface"
 msgstr  ""
 #
-# File: gem/interface.py, line: 316
+# File: gem/interface.py, line: 338
 msgid   "Launch selected game"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 231
+# File: gem/preferences.py, line: 245
 msgid   "Load the last chosen console during startup"
 msgstr  ""
 #
-# File: gem/interface.py, line: 1625
+# File: gem/interface.py, line: 1710
 #, python-format
 msgid   "Log to %s"
 msgstr  ""
 #
-# File: gem/utils.py, line: 61
+# File: gem/utils.py, line: 88
 msgid   "Manage your emulators easily and have fun"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 99
+# File: gem/preferences.py, line: 113
 msgid   "Mark a game as favorite"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 100
+# File: gem/preferences.py, line: 114
 msgid   "Mark a game as multiplayer"
 msgstr  ""
 #
-# File: gem/interface.py, line: 356
+# File: gem/interface.py, line: 379
 msgid   "Mark as _favorite"
 msgstr  ""
 #
-# File: gem/interface.py, line: 357
+# File: gem/interface.py, line: 380
 msgid   "Mark as _multiplayer"
 msgstr  ""
 #
-# File: gem/interface.py, line: 2432
+# File: gem/interface.py, line: 2555
 msgid   "Migrating entries from old database"
 msgstr  ""
 #
-# File: gem/interface.py, line: 157
+# File: gem/interface.py, line: 172
 msgid   "Migration complete"
 msgstr  ""
 #
-# File: gem/interface.py, line: 995
-# File: gem/interface.py, line: 1537
+# File: gem/interface.py, line: 1046
+# File: gem/interface.py, line: 1595
 msgid   "Missing binary"
 msgstr  ""
 #
-# File: gem/interface.py, line: 1526
+# File: gem/interface.py, line: 1584
 msgid   "Missing file"
 msgstr  ""
 #
-# File: gem/interface.py, line: 413
-# File: gem/preferences.py, line: 924
-# File: gem/preferences.py, line: 1236
+# File: gem/interface.py, line: 439
+# File: gem/preferences.py, line: 938
+# File: gem/preferences.py, line: 1250
 msgid   "Name"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 112
+# File: gem/preferences.py, line: 126
 msgid   "None"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 102
+# File: gem/preferences.py, line: 116
 msgid   "Open a game log"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 107
+# File: gem/preferences.py, line: 121
 msgid   "Open main log"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 108
+# File: gem/preferences.py, line: 122
 msgid   "Open preferences"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 104
+# File: gem/preferences.py, line: 118
 msgid   "Open selected game directory"
 msgstr  ""
 #
-# File: gem/interface.py, line: 359
+# File: gem/interface.py, line: 382
 msgid   "Output _log"
 msgstr  ""
 #
-# File: gem/interface.py, line: 416
+# File: gem/interface.py, line: 442
 msgid   "Play time"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 186
 # File: gem/preferences.py, line: 200
+# File: gem/preferences.py, line: 214
 msgid   "Preferences"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 109
+# File: gem/preferences.py, line: 123
 msgid   "Quit application"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 926
+# File: gem/preferences.py, line: 940
 msgid   "ROM's extensions"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 380
+# File: gem/preferences.py, line: 394
 msgid   "ROMs path"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 1245
+# File: gem/preferences.py, line: 1259
 msgid   "Regular expressions for files"
 msgstr  ""
 #
-# File: gem/interface.py, line: 1860
+# File: gem/interface.py, line: 1945
 #, python-format
 msgid   "Remove %s"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 96
+# File: gem/preferences.py, line: 110
 msgid   "Remove a game from database"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 97
+# File: gem/preferences.py, line: 111
 msgid   "Remove a game from disk"
 msgstr  ""
 #
-# File: gem/windows.py, line: 570
+# File: gem/windows.py, line: 744
 msgid   "Remove game save files"
 msgstr  ""
 #
-# File: gem/windows.py, line: 571
+# File: gem/windows.py, line: 745
 msgid   "Remove game screenshots"
 msgstr  ""
 #
-# File: gem/windows.py, line: 569
+# File: gem/windows.py, line: 743
 msgid   "Remove game's data from database"
 msgstr  ""
 #
-# File: gem/interface.py, line: 1744
+# File: gem/interface.py, line: 1829
 #, python-format
 msgid   "Rename %(old)s to %(new)s"
 msgstr  ""
 #
-# File: gem/interface.py, line: 1725
-# File: gem/preferences.py, line: 98
+# File: gem/interface.py, line: 1810
+# File: gem/preferences.py, line: 112
 msgid   "Rename a game"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 1246
+# File: gem/preferences.py, line: 1260
 msgid   "Save"
 msgstr  ""
 #
-# File: gem/interface.py, line: 613
+# File: gem/interface.py, line: 641
 #, python-format
 msgid   "Save %s for next startup"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 1566
+# File: gem/windows.py, line: 385
+msgid   "Search"
+msgstr  ""
+#
+# File: gem/preferences.py, line: 1499
+msgid   "Select a binary"
+msgstr  ""
+#
+# File: gem/preferences.py, line: 1613
 msgid   "Select icon from"
 msgstr  ""
 #
-# File: gem/interface.py, line: 1726
+# File: gem/interface.py, line: 1811
 #, python-format
 msgid   "Set a custom name for %s"
 msgstr  ""
 #
-# File: gem/interface.py, line: 318
+# File: gem/interface.py, line: 340
 msgid   "Set custom parameters"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 103
+# File: gem/preferences.py, line: 117
 msgid   "Set specific arguments for a game"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 355
+# File: gem/preferences.py, line: 369
 msgid   "Shortcut"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 215
+# File: gem/preferences.py, line: 229
 msgid   "Shortcuts"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 300
+# File: gem/preferences.py, line: 314
 msgid   "Show \"Flags\" column"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 299
+# File: gem/preferences.py, line: 313
 msgid   "Show \"Installed\" column"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 297
+# File: gem/preferences.py, line: 311
 msgid   "Show \"Last launch\" column"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 296
+# File: gem/preferences.py, line: 310
 msgid   "Show \"Launch\" column"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 298
+# File: gem/preferences.py, line: 312
 msgid   "Show \"Play time\" column"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 265
+# File: gem/preferences.py, line: 279
 msgid   "Show close buttons in header bar"
 msgstr  ""
 #
-# File: gem/interface.py, line: 324
+# File: gem/interface.py, line: 346
 msgid   "Show favorite games"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 101
+# File: gem/preferences.py, line: 115
 msgid   "Show game snapshots"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 324
+# File: gem/preferences.py, line: 338
 msgid   "Show line numbers"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 287
+# File: gem/preferences.py, line: 301
 msgid   "Show lines in games list"
 msgstr  ""
 #
-# File: gem/interface.py, line: 367
+# File: gem/interface.py, line: 390
 msgid   "Show main _log"
 msgstr  ""
 #
-# File: gem/interface.py, line: 326
+# File: gem/interface.py, line: 348
 msgid   "Show multiplayer games"
 msgstr  ""
 #
-# File: gem/interface.py, line: 320
+# File: gem/interface.py, line: 342
 msgid   "Show selected game screenshots"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 1247
+# File: gem/preferences.py, line: 1261
 msgid   "Snapshots"
 msgstr  ""
 #
-# File: gem/interface.py, line: 146
+# File: gem/interface.py, line: 161
 msgid   "Start database migration"
 msgstr  ""
 #
-# File: gem/database.py, line: 493
+# File: gem/database.py, line: 506
 #, python-format
 msgid   "Start to migrate %d entries"
 msgstr  ""
 #
-# File: gem/interface.py, line: 317
+# File: gem/interface.py, line: 339
 msgid   "Switch fullscreen mode"
 msgstr  ""
 #
-# File: gem/interface.py, line: 1616
-# File: gem/main.py, line: 163
+# File: gem/interface.py, line: 1701
+# File: gem/main.py, line: 194
 msgid   "Terminate by keyboard interrupt"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 1102
+# File: gem/preferences.py, line: 1476
+msgid   "This binary not exist, please, check the path"
+msgstr  ""
+#
+# File: gem/preferences.py, line: 1116
 msgid   "This console already exist, please, choose another name"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 1429
+# File: gem/preferences.py, line: 1451
 msgid   "This emulator already exist, please, choose another name"
 msgstr  ""
 #
-# File: gem/windows.py, line: 984
+# File: gem/windows.py, line: 1158
 msgid   "This extension is available in multiple consoles. Which one GEM must "
         "use to move this file ?"
 msgstr  ""
 #
-# File: gem/windows.py, line: 554
+# File: gem/windows.py, line: 728
 msgid   "This game is going to be removed from your disk and this action is "
         "irreversible."
 msgstr  ""
 #
-# File: gem/interface.py, line: 1861
+# File: gem/interface.py, line: 1946
 msgid   "This game was removed successfully"
 msgstr  ""
 #
-# File: gem/interface.py, line: 2227
+# File: gem/interface.py, line: 2350
 #, python-format
 msgid   "This rom already exists in %s. Do you want to replace it ?"
 msgstr  ""
 #
-# File: gem/utils.py, line: 218
+# File: gem/utils.py, line: 277
 msgid   "Today"
 msgstr  ""
 #
-# File: gem/interface.py, line: 1062
+# File: gem/interface.py, line: 1114
 #, python-format
 msgid   "Update %s configuration file"
 msgstr  ""
 #
-# File: gem/interface.py, line: 135
+# File: gem/interface.py, line: 150
 #, python-format
 msgid   "Update v%(old)s database to v%(new)s."
 msgstr  ""
 #
-# File: gem/preferences.py, line: 927
+# File: gem/preferences.py, line: 941
 msgid   "Use ; to separate extensions"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 252
+# File: gem/interface.py, line: 391
+msgid   "Use dark theme"
+msgstr  ""
+#
+# File: gem/preferences.py, line: 266
 msgid   "Use native viewer"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 114
+# File: gem/preferences.py, line: 128
 msgid   "Vertical"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 248
+# File: gem/preferences.py, line: 262
 msgid   "Viewer"
 msgstr  ""
 #
-# File: gem/interface.py, line: 566
+# File: gem/interface.py, line: 596
 msgid   "Welcome !"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 1242
+# File: gem/interface.py, line: 596
+msgid   "Welcome and thanks for choosing GEM as emulators manager. Start "
+        "using GEM by droping some roms into interface.\n"
+        "\n"
+        "Enjoy and have fun :D"
+msgstr  ""
+#
+# File: gem/preferences.py, line: 1256
 msgid   "Windowed"
 msgstr  ""
 #
-# File: gem/interface.py, line: 1765
+# File: gem/interface.py, line: 1850
 msgid   "Would you really want to clean informations for this game ?"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 829
+# File: gem/preferences.py, line: 843
 msgid   "Would you really want to remove this entry ?"
 msgstr  ""
 #
-# File: gem/utils.py, line: 220
+# File: gem/utils.py, line: 279
 msgid   "Yesterday"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 345
+# File: gem/preferences.py, line: 359
 msgid   "You can edit interface shortcuts for some actions. Click on a "
         "shortcut and insert wanted shortcut with your keyboard."
 msgstr  ""
 #
-# File: gem/interface.py, line: 368
+# File: gem/interface.py, line: 392
 msgid   "_About"
 msgstr  ""
 #
-# File: gem/interface.py, line: 360
+# File: gem/interface.py, line: 383
 msgid   "_Copy file path"
 msgstr  ""
 #
-# File: gem/interface.py, line: 362
+# File: gem/interface.py, line: 385
 msgid   "_Generate a menu entry"
 msgstr  ""
 #
-# File: gem/interface.py, line: 353
+# File: gem/interface.py, line: 376
 msgid   "_Launch"
 msgstr  ""
 #
-# File: gem/interface.py, line: 361
+# File: gem/interface.py, line: 384
 msgid   "_Open file path"
 msgstr  ""
 #
-# File: gem/interface.py, line: 366
+# File: gem/interface.py, line: 389
 msgid   "_Preferences"
 msgstr  ""
 #
-# File: gem/interface.py, line: 369
+# File: gem/interface.py, line: 393
 msgid   "_Quit"
 msgstr  ""
 #
-# File: gem/interface.py, line: 364
+# File: gem/interface.py, line: 387
 msgid   "_Remove game from disk"
 msgstr  ""
 #
-# File: gem/interface.py, line: 354
+# File: gem/interface.py, line: 377
 msgid   "_Rename"
 msgstr  ""
 #
-# File: gem/interface.py, line: 363
+# File: gem/interface.py, line: 386
 msgid   "_Reset game informations"
 msgstr  ""
 #
-# File: gem/interface.py, line: 358
+# File: gem/interface.py, line: 381
 msgid   "_Screenshots"
 msgstr  ""
 #
-# File: gem/interface.py, line: 926
+# File: gem/interface.py, line: 972
 msgid   "translator-credits"
 msgstr  ""

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.5\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2016-11-04 16:48+0100\n"
+"PO-Revision-Date: 2017-01-18 11:48+0100\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -18,10 +18,46 @@ msgid "%d days ago"
 msgstr "Il y a %d jours"
 
 #
+# File: gem/utils.py, line: 330
+#, python-format
+msgid "%d hour"
+msgstr "%d heure"
+
+#
+# File: gem/utils.py, line: 332
+#, python-format
+msgid "%d hours"
+msgstr "%d heures"
+
+#
+# File: gem/utils.py, line: 325
+#, python-format
+msgid "%d minute"
+msgstr "%d minute"
+
+#
+# File: src/window.py, line: 1056
+#, python-format
+msgid "%d minutes"
+msgstr "%d minute"
+
+#
 # File: src/window.py, line: 1056
 #, python-format
 msgid "%d months ago"
 msgstr "Il y a %d mois"
+
+#
+# File: gem/utils.py, line: 320
+#, python-format
+msgid "%d second"
+msgstr "%d seconde"
+
+#
+# File: gem/utils.py, line: 322
+#, python-format
+msgid "%d seconds"
+msgstr "%d secondes"
 
 #
 # File: src/window.py, line: 1048
@@ -320,25 +356,6 @@ msgid "GEM"
 msgstr "GEM"
 
 #
-# File: gem/interface.py, line: 829
-msgid ""
-"GEM come with some emulators and consoles already configured. But the "
-"default paths may not work with your system.\n"
-"\n"
-"The first thing you may do, it's open the preferences window and change "
-"paths for both consoles and emulators.\n"
-"\n"
-"Enjoy your games :D"
-msgstr ""
-"GEM arrive avec plusieurs émulateurs et consoles déjà configurés. Mais les "
-"chemins par défaut peuvent ne pas fonctionner avec votre système.\n"
-"\n"
-"La première chose que vous devriez faire est d'ouvrir la fenêtre de "
-"préférences et de changer les chemins pour les consoles et les émulateurs.\n"
-"\n"
-"Amusez-vous bien :D"
-
-#
 # File: gem/interface.py, line: 220
 msgid "Games list"
 msgstr "Liste de jeux"
@@ -608,6 +625,16 @@ msgid "Save %s for next startup"
 msgstr "Sauvegarde %s pour le prochain lancement"
 
 #
+# File: gem/windows.py, line: 385
+msgid "Search"
+msgstr "Recherche"
+
+#
+# File: gem/preferences.py, line: 1577
+msgid "Select a binary"
+msgstr "Choisir un binaire"
+
+#
 # File: gem/preferences.py, line: 1577
 msgid "Select icon from"
 msgstr "Choisir l'icône depuis"
@@ -731,6 +758,11 @@ msgstr "Arrêt par interruption du clavier"
 
 #
 # File: gem/preferences.py, line: 1020
+msgid "This binary not exist, please, check the path"
+msgstr "Ce binaire existe déjà, veuillez choisir un autre chemin"
+
+#
+# File: gem/preferences.py, line: 1020
 msgid "This console already exist, please, choose another name"
 msgstr "Cette console existe déjà, veuillez choisir un autre nom"
 
@@ -790,6 +822,11 @@ msgid "Use ; to separate extensions"
 msgstr "Utilisez ; pour séparer les extensions"
 
 #
+# File: gem/interface.py, line: 391
+msgid "Use dark theme"
+msgstr "Utiliser le thème sombre"
+
+#
 # File: gem/preferences.py, line: 292
 msgid "Use native viewer"
 msgstr "Utiliser le visualiseur natif"
@@ -808,6 +845,19 @@ msgstr "Visualiseur"
 # File: gem/interface.py, line: 829
 msgid "Welcome !"
 msgstr "Bienvenue !"
+
+#
+# File: gem/interface.py, line: 596
+msgid ""
+"Welcome and thanks for choosing GEM as emulators manager. Start using GEM by "
+"droping some roms into interface.\n"
+"\n"
+"Enjoy and have fun :D"
+msgstr ""
+"Bienvenue et merci d'avoir choisi GEM pour gérer vos émulateurs. Commencez à "
+"utiliser GEM en déposant une rom dans l'interface.\n"
+"\n"
+"Amusez-vous bien :D"
 
 #
 # File: gem/preferences.py, line: 1274
@@ -897,3 +947,23 @@ msgstr "_Capture d'écran"
 # File: gem/interface.py, line: 926
 msgid "translator-credits"
 msgstr ""
+
+#
+# File: gem/interface.py, line: 829
+#~ msgid ""
+#~ "GEM come with some emulators and consoles already configured. But the "
+#~ "default paths may not work with your system.\n"
+#~ "\n"
+#~ "The first thing you may do, it's open the preferences window and change "
+#~ "paths for both consoles and emulators.\n"
+#~ "\n"
+#~ "Enjoy your games :D"
+#~ msgstr ""
+#~ "GEM arrive avec plusieurs émulateurs et consoles déjà configurés. Mais "
+#~ "les chemins par défaut peuvent ne pas fonctionner avec votre système.\n"
+#~ "\n"
+#~ "La première chose que vous devriez faire est d'ouvrir la fenêtre de "
+#~ "préférences et de changer les chemins pour les consoles et les "
+#~ "émulateurs.\n"
+#~ "\n"
+#~ "Amusez-vous bien :D"

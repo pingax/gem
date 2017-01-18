@@ -18,10 +18,46 @@ msgid "%d days ago"
 msgstr "hace %d días"
 
 #
+# File: gem/utils.py, line: 330
+#, python-format
+msgid "%d hour"
+msgstr ""
+
+#
+# File: gem/utils.py, line: 332
+#, python-format
+msgid "%d hours"
+msgstr ""
+
+#
+# File: gem/utils.py, line: 325
+#, python-format
+msgid "%d minute"
+msgstr ""
+
+#
+# File: gem/interface.py, line: 2130
+#, fuzzy, python-format
+msgid "%d minutes"
+msgstr "hace %d meses"
+
+#
 # File: gem/interface.py, line: 2130
 #, python-format
 msgid "%d months ago"
 msgstr "hace %d meses"
+
+#
+# File: gem/utils.py, line: 320
+#, python-format
+msgid "%d second"
+msgstr ""
+
+#
+# File: gem/utils.py, line: 322
+#, python-format
+msgid "%d seconds"
+msgstr ""
 
 #
 # File: gem/interface.py, line: 2137
@@ -327,25 +363,6 @@ msgid "GEM"
 msgstr "GEM"
 
 #
-# File: gem/interface.py, line: 1098
-msgid ""
-"GEM come with some emulators and consoles already configured. But the "
-"default paths may not work with your system.\n"
-"\n"
-"The first thing you may do, it's open the preferences window and change "
-"paths for both consoles and emulators.\n"
-"\n"
-"Enjoy your games :D"
-msgstr ""
-"GEM viene con algunos emuladores y consolas ya configurados, pero la ruta "
-"por defecto puede que no funcione en tu sistema.\n"
-"\n"
-"La primera cosa que debes hacer es abrir la ventana de preferencias y "
-"cambiar la ruta tanto para las consolas como para los emuladores.\n"
-"\n"
-"Disfruta los juegos :D"
-
-#
 # File: gem/preferences.py, line: 328
 msgid "Games list"
 msgstr "Lista de juegos"
@@ -621,6 +638,17 @@ msgid "Save %s for next startup"
 msgstr "Guardar %s para el próximo arranque"
 
 #
+# File: gem/windows.py, line: 385
+msgid "Search"
+msgstr ""
+
+#
+# File: gem/windows.py, line: 915
+#, fuzzy
+msgid "Select a binary"
+msgstr "Seleccionar un icono de"
+
+#
 # File: gem/windows.py, line: 915
 msgid "Select icon from"
 msgstr "Seleccionar un icono de"
@@ -747,6 +775,12 @@ msgstr "Finalizado por interrupción del teclado"
 
 #
 # File: gem/preferences.py, line: 1418
+#, fuzzy
+msgid "This binary not exist, please, check the path"
+msgstr "Esta consola ya existe, por favor escoja otro nombre"
+
+#
+# File: gem/preferences.py, line: 1418
 msgid "This console already exist, please, choose another name"
 msgstr "Esta consola ya existe, por favor escoja otro nombre"
 
@@ -805,6 +839,11 @@ msgid "Use ; to separate extensions"
 msgstr "Usa ; para separar las extensiones"
 
 #
+# File: gem/interface.py, line: 391
+msgid "Use dark theme"
+msgstr ""
+
+#
 # File: gem/preferences.py, line: 393
 msgid "Use native viewer"
 msgstr "Usar el visor nativo"
@@ -823,6 +862,15 @@ msgstr "Visor"
 # File: gem/interface.py, line: 1098
 msgid "Welcome !"
 msgstr "¡Bienvenido!"
+
+#
+# File: gem/interface.py, line: 596
+msgid ""
+"Welcome and thanks for choosing GEM as emulators manager. Start using GEM by "
+"droping some roms into interface.\n"
+"\n"
+"Enjoy and have fun :D"
+msgstr ""
 
 #
 # File: gem/preferences.py, line: 1670
@@ -914,3 +962,22 @@ msgstr "_Capturas de pantalla"
 # File: gem/preferences.py, line: 280
 msgid "translator-credits"
 msgstr "Emuladores"
+
+#
+# File: gem/interface.py, line: 1098
+#~ msgid ""
+#~ "GEM come with some emulators and consoles already configured. But the "
+#~ "default paths may not work with your system.\n"
+#~ "\n"
+#~ "The first thing you may do, it's open the preferences window and change "
+#~ "paths for both consoles and emulators.\n"
+#~ "\n"
+#~ "Enjoy your games :D"
+#~ msgstr ""
+#~ "GEM viene con algunos emuladores y consolas ya configurados, pero la ruta "
+#~ "por defecto puede que no funcione en tu sistema.\n"
+#~ "\n"
+#~ "La primera cosa que debes hacer es abrir la ventana de preferencias y "
+#~ "cambiar la ruta tanto para las consolas como para los emuladores.\n"
+#~ "\n"
+#~ "Disfruta los juegos :D"

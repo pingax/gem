@@ -1341,12 +1341,12 @@ class Interface(Gtk.Builder):
                             # Last play time
                             if len(data["last_play_time"]) > 0:
                                 row_data[Columns.LastTimePlay] = str(
-                                    data["last_play_time"])
+                                    string_from_time(data["last_play_time"]))
 
                             # Play time
                             if len(data["play_time"]) > 0:
                                 row_data[Columns.TimePlay] = str(
-                                    data["play_time"])
+                                    string_from_time(data["play_time"]))
 
                             # Exception
                             if data["arguments"] is not None and \
@@ -1749,12 +1749,12 @@ class Interface(Gtk.Builder):
                     string_from_date(value["last_play"]), gamename)
 
                 # Last time played
-                self.set_game_data(
-                    Columns.LastTimePlay, value["last_play_time"], gamename)
+                self.set_game_data(Columns.LastTimePlay,
+                    string_from_time(value["last_play_time"]), gamename)
 
                 # Play time
-                self.set_game_data(
-                    Columns.TimePlay, value["play_time"], gamename)
+                self.set_game_data(Columns.TimePlay,
+                    string_from_time(value["play_time"]), gamename)
 
                 # Snaps
                 if self.check_screenshots(emulator, gamename):

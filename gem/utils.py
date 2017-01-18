@@ -295,6 +295,43 @@ def string_from_date(date, date_format="%d-%m-%Y %H:%M:%S"):
     return _("%d years ago") % int(years)
 
 
+def string_from_time(date, date_format="%H:%M:%S"):
+    """
+    Get a pretty string from date
+
+    :param datetime date: Date to compare with NOW()
+    :param str date_format: Date string format
+
+    :return: Pretty string
+    :rtype: str/None
+    """
+
+    if date is None:
+        return None
+
+    if type(date) is str:
+        date = datetime.strptime(str(date), date_format)
+
+    if date.hour == 0:
+        if date.minute == 0:
+            if date.second == 0:
+                return str()
+            elif date.second == 1:
+                return _("%d second" % date.second)
+            else:
+                return _("%d seconds" % date.second)
+
+        elif date.minute == 1:
+            return _("%d minute" % date.minute)
+        else:
+            return _("%d minutes" % date.minute)
+
+    elif date.hour == 1:
+        return _("%d hour" % date.hour)
+
+    return _("%d hours" % date.hour)
+
+
 def on_entry_clear(widget, pos, event):
     """
     Reset an entry widget when specific icon is clicked
