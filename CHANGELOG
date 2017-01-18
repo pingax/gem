@@ -4,6 +4,7 @@
     - Add the possibility to switch ui theme between dark and light
     - Add an icon in consoles combobox to alert user when a binary is missing
     - Add the possibility to use basename for emulator binary instead of full path
+    - Add <conf_path>, <rom_path>, <rom_name>, <rom_file> to default argument
     - Fix cannot open viewer when rom filename has many dots
     - Fix cannot open parameters dialog when data from database are empty
     - Fix avoid RecursionError when use forward_search

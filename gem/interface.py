@@ -1578,6 +1578,8 @@ class Interface(Gtk.Builder):
         Generate a command for a game with a specific emulator
         """
 
+        not_use_filename = False
+
         if not exists(filename):
             self.set_message(_("Missing file"), _("Cannot found %s" % filename))
 
@@ -1615,11 +1617,37 @@ class Interface(Gtk.Builder):
         # Fullscreen
         if self.tool_item_fullscreen.get_active():
             if self.emulators.has_option(emulator, "fullscreen"):
-                args += " %s" %self.emulators.get(emulator, "fullscreen")
+                args += " %s" % self.emulators.get(emulator, "fullscreen")
 
         # Windowed
         elif self.emulators.has_option(emulator, "windowed"):
-            args += " %s" %self.emulators.get(emulator, "windowed")
+            args += " %s" % self.emulators.get(emulator, "windowed")
+
+        # ----------------------------
+        #   Replace special parameters
+        # ----------------------------
+
+        if "<conf_path>" in args and \
+            self.emulators.has_option(emulator, "configuration"):
+            args = args.replace("<conf_path>",
+                self.emulators.get(emulator, "configuration"))
+
+        if "<rom_path>" in args:
+            args = args.replace("<rom_path>", dirname(expanduser(filename)))
+
+            not_use_filename = True
+
+        if "<rom_name>" in args:
+            name, extension = splitext(expanduser(filename))
+
+            args = args.replace("<rom_name>", name)
+
+            not_use_filename = True
+
+        if "<rom_file>" in args:
+            args = args.replace("<rom_file>", self.selection["game"])
+
+            not_use_filename = True
 
         # ----------------------------
         #   Generate correct command
@@ -1635,7 +1663,8 @@ class Interface(Gtk.Builder):
             command.extend(shlex_split(args))
 
         # Append game file
-        command.append(self.selection["game"])
+        if not not_use_filename:
+            command.append(self.selection["game"])
 
         return command
 
