@@ -88,9 +88,7 @@ def main():
     # ------------------------------------
 
     parser = ArgumentParser(
-        description="Graphical Emulators Manager",
-        epilog="Copyleft 2016 - Kawa Team",
-        conflict_handler="resolve")
+        description=Gem.Name, epilog=Gem.Copyleft, conflict_handler="resolve")
 
     parser.add_argument("-v", "--version", action="version",
         version="GEM %s (%s) - Licence GPLv3" % (Gem.Version, Gem.CodeName),
