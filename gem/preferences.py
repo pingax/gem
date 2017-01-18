@@ -572,15 +572,15 @@ class Preferences(Gtk.Builder):
         #   Interface
         # ------------------------------------
 
-        self.check_last_console.set_active(
-            bool(int(self.config.item("gem", "load_console_startup", 1))))
+        self.check_last_console.set_active(self.config.getboolean(
+            "gem", "load_console_startup", fallback=True))
 
         # ------------------------------------
         #   Viewer
         # ------------------------------------
 
         self.check_native_viewer.set_active(
-            bool(int(self.config.item("viewer", "native", 1))))
+            self.config.getboolean("viewer", "native", fallback=True))
 
         self.file_viewer_binary.set_filename(
             self.config.item("viewer", "binary"))
@@ -592,7 +592,7 @@ class Preferences(Gtk.Builder):
         # ------------------------------------
 
         self.check_header.set_active(
-            bool(int(self.config.item("gem", "show_header", 1))))
+            self.config.getboolean("gem", "show_header", fallback=True))
 
         # ------------------------------------
         #   Games list
@@ -609,26 +609,26 @@ class Preferences(Gtk.Builder):
             self.combo_lines.set_active_iter(item)
 
         self.check_play.set_active(
-            bool(int(self.config.item("columns", "play", 1))))
+            self.config.getboolean("columns", "play", fallback=True))
 
         self.check_last_play.set_active(
-            bool(int(self.config.item("columns", "last_play", 1))))
+            self.config.getboolean("columns", "last_play", fallback=True))
 
         self.check_play_time.set_active(
-            bool(int(self.config.item("columns", "play_time", 1))))
+            self.config.getboolean("columns", "play_time", fallback=True))
 
         self.check_installed.set_active(
-            bool(int(self.config.item("columns", "installed", 1))))
+            self.config.getboolean("columns", "installed", fallback=True))
 
         self.check_flags.set_active(
-            bool(int(self.config.item("columns", "flags", 1))))
+            self.config.getboolean("columns", "flags", fallback=True))
 
         # ------------------------------------
         #   Editor
         # ------------------------------------
 
         # self.check_lines.set_active(
-            # bool(int(self.config.item("editor", "lines", 1))))
+            # self.config.getboolean("editor", "lines", fallback=True))
 
         # style_manager = gtksourceview2.StyleSchemeManager()
 

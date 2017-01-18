@@ -592,7 +592,7 @@ class Interface(Gtk.Builder):
 
         self.load_interface()
 
-        if bool(int(self.config.item("gem", "load_console_startup", 1))):
+        if self.config.getboolean("gem", "load_console_startup", fallback=True):
             console = self.config.item("gem", "last_console", str())
             if len(console) > 0:
                 for row in self.model_consoles:
@@ -604,7 +604,7 @@ class Interface(Gtk.Builder):
 
                         break
 
-        if bool(int(self.config.item("gem", "welcome", 1))):
+        if self.config.getboolean("gem", "welcome", fallback=True):
             dialog = Message(self, _("Welcome !"), _("Welcome and thanks for "
                 "choosing GEM as emulators manager. Start using GEM by "
                 "droping some roms into interface.\n\nEnjoy and have fun :D"),
@@ -690,7 +690,8 @@ class Interface(Gtk.Builder):
         # Block signal to avoid stack overflow when toggled
         self.menu_item_dark_theme.handler_block(self.dark_theme_signal)
 
-        dark_theme_status = bool(int(self.config.item("gem", "dark_theme", 0)))
+        dark_theme_status = self.config.getboolean(
+            "gem", "dark_theme", fallback=False)
 
         on_change_theme(dark_theme_status)
 
@@ -714,7 +715,7 @@ class Interface(Gtk.Builder):
         #   Header
         # ------------------------------------
 
-        if not bool(int(self.config.item("gem", "show_header", 1))):
+        if not self.config.getboolean("gem", "show_header", fallback=True):
             self.headerbar.set_show_close_button(False)
         else:
             self.headerbar.set_show_close_button(True)
@@ -755,7 +756,7 @@ class Interface(Gtk.Builder):
             "flags": self.column_game_flags }
 
         for key, widget in columns.items():
-            if not bool(int(self.config.item("columns", key, 1))):
+            if not self.config.getboolean("columns", key, fallback=True):
                 widget.set_visible(False)
             else:
                 widget.set_visible(True)
@@ -1037,7 +1038,7 @@ class Interface(Gtk.Builder):
 
             title = "%s (%s)" % (title, self.selection["console"])
 
-            if bool(int(self.config.item("viewer", "native", '1'))):
+            if self.config.getboolean("viewer", "native", fallback=True):
                 DialogViewer(self, title, path)
 
             elif exists(viewer):
@@ -2309,7 +2310,8 @@ class Interface(Gtk.Builder):
         Change ui theme between dark and light version
         """
 
-        dark_theme_status = bool(int(self.config.item("gem", "dark_theme", 0)))
+        dark_theme_status = self.config.getboolean(
+            "gem", "dark_theme", fallback=False)
 
         on_change_theme(not dark_theme_status)
 
