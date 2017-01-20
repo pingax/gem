@@ -213,6 +213,7 @@ class Interface(Gtk.Builder):
 
         self.icons = dict()
         self.translucent = dict()
+        self.notes = dict()
         self.threads = dict()
         self.selection = dict()
         self.shortcuts_data = dict()
@@ -249,7 +250,7 @@ class Interface(Gtk.Builder):
         for icon in self.icons_data.keys():
             self.icons[icon] = icon_load(self.icons_data[icon], 22)
 
-            self.translucent[icon] = set_pixbuf_opacity(self.icons[icon], 20)
+            self.translucent[icon] = set_pixbuf_opacity(self.icons[icon], 50)
 
         # HACK: Create an empty image to avoid g_object_set_qdata warning
         self.empty = Pixbuf.new(Colorspace.RGB, True, 8, 22, 22)
@@ -634,8 +635,17 @@ class Interface(Gtk.Builder):
         if not self.list_thread == 0:
             source_remove(self.list_thread)
 
-        for thread in self.threads.keys():
-            self.threads[thread].terminate()
+        if len(self.threads.keys()) > 0:
+            for thread in self.threads.copy().keys():
+                self.threads[thread].terminate()
+
+        # ------------------------------------
+        #   Notes
+        # ------------------------------------
+
+        if len(self.notes.keys()) > 0:
+            for dialog in self.notes.copy().keys():
+                self.notes[dialog].response(Gtk.ResponseType.APPLY)
 
         # ------------------------------------
         #   Last console
@@ -1106,21 +1116,43 @@ class Interface(Gtk.Builder):
         if self.selection["name"] is not None:
             title = self.selection["name"]
 
-        if path is not None:
+        if path is not None and not expanduser(path) in self.notes.keys():
             dialog = DialogEditor(
                 self, title, expanduser(path), icon="emblem-documents")
 
-            response = dialog.run()
+            # Allow to launch games with open notes
+            dialog.set_modal(False)
 
-            if response == Gtk.ResponseType.APPLY:
-                with open(path, 'w') as pipe:
-                    pipe.write(dialog.buffer_editor.get_text(
-                        dialog.buffer_editor.get_start_iter(),
-                        dialog.buffer_editor.get_end_iter(), True))
+            dialog.connect("response", self.__on_show_notes_response,
+                title, expanduser(path))
 
-                self.logger.info(_("Update %s notes") % title)
+            dialog.show()
 
-            dialog.destroy()
+            # Save dialogs to close it properly when gem terminate and avoid to
+            # reopen existing one
+            self.notes[expanduser(path)] = dialog
+
+        elif expanduser(path) in self.notes.keys():
+            self.notes[expanduser(path)].grab_focus()
+
+
+    def __on_show_notes_response(self, dialog, response, title, path):
+        """
+        Close game's note and save buffer to correct file
+        """
+
+        if response == Gtk.ResponseType.APPLY:
+            with open(path, 'w') as pipe:
+                pipe.write(dialog.buffer_editor.get_text(
+                    dialog.buffer_editor.get_start_iter(),
+                    dialog.buffer_editor.get_end_iter(), True))
+
+            self.logger.info(_("Update %s notes") % title)
+
+        dialog.destroy()
+
+        if path in self.notes.keys():
+            del self.notes[path]
 
 
     def __on_show_emulator_config(self, widget):
@@ -1607,8 +1639,6 @@ class Interface(Gtk.Builder):
                 # ----------------------------
                 #   Run game
                 # ----------------------------
-
-                self.threads[splitext(filename)[0]] = None
 
                 thread = Thread(target=self.launch_game,
                     args=[emulator, filename, command, title])

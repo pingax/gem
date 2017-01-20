@@ -93,10 +93,13 @@ class Dialog(Gtk.Dialog):
         # ------------------------------------
 
         self.set_title(title)
-        self.set_transient_for(parent.window)
         self.set_default_icon_name(icon)
 
+        if parent is not None:
+            self.set_transient_for(parent.window)
+
         self.set_modal(True)
+        self.set_can_focus(True)
         self.set_resizable(False)
         self.set_keep_above(True)
         self.set_destroy_with_parent(True)

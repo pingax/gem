@@ -97,6 +97,8 @@ def main():
         help="configure gem")
     parser.add_argument("-r", "--reconstruct", action="store_true",
         help="reconstruct gem db")
+    parser.add_argument("-d", "--debug", action="store_true",
+        help="launch gem with debug flag")
 
     args = parser.parse_args()
 
@@ -135,6 +137,11 @@ def main():
 
     logger = logging.getLogger("gem")
 
+    if not args.debug:
+        logger.setLevel(logging.INFO)
+
+    logger.debug("Activate debug flag")
+
     try:
         # ------------------------------------
         #   Icons folders
@@ -142,6 +149,7 @@ def main():
 
         # ~/.local/share/gem/icons/consoles
         if not exists(expanduser(Path.Consoles)):
+            logger.debug("Copy consoles icons to %s" % Path.Consoles)
             mkdir(expanduser(Path.Consoles))
 
             for filename in glob(path_join(
@@ -151,6 +159,7 @@ def main():
 
         # ~/.local/share/gem/icons/emulators
         if not exists(expanduser(Path.Emulators)):
+            logger.debug("Copy emulators icons to %s" % Path.Emulators)
             mkdir(expanduser(Path.Emulators))
 
             for filename in glob(path_join(
@@ -163,14 +172,17 @@ def main():
         # ------------------------------------
 
         if not exists(expanduser(path_join(Path.User, "gem.conf"))):
+            logger.debug("Copy gem.conf to %s" % Path.User)
             copy(get_data(Conf.Default),
                 expanduser(path_join(Path.User, "gem.conf")))
 
         if not exists(expanduser(path_join(Path.User, "consoles.conf"))):
+            logger.debug("Copy consoles.conf to %s" % Path.User)
             copy(get_data(Conf.Consoles),
                 expanduser(path_join(Path.User, "consoles.conf")))
 
         if not exists(expanduser(path_join(Path.User, "emulators.conf"))):
+            logger.debug("Copy emulators.conf to %s" % Path.User)
             copy(get_data(Conf.Emulators),
                 expanduser(path_join(Path.User, "emulators.conf")))
 
