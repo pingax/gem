@@ -105,6 +105,12 @@
     <property name="stock">gtk-clear</property>
     <property name="icon_size">1</property>
   </object>
+  <object class="GtkImage" id="image_games_edit">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">preferences-desktop</property>
+    <property name="icon_size">1</property>
+  </object>
   <object class="GtkImage" id="image_games_launch">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -114,13 +120,19 @@
   <object class="GtkImage" id="image_games_log">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="stock">gtk-file</property>
+    <property name="icon_name">utilities-terminal</property>
     <property name="icon_size">1</property>
   </object>
   <object class="GtkImage" id="image_games_multiplayer">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="icon_name">system-users</property>
+    <property name="icon_size">1</property>
+  </object>
+  <object class="GtkImage" id="image_games_notes">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">emblem-documents</property>
     <property name="icon_size">1</property>
   </object>
   <object class="GtkImage" id="image_games_open">
@@ -145,24 +157,6 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="stock">gtk-edit</property>
-    <property name="icon_size">1</property>
-  </object>
-  <object class="GtkImage" id="image_games_screenshots">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="icon_name">emblem-photos</property>
-    <property name="icon_size">1</property>
-  </object>
-  <object class="GtkImage" id="image_games_notes">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="icon_name">emblem-documents</property>
-    <property name="icon_size">1</property>
-  </object>
-  <object class="GtkImage" id="image_games_edit">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="icon_name">preferences-desktop</property>
     <property name="icon_size">1</property>
   </object>
   <object class="GtkMenu" id="submenu_edit">
@@ -250,6 +244,12 @@
         <property name="use_stock">False</property>
       </object>
     </child>
+  </object>
+  <object class="GtkImage" id="image_games_screenshots">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">emblem-photos</property>
+    <property name="icon_size">1</property>
   </object>
   <object class="GtkMenu" id="menu_games">
     <property name="visible">True</property>
@@ -451,47 +451,81 @@
               </object>
             </child>
             <child>
-              <object class="GtkSeparator" id="button_separator">
+              <object class="GtkSeparator" id="button_separator_options">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
               </object>
               <packing>
-                <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkToggleButton" id="button_fullscreen">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <child>
-                  <object class="GtkImage" id="image_fullscreen">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="icon_name">view-restore</property>
-                  </object>
-                </child>
-              </object>
-              <packing>
-                <property name="position">2</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="button_screenshots">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="tooltip_text" translatable="yes">Show game screenshots</property>
-                <child>
-                  <object class="GtkImage" id="image_screenshots">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="icon_name">image-x-generic</property>
-                  </object>
-                </child>
-              </object>
-              <packing>
                 <property name="position">3</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox" id="box_header_options">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <child>
+                  <object class="GtkButton" id="button_screenshots">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="tooltip_text" translatable="yes">Show game screenshots</property>
+                    <child>
+                      <object class="GtkImage" id="image_screenshots">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="icon_name">image-x-generic</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="button_output">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="tooltip_text" translatable="yes">Show game output</property>
+                    <child>
+                      <object class="GtkImage" id="image_output">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="icon_name">utilities-terminal</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="button_notes">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="tooltip_text" translatable="yes">Show game notes</property>
+                    <child>
+                      <object class="GtkImage" id="image_notes">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="icon_name">emblem-documents</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="position">4</property>
               </packing>
             </child>
             <child>
@@ -509,7 +543,7 @@
                 </child>
               </object>
               <packing>
-                <property name="position">4</property>
+                <property name="position">5</property>
               </packing>
             </child>
             <child>
@@ -522,13 +556,41 @@
                   <object class="GtkImage" id="image_menu">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="icon_name">applications-other</property>
+                    <property name="icon_name">open-menu</property>
                   </object>
                 </child>
               </object>
               <packing>
                 <property name="pack_type">end</property>
-                <property name="position">5</property>
+                <property name="position">8</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSeparator" id="button_separator_menu">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+              </object>
+              <packing>
+                <property name="pack_type">end</property>
+                <property name="position">7</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToggleButton" id="button_fullscreen">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <child>
+                  <object class="GtkImage" id="image_fullscreen">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="icon_name">view-restore</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="pack_type">end</property>
+                <property name="position">6</property>
               </packing>
             </child>
           </object>

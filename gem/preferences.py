@@ -273,11 +273,14 @@ class Preferences(Gtk.Builder):
         label_interface = self.get_object("label_interface")
 
         self.check_header = self.get_object("check_header")
+        self.check_icons = self.get_object("check_translucent_icons")
 
         # Properties
         label_interface.set_label(_("Interface"))
 
         self.check_header.set_label(_("Show close buttons in header bar"))
+        self.check_icons.set_label(
+            _("Use translucent icons instead of empty ones"))
 
         # ------------------------------------
         #   Interface - Games list
@@ -520,6 +523,8 @@ class Preferences(Gtk.Builder):
 
             self.config.modify("gem", "show_header",
                 int(self.check_header.get_active()))
+            self.config.modify("gem", "use_translucent_icons",
+                int(self.check_icons.get_active()))
 
             self.config.modify("columns", "play",
                 int(self.check_play.get_active()))
@@ -579,8 +584,8 @@ class Preferences(Gtk.Builder):
         #   Viewer
         # ------------------------------------
 
-        self.check_native_viewer.set_active(
-            self.config.getboolean("viewer", "native", fallback=True))
+        self.check_native_viewer.set_active(self.config.getboolean(
+            "viewer", "native", fallback=True))
 
         self.file_viewer_binary.set_filename(
             self.config.item("viewer", "binary"))
@@ -591,8 +596,10 @@ class Preferences(Gtk.Builder):
         #   Interface
         # ------------------------------------
 
-        self.check_header.set_active(
-            self.config.getboolean("gem", "show_header", fallback=True))
+        self.check_header.set_active(self.config.getboolean(
+            "gem", "show_header", fallback=True))
+        self.check_icons.set_active(self.config.getboolean(
+            "gem", "use_translucent_icons", fallback=True))
 
         # ------------------------------------
         #   Games list
@@ -608,20 +615,20 @@ class Preferences(Gtk.Builder):
         if item is not None:
             self.combo_lines.set_active_iter(item)
 
-        self.check_play.set_active(
-            self.config.getboolean("columns", "play", fallback=True))
+        self.check_play.set_active(self.config.getboolean(
+            "columns", "play", fallback=True))
 
-        self.check_last_play.set_active(
-            self.config.getboolean("columns", "last_play", fallback=True))
+        self.check_last_play.set_active(self.config.getboolean(
+            "columns", "last_play", fallback=True))
 
-        self.check_play_time.set_active(
-            self.config.getboolean("columns", "play_time", fallback=True))
+        self.check_play_time.set_active(self.config.getboolean(
+            "columns", "play_time", fallback=True))
 
-        self.check_installed.set_active(
-            self.config.getboolean("columns", "installed", fallback=True))
+        self.check_installed.set_active(self.config.getboolean(
+            "columns", "installed", fallback=True))
 
-        self.check_flags.set_active(
-            self.config.getboolean("columns", "flags", fallback=True))
+        self.check_flags.set_active(self.config.getboolean(
+            "columns", "flags", fallback=True))
 
         # ------------------------------------
         #   Editor

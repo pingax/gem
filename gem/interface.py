@@ -212,7 +212,7 @@ class Interface(Gtk.Builder):
         self.available_configurators = dict()
 
         self.icons = dict()
-        self.translucent = dict()
+        self.alternative = dict()
         self.notes = dict()
         self.threads = dict()
         self.selection = dict()
@@ -250,7 +250,7 @@ class Interface(Gtk.Builder):
         for icon in self.icons_data.keys():
             self.icons[icon] = icon_load(self.icons_data[icon], 22)
 
-            self.translucent[icon] = set_pixbuf_opacity(self.icons[icon], 50)
+            self.alternative[icon] = None
 
         # HACK: Create an empty image to avoid g_object_set_qdata warning
         self.empty = Pixbuf.new(Colorspace.RGB, True, 8, 22, 22)
@@ -318,9 +318,14 @@ class Interface(Gtk.Builder):
 
         self.headerbar = self.get_object("headerbar")
 
+        self.grid_options = self.get_object("box_header_options")
+
         # Properties
         self.headerbar.set_title(self.title)
         self.headerbar.set_subtitle(str())
+
+        Gtk.StyleContext.add_class(
+            self.grid_options.get_style_context(), "linked")
 
         # ------------------------------------
         #   Toolbar items
@@ -330,6 +335,8 @@ class Interface(Gtk.Builder):
         self.tool_item_fullscreen = self.get_object("button_fullscreen")
         self.tool_item_parameters = self.get_object("button_arguments")
         self.tool_item_screenshots = self.get_object("button_screenshots")
+        self.tool_item_output = self.get_object("button_output")
+        self.tool_item_notes = self.get_object("button_notes")
 
         self.tool_item_properties = self.get_object("tool_properties")
 
@@ -344,6 +351,9 @@ class Interface(Gtk.Builder):
         self.tool_item_parameters.set_tooltip_text(_("Set custom parameters"))
         self.tool_item_screenshots.set_tooltip_text(
             _("Show selected game screenshots"))
+        self.tool_item_output.set_tooltip_text(
+            _("Show selected game output log"))
+        self.tool_item_notes.set_tooltip_text(_("Show selected game notes"))
 
         self.tool_item_properties.set_tooltip_text(_("Edit emulator"))
 
@@ -497,6 +507,10 @@ class Interface(Gtk.Builder):
             "toggled", self.__on_activate_fullscreen)
         self.tool_item_screenshots.connect(
             "clicked", self.__on_show_viewer)
+        self.tool_item_output.connect(
+            "clicked", self.__on_show_log)
+        self.tool_item_notes.connect(
+            "clicked", self.__on_show_notes)
         self.tool_item_parameters.connect(
             "clicked", self.__on_game_parameters)
 
@@ -711,6 +725,26 @@ class Interface(Gtk.Builder):
         self.menu_item_dark_theme.handler_unblock(self.dark_theme_signal)
 
         # ------------------------------------
+        #   Icons
+        # ------------------------------------
+
+        icon = self.alternative["save"]
+
+        status = self.config.getboolean(
+            "gem", "use_translucent_icons", fallback=False)
+
+        if icon is None or (icon == self.empty and status) or (
+            not icon == self.empty and not status):
+
+            for icon in self.icons_data.keys():
+                if status:
+                    self.alternative[icon] = set_pixbuf_opacity(
+                        self.icons[icon], 50)
+
+                else:
+                    self.alternative[icon] = self.empty
+
+        # ------------------------------------
         #   Widgets
         # ------------------------------------
 
@@ -795,6 +829,8 @@ class Interface(Gtk.Builder):
         self.menu_item_database.set_sensitive(status)
 
         self.tool_item_launch.set_sensitive(status)
+        self.tool_item_output.set_sensitive(status)
+        self.tool_item_notes.set_sensitive(status)
         self.tool_item_parameters.set_sensitive(status)
         self.tool_item_screenshots.set_sensitive(status)
 
@@ -1369,17 +1405,17 @@ class Interface(Gtk.Builder):
                     if ext in ext_list or ext.lower() in ext_list:
                         row_data = [
                             False,          # Favorite status
-                            self.translucent["favorite"],
+                            self.alternative["favorite"],
                             filename,       # File name
                             str(),          # Play number
                             str(),          # Last play date
                             str(),          # Last play time
                             str(),          # Total play time
                             str(),          # Installed date
-                            self.translucent["except"],
-                            self.translucent["snap"],
-                            self.translucent["multiplayer"],
-                            self.translucent["save"],
+                            self.alternative["except"],
+                            self.alternative["snap"],
+                            self.alternative["multiplayer"],
+                            self.alternative["save"],
                             filename ]      # Filename without extension
 
                         # Get values from database
@@ -1542,11 +1578,16 @@ class Interface(Gtk.Builder):
                 self.menu_item_remove.set_sensitive(False)
                 self.menu_item_rename.set_sensitive(False)
 
-            if model.get_value(treeiter, Columns.Snapshots) == self.empty:
+            iter_snaps = model.get_value(treeiter, Columns.Snapshots)
+
+            # Check snaps icon to avoid to check screenshots again
+            if iter_snaps == self.empty or \
+                iter_snaps == self.alternative["snap"]:
                 self.tool_item_screenshots.set_sensitive(False)
                 self.menu_item_screenshots.set_sensitive(False)
 
             if self.check_log() is None:
+                self.tool_item_output.set_sensitive(False)
                 self.menu_item_log.set_sensitive(False)
 
             if run_game:
@@ -1838,7 +1879,7 @@ class Interface(Gtk.Builder):
 
                 else:
                     self.set_game_data(
-                        Columns.Snapshots, self.translucent["snap"], gamename)
+                        Columns.Snapshots, self.alternative["snap"], gamename)
 
                 # Save state
                 if self.check_save_states(emulator, gamename):
@@ -1847,7 +1888,7 @@ class Interface(Gtk.Builder):
 
                 else:
                     self.set_game_data(
-                        Columns.Save, self.translucent["save"], gamename)
+                        Columns.Save, self.alternative["save"], gamename)
 
         if basename(splitext(self.selection["game"])[0]) == gamename:
             self.tool_item_launch.set_sensitive(True)
@@ -2137,7 +2178,7 @@ class Interface(Gtk.Builder):
         treeiter = self.game_path[gamename][1]
 
         if self.model_games[treeiter][Columns.Icon] == \
-            self.translucent["favorite"]:
+            self.alternative["favorite"]:
             self.model_games[treeiter][Columns.Favorite] = True
             self.model_games[treeiter][Columns.Icon] = self.icons["favorite"]
 
@@ -2147,7 +2188,7 @@ class Interface(Gtk.Builder):
         else:
             self.model_games[treeiter][Columns.Favorite] = False
             self.model_games[treeiter][Columns.Icon] = \
-                self.translucent["favorite"]
+                self.alternative["favorite"]
 
             self.database.modify("games",
                 { "favorite": 0 }, { "filename": gamefile })
@@ -2166,7 +2207,7 @@ class Interface(Gtk.Builder):
         treeiter = self.game_path[gamename][1]
 
         if self.model_games[treeiter][Columns.Multiplayer] == \
-            self.translucent["multiplayer"]:
+            self.alternative["multiplayer"]:
             self.model_games[treeiter][Columns.Multiplayer] = \
                 self.icons["multiplayer"]
 
@@ -2175,7 +2216,7 @@ class Interface(Gtk.Builder):
 
         else:
             self.model_games[treeiter][Columns.Multiplayer] = \
-                self.translucent["multiplayer"]
+                self.alternative["multiplayer"]
 
             self.database.modify("games",
                 { "multiplayer": 0 }, { "filename": gamefile })
@@ -2548,7 +2589,7 @@ class Interface(Gtk.Builder):
 
     def check_log(self):
         """
-        Check if a game has some snaps
+        Check if a game has an output file available
         """
 
         log_path = path_join(expanduser(Path.Logs),

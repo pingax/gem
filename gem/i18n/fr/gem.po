@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.5\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2017-01-18 14:57+0100\n"
+"PO-Revision-Date: 2017-01-21 11:51+0100\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -18,22 +18,10 @@ msgid "%d days ago"
 msgstr "Il y a %d jours"
 
 #
-# File: gem/utils.py, line: 330
-#, python-format
-msgid "%d hour"
-msgstr "%d heure"
-
-#
 # File: gem/utils.py, line: 332
 #, python-format
 msgid "%d hours"
 msgstr "%d heures"
-
-#
-# File: gem/utils.py, line: 325
-#, python-format
-msgid "%d minute"
-msgstr "%d minute"
 
 #
 # File: src/window.py, line: 1056
@@ -46,12 +34,6 @@ msgstr "%d minute"
 #, python-format
 msgid "%d months ago"
 msgstr "Il y a %d mois"
-
-#
-# File: gem/utils.py, line: 320
-#, python-format
-msgid "%d second"
-msgstr "%d seconde"
 
 #
 # File: gem/utils.py, line: 322
@@ -99,6 +81,21 @@ msgstr "%s à été généré avec succès"
 # File: gem/interface.py, line: 532
 msgid "1 game available"
 msgstr "1 jeu disponible"
+
+#
+# File: gem/utils.py, line: 330
+msgid "1 hour"
+msgstr "1 heure"
+
+#
+# File: gem/utils.py, line: 325
+msgid "1 minute"
+msgstr "1 minute"
+
+#
+# File: gem/utils.py, line: 320
+msgid "1 second"
+msgstr "1 seconde"
 
 #
 # File: gem/preferences.py, line: 1372
@@ -518,8 +515,13 @@ msgstr "Aucune"
 
 #
 # File: src/window.py, line: 451
-msgid "Open a game log"
+msgid "Open game log"
 msgstr "Ouvrir le journal du jeu"
+
+#
+# File: src/window.py, line: 451
+msgid "Open game notes"
+msgstr "Ouvrir les notes du jeu"
 
 #
 # File: gem/interface.py, line: 868

@@ -18,21 +18,9 @@ msgid "%d days ago"
 msgstr "hace %d días"
 
 #
-# File: gem/utils.py, line: 330
-#, python-format
-msgid "%d hour"
-msgstr ""
-
-#
 # File: gem/utils.py, line: 332
 #, python-format
 msgid "%d hours"
-msgstr ""
-
-#
-# File: gem/utils.py, line: 325
-#, python-format
-msgid "%d minute"
 msgstr ""
 
 #
@@ -46,12 +34,6 @@ msgstr "hace %d meses"
 #, python-format
 msgid "%d months ago"
 msgstr "hace %d meses"
-
-#
-# File: gem/utils.py, line: 320
-#, python-format
-msgid "%d second"
-msgstr ""
 
 #
 # File: gem/utils.py, line: 322
@@ -99,6 +81,22 @@ msgstr "%s ha sido creado con éxito"
 # File: gem/interface.py, line: 910
 msgid "1 game available"
 msgstr "1 juego disponible"
+
+#
+# File: gem/utils.py, line: 360
+msgid "1 hour"
+msgstr ""
+
+#
+# File: gem/interface.py, line: 2130
+#, fuzzy
+msgid "1 minute"
+msgstr "hace %d meses"
+
+#
+# File: gem/utils.py, line: 350
+msgid "1 second"
+msgstr ""
 
 #
 # File: gem/preferences.py, line: 1638
@@ -529,7 +527,14 @@ msgstr "Ninguno"
 
 #
 # File: gem/preferences.py, line: 86
-msgid "Open a game log"
+#, fuzzy
+msgid "Open game log"
+msgstr "Abrir el historial de un juego"
+
+#
+# File: gem/preferences.py, line: 86
+#, fuzzy
+msgid "Open game notes"
 msgstr "Abrir el historial de un juego"
 
 #
