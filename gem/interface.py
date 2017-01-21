@@ -371,7 +371,7 @@ class Interface(Gtk.Builder):
         self.menu_item_favorite = self.get_object("menu_games_favorite")
         self.menu_item_multiplayer = self.get_object("menu_games_multiplayer")
         self.menu_item_screenshots = self.get_object("menu_games_screenshots")
-        self.menu_item_log = self.get_object("menu_games_log")
+        self.menu_item_output = self.get_object("menu_games_log")
         self.menu_item_notes = self.get_object("menu_games_notes")
         self.menu_item_edit = self.get_object("menu_games_edit")
 
@@ -394,7 +394,7 @@ class Interface(Gtk.Builder):
         self.menu_item_favorite.set_label(_("Mark as _favorite"))
         self.menu_item_multiplayer.set_label(_("Mark as _multiplayer"))
         self.menu_item_screenshots.set_label(_("_Screenshots"))
-        self.menu_item_log.set_label(_("Output _log"))
+        self.menu_item_output.set_label(_("Output _log"))
         self.menu_item_notes.set_label(_("_Notes"))
         self.menu_item_edit.set_label(_("_Edit"))
 
@@ -539,7 +539,7 @@ class Interface(Gtk.Builder):
             "activate", self.__on_game_marked_as_multiplayer)
         self.menu_item_screenshots.connect(
             "activate", self.__on_show_viewer)
-        self.menu_item_log.connect(
+        self.menu_item_output.connect(
             "activate", self.__on_show_log)
         self.menu_item_notes.connect(
             "activate", self.__on_show_notes)
@@ -821,7 +821,8 @@ class Interface(Gtk.Builder):
         self.menu_item_favorite.set_sensitive(status)
         self.menu_item_multiplayer.set_sensitive(status)
         self.menu_item_screenshots.set_sensitive(status)
-        self.menu_item_log.set_sensitive(status)
+        self.menu_item_output.set_sensitive(status)
+        self.menu_item_notes.set_sensitive(status)
         self.menu_item_copy.set_sensitive(status)
         self.menu_item_open.set_sensitive(status)
         self.menu_item_desktop.set_sensitive(status)
@@ -918,7 +919,7 @@ class Interface(Gtk.Builder):
                 self.config.item("keys", "snapshots", "F5"),
             self.menu_item_screenshots:
                 self.config.item("keys", "snapshots", "F5"),
-            self.menu_item_log:
+            self.menu_item_output:
                 self.config.item("keys", "log", "F6"),
             self.menu_item_notes:
                 self.config.item("keys", "notes", "F7"),
@@ -1178,12 +1179,15 @@ class Interface(Gtk.Builder):
         """
 
         if response == Gtk.ResponseType.APPLY:
-            with open(path, 'w') as pipe:
-                pipe.write(dialog.buffer_editor.get_text(
-                    dialog.buffer_editor.get_start_iter(),
-                    dialog.buffer_editor.get_end_iter(), True))
+            text_buffer = dialog.buffer_editor.get_text(
+                dialog.buffer_editor.get_start_iter(),
+                dialog.buffer_editor.get_end_iter(), True)
 
-            self.logger.info(_("Update %s notes") % title)
+            if len(text_buffer) > 0:
+                with open(path, 'w') as pipe:
+                    pipe.write(text_buffer)
+
+                self.logger.info(_("Update %s notes") % title)
 
         dialog.destroy()
 
@@ -1571,9 +1575,10 @@ class Interface(Gtk.Builder):
             if splitext(filename)[0] in self.threads:
                 self.tool_item_launch.set_sensitive(False)
                 self.tool_item_parameters.set_sensitive(False)
+                self.tool_item_output.set_sensitive(False)
                 self.menu_item_launch.set_sensitive(False)
+                self.menu_item_output.set_sensitive(False)
                 self.menu_item_parameters.set_sensitive(False)
-                self.menu_item_log.set_sensitive(False)
                 self.menu_item_database.set_sensitive(False)
                 self.menu_item_remove.set_sensitive(False)
                 self.menu_item_rename.set_sensitive(False)
@@ -1588,7 +1593,7 @@ class Interface(Gtk.Builder):
 
             if self.check_log() is None:
                 self.tool_item_output.set_sensitive(False)
-                self.menu_item_log.set_sensitive(False)
+                self.menu_item_output.set_sensitive(False)
 
             if run_game:
                 self.__on_game_launch()
@@ -1686,6 +1691,9 @@ class Interface(Gtk.Builder):
                 thread.start()
 
                 self.sensitive_interface()
+
+                self.tool_item_notes.set_sensitive(True)
+                self.menu_item_notes.set_sensitive(True)
 
 
     def generate_command(self, emulator, filename):
@@ -1892,10 +1900,13 @@ class Interface(Gtk.Builder):
 
         if basename(splitext(self.selection["game"])[0]) == gamename:
             self.tool_item_launch.set_sensitive(True)
+            self.tool_item_output.set_sensitive(True)
+            self.tool_item_notes.set_sensitive(True)
             self.tool_item_parameters.set_sensitive(True)
             self.menu_item_launch.set_sensitive(True)
             self.menu_item_parameters.set_sensitive(True)
-            self.menu_item_log.set_sensitive(True)
+            self.menu_item_output.set_sensitive(True)
+            self.menu_item_notes.set_sensitive(True)
             self.menu_item_database.set_sensitive(True)
             self.menu_item_remove.set_sensitive(True)
             self.menu_item_rename.set_sensitive(True)
