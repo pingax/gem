@@ -877,13 +877,14 @@ class Interface(Gtk.Builder):
                     return True
 
                 # Only multiplayer flag
-                if flag_multiplayer and not data_multiplayer == self.empty and \
+                if flag_multiplayer and \
+                    not data_multiplayer == self.alternative["multiplayer"] and \
                     not flag_favorite and found:
                     return True
 
                 # Both favorite and multiplayer flags
-                if flag_favorite and data_favorite and \
-                    flag_multiplayer and not data_multiplayer == self.empty and \
+                if flag_favorite and data_favorite and flag_multiplayer and \
+                    not data_multiplayer == self.alternative["multiplayer"] and \
                     found:
                     return True
 
@@ -1086,7 +1087,7 @@ class Interface(Gtk.Builder):
             title = "%s (%s)" % (title, self.selection["console"])
 
             if self.config.getboolean("viewer", "native", fallback=True):
-                DialogViewer(self, title, path)
+                DialogViewer(self, title, sorted(path))
 
             elif exists(viewer):
                 command = list()
@@ -1099,7 +1100,7 @@ class Interface(Gtk.Builder):
                     command.extend(shlex_split(args))
 
                 # Append game file
-                command.extend(path)
+                command.extend(sorted(path))
 
                 process = Popen(command)
                 process.wait()
@@ -1114,7 +1115,8 @@ class Interface(Gtk.Builder):
             # ----------------------------
 
             if not self.check_screenshots(emulator, gamename):
-                self.set_game_data(Columns.Snapshots, self.empty, gamename)
+                self.set_game_data(
+                    Columns.Snapshots, self.alternative["snap"], gamename)
 
 
     def __on_show_log(self, widget):
@@ -1586,8 +1588,7 @@ class Interface(Gtk.Builder):
             iter_snaps = model.get_value(treeiter, Columns.Snapshots)
 
             # Check snaps icon to avoid to check screenshots again
-            if iter_snaps == self.empty or \
-                iter_snaps == self.alternative["snap"]:
+            if iter_snaps == self.alternative["snap"]:
                 self.tool_item_screenshots.set_sensitive(False)
                 self.menu_item_screenshots.set_sensitive(False)
 
@@ -1979,12 +1980,16 @@ class Interface(Gtk.Builder):
         if dialog.run() == Gtk.ResponseType.YES:
             self.model_games[treeiter][Columns.Name] = gamename
             self.model_games[treeiter][Columns.Favorite] = False
-            self.model_games[treeiter][Columns.Icon] = self.empty
+            self.model_games[treeiter][Columns.Icon] = \
+                self.alternative["favorite"]
             self.model_games[treeiter][Columns.Played] = None
             self.model_games[treeiter][Columns.LastPlay] = None
             self.model_games[treeiter][Columns.TimePlay] = None
             self.model_games[treeiter][Columns.LastTimePlay] = None
-            self.model_games[treeiter][Columns.Except] = None
+            self.model_games[treeiter][Columns.Except] = \
+                self.alternative["except"]
+            self.model_games[treeiter][Columns.Multiplayer] = \
+                self.alternative["multiplayer"]
 
             self.database.remove("games", { "filename": gamefile })
 
@@ -2148,10 +2153,12 @@ class Interface(Gtk.Builder):
                         Columns.Except, self.icons["except"], gamename)
 
                 else:
-                    self.set_game_data(Columns.Except, self.empty, gamename)
+                    self.set_game_data(
+                        Columns.Except, self.alternative["except"], gamename)
 
             else:
-                self.set_game_data(Columns.Except, self.empty, gamename)
+                self.set_game_data(
+                    Columns.Except, self.alternative["except"], gamename)
 
             if len(emulator) == 0:
                 emulator = self.consoles.get(
@@ -2165,7 +2172,7 @@ class Interface(Gtk.Builder):
 
             else:
                 self.set_game_data(
-                    Columns.Snapshots, self.empty, gamename)
+                    Columns.Snapshots, self.alternative["snap"], gamename)
                 self.tool_item_screenshots.set_sensitive(False)
 
             # Save state
@@ -2173,7 +2180,8 @@ class Interface(Gtk.Builder):
                 self.set_game_data(Columns.Save, self.icons["save"], gamename)
 
             else:
-                self.set_game_data(Columns.Save, self.empty, gamename)
+                self.set_game_data(
+                    Columns.Save, self.alternative["save"], gamename)
 
         dialog.hide()
 

@@ -350,17 +350,17 @@ def string_from_time(date, date_format="%H:%M:%S"):
             elif date.second == 1:
                 return _("1 second")
             else:
-                return _("%d seconds" % date.second)
+                return _("%d seconds") % date.second
 
         elif date.minute == 1:
             return _("1 minute")
         else:
-            return _("%d minutes" % date.minute)
+            return _("%d minutes") % date.minute
 
     elif date.hour == 1:
         return _("1 hour")
 
-    return _("%d hours" % date.hour)
+    return _("%d hours") % date.hour
 
 
 def on_entry_clear(widget, pos, event):

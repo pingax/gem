@@ -106,22 +106,26 @@ class Preferences(Gtk.Builder):
         self.interface = parent
 
         self.shortcuts = {
-            "start": [_("Launch a game"), "Return"],
-            "remove": [_("Remove a game from database"), "Delete"],
-            "delete": [_("Remove a game from disk"), "<Control>Delete"],
-            "rename": [_("Rename a game"), "F2"],
-            "favorite": [_("Mark a game as favorite"), "F3"],
-            "multiplayer": [_("Mark a game as multiplayer"), "F4"],
-            "snapshots": [_("Show game snapshots"), "F5"],
-            "log": [_("Open game log"), "F6"],
-            "notes": [_("Open game notes"), "F7"],
-            "exceptions": [_("Set specific arguments for a game"), "F12"],
-            "open": [_("Open selected game directory"), "<Control>O"],
-            "copy": [_("Copy selected game path"), "<Control>C"],
-            "desktop": [_("Generate desktop entry for a game"), "<Control>G"],
-            "gem": [_("Open main log"), "<Control>L"],
-            "preferences": [_("Open preferences"), "<Control>P"],
-            "quit": [_("Quit application"), "<Control>Q"] }
+            _("Interface"): {
+                "gem": [_("Open main log"), "<Control>L"],
+                "preferences": [_("Open preferences"), "<Control>P"],
+                "quit": [_("Quit application"), "<Control>Q"] },
+            _("Game"): {
+                "start": [_("Launch a game"), "Return"],
+                "favorite": [_("Mark a game as favorite"), "F3"],
+                "multiplayer": [_("Mark a game as multiplayer"), "F4"],
+                "snapshots": [_("Show game snapshots"), "F5"],
+                "log": [_("Open game log"), "F6"],
+                "notes": [_("Open game notes"), "F7"] },
+            _("Edit"): {
+                "remove": [_("Remove a game from database"), "Delete"],
+                "delete": [_("Remove a game from disk"), "<Control>Delete"],
+                "rename": [_("Rename a game"), "F2"],
+                "exceptions": [_("Set specific arguments for a game"), "F12"],
+                "open": [_("Open selected game directory"), "<Control>O"],
+                "copy": [_("Copy selected game path"), "<Control>C"],
+                "desktop": [
+                    _("Generate desktop entry for a game"), "<Control>G"] }}
 
         self.lines = {
             _("None"): "none",
@@ -164,6 +168,10 @@ class Preferences(Gtk.Builder):
             # HACK: Create an empty image to avoid g_object_set_qdata warning
             self.empty = Pixbuf.new(Colorspace.RGB, True, 8, 24, 24)
             self.empty.fill(0x00000000)
+
+            # Set light/dark theme
+            on_change_theme(self.config.getboolean(
+                "gem", "dark_theme", fallback=False))
 
         # ------------------------------------
         #   Initialize logger
@@ -280,7 +288,7 @@ class Preferences(Gtk.Builder):
 
         self.check_header.set_label(_("Show close buttons in header bar"))
         self.check_icons.set_label(
-            _("Use translucent icons instead of empty ones"))
+            _("use translucent icons in games list instead of empty ones"))
 
         # ------------------------------------
         #   Interface - Games list
@@ -353,6 +361,7 @@ class Preferences(Gtk.Builder):
         label_shortcuts = self.get_object("label_shortcuts")
 
         self.model_shortcuts = self.get_object("store_shortcuts")
+        self.treeview_shortcuts = self.get_object("treeview_shortcuts")
 
         column_shortcuts_name = self.get_object("column_shortcuts_name")
         column_shortcuts_key = self.get_object("column_shortcuts_key")
@@ -555,7 +564,8 @@ class Preferences(Gtk.Builder):
                 # self.font_editor.get_font_name())
 
             for text, value, option in self.model_shortcuts:
-                self.config.modify("keys", option, value)
+                if value is not None and option is not None:
+                    self.config.modify("keys", option, value)
 
             self.config.update()
 
@@ -660,10 +670,15 @@ class Preferences(Gtk.Builder):
         #   Shortcuts
         # ------------------------------------
 
-        for option, (string, default) in self.shortcuts.items():
-            value = self.config.item("keys", option, default)
+        for key in self.shortcuts.keys():
+            key_iter = self.model_shortcuts.append(None, [key, None, None])
 
-            self.model_shortcuts.append([string, value, option])
+            for option, (string, default) in self.shortcuts[key].items():
+                value = self.config.item("keys", option, default)
+
+                self.model_shortcuts.append(key_iter, [string, value, option])
+
+        self.treeview_shortcuts.expand_all()
 
         # ------------------------------------
         #   Consoles
@@ -733,9 +748,12 @@ class Preferences(Gtk.Builder):
         Edit a shortcut
         """
 
-        if Gtk.accelerator_valid(key, mods):
-            self.model_shortcuts.set_value(self.model_shortcuts.get_iter(path),
-                1, Gtk.accelerator_name(key, mods))
+        treeiter = self.model_shortcuts.get_iter(path)
+
+        if self.model_shortcuts.iter_parent(treeiter) is not None:
+            if Gtk.accelerator_valid(key, mods):
+                self.model_shortcuts.set_value(
+                    treeiter, 1, Gtk.accelerator_name(key, mods))
 
 
     def __clear_keys(self, widget, path):
@@ -743,8 +761,10 @@ class Preferences(Gtk.Builder):
         Clear a shortcut
         """
 
-        self.model_shortcuts.set_value(
-            self.model_shortcuts.get_iter(path), 1, None)
+        treeiter = self.model_shortcuts.get_iter(path)
+
+        if self.model_shortcuts.iter_parent(treeiter) is not None:
+            self.model_shortcuts.set_value(treeiter, 1, None)
 
 
     def __on_selected_treeview(self, treeview, event, manager):

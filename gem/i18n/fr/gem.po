@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.5\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2017-01-21 11:51+0100\n"
+"PO-Revision-Date: 2017-01-22 16:41+0100\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -300,6 +300,12 @@ msgid "Drop %(rom)s to %(path)s"
 msgstr "Déplace %(rom)s vers %(path)s"
 
 #
+# File: gem/preferences.py, line: 336
+#, fuzzy
+msgid "Edit"
+msgstr "_Éditer"
+
+#
 # File: gem/configuration.py, line: 144
 # File: gem/configuration.py, line: 301
 msgid "Edit emulator"
@@ -351,6 +357,11 @@ msgstr "Plein écran"
 # File: gem/interface.py, line: 937
 msgid "GEM"
 msgstr "GEM"
+
+#
+# File: gem/preferences.py, line: 113
+msgid "Game"
+msgstr ""
 
 #
 # File: gem/interface.py, line: 220
@@ -729,6 +740,16 @@ msgstr "Afficher les jeux multi-joueurs"
 
 #
 # File: src/window.py, line: 441
+msgid "Show selected game notes"
+msgstr "Afficher les notes du jeu sélectionné"
+
+#
+# File: src/window.py, line: 441
+msgid "Show selected game output log"
+msgstr "Afficher le journal de sortie du jeu sélectionné"
+
+#
+# File: src/window.py, line: 441
 msgid "Show selected game screenshots"
 msgstr "Afficher les captures d'écran du jeu sélectionné"
 
@@ -967,21 +988,7 @@ msgid "translator-credits"
 msgstr ""
 
 #
-# File: gem/interface.py, line: 829
-#~ msgid ""
-#~ "GEM come with some emulators and consoles already configured. But the "
-#~ "default paths may not work with your system.\n"
-#~ "\n"
-#~ "The first thing you may do, it's open the preferences window and change "
-#~ "paths for both consoles and emulators.\n"
-#~ "\n"
-#~ "Enjoy your games :D"
-#~ msgstr ""
-#~ "GEM arrive avec plusieurs émulateurs et consoles déjà configurés. Mais "
-#~ "les chemins par défaut peuvent ne pas fonctionner avec votre système.\n"
-#~ "\n"
-#~ "La première chose que vous devriez faire est d'ouvrir la fenêtre de "
-#~ "préférences et de changer les chemins pour les consoles et les "
-#~ "émulateurs.\n"
-#~ "\n"
-#~ "Amusez-vous bien :D"
+# File: gem/preferences.py, line: 283
+msgid "use translucent icons in games list instead of empty ones"
+msgstr ""
+"Utiliser des icônes translucides dans la liste de jeux au lieu d'icônes vides"

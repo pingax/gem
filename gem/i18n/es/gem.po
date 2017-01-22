@@ -308,6 +308,12 @@ msgid "Drop %(rom)s to %(path)s"
 msgstr "Dejar %(rom)s en %(path)s"
 
 #
+# File: gem/preferences.py, line: 429
+#, fuzzy
+msgid "Edit"
+msgstr "Editor"
+
+#
 # File: gem/interface.py, line: 1257
 # File: gem/preferences.py, line: 547
 # File: gem/preferences.py, line: 1362
@@ -359,6 +365,11 @@ msgstr "Pantalla completa"
 # File: gem/interface.py, line: 937
 msgid "GEM"
 msgstr "GEM"
+
+#
+# File: gem/preferences.py, line: 113
+msgid "Game"
+msgstr ""
 
 #
 # File: gem/preferences.py, line: 328
@@ -748,6 +759,18 @@ msgstr "Mostrar los juegos mutijugador"
 
 #
 # File: gem/interface.py, line: 455
+#, fuzzy
+msgid "Show selected game notes"
+msgstr "Mostrar las capturas de pantalla seleccionadas del juego"
+
+#
+# File: gem/interface.py, line: 455
+#, fuzzy
+msgid "Show selected game output log"
+msgstr "Mostrar las capturas de pantalla seleccionadas del juego"
+
+#
+# File: gem/interface.py, line: 455
 msgid "Show selected game screenshots"
 msgstr "Mostrar las capturas de pantalla seleccionadas del juego"
 
@@ -984,6 +1007,11 @@ msgstr "_Capturas de pantalla"
 # File: gem/preferences.py, line: 280
 msgid "translator-credits"
 msgstr "Emuladores"
+
+#
+# File: gem/preferences.py, line: 283
+msgid "use translucent icons in games list instead of empty ones"
+msgstr ""
 
 #
 # File: gem/interface.py, line: 1098
