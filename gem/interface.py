@@ -1023,7 +1023,7 @@ class Interface(Gtk.Builder):
 
         about.set_program_name(Gem.Name)
         about.set_version("%s (%s)" % (Gem.Version, Gem.CodeName))
-        about.set_logo_icon_name(Icons.Game)
+        about.set_logo_icon_name(Gem.Icon)
 
         about.set_authors([
             "PacMiam (Lubert Aurélien)" ])

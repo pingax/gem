@@ -1,0 +1,475 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="svg11014"
+   width="256"
+   height="256"
+   viewBox="0 0 256 256"
+   sodipodi:docname="gem.svg"
+   inkscape:version="0.92.0 r"
+   inkscape:export-filename="/home/pacmiam/telechargements/gem.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96">
+  <title
+     id="title11990">Logo de GEM</title>
+  <metadata
+     id="metadata11020">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Logo de GEM</dc:title>
+        <cc:license
+           rdf:resource="http://artlibre.org/licence/lal" />
+        <dc:date>22 janv. 2017</dc:date>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>PacMiam</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title />
+          </cc:Agent>
+        </dc:rights>
+        <dc:source>input-gaming</dc:source>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://artlibre.org/licence/lal">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Attribution" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs11018">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient11611">
+      <stop
+         style="stop-color:#333333;stop-opacity:1;"
+         offset="0"
+         id="stop11607" />
+      <stop
+         style="stop-color:#333333;stop-opacity:0;"
+         offset="1"
+         id="stop11609" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient11611"
+       id="linearGradient11613"
+       x1="27.884207"
+       y1="20.633812"
+       x2="27.884207"
+       y2="6.7243714"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(4.1938918,-2.4213445,2.4213445,4.1938918,-58.882508,78.626245)" />
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter11809">
+      <feFlood
+         flood-opacity="0.498039"
+         flood-color="rgb(0,0,0)"
+         result="flood"
+         id="feFlood11799" />
+      <feComposite
+         in="flood"
+         in2="SourceGraphic"
+         operator="in"
+         result="composite1"
+         id="feComposite11801" />
+      <feGaussianBlur
+         in="composite1"
+         stdDeviation="1"
+         result="blur"
+         id="feGaussianBlur11803" />
+      <feOffset
+         dx="0"
+         dy="-2.41474e-15"
+         result="offset"
+         id="feOffset11805" />
+      <feComposite
+         in="SourceGraphic"
+         in2="offset"
+         operator="over"
+         result="composite2"
+         id="feComposite11807" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter11821">
+      <feFlood
+         flood-opacity="0.498039"
+         flood-color="rgb(0,0,0)"
+         result="flood"
+         id="feFlood11811" />
+      <feComposite
+         in="flood"
+         in2="SourceGraphic"
+         operator="in"
+         result="composite1"
+         id="feComposite11813" />
+      <feGaussianBlur
+         in="composite1"
+         stdDeviation="1"
+         result="blur"
+         id="feGaussianBlur11815" />
+      <feOffset
+         dx="0"
+         dy="-2.41474e-15"
+         result="offset"
+         id="feOffset11817" />
+      <feComposite
+         in="SourceGraphic"
+         in2="offset"
+         operator="over"
+         result="composite2"
+         id="feComposite11819" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter11833">
+      <feFlood
+         flood-opacity="0.498039"
+         flood-color="rgb(0,0,0)"
+         result="flood"
+         id="feFlood11823" />
+      <feComposite
+         in="flood"
+         in2="SourceGraphic"
+         operator="in"
+         result="composite1"
+         id="feComposite11825" />
+      <feGaussianBlur
+         in="composite1"
+         stdDeviation="1"
+         result="blur"
+         id="feGaussianBlur11827" />
+      <feOffset
+         dx="0"
+         dy="-2.41474e-15"
+         result="offset"
+         id="feOffset11829" />
+      <feComposite
+         in="SourceGraphic"
+         in2="offset"
+         operator="over"
+         result="composite2"
+         id="feComposite11831" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter11845">
+      <feFlood
+         flood-opacity="0.498039"
+         flood-color="rgb(0,0,0)"
+         result="flood"
+         id="feFlood11835" />
+      <feComposite
+         in="flood"
+         in2="SourceGraphic"
+         operator="in"
+         result="composite1"
+         id="feComposite11837" />
+      <feGaussianBlur
+         in="composite1"
+         stdDeviation="1"
+         result="blur"
+         id="feGaussianBlur11839" />
+      <feOffset
+         dx="0"
+         dy="-2.41474e-15"
+         result="offset"
+         id="feOffset11841" />
+      <feComposite
+         in="SourceGraphic"
+         in2="offset"
+         operator="over"
+         result="composite2"
+         id="feComposite11843" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter11857">
+      <feFlood
+         flood-opacity="0.498039"
+         flood-color="rgb(0,0,0)"
+         result="flood"
+         id="feFlood11847" />
+      <feComposite
+         in="flood"
+         in2="SourceGraphic"
+         operator="in"
+         result="composite1"
+         id="feComposite11849" />
+      <feGaussianBlur
+         in="composite1"
+         stdDeviation="1"
+         result="blur"
+         id="feGaussianBlur11851" />
+      <feOffset
+         dx="0"
+         dy="-2.41474e-15"
+         result="offset"
+         id="feOffset11853" />
+      <feComposite
+         in="SourceGraphic"
+         in2="offset"
+         operator="over"
+         result="composite2"
+         id="feComposite11855" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter11869">
+      <feFlood
+         flood-opacity="0.498039"
+         flood-color="rgb(0,0,0)"
+         result="flood"
+         id="feFlood11859" />
+      <feComposite
+         in="flood"
+         in2="SourceGraphic"
+         operator="in"
+         result="composite1"
+         id="feComposite11861" />
+      <feGaussianBlur
+         in="composite1"
+         stdDeviation="1"
+         result="blur"
+         id="feGaussianBlur11863" />
+      <feOffset
+         dx="0"
+         dy="-2.41474e-15"
+         result="offset"
+         id="feOffset11865" />
+      <feComposite
+         in="SourceGraphic"
+         in2="offset"
+         operator="over"
+         result="composite2"
+         id="feComposite11867" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter11881">
+      <feFlood
+         flood-opacity="0.498039"
+         flood-color="rgb(0,0,0)"
+         result="flood"
+         id="feFlood11871" />
+      <feComposite
+         in="flood"
+         in2="SourceGraphic"
+         operator="in"
+         result="composite1"
+         id="feComposite11873" />
+      <feGaussianBlur
+         in="composite1"
+         stdDeviation="1"
+         result="blur"
+         id="feGaussianBlur11875" />
+      <feOffset
+         dx="0"
+         dy="-2.41474e-15"
+         result="offset"
+         id="feOffset11877" />
+      <feComposite
+         in="SourceGraphic"
+         in2="offset"
+         operator="over"
+         result="composite2"
+         id="feComposite11879" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter12150">
+      <feFlood
+         flood-opacity="0.498039"
+         flood-color="rgb(255,255,255)"
+         result="flood"
+         id="feFlood12140" />
+      <feComposite
+         in="flood"
+         in2="SourceGraphic"
+         operator="in"
+         result="composite1"
+         id="feComposite12142" />
+      <feGaussianBlur
+         in="composite1"
+         stdDeviation="1"
+         result="blur"
+         id="feGaussianBlur12144" />
+      <feOffset
+         dx="0"
+         dy="-2.41474e-15"
+         result="offset"
+         id="feOffset12146" />
+      <feComposite
+         in="SourceGraphic"
+         in2="offset"
+         operator="over"
+         result="composite2"
+         id="feComposite12148" />
+    </filter>
+  </defs>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="640"
+     inkscape:window-height="480"
+     id="namedview11016"
+     showgrid="false"
+     inkscape:zoom="4"
+     inkscape:cx="56.469954"
+     inkscape:cy="167.59496"
+     inkscape:current-layer="g12138"
+     inkscape:showpageshadow="false" />
+  <g
+     id="g12138">
+    <path
+       sodipodi:nodetypes="cccccc"
+       inkscape:connector-curvature="0"
+       id="path11597"
+       d="M 98.646113,105.20291 C 88.993693,88.484442 77.494401,107.76434 62.942222,116.16604 39.64801,129.61496 35.691178,101.90339 58.47459,95.798597 c 32.537243,-8.718325 47.91424,-7.933315 78.02719,-25.319035 28.73583,-16.59064 24.06703,-38.99895 -0.42705,-38.998952 -22.82157,-3e-6 -22.53806,-9.321123 -29.1183,-20.718429"
+       style="fill:none;fill-rule:evenodd;stroke:url(#linearGradient11613);stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;" />
+    <rect
+       transform="rotate(-30)"
+       ry="3.9002342"
+       rx="3.9002342"
+       y="139.9505"
+       x="20.390646"
+       height="8.5362654"
+       width="25.608795"
+       id="rect11595"
+       style="opacity:1;fill:#575755;fill-opacity:0.99607843;fill-rule:evenodd;stroke:none;stroke-width:4.84268904;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.99557525" />
+    <path
+       sodipodi:nodetypes="ccccccccc"
+       inkscape:connector-curvature="0"
+       id="path11615"
+       d="M 37.327857,146.14369 C 13.866768,161.3448 6.4207112,192.2573 20.387065,216.47376 c 14.50591,25.12604 46.634303,33.73482 71.759818,19.22799 17.417217,-10.08876 27.537947,-29.2431 26.058437,-49.31681 l 40.55461,-23.41421 c 16.65304,11.32388 38.31412,12.13067 55.7634,2.07694 25.12604,-14.50592 33.73481,-46.63431 19.22798,-71.759817 -14.5059,-25.126026 -46.63429,-33.73481 -71.75981,-19.227976 0,0 -87.82347,50.840283 -124.663638,72.083823 z"
+       style="opacity:1;fill:#e6e7e4;fill-opacity:1;fill-rule:evenodd;stroke:#575755;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+  </g>
+  <g
+     id="g12133">
+    <rect
+       transform="rotate(-60,38.09346,96.52829)"
+       ry="3.9930801"
+       rx="3.9930801"
+       y="193.16454"
+       x="9.9488983"
+       height="7.9861603"
+       width="23.958479"
+       id="rect11573"
+       style="opacity:1;fill:#555853;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter11821)" />
+    <rect
+       transform="rotate(-60,38.09346,92.550815)"
+       style="opacity:1;fill:#555853;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter11833)"
+       id="rect11575"
+       width="23.958479"
+       height="7.9861603"
+       x="29.249969"
+       y="204.30801"
+       rx="3.9930801"
+       ry="3.9930801" />
+  </g>
+  <g
+     id="g12129">
+    <circle
+       transform="rotate(-30,119.91336,149.56443)"
+       r="11.422067"
+       cy="161.79973"
+       cx="175.7592"
+       id="path11577"
+       style="opacity:1;fill:#ff5555;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter11857)" />
+    <circle
+       transform="rotate(-30,117.26171,159.46052)"
+       style="opacity:1;fill:#87cdde;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter11869)"
+       id="circle11579"
+       cx="199.61467"
+       cy="137.07591"
+       r="11.422067" />
+    <circle
+       transform="rotate(-30,117.26171,159.46052)"
+       r="11.422067"
+       cy="153.41966"
+       cx="225.98756"
+       id="circle11581"
+       style="opacity:1;fill:#87deaa;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter11845)" />
+    <circle
+       transform="rotate(-30,119.91336,149.56443)"
+       style="opacity:1;fill:#ffdd55;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter11881)"
+       id="circle11583"
+       cx="201.76064"
+       cy="176.28627"
+       r="11.422067" />
+  </g>
+  <path
+     style="opacity:1;fill:#555853;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter11809)"
+     d="m 52.381628,128.43057 c -2.057837,0 -3.717142,1.65932 -3.717142,3.71716 v 14.20648 h -14.20648 c -2.05784,0 -3.717142,1.65929 -3.717142,3.71713 v 13.37414 c 0,2.05784 1.659302,3.70768 3.717142,3.70768 h 14.20648 v 14.21596 c 0,2.05784 1.659305,3.70768 3.717142,3.70768 h 13.374146 c 2.05784,0 3.707686,-1.64984 3.707686,-3.70768 v -14.21596 h 14.206478 c 2.057842,0 3.717142,-1.64984 3.717142,-3.70768 v -13.37414 c 0,-2.05784 -1.6593,-3.71713 -3.717142,-3.71713 H 69.46346 v -14.20648 c 0,-2.05784 -1.649846,-3.71716 -3.707686,-3.71716 z"
+     id="rect11585"
+     inkscape:connector-curvature="0"
+     transform="rotate(-30,117.26171,159.46052)" />
+  <g
+     id="g12123">
+    <text
+       transform="rotate(-30)"
+       id="text11625"
+       y="166.99268"
+       x="67.879601"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13.33333302px;line-height:28px;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans';text-align:end;writing-mode:lr-tb;text-anchor:end;opacity:1;fill:#555853;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:4;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         y="166.99268"
+         x="67.879601"
+         id="tspan11623"
+         sodipodi:role="line">GRAPHICAL</tspan></text>
+    <text
+       transform="rotate(-30)"
+       id="text11629"
+       y="172.05518"
+       x="67.879601"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.33333349px;line-height:28px;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans';text-align:end;writing-mode:lr-tb;text-anchor:end;opacity:1;fill:#555853;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:4;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         y="172.05518"
+         x="67.879601"
+         id="tspan11627"
+         sodipodi:role="line">EMULATORS MANAGER</tspan></text>
+  </g>
+</svg>

@@ -84,6 +84,7 @@ class Gem:
     Name        = "Graphical Emulators Manager"
     Version     = "0.6"
     CodeName    = "Magicball"
+    Icon        = "gem"
     Website     = "https://gem.tuxfamily.org/"
     Copyleft    = "Copyleft 2017 - Kawa Team"
     Description = _("Manage your emulators easily and have fun")
