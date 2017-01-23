@@ -349,13 +349,13 @@ def string_from_time(date, date_format="%H:%M:%S"):
                 return str()
             elif date.second == 1:
                 return _("1 second")
-            else:
-                return _("%d seconds") % date.second
+
+            return _("%d seconds") % date.second
 
         elif date.minute == 1:
             return _("1 minute")
-        else:
-            return _("%d minutes") % date.minute
+
+        return _("%d minutes") % date.minute
 
     elif date.hour == 1:
         return _("1 hour")

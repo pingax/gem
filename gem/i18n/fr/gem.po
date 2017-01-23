@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.5\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2017-01-22 16:41+0100\n"
+"PO-Revision-Date: 2017-01-23 13:10+0100\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -27,7 +27,7 @@ msgstr "%d heures"
 # File: src/window.py, line: 1056
 #, python-format
 msgid "%d minutes"
-msgstr "%d minute"
+msgstr "%d minutes"
 
 #
 # File: src/window.py, line: 1056

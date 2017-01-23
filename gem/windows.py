@@ -343,8 +343,40 @@ class DialogEditor(Dialog):
 
         scroll_editor = Gtk.ScrolledWindow()
 
-        self.text_editor = Gtk.TextView()
-        self.buffer_editor = Gtk.TextBuffer()
+        if self.editable:
+            try:
+                require_version("GtkSource", "3.0")
+
+                from gi.repository import GtkSource
+
+                self.text_editor = GtkSource.View()
+                self.buffer_editor = GtkSource.Buffer()
+
+                self.language_editor = GtkSource.LanguageManager()
+                self.style_editor = GtkSource.StyleSchemeManager()
+
+                # Properties
+                self.text_editor.set_insert_spaces_instead_of_tabs(True)
+
+                self.text_editor.set_tab_width(self.interface.config.getint(
+                    "editor", "tab", fallback=4))
+                self.text_editor.set_show_line_numbers(
+                    self.interface.config.getboolean(
+                    "editor", "lines", fallback=False))
+
+                self.buffer_editor.set_language(
+                    self.language_editor.guess_language(self.path))
+                self.buffer_editor.set_style_scheme(
+                    self.style_editor.get_scheme(self.interface.config.item(
+                    "editor", "colorscheme", "classic")))
+
+            except ImportError as error:
+                self.text_editor = Gtk.TextView()
+                self.buffer_editor = Gtk.TextBuffer()
+
+        else:
+            self.text_editor = Gtk.TextView()
+            self.buffer_editor = Gtk.TextBuffer()
 
         # Properties
         scroll_editor.set_shadow_type(Gtk.ShadowType.OUT)

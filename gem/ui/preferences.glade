@@ -592,7 +592,6 @@
                         <child>
                           <object class="GtkFrame" id="frame_editor">
                             <property name="can_focus">False</property>
-                            <property name="no_show_all">True</property>
                             <property name="label_xalign">0</property>
                             <property name="shadow_type">out</property>
                             <child>
@@ -613,7 +612,6 @@
                                     <child>
                                       <object class="GtkSeparator" id="separator_editor_lines">
                                         <property name="can_focus">False</property>
-                                        <property name="no_show_all">True</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
@@ -650,7 +648,6 @@
                                     <child>
                                       <object class="GtkComboBox" id="combo_colorsheme">
                                         <property name="can_focus">False</property>
-                                        <property name="no_show_all">True</property>
                                         <property name="hexpand">True</property>
                                       </object>
                                       <packing>
@@ -661,7 +658,6 @@
                                     <child>
                                       <object class="GtkLabel" id="label_editor_colorscheme">
                                         <property name="can_focus">False</property>
-                                        <property name="no_show_all">True</property>
                                         <property name="label" translatable="yes">COLORSCHEME</property>
                                         <property name="lines">0</property>
                                         <property name="xalign">0</property>
@@ -674,7 +670,6 @@
                                     <child>
                                       <object class="GtkSeparator" id="separator_editor_colorscheme">
                                         <property name="can_focus">False</property>
-                                        <property name="no_show_all">True</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
@@ -687,7 +682,6 @@
                                         <property name="label" translatable="yes">SHOW_LINES_NUMBER</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
-                                        <property name="no_show_all">True</property>
                                         <property name="xalign">0</property>
                                         <property name="draw_indicator">True</property>
                                       </object>

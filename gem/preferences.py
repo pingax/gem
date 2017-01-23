@@ -556,12 +556,13 @@ class Preferences(Gtk.Builder):
             self.config.modify("viewer", "options",
                 self.entry_viewer_options.get_text())
 
-            # self.config.modify("editor", "lines",
-                # int(self.check_lines.get_active()))
-            # self.config.modify("editor", "colorscheme",
-                # self.combo_editor_colorscheme.get_active_id())
-            # self.config.modify("editor", "font",
-                # self.font_editor.get_font_name())
+            if self.gtksource:
+                self.config.modify("editor", "lines",
+                    int(self.check_lines.get_active()))
+                self.config.modify("editor", "colorscheme",
+                    self.combo_colorsheme.get_active_id())
+                # self.config.modify("editor", "font",
+                    # self.font_editor.get_font_name())
 
             for text, value, option in self.model_shortcuts:
                 if value is not None and option is not None:
@@ -644,27 +645,35 @@ class Preferences(Gtk.Builder):
         #   Editor
         # ------------------------------------
 
-        # self.check_lines.set_active(
-            # self.config.getboolean("editor", "lines", fallback=True))
+        try:
+            require_version("GtkSource", "3.0")
 
-        # style_manager = gtksourceview2.StyleSchemeManager()
+            from gi.repository.GtkSource import StyleSchemeManager
 
-        # colorscheme = self.config.item("editor", "colorscheme", "classic")
+            self.check_lines.set_active(
+                self.config.getboolean("editor", "lines", fallback=True))
 
-        # item = None
-        # for path in style_manager.get_search_path():
-            # for element in glob(path_join(path, "*.xml")):
-                # name = splitext(basename(element))[0]
+            colorscheme = self.config.item("editor", "colorscheme", "classic")
 
-                # row = self.model_editor_colorscheme.append([name])
-                # if name == colorscheme:
-                    # item = row
+            item = None
+            for path in StyleSchemeManager().get_search_path():
+                for element in sorted(glob(path_join(path, "*.xml"))):
+                    filename, extension = splitext(basename(element))
 
-        # if item is not None:
-            # self.combo_editor_colorscheme.set_active_iter(item)
+                    row = self.model_colorsheme.append([filename])
+                    if filename == colorscheme:
+                        item = row
 
-        # self.font_editor.set_font_name(
-            # self.config.item("editor", "font", "Sans 12"))
+            if item is not None:
+                self.combo_colorsheme.set_active_iter(item)
+
+            # self.font_editor.set_font_name(
+                # self.config.item("editor", "font", "Sans 12"))
+
+            self.gtksource = True
+
+        except ImportError as error:
+            self.gtksource = False
 
         # ------------------------------------
         #   Shortcuts
