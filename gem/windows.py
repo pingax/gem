@@ -541,13 +541,15 @@ class DialogEditor(Dialog):
                 self.__on_search_and_mark(
                     text, self.buffer_editor.get_start_iter())
 
-                match = self.founded_iter[self.current_index]
-                self.buffer_editor.apply_tag(
-                    self.tag_current, match[0], match[1])
+                if len(self.founded_iter) > 0:
+                    match = self.founded_iter[self.current_index]
+                    self.buffer_editor.apply_tag(
+                        self.tag_current, match[0], match[1])
 
-                self.text_editor.scroll_to_iter(match[0], .25, False, .0, .0)
+                    self.text_editor.scroll_to_iter(
+                        match[0], .25, False, .0, .0)
 
-                self.previous_search = text
+                    self.previous_search = text
 
         else:
             self.__on_move_search()

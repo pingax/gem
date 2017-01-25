@@ -857,6 +857,8 @@ class Interface(Gtk.Builder):
         data_multiplayer = model.get_value(row, Columns.Multiplayer)
         flag_multiplayer = self.tool_filter_multiplayer.get_active()
 
+        icon = self.alternative["multiplayer"]
+
         try:
             name = model.get_value(row, Columns.Name)
             if name is not None:
@@ -877,15 +879,13 @@ class Interface(Gtk.Builder):
                     return True
 
                 # Only multiplayer flag
-                if flag_multiplayer and \
-                    not data_multiplayer == self.alternative["multiplayer"] and \
+                if flag_multiplayer and not data_multiplayer == icon and \
                     not flag_favorite and found:
                     return True
 
                 # Both favorite and multiplayer flags
                 if flag_favorite and data_favorite and flag_multiplayer and \
-                    not data_multiplayer == self.alternative["multiplayer"] and \
-                    found:
+                    not data_multiplayer == icon and found:
                     return True
 
         except:
