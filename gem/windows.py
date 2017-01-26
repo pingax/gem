@@ -1244,8 +1244,7 @@ class DialogConsoles(Dialog):
         Initialize widgets signals
         """
 
-        self.cell_consoles_status.connect(
-            "toggled", self.on_cell_toggled)
+        self.cell_consoles_status.connect("toggled", self.on_cell_toggled)
 
 
     def __start_interface(self):

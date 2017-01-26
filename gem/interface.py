@@ -93,6 +93,7 @@ try:
     from gi.repository.GLib import source_remove
 
     from gi.repository.GObject import MainLoop
+    from gi.repository.GObject import SIGNAL_RUN_FIRST
 
     from gi.repository.GdkPixbuf import Pixbuf
     from gi.repository.GdkPixbuf import InterpType
@@ -184,6 +185,9 @@ def launch_gem(logger, reconstruct_db=False):
 # ------------------------------------------------------------------
 
 class Interface(Gtk.Builder):
+
+    __gsignals__ = {
+        "game_close": (SIGNAL_RUN_FIRST, None, (bool, str, str, object)) }
 
     def __init__(self, logger, database):
         """
@@ -1691,6 +1695,8 @@ class Interface(Gtk.Builder):
                     args=[emulator, filename, command, title])
                 thread.start()
 
+                self.logger.debug("Start %s into %s" % (filename, thread))
+
                 self.sensitive_interface()
 
                 self.tool_item_notes.set_sensitive(True)
@@ -1798,13 +1804,17 @@ class Interface(Gtk.Builder):
         Launch a game with correct arguments and update game informations
         """
 
-        no_error = True
+        error = False
 
-        date_start = datetime.now()
+        launch_date = datetime.now()
 
-        gamename = splitext(filename)[0]
+        gamename, extension = splitext(basename(filename))
 
         try:
+            # ----------------------------
+            #   Launch game
+            # ----------------------------
+
             self.logger.info(_("Launch %s") % ' '.join(command))
 
             proc = Popen(command, stdout=PIPE, stdin=PIPE,
@@ -1818,17 +1828,10 @@ class Interface(Gtk.Builder):
 
             proc.terminate()
 
-        except OSError as error:
-            no_error = False
+            # ----------------------------
+            #   Log data
+            # ----------------------------
 
-        except KeyboardInterrupt as error:
-            self.logger.info(_("Terminate by keyboard interrupt"))
-
-        # ----------------------------
-        #   Save game data
-        # ----------------------------
-
-        if no_error:
             log_path = path_join(expanduser(Path.Logs), "%s.log" % filename)
 
             self.logger.info(_("Log to %s") % log_path)
@@ -1839,8 +1842,29 @@ class Interface(Gtk.Builder):
                 pipe.write("%s\n\n" % " ".join(command))
                 pipe.write(output)
 
+        except OSError as error:
+            error = True
+
+        except KeyboardInterrupt as error:
+            self.logger.info(_("Terminate by keyboard interrupt"))
+
+        self.emit("game_close", error, emulator, filename, launch_date)
+
+
+    def do_game_close(self, error, emulator, filename, launch_date):
+        """
+        Close a game which send game_close signal
+        """
+
+        gamename, extension = splitext(basename(filename))
+
+        # ----------------------------
+        #   Save game data
+        # ----------------------------
+
+        if not error:
             # Calc time since game start
-            interval = datetime.now() - date_start
+            interval = datetime.now() - launch_date
 
             total = self.get_play_time(filename, interval)
             play_time = self.get_play_time(filename, interval, False)
@@ -1899,21 +1923,27 @@ class Interface(Gtk.Builder):
                     self.set_game_data(
                         Columns.Save, self.alternative["save"], gamename)
 
-        if basename(splitext(self.selection["game"])[0]) == gamename:
+        # ----------------------------
+        #   Refresh widgets
+        # ----------------------------
+
+        name, extension = splitext(basename(self.selection["game"]))
+
+        # Current selected game is the same as launched
+        if name == gamename:
             self.tool_item_launch.set_sensitive(True)
             self.tool_item_output.set_sensitive(True)
-            self.tool_item_notes.set_sensitive(True)
             self.tool_item_parameters.set_sensitive(True)
             self.menu_item_launch.set_sensitive(True)
             self.menu_item_parameters.set_sensitive(True)
             self.menu_item_output.set_sensitive(True)
-            self.menu_item_notes.set_sensitive(True)
             self.menu_item_database.set_sensitive(True)
             self.menu_item_remove.set_sensitive(True)
             self.menu_item_rename.set_sensitive(True)
 
         # Remove this game from threads list
         if gamename in self.threads:
+            self.logger.debug("Remove %s from process cache" % gamename)
             del self.threads[gamename]
 
 
@@ -2204,6 +2234,8 @@ class Interface(Gtk.Builder):
             self.database.modify("games",
                 { "favorite": 1 }, { "filename": gamefile })
 
+            self.logger.debug("Mark %s as favorite" % gamename)
+
         else:
             self.model_games[treeiter][Columns.Favorite] = False
             self.model_games[treeiter][Columns.Icon] = \
@@ -2211,6 +2243,8 @@ class Interface(Gtk.Builder):
 
             self.database.modify("games",
                 { "favorite": 0 }, { "filename": gamefile })
+
+            self.logger.debug("Unmark %s as favorite" % gamename)
 
         self.check_selection()
 
@@ -2233,12 +2267,16 @@ class Interface(Gtk.Builder):
             self.database.modify("games",
                 { "multiplayer": 1 }, { "filename": gamefile })
 
+            self.logger.debug("Mark %s as multiplayers" % gamename)
+
         else:
             self.model_games[treeiter][Columns.Multiplayer] = \
                 self.alternative["multiplayer"]
 
             self.database.modify("games",
                 { "multiplayer": 0 }, { "filename": gamefile })
+
+            self.logger.debug("Unmark %s as multiplayers" % gamename)
 
         self.check_selection()
 
@@ -2259,6 +2297,8 @@ class Interface(Gtk.Builder):
         """
 
         path = dirname(self.selection["game"])
+
+        self.logger.debug("Open %s folder in files manager" % path)
 
         if system() == "Windows":
             from os import startfile
@@ -2387,10 +2427,12 @@ class Interface(Gtk.Builder):
         """
 
         if self.tool_item_fullscreen.get_active():
+            self.logger.debug("Switch to windowed mode")
             self.get_object("image_fullscreen").set_from_icon_name(
                 "view-fullscreen", Gtk.IconSize.BUTTON)
 
         else:
+            self.logger.debug("Switch to fullscreen mode")
             self.get_object("image_fullscreen").set_from_icon_name(
                 "view-restore", Gtk.IconSize.BUTTON)
 
@@ -2424,6 +2466,7 @@ class Interface(Gtk.Builder):
         Install drop files
         """
 
+        self.logger.debug("Received data from drag & drop")
         widget.stop_emission("drag_data_received")
 
         if not info == 1337:
@@ -2441,6 +2484,7 @@ class Interface(Gtk.Builder):
                 path = expanduser(url2pathname(result.path))
 
                 if exists(path):
+                    self.logger.debug("Check %s" % path)
                     filename, ext = splitext(basename(path))
 
                     # ----------------------------
@@ -2494,6 +2538,8 @@ class Interface(Gtk.Builder):
                         if dialog.run() == Gtk.ResponseType.YES:
                             move = True
 
+                            self.logger.debug(
+                                "Move %s to %s" % (path, rom_path))
                             remove(path_join(rom_path, basename(path)))
 
                         dialog.destroy()
