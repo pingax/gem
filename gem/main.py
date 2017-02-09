@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # ------------------------------------------------------------------
 #
 #  This program is free software; you can redistribute it and/or modify
@@ -48,23 +47,14 @@ from gettext import textdomain
 from gettext import bindtextdomain
 
 # ------------------------------------------------------------------
-#   Modules - Interface
-# ------------------------------------------------------------------
-
-try:
-    from gi import require_version
-
-    require_version("Gtk", "3.0")
-
-except ImportError as error:
-    sys_exit("Cannot found python3-gobject module: %s" % str(error))
-
-# ------------------------------------------------------------------
 #   Modules - GEM
 # ------------------------------------------------------------------
 
 try:
-    from gem.utils import *
+    from gem import Gem
+    from gem import Conf
+    from gem import Path
+    from gem.utils import get_data
     from gem.configuration import Configuration
 
 except ImportError as error:
@@ -78,15 +68,10 @@ bindtextdomain("gem", get_data("i18n"))
 textdomain("gem")
 
 # ------------------------------------------------------------------
-#   Functions
+#   Launcher
 # ------------------------------------------------------------------
 
 def main():
-
-    # ------------------------------------
-    #   Arguments
-    # ------------------------------------
-
     parser = ArgumentParser(
         description=Gem.Name, epilog=Gem.Copyleft, conflict_handler="resolve")
 
@@ -147,6 +132,8 @@ def main():
         #   Icons folders
         # ------------------------------------
 
+        logger.info(_("Check icons folders"))
+
         # ~/.local/share/gem/icons/consoles
         if not exists(expanduser(Path.Consoles)):
             logger.debug("Copy consoles icons to %s" % Path.Consoles)
@@ -170,6 +157,8 @@ def main():
         # ------------------------------------
         #   Create default configuration files
         # ------------------------------------
+
+        logger.info(_("Check configuration files"))
 
         if not exists(expanduser(path_join(Path.User, "gem.conf"))):
             logger.debug("Copy gem.conf to %s" % Path.User)
@@ -210,4 +199,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    sys_exit(main())

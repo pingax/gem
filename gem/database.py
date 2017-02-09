@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # ------------------------------------------------------------------
 #
 #  This program is free software; you can redistribute it and/or modify
@@ -38,6 +37,7 @@ from gettext import bindtextdomain
 # ------------------------------------------------------------------
 
 try:
+    from gem import *
     from gem.utils import *
     from gem.configuration import Configuration
 

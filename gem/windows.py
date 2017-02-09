@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # ------------------------------------------------------------------
 #
 #  This program is free software; you can redistribute it and/or modify
@@ -45,6 +44,7 @@ try:
     from gi.repository import Pango
 
     from gi.repository.GdkPixbuf import Pixbuf
+    from gi.repository.GdkPixbuf import Colorspace
     from gi.repository.GdkPixbuf import InterpType
 
 except ImportError as error:
@@ -55,6 +55,7 @@ except ImportError as error:
 # ------------------------------------------------------------------
 
 try:
+    from gem import *
     from gem.utils import *
 
 except ImportError as error:
@@ -573,7 +574,7 @@ class DialogEditor(Dialog):
 
 class DialogParameters(Dialog):
 
-    def __init__(self, parent, title, parameters, default):
+    def __init__(self, parent, title, emulator):
         """
         Constructor
         """
@@ -586,11 +587,7 @@ class DialogParameters(Dialog):
 
         self.interface = parent
 
-        self.default = default
-
-        self.arguments, self.emulator = str(), str()
-        if parameters is not None:
-            self.arguments, self.emulator = parameters
+        self.emulator = emulator
 
         # HACK: Create an empty image to avoid g_object_set_qdata warning
         self.empty = Pixbuf.new(Colorspace.RGB, True, 8, 24, 24)
@@ -635,7 +632,7 @@ class DialogParameters(Dialog):
 
         # Properties
         label_emulator.set_alignment(0, .5)
-        label_emulator.set_text(_("Default emulator"))
+        label_emulator.set_text(_("Set default emulator"))
 
         self.model.set_sort_column_id(1, Gtk.SortType.ASCENDING)
 
@@ -658,11 +655,10 @@ class DialogParameters(Dialog):
 
         # Properties
         label_arguments.set_alignment(0, .5)
-        label_arguments.set_text(_("Default arguments"))
+        label_arguments.set_text(_("Set default arguments"))
 
         self.entry.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, "gtk-clear")
-        self.entry.set_placeholder_text(self.default)
 
         # ------------------------------------
         #   Integrate widgets
@@ -700,10 +696,14 @@ class DialogParameters(Dialog):
 
             row = self.model.append([icon, emulator])
 
-            if emulator == self.emulator:
+            if (self.emulator["rom"] is not None and \
+                emulator == self.emulator["rom"]) or \
+                (self.emulator["console"] is not None and \
+                emulator == self.emulator["console"]):
                 self.combo.set_active_iter(row)
 
-        self.entry.set_text(self.arguments)
+        if self.emulator["parameters"] is not None:
+            self.entry.set_text(self.emulator["parameters"])
 
         self.combo.grab_focus()
 
@@ -1281,3 +1281,147 @@ class DialogConsoles(Dialog):
 
         for row in self.model_consoles:
             row[0] = (row.path == selected_path)
+
+
+# ------------------------------------------------------------------
+#   Misc functions
+# ------------------------------------------------------------------
+
+def icon_from_data(icon, fallback=None, width=24, height=24, subfolder=None):
+    """
+    Load an icon or return an empty icon if not found
+
+    :param str icon: Icon path
+    :param GdkPixbuf.Pixbuf fallback: Fallback icon to return if wanted icon
+        was not found
+    :param int width: Icon width
+    :param int height: Icon height
+    :param str subfolder: Subfolder in Path.Icons
+
+    :return: Icon object
+    :rtype: GdkPixbuf.Pixbuf
+    """
+
+    if icon is not None:
+        path = icon
+
+        if not exists(expanduser(icon)):
+            path = path_join(Path.Icons, "%s.%s" % (icon, Icons.Ext))
+
+            if subfolder is not None:
+                path = path_join(
+                    Path.Icons, subfolder, "%s.%s" % (icon, Icons.Ext))
+
+        if path is not None and exists(expanduser(path)):
+            try:
+                return Pixbuf.new_from_file_at_size(
+                    expanduser(path), width, height)
+            except GError:
+                pass
+
+    # Return an empty icon
+    if fallback is None:
+        fallback = Pixbuf.new(Colorspace.RGB, True, 8, width, height)
+        fallback.fill(0x00000000)
+
+    return fallback
+
+def icon_load(name, size=16, fallback="image-missing"):
+    """
+    Get an icon from data folder
+
+    :param str name: Icon name in icons theme
+    :param int size: Icon width and height
+    :param str/GdkPixbuf.Pixbuf fallback: Fallback icon to return if wanted icon
+        was not found
+
+    :return: Icon from icons theme
+    :rtype: GdkPixbuf.Pixbuf
+    """
+
+    icons_theme = Gtk.IconTheme.get_default()
+
+    # Check if specific icon name is in icons theme
+    if icons_theme.has_icon(name):
+        try:
+            return icons_theme.load_icon(
+                name, size, Gtk.IconLookupFlags.FORCE_SVG)
+
+        except:
+            if type(fallback) == Pixbuf:
+                return fallback
+
+            return icons_theme.load_icon(
+                fallback, size, Gtk.IconLookupFlags.FORCE_SVG)
+
+    # Return fallback icon (in the case where is a Pixbuf)
+    if type(fallback) == Pixbuf:
+        return fallback
+
+    # Find fallback icon in icons theme
+    if icons_theme.has_icon(fallback):
+        return icons_theme.load_icon(
+            fallback, size, Gtk.IconLookupFlags.FORCE_SVG)
+
+    # Instead, return default image
+    return icons_theme.load_icon(
+        "image-missing", size, Gtk.IconLookupFlags.FORCE_SVG)
+
+def set_pixbuf_opacity(pixbuf, opacity):
+    """
+    Changes the opacity of pixbuf by combining the pixbuf with an other pixbuf
+
+    Thanks to Rick Spencer:
+    https://theravingrick.blogspot.fr/2011/01/changing-opacity-of-gtkpixbuf.html
+
+    :param Pixbuf pixbuf: Original pixbuf
+    :param int opacity: The degree of desired opacity (between 0 and 255)
+
+    :return: Pixbuf with the transperancy
+    :rtype: GdkPixbuf.Pixbuf
+    """
+
+    width, height = pixbuf.get_width(), pixbuf.get_height()
+
+    new_pixbuf = Pixbuf.new(Colorspace.RGB, True, 8, width, height)
+    new_pixbuf.fill(0x00000000)
+
+    try:
+        pixbuf.composite(new_pixbuf, 0, 0, width, height, 0, 0, 1, 1,
+            InterpType.NEAREST, opacity)
+    except:
+        pass
+
+    return new_pixbuf
+
+def on_change_theme(status=False):
+    """
+    Change dark status of interface theme
+
+    :param bool status: Use dark theme
+    """
+
+    Gtk.Settings.get_default().set_property(
+        "gtk-application-prefer-dark-theme", status)
+
+def on_entry_clear(widget, pos, event):
+    """
+    Reset an entry widget when specific icon is clicked
+
+    :param Gtk.Entry widget: Entry widget
+    :param Gtk.EntryIconPosition pos: Specific icon from entry widget
+    :param Gdk.Event event: Wdget event
+
+    :return: Function state
+    :rtype: bool
+    """
+
+    if type(widget) is not Gtk.Entry:
+        return False
+
+    if pos == Gtk.EntryIconPosition.SECONDARY and len(widget.get_text()) > 0:
+        widget.set_text(str())
+
+        return True
+
+    return False

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # ------------------------------------------------------------------
 #
 #  This program is free software; you can redistribute it and/or modify
@@ -20,10 +19,6 @@
 # ------------------------------------------------------------------
 #   Modules
 # ------------------------------------------------------------------
-
-# Logging
-from logging import getLogger
-from logging.config import fileConfig
 
 # Path
 from os import W_OK
@@ -107,6 +102,7 @@ except ImportError as error:
 # ------------------------------------------------------------------
 
 try:
+    from gem import *
     from gem.utils import *
     from gem.windows import *
     from gem.database import Database
@@ -222,6 +218,8 @@ class Interface(Gtk.Builder):
         self.selection = dict()
         self.shortcuts_data = dict()
 
+        self.keys = list()
+
         # ------------------------------------
         #   Initialize logger
         # ------------------------------------
@@ -306,7 +304,8 @@ class Interface(Gtk.Builder):
 
         # Properties
         self.window.set_title(self.title)
-        self.window.set_wmclass("GEM", "gem")
+        self.window.set_icon_name(Gem.Icon)
+        self.window.set_wmclass(Gem.Acronym.upper(), Gem.Acronym.lower())
 
         self.window.add_accel_group(self.shortcuts_group)
 
@@ -978,6 +977,29 @@ class Interface(Gtk.Builder):
             self.tool_item_fullscreen.set_active(
                 not self.tool_item_fullscreen.get_active())
 
+        # Give me more lifes, powerups or cookies konami code, I need more
+        konami_code = [Gdk.KEY_Up, Gdk.KEY_Up, Gdk.KEY_Down, Gdk.KEY_Down,
+            Gdk.KEY_Left, Gdk.KEY_Right, Gdk.KEY_Left, Gdk.KEY_Right]
+
+        if event.keyval in konami_code:
+            self.keys.append(event.keyval)
+
+            if self.keys == konami_code:
+                dialog = Message(self, "Someone wrote the KONAMI CODE !",
+                    "Nice catch ! You have discover an easter-egg ! But, this "
+                    "kind of code is usefull in a game, not in an emulators "
+                    "manager !", "face-monkey")
+
+                dialog.set_size_request(500, -1)
+
+                dialog.run()
+                dialog.destroy()
+
+                self.keys = list()
+
+            if not self.keys == konami_code[0:len(self.keys)]:
+                self.keys = list()
+
 
     def set_informations(self):
         """
@@ -1141,7 +1163,8 @@ class Interface(Gtk.Builder):
                 title = self.selection["name"]
 
         if path is not None and exists(expanduser(path)):
-            dialog = DialogEditor(self, title, expanduser(path), False)
+            dialog = DialogEditor(
+                self, title, expanduser(path), False, Icons.Output)
 
             dialog.run()
             dialog.destroy()
@@ -1476,7 +1499,8 @@ class Interface(Gtk.Builder):
                                 row_data[Columns.Except] = self.icons["except"]
 
                             elif data["emulator"] is not None and \
-                                len(data["emulator"]) > 0:
+                                len(data["emulator"]) > 0 and \
+                                not data["emulator"] == emulator:
                                 row_data[Columns.Except] = self.icons["except"]
 
                             # Multiplayer
@@ -2116,8 +2140,35 @@ class Interface(Gtk.Builder):
         gamefile = basename(self.selection["game"])
         gamename = splitext(gamefile)[0]
 
+        parameters = None
+
+        emulator = {
+            "rom": None,
+            "console": None,
+            "parameters": None }
+
+        # Current console default emulator
+        if self.selection.get("console") is not None:
+            emulator["console"] = self.consoles.get(
+                self.selection["console"], "emulator")
+
+            if self.emulators.has_option(emulator["console"], "default"):
+                parameters = self.emulators.get(emulator["console"], "default")
+
+        # ----------------------------
+        #   Generate data
+        # ----------------------------
+
+        # Get game data from database
         data = self.database.select("games", ["arguments", "emulator"],
             { "filename": gamefile })
+
+        if data is not None:
+            if len(data[0]) > 0 and not data[0] == parameters:
+                emulator["parameters"] = data[0]
+
+            if len(data[1]) > 0 and not data[1] == emulator["console"]:
+                emulator["rom"] = data[1]
 
         # ----------------------------
         #   Dialog
@@ -2127,75 +2178,56 @@ class Interface(Gtk.Builder):
         if self.selection["name"] is not None:
             title = self.selection["name"]
 
-        # Default value
-        default = str()
-
-        # Use a specific emulator for this game
-        if data is not None and len(data[1]) > 0:
-            if self.emulators.has_option(data[1], "default"):
-                default = self.emulators.get(data[1], "default")
-
-        # Use default parameters from default emulator
-        elif self.selection.get("console") is not None:
-            emulator = self.consoles.get(self.selection["console"], "emulator")
-
-            if self.emulators.has_option(emulator, "default"):
-                default = self.emulators.get(emulator, "default")
-
-        dialog = DialogParameters(self, title, data, default)
+        dialog = DialogParameters(self, title, emulator)
 
         if dialog.run() == Gtk.ResponseType.OK:
+            new_emulator = dialog.combo.get_active_id()
+            new_parameters = dialog.entry.get_text()
 
             # ----------------------------
-            #   Update exceptions
+            #   Check new results
             # ----------------------------
 
-            emulator = dialog.combo.get_active_id()
-            if emulator is None:
-                emulator = str()
+            if new_emulator is None:
+                new_emulator = str()
 
             self.database.modify("games", {
-                    "arguments": dialog.entry.get_text(),
-                    "emulator": emulator
+                    "arguments": new_parameters,
+                    "emulator": new_emulator
                 }, { "filename": gamefile })
 
             self.logger.info(_("Change custom parameters for %s") % title)
 
             # ----------------------------
-            #   Update data
+            #   Check diferences
             # ----------------------------
 
-            result = self.database.select("games", ["arguments", "emulator"],
-                { "filename": gamefile })
+            custom = False
 
-            # Fix in case of "None" instead of None
-            if result[1] == "None":
-                result[1] = None
+            if len(new_emulator) > 0 and \
+                not new_emulator == emulator["console"]:
+                custom = True
 
-            # Parameters
-            if result is not None:
-                if result[0] is not None and len(result[0]) > 0:
-                    self.set_game_data(
-                        Columns.Except, self.icons["except"], gamename)
+            elif len(new_parameters) > 0 and \
+                not new_parameters == emulator["parameters"]:
+                custom = True
 
-                elif result[1] is not None and len(result[1]) > 0:
-                    self.set_game_data(
-                        Columns.Except, self.icons["except"], gamename)
-
-                else:
-                    self.set_game_data(
-                        Columns.Except, self.alternative["except"], gamename)
-
+            if custom:
+                self.set_game_data(
+                    Columns.Except, self.icons["except"], gamename)
             else:
                 self.set_game_data(
                     Columns.Except, self.alternative["except"], gamename)
 
-            if len(emulator) == 0:
-                emulator = self.consoles.get(
-                    self.selection["console"], "emulator")
+            # ----------------------------
+            #   Update icons
+            # ----------------------------
+
+            if len(new_emulator) == 0:
+                new_emulator = emulator["console"]
 
             # Snap
-            if self.check_screenshots(emulator, gamename):
+            if self.check_screenshots(new_emulator, gamename):
                 self.set_game_data(
                     Columns.Snapshots, self.icons["snap"], gamename)
                 self.tool_item_screenshots.set_sensitive(True)
@@ -2206,7 +2238,7 @@ class Interface(Gtk.Builder):
                 self.tool_item_screenshots.set_sensitive(False)
 
             # Save state
-            if self.check_save_states(emulator, gamename):
+            if self.check_save_states(new_emulator, gamename):
                 self.set_game_data(Columns.Save, self.icons["save"], gamename)
 
             else:
@@ -2691,7 +2723,16 @@ class Splash(object):
 
         self.length = length
 
-        self.index = int(1)
+        self.index = 1
+
+        # ------------------------------------
+        #   Initialize icons
+        # ------------------------------------
+
+        # Get user icon theme
+        self.icons_theme = Gtk.IconTheme.get_default()
+
+        self.icons_theme.append_search_path(get_data(path_join("ui", "icons")))
 
         # ------------------------------------
         #   Prepare interface
@@ -2727,6 +2768,15 @@ class Splash(object):
 
         # Properties
         self.window.set_title("Graphical Emulators Manager")
+
+        # ------------------------------------
+        #   Image
+        # ------------------------------------
+
+        self.image_splash = builder.get_object("image_splash")
+
+        # Properties
+        self.image_splash.set_from_icon_name("gem", 256)
 
         # ------------------------------------
         #   Progressbar

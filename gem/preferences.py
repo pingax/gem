@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # ------------------------------------------------------------------
 #
 #  This program is free software; you can redistribute it and/or modify
@@ -60,6 +59,7 @@ except ImportError as error:
 # ------------------------------------------------------------------
 
 try:
+    from gem import *
     from gem.utils import *
     from gem.windows import *
     from gem.configuration import Configuration
@@ -564,7 +564,7 @@ class Preferences(Gtk.Builder):
                 # self.config.modify("editor", "font",
                     # self.font_editor.get_font_name())
 
-            for text, value, option in self.model_shortcuts:
+            for text, value, option, sensitive in self.model_shortcuts:
                 if value is not None and option is not None:
                     self.config.modify("keys", option, value)
 
@@ -680,12 +680,14 @@ class Preferences(Gtk.Builder):
         # ------------------------------------
 
         for key in self.shortcuts.keys():
-            key_iter = self.model_shortcuts.append(None, [key, None, None])
+            key_iter = self.model_shortcuts.append(
+                None, [key, None, None, False])
 
             for option, (string, default) in self.shortcuts[key].items():
                 value = self.config.item("keys", option, default)
 
-                self.model_shortcuts.append(key_iter, [string, value, option])
+                self.model_shortcuts.append(
+                    key_iter, [string, value, option, True])
 
         self.treeview_shortcuts.expand_all()
 

@@ -36,6 +36,8 @@
       <column type="gchararray"/>
       <!-- column-name column_shortcuts_default -->
       <column type="gchararray"/>
+      <!-- column-name column_shortcuts_sensitive -->
+      <column type="gboolean"/>
     </columns>
   </object>
   <object class="GtkWindow" id="window_preferences">
@@ -832,6 +834,7 @@
                                       </object>
                                       <attributes>
                                         <attribute name="text">1</attribute>
+                                        <attribute name="sensitive">3</attribute>
                                       </attributes>
                                     </child>
                                   </object>
