@@ -15,6 +15,7 @@
     - Fix avoid RecursionError when use forward_search
     - Fix cannot see roms folder with ~ in path
     - Fix set icons size to 22 pixels instead of 24 pixels
+    - Fix drag a game to an extern application send the good file-uri
 
 ## Version 0.5.2 - Flintheart Glomgold (29 Nov, 2016)
     - Fix cannot launch GEM from a fresh installation

@@ -268,7 +268,7 @@ class Interface(Gtk.Builder):
         #   Targets
         # ------------------------------------
 
-        self.targets = [ Gtk.TargetEntry.new("text/uri-list", 0, 1337) ]
+        self.targets = [ Gtk.TargetEntry.new("text/uri-list", 0, Gem.Id) ]
 
         # ------------------------------------
         #   Prepare interface
@@ -2490,7 +2490,7 @@ class Interface(Gtk.Builder):
         Send rom file path
         """
 
-        data.set_uris([self.selection["game"]])
+        data.set_uris(["file://%s" % self.selection["game"]])
 
 
     def __on_dnd_received_data(self, widget, context, x, y, data, info, time):
@@ -2501,7 +2501,7 @@ class Interface(Gtk.Builder):
         self.logger.debug("Received data from drag & drop")
         widget.stop_emission("drag_data_received")
 
-        if not info == 1337:
+        if not info == Gem.Id:
             return
 
         previous_console = None

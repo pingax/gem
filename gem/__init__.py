@@ -39,6 +39,7 @@ except ImportError as error:
 # ------------------------------------------------------------------
 
 class Gem:
+    Id          = 1337
     Name        = "Graphical Emulators Manager"
     Acronym     = "GEM"
     Version     = "0.6"
