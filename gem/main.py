@@ -188,7 +188,7 @@ def main():
             launch_gem(logger, args.reconstruct)
 
     except ImportError as error:
-        logger.critical(_("Cannot import interface: %s" % str(error)))
+        logger.critical(_("Import error with interface: %s" % str(error)))
 
     except KeyboardInterrupt as error:
         logger.warning(_("Terminate by keyboard interrupt"))

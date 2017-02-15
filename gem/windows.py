@@ -48,7 +48,7 @@ try:
     from gi.repository.GdkPixbuf import InterpType
 
 except ImportError as error:
-    sys_exit("Cannot found python3-gobject module: %s" % str(error))
+    sys_exit("Import error with python3-gobject module: %s" % str(error))
 
 # ------------------------------------------------------------------
 #   Modules - GEM
@@ -59,7 +59,7 @@ try:
     from gem.utils import *
 
 except ImportError as error:
-    sys_exit("Cannot found gem module: %s" % str(error))
+    sys_exit("Import error with gem module: %s" % str(error))
 
 # ------------------------------------------------------------------
 #   Translation

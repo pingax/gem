@@ -1,5 +1,4 @@
-# ------------------------------------------------------------------
-#
+# ------------------------------------------------------------------------------
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation; either version 3 of the License.
@@ -13,12 +12,11 @@
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #  MA 02110-1301, USA.
-#
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #   Modules
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 # System
 from os.path import exists
@@ -32,70 +30,60 @@ if(version_info[0] >= 3):
 else:
     from ConfigParser import SafeConfigParser
 
-# Translation
-from gettext import lgettext as _
-from gettext import textdomain
-from gettext import bindtextdomain
-
-# ------------------------------------------------------------------
-#   Modules - GEM
-# ------------------------------------------------------------------
-
-try:
-    from gem import *
-    from gem.utils import get_data
-
-except ImportError as error:
-    sys_exit("Cannot found gem module: %s" % str(error))
-
-# ------------------------------------------------------------------
-#   Translation
-# ------------------------------------------------------------------
-
-bindtextdomain("gem", get_data("i18n"))
-textdomain("gem")
-
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #   Class
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 class Configuration(SafeConfigParser):
 
-    def __init__(self, path):
-        """
-        Constructor
+    def __init__(self, filepath):
+        """ Constructor
 
-        :param str path: Configuration file path
+        Manage a configuration file easily with SafeConfigParser
+
+        Parameters
+        ----------
+        filepath : str
+            Configuration file path
+
+        Returns
+        -------
+        Configuration
+            Object Configuration
+
+        Raises
+        ------
+        OSError
+            If the configuration filepath not exists
         """
 
         SafeConfigParser.__init__(self)
 
-        # ------------------------------------
-        #   Variables
-        # ------------------------------------
+        if not exists(expanduser(filepath)):
+            raise OSError(2, "Cannot found file", filepath)
 
-        self.path = path
+        # Read contents
+        self.read(expanduser(filepath))
 
-        # ------------------------------------
-        #   Read contents
-        # ------------------------------------
-
-        if not exists(path):
-            raise IOError(_("Cannot open %s file" % path))
-
-        self.read(path)
+        self.path = expanduser(filepath)
 
 
     def item(self, section, option, default=None):
-        """
-        Return an item from configuration
+        """ Return an item from configuration
 
-        :param str section: Section name
-        :param str option: Option name
-        :param str default: Default value to return
+        Parameters
+        ----------
+        section : str
+            Section name
+        option : str
+            Option name
+        default : str
+            Fallback value to return if nothing has been founded (default: None)
 
-        :return: Option value
-        :rtype: str/None
+        Returns
+        -------
+        str or None
+            Value from section option
         """
 
         if self.has_section(section) and self.has_option(section, option):
@@ -105,26 +93,43 @@ class Configuration(SafeConfigParser):
 
 
     def append(self, section, option, value):
-        """
-        Append a new section to configuration
+        """ Append a new section to configuration
 
-        :param str section: Section name
-        :param str option: Option name
-        :param str value: Option value
+        Parameters
+        ----------
+        section : str
+            Section name
+        option : str
+            Option name
+        value : str
+            Value to set
+
+        Raises
+        ------
+        IndexError
+            If the configuration file not has section
         """
 
-        if not self.has_section(section):
-            self.add_section(section)
-            self.set(section, option, str(value))
+        if self.has_section(section):
+            raise IndexError("Cannot found %s section" % section)
+
+        self.add_section(section)
+        self.set(section, option, str(value))
 
 
     def modify(self, section, option, value):
-        """
-        Modify a section from configuration
+        """ Modify a section from configuration
 
-        :param str section: Section name
-        :param str option: Option name
-        :param str value: Option value
+        This function append or update a section into configuration
+
+        Parameters
+        ----------
+        section : str
+            Section name
+        option : str
+            Option name
+        value : str
+            Value to set
         """
 
         if self.has_section(section):
@@ -135,11 +140,14 @@ class Configuration(SafeConfigParser):
 
 
     def rename(self, section, new_name):
-        """
-        Rename a section from configuration
+        """ Rename a section from configuration
 
-        :param str section: Old section name
-        :param str new_name: New section name
+        Parameters
+        ----------
+        section : str
+            Previous section name
+        new_name : str
+            New section name
         """
 
         if self.has_section(section) and not self.has_section(new_name):
@@ -151,10 +159,12 @@ class Configuration(SafeConfigParser):
 
 
     def remove(self, section):
-        """
-        Remove a section from configuration
+        """ Remove a section from configuration
 
-        :param str section: Section name
+        Parameters
+        ----------
+        section : str
+            Section name
         """
 
         if self.has_section(section):
@@ -162,32 +172,43 @@ class Configuration(SafeConfigParser):
 
 
     def update(self):
-        """
-        Write all data from cache into configuration file
+        """ Write all data from cache into configuration file
+
+        This function need to be exec after each modifications to update file
+        content
         """
 
         with open(self.path, 'w') as pipe:
             self.write(pipe)
 
 
-    def add_missing_data(self, path):
+    def add_missing_data(self, secondary_path):
+        """ Append to configuration all missing data from another configuration
+
+        Parameters
+        ----------
+        secondary_path : str
+            Configuration file where to get missing sections/options
+
+        Raises
+        ------
+        OSError
+            If the configuration filepath not exists
         """
-        Append to configuration all missing data from another configuration
 
-        :param str path: Other configuration file path
-        """
+        if not exists(expanduser(secondary_path)):
+            raise OSError(2, "Cannot found file", filepath)
 
-        if exists(expanduser(path)):
-            config = Configuration(path)
+        config = Configuration(expanduser(secondary_path))
 
-            for section in config.sections():
+        for section in config.sections():
 
-                if not self.has_section(section):
-                    self.add_section(section)
+            if not self.has_section(section):
+                self.add_section(section)
 
-                for option in config.options(section):
+            for option in config.options(section):
 
-                    if not self.has_option(section, option):
-                        self.set(section, option, config.get(section, option))
+                if not self.has_option(section, option):
+                    self.set(section, option, config.get(section, option))
 
-            self.update()
+        self.update()

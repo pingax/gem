@@ -52,7 +52,7 @@ try:
     from gi.repository.GdkPixbuf import Colorspace
 
 except ImportError as error:
-    sys_exit("Cannot found python3-gobject module: %s" % str(error))
+    sys_exit("Import error with python3-gobject module: %s" % str(error))
 
 # ------------------------------------------------------------------
 #   Modules - GEM
@@ -65,7 +65,7 @@ try:
     from gem.configuration import Configuration
 
 except ImportError as error:
-    sys_exit("Cannot found gem module: %s" % str(error))
+    sys_exit("Import error with gem module: %s" % str(error))
 
 # ------------------------------------------------------------------
 #   Translation

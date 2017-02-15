@@ -32,7 +32,7 @@ try:
     from xdg.BaseDirectory import xdg_config_home
 
 except ImportError as error:
-    sys_exit("Cannot found pyxdg module: %s" % str(error))
+    sys_exit("Import error with pyxdg module: %s" % str(error))
 
 # ------------------------------------------------------------------
 #   Class

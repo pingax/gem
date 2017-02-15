@@ -1,5 +1,4 @@
-# ------------------------------------------------------------------
-#
+# ------------------------------------------------------------------------------
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation; either version 3 of the License.
@@ -13,65 +12,75 @@
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #  MA 02110-1301, USA.
-#
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #   Modules
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 # System
 from copy import deepcopy
+
 from os.path import exists
+from os.path import expanduser
+
+from logging import Logger
 
 # Database
 import sqlite3
 
-# Translation
-from gettext import gettext as _
-from gettext import textdomain
-from gettext import bindtextdomain
-
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #   Modules - GEM
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 try:
-    from gem import *
-    from gem.utils import *
     from gem.configuration import Configuration
 
 except ImportError as error:
-    sys_exit("Cannot found gem module: %s" % str(error))
+    sys_exit("Import error with gem module: %s" % str(error))
 
-# ------------------------------------------------------------------
-#   Translation
-# ------------------------------------------------------------------
-
-bindtextdomain("gem", get_data("i18n"))
-textdomain("gem")
-
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #   Class
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 class Database(object):
 
     def __init__(self, db_path, configuration_path, logger):
-        """
-        Constructor
+        """ Constructor
 
-        :param str db_path: Database path
-        :param str configuration_path: Database configuration path
-        :param logging.Logger logger: Logging object
+        Parameters
+        ----------
+        db_path : str
+            Database filepath
+        configuration_path : str
+            Configuration file which contains database schema
+        logger : logging.Logger
+            Logging object
+
+        Raises
+        ------
+        OSError
+            If the configuration path not exists
+        ValueError
+            If logger type is not logging.Logger
         """
+
+        if not exists(expanduser(configuration_path)):
+            raise OSError(2, "Cannot found file", configuration_path)
+
+        if type(logger) is not Logger:
+            raise ValueError(
+                "Expected logging.Logger type, get %s" % type(logger))
 
         # ------------------------------------
         #   Variables
         # ------------------------------------
 
-        self.path = db_path
-        self.configuration = Configuration(configuration_path)
+        self.path = expanduser(db_path)
+
+        self.configuration = Configuration(expanduser(configuration_path))
+
+        self.logger = logger
 
         self.sql_types = {
             "NULL": None,
@@ -80,12 +89,6 @@ class Database(object):
             "REAL": float,
             "TEXT": str,
             "BLOB": memoryview }
-
-        # ------------------------------------
-        #   Logger
-        # ------------------------------------
-
-        self.logger = logger
 
         # ------------------------------------
         #   Intialization
@@ -105,14 +108,22 @@ class Database(object):
 
 
     def __generate_request(self, table, data):
-        """
-        Generate a container with parameters which contains request strings
+        """ Generate a request to database
 
-        :param str table: Table name
-        :param dict data: Columns and values data (Dict keys are columns)
+        This function generate a correct sql request from data dict which use
+        keys as columns.
 
-        :return: Request strings list
-        :rtype: list
+        Parameters
+        ----------
+        table : str
+            Table name
+        data : dict
+            Columns keys with values
+
+        Returns
+        -------
+        list
+            Request strings list
         """
 
         values = list()
@@ -140,10 +151,12 @@ class Database(object):
 
 
     def __create_table(self, table):
-        """
-        Create a new table into database
+        """ Create a new table into database
 
-        :param str table: Table name
+        Parameters
+        ----------
+        table : str
+            Table name
         """
 
         request = list()
@@ -167,11 +180,14 @@ class Database(object):
 
 
     def __rename_table(self, table, name):
-        """
-        Rename a table from database
+        """ Rename a table from database
 
-        :param str table: Table name
-        :param str name: New table name
+        Parameters
+        ----------
+        table : str
+            Previous table name
+        name : str
+            New table name
         """
 
         database = sqlite3.connect(self.path)
@@ -188,10 +204,12 @@ class Database(object):
 
 
     def __remove_table(self, table):
-        """
-        Remove a table from database
+        """ Remove a table from database
 
-        :param str table: Table name
+        Parameters
+        ----------
+        table : str
+            Table name
         """
 
         database = sqlite3.connect(self.path)
@@ -208,12 +226,16 @@ class Database(object):
 
 
     def __add_column(self, table, name, sql_type):
-        """
-        Add a new column into database
+        """ Add a new column into database
 
-        :param str table: Table name
-        :param str name: Column name
-        :param str sql_type: Column type
+        Parameters
+        ----------
+        table : str
+            Table name
+        name : str
+            Column name
+        sql_type : str
+            Column type
         """
 
         database =  sqlite3.connect(self.path)
@@ -232,13 +254,17 @@ class Database(object):
 
 
     def __get_columns(self, table):
-        """
-        Get all the columns from database
+        """ Get all the columns from database
 
-        :param str table: Table name
+        Parameters
+        ----------
+        table : str
+            Table name
 
-        :return: Columns list
-        :rtype: list
+        Returns
+        -------
+        list
+            Columns list
         """
 
         columns = list()
@@ -263,11 +289,17 @@ class Database(object):
 
 
     def __insert(self, table, data):
-        """
-        Insert a new row into database
+        """ Insert a new row into database
 
-        :param str table: Table name
-        :param dict data: Columns and values data (Dict keys are columns)
+        This function insert a new row into database from data dict which use
+        keys as columns.
+
+        Parameters
+        ----------
+        table : str
+            Table name
+        data : dict
+            Columns keys and values
         """
 
         database = sqlite3.connect(self.path)
@@ -302,12 +334,19 @@ class Database(object):
 
 
     def __update(self, table, data, where):
-        """
-        Update a row from database
+        """ Update a row from database
 
-        :param str table: Table name
-        :param dict data: Columns and values data (Dict keys are columns)
-        :param dict where: Update conditions (Dict keys are columns)
+        This function update a row from database with data and where dict which
+        use keys as columns.
+
+        Parameters
+        ----------
+        table : str
+            Table name
+        data : dict
+            Columns keys and values
+        where : dict
+            Request conditions
         """
 
         database = sqlite3.connect(self.path)
@@ -329,15 +368,29 @@ class Database(object):
 
 
     def select(self, table, columns, where=None):
-        """
-        Get rows from the database
+        """ Get rows from the database
 
-        :param str table: Table name
-        :param list columns: Columns name
-        :param dict where: Search conditions (Dict keys are columns)
+        This function do a request for specific columns from database with where
+        dict which use keys as columns.
 
-        :return: Database rows
-        :rtype: str/bool/None
+        Parameters
+        ----------
+        table : str
+            Table name
+        columns : list
+            Columns name list
+        where : dict
+            Request conditions (default: None)
+
+        Returns
+        -------
+        object or None
+            Database rows
+
+        Examples
+        --------
+        >>> database.get("main", ["age"], {"name": "doe"})
+        {'age': 42}
         """
 
         value = None
@@ -379,10 +432,17 @@ class Database(object):
 
 
     def remove(self, table, where):
-        """
-        Remove data from database
+        """ Remove data from database
 
-        :param str table: Table name
+        This function remove a row from database with where dict which use keys
+        as columns.
+
+        Parameters
+        ----------
+        table : str
+            Table name
+        where : dict
+            Request conditions
         """
 
         database =  sqlite3.connect(self.path)
@@ -403,8 +463,19 @@ class Database(object):
 
 
     def modify(self, table, data, where=None):
-        """
-        Set a specific data in main table
+        """ Set a specific data in main table
+
+        This function insert or update a row from database with data and where
+        dict which use keys as columns.
+
+        Parameters
+        ----------
+        table : str
+            Table name
+        data : dict
+            Columns keys and values
+        where : dict
+            Request conditions (Default: None)
         """
 
         request = self.select(table, list(data.keys()), where)
@@ -419,19 +490,33 @@ class Database(object):
             self.__update(table, data, where)
 
 
-    def get(self, table, data):
-        """
-        Get all the data for a specific entry in database
+    def get(self, table, where):
+        """ Get rows from database
 
-        :param str table: Table name
+        This function request rows from database with where dict which use keys
+        as columns.
 
-        :return: Entry data
-        :rtype: list
+        Parameters
+        ----------
+        table : str
+            Table name
+        where : dict
+            Request conditions
+
+        Returns
+        -------
+        dict
+            Rows data
+
+        Examples
+        --------
+        >>> database.get("main", {"name": "doe"})
+        {'first_name': 'john', 'age': 42}
         """
 
         result = None
 
-        values = self.select(table, ['*'], data)
+        values = self.select(table, ['*'], where)
 
         if values is not None:
             columns = self.__get_columns(table)
@@ -448,11 +533,12 @@ class Database(object):
 
 
     def check_integrity(self):
-        """
-        Check if database respect configuration schema
+        """ Check if database respect configuration schema
 
-        :return: Integrity status
-        :rtype: bool
+        Returns
+        -------
+        bool
+            Integrity status
         """
 
         tables = self.select("sqlite_master", ["name"], { "type": "table" })
@@ -471,13 +557,20 @@ class Database(object):
 
 
     def migrate(self, table, renamed_columns=None, function=None):
-        """
-        Migrate old data from a database
+        """ Migrate old data from a database
 
-        :param str table: Table name
-        :param dict renamed_columns: In case of some columns need to change
-            their name (Keys are old names, Values are new names)
-        :param def function: Function to call every new insert into database
+        This function check if the database need to update his schema by
+        checking configuration schema and possible renamed columns
+
+        Parameters
+        ----------
+        table : str
+            Table name
+        renamed_columns : dict
+            In case of some columns need to change their name (Keys are old
+            names, Values are new names)
+        function : def
+            Function to call every time a new row is inserted into database
         """
 
         columns_index = dict()
@@ -503,8 +596,6 @@ class Database(object):
             columns_data[column] = str()
 
         if old_data is not None:
-            self.logger.info(_("Start to migrate %d entries" % len(old_data)))
-
             for row in old_data:
                 columns = deepcopy(columns_data)
 
