@@ -1,5 +1,4 @@
 # ------------------------------------------------------------------
-#
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation; either version 3 of the License.
@@ -13,7 +12,6 @@
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #  MA 02110-1301, USA.
-#
 # ------------------------------------------------------------------
 
 # ------------------------------------------------------------------
@@ -52,22 +50,33 @@ except ImportError as error:
 # ------------------------------------------------------------------
 
 def get_data(path, egg="gem"):
-    """
-    Provides easy access to data in a python egg
+    """ Provides easy access to data in a python egg or local folder
+
+    This function search a path in a specific python egg or in local folder. The
+    local folder is check before egg to allow quick debugging.
 
     Thanks Deluge :)
 
-    :param str path: File path
-    :param str egg: Python egg name
+    Parameters
+    ----------
+    path : str
+        File path
 
-    :return: Path
-    :rtype: str/None
+    Other Parameters
+    ----------------
+    egg : str
+        Python egg name (Default: gem)
+
+    Returns
+    -------
+    str or None
+        Path
     """
 
     try:
         data = resource_filename(egg, path)
 
-        if exists(data):
+        if exists(expanduser(data)):
             return data
 
         return path
@@ -79,14 +88,25 @@ def get_data(path, egg="gem"):
 
 
 def string_from_date(date, date_format="%d-%m-%Y %H:%M:%S"):
-    """
+    """ Convert a datetime to a pretty string
+
     Get a pretty string from the interval between NOW() and the wanted date
 
-    :param datetime date: Date to compare with NOW()
-    :param str date_format: Date string format
+    Parameters
+    ----------
+    date : datetime.datetime
+        Date to compare with NOW()
 
-    :return: Pretty string
-    :rtype: str/None
+    Other Parameters
+    ----------------
+    date_format : str
+        Format using to parse time when date type is a string
+        (Default: %d-%m-%Y %H:%M:%S)
+
+    Returns
+    -------
+    str or None
+        Convert value
     """
 
     if date is None:
@@ -120,14 +140,25 @@ def string_from_date(date, date_format="%d-%m-%Y %H:%M:%S"):
 
 
 def string_from_time(date, date_format="%H:%M:%S"):
-    """
-    Get a pretty string from date
+    """ Convert a time to a pretty string
 
-    :param datetime date: Date to compare with NOW()
-    :param str date_format: Date string format
+    Get a pretty string from the interval between NOW() and the wanted date
 
-    :return: Pretty string
-    :rtype: str/None
+    Parameters
+    ----------
+    date : datetime.datetime
+        Date to compare with NOW()
+
+    Other Parameters
+    ----------------
+    date_format : str
+        Format using to parse date when date type is a string
+        (Default: %H:%M:%S)
+
+    Returns
+    -------
+    str or None
+        Convert value
     """
 
     if date is None:
@@ -157,13 +188,25 @@ def string_from_time(date, date_format="%H:%M:%S"):
 
 
 def get_binary_path(binary):
-    """
-    Get a list of available binary paths from $PATH variable
+    """ Get a list of available binary paths from $PATH variable
 
-    :param str binary: Binary name or path
+    This function get all the path from $PATH variable which match binary
+    request.
 
-    :return: List of available path
-    :rtype: list
+    Parameters
+    ----------
+    binary : str
+        Binary name or path
+
+    Returns
+    -------
+    list
+        List of available path
+
+    Examples
+    --------
+    >>> get_binary_path("ls")
+    ['/bin/ls']
     """
 
     available = list()

@@ -1,5 +1,4 @@
 # ------------------------------------------------------------------
-#
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation; either version 3 of the License.
@@ -13,7 +12,6 @@
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #  MA 02110-1301, USA.
-#
 # ------------------------------------------------------------------
 
 # ------------------------------------------------------------------
@@ -58,7 +56,7 @@ try:
     from gem.configuration import Configuration
 
 except ImportError as error:
-    sys_exit("Cannot found gem module: %s" % str(error))
+    sys_exit("Cannot find gem module: %s" % str(error))
 
 # ------------------------------------------------------------------
 #   Translation
@@ -72,8 +70,8 @@ textdomain("gem")
 # ------------------------------------------------------------------
 
 def main():
-    parser = ArgumentParser(
-        description=Gem.Name, epilog=Gem.Copyleft, conflict_handler="resolve")
+    parser = ArgumentParser(description="%s - %s" % (Gem.Name, Gem.Description),
+        epilog=Gem.Copyleft, conflict_handler="resolve")
 
     parser.add_argument("-v", "--version", action="version",
         version="GEM %s (%s) - Licence GPLv3" % (Gem.Version, Gem.CodeName),

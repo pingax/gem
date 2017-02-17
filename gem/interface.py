@@ -1,5 +1,4 @@
 # ------------------------------------------------------------------
-#
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation; either version 3 of the License.
@@ -13,7 +12,6 @@
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #  MA 02110-1301, USA.
-#
 # ------------------------------------------------------------------
 
 # ------------------------------------------------------------------
@@ -124,8 +122,18 @@ textdomain("gem")
 # ------------------------------------------------------------------
 
 def launch_gem(logger, reconstruct_db=False):
-    """
-    Launch GEM and manage his database
+    """ Launch GEM and manage his database
+
+    Parameters
+    ----------
+    logger : logging.Logger
+        Logger object
+
+    Other Parameters
+    ----------------
+    reconstruct_db : bool
+        Ask the launcher to build a new sqlite database with previous one
+        content (Default: False)
     """
 
     # ------------------------------------
@@ -186,8 +194,14 @@ class Interface(Gtk.Builder):
         "game_close": (SIGNAL_RUN_FIRST, None, (bool, str, str, object)) }
 
     def __init__(self, logger, database):
-        """
-        Constructor
+        """ Constructor
+
+        Parameters
+        ----------
+        logger : logging.Logger
+            Output logger
+        database : database.Database
+            Games database
         """
 
         Gtk.Builder.__init__(self)
@@ -292,8 +306,7 @@ class Interface(Gtk.Builder):
 
 
     def __init_widgets(self):
-        """
-        Initialize interface widgets
+        """ Initialize interface widgets
         """
 
         # ------------------------------------
@@ -487,8 +500,7 @@ class Interface(Gtk.Builder):
 
 
     def __init_signals(self):
-        """
-        Initialize widgets signals
+        """ Initialize widgets signals
         """
 
         # ------------------------------------
@@ -599,13 +611,11 @@ class Interface(Gtk.Builder):
         self.treeview_games.connect(
             "drag-data-received", self.__on_dnd_received_data)
 
-
         self.filter_games.set_visible_func(self.filters_match)
 
 
     def __start_interface(self):
-        """
-        Load data and start interface
+        """ Load data and start interface
         """
 
         self.load_interface()
@@ -638,11 +648,14 @@ class Interface(Gtk.Builder):
 
 
     def __stop_interface(self, widget=None, event=None):
-        """
-        Save data and stop interface
+        """ Save data and stop interface
 
-        :param Gtk.Widget widget:
-        :param Gdk.Event event:
+        Other Parameters
+        ----------------
+        widget : Gtk.Widget
+            Object which receive signal
+        event : Gdk.EventButton or Gdk.EventKey
+            Event which triggered this signal
         """
 
         # ------------------------------------
@@ -686,8 +699,7 @@ class Interface(Gtk.Builder):
 
 
     def load_interface(self):
-        """
-        Load main interface
+        """ Load main interface
         """
 
         # ------------------------------------
@@ -816,8 +828,12 @@ class Interface(Gtk.Builder):
 
 
     def sensitive_interface(self, status=False):
-        """
-        Set a sensitive status for specific widgets
+        """ Update sensitive status for main widgets
+
+        Parameters
+        ----------
+        status : bool
+            Sensitive status
         """
 
         self.menu_item_rename.set_sensitive(status)
@@ -840,8 +856,16 @@ class Interface(Gtk.Builder):
 
 
     def filters_update(self, widget=None):
-        """
-        Reload packages filter when user change filters from menu
+        """ Reload packages filter when user change filters from menu
+
+        Other Parameters
+        ----------------
+        widget : Gtk.Widget
+            Object which receive signal
+
+        Notes
+        -----
+        Check widget utility in this function
         """
 
         self.filter_games.refilter()
@@ -850,8 +874,22 @@ class Interface(Gtk.Builder):
 
 
     def filters_match(self, model, row, data=None):
-        """
-        Update treeview filter
+        """ Update treeview rows
+
+        This function update games treeview with filter entry content. A row is
+        visible if the content match the filter.
+
+        Parameters
+        ----------
+        model : Gtk.TreeModel
+            Treeview model which receive signal
+        row : Gtk.TreeModelRow
+            Treeview current row
+
+        Other Parameters
+        ----------------
+        data : object
+            User data to pass to the visible function (Default: None)
         """
 
         data_favorite = model.get_value(row, Columns.Favorite)
@@ -898,8 +936,7 @@ class Interface(Gtk.Builder):
 
 
     def __init_shortcuts(self):
-        """
-        Generate shortcuts signals from user configuration
+        """ Generate shortcuts signals from user configuration
         """
 
         shortcuts = {
@@ -969,8 +1006,14 @@ class Interface(Gtk.Builder):
 
 
     def __on_manage_keys(self, widget, event):
-        """
-        Manage widgets for specific keymaps
+        """ Manage widgets for specific keymaps
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        event : Gdk.EventButton or Gdk.EventKey
+            Event which triggered this signal
         """
 
         if event.keyval == Gdk.KEY_F11:
@@ -1002,8 +1045,7 @@ class Interface(Gtk.Builder):
 
 
     def set_informations(self):
-        """
-        Update text from headerbar
+        """ Update headerbar title and subtitle
         """
 
         texts = str()
@@ -1022,8 +1064,19 @@ class Interface(Gtk.Builder):
 
 
     def set_message(self, title, message, icon="dialog-error"):
-        """
-        Show a dialog when an error occur.
+        """ Open a message dialog
+
+        This function open a dialog to inform user and write message to logger
+        output.
+
+        Parameters
+        ----------
+        title : str
+            Dialog title
+        message : str
+            Dialog message
+        icon : str
+            Dialog icon, set also the logging mode
         """
 
         if icon == "dialog-error":
@@ -1039,9 +1092,13 @@ class Interface(Gtk.Builder):
         dialog.destroy()
 
 
-    def __on_show_about(self, widget=None, event=None):
-        """
-        Show about window
+    def __on_show_about(self, widget):
+        """ Show about dialog
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
         """
 
         about = Gtk.AboutDialog()
@@ -1071,8 +1128,16 @@ class Interface(Gtk.Builder):
 
 
     def __on_show_viewer(self, widget):
-        """
-        Show game's screenshots with native or specified viewer
+        """ Show game screenshots
+
+        This function open game screenshots in a viewer. This viewer can be a
+        custom one or the gem native viewer. This choice can be do in gem
+        configuration file
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
         """
 
         viewer = self.config.get("viewer", "binary")
@@ -1146,8 +1211,14 @@ class Interface(Gtk.Builder):
 
 
     def __on_show_log(self, widget):
-        """
-        Show game's log
+        """ Show game log
+
+        This function show the gem log content in a non-editable dialog
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
         """
 
         if widget == self.menu_item_gem_log:
@@ -1171,8 +1242,16 @@ class Interface(Gtk.Builder):
 
 
     def __on_show_notes(self, widget):
-        """
-        Show game's notes
+        """ Edit game notes
+
+        This function allow user to write some notes for a specific game. The
+        user can open as many notes he wants but cannot open a note already
+        open
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
         """
 
         path = path_join(expanduser(Path.Notes),
@@ -1203,8 +1282,21 @@ class Interface(Gtk.Builder):
 
 
     def __on_show_notes_response(self, dialog, response, title, path):
-        """
-        Close game's note and save buffer to correct file
+        """ Close notes dialog
+
+        This function close current notes dialog and save his textview buffer to
+        the game notes file
+
+        Parameters
+        ----------
+        dialog : Gtk.Dialog
+            Dialog object
+        response : Gtk.ResponseType
+            Dialog object user response
+        title : str
+            Dialog title, it's game name by default
+        path : str
+            Notes path
         """
 
         if response == Gtk.ResponseType.APPLY:
@@ -1225,8 +1317,12 @@ class Interface(Gtk.Builder):
 
 
     def __on_show_emulator_config(self, widget):
-        """
-        Show emulator's configuration file
+        """ Edit emulator configuration file
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
         """
 
         if self.selection["console"] is not None:
@@ -1262,11 +1358,15 @@ class Interface(Gtk.Builder):
 
 
     def append_consoles(self):
-        """
-        Append user's consoles into combobox.
+        """ Append to consoles combobox all available consoles
 
-        :return: Selected row
-        :rtype: Gtk.TreeIter or None
+        This function add every consoles into consoles combobox and inform user
+        when an emulator binary is missing
+
+        Returns
+        -------
+        Gtk.TreeIter or None
+            Selected row
         """
 
         item = None
@@ -1305,8 +1405,15 @@ class Interface(Gtk.Builder):
 
 
     def __on_selected_console(self, widget=None):
-        """
-        Select a console in combobox and append console's games
+        """ Select a console
+
+        This function occurs when the user select a console in the consoles
+        combobox
+
+        Other Parameters
+        ----------------
+        widget : Gtk.Widget
+            Object which receive signal (Default: None)
         """
 
         self.selection["name"] = None
@@ -1340,7 +1447,7 @@ class Interface(Gtk.Builder):
                     error = True
 
                 # ------------------------------------
-                #   Set sensistive widgets
+                #   Set sensitive widgets
                 # ------------------------------------
 
                 self.sensitive_interface()
@@ -1376,10 +1483,19 @@ class Interface(Gtk.Builder):
 
 
     def append_games(self, console):
-        """
-        Append games from console to treeview
+        """ Append to games treeview all games from console
 
-        :param str console: Console key
+        This function add every games which match console extensions to games
+        treeview
+
+        Parameters
+        ----------
+        console : str
+            Console name
+
+        Notes
+        -----
+        Using yield avoid an UI freeze when append a lot of games
         """
 
         iteration = int()
@@ -1556,8 +1672,16 @@ class Interface(Gtk.Builder):
 
 
     def __on_selected_game(self, treeview, event):
-        """
-        Select a game in games treeview
+        """ Select a game
+
+        This function occurs when the user select a game in the games treeview
+
+        Parameters
+        ----------
+        treeview : Gtk.Treeview
+            Object which receive signal
+        event : Gdk.EventButton or Gdk.EventKey
+            Event which triggered this signal
         """
 
         filename, name, snap, run_game = None, None, None, None
@@ -1631,8 +1755,16 @@ class Interface(Gtk.Builder):
 
 
     def check_selection(self):
-        """
-        Check if selected game is the good game
+        """ Check selected game
+
+        This function check if the selected game in the games treeview is the
+        same as the one stock in self.selection["game"]. If this is not the
+        case, the self.selection is reset
+
+        Returns
+        -------
+        bool
+            Check status
         """
 
         name = None
@@ -1663,8 +1795,15 @@ class Interface(Gtk.Builder):
 
 
     def __on_game_launch(self, widget=None):
-        """
-        Start a game
+        """ Prepare the game launch
+
+        This function prepare the game launch and start a thread when everything
+        are done
+
+        Other Parameters
+        ----------------
+        widget : Gtk.Widget
+            Object which receive signal (Default: None)
         """
 
         binary = str()
@@ -1728,14 +1867,28 @@ class Interface(Gtk.Builder):
 
 
     def generate_command(self, emulator, filename):
-        """
-        Generate a command for a game with a specific emulator
+        """ Generate a command laucncher
+
+        This function generate the command launcher for a game with his
+        specified emulator (default or custom)
+
+        Parameters
+        ----------
+        emulator : str
+            Emulator name
+        filename : str
+            Game file name
+
+        Returns
+        -------
+        list or None
+            Generate command as arguments list
         """
 
         not_use_filename = False
 
         if not exists(filename):
-            self.set_message(_("Missing file"), _("Cannot found %s" % filename))
+            self.set_message(_("Missing file"), _("Cannot find %s" % filename))
 
             return None
 
@@ -1746,7 +1899,7 @@ class Interface(Gtk.Builder):
         binary = self.emulators.get(emulator, "binary")
 
         if len(get_binary_path(binary)) == 0:
-            self.set_message(_("Missing binary"), _("Cannot found %s" % binary))
+            self.set_message(_("Missing binary"), _("Cannot find %s" % binary))
 
             return None
 
@@ -1824,8 +1977,21 @@ class Interface(Gtk.Builder):
 
 
     def launch_game(self, emulator, filename, command, title):
-        """
-        Launch a game with correct arguments and update game informations
+        """ Launch a game
+
+        This function launch a game with correct arguments and emit game_close
+        signal when terminate
+
+        Parameters
+        ----------
+        emulator : str
+            Emulator name
+        filename : str
+            Game file name
+        command : list
+            Command launcher
+        title : str
+            Game title for logger output
         """
 
         error = False
@@ -1876,8 +2042,25 @@ class Interface(Gtk.Builder):
 
 
     def do_game_close(self, error, emulator, filename, launch_date):
-        """
-        Close a game which send game_close signal
+        """ Close a game when game_close signal was emited
+
+        This function update the database when a game emit the game_close signal
+
+        Parameters
+        ----------
+        error : bool
+            If False, the game terminate without errors
+        emulator : str
+            Emulator name
+        filename : str
+            Game file name
+        launch_date : datetime.datetime
+            Game started datetime
+
+        Notes
+        -----
+        This function is a try for fixing Threading Segfault. Currently, this
+        function is still launched by sub-thread instead of MainThread.
         """
 
         gamename, extension = splitext(basename(filename))
@@ -1972,8 +2155,12 @@ class Interface(Gtk.Builder):
 
 
     def __on_game_renamed(self, widget):
-        """
-        Set a custom name for a specific game
+        """ Set a custom name for a specific game
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
         """
 
         gamefile = basename(self.selection["game"])
@@ -2015,8 +2202,12 @@ class Interface(Gtk.Builder):
 
 
     def __on_game_clean(self, widget):
-        """
-        Reset game informations from database
+        """ Reset game informations from database
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
         """
 
         gamefile = basename(self.selection["game"])
@@ -2032,18 +2223,20 @@ class Interface(Gtk.Builder):
             _("Would you really want to clean informations for this game ?"))
 
         if dialog.run() == Gtk.ResponseType.YES:
-            self.model_games[treeiter][Columns.Name] = gamename
-            self.model_games[treeiter][Columns.Favorite] = False
-            self.model_games[treeiter][Columns.Icon] = \
-                self.alternative["favorite"]
-            self.model_games[treeiter][Columns.Played] = None
-            self.model_games[treeiter][Columns.LastPlay] = None
-            self.model_games[treeiter][Columns.TimePlay] = None
-            self.model_games[treeiter][Columns.LastTimePlay] = None
-            self.model_games[treeiter][Columns.Except] = \
-                self.alternative["except"]
-            self.model_games[treeiter][Columns.Multiplayer] = \
-                self.alternative["multiplayer"]
+            data = {
+                Columns.Name: gamename,
+                Columns.Favorite: False,
+                Columns.Icon: self.alternative["favorite"],
+                Columns.Played: None,
+                Columns.LastPlay: None,
+                Columns.TimePlay: None,
+                Columns.LastTimePlay: None,
+                Columns.Except: self.alternative["except"],
+                Columns.Multiplayer: self.alternative["multiplayer"],
+            }
+
+            for key, value in data.items():
+                self.model_games[treeiter][key] = value
 
             self.database.remove("games", { "filename": gamefile })
 
@@ -2053,8 +2246,14 @@ class Interface(Gtk.Builder):
 
 
     def __on_game_removed(self, widget):
-        """
-        Remove a game from harddrive and from database
+        """ Remove a game
+
+        This function remove a game from harddrive and/or from database
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
         """
 
         file_to_remove = list()
@@ -2133,8 +2332,15 @@ class Interface(Gtk.Builder):
 
 
     def __on_game_parameters(self, widget):
-        """
-        Set some parameters for a specific game
+        """ Manage game default parameters
+
+        This function allow the user to specify default emulator and default
+        emulator arguments for the selected game
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
         """
 
         gamefile = basename(self.selection["game"])
@@ -2249,8 +2455,15 @@ class Interface(Gtk.Builder):
 
 
     def __on_game_marked_as_favorite(self, widget):
-        """
-        Mark or unmark a game as favorite
+        """ Mark or unmark a game as favorite
+
+        This function update the database when user change the game favorite
+        status
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
         """
 
         gamefile = basename(self.selection["game"])
@@ -2282,8 +2495,15 @@ class Interface(Gtk.Builder):
 
 
     def __on_game_marked_as_multiplayer(self, widget):
-        """
-        Mark or unmark a game as multiplayer
+        """ Mark or unmark a game as multiplayer
+
+        This function update the database when user change the game multiplayers
+        status
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
         """
 
         gamefile = basename(self.selection["game"])
@@ -2314,18 +2534,29 @@ class Interface(Gtk.Builder):
 
 
     def __on_game_copy(self, widget):
-        """
-        Copy game directory to clipboard
+        """ Copy path folder which contains selected game to clipboard
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
         """
 
         self.clipboard.set_text(self.selection["game"], -1)
 
 
     def __on_game_open(self, widget):
-        """
-        Open game directory in default files manager
+        """ Open game directory
 
-        http://stackoverflow.com/a/6631329
+        This function open the folder which contains game with the default
+        files manager
+
+        Based on http://stackoverflow.com/a/6631329
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
         """
 
         path = dirname(self.selection["game"])
@@ -2346,8 +2577,15 @@ class Interface(Gtk.Builder):
 
 
     def __on_game_generate_desktop(self, widget):
-        """
-        Mark or unmark a game as multiplayer
+        """ Generate application desktop file
+
+        This function generate a .desktop file to allow user to launch the game
+        from his favorite applications launcher
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
         """
 
         model, treeiter = self.treeview_games.get_selection().get_selected()
@@ -2422,10 +2660,25 @@ class Interface(Gtk.Builder):
 
 
     def __on_menu_show(self, treeview, event):
-        """
-        Show a menu when user right-click in treeview
+        """ Open context menu
+
+        This function open context-menu when user right-click or use context key
+        on games treeview
+
+        Parameters
+        ----------
+        treeview : Gtk.Treeview
+            Object which receive signal
+        event : Gdk.EventButton or Gdk.EventKey
+            Event which triggered this signal
+
+        Returns
+        -------
+        bool
+            Context menu popup status
         """
 
+        # Gdk.EventButton - Mouse
         if event.type == EventType.BUTTON_PRESS:
             if event.button == Gdk.BUTTON_SECONDARY:
                 treeiter = treeview.get_path_at_pos(int(event.x), int(event.y))
@@ -2441,6 +2694,7 @@ class Interface(Gtk.Builder):
 
                     return True
 
+        # Gdk.EventKey - Keyboard
         elif event.type == EventType.KEY_RELEASE:
             if event.keyval == Gdk.KEY_Menu:
                 model, treeiter = treeview.get_selection().get_selected()
@@ -2454,8 +2708,15 @@ class Interface(Gtk.Builder):
 
 
     def __on_activate_fullscreen(self, widget):
-        """
-        Update fullscreen icon
+        """ Update fullscreen button
+
+        This function alternate fullscreen status between active and inactive
+        state when user use fullscreen button in toolbar
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
         """
 
         if self.tool_item_fullscreen.get_active():
@@ -2470,8 +2731,15 @@ class Interface(Gtk.Builder):
 
 
     def __on_activate_dark_theme(self, widget):
-        """
-        Change ui theme between dark and light version
+        """ Update dark theme status
+
+        This function alternate between dark and light theme when user use
+        dark theme entry in main menu
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
         """
 
         dark_theme_status = self.config.getboolean(
@@ -2485,22 +2753,58 @@ class Interface(Gtk.Builder):
         self.menu_item_dark_theme.set_active(not dark_theme_status)
 
 
-    def __on_dnd_send_data(self, widget, context, data, target, time):
-        """
-        Send rom file path
+    def __on_dnd_send_data(self, widget, context, data, info, time):
+        """ Set rom file path uri
+
+        This function send rom file path uri when user drag a game from gem and
+        drop it to extern application
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        context : Gdk.DragContext
+            Drag context
+        data : Gtk.SelectionData
+            Received data
+        info : int
+            info that has been registered with the target in the Gtk.TargetList
+        time : int
+            timestamp at which the data was received
         """
 
         data.set_uris(["file://%s" % self.selection["game"]])
 
 
     def __on_dnd_received_data(self, widget, context, x, y, data, info, time):
-        """
-        Install drop files
+        """ Manage drag & drop acquisition
+
+        This function receive drag files and install them into the correct
+        games folder. If a file extension can be find in multiple consoles,
+        a dialog appear to ask user where he want to put it.
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        context : Gdk.DragContext
+            Drag context
+        x : int
+            X coordinate where the drop happened
+        y : int
+            Y coordinate where the drop happened
+        data : Gtk.SelectionData
+            Received data
+        info : int
+            info that has been registered with the target in the Gtk.TargetList
+        time : int
+            timestamp at which the data was received
         """
 
         self.logger.debug("Received data from drag & drop")
         widget.stop_emission("drag_data_received")
 
+        # Current acquisition not respect text/uri-list
         if not info == Gem.Id:
             return
 
@@ -2606,8 +2910,27 @@ class Interface(Gtk.Builder):
 
 
     def get_play_time(self, gamename, interval, total=True):
-        """
-        Calc time passed ingame
+        """ Get ingame time for a game
+
+        This function calc the game session time and give the result as a string
+
+        Parameters
+        ----------
+        gamename : str
+            Game file name
+        interval : datetime.timedelta
+            Game play time length
+        total : bool
+            Append interval to result when True (Default: True)
+
+        Returns
+        -------
+        str
+            Play time string format as %H:%M:%S
+
+        Notes
+        -----
+        I need to check if total is usefull or not
         """
 
         result = self.database.get("games", { "filename": gamename })
@@ -2623,8 +2946,19 @@ class Interface(Gtk.Builder):
 
 
     def check_save_states(self, emulator, filename):
-        """
-        Check if a game has some save states
+        """ Check emulator save states path for specific game
+
+        Parameters
+        ----------
+        emulator : str
+            Emulator name
+        filename : str
+            Game file name
+
+        Returns
+        -------
+        bool
+            Game save states status
         """
 
         if not emulator in self.emulators.sections():
@@ -2649,8 +2983,19 @@ class Interface(Gtk.Builder):
 
 
     def check_screenshots(self, emulator, filename):
-        """
-        Check if a game has some snaps
+        """ Check emulator snaps path for specific game
+
+        Parameters
+        ----------
+        emulator : str
+            Emulator name
+        filename : str
+            Game file name
+
+        Returns
+        -------
+        bool
+            Game screenshots status
         """
 
         if not emulator in self.emulators.sections():
@@ -2675,8 +3020,28 @@ class Interface(Gtk.Builder):
 
 
     def check_desktop(self, filename):
-        """
-        Check if a game has already a desktop entry file
+        """ Check user applications folder for specific desktop file
+
+        Parameters
+        ----------
+        filename : str
+            Application name
+
+        Returns
+        -------
+        bool
+            Desktop file status
+
+        Examples
+        --------
+        >>> check_desktop("unavailable_file")
+        False
+
+        Notes
+        -----
+        In GNU/Linux desktop, the default folder for user applications is:
+
+            ~/.local/share/applications/
         """
 
         name, extension = splitext(filename)
@@ -2685,8 +3050,12 @@ class Interface(Gtk.Builder):
 
 
     def check_log(self):
-        """
-        Check if a game has an output file available
+        """ Check if a game has an output file available
+
+        Returns
+        -------
+        str or None
+            Output file path
         """
 
         log_path = path_join(expanduser(Path.Logs),
@@ -2699,11 +3068,18 @@ class Interface(Gtk.Builder):
 
 
     def set_game_data(self, index, data, gamename):
-        """
-        Update game informations in games treeview
+        """ Update game informations in games treeview
+
+        Parameters
+        ----------
+        index : int
+            Column index
+        data : object
+            Value to set
+        gamename : str
+            Game basename without extension
         """
 
-        model = self.treeview_games.get_model()
         treeiter = self.game_path.get(gamename, None)
 
         if treeiter is not None:
@@ -2711,10 +3087,25 @@ class Interface(Gtk.Builder):
 
 
 class Splash(object):
+    """ Splash window which inform user for database migration progress
+
+    Attributes
+    ----------
+    length : int
+        Steps length
+    index : int
+        Current step
+    icons_theme : Gtk.IconTheme
+        Default icons theme
+    """
 
     def __init__(self, length):
-        """
-        Constructor
+        """ Constructor
+
+        Parameters
+        ----------
+        length : int
+            Progress steps length
         """
 
         # ------------------------------------
@@ -2746,8 +3137,7 @@ class Splash(object):
 
 
     def __init_widgets (self):
-        """
-        Load widgets into main interface
+        """ Load widgets into main interface
         """
 
         # Load glade file
@@ -2792,8 +3182,7 @@ class Splash(object):
 
 
     def __start_interface(self):
-        """
-        Load data and start interface
+        """ Load data and start interface
         """
 
         self.window.show_all()
@@ -2802,8 +3191,7 @@ class Splash(object):
 
 
     def update(self):
-        """
-        Update splash widgets
+        """ Update progress in progressbar widgets
         """
 
         self.refresh()
@@ -2818,8 +3206,7 @@ class Splash(object):
 
 
     def refresh(self):
-        """
-        Refresh all pendings event in main interface
+        """ Refresh all pendings event in main interface
         """
 
         while Gtk.events_pending():

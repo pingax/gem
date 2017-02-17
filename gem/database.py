@@ -44,6 +44,19 @@ except ImportError as error:
 # ------------------------------------------------------------------------------
 
 class Database(object):
+    """ Manage a sqlite3 database
+
+    Attributes
+    ----------
+    path : str
+        Database file path
+    configuration : configuration.Configuration
+        Database schema configuration object
+    logger : logging.Logger
+        Logger object
+    sql_types : dict
+        Sqlite sql types correspondance with python types
+    """
 
     def __init__(self, db_path, configuration_path, logger):
         """ Constructor
@@ -66,7 +79,7 @@ class Database(object):
         """
 
         if not exists(expanduser(configuration_path)):
-            raise OSError(2, "Cannot found file", configuration_path)
+            raise OSError(2, "Cannot find file", configuration_path)
 
         if type(logger) is not Logger:
             raise ValueError(

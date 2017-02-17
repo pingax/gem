@@ -35,11 +35,16 @@ else:
 # ------------------------------------------------------------------------------
 
 class Configuration(SafeConfigParser):
+    """ Manage a configuration file easily with SafeConfigParser
+
+    Attributes
+    ----------
+    path : str
+        Configuration file path
+    """
 
     def __init__(self, filepath):
         """ Constructor
-
-        Manage a configuration file easily with SafeConfigParser
 
         Parameters
         ----------
@@ -60,7 +65,7 @@ class Configuration(SafeConfigParser):
         SafeConfigParser.__init__(self)
 
         if not exists(expanduser(filepath)):
-            raise OSError(2, "Cannot found file", filepath)
+            raise OSError(2, "Cannot find file", filepath)
 
         # Read contents
         self.read(expanduser(filepath))
@@ -111,7 +116,7 @@ class Configuration(SafeConfigParser):
         """
 
         if self.has_section(section):
-            raise IndexError("Cannot found %s section" % section)
+            raise IndexError("Cannot find %s section" % section)
 
         self.add_section(section)
         self.set(section, option, str(value))
@@ -197,7 +202,7 @@ class Configuration(SafeConfigParser):
         """
 
         if not exists(expanduser(secondary_path)):
-            raise OSError(2, "Cannot found file", filepath)
+            raise OSError(2, "Cannot find file", filepath)
 
         config = Configuration(expanduser(secondary_path))
 
