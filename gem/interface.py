@@ -1854,11 +1854,15 @@ class Interface(Gtk.Builder):
                 #   Run game
                 # ----------------------------
 
-                thread = Thread(target=self.launch_game,
-                    args=[emulator, filename, command, title])
-                thread.start()
+                if self.config.getboolean("experimental", "threading"):
+                    thread = Thread(target=self.launch_game,
+                        args=[emulator, filename, command, title])
+                    thread.start()
 
-                self.logger.debug("Start %s into %s" % (filename, thread))
+                    self.logger.debug("Start %s into %s" % (filename, thread))
+
+                else:
+                    self.launch_game(emulator, filename, command, title)
 
                 self.sensitive_interface()
 
