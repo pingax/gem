@@ -84,8 +84,16 @@ class Manager(object):
 class Preferences(Gtk.Builder):
 
     def __init__(self, widget=None, parent=None, logger=None):
-        """
-        Constructor
+        """ Constructor
+
+        Other Parameters
+        ----------------
+        widget : Gtk.Widget
+            Object which receive signal (Default: None)
+        parent : Gtk.Window
+            Parent object (Default: None)
+        logger : logging.Logger
+            Output logger (Default: None)
         """
 
         Gtk.Builder.__init__(self)
@@ -192,8 +200,7 @@ class Preferences(Gtk.Builder):
 
 
     def __init_widgets(self):
-        """
-        Initialize interface widgets
+        """ Initialize interface widgets
         """
 
         # ------------------------------------
@@ -436,8 +443,7 @@ class Preferences(Gtk.Builder):
 
 
     def __init_signals(self):
-        """
-        Initialize widgets signals
+        """ Initialize widgets signals
         """
 
         # ------------------------------------
@@ -506,8 +512,7 @@ class Preferences(Gtk.Builder):
 
 
     def __start_interface(self):
-        """
-        Load data and start interface
+        """ Load data and start interface
         """
 
         self.load_configuration()
@@ -519,8 +524,14 @@ class Preferences(Gtk.Builder):
 
 
     def __stop_interface(self, widget=None, event=None):
-        """
-        Save data and stop interface
+        """ Save data and stop interface
+
+        Other Parameters
+        ----------------
+        widget : Gtk.Widget
+            Object which receive signal (Default: None)
+        event : Gdk.EventButton or Gdk.EventKey
+            Event which triggered this signal (Default: None)
         """
 
         if widget == self.button_save:
@@ -578,8 +589,7 @@ class Preferences(Gtk.Builder):
 
 
     def load_configuration(self):
-        """
-        Load configuration files and fill widgets
+        """ Load configuration files and fill widgets
         """
 
         # ------------------------------------
@@ -703,8 +713,7 @@ class Preferences(Gtk.Builder):
 
 
     def on_load_consoles(self):
-        """
-        Load consoles into treeview
+        """ Load consoles into treeview
         """
 
         self.model_consoles.clear()
@@ -724,14 +733,13 @@ class Preferences(Gtk.Builder):
 
             check = self.empty
             if not exists(expanduser(path)):
-                check = icon_load("dialog-warning", 16, self.empty)
+                check = icon_load("dialog-warning", 24, self.empty)
 
             self.model_consoles.append([image, name, path, check])
 
 
     def on_load_emulators(self):
-        """
-        Load emulators into treeview
+        """ Load emulators into treeview
         """
 
         self.model_emulators.clear()
@@ -746,15 +754,27 @@ class Preferences(Gtk.Builder):
 
             check, font = self.empty, Pango.Style.NORMAL
             if len(get_binary_path(binary)) == 0:
-                check = icon_load("dialog-warning", 16, self.empty)
+                check = icon_load("dialog-warning", 24, self.empty)
                 font = Pango.Style.OBLIQUE
 
             self.model_emulators.append([image, name, binary, check, font])
 
 
     def __edit_keys(self, widget, path, key, mods, hwcode):
-        """
-        Edit a shortcut
+        """ Edit a shortcut
+
+        Parameters
+        ----------
+        widget : Gtk.CellRendererAccel
+            Object which receive signal
+        path : str
+            Path identifying the row of the edited cell
+        key : int
+            New accelerator keyval
+        mods : Gdk.ModifierType
+            New acclerator modifier mask
+        kwcode : int
+            Keycode of the new accelerator
         """
 
         treeiter = self.model_shortcuts.get_iter(path)
@@ -766,8 +786,14 @@ class Preferences(Gtk.Builder):
 
 
     def __clear_keys(self, widget, path):
-        """
-        Clear a shortcut
+        """ Clear a shortcut
+
+        Parameters
+        ----------
+        widget : Gtk.CellRendererAccel
+            Object which receive signal
+        path : str
+            Path identifying the row of the edited cell
         """
 
         treeiter = self.model_shortcuts.get_iter(path)
@@ -777,8 +803,16 @@ class Preferences(Gtk.Builder):
 
 
     def __on_selected_treeview(self, treeview, event, manager):
-        """
-        Select a console in consoles treeview
+        """ Select a console in consoles treeview
+
+        Parameters
+        ----------
+        treeview : Gtk.Widget
+            Object which receive signal
+        event : Gdk.EventButton or Gdk.EventKey
+            Event which triggered this signal
+        manager : preferences.Manager
+            Treeview widget which receive signal
         """
 
         self.selection[manager] = None
@@ -814,8 +848,16 @@ class Preferences(Gtk.Builder):
 
 
     def __on_modify_item(self, widget, manager, modification):
-        """
-        Append or modify an item in the treeview
+        """ Append or modify an item in the treeview
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        manager : preferences.Manager
+            Treeview widget which receive signal
+        modification : bool
+            Use edit mode instead of append mode
         """
 
         self.selection = {
@@ -853,8 +895,14 @@ class Preferences(Gtk.Builder):
 
 
     def __on_remove_item(self, widget, manager):
-        """
-        Remove an item in the treeview
+        """ Remove an item in the treeview
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        manager : preferences.Manager
+            Treeview widget which receive signal
         """
 
         name = None
@@ -899,8 +947,14 @@ class Preferences(Gtk.Builder):
 class Console(Gtk.Builder):
 
     def __init__(self, parent, modify):
-        """
-        Constructor
+        """ Constructor
+
+        Parameters
+        ----------
+        parent : Gtk.Window
+            Parent object (Default: None)
+        modify : bool
+            Use edit mode instead of append mode
         """
 
         Gtk.Builder.__init__(self)
@@ -920,6 +974,8 @@ class Console(Gtk.Builder):
         self.path = None
 
         self.error = False
+        self.file_error = False
+        self.emulator_error = False
 
         self.interface = parent
         self.modify = modify
@@ -944,8 +1000,7 @@ class Console(Gtk.Builder):
 
 
     def __init_widgets(self):
-        """
-        Initialize interface widgets
+        """ Initialize interface widgets
         """
 
         self.window = self.get_object("dialog_console")
@@ -989,11 +1044,12 @@ class Console(Gtk.Builder):
         self.button_console = self.get_object("button_console_image")
         self.image_console = self.get_object("image_console")
 
-        self.model_emulators = Gtk.ListStore(Pixbuf, str)
+        self.model_emulators = Gtk.ListStore(Pixbuf, str, Pixbuf)
         self.combo_emulators = self.get_object("combo_emulators")
 
         cell_emulators_icon = Gtk.CellRendererPixbuf()
         cell_emulators_name = Gtk.CellRendererText()
+        cell_emulators_warning = Gtk.CellRendererPixbuf()
 
         # Properties
         self.model_emulators.set_sort_column_id(1, Gtk.SortType.ASCENDING)
@@ -1004,13 +1060,14 @@ class Console(Gtk.Builder):
         self.combo_emulators.add_attribute(cell_emulators_icon, "pixbuf", 0)
         self.combo_emulators.pack_start(cell_emulators_name, True)
         self.combo_emulators.add_attribute(cell_emulators_name, "text", 1)
+        self.combo_emulators.pack_start(cell_emulators_warning, False)
+        self.combo_emulators.add_attribute(cell_emulators_warning, "pixbuf", 2)
 
         cell_emulators_icon.set_padding(4, 0)
 
 
     def __init_signals(self):
-        """
-        Initialize widgets signals
+        """ Initialize widgets signals
         """
 
         self.entry_name.connect("changed", self.__on_entry_update)
@@ -1022,10 +1079,11 @@ class Console(Gtk.Builder):
 
         self.button_console.connect("clicked", self.__on_select_icon)
 
+        self.combo_emulators.connect("changed", self.__on_selected_emulator)
+
 
     def __start_interface(self):
-        """
-        Load data and start interface
+        """ Load data and start interface
         """
 
         emulators_rows = dict()
@@ -1034,8 +1092,14 @@ class Console(Gtk.Builder):
             icon = icon_from_data(self.emulators.item(emulator, "icon"),
                 self.empty, 24, 24, "emulators")
 
+            path = self.emulators.item(emulator, "binary")
+
+            warning = self.empty
+            if len(get_binary_path(path)) == 0:
+                warning = icon_load("dialog-warning", 24, self.empty)
+
             emulators_rows[emulator] = self.model_emulators.append(
-                [icon, emulator])
+                [icon, emulator, warning])
 
         # ------------------------------------
         #   Init data
@@ -1107,8 +1171,7 @@ class Console(Gtk.Builder):
 
 
     def __on_save_data(self):
-        """
-        Return all the data from interface
+        """ Return all the data from interface
         """
 
         self.data = dict()
@@ -1131,19 +1194,23 @@ class Console(Gtk.Builder):
         self.data["emulator"] = self.combo_emulators.get_active_id()
 
 
-    def __on_entry_update(self, widget, pos=None, event=None):
-        """
-        Check if a value is not already used
-        """
+    def __on_entry_update(self, widget):
+        """ Check if a value is not already used
 
-        name = widget.get_text()
-
-        path = self.file_folder.get_filename()
-        if path is None or not exists(expanduser(path)):
-            path = None
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
 
         self.error = False
         icon, tooltip = None, None
+
+        path = self.file_folder.get_filename()
+        if path is None or not exists(expanduser(path)):
+            self.error = True
+
+        name = widget.get_text()
 
         if len(name) == 0:
             self.error = True
@@ -1164,29 +1231,51 @@ class Console(Gtk.Builder):
         widget.set_icon_from_icon_name(Gtk.EntryIconPosition.PRIMARY, icon)
         widget.set_tooltip_text(tooltip)
 
-        if not self.error and path is not None:
-            self.window.set_response_sensitive(Gtk.ResponseType.APPLY, True)
-        else:
-            self.window.set_response_sensitive(Gtk.ResponseType.APPLY, False)
+        self.__update_response_sensitive()
 
 
     def __on_file_set(self, widget):
-        """
-        Change response button state when user set a file
+        """ Change response button state when user set a file
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
         """
 
         path = widget.get_filename()
 
+        self.file_error = False
         if path is None or not exists(expanduser(path)):
-            self.window.set_response_sensitive(Gtk.ResponseType.APPLY, False)
+            self.file_error = True
 
-        elif len(self.entry_name.get_text()) > 0 and not self.error:
-            self.window.set_response_sensitive(Gtk.ResponseType.APPLY, True)
+        self.__update_response_sensitive()
+
+
+    def __on_selected_emulator(self, widget=None):
+        """
+        Select an emulator in combobox and update parameters placeholder
+        """
+
+        emulator = self.combo_emulators.get_active_id()
+
+        path = self.interface.emulators.item(emulator, "binary")
+
+        # Allow to validate dialog if selected emulator binary exist
+        self.emulator_error = False
+        if len(get_binary_path(path)) == 0:
+            self.emulator_error = True
+
+        self.__update_response_sensitive()
 
 
     def __on_select_icon(self, widget):
-        """
-        Select a new icon
+        """ Select a new icon
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
         """
 
         dialog = IconViewer(self, _("Choose an icon"), self.path, "consoles")
@@ -1200,11 +1289,29 @@ class Console(Gtk.Builder):
         dialog.destroy()
 
 
+    def __update_response_sensitive(self):
+        """ Update dialog response sensitive status
+        """
+
+        status = False
+
+        if not self.error and not self.file_error and not self.emulator_error:
+            status = True
+
+        self.window.set_response_sensitive(Gtk.ResponseType.APPLY, status)
+
+
 class Emulator(Gtk.Builder):
 
     def __init__(self, parent, modify):
-        """
-        Constructor
+        """ Constructor
+
+        Parameters
+        ----------
+        parent : Gtk.Window
+            Parent object (Default: None)
+        modify : bool
+            Use edit mode instead of append mode
         """
 
         Gtk.Builder.__init__(self)
@@ -1248,8 +1355,7 @@ class Emulator(Gtk.Builder):
 
 
     def __init_widgets(self):
-        """
-        Initialize interface widgets
+        """ Initialize interface widgets
         """
 
         self.window = self.get_object("dialog_emulator")
@@ -1321,8 +1427,7 @@ class Emulator(Gtk.Builder):
 
 
     def __init_signals(self):
-        """
-        Initialize widgets signals
+        """ Initialize widgets signals
         """
 
         self.entry_name.connect("changed", self.__on_entry_update)
@@ -1343,8 +1448,7 @@ class Emulator(Gtk.Builder):
 
 
     def __start_interface(self):
-        """
-        Load data and start interface
+        """ Load data and start interface
         """
 
         # ------------------------------------
@@ -1427,8 +1531,7 @@ class Emulator(Gtk.Builder):
 
 
     def __on_save_data(self):
-        """
-        Return all the data from interface
+        """ Return all the data from interface
         """
 
         self.data = dict()
@@ -1460,9 +1563,13 @@ class Emulator(Gtk.Builder):
         self.data["fullscreen"] = self.entry_fullscreen.get_text()
 
 
-    def __on_entry_update(self, widget, pos=None, event=None):
-        """
-        Check if a value is not already used
+    def __on_entry_update(self, widget):
+        """ Check if a value is not already used
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
         """
 
         self.error = False
@@ -1529,8 +1636,12 @@ class Emulator(Gtk.Builder):
 
 
     def __on_file_set(self, widget):
-        """
-        Change response button state when user set a file
+        """ Change response button state when user set a file
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
         """
 
         dialog = Gtk.FileChooserDialog(_("Select a binary"), self.window,
@@ -1545,8 +1656,7 @@ class Emulator(Gtk.Builder):
 
 
     def __on_select_icon(self, widget):
-        """
-        Select a new icon
+        """ Select a new icon
         """
 
         dialog = IconViewer(self, _("Choose an icon"), self.path, "emulators")
@@ -1564,8 +1674,18 @@ class Emulator(Gtk.Builder):
 class IconViewer(Dialog):
 
     def __init__(self, parent, title, path, folder):
-        """
-        Constructor
+        """ Constructor
+
+        Parameters
+        ----------
+        parent : Gtk.Window
+            Parent object
+        title : str
+            Window title
+        path : str
+            Selected icon path
+        folder : str
+            Icons folder
         """
 
         Dialog.__init__(self, parent, title, "image-x-generic")
@@ -1600,8 +1720,7 @@ class IconViewer(Dialog):
 
 
     def __init_widgets(self):
-        """
-        Initialize interface widgets
+        """ Initialize interface widgets
         """
 
         # ------------------------------------
@@ -1702,20 +1821,16 @@ class IconViewer(Dialog):
 
 
     def __init_signals(self):
-        """
-        Initialize widgets signals
+        """ Initialize widgets signals
         """
 
-        self.combo_option.connect(
-            "changed", self.set_widgets_sensitive)
+        self.combo_option.connect("changed", self.set_widgets_sensitive)
 
-        self.view_icons.connect(
-            "item_activated", self.__on_selected_icon)
+        self.view_icons.connect("item_activated", self.__on_selected_icon)
 
 
     def __start_interface(self):
-        """
-        Load data and start interface
+        """ Load data and start interface
         """
 
         self.load_interface()
@@ -1730,17 +1845,22 @@ class IconViewer(Dialog):
             self.save_interface()
 
 
-    def __on_selected_icon(self, iconview, path):
-        """
-        Select an icon in treeview
+    def __on_selected_icon(self, widget, path):
+        """ Select an icon in treeview
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        path : Gtk.TreePath
+            Path to be activated
         """
 
         self.response(Gtk.ResponseType.OK)
 
 
     def load_interface(self):
-        """
-        Insert data into interface's widgets
+        """ Insert data into interface's widgets
         """
 
         # Fill options combobox
@@ -1778,8 +1898,7 @@ class IconViewer(Dialog):
 
 
     def save_interface(self):
-        """
-        Return all the data from interface
+        """ Return all the data from interface
         """
 
         if self.combo_option.get_active_id() == _("All icons"):
@@ -1796,8 +1915,12 @@ class IconViewer(Dialog):
 
 
     def set_widgets_sensitive(self, widget=None):
-        """
-        Change sensitive state between radio children
+        """ Change sensitive state between radio children
+
+        Others Parameters
+        -----------------
+        widget : Gtk.Widget
+            Object which receive signal (Default: None)
         """
 
         if self.combo_option.get_active_id() == _("All icons"):

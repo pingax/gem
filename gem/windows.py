@@ -622,11 +622,12 @@ class DialogParameters(Dialog):
 
         label_emulator = Gtk.Label()
 
-        self.model = Gtk.ListStore(Pixbuf, str)
+        self.model = Gtk.ListStore(Pixbuf, str, Pixbuf)
         self.combo = Gtk.ComboBox()
 
         cell_icon = Gtk.CellRendererPixbuf()
         cell_name = Gtk.CellRendererText()
+        cell_warning = Gtk.CellRendererPixbuf()
 
         # Properties
         label_emulator.set_alignment(0, .5)
@@ -640,6 +641,8 @@ class DialogParameters(Dialog):
         self.combo.add_attribute(cell_icon, "pixbuf", 0)
         self.combo.pack_start(cell_name, True)
         self.combo.add_attribute(cell_name, "text", 1)
+        self.combo.pack_start(cell_warning, False)
+        self.combo.add_attribute(cell_warning, "pixbuf", 2)
 
         cell_icon.set_padding(4, 0)
 
@@ -686,13 +689,19 @@ class DialogParameters(Dialog):
 
         self.show_all()
 
-        self.model.append([self.empty, str()])
+        self.model.append([self.empty, str(), self.empty])
 
         for emulator in self.interface.emulators.sections():
             icon = icon_from_data(self.interface.emulators.item(
                 emulator, "icon"), self.empty, 24, 24, "emulators")
 
-            row = self.model.append([icon, emulator])
+            path = self.interface.emulators.item(emulator, "binary")
+
+            warning = self.empty
+            if len(get_binary_path(path)) == 0:
+                warning = self.interface.icons["warning"]
+
+            row = self.model.append([icon, emulator, warning])
 
             if (self.emulator["rom"] is not None and \
                 emulator == self.emulator["rom"]) or \
@@ -718,6 +727,15 @@ class DialogParameters(Dialog):
         if emulator is not None:
             if self.interface.emulators.has_option(emulator, "default"):
                 default = self.interface.emulators.get(emulator, "default")
+
+        path = self.interface.emulators.item(emulator, "binary")
+
+        # Allow to validate dialog if selected emulator binary exist
+        if len(get_binary_path(path)) == 0:
+            self.set_response_sensitive(Gtk.ResponseType.OK, False)
+
+        else:
+            self.set_response_sensitive(Gtk.ResponseType.OK, True)
 
         self.entry.set_placeholder_text(default)
 

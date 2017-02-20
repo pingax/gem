@@ -672,6 +672,7 @@
                                     <child>
                                       <object class="GtkSeparator" id="separator_editor_colorscheme">
                                         <property name="can_focus">False</property>
+                                        <property name="no_show_all">True</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>

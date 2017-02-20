@@ -2037,6 +2037,11 @@ class Interface(Gtk.Builder):
                 pipe.write(output)
 
         except OSError as error:
+            self.logger.error(_("OSError occurs: %s" % error))
+            error = True
+
+        except MemoryError as error:
+            self.logger.error(_("MemoryError occurs: %s" % error))
             error = True
 
         except KeyboardInterrupt as error:
