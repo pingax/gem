@@ -123,14 +123,12 @@ def main():
     if not args.debug:
         logger.setLevel(logging.INFO)
 
-    logger.debug("Activate debug flag")
-
     try:
         # ------------------------------------
         #   Icons folders
         # ------------------------------------
 
-        logger.info(_("Check icons folders"))
+        logger.debug(_("Check icons folders"))
 
         # ~/.local/share/gem/icons/consoles
         if not exists(expanduser(Path.Consoles)):
@@ -156,7 +154,7 @@ def main():
         #   Create default configuration files
         # ------------------------------------
 
-        logger.info(_("Check configuration files"))
+        logger.debug(_("Check configuration files"))
 
         if not exists(expanduser(path_join(Path.User, "gem.conf"))):
             logger.debug("Copy gem.conf to %s" % Path.User)

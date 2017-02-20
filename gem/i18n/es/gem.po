@@ -162,6 +162,12 @@ msgid "Cannot find %(binary)s for %(console)s"
 msgstr "No puedo encontrar el %(binary)s para la %(console)s"
 
 #
+# File: gem/interface.py, line: 1892
+#, fuzzy, python-format
+msgid "Cannot find %s"
+msgstr "No se ha encontrado %s"
+
+#
 # File: gem/interface.py, line: 2033
 #, python-format
 msgid "Cannot find <b>%s</b> viewer !"
@@ -172,24 +178,6 @@ msgstr "¡No puedo encontrar el visor <b>%s</b>!"
 #, python-format
 msgid "Cannot find emulator for %s"
 msgstr "No puedo encontrar el emulador para %s"
-
-#
-# File: gem/interface.py, line: 1892
-#, python-format
-msgid "Cannot found %s"
-msgstr "No se ha encontrado %s"
-
-#
-# File: gem/main.py, line: 128
-#, python-format
-msgid "Cannot import interface: %s"
-msgstr "No puedo importar la interfaz: %s"
-
-#
-# File: gem/configuration.py, line: 71
-#, python-format
-msgid "Cannot open %s file"
-msgstr "No puedo abrir el archivo %s"
 
 #
 # File: gem/main.py, line: 128
@@ -208,6 +196,17 @@ msgstr "No puedo escribir en %s. Anulando acción."
 #, python-format
 msgid "Change custom parameters for %s"
 msgstr "Cambiar los parametros personalizados para %s"
+
+#
+# File: gem/preferences.py, line: 1602
+#, fuzzy
+msgid "Check configuration files"
+msgstr "Archivo de configuración"
+
+#
+# File: gem/main.py, line: 133
+msgid "Check icons folders"
+msgstr ""
 
 #
 # File: gem/windows.py, line: 1122
@@ -278,16 +277,6 @@ msgstr "La base de datos necesita actualizarse"
 # File: gem/interface.py, line: 1667
 msgid "Custom _parameters"
 msgstr "_Parametros personalizados"
-
-#
-# File: gem/preferences.py, line: 1662
-msgid "Default arguments"
-msgstr "Opciones por defecto"
-
-#
-# File: gem/preferences.py, line: 1013
-msgid "Default emulator"
-msgstr "Emulador por defecto"
 
 #
 # File: gem/preferences.py, line: 399
@@ -408,6 +397,12 @@ msgid "Image file"
 msgstr "Archivo de imagen"
 
 #
+# File: gem/main.py, line: 128
+#, fuzzy, python-format
+msgid "Import error with interface: %s"
+msgstr "No puedo importar la interfaz: %s"
+
+#
 # File: gem/interface.py, line: 1411
 #, python-format
 msgid "Initialize %s"
@@ -476,11 +471,6 @@ msgid "Log to %s"
 msgstr "Guardar historial en %s"
 
 #
-# File: gem/utils.py, line: 61
-msgid "Manage your emulators easily and have fun"
-msgstr ""
-
-#
 # File: gem/preferences.py, line: 87
 msgid "Mark a game as favorite"
 msgstr "Marcar el juego como favorito"
@@ -501,6 +491,12 @@ msgstr "Marcar como _favorito"
 # File: gem/interface.py, line: 746
 msgid "Mark as _multiplayer"
 msgstr "Marcar como _mutijugador"
+
+#
+# File: gem/interface.py, line: 2044
+#, python-format
+msgid "MemoryError occurs: %s"
+msgstr ""
 
 #
 # File: gem/interface.py, line: 139
@@ -535,6 +531,12 @@ msgstr "Nombre"
 # File: gem/preferences.py, line: 97
 msgid "None"
 msgstr "Ninguno"
+
+#
+# File: gem/interface.py, line: 2040
+#, python-format
+msgid "OSError occurs: %s"
+msgstr ""
 
 #
 # File: gem/preferences.py, line: 86
@@ -683,6 +685,18 @@ msgid "Set custom parameters"
 msgstr "Crear parametros personalizados"
 
 #
+# File: gem/preferences.py, line: 1662
+#, fuzzy
+msgid "Set default arguments"
+msgstr "Opciones por defecto"
+
+#
+# File: gem/preferences.py, line: 1013
+#, fuzzy
+msgid "Set default emulator"
+msgstr "Emulador por defecto"
+
+#
 # File: gem/preferences.py, line: 90
 msgid "Set specific arguments for a game"
 msgstr "Ajustar las opciones de un juego"
@@ -784,12 +798,6 @@ msgstr "Capturas de pantalla"
 # File: gem/interface.py, line: 135
 msgid "Start database migration"
 msgstr "Comenzar la migración de la base de datos"
-
-#
-# File: gem/database.py, line: 493
-#, python-format
-msgid "Start to migrate %d entries"
-msgstr ""
 
 #
 # File: gem/interface.py, line: 451
@@ -1012,6 +1020,11 @@ msgstr "Emuladores"
 # File: gem/preferences.py, line: 283
 msgid "use translucent icons in games list instead of empty ones"
 msgstr ""
+
+#
+# File: gem/configuration.py, line: 71
+#~ msgid "Cannot open %s file"
+#~ msgstr "No puedo abrir el archivo %s"
 
 #
 # File: gem/interface.py, line: 1098

@@ -26,10 +26,10 @@ GEM est disponible sous [licence GPLv3](http://www.gnu.org/licenses/gpl-3.0.html
 
 ## Dépendances
 
-* python3.4
-* python3.4-gobject
+* python3
+* python3-gobject
 * python3-setuptools
-* pyxdg
+* python3-xdg
 
 ## Installation
 

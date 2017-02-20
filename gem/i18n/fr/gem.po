@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: 0.5\n"
+"Project-Id-Version: 0.6\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2017-01-23 13:10+0100\n"
+"PO-Revision-Date: 2017-02-20 10:36+0100\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -161,6 +161,12 @@ msgstr "Impossible de trouver %(binary)s pour %(console)s !"
 #
 # File: gem/interface.py, line: 942
 #, python-format
+msgid "Cannot find %s"
+msgstr "Impossible de trouver %s"
+
+#
+# File: gem/interface.py, line: 942
+#, python-format
 msgid "Cannot find <b>%s</b> viewer !"
 msgstr "Impossible de trouver le visionneur <b>%s</b> !"
 
@@ -169,24 +175,6 @@ msgstr "Impossible de trouver le visionneur <b>%s</b> !"
 #, python-format
 msgid "Cannot find emulator for %s"
 msgstr "Impossible de trouver l'émulateur pour %s !"
-
-#
-# File: gem/interface.py, line: 942
-#, python-format
-msgid "Cannot found %s"
-msgstr "Impossible de trouver %s"
-
-#
-# File: gem/main.py, line: 136
-#, python-format
-msgid "Cannot import interface: %s"
-msgstr "Impossible d'importer l'interface: %s"
-
-#
-# File: gem/games.py, line: 225
-#, python-format
-msgid "Cannot open %s file"
-msgstr "Impossible d'ouvrir le fichier %s"
 
 #
 # File: gem/main.py, line: 136
@@ -205,6 +193,16 @@ msgstr "Impossible d'écrire dans %s. Annulation de l'opération."
 #, python-format
 msgid "Change custom parameters for %s"
 msgstr "Changement des paramètres personnalisés pour %s"
+
+#
+# File: gem/interface.py, line: 300
+msgid "Check configuration files"
+msgstr "Vérification des fichiers de configuration"
+
+#
+# File: gem/main.py, line: 133
+msgid "Check icons folders"
+msgstr "Vérification des fichiers d'icônes"
 
 #
 # File: gem/preferences.py, line: 102
@@ -273,16 +271,6 @@ msgid "Custom _parameters"
 msgstr "Définir des _paramètres personnalisés"
 
 #
-# File: gem/interface.py, line: 1286
-msgid "Default arguments"
-msgstr "Arguments par défaut"
-
-#
-# File: gem/interface.py, line: 300
-msgid "Default emulator"
-msgstr "Émulateur par défaut"
-
-#
 # File: gem/preferences.py, line: 1269
 msgid "Default options"
 msgstr "Options par défaut"
@@ -301,9 +289,8 @@ msgstr "Déplace %(rom)s vers %(path)s"
 
 #
 # File: gem/preferences.py, line: 336
-#, fuzzy
 msgid "Edit"
-msgstr "_Éditer"
+msgstr "Éditer"
 
 #
 # File: gem/configuration.py, line: 144
@@ -361,7 +348,7 @@ msgstr "GEM"
 #
 # File: gem/preferences.py, line: 113
 msgid "Game"
-msgstr ""
+msgstr "Jeu"
 
 #
 # File: gem/interface.py, line: 220
@@ -398,6 +385,12 @@ msgstr "Hozizontales"
 # File: gem/preferences.py, line: 1255
 msgid "Image file"
 msgstr "Fichier image"
+
+#
+# File: gem/main.py, line: 136
+#, python-format
+msgid "Import error with interface: %s"
+msgstr "Erreur d'importation pour l'interface: %s"
 
 #
 # File: gem/interface.py, line: 1411
@@ -468,11 +461,6 @@ msgid "Log to %s"
 msgstr "Journalisation dans %s"
 
 #
-# File: gem/utils.py, line: 61
-msgid "Manage your emulators easily and have fun"
-msgstr "Gérer vos émulateurs facilement et amusez-vous"
-
-#
 # File: src/window.py, line: 436
 msgid "Mark a game as favorite"
 msgstr "Marquer un jeu comme favori"
@@ -493,6 +481,12 @@ msgstr "Marquer comme _favori"
 # File: gem/interface.py, line: 550
 msgid "Mark as _multiplayer"
 msgstr "Marquer comme _multi-joueurs"
+
+#
+# File: gem/interface.py, line: 2044
+#, python-format
+msgid "MemoryError occurs: %s"
+msgstr "Une MemoryError est survenue: %s"
 
 #
 # File: src/window.py, line: 446
@@ -523,6 +517,12 @@ msgstr "Nom"
 # File: gem/preferences.py, line: 97
 msgid "None"
 msgstr "Aucune"
+
+#
+# File: gem/interface.py, line: 2040
+#, python-format
+msgid "OSError occurs: %s"
+msgstr "Une OSError est survenue: %s"
 
 #
 # File: src/window.py, line: 451
@@ -664,6 +664,16 @@ msgid "Set custom parameters"
 msgstr "Définir des paramètres personnalisés"
 
 #
+# File: gem/interface.py, line: 1286
+msgid "Set default arguments"
+msgstr "Définir les arguments par défaut"
+
+#
+# File: gem/interface.py, line: 300
+msgid "Set default emulator"
+msgstr "Définir l'émulateur par défaut"
+
+#
 # File: gem/preferences.py, line: 633
 msgid "Set specific arguments for a game"
 msgstr "Définir un argument spécifique pour un jeu"
@@ -762,12 +772,6 @@ msgstr "Captures d'écran"
 # File: gem/interface.py, line: 107
 msgid "Start database migration"
 msgstr "Démarrage de la migration de la base de données"
-
-#
-# File: gem/database.py, line: 493
-#, python-format
-msgid "Start to migrate %d entries"
-msgstr "Début de la migration de %d entrées"
 
 #
 # File: gem/interface.py, line: 290
