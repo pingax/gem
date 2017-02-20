@@ -2,15 +2,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.4\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2016-11-04 16:48+0100\n"
-"Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
+"PO-Revision-Date: 2017-02-20 11:42+0100\n"
+"Last-Translator: José Luis <darknekros@gmail.com>\n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 1.8.9\n"
+"X-Generator: Poedit 1.8.11\n"
 
 # File: gem/interface.py, line: 2123
 #, python-format
@@ -21,13 +21,13 @@ msgstr "hace %d días"
 # File: gem/utils.py, line: 332
 #, python-format
 msgid "%d hours"
-msgstr ""
+msgstr "%d horas"
 
 #
 # File: gem/interface.py, line: 2130
-#, fuzzy, python-format
+#, python-format
 msgid "%d minutes"
-msgstr "hace %d meses"
+msgstr "%d minutos"
 
 #
 # File: gem/interface.py, line: 2130
@@ -39,7 +39,7 @@ msgstr "hace %d meses"
 # File: gem/utils.py, line: 322
 #, python-format
 msgid "%d seconds"
-msgstr ""
+msgstr "%d segundos"
 
 #
 # File: gem/interface.py, line: 2137
@@ -85,18 +85,17 @@ msgstr "1 juego disponible"
 #
 # File: gem/utils.py, line: 360
 msgid "1 hour"
-msgstr ""
+msgstr "1 hora"
 
 #
 # File: gem/interface.py, line: 2130
-#, fuzzy
 msgid "1 minute"
-msgstr "hace %d meses"
+msgstr "1 minuto"
 
 #
 # File: gem/utils.py, line: 350
 msgid "1 second"
-msgstr ""
+msgstr "1 segundo"
 
 #
 # File: gem/preferences.py, line: 1638
@@ -124,14 +123,14 @@ msgstr "Todos los iconos"
 # File: gem/interface.py, line: 2112
 msgid "An error occur during generation, consult log for futher details."
 msgstr ""
-"Un error ha ocurrido durante la creación, consulta el historial para mas "
+"Un error ha ocurrido durante la creación, consulta el historial para más "
 "detalles."
 
 #
 # File: gem/main.py, line: 132
 #, python-format
 msgid "An error occur during program exec: %s"
-msgstr "Un error ha ocurrido durante la ejecución del programa:%s"
+msgstr "Un error ha ocurrido durante la ejecución del programa: %s"
 
 #
 # File: gem/windows.py, line: 319
@@ -163,9 +162,9 @@ msgstr "No puedo encontrar el %(binary)s para la %(console)s"
 
 #
 # File: gem/interface.py, line: 1892
-#, fuzzy, python-format
+#, python-format
 msgid "Cannot find %s"
-msgstr "No se ha encontrado %s"
+msgstr "No pude encontrar %s"
 
 #
 # File: gem/interface.py, line: 2033
@@ -199,14 +198,13 @@ msgstr "Cambiar los parametros personalizados para %s"
 
 #
 # File: gem/preferences.py, line: 1602
-#, fuzzy
 msgid "Check configuration files"
-msgstr "Archivo de configuración"
+msgstr "Comprobar los archivos de configuración"
 
 #
 # File: gem/main.py, line: 133
 msgid "Check icons folders"
-msgstr ""
+msgstr "Comprobar las carpetas de los iconos"
 
 #
 # File: gem/windows.py, line: 1122
@@ -288,7 +286,7 @@ msgstr "Opciones por defecto"
 # File: gem/interface.py, line: 2054
 #, python-format
 msgid "Destination %s not exist. Canceling operation."
-msgstr "La destinación %s no existe. Anulando acción."
+msgstr "El destino %s no existe. Anulando acción."
 
 #
 # File: gem/interface.py, line: 2017
@@ -298,9 +296,8 @@ msgstr "Dejar %(rom)s en %(path)s"
 
 #
 # File: gem/preferences.py, line: 429
-#, fuzzy
 msgid "Edit"
-msgstr "Editor"
+msgstr "Editar"
 
 #
 # File: gem/interface.py, line: 1257
@@ -358,7 +355,7 @@ msgstr "GEM"
 #
 # File: gem/preferences.py, line: 113
 msgid "Game"
-msgstr ""
+msgstr "Juego"
 
 #
 # File: gem/preferences.py, line: 328
@@ -398,9 +395,9 @@ msgstr "Archivo de imagen"
 
 #
 # File: gem/main.py, line: 128
-#, fuzzy, python-format
+#, python-format
 msgid "Import error with interface: %s"
-msgstr "No puedo importar la interfaz: %s"
+msgstr "Error de importación con la interfaz: %s"
 
 #
 # File: gem/interface.py, line: 1411
@@ -496,7 +493,7 @@ msgstr "Marcar como _mutijugador"
 # File: gem/interface.py, line: 2044
 #, python-format
 msgid "MemoryError occurs: %s"
-msgstr ""
+msgstr "MemoryError: %s"
 
 #
 # File: gem/interface.py, line: 139
@@ -536,19 +533,17 @@ msgstr "Ninguno"
 # File: gem/interface.py, line: 2040
 #, python-format
 msgid "OSError occurs: %s"
-msgstr ""
+msgstr "OSError: %s"
 
 #
 # File: gem/preferences.py, line: 86
-#, fuzzy
 msgid "Open game log"
-msgstr "Abrir el historial de un juego"
+msgstr "Abrir el historial del juego"
 
 #
 # File: gem/preferences.py, line: 86
-#, fuzzy
 msgid "Open game notes"
-msgstr "Abrir el historial de un juego"
+msgstr "Abrir las notas del juego"
 
 #
 # File: gem/preferences.py, line: 100
@@ -658,13 +653,12 @@ msgstr "Guardar %s para el próximo arranque"
 #
 # File: gem/windows.py, line: 385
 msgid "Search"
-msgstr ""
+msgstr "Buscar"
 
 #
 # File: gem/windows.py, line: 915
-#, fuzzy
 msgid "Select a binary"
-msgstr "Seleccionar un icono de"
+msgstr "Selecciona un binario"
 
 #
 # File: gem/windows.py, line: 915
@@ -686,20 +680,18 @@ msgstr "Crear parametros personalizados"
 
 #
 # File: gem/preferences.py, line: 1662
-#, fuzzy
 msgid "Set default arguments"
-msgstr "Opciones por defecto"
+msgstr "Establecer las opciones por defecto"
 
 #
 # File: gem/preferences.py, line: 1013
-#, fuzzy
 msgid "Set default emulator"
-msgstr "Emulador por defecto"
+msgstr "Establecer el emulador por defecto"
 
 #
 # File: gem/preferences.py, line: 90
 msgid "Set specific arguments for a game"
-msgstr "Ajustar las opciones de un juego"
+msgstr "Establecer opciones específicas de un juego"
 
 #
 # File: gem/preferences.py, line: 485
@@ -773,15 +765,13 @@ msgstr "Mostrar los juegos mutijugador"
 
 #
 # File: gem/interface.py, line: 455
-#, fuzzy
 msgid "Show selected game notes"
-msgstr "Mostrar las capturas de pantalla seleccionadas del juego"
+msgstr "Mostrar las notas del juego seleccionado"
 
 #
 # File: gem/interface.py, line: 455
-#, fuzzy
 msgid "Show selected game output log"
-msgstr "Mostrar las capturas de pantalla seleccionadas del juego"
+msgstr "Mostrar el historial de salida del juego seleccionado"
 
 #
 # File: gem/interface.py, line: 455
@@ -811,9 +801,8 @@ msgstr "Finalizado por interrupción del teclado"
 
 #
 # File: gem/preferences.py, line: 1418
-#, fuzzy
 msgid "This binary not exist, please, check the path"
-msgstr "Esta consola ya existe, por favor escoja otro nombre"
+msgstr "Este binario no existe, por favor compruebe la ruta"
 
 #
 # File: gem/preferences.py, line: 1418
@@ -865,9 +854,9 @@ msgstr "Actualizar el archivo de configuración de %s"
 
 #
 # File: gem/preferences.py, line: 1602
-#, fuzzy, python-format
+#, python-format
 msgid "Update %s notes"
-msgstr "Actualizar el archivo de configuración de %s"
+msgstr "Actualizar las notas %s"
 
 #
 # File: gem/preferences.py, line: 1159
@@ -883,7 +872,7 @@ msgstr "Usa ; para separar las extensiones"
 #
 # File: gem/interface.py, line: 391
 msgid "Use dark theme"
-msgstr ""
+msgstr "Usar el tema oscuro"
 
 #
 # File: gem/preferences.py, line: 393
@@ -913,11 +902,15 @@ msgid ""
 "\n"
 "Enjoy and have fun :D"
 msgstr ""
+"Bienvenido y gracias por escoger GEM como tu gestor de emulación. Empieza a "
+"utilizar GEM arrastrando algunas ROMs dentro de la interfaz.\n"
+"\n"
+"Diviértete y disfruta :D"
 
 #
 # File: gem/preferences.py, line: 1670
 msgid "Windowed"
-msgstr "Ventana"
+msgstr "Modo ventana"
 
 #
 # File: gem/preferences.py, line: 1196
@@ -956,9 +949,8 @@ msgstr "_Copiar la ruta del juego"
 
 #
 # File: gem/preferences.py, line: 429
-#, fuzzy
 msgid "_Edit"
-msgstr "Editor"
+msgstr "_Editar"
 
 #
 # File: gem/interface.py, line: 460
@@ -973,7 +965,7 @@ msgstr "_Lanzar"
 #
 # File: gem/interface.py, line: 384
 msgid "_Notes"
-msgstr ""
+msgstr "_Notas"
 
 #
 # File: gem/interface.py, line: 406
@@ -1014,12 +1006,13 @@ msgstr "_Capturas de pantalla"
 #
 # File: gem/preferences.py, line: 280
 msgid "translator-credits"
-msgstr "Emuladores"
+msgstr "agradecimientos a los traductores"
 
 #
 # File: gem/preferences.py, line: 283
 msgid "use translucent icons in games list instead of empty ones"
 msgstr ""
+"usar iconos translucidos en la lista de los juegos en vez de iconos vacíos"
 
 #
 # File: gem/configuration.py, line: 71
