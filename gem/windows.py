@@ -73,8 +73,16 @@ textdomain("gem")
 class Dialog(Gtk.Dialog):
 
     def __init__(self, parent, title, icon):
-        """
-        Constructor
+        """ Constructor
+
+        Parameters
+        ----------
+        parent : Gtk.Window
+            Parent object
+        title : str
+            Dialog title
+        icon : str
+            Default icon name
         """
 
         Gtk.Dialog.__init__(self)
@@ -153,8 +161,14 @@ class Dialog(Gtk.Dialog):
 
 
     def set_size(self, width, height):
-        """
-        Set a new size for dialog
+        """ Set a new size for dialog
+
+        Parameters
+        ----------
+        width : int
+            Dialog width
+        height : int
+            Dialog height
         """
 
         self.set_size_request(width, height)
@@ -164,8 +178,23 @@ class Dialog(Gtk.Dialog):
 class TemplateDialog(Dialog):
 
     def __init__(self, parent, title, message, icon, center=True):
-        """
-        Constructor
+        """ Constructor
+
+        Parameters
+        ----------
+        parent : Gtk.Window
+            Parent object
+        title : str
+            Dialog title
+        message : str
+            Dialog message
+        icon : str
+            Default icon name
+
+        Other Parameters
+        ----------------
+        center : bool
+            If False, use justify text insted of center (Default: True)
         """
 
         Dialog.__init__(self, parent, title, icon)
@@ -190,8 +219,7 @@ class TemplateDialog(Dialog):
 
 
     def __init_widgets(self):
-        """
-        Initialize interface widgets
+        """ Initialize interface widgets
         """
 
         self.set_size(500, -1)
@@ -224,8 +252,7 @@ class TemplateDialog(Dialog):
 
 
     def __start_interface(self):
-        """
-        Load data and start interface
+        """ Load data and start interface
         """
 
         self.show_all()
@@ -235,8 +262,23 @@ class Message(TemplateDialog):
 
     def __init__(self, parent, title, message, icon="dialog-information",
         center=True):
-        """
-        Constructor
+        """ Constructor
+
+        Parameters
+        ----------
+        parent : Gtk.Window
+            Parent object
+        title : str
+            Dialog title
+        message : str
+            Dialog message
+
+        Other Parameters
+        ----------------
+        icon : str
+            Default icon name (Default: dialog-information)
+        center : bool
+            If False, use justify text insted of center (Default: True)
         """
 
         TemplateDialog.__init__(self, parent, title, message, icon, center)
@@ -249,8 +291,23 @@ class Question(TemplateDialog):
 
     def __init__(self, parent, title, message, icon="dialog-question",
         center=True):
-        """
-        Constructor
+        """ Constructor
+
+        Parameters
+        ----------
+        parent : Gtk.Window
+            Parent object
+        title : str
+            Dialog title
+        message : str
+            Dialog message
+
+        Other Parameters
+        ----------------
+        icon : str
+            Default icon name (Default: dialog-question)
+        center : bool
+            If False, use justify text insted of center (Default: True)
         """
 
         TemplateDialog.__init__(self, parent, title, message, icon, center)
@@ -264,8 +321,24 @@ class DialogEditor(Dialog):
 
     def __init__(self, parent, title, file_path, editable=True,
         icon="gtk-file"):
-        """
-        Constructor
+        """ Constructor
+
+        Parameters
+        ----------
+        parent : Gtk.Window
+            Parent object
+        title : str
+            Dialog title
+        file_path : str
+            File path
+
+        Other Parameters
+        ----------------
+        editable : bool
+            If True, allow to modify and save text buffer to file_path
+            (Default: True)
+        icon : str
+            Default icon name (Default: gtk-file)
         """
 
         Dialog.__init__(self, parent, title, icon)
@@ -299,8 +372,7 @@ class DialogEditor(Dialog):
 
 
     def __init_widgets(self):
-        """
-        Initialize interface widgets
+        """ Initialize interface widgets
         """
 
         self.set_size(800, 600)
@@ -452,12 +524,10 @@ class DialogEditor(Dialog):
 
 
     def __init_signals(self):
-        """
-        Initialize widgets signals
+        """ Initialize widgets signals
         """
 
-        self.check_lines.connect(
-            "toggled", self.__on_break_line)
+        self.check_lines.connect("toggled", self.__on_break_line)
 
         self.entry_search.connect("activate", self.__on_entry_update)
         self.entry_search.connect("icon-press", on_entry_clear)
@@ -467,8 +537,7 @@ class DialogEditor(Dialog):
 
 
     def __start_interface(self):
-        """
-        Load data and start interface
+        """ Load data and start interface
         """
 
         self.entry_path.set_text(self.path)
@@ -483,8 +552,12 @@ class DialogEditor(Dialog):
 
 
     def __on_break_line(self, widget):
-        """
-        Set break line mode for textview
+        """ Set break line mode for textview
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
         """
 
         if self.check_lines.get_active():
@@ -494,8 +567,14 @@ class DialogEditor(Dialog):
 
 
     def __on_move_search(self, widget=None, backward=False):
-        """
-        Move between search results
+        """ Move between search results
+
+        Other Parameters
+        ----------------
+        widget : Gtk.Widget
+            Object which receive signal (Default: None)
+        backward : bool
+            If True, use backward search instead of forward (Default: False)
         """
 
         if len(self.founded_iter) > 0:
@@ -521,9 +600,13 @@ class DialogEditor(Dialog):
             self.text_editor.scroll_to_iter(match[0], .25, False, .0, .0)
 
 
-    def __on_entry_update(self, widget, pos=None, event=None):
-        """
-        Search entry value in text buffer
+    def __on_entry_update(self, widget):
+        """ Search entry value in text buffer
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
         """
 
         text = widget.get_text()
@@ -555,8 +638,14 @@ class DialogEditor(Dialog):
 
 
     def __on_search_and_mark(self, text, start):
-        """
-        Search a text and mark it
+        """ Search a text and mark it
+
+        Parameters
+        ----------
+        text : str
+            Text to match in text buffer
+        start : Gtk.TextIter
+            Start position in text buffer
         """
 
         match = start.forward_search(text, 0, self.buffer_editor.get_end_iter())
@@ -573,8 +662,16 @@ class DialogEditor(Dialog):
 class DialogParameters(Dialog):
 
     def __init__(self, parent, title, emulator):
-        """
-        Constructor
+        """ Constructor
+
+        Parameters
+        ----------
+        parent : Gtk.Window
+            Parent object
+        title : str
+            Dialog title
+        emulator : str
+            Emulator name
         """
 
         Dialog.__init__(self, parent, title, "emblem-important")
@@ -606,8 +703,7 @@ class DialogParameters(Dialog):
 
 
     def __init_widgets(self):
-        """
-        Initialize interface widgets
+        """ Initialize interface widgets
         """
 
         self.set_size(520, -1)
@@ -673,8 +769,7 @@ class DialogParameters(Dialog):
 
 
     def __init_signals(self):
-        """
-        Initialize widgets signals
+        """ Initialize widgets signals
         """
 
         self.combo.connect("changed", self.__on_selected_emulator)
@@ -683,8 +778,7 @@ class DialogParameters(Dialog):
 
 
     def __start_interface(self):
-        """
-        Load data and start interface
+        """ Load data and start interface
         """
 
         self.show_all()
@@ -716,8 +810,12 @@ class DialogParameters(Dialog):
 
 
     def __on_selected_emulator(self, widget=None):
-        """
-        Select an emulator in combobox and update parameters placeholder
+        """ Select an emulator in combobox and update parameters placeholder
+
+        Other Parameters
+        ----------------
+        widget : Gtk.Widget
+            Object which receive signal (Default: None)
         """
 
         default = str()
@@ -743,8 +841,14 @@ class DialogParameters(Dialog):
 class DialogRemove(Dialog):
 
     def __init__(self, parent, title):
-        """
-        Constructor
+        """ Constructor
+
+        Parameters
+        ----------
+        parent : Gtk.Window
+            Parent object
+        title : str
+            Dialog title
         """
 
         Dialog.__init__(self, parent, title, "edit-delete")
@@ -761,8 +865,7 @@ class DialogRemove(Dialog):
 
 
     def __init_widgets(self):
-        """
-        Initialize interface widgets
+        """ Initialize interface widgets
         """
 
         self.set_size(520, -1)
@@ -811,8 +914,7 @@ class DialogRemove(Dialog):
 
 
     def __start_interface(self):
-        """
-        Load data and start interface
+        """ Load data and start interface
         """
 
         self.show_all()
@@ -823,8 +925,21 @@ class DialogRemove(Dialog):
 class DialogRename(Dialog):
 
     def __init__(self, parent, title, description, name=str()):
-        """
-        Constructor
+        """ Constructor
+
+        Parameters
+        ----------
+        parent : Gtk.Window
+            Parent object
+        title : str
+            Dialog title
+        description : str
+            Dialog message
+
+        Other Parameters
+        ----------------
+        name : str
+            Rom current name (Default: "")
         """
 
         Dialog.__init__(self, parent, title, "tools-check-spelling")
@@ -851,8 +966,7 @@ class DialogRename(Dialog):
 
 
     def __init_widgets(self):
-        """
-        Initialize interface widgets
+        """ Initialize interface widgets
         """
 
         self.set_size(520, -1)
@@ -887,16 +1001,14 @@ class DialogRename(Dialog):
 
 
     def __init_signals(self):
-        """
-        Initialize widgets signals
+        """ Initialize widgets signals
         """
 
         self.entry.connect("icon-press", on_entry_clear)
 
 
     def __start_interface(self):
-        """
-        Load data and start interface
+        """ Load data and start interface
         """
 
         self.show_all()
@@ -908,8 +1020,16 @@ class DialogRename(Dialog):
 class DialogViewer(Dialog):
 
     def __init__(self, parent, title, screenshots_path):
-        """
-        Constructor
+        """ Constructor
+
+        Parameters
+        ----------
+        parent : Gtk.Window
+            Parent object
+        title : str
+            Dialog title
+        screenshots_path : list
+            Screnshots path list
         """
 
         Dialog.__init__(self, parent, title, "image-x-generic")
@@ -940,8 +1060,7 @@ class DialogViewer(Dialog):
 
 
     def __init_widgets(self):
-        """
-        Initialize interface widgets
+        """ Initialize interface widgets
         """
 
         self.set_size(800, 600)
@@ -1017,8 +1136,7 @@ class DialogViewer(Dialog):
 
 
     def __init_signals(self):
-        """
-        Initialize widgets signals
+        """ Initialize widgets signals
         """
 
         # self.connect("size-allocate", self.update_screenshot)
@@ -1036,8 +1154,7 @@ class DialogViewer(Dialog):
 
 
     def __start_interface(self):
-        """
-        Load data and start interface
+        """ Load data and start interface
         """
 
         self.show_all()
@@ -1051,8 +1168,14 @@ class DialogViewer(Dialog):
 
 
     def change_screenshot(self, widget=None, event=None):
-        """
-        Change current screenshot
+        """ Change current screenshot
+
+        Other Parameters
+        ----------------
+        widget : Gtk.Widget
+            Object which receive signal (Default: None)
+        event : Gdk.EventButton or Gdk.EventKey
+            Event which triggered this signal (Default: None)
         """
 
         # Keyboard
@@ -1107,8 +1230,7 @@ class DialogViewer(Dialog):
 
 
     def set_widgets_sensitive(self):
-        """
-        Refresh interface's widgets
+        """ Refresh interface's widgets
         """
 
         self.tool_first.set_sensitive(True)
@@ -1126,8 +1248,14 @@ class DialogViewer(Dialog):
 
 
     def update_screenshot(self, widget=None, event=None):
-        """
-        Change current screenshot size
+        """ Change current screenshot size
+
+        Other Parameters
+        ----------------
+        widget : Gtk.Widget
+            Object which receive signal (Default: None)
+        event : Gdk.EventButton or Gdk.EventKey
+            Event which triggered this signal (Default: None)
         """
 
         pixbuf = Pixbuf.new_from_file(
@@ -1151,8 +1279,21 @@ class DialogViewer(Dialog):
 class DialogConsoles(Dialog):
 
     def __init__(self, parent, title, consoles, previous=None):
-        """
-        Constructor
+        """ Constructor
+
+        Parameters
+        ----------
+        parent : Gtk.Window
+            Parent object
+        title : str
+            Dialog title
+        consoles : list
+            Consoles list
+
+        Other Parameters
+        ----------------
+        previous : str or None
+            Previous selected console (Default: None)
         """
 
         Dialog.__init__(self, parent, title, "input-gaming")
@@ -1181,8 +1322,7 @@ class DialogConsoles(Dialog):
 
 
     def __init_widgets(self):
-        """
-        Initialize interface widgets
+        """ Initialize interface widgets
         """
 
         self.set_size(500, 300)
@@ -1256,16 +1396,14 @@ class DialogConsoles(Dialog):
 
 
     def __init_signals(self):
-        """
-        Initialize widgets signals
+        """ Initialize widgets signals
         """
 
         self.cell_consoles_status.connect("toggled", self.on_cell_toggled)
 
 
     def __start_interface(self):
-        """
-        Load data and start interface
+        """ Load data and start interface
         """
 
         self.show_all()
@@ -1284,8 +1422,14 @@ class DialogConsoles(Dialog):
 
 
     def on_cell_toggled(self, widget, path):
-        """
-        Toggled a radio cell in treeview
+        """ Toggled a radio cell in treeview
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        path : Gtk.TreePath
+            Path to be activated
         """
 
         self.set_response_sensitive(Gtk.ResponseType.APPLY, True)
@@ -1304,18 +1448,32 @@ class DialogConsoles(Dialog):
 # ------------------------------------------------------------------
 
 def icon_from_data(icon, fallback=None, width=24, height=24, subfolder=None):
-    """
-    Load an icon or return an empty icon if not found
+    """ Load an icon from path
 
-    :param str icon: Icon path
-    :param GdkPixbuf.Pixbuf fallback: Fallback icon to return if wanted icon
-        was not found
-    :param int width: Icon width
-    :param int height: Icon height
-    :param str subfolder: Subfolder in Path.Icons
+    This function search if a path is available in Path.Icons folder and return
+    a generate Pixbuf from the path. If no icon was found, return an empty
+    generate Pixbuf.
 
-    :return: Icon object
-    :rtype: GdkPixbuf.Pixbuf
+    Parameters
+    ----------
+    icon : str
+        Icon path
+
+    Other Parameters
+    ----------------
+    fallback : GdkPixbuf.Pixbuf
+        Fallback icon to return instead of empty (Default: None)
+    width : int
+        Icon width in pixels (Default: 24)
+    height : int
+        Icon height in pixels (Default: 24)
+    subfolder : str
+        Subfolder in Path.Icons (Default: None)
+
+    Returns
+    -------
+    GdkPixbuf.Pixbuf
+        Pixbuf icon object
     """
 
     if icon is not None:
@@ -1343,16 +1501,28 @@ def icon_from_data(icon, fallback=None, width=24, height=24, subfolder=None):
     return fallback
 
 def icon_load(name, size=16, fallback="image-missing"):
-    """
-    Get an icon from data folder
+    """ Load an icon from IconTheme
 
-    :param str name: Icon name in icons theme
-    :param int size: Icon width and height
-    :param str/GdkPixbuf.Pixbuf fallback: Fallback icon to return if wanted icon
-        was not found
+    This function search an icon in current user icons theme. If founded, return
+    a generate Pixbuf from the icon name, else, return a generate Pixbuf from
+    the fallback icon name.
 
-    :return: Icon from icons theme
-    :rtype: GdkPixbuf.Pixbuf
+    Parameters
+    ----------
+    icon : str
+        Icon name
+
+    Other Parameters
+    ----------------
+    width : int
+        Icon width in pixels (Default: 16)
+    fallback : str or GdkPixbuf.Pixbuf
+        Fallback icon to return instead of empty (Default: image-missing)
+
+    Returns
+    -------
+    GdkPixbuf.Pixbuf
+        Pixbuf icon object
     """
 
     icons_theme = Gtk.IconTheme.get_default()
@@ -1384,17 +1554,25 @@ def icon_load(name, size=16, fallback="image-missing"):
         "image-missing", size, Gtk.IconLookupFlags.FORCE_SVG)
 
 def set_pixbuf_opacity(pixbuf, opacity):
-    """
-    Changes the opacity of pixbuf by combining the pixbuf with an other pixbuf
+    """ Changes the opacity of pixbuf
+
+    This function generate a new Pixbuf from another one and change his opacity
+    by combining the two Pixbufs.
 
     Thanks to Rick Spencer:
     https://theravingrick.blogspot.fr/2011/01/changing-opacity-of-gtkpixbuf.html
 
-    :param Pixbuf pixbuf: Original pixbuf
-    :param int opacity: The degree of desired opacity (between 0 and 255)
+    Parameters
+    ----------
+    pixbuf : GdkPixbuf.Pixbuf
+        Original Pixbuf
+    opacity : int
+        The degree of desired opacity (between 0 and 255)
 
-    :return: Pixbuf with the transperancy
-    :rtype: GdkPixbuf.Pixbuf
+    Returns
+    -------
+    GdkPixbuf.Pixbuf
+        Pixbuf icon object
     """
 
     width, height = pixbuf.get_width(), pixbuf.get_height()
@@ -1411,25 +1589,33 @@ def set_pixbuf_opacity(pixbuf, opacity):
     return new_pixbuf
 
 def on_change_theme(status=False):
-    """
-    Change dark status of interface theme
+    """ Change dark status of interface theme
 
-    :param bool status: Use dark theme
+    Other Parameters
+    ----------------
+    status : bool
+        Use dark theme (Default: False)
     """
 
     Gtk.Settings.get_default().set_property(
         "gtk-application-prefer-dark-theme", status)
 
 def on_entry_clear(widget, pos, event):
-    """
-    Reset an entry widget when specific icon is clicked
+    """ Reset an entry widget when secondary icon is clicked
 
-    :param Gtk.Entry widget: Entry widget
-    :param Gtk.EntryIconPosition pos: Specific icon from entry widget
-    :param Gdk.Event event: Wdget event
+    Parameters
+    ----------
+    widget : Gtk.Entry
+        Entry widget
+    pos : Gtk.EntryIconPosition
+        Position of the clicked icon
+    event : Gdk.EventButton or Gdk.EventKey
+        Event which triggered this signal
 
-    :return: Function state
-    :rtype: bool
+    Returns
+    -------
+    bool
+        Function state
     """
 
     if type(widget) is not Gtk.Entry:
