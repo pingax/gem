@@ -10,6 +10,7 @@
 * Add translucent icons into games treeview
 * Add debug mode
 * Add a new logo based on GNOME input-gaming icon
+* Move multithreading as experimental option (desactivate by default)
 * Move some items in game menu to submenu
 * Fix cannot open viewer when rom filename has many dots
 * Fix cannot open parameters dialog when data from database are empty

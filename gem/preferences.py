@@ -729,7 +729,7 @@ class Preferences(Gtk.Builder):
             if path is not None:
                 path = path.replace(expanduser('~'), '~')
             else:
-                path = ""
+                path = str()
 
             check = self.empty
             if not exists(expanduser(path)):
@@ -1070,16 +1070,16 @@ class Console(Gtk.Builder):
         """ Initialize widgets signals
         """
 
-        self.entry_name.connect("changed", self.__on_entry_update)
+        self.entry_name.connect("changed", self.__update_dialog)
         self.entry_name.connect("icon-press", on_entry_clear)
 
-        self.file_folder.connect("file-set", self.__on_file_set)
+        self.file_folder.connect("file-set", self.__update_dialog)
 
         self.entry_extensions.connect("icon-press", on_entry_clear)
 
         self.button_console.connect("clicked", self.__on_select_icon)
 
-        self.combo_emulators.connect("changed", self.__on_selected_emulator)
+        self.combo_emulators.connect("changed", self.__update_dialog)
 
 
     def __start_interface(self):
@@ -1194,81 +1194,6 @@ class Console(Gtk.Builder):
         self.data["emulator"] = self.combo_emulators.get_active_id()
 
 
-    def __on_entry_update(self, widget):
-        """ Check if a value is not already used
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        """
-
-        self.error = False
-        icon, tooltip = None, None
-
-        path = self.file_folder.get_filename()
-        if path is None or not exists(expanduser(path)):
-            self.error = True
-
-        name = widget.get_text()
-
-        if len(name) == 0:
-            self.error = True
-
-        elif self.consoles.has_section(name):
-            icon, tooltip = "dialog-error", _(
-                "This console already exist, please, choose another name")
-
-            if not self.modify:
-                self.error = True
-
-            elif self.modify and not name == self.console:
-                self.error = True
-
-            else:
-                icon, tooltip = None, None
-
-        widget.set_icon_from_icon_name(Gtk.EntryIconPosition.PRIMARY, icon)
-        widget.set_tooltip_text(tooltip)
-
-        self.__update_response_sensitive()
-
-
-    def __on_file_set(self, widget):
-        """ Change response button state when user set a file
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        """
-
-        path = widget.get_filename()
-
-        self.file_error = False
-        if path is None or not exists(expanduser(path)):
-            self.file_error = True
-
-        self.__update_response_sensitive()
-
-
-    def __on_selected_emulator(self, widget=None):
-        """
-        Select an emulator in combobox and update parameters placeholder
-        """
-
-        emulator = self.combo_emulators.get_active_id()
-
-        path = self.interface.emulators.item(emulator, "binary")
-
-        # Allow to validate dialog if selected emulator binary exist
-        self.emulator_error = False
-        if len(get_binary_path(path)) == 0:
-            self.emulator_error = True
-
-        self.__update_response_sensitive()
-
-
     def __on_select_icon(self, widget):
         """ Select a new icon
 
@@ -1289,14 +1214,61 @@ class Console(Gtk.Builder):
         dialog.destroy()
 
 
-    def __update_response_sensitive(self):
+    def __update_dialog(self, widget):
         """ Update dialog response sensitive status
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
         """
 
-        status = False
+        status = True
+        icon, tooltip = None, None
 
-        if not self.error and not self.file_error and not self.emulator_error:
-            status = True
+        # ------------------------------------
+        #   Console name
+        # ------------------------------------
+
+        name = self.entry_name.get_text()
+
+        if len(name) == 0:
+            status = False
+
+        elif self.consoles.has_section(name):
+            if not self.modify or (self.modify and not name == self.console):
+                status = False
+
+                icon, tooltip = "dialog-error", _(
+                    "This console already exist, please, choose another name")
+
+        self.entry_name.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.PRIMARY, icon)
+        self.entry_name.set_tooltip_text(tooltip)
+
+        # ------------------------------------
+        #   Console roms folder
+        # ------------------------------------
+
+        path = self.file_folder.get_filename()
+
+        if path is None or not exists(expanduser(path)):
+            status = False
+
+        # ------------------------------------
+        #   Console emulator
+        # ------------------------------------
+
+        path = self.interface.emulators.item(
+            self.combo_emulators.get_active_id(), "binary")
+
+        # Allow to validate dialog if selected emulator binary exist
+        if path is None or len(get_binary_path(path)) == 0:
+            status = False
+
+        # ------------------------------------
+        #   Start dialog
+        # ------------------------------------
 
         self.window.set_response_sensitive(Gtk.ResponseType.APPLY, status)
 
@@ -1662,9 +1634,8 @@ class Emulator(Gtk.Builder):
         dialog = IconViewer(self, _("Choose an icon"), self.path, "emulators")
 
         if dialog.new_path is not None:
-            self.image_emulator.set_from_pixbuf(
-                icon_from_data(
-                    dialog.new_path, self.empty, 64, 64, "emulators"))
+            self.image_emulator.set_from_pixbuf(icon_from_data(
+                dialog.new_path, self.empty, 64, 64, "emulators"))
 
             self.path = dialog.new_path
 
