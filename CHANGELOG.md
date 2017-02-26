@@ -1,6 +1,6 @@
 # GEM Changelog
 
-## Version 0.6 - Magicball
+## Version 0.6 - Magicball (26 Feb, 2017)
 
 * Add the possibility to switch ui theme between dark and light
 * Add an icon in consoles combobox to alert user when a binary is missing

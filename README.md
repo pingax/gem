@@ -4,7 +4,7 @@
 
 GEM (Graphical Emulators Manager) est une interface qui à pour but de vous aider à gérer vos roms de jeux et vos émulateurs simplement et efficacement.
 
-![Interface principale de GEM](https://gem.tuxfamily.org/data/images/preview.png)
+![Interface principale de GEM](https://gem.tuxfamily.org/data/medias/preview.png)
 
 GEM est disponible sous [licence GPLv3](http://www.gnu.org/licenses/gpl-3.0.html).
 
