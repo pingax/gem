@@ -81,12 +81,10 @@ try:
     from gi.repository.Gdk import EventType
 
     from gi.repository.GLib import idle_add
-    from gi.repository.GLib import timeout_add
-    from gi.repository.GLib import threads_init
     from gi.repository.GLib import source_remove
 
     from gi.repository.GObject import MainLoop
-    from gi.repository.GObject import SIGNAL_RUN_FIRST
+    from gi.repository.GObject import SIGNAL_RUN_LAST
 
     from gi.repository.GdkPixbuf import Pixbuf
     from gi.repository.GdkPixbuf import InterpType
@@ -101,6 +99,7 @@ except ImportError as error:
 
 try:
     from gem import *
+    from gem.game import *
     from gem.utils import *
     from gem.windows import *
     from gem.database import Database
@@ -190,8 +189,7 @@ def launch_gem(logger, reconstruct_db=False):
 
 class Interface(Gtk.Builder):
 
-    __gsignals__ = {
-        "game_close": (SIGNAL_RUN_FIRST, None, (bool, str, str, object)) }
+    __gsignals__ = { "game-terminate": (SIGNAL_RUN_LAST, None, [object]) }
 
     def __init__(self, logger, database):
         """ Constructor
@@ -503,6 +501,8 @@ class Interface(Gtk.Builder):
         """ Initialize widgets signals
         """
 
+        self.connect("game-terminate", self.__on_game_terminate)
+
         # ------------------------------------
         #   Window
         # ------------------------------------
@@ -667,7 +667,7 @@ class Interface(Gtk.Builder):
 
         if len(self.threads.keys()) > 0:
             for thread in self.threads.copy().keys():
-                self.threads[thread].terminate()
+                self.threads[thread].proc.terminate()
 
         # ------------------------------------
         #   Notes
@@ -1854,20 +1854,122 @@ class Interface(Gtk.Builder):
                 #   Run game
                 # ----------------------------
 
-                if self.config.getboolean("experimental", "threading"):
-                    thread = Thread(target=self.launch_game,
-                        args=[emulator, filename, command, title])
-                    thread.start()
+                thread = GameThread(
+                    self, emulator, filename, command, title)
 
-                    self.logger.debug("Start %s into %s" % (filename, thread))
+                # Save thread references
+                self.threads[splitext(filename)[0]] = thread
 
-                else:
-                    self.launch_game(emulator, filename, command, title)
+                # Launch thread
+                thread.start()
+
+                self.logger.debug("Start %s into %s" % (filename, thread))
 
                 self.sensitive_interface()
 
                 self.tool_item_notes.set_sensitive(True)
                 self.menu_item_notes.set_sensitive(True)
+
+
+    def __on_game_terminate(self, widget, thread):
+        """ Terminate the game processus and update data
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        thread : gem.game.GameThread
+            Game thread
+        """
+
+        gamename = thread.name
+
+        # ----------------------------
+        #   Save game data
+        # ----------------------------
+
+        if not thread.error:
+            total = self.get_play_time(thread.filename, thread.delta)
+            play_time = self.get_play_time(thread.filename, thread.delta, False)
+
+            # ----------------------------
+            #   Update data
+            # ----------------------------
+
+            # Play data
+            self.database.modify("games", {
+                "play_time": total,
+                "last_play": datetime.now().strftime("%d-%m-%Y %H:%M:%S"),
+                "last_play_time": play_time,
+                }, { "filename": thread.filename })
+
+            # Set new data into games treeview
+            value = self.database.get("games", { "filename": thread.filename })
+            if value is not None:
+                self.logger.debug("Update database for %s" % gamename)
+
+                # Played
+                play = value.get("play", 0) + 1
+
+                self.database.modify("games",
+                    { "play": play }, { "filename": thread.filename })
+
+                self.set_game_data(Columns.Played, str(play), gamename)
+
+                # Last played
+                self.set_game_data(Columns.LastPlay,
+                    string_from_date(value["last_play"]), gamename)
+
+                # Last time played
+                self.set_game_data(Columns.LastTimePlay,
+                    string_from_time(value["last_play_time"]), gamename)
+
+                # Play time
+                self.set_game_data(Columns.TimePlay,
+                    string_from_time(value["play_time"]), gamename)
+
+                # Snaps
+                if self.check_screenshots(thread.emulator, gamename):
+                    self.set_game_data(
+                        Columns.Snapshots, self.icons["snap"], gamename)
+                    self.tool_item_screenshots.set_sensitive(True)
+
+                else:
+                    self.set_game_data(
+                        Columns.Snapshots, self.alternative["snap"], gamename)
+
+                # Save state
+                if self.check_save_states(thread.emulator, gamename):
+                    self.set_game_data(
+                        Columns.Save, self.icons["save"], gamename)
+
+                else:
+                    self.set_game_data(
+                        Columns.Save, self.alternative["save"], gamename)
+
+        # ----------------------------
+        #   Refresh widgets
+        # ----------------------------
+
+        name, extension = splitext(basename(self.selection["game"]))
+
+        # Current selected game is the same as launched
+        if name == gamename:
+            self.logger.debug("Restore widgets status for %s" % gamename)
+            self.tool_item_launch.set_sensitive(True)
+            self.tool_item_output.set_sensitive(True)
+            self.tool_item_parameters.set_sensitive(True)
+            self.menu_item_launch.set_sensitive(True)
+            self.menu_item_parameters.set_sensitive(True)
+            self.menu_item_output.set_sensitive(True)
+            self.menu_item_database.set_sensitive(True)
+            self.menu_item_remove.set_sensitive(True)
+            self.menu_item_rename.set_sensitive(True)
+
+        # Remove this game from threads list
+        if gamename in self.threads:
+            self.logger.debug("Remove %s from process cache" % gamename)
+            del self.threads[gamename]
 
 
     def generate_command(self, emulator, filename):
@@ -1978,189 +2080,6 @@ class Interface(Gtk.Builder):
             command.append(self.selection["game"])
 
         return command
-
-
-    def launch_game(self, emulator, filename, command, title):
-        """ Launch a game
-
-        This function launch a game with correct arguments and emit game_close
-        signal when terminate
-
-        Parameters
-        ----------
-        emulator : str
-            Emulator name
-        filename : str
-            Game file name
-        command : list
-            Command launcher
-        title : str
-            Game title for logger output
-        """
-
-        error = False
-
-        launch_date = datetime.now()
-
-        gamename, extension = splitext(basename(filename))
-
-        try:
-            # ----------------------------
-            #   Launch game
-            # ----------------------------
-
-            self.logger.info(_("Launch %s") % ' '.join(command))
-
-            proc = Popen(command, stdout=PIPE, stdin=PIPE,
-                stderr=STDOUT, universal_newlines=True)
-
-            self.threads[gamename] = proc
-
-            output, error_output = proc.communicate()
-
-            self.logger.info(_("Close %s") % title)
-
-            proc.terminate()
-
-            # ----------------------------
-            #   Log data
-            # ----------------------------
-
-            log_path = path_join(expanduser(Path.Logs), "%s.log" % filename)
-
-            self.logger.info(_("Log to %s") % log_path)
-
-            # Write output into game's log
-            with open(log_path, 'w') as pipe:
-                pipe.write(str())
-                pipe.write("%s\n\n" % " ".join(command))
-                pipe.write(output)
-
-        except OSError as error:
-            self.logger.error(_("OSError occurs: %s" % error))
-            error = True
-
-        except MemoryError as error:
-            self.logger.error(_("MemoryError occurs: %s" % error))
-            error = True
-
-        except KeyboardInterrupt as error:
-            self.logger.info(_("Terminate by keyboard interrupt"))
-
-        self.emit("game_close", error, emulator, filename, launch_date)
-
-
-    def do_game_close(self, error, emulator, filename, launch_date):
-        """ Close a game when game_close signal was emited
-
-        This function update the database when a game emit the game_close signal
-
-        Parameters
-        ----------
-        error : bool
-            If False, the game terminate without errors
-        emulator : str
-            Emulator name
-        filename : str
-            Game file name
-        launch_date : datetime.datetime
-            Game started datetime
-
-        Notes
-        -----
-        This function is a try for fixing Threading Segfault. Currently, this
-        function is still launched by sub-thread instead of MainThread.
-        """
-
-        gamename, extension = splitext(basename(filename))
-
-        # ----------------------------
-        #   Save game data
-        # ----------------------------
-
-        if not error:
-            # Calc time since game start
-            interval = datetime.now() - launch_date
-
-            total = self.get_play_time(filename, interval)
-            play_time = self.get_play_time(filename, interval, False)
-
-            # ----------------------------
-            #   Update data
-            # ----------------------------
-
-            # Play data
-            self.database.modify("games", {
-                "play_time": total,
-                "last_play": datetime.now().strftime("%d-%m-%Y %H:%M:%S"),
-                "last_play_time": play_time,
-                }, { "filename": filename })
-
-            # Set new data into games treeview
-            value = self.database.get("games", { "filename": filename })
-            if value is not None:
-
-                # Played
-                play = value.get("play", 0) + 1
-
-                self.database.modify("games",
-                    { "play": play }, { "filename": filename })
-
-                self.set_game_data(Columns.Played, str(play), gamename)
-
-                # Last played
-                self.set_game_data(Columns.LastPlay,
-                    string_from_date(value["last_play"]), gamename)
-
-                # Last time played
-                self.set_game_data(Columns.LastTimePlay,
-                    string_from_time(value["last_play_time"]), gamename)
-
-                # Play time
-                self.set_game_data(Columns.TimePlay,
-                    string_from_time(value["play_time"]), gamename)
-
-                # Snaps
-                if self.check_screenshots(emulator, gamename):
-                    self.set_game_data(
-                        Columns.Snapshots, self.icons["snap"], gamename)
-                    self.tool_item_screenshots.set_sensitive(True)
-
-                else:
-                    self.set_game_data(
-                        Columns.Snapshots, self.alternative["snap"], gamename)
-
-                # Save state
-                if self.check_save_states(emulator, gamename):
-                    self.set_game_data(
-                        Columns.Save, self.icons["save"], gamename)
-
-                else:
-                    self.set_game_data(
-                        Columns.Save, self.alternative["save"], gamename)
-
-        # ----------------------------
-        #   Refresh widgets
-        # ----------------------------
-
-        name, extension = splitext(basename(self.selection["game"]))
-
-        # Current selected game is the same as launched
-        if name == gamename:
-            self.tool_item_launch.set_sensitive(True)
-            self.tool_item_output.set_sensitive(True)
-            self.tool_item_parameters.set_sensitive(True)
-            self.menu_item_launch.set_sensitive(True)
-            self.menu_item_parameters.set_sensitive(True)
-            self.menu_item_output.set_sensitive(True)
-            self.menu_item_database.set_sensitive(True)
-            self.menu_item_remove.set_sensitive(True)
-            self.menu_item_rename.set_sensitive(True)
-
-        # Remove this game from threads list
-        if gamename in self.threads:
-            self.logger.debug("Remove %s from process cache" % gamename)
-            del self.threads[gamename]
 
 
     def __on_game_renamed(self, widget):
@@ -3093,6 +3012,16 @@ class Interface(Gtk.Builder):
 
         if treeiter is not None:
             self.model_games[treeiter[1]][index] = data
+
+
+    def emit(self, *args):
+        """ Override emit function
+
+        This override allow to use Interface function from another thread in
+        MainThread
+        """
+
+        idle_add(GObject.emit, self, *args)
 
 
 class Splash(object):

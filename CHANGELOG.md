@@ -1,5 +1,10 @@
 # GEM Changelog
 
+## Version 0.6.1 - Dr. Funfrock
+
+* Fix specify bash for install.sh
+* Fix random segfault when a game terminate
+
 ## Version 0.6 - Magicball (26 Feb, 2017)
 
 * Add the possibility to switch ui theme between dark and light

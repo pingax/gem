@@ -1,6 +1,14 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-if [ $UID == 0 ] ; then
+if [ -z "$BASH_VERSION" ]; then
+    bash $0 $@
+    exit $?
+fi
+
+if [ $EUID -ne 0 ] ; then
+    echo "Need to use root account to install GEM"
+
+else
     echo "==> Install GEM"
     python3 setup.py install
 
@@ -14,7 +22,4 @@ if [ $UID == 0 ] ; then
     echo "==> Install desktop file"
     mkdir -p /usr/share/applications/
     cp gem.desktop /usr/share/applications/
-
-else
-    echo "Need to use root account to install GEM"
 fi
