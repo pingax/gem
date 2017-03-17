@@ -2,6 +2,9 @@
 
 ## Version 0.6.1 - Dr. Funfrock
 
+* Add windows size memorization
+* Fix manage preferences window as Dialog when open from GEM window
+* Fix preferences window crash when use drag and drop in main window while preferences is open
 * Fix specify bash for install.sh
 * Fix random segfault when a game terminate
 

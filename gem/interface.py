@@ -232,6 +232,8 @@ class Interface(Gtk.Builder):
 
         self.keys = list()
 
+        self.__resize_once = False
+
         # ------------------------------------
         #   Initialize logger
         # ------------------------------------
@@ -575,7 +577,7 @@ class Interface(Gtk.Builder):
             "activate", self.__on_game_removed)
 
         self.menu_item_preferences.connect(
-            "activate", Preferences, self, self.logger)
+            "activate", self.__on_show_preferences)
         self.menu_item_gem_log.connect(
             "activate", self.__on_show_log)
         self.dark_theme_signal = self.menu_item_dark_theme.connect(
@@ -692,6 +694,13 @@ class Interface(Gtk.Builder):
 
                 self.logger.info(_("Save %s for next startup") % console)
 
+        # ------------------------------------
+        #   Windows size
+        # ------------------------------------
+
+        self.config.modify("windows", "main", "%dx%d" % self.window.get_size())
+        self.config.update()
+
         self.logger.info(_("Close interface"))
 
         # Gtk.main_quit()
@@ -758,6 +767,31 @@ class Interface(Gtk.Builder):
 
                 else:
                     self.alternative[icon] = self.empty
+
+        # ------------------------------------
+        #   Window size
+        # ------------------------------------
+
+        if not self.__resize_once:
+            try:
+                width, height = self.config.get("windows", "main",
+                    fallback="1024x768").split('x')
+
+                self.window.set_default_size(int(width), int(height))
+                self.window.resize(int(width), int(height))
+
+            except ValueError as error:
+                self.logger.error(
+                    _("Cannot resize main window: %s" % str(error)))
+
+                self.window.set_default_size(1024, 768)
+
+            self.window.set_position(Gtk.WindowPosition.CENTER)
+
+            self.window.hide()
+            self.window.unrealize()
+
+            self.__resize_once = True
 
         # ------------------------------------
         #   Widgets
@@ -1208,6 +1242,24 @@ class Interface(Gtk.Builder):
             if not self.check_screenshots(emulator, gamename):
                 self.set_game_data(
                     Columns.Snapshots, self.alternative["snap"], gamename)
+
+
+    def __on_show_preferences(self, widget):
+        """ Show preferences window
+
+        This function show the gem preferences manager
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        self.window.set_sensitive(False)
+
+        Preferences(self, self.logger).start()
+
+        self.window.set_sensitive(True)
 
 
     def __on_show_log(self, widget):

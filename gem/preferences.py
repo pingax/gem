@@ -83,13 +83,11 @@ class Manager(object):
 
 class Preferences(Gtk.Builder):
 
-    def __init__(self, widget=None, parent=None, logger=None):
+    def __init__(self, parent=None, logger=None):
         """ Constructor
 
         Other Parameters
         ----------------
-        widget : Gtk.Widget
-            Object which receive signal (Default: None)
         parent : Gtk.Window
             Parent object (Default: None)
         logger : logging.Logger
@@ -113,23 +111,38 @@ class Preferences(Gtk.Builder):
 
         self.shortcuts = {
             _("Interface"): {
-                "gem": [_("Open main log"), "<Control>L"],
-                "preferences": [_("Open preferences"), "<Control>P"],
-                "quit": [_("Quit application"), "<Control>Q"] },
+                "gem": [
+                    _("Open main log"), "<Control>L"],
+                "preferences": [
+                    _("Open preferences"), "<Control>P"],
+                "quit": [
+                    _("Quit application"), "<Control>Q"] },
             _("Game"): {
-                "start": [_("Launch a game"), "Return"],
-                "favorite": [_("Mark a game as favorite"), "F3"],
-                "multiplayer": [_("Mark a game as multiplayer"), "F4"],
-                "snapshots": [_("Show game snapshots"), "F5"],
-                "log": [_("Open game log"), "F6"],
-                "notes": [_("Open game notes"), "F7"] },
+                "start": [
+                    _("Launch a game"), "Return"],
+                "favorite": [
+                    _("Mark a game as favorite"), "F3"],
+                "multiplayer": [
+                    _("Mark a game as multiplayer"), "F4"],
+                "snapshots": [
+                    _("Show game snapshots"), "F5"],
+                "log": [
+                    _("Open game log"), "F6"],
+                "notes": [
+                    _("Open game notes"), "F7"] },
             _("Edit"): {
-                "remove": [_("Remove a game from database"), "Delete"],
-                "delete": [_("Remove a game from disk"), "<Control>Delete"],
-                "rename": [_("Rename a game"), "F2"],
-                "exceptions": [_("Set specific arguments for a game"), "F12"],
-                "open": [_("Open selected game directory"), "<Control>O"],
-                "copy": [_("Copy selected game path"), "<Control>C"],
+                "remove": [
+                    _("Remove a game from database"), "Delete"],
+                "delete": [
+                    _("Remove a game from disk"), "<Control>Delete"],
+                "rename": [
+                    _("Rename a game"), "F2"],
+                "exceptions": [
+                    _("Set specific arguments for a game"), "F12"],
+                "open": [
+                    _("Open selected game directory"), "<Control>O"],
+                "copy": [
+                    _("Copy selected game path"), "<Control>C"],
                 "desktop": [
                     _("Generate desktop entry for a game"), "<Control>G"] }}
 
@@ -207,16 +220,64 @@ class Preferences(Gtk.Builder):
         #   Main window
         # ------------------------------------
 
-        self.window = self.get_object("window_preferences")
+        grid_preferences = self.get_object("grid_preferences")
+
+        # Gtk.Window
+        if self.interface is None:
+            self.window = Gtk.Window()
+
+            grid_preferences.pack_start(
+                self.get_object("grid_buttons"), False, True, 2)
+
+            self.window.add(grid_preferences)
+
+        # Gtk.Dialog
+        else:
+            self.window = Gtk.Dialog()
+
+            # Properties
+            self.window.set_transient_for(self.interface.window)
+
+            self.window.set_modal(True)
+            self.window.set_destroy_with_parent(True)
+
+            box = self.window.get_content_area()
+
+            box.pack_start(grid_preferences, True, True, 0)
+
+            box.set_spacing(2)
+            box.get_children()[-1].set_border_width(4)
+
+            self.window.add_buttons(
+                Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                Gtk.STOCK_SAVE, Gtk.ResponseType.APPLY)
 
         # Properties
+        self.window.set_can_focus(True)
+        self.window.set_keep_above(True)
+
+        self.window.set_border_width(4)
+
         self.window.set_title("%s - %s (%s) - %s" % (
             Gem.Name, Gem.Version, Gem.CodeName, _("Preferences")))
 
-        if self.interface is not None:
-            self.window.set_transient_for(self.interface.window)
-
         self.window.set_default_icon_name("gtk-preferences")
+
+        try:
+            width, height = self.config.get("windows", "preferences",
+                fallback="800x600").split('x')
+
+            self.window.set_default_size(int(width), int(height))
+            self.window.resize(int(width), int(height))
+
+        except ValueError as error:
+            self.logger.error(
+                _("Cannot resize preferences window: %s" % str(error)))
+
+            self.window.set_default_size(800, 600)
+
+        self.window.set_position(Gtk.WindowPosition.CENTER)
+        self.window.set_type_hint(Gdk.WindowTypeHint.DIALOG)
 
         # ------------------------------------
         #   Header
@@ -517,10 +578,27 @@ class Preferences(Gtk.Builder):
 
         self.load_configuration()
 
+        self.window.hide()
+        self.window.unrealize()
+
+
+    def start(self):
+        """ Start interface
+        """
+
         self.window.show_all()
 
         if self.interface is None:
             Gtk.main()
+
+        else:
+            response = self.window.run()
+
+            if response == Gtk.ResponseType.APPLY:
+                self.button_save.clicked()
+
+            else:
+                self.button_cancel.clicked()
 
 
     def __stop_interface(self, widget=None, event=None):
@@ -584,8 +662,15 @@ class Preferences(Gtk.Builder):
 
         self.window.hide()
 
+        self.config.modify(
+            "windows", "preferences", "%dx%d" % self.window.get_size())
+        self.config.update()
+
         if self.interface is None:
             Gtk.main_quit()
+
+        else:
+            self.window.destroy()
 
 
     def load_configuration(self):

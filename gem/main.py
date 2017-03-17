@@ -177,7 +177,7 @@ def main():
 
         if args.preferences:
             from gem.preferences import Preferences
-            Preferences(logger=logger)
+            Preferences(logger=logger).start()
 
         else:
             from gem.interface import launch_gem
