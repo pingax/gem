@@ -24,6 +24,9 @@ from logging.config import fileConfig
 
 # System
 from os import mkdir
+from os import getpid
+from os import remove
+from os import environ
 from os import makedirs
 
 from os.path import join as path_join
@@ -123,6 +126,33 @@ def main():
     if not args.debug:
         logger.setLevel(logging.INFO)
 
+    # ------------------------------------
+    #   Check lock
+    # ------------------------------------
+
+    if exists(expanduser(Path.Lock)):
+        with open(expanduser(Path.Lock), 'r') as pipe:
+            gem_pid = pipe.read()
+
+        # Lock PID still exists
+        if len(gem_pid) > 0 and exists(path_join("/proc", gem_pid)):
+
+            # Check process command line
+            if exists(path_join("/proc", gem_pid, "cmdline")):
+                with open(path_join("/proc", gem_pid, "cmdline"), 'r') as pipe:
+                    content = pipe.read()
+
+                # Check if lock process is gem
+                if "gem.main" in content or "gem-ui" in content:
+                    logger.critical(
+                        _("GEM is already running with PID %s" % gem_pid))
+
+                    return True
+
+    # ------------------------------------
+    #   Check folders and launch interface
+    # ------------------------------------
+
     try:
         # ------------------------------------
         #   Icons folders
@@ -175,13 +205,39 @@ def main():
         #   Start main window
         # ------------------------------------
 
-        if args.preferences:
-            from gem.preferences import Preferences
-            Preferences(logger=logger).start()
+        # Check display settings
+        if "DISPLAY" in environ and len(environ["DISPLAY"]) > 0:
+
+            # ------------------------------------
+            #   Manage lock
+            # ------------------------------------
+
+            with open(expanduser(Path.Lock), 'w') as pipe:
+                pipe.write(str(getpid()))
+
+            logger.debug("Start with PID %s" % getpid())
+
+            # ------------------------------------
+            #   Launch interface
+            # ------------------------------------
+
+            if args.preferences:
+                from gem.preferences import Preferences
+                Preferences(logger=logger).start()
+
+            else:
+                from gem.interface import launch_gem
+                launch_gem(logger, args.reconstruct)
+
+            # ------------------------------------
+            #   Remove lock
+            # ------------------------------------
+
+            if exists(expanduser(Path.Lock)):
+                remove(expanduser(Path.Lock))
 
         else:
-            from gem.interface import launch_gem
-            launch_gem(logger, args.reconstruct)
+            logger.critical(_("Cannot launch GEM without display"))
 
     except ImportError as error:
         logger.critical(_("Import error with interface: %s" % str(error)))

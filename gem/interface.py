@@ -703,7 +703,6 @@ class Interface(Gtk.Builder):
 
         self.logger.info(_("Close interface"))
 
-        # Gtk.main_quit()
         self.main_loop.quit()
 
 
@@ -1289,7 +1288,24 @@ class Interface(Gtk.Builder):
             dialog = DialogEditor(
                 self, title, expanduser(path), False, Icons.Output)
 
+            try:
+                width, height = self.config.get("windows", "log",
+                    fallback="800x600").split('x')
+
+                dialog.set_size(int(width), int(height))
+
+                dialog.hide()
+                dialog.unrealize()
+
+            except ValueError as error:
+                self.logger.error(
+                    _("Cannot resize log window: %s" % str(error)))
+
             dialog.run()
+
+            self.config.modify("windows", "log", "%dx%d" % dialog.get_size())
+            self.config.update()
+
             dialog.destroy()
 
 
@@ -1316,6 +1332,19 @@ class Interface(Gtk.Builder):
         if path is not None and not expanduser(path) in self.notes.keys():
             dialog = DialogEditor(
                 self, title, expanduser(path), icon="emblem-documents")
+
+            try:
+                width, height = self.config.get("windows", "notes",
+                    fallback="800x600").split('x')
+
+                dialog.set_size(int(width), int(height))
+
+                dialog.hide()
+                dialog.unrealize()
+
+            except ValueError as error:
+                self.logger.error(
+                    _("Cannot resize notes window: %s" % str(error)))
 
             # Allow to launch games with open notes
             dialog.set_modal(False)
@@ -1362,6 +1391,9 @@ class Interface(Gtk.Builder):
 
                 self.logger.info(_("Update %s notes") % title)
 
+        self.config.modify("windows", "notes", "%dx%d" % dialog.get_size())
+        self.config.update()
+
         dialog.destroy()
 
         if path in self.notes.keys():
@@ -1395,6 +1427,19 @@ class Interface(Gtk.Builder):
                     dialog = DialogEditor(self,
                         _("Configuration for %s") % emulator, expanduser(path))
 
+                    try:
+                        width, height = self.config.get("windows", "editor",
+                            fallback="800x600").split('x')
+
+                        dialog.set_size(int(width), int(height))
+
+                        dialog.hide()
+                        dialog.unrealize()
+
+                    except ValueError as error:
+                        self.logger.error(
+                            _("Cannot resize editor window: %s" % str(error)))
+
                     response = dialog.run()
 
                     if response == Gtk.ResponseType.APPLY:
@@ -1405,6 +1450,10 @@ class Interface(Gtk.Builder):
 
                         self.logger.info(
                             _("Update %s configuration file") % emulator)
+
+                    self.config.modify(
+                        "windows", "editor", "%dx%d" % dialog.get_size())
+                    self.config.update()
 
                     dialog.destroy()
 
@@ -1921,6 +1970,7 @@ class Interface(Gtk.Builder):
 
                 self.tool_item_notes.set_sensitive(True)
                 self.menu_item_notes.set_sensitive(True)
+                self.menu_item_preferences.set_sensitive(False)
 
 
     def __on_game_terminate(self, widget, thread):
@@ -2022,6 +2072,9 @@ class Interface(Gtk.Builder):
         if gamename in self.threads:
             self.logger.debug("Remove %s from process cache" % gamename)
             del self.threads[gamename]
+
+        if len(self.threads) == 0:
+            self.menu_item_preferences.set_sensitive(True)
 
 
     def generate_command(self, emulator, filename):

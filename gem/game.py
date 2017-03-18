@@ -106,7 +106,7 @@ class GameThread(Thread, GObject):
         self.parent = parent
         self.logger = parent.logger
 
-        self.title = title
+        self.name = title
         self.command = command
         self.emulator = emulator
         self.filename = filename
@@ -117,8 +117,6 @@ class GameThread(Thread, GObject):
         # ----------------------------
         #   Generate data
         # ----------------------------
-
-        self.name, self.extension = splitext(basename(filename))
 
         self.path = path_join(expanduser(Path.Logs), "%s.log" % filename)
 
@@ -145,7 +143,7 @@ class GameThread(Thread, GObject):
 
             output, error_output = self.proc.communicate()
 
-            self.logger.info(_("Close %s") % self.title)
+            self.logger.info(_("Close %s") % self.name)
 
             self.proc.terminate()
 
