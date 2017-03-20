@@ -1285,21 +1285,15 @@ class Interface(Gtk.Builder):
                 title = self.selection["name"]
 
         if path is not None and exists(expanduser(path)):
-            dialog = DialogEditor(
-                self, title, expanduser(path), False, Icons.Output)
-
             try:
-                width, height = self.config.get("windows", "log",
+                size = self.config.get("windows", "log",
                     fallback="800x600").split('x')
 
-                dialog.set_size(int(width), int(height))
-
-                dialog.hide()
-                dialog.unrealize()
-
             except ValueError as error:
-                self.logger.error(
-                    _("Cannot resize log window: %s" % str(error)))
+                size = (800, 600)
+
+            dialog = DialogEditor(
+                self, title, expanduser(path), size, False, Icons.Output)
 
             dialog.run()
 
@@ -1330,21 +1324,15 @@ class Interface(Gtk.Builder):
             title = self.selection["name"]
 
         if path is not None and not expanduser(path) in self.notes.keys():
-            dialog = DialogEditor(
-                self, title, expanduser(path), icon="emblem-documents")
-
             try:
-                width, height = self.config.get("windows", "notes",
+                size = self.config.get("windows", "notes",
                     fallback="800x600").split('x')
 
-                dialog.set_size(int(width), int(height))
-
-                dialog.hide()
-                dialog.unrealize()
-
             except ValueError as error:
-                self.logger.error(
-                    _("Cannot resize notes window: %s" % str(error)))
+                size = (800, 600)
+
+            dialog = DialogEditor(
+                self, title, expanduser(path), size, icon="emblem-documents")
 
             # Allow to launch games with open notes
             dialog.set_modal(False)
@@ -1424,21 +1412,15 @@ class Interface(Gtk.Builder):
                 path = self.emulators.get(emulator, "configuration")
 
                 if path is not None and exists(expanduser(path)):
-                    dialog = DialogEditor(self,
-                        _("Configuration for %s") % emulator, expanduser(path))
-
                     try:
-                        width, height = self.config.get("windows", "editor",
+                        size = self.config.get("windows", "editor",
                             fallback="800x600").split('x')
 
-                        dialog.set_size(int(width), int(height))
-
-                        dialog.hide()
-                        dialog.unrealize()
-
                     except ValueError as error:
-                        self.logger.error(
-                            _("Cannot resize editor window: %s" % str(error)))
+                        size = (800, 600)
+
+                    dialog = DialogEditor(self, _("Configuration for %s") % (
+                        emulator), expanduser(path), size)
 
                     response = dialog.run()
 

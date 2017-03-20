@@ -319,7 +319,7 @@ class Question(TemplateDialog):
 
 class DialogEditor(Dialog):
 
-    def __init__(self, parent, title, file_path, editable=True,
+    def __init__(self, parent, title, file_path, size, editable=True,
         icon="gtk-file"):
         """ Constructor
 
@@ -331,6 +331,8 @@ class DialogEditor(Dialog):
             Dialog title
         file_path : str
             File path
+        size : (int, int)
+            Dialog size
 
         Other Parameters
         ----------------
@@ -347,11 +349,15 @@ class DialogEditor(Dialog):
         #   Initialize variables
         # ------------------------------------
 
+        if type(editable) is not bool:
+            raise TypeError("Wrong type for editable : bool wanted !")
+
+        if type(size) is not list:
+            raise TypeError("Wrong type for size : list wanted !")
+
         self.path = file_path
         self.editable = editable
-
-        if type(self.editable) is not bool:
-            raise TypeError("Wrong type for editable : bool wanted !")
+        self.__width, self.__height = size
 
         self.founded_iter = list()
         self.current_index = int()
@@ -374,8 +380,6 @@ class DialogEditor(Dialog):
     def __init_widgets(self):
         """ Initialize interface widgets
         """
-
-        self.set_size(800, 600)
 
         if self.editable:
             self.add_buttons(
@@ -545,6 +549,11 @@ class DialogEditor(Dialog):
         if exists(expanduser(self.path)):
             with open(self.path, 'r') as pipe:
                 self.buffer_editor.set_text(''.join(pipe.readlines()))
+
+        self.set_size(int(self.__width), int(self.__height))
+
+        self.hide()
+        self.unrealize()
 
         self.show_all()
 
