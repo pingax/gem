@@ -352,9 +352,6 @@ class DialogEditor(Dialog):
         if type(editable) is not bool:
             raise TypeError("Wrong type for editable : bool wanted !")
 
-        if type(size) is not list:
-            raise TypeError("Wrong type for size : list wanted !")
-
         self.path = file_path
         self.editable = editable
         self.__width, self.__height = size
