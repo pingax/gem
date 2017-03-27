@@ -179,10 +179,27 @@ msgid "Cannot find emulator for %s"
 msgstr "No puedo encontrar el emulador para %s"
 
 #
+# File: gem/main.py, line: 240
+msgid "Cannot launch GEM without display"
+msgstr ""
+
+#
 # File: gem/main.py, line: 128
 #, python-format
 msgid "Cannot open interface: %s"
 msgstr "No puedo abrir la interfaz: %s"
+
+#
+# File: gem/interface.py, line: 1892
+#, fuzzy, python-format
+msgid "Cannot resize main window: %s"
+msgstr "No pude encontrar %s"
+
+#
+# File: gem/preferences.py, line: 275
+#, python-format
+msgid "Cannot resize preferences window: %s"
+msgstr ""
 
 #
 # File: gem/interface.py, line: 2161
@@ -351,6 +368,12 @@ msgstr "Pantalla completa"
 # File: gem/interface.py, line: 937
 msgid "GEM"
 msgstr "GEM"
+
+#
+# File: gem/main.py, line: 148
+#, python-format
+msgid "GEM is already running with PID %s"
+msgstr ""
 
 #
 # File: gem/preferences.py, line: 113

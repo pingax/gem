@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.6\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2017-02-20 10:36+0100\n"
+"PO-Revision-Date: 2017-03-27 20:56+0200\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -177,10 +177,27 @@ msgid "Cannot find emulator for %s"
 msgstr "Impossible de trouver l'émulateur pour %s !"
 
 #
+# File: gem/main.py, line: 240
+msgid "Cannot launch GEM without display"
+msgstr "Impossible de lancer GEM sans affichage"
+
+#
 # File: gem/main.py, line: 136
 #, python-format
 msgid "Cannot open interface: %s"
 msgstr "Impossible d'importer l'interface: %s"
+
+#
+# File: gem/interface.py, line: 942
+#, python-format
+msgid "Cannot resize main window: %s"
+msgstr "Impossible de redimensionner la fenêtre principale: %s"
+
+#
+# File: gem/preferences.py, line: 275
+#, python-format
+msgid "Cannot resize preferences window: %s"
+msgstr "Impossible de redimensionner la fenêtre des préférences: %s"
 
 #
 # File: gem/interface.py, line: 2054
@@ -344,6 +361,12 @@ msgstr "Plein écran"
 # File: gem/interface.py, line: 937
 msgid "GEM"
 msgstr "GEM"
+
+#
+# File: gem/main.py, line: 148
+#, python-format
+msgid "GEM is already running with PID %s"
+msgstr "GEM est déjà en cours de fonctionnement avec le PID %s"
 
 #
 # File: gem/preferences.py, line: 113
