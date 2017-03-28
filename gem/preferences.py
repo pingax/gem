@@ -101,7 +101,7 @@ class Preferences(Gtk.Builder):
             self.add_from_file(get_data(path_join("ui", "preferences.glade")))
 
         except OSError as error:
-            sys_exit(_("Cannot open interface: %s" % error))
+            sys_exit(_("Cannot open interface: %s") % error)
 
         # ------------------------------------
         #   Initialize variables
@@ -272,7 +272,7 @@ class Preferences(Gtk.Builder):
 
         except ValueError as error:
             self.logger.error(
-                _("Cannot resize preferences window: %s" % str(error)))
+                _("Cannot resize preferences window: %s") % str(error))
 
             self.window.set_default_size(800, 600)
 
@@ -1050,7 +1050,7 @@ class Console(Gtk.Builder):
                 path_join("ui", "preferences_dialogs.glade")))
 
         except OSError as error:
-            raise IOError(_("Cannot open interface: %s" % error))
+            raise IOError(_("Cannot open interface: %s") % error)
 
         # ------------------------------------
         #   Initialize variables
@@ -1379,7 +1379,7 @@ class Emulator(Gtk.Builder):
                 path_join("ui", "preferences_dialogs.glade")))
 
         except OSError as error:
-            raise IOError(_("Cannot open interface: %s" % error))
+            raise IOError(_("Cannot open interface: %s") % error)
 
         # ------------------------------------
         #   Initialize variables
@@ -1461,7 +1461,8 @@ class Emulator(Gtk.Builder):
         label_screenshots.set_label(_("Snapshots"))
         label_regex.set_markup("<i>%s</i>" % (
             _("<name> = ROM filename, <lname> = ROM lowercase filename\n"
-            "<rom_path> = ROM folder").replace('>', "&gt;").replace('<', "&lt;")))
+            "<rom_path> = ROM folder").replace('>', "&gt;").replace(
+            '<', "&lt;")))
 
         # ------------------------------------
         #   Init widgets

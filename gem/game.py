@@ -166,11 +166,11 @@ class GameThread(Thread, GObject):
                 pipe.write(output)
 
         except OSError as error:
-            self.logger.error(_("OSError occurs: %s" % error))
+            self.logger.error(_("OSError occurs: %s") % error)
             self.error = True
 
         except MemoryError as error:
-            self.logger.error(_("MemoryError occurs: %s" % error))
+            self.logger.error(_("MemoryError occurs: %s") % error)
             self.error = True
 
         except KeyboardInterrupt as error:

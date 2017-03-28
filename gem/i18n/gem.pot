@@ -43,12 +43,12 @@ msgstr  ""
 msgid   "%s has been deleted from disk"
 msgstr  ""
 #
-# File: gem/interface.py, line: 2912
+# File: gem/interface.py, line: 2916
 #, python-format
 msgid   "%s is already in the roms folder. Canceling operation."
 msgstr  ""
 #
-# File: gem/interface.py, line: 2667
+# File: gem/interface.py, line: 2671
 #, python-format
 msgid   "%s was generated successfully"
 msgstr  ""
@@ -78,14 +78,14 @@ msgstr  ""
 msgid   "Action"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 1923
-# File: gem/preferences.py, line: 1953
-# File: gem/preferences.py, line: 1960
-# File: gem/preferences.py, line: 1982
+# File: gem/preferences.py, line: 1924
+# File: gem/preferences.py, line: 1954
+# File: gem/preferences.py, line: 1961
+# File: gem/preferences.py, line: 1983
 msgid   "All icons"
 msgstr  ""
 #
-# File: gem/interface.py, line: 2673
+# File: gem/interface.py, line: 2677
 msgid   "An error occur during generation, consult log for futher details."
 msgstr  ""
 #
@@ -138,7 +138,7 @@ msgid   "Cannot launch GEM without display"
 msgstr  ""
 #
 # File: gem/interface.py, line: 212
-# File: gem/interface.py, line: 3176
+# File: gem/interface.py, line: 3180
 # File: gem/preferences.py, line: 104
 # File: gem/preferences.py, line: 1053
 # File: gem/preferences.py, line: 1382
@@ -156,7 +156,7 @@ msgstr  ""
 msgid   "Cannot resize preferences window: %s"
 msgstr  ""
 #
-# File: gem/interface.py, line: 2920
+# File: gem/interface.py, line: 2924
 #, python-format
 msgid   "Cannot write into %s. Canceling operation."
 msgstr  ""
@@ -175,7 +175,7 @@ msgid   "Check icons folders"
 msgstr  ""
 #
 # File: gem/preferences.py, line: 1291
-# File: gem/preferences.py, line: 1719
+# File: gem/preferences.py, line: 1720
 msgid   "Choose an icon"
 msgstr  ""
 #
@@ -236,12 +236,12 @@ msgstr  ""
 msgid   "Default options"
 msgstr  ""
 #
-# File: gem/interface.py, line: 2916
+# File: gem/interface.py, line: 2920
 #, python-format
 msgid   "Destination %s not exist. Canceling operation."
 msgstr  ""
 #
-# File: gem/interface.py, line: 2901
+# File: gem/interface.py, line: 2905
 #, python-format
 msgid   "Drop %(rom)s to %(path)s"
 msgstr  ""
@@ -317,8 +317,8 @@ msgstr  ""
 msgid   "Generate desktop entry for a game"
 msgstr  ""
 #
-# File: gem/interface.py, line: 2666
-# File: gem/interface.py, line: 2672
+# File: gem/interface.py, line: 2670
+# File: gem/interface.py, line: 2676
 #, python-format
 msgid   "Generate menu entry for %s"
 msgstr  ""
@@ -327,7 +327,7 @@ msgstr  ""
 msgid   "Horizontal"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 1924
+# File: gem/preferences.py, line: 1925
 msgid   "Image file"
 msgstr  ""
 #
@@ -414,7 +414,7 @@ msgstr  ""
 msgid   "MemoryError occurs: %s"
 msgstr  ""
 #
-# File: gem/interface.py, line: 3206
+# File: gem/interface.py, line: 3210
 msgid   "Migrating entries from old database"
 msgstr  ""
 #
@@ -543,11 +543,11 @@ msgstr  ""
 msgid   "Search"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 1704
+# File: gem/preferences.py, line: 1705
 msgid   "Select a binary"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 1825
+# File: gem/preferences.py, line: 1826
 msgid   "Select icon from"
 msgstr  ""
 #
@@ -657,7 +657,7 @@ msgstr  ""
 msgid   "Terminate by keyboard interrupt"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 1677
+# File: gem/preferences.py, line: 1678
 msgid   "This binary not exist, please, check the path"
 msgstr  ""
 #
@@ -665,7 +665,7 @@ msgstr  ""
 msgid   "This console already exist, please, choose another name"
 msgstr  ""
 #
-# File: gem/preferences.py, line: 1652
+# File: gem/preferences.py, line: 1653
 msgid   "This emulator already exist, please, choose another name"
 msgstr  ""
 #
@@ -683,7 +683,7 @@ msgstr  ""
 msgid   "This game was removed successfully"
 msgstr  ""
 #
-# File: gem/interface.py, line: 2885
+# File: gem/interface.py, line: 2889
 #, python-format
 msgid   "This rom already exists in %s. Do you want to replace it ?"
 msgstr  ""

@@ -209,7 +209,7 @@ class Interface(Gtk.Builder):
             self.add_from_file(get_data(path_join("ui", "interface.glade")))
 
         except OSError as error:
-            logger.critical(_("Cannot open interface: %s" % error))
+            logger.critical(_("Cannot open interface: %s") % error)
             sys_exit()
 
         # ------------------------------------
@@ -781,7 +781,7 @@ class Interface(Gtk.Builder):
 
             except ValueError as error:
                 self.logger.error(
-                    _("Cannot resize main window: %s" % str(error)))
+                    _("Cannot resize main window: %s") % str(error))
 
                 self.window.set_default_size(1024, 768)
 
@@ -1231,7 +1231,7 @@ class Interface(Gtk.Builder):
 
             else:
                 self.set_message(_("Missing binary"),
-                    _("Cannot find <b>%s</b> viewer !" % viewer),
+                    _("Cannot find <b>%s</b> viewer !") % viewer,
                     "dialog-warning")
 
             # ----------------------------
@@ -1472,8 +1472,8 @@ class Interface(Gtk.Builder):
                         status = self.icons["warning"]
 
                         self.logger.warning(
-                            _("Cannot find %(binary)s for %(console)s" % dict(
-                            binary=binary, console=console)))
+                            _("Cannot find %(binary)s for %(console)s") % {
+                                "binary": binary, "console": console })
 
                     icon = icon_from_data(self.consoles.item(
                         console, "icon"), self.empty, subfolder="consoles")
@@ -2081,7 +2081,7 @@ class Interface(Gtk.Builder):
         not_use_filename = False
 
         if not exists(filename):
-            self.set_message(_("Missing file"), _("Cannot find %s" % filename))
+            self.set_message(_("Missing file"), _("Cannot find %s") % filename)
 
             return None
 
@@ -2092,7 +2092,7 @@ class Interface(Gtk.Builder):
         binary = self.emulators.get(emulator, "binary")
 
         if len(get_binary_path(binary)) == 0:
-            self.set_message(_("Missing binary"), _("Cannot find %s" % binary))
+            self.set_message(_("Missing binary"), _("Cannot find %s") % binary)
 
             return None
 
@@ -3177,7 +3177,7 @@ class Splash(object):
             builder.add_from_file(get_data(path_join("ui", "interface.glade")))
 
         except OSError as error:
-            sys_exit(_("Cannot open interface: %s" % error))
+            sys_exit(_("Cannot open interface: %s") % error)
 
         # ------------------------------------
         #   Main window

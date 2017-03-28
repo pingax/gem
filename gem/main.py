@@ -145,7 +145,7 @@ def main():
                 # Check if lock process is gem
                 if "gem.main" in content or "gem-ui" in content:
                     logger.critical(
-                        _("GEM is already running with PID %s" % gem_pid))
+                        _("GEM is already running with PID %s") % gem_pid)
 
                     return True
 
@@ -240,14 +240,14 @@ def main():
             logger.critical(_("Cannot launch GEM without display"))
 
     except ImportError as error:
-        logger.critical(_("Import error with interface: %s" % str(error)))
+        logger.critical(_("Import error with interface: %s") % str(error))
 
     except KeyboardInterrupt as error:
         logger.warning(_("Terminate by keyboard interrupt"))
 
     except Exception as error:
         logger.critical(
-            _("An error occur during program exec: %s" % str(error)))
+            _("An error occur during program exec: %s") % str(error))
 
 
 if __name__ == "__main__":
