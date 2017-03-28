@@ -2133,20 +2133,19 @@ class Interface(Gtk.Builder):
                 self.emulators.get(emulator, "configuration"))
 
         if "<rom_path>" in args:
-            args = args.replace("<rom_path>", "\"%s\"" % dirname(
-                expanduser(filename)))
+            args = args.replace("<rom_path>", dirname(expanduser(filename)))
 
             not_use_filename = True
 
         if "<rom_name>" in args:
             name, extension = splitext(expanduser(filename))
 
-            args = args.replace("<rom_name>", "\"%s\"" % name)
+            args = args.replace("<rom_name>", name)
 
             not_use_filename = True
 
         if "<rom_file>" in args:
-            args = args.replace("<rom_file>", "\"%s\"" % self.selection["game"])
+            args = args.replace("<rom_file>", self.selection["game"])
 
             not_use_filename = True
 
@@ -2165,7 +2164,7 @@ class Interface(Gtk.Builder):
 
         # Append game file
         if not not_use_filename:
-            command.append("\"%s\"" % self.selection["game"])
+            command.append(self.selection["game"])
 
         return command
 
@@ -2644,6 +2643,10 @@ class Interface(Gtk.Builder):
                     "%path%": dirname(self.selection["game"]),
                     "%command%": ' '.join(self.generate_command(
                         emulator, self.selection["game"])) }
+
+                # Quote game path
+                values["%command%"] = values["%command%"].replace(
+                    self.selection["game"], "\"%s\"" % self.selection["game"])
 
                 try:
                     with open(get_data(Conf.Desktop), 'r') as pipe:
