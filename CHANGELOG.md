@@ -9,6 +9,7 @@
 * Fix preferences window crash when use drag and drop in main window while preferences is open
 * Fix specify bash for install.sh
 * Fix random segfault when a game terminate
+* Fix cannot launch Exec command in generate menu entries when filepath has some spaces
 
 ## Version 0.6 - Magicball (26 Feb, 2017)
 

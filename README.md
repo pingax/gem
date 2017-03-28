@@ -4,7 +4,7 @@
 
 GEM (Graphical Emulators Manager) est une interface qui à pour but de vous aider à gérer vos roms de jeux et vos émulateurs simplement et efficacement.
 
-![Interface principale de GEM](https://gem.tuxfamily.org/data/medias/preview.png)
+![Interface principale de GEM](https://gem.tuxfamily.org/data/medias/preview.tb.png)
 
 GEM est disponible sous [licence GPLv3](http://www.gnu.org/licenses/gpl-3.0.html).
 
@@ -31,6 +31,24 @@ GEM est disponible sous [licence GPLv3](http://www.gnu.org/licenses/gpl-3.0.html
 * python3-setuptools
 * python3-xdg
 
+## Récupération des sources
+
+Pour récupérer les sources, il est possible de passer par git via:
+
+```
+git clone https://framagit.org/PacMiam/gem.git
+```
+
+Ou directement depuis la zone de [téléchargements de GEM](https://download.tuxfamily.org/gem/releases/).
+
+## Lancement
+
+Une fois à la racine des sources de GEM, exécuter la commande suivante:
+
+```
+$ python3 -m gem.main
+```
+
 ## Installation
 
 Un script d'installation est disponible pour vous aider à installer GEM. Il suffit de lancer la commande suivante en mode root:
@@ -38,6 +56,8 @@ Un script d'installation est disponible pour vous aider à installer GEM. Il suf
 ```
 # ./install.sh
 ```
+
+Un script sera placé sous le nom **gem-ui** dans le dossier /usr/bin. Une entrée de menu sera aussi créée, vous permettant de lancer GEM facilement.
 
 ## Émulateurs
 
