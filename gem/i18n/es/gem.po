@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.4\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2017-02-20 11:42+0100\n"
+"PO-Revision-Date: 2017-03-29 14:39+0200\n"
 "Last-Translator: José Luis <darknekros@gmail.com>\n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 1.8.11\n"
+"X-Generator: Poedit 1.8.12\n"
 
 # File: gem/interface.py, line: 2123
 #, python-format
@@ -181,7 +181,7 @@ msgstr "No puedo encontrar el emulador para %s"
 #
 # File: gem/main.py, line: 240
 msgid "Cannot launch GEM without display"
-msgstr ""
+msgstr "No puedo ejecutar GEM sin una sesión gráfica"
 
 #
 # File: gem/main.py, line: 128
@@ -191,15 +191,15 @@ msgstr "No puedo abrir la interfaz: %s"
 
 #
 # File: gem/interface.py, line: 1892
-#, fuzzy, python-format
+#, python-format
 msgid "Cannot resize main window: %s"
-msgstr "No pude encontrar %s"
+msgstr "No puedo cambiar el tamaño de la ventana principal: %s"
 
 #
 # File: gem/preferences.py, line: 275
 #, python-format
 msgid "Cannot resize preferences window: %s"
-msgstr ""
+msgstr "No puedo cambiar el tamaño de la ventana de las preferencias: %s"
 
 #
 # File: gem/interface.py, line: 2161
@@ -373,7 +373,7 @@ msgstr "GEM"
 # File: gem/main.py, line: 148
 #, python-format
 msgid "GEM is already running with PID %s"
-msgstr ""
+msgstr "GEM ya está ejecutandose con el PID %s"
 
 #
 # File: gem/preferences.py, line: 113
