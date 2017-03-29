@@ -1456,14 +1456,14 @@ class DialogConsoles(Dialog):
 def icon_from_data(icon, fallback=None, width=24, height=24, subfolder=None):
     """ Load an icon from path
 
-    This function search if a path is available in Path.Icons folder and return
-    a generate Pixbuf from the path. If no icon was found, return an empty
+    This function search if an icon is available in Path.Icons folder and return
+    a generate Pixbuf from the icon path. If no icon was found, return an empty
     generate Pixbuf.
 
     Parameters
     ----------
     icon : str
-        Icon path
+        Absolute or relative icon path
 
     Other Parameters
     ----------------

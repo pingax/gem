@@ -122,7 +122,10 @@ class GameThread(Thread, GObject):
 
 
     def run(self):
-        """
+        """ Launch GameThread instance
+
+        This function start a new processus with Popen and wait until it stop.
+        When it finish, GameThread emit a signal to main interface.
         """
 
         started = datetime.now()
