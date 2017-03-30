@@ -20,9 +20,9 @@ GEM est disponible sous [licence GPLv3](http://www.gnu.org/licenses/gpl-3.0.html
 
 ### Icônes
 
-* [Tango](http://tango.freedesktop.org/Tango_Desktop_Project)
-* [Gelide](http://gelide.sourceforge.net/index.php?lang=en)
-* [Evan-Amos](https://commons.wikimedia.org/wiki/User:Evan-Amos)
+* Interface: [Tango](http://tango.freedesktop.org/Tango_Desktop_Project)
+* Émulateurs: [Gelide](http://gelide.sourceforge.net/index.php?lang=en) (en partie)
+* Consoles: [Evan-Amos](https://commons.wikimedia.org/wiki/User:Evan-Amos)
 
 ## Dépendances
 

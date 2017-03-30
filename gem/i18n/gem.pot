@@ -188,7 +188,7 @@ msgstr  ""
 msgid   "Clean %s informations"
 msgstr  ""
 #
-# File: gem/game.py, line: 146
+# File: gem/game.py, line: 149
 #, python-format
 msgid   "Close %s"
 msgstr  ""
@@ -367,7 +367,7 @@ msgstr  ""
 msgid   "Launch"
 msgstr  ""
 #
-# File: gem/game.py, line: 135
+# File: gem/game.py, line: 138
 #, python-format
 msgid   "Launch %s"
 msgstr  ""
@@ -388,7 +388,7 @@ msgstr  ""
 msgid   "Load the last chosen console during startup"
 msgstr  ""
 #
-# File: gem/game.py, line: 160
+# File: gem/game.py, line: 163
 #, python-format
 msgid   "Log to %s"
 msgstr  ""
@@ -409,7 +409,7 @@ msgstr  ""
 msgid   "Mark as _multiplayer"
 msgstr  ""
 #
-# File: gem/game.py, line: 173
+# File: gem/game.py, line: 176
 #, python-format
 msgid   "MemoryError occurs: %s"
 msgstr  ""
@@ -441,7 +441,7 @@ msgstr  ""
 msgid   "None"
 msgstr  ""
 #
-# File: gem/game.py, line: 169
+# File: gem/game.py, line: 172
 #, python-format
 msgid   "OSError occurs: %s"
 msgstr  ""
@@ -652,7 +652,7 @@ msgstr  ""
 msgid   "Switch fullscreen mode"
 msgstr  ""
 #
-# File: gem/game.py, line: 177
+# File: gem/game.py, line: 180
 # File: gem/main.py, line: 246
 msgid   "Terminate by keyboard interrupt"
 msgstr  ""
