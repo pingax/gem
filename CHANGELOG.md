@@ -1,6 +1,8 @@
 # GEM Changelog
 
-## Version 0.6.1 - Dr. Funfrock
+## Version 0.7 - Vampire hunter
+
+## Version 0.6.1 - Dr. Funfrock (30 Mar, 2017)
 
 * Add windows size memorization
 * Add a lock to avoid multi GEM instances

@@ -40,8 +40,8 @@ class Gem:
     Id          = 1337
     Name        = "Graphical Emulators Manager"
     Acronym     = "GEM"
-    Version     = "0.6.1"
-    CodeName    = "Dr. Funfrock"
+    Version     = "0.7"
+    CodeName    = "Vampire hunter"
     Icon        = "gem"
     Website     = "https://gem.tuxfamily.org/"
     Copyleft    = "Copyleft 2017 - Kawa Team"
