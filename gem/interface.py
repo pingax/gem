@@ -363,7 +363,8 @@ class Interface(Gtk.Builder):
 
         # Properties
         self.tool_item_launch.set_tooltip_text(_("Launch selected game"))
-        self.tool_item_fullscreen.set_tooltip_text(_("Switch fullscreen mode"))
+        self.tool_item_fullscreen.set_tooltip_text(
+            _("Alternate game fullscreen mode"))
         self.tool_item_parameters.set_tooltip_text(_("Set custom parameters"))
         self.tool_item_screenshots.set_tooltip_text(
             _("Show selected game screenshots"))
@@ -2739,12 +2740,12 @@ class Interface(Gtk.Builder):
         """
 
         if self.tool_item_fullscreen.get_active():
-            self.logger.debug("Switch to windowed mode")
+            self.logger.debug("Switch game launch to windowed mode")
             self.get_object("image_fullscreen").set_from_icon_name(
                 "view-fullscreen", Gtk.IconSize.BUTTON)
 
         else:
-            self.logger.debug("Switch to fullscreen mode")
+            self.logger.debug("Switch game launch to fullscreen mode")
             self.get_object("image_fullscreen").set_from_icon_name(
                 "view-restore", Gtk.IconSize.BUTTON)
 
