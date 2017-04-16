@@ -1968,6 +1968,10 @@ class Interface(Gtk.Builder):
         """
 
         gamename = thread.name
+        gamefile = basename(thread.filename)
+
+        # Get file from thread
+        thread_name, thread_extension = splitext(gamefile)
 
         # ----------------------------
         #   Save game data
@@ -1986,10 +1990,10 @@ class Interface(Gtk.Builder):
                 "play_time": total,
                 "last_play": datetime.now().strftime("%d-%m-%Y %H:%M:%S"),
                 "last_play_time": play_time,
-                }, { "filename": thread.filename })
+                }, { "filename": gamefile })
 
             # Set new data into games treeview
-            value = self.database.get("games", { "filename": thread.filename })
+            value = self.database.get("games", { "filename": gamefile })
             if value is not None:
                 self.logger.debug("Update database for %s" % gamename)
 
@@ -1997,49 +2001,50 @@ class Interface(Gtk.Builder):
                 play = value.get("play", 0) + 1
 
                 self.database.modify("games",
-                    { "play": play }, { "filename": thread.filename })
+                    { "play": play }, { "filename": gamefile })
 
-                self.set_game_data(Columns.Played, str(play), gamename)
+                self.set_game_data(Columns.Played, str(play), thread_name)
 
                 # Last played
                 self.set_game_data(Columns.LastPlay,
-                    string_from_date(value["last_play"]), gamename)
+                    string_from_date(value["last_play"]), thread_name)
 
                 # Last time played
                 self.set_game_data(Columns.LastTimePlay,
-                    string_from_time(value["last_play_time"]), gamename)
+                    string_from_time(value["last_play_time"]), thread_name)
 
                 # Play time
                 self.set_game_data(Columns.TimePlay,
-                    string_from_time(value["play_time"]), gamename)
+                    string_from_time(value["play_time"]), thread_name)
 
                 # Snaps
-                if self.check_screenshots(thread.emulator, gamename):
+                if self.check_screenshots(thread.emulator, gamefile):
                     self.set_game_data(
-                        Columns.Snapshots, self.icons["snap"], gamename)
+                        Columns.Snapshots, self.icons["snap"], thread_name)
                     self.tool_item_screenshots.set_sensitive(True)
 
                 else:
-                    self.set_game_data(
-                        Columns.Snapshots, self.alternative["snap"], gamename)
+                    self.set_game_data(Columns.Snapshots,
+                        self.alternative["snap"], thread_name)
 
                 # Save state
-                if self.check_save_states(thread.emulator, gamename):
+                if self.check_save_states(thread.emulator, gamefile):
                     self.set_game_data(
-                        Columns.Save, self.icons["save"], gamename)
+                        Columns.Save, self.icons["save"], thread_name)
 
                 else:
                     self.set_game_data(
-                        Columns.Save, self.alternative["save"], gamename)
+                        Columns.Save, self.alternative["save"], thread_name)
 
         # ----------------------------
         #   Refresh widgets
         # ----------------------------
 
+        # Get current selected file
         name, extension = splitext(basename(self.selection["game"]))
 
-        # Current selected game is the same as launched
-        if name == gamename:
+        # Check if current selected file is the same as thread file
+        if name == thread_name:
             self.logger.debug("Restore widgets status for %s" % gamename)
             self.tool_item_launch.set_sensitive(True)
             self.tool_item_output.set_sensitive(True)
@@ -2052,9 +2057,9 @@ class Interface(Gtk.Builder):
             self.menu_item_rename.set_sensitive(True)
 
         # Remove this game from threads list
-        if gamename in self.threads:
+        if thread_name in self.threads:
             self.logger.debug("Remove %s from process cache" % gamename)
-            del self.threads[gamename]
+            del self.threads[thread_name]
 
         if len(self.threads) == 0:
             self.menu_item_preferences.set_sensitive(True)
