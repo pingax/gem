@@ -218,20 +218,26 @@ class Interface(Gtk.Builder):
 
         self.title = "%s - %s (%s)" % (Gem.Name, Gem.Version, Gem.CodeName)
 
+        # Store thread id for game listing
         self.list_thread = int()
 
-        self.configurators = dict()
-        self.available_configurators = dict()
-
+        # Store normal icons with icon name as key
         self.icons = dict()
+        # Store alternative icons with icon name as key
         self.alternative = dict()
+        # Store started notes with note file path as key
         self.notes = dict()
+        # Store started threads with basename game file without extension as key
         self.threads = dict()
+        # Store selected game informations with console, game and name as keys
         self.selection = dict()
+        # Store shortcut with Gtk.Widget as key
         self.shortcuts_data = dict()
 
+        # Store user keys input
         self.keys = list()
 
+        # Avoid to resize the main window everytime user modify preferences
         self.__resize_once = False
 
         # ------------------------------------

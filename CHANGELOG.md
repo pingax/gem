@@ -2,6 +2,8 @@
 
 ## Version 0.7 - Vampire hunter
 
+* Fix game with custom name won't work correctly in self.__on_game_launch
+
 ## Version 0.6.1 - Dr. Funfrock (30 Mar, 2017)
 
 * Add windows size memorization
