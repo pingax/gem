@@ -103,7 +103,7 @@ class Dialog(Gtk.Dialog):
         self.set_default_icon_name(icon)
 
         if parent is not None:
-            self.set_transient_for(parent.window)
+            self.set_transient_for(parent)
 
         self.set_modal(True)
         self.set_can_focus(True)

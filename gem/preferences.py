@@ -236,7 +236,7 @@ class Preferences(Gtk.Builder):
             self.window = Gtk.Dialog()
 
             # Properties
-            self.window.set_transient_for(self.interface.window)
+            self.window.set_transient_for(self.interface)
 
             self.window.set_modal(True)
             self.window.set_destroy_with_parent(True)

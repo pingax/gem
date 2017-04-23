@@ -52,22 +52,45 @@ class Gem:
 
 class Icons:
     Ext         = "png"
-    Misc        = "applications-other"
+    # Actions
     Error       = "dialog-error"
     Warning     = "dialog-warning"
+    Open        = "document-open"
     Properties  = "document-properties"
-    Snap        = "emblem-photos"
-    Save        = "emblem-downloads"
-    File        = "emblem-documents"
-    Except      = "emblem-important"
-    Favorite    = "emblem-favorite"
-    Game        = "input-gaming"
-    System      = "preferences-system"
-    Emulator    = "preferences-desktop"
+    Clear       = "edit-clear"
+    Copy        = "edit-copy"
+    Delete      = "edit-delete"
+    Find        = "edit-find"
+    Paste       = "edit-paste"
+    About       = "help-about"
+    Launch      = "media-playback-start"
+    Menu        = "open-menu" # Not standard
+    Fullscreen  = "view-fullscreen"
+    Restore     = "view-restore"
+    Close       = "window-close"
+    # Applications
+    Editor      = "accessories-text-editor"
     Keyboard    = "preferences-desktop-keyboard"
-    Users       = "system-users"
-    Multiplayer = "system-users"
-    Output      = "utilities-terminal"
+    Terminal    = "utilities-terminal"
+    # Categories
+    Desktop     = "preferences-desktop"
+    Other       = "applications-other"
+    System      = "preferences-system"
+    # Devices
+    Gaming      = "input-gaming"
+    # Emblems
+    Document    = "emblem-documents"
+    Download    = "emblem-downloads"
+    Favorite    = "emblem-favorite"
+    Important   = "emblem-important"
+    Photos      = "emblem-photos"
+    Users       = "system-users" # Not standard
+    # Faces
+    Monkey      = "face-monkey"
+    Sad         = "face-sad"
+    SmileBig    = "face-smile-big"
+    # Mimes
+    Image       = "image-x-generic"
 
 
 class Path:

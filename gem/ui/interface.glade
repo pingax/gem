@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Generated with glade 3.20.0 -->
 <interface>
-  <requires lib="gtk+" version="3.16"/>
+  <requires lib="gtk+" version="3.16" />
   <object class="GtkTextBuffer" id="buffer_output">
     <property name="text" translatable="yes">Lorem ipsum</property>
   </object>
-  <object class="GtkEntryBuffer" id="buffer_search"/>
+  <object class="GtkEntryBuffer" id="buffer_search" />
   <object class="GtkImage" id="image1">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -28,7 +28,7 @@
         <property name="can_focus">False</property>
         <property name="use_underline">True</property>
         <property name="use_stock">True</property>
-        <accelerator key="p" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+        <accelerator key="p" signal="activate" modifiers="GDK_CONTROL_MASK" />
       </object>
     </child>
     <child>
@@ -83,7 +83,7 @@
         <property name="can_focus">False</property>
         <property name="use_underline">True</property>
         <property name="use_stock">True</property>
-        <accelerator key="q" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+        <accelerator key="q" signal="activate" modifiers="GDK_CONTROL_MASK" />
       </object>
     </child>
   </object>
@@ -421,11 +421,11 @@
   <object class="GtkListStore" id="store_consoles">
     <columns>
       <!-- column-name column_console_icon -->
-      <column type="GdkPixbuf"/>
+      <column type="GdkPixbuf" />
       <!-- column-name column_console_name -->
-      <column type="gchararray"/>
+      <column type="gchararray" />
       <!-- column-name column_console_status -->
-      <column type="GdkPixbuf"/>
+      <column type="GdkPixbuf" />
     </columns>
   </object>
   <object class="GtkWindow" id="window">
@@ -637,7 +637,7 @@
                       </attributes>
                     </child>
                     <child>
-                      <object class="GtkCellRendererText" id="cell_consoles_name"/>
+                      <object class="GtkCellRendererText" id="cell_consoles_name" />
                       <attributes>
                         <attribute name="text">1</attribute>
                       </attributes>
@@ -758,9 +758,9 @@
                 <property name="search_column">2</property>
                 <property name="show_expanders">False</property>
                 <property name="enable_grid_lines">vertical</property>
-                <signal name="button-press-event" handler="on_game_menu_show" swapped="no"/>
+                <signal name="button-press-event" handler="on_game_menu_show" swapped="no" />
                 <child internal-child="selection">
-                  <object class="GtkTreeSelection" id="treeview_game_selection"/>
+                  <object class="GtkTreeSelection" id="treeview_game_selection" />
                 </child>
                 <child>
                   <object class="GtkTreeViewColumn" id="column_games_favorite">
@@ -947,48 +947,48 @@
   <object class="GtkListStore" id="store_emulators">
     <columns>
       <!-- column-name column_emulator_name -->
-      <column type="gchararray"/>
+      <column type="gchararray" />
     </columns>
   </object>
   <object class="GtkListStore" id="store_games">
     <columns>
       <!-- column-name favorite_status -->
-      <column type="gboolean"/>
+      <column type="gboolean" />
       <!-- column-name favorite -->
-      <column type="GdkPixbuf"/>
+      <column type="GdkPixbuf" />
       <!-- column-name name -->
-      <column type="gchararray"/>
+      <column type="gchararray" />
       <!-- column-name played -->
-      <column type="gchararray"/>
+      <column type="gchararray" />
       <!-- column-name last_played_date -->
-      <column type="gchararray"/>
+      <column type="gchararray" />
       <!-- column-name last_played_time -->
-      <column type="gchararray"/>
+      <column type="gchararray" />
       <!-- column-name time_played -->
-      <column type="gchararray"/>
+      <column type="gchararray" />
       <!-- column-name installed -->
-      <column type="gchararray"/>
+      <column type="gchararray" />
       <!-- column-name flag_arguments -->
-      <column type="GdkPixbuf"/>
+      <column type="GdkPixbuf" />
       <!-- column-name flag_screenshots -->
-      <column type="GdkPixbuf"/>
+      <column type="GdkPixbuf" />
       <!-- column-name flag_multiplayer -->
-      <column type="GdkPixbuf"/>
+      <column type="GdkPixbuf" />
       <!-- column-name flag_save -->
-      <column type="GdkPixbuf"/>
+      <column type="GdkPixbuf" />
       <!-- column-name filename -->
-      <column type="gchararray"/>
+      <column type="gchararray" />
     </columns>
   </object>
   <object class="GtkListStore" id="store_icons">
     <columns>
       <!-- column-name icon -->
-      <column type="GdkPixbuf"/>
+      <column type="GdkPixbuf" />
       <!-- column-name name -->
-      <column type="gchararray"/>
+      <column type="gchararray" />
     </columns>
   </object>
-  <object class="GtkTextTagTable" id="tag_editor"/>
+  <object class="GtkTextTagTable" id="tag_editor" />
   <object class="GtkTextBuffer" id="buffer_editor">
     <property name="tag_table">tag_editor</property>
   </object>
