@@ -351,10 +351,10 @@ class Interface(Gtk.Window):
         self.headerbar = Gtk.HeaderBar()
 
         self.tool_item_launch = Gtk.Button()
-        self.tool_item_parameters = Gtk.Button()
         self.tool_item_screenshots = Gtk.Button()
         self.tool_item_output = Gtk.Button()
         self.tool_item_notes = Gtk.Button()
+        self.tool_item_parameters = Gtk.Button()
 
         self.tool_item_fullscreen = Gtk.ToggleButton()
 
@@ -737,7 +737,7 @@ class Interface(Gtk.Window):
         self.menu_image_rename.set_from_icon_name(
             Icons.Editor, Gtk.IconSize.MENU)
         self.menu_image_parameters.set_from_icon_name(
-            Icons.Properties, Gtk.IconSize.MENU)
+            Icons.Important, Gtk.IconSize.MENU)
         self.menu_image_copy.set_from_icon_name(
             Icons.Copy, Gtk.IconSize.MENU)
         self.menu_image_open.set_from_icon_name(
@@ -828,9 +828,10 @@ class Interface(Gtk.Window):
 
         # Headerbar
         self.headerbar.pack_start(self.tool_item_launch)
+        self.headerbar.pack_start(self.tool_item_fullscreen)
         self.headerbar.pack_start(Gtk.Separator())
         self.headerbar.pack_start(self.grid_options)
-        self.headerbar.pack_start(self.tool_item_fullscreen)
+        self.headerbar.pack_start(self.tool_item_parameters)
         self.headerbar.pack_end(self.tool_item_menu)
 
         self.grid_options.pack_start(
@@ -864,10 +865,11 @@ class Interface(Gtk.Window):
         self.tool_search.add(self.entry_filter)
 
         self.tool_item_launch.add(self.tool_image_launch)
+        self.tool_item_fullscreen.add(self.tool_image_fullscreen)
         self.tool_item_screenshots.add(self.tool_image_screenshots)
         self.tool_item_output.add(self.tool_image_output)
         self.tool_item_notes.add(self.tool_image_notes)
-        self.tool_item_fullscreen.add(self.tool_image_fullscreen)
+        self.tool_item_parameters.add(self.tool_image_parameters)
         self.tool_item_menu.add(self.tool_image_menu)
 
         # Games

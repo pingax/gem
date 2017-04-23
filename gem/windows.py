@@ -128,36 +128,37 @@ class Dialog(Gtk.Dialog):
         self.dialog_box.set_border_width(4)
 
         # ------------------------------------
+        #   Headerbar
+        # ------------------------------------
+
+        headerbar = Gtk.HeaderBar()
+
+        # Properties
+        headerbar.set_title(self.title)
+        headerbar.set_show_close_button(True)
+
+        # ------------------------------------
         #   Header
         # ------------------------------------
 
         grid_header = Gtk.Box()
 
         image_header = Gtk.Image()
-        label_header = Gtk.Label()
 
         # Properties
-        grid_header.set_spacing(2)
         grid_header.set_orientation(Gtk.Orientation.HORIZONTAL)
-        grid_header.set_border_width(4)
 
         image_header.set_from_icon_name(self.icon, Gtk.IconSize.DND)
-
-        label_header.set_alignment(0, .5)
-        label_header.set_use_markup(True)
-        label_header.set_single_line_mode(True)
-        label_header.set_ellipsize(Pango.EllipsizeMode.END)
-        label_header.set_markup("<span font='14'><b>%s</b></span>" % \
-            GLib.markup_escape_text(self.title, -1))
 
         # ------------------------------------
         #   Integrate widgets
         # ------------------------------------
 
-        grid_header.pack_start(image_header, False, True, 8)
-        grid_header.pack_start(label_header, True, True, 0)
+        self.set_titlebar(headerbar)
 
-        self.dialog_box.pack_start(grid_header, False, True, 0)
+        grid_header.pack_start(image_header, False, False, 0)
+
+        headerbar.pack_start(grid_header)
 
 
     def set_size(self, width, height):
