@@ -1029,7 +1029,7 @@ class Preferences(Gtk.Builder):
                 self.on_load_emulators()
 
 
-class Console(Gtk.Builder):
+class Console(Dialog):
 
     def __init__(self, parent, modify):
         """ Constructor
@@ -1042,15 +1042,7 @@ class Console(Gtk.Builder):
             Use edit mode instead of append mode
         """
 
-        Gtk.Builder.__init__(self)
-
-        # Load glade file
-        try:
-            self.add_from_file(get_data(
-                path_join("ui", "preferences_dialogs.glade")))
-
-        except OSError as error:
-            raise IOError(_("Cannot open interface: %s") % error)
+        Dialog.__init__(self, parent.window, _("Console"), Icons.Gaming)
 
         # ------------------------------------
         #   Initialize variables
@@ -1077,6 +1069,9 @@ class Console(Gtk.Builder):
         # Init widgets
         self.__init_widgets()
 
+        # Init packing
+        self.__init_packing()
+
         # Init signals
         self.__init_signals()
 
@@ -1088,57 +1083,103 @@ class Console(Gtk.Builder):
         """ Initialize interface widgets
         """
 
-        self.window = self.get_object("dialog_console")
+        # ------------------------------------
+        #   Main window
+        # ------------------------------------
 
         # Properties
-        self.window.set_transient_for(self.interface.window)
+        self.set_transient_for(self.interface.window)
 
-        self.window.add_buttons(
+        self.set_size(600, 250)
+        self.set_resizable(True)
+
+        self.add_buttons(
             Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
             Gtk.STOCK_APPLY, Gtk.ResponseType.APPLY)
 
-        self.window.set_response_sensitive(Gtk.ResponseType.APPLY, False)
+        self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
 
         # ------------------------------------
-        #   Init localization
+        #   Main scrolling
         # ------------------------------------
 
-        label_header = self.get_object("label_header_console")
-        label_name = self.get_object("label_console_name")
-        label_folder = self.get_object("label_console_folder")
-        label_extensions = self.get_object("label_console_extensions")
-        label_separator = self.get_object("label_console_separator")
-        label_emulator = self.get_object("label_console_emulator")
+        self.scroll = Gtk.ScrolledWindow()
+
+        self.viewport = Gtk.Viewport()
 
         # Properties
-        label_header.set_label(_("Console"))
-        label_name.set_label(_("Name"))
-        label_folder.set_label(_("Choose the ROMs folder"))
-        label_extensions.set_label(_("ROM's extensions"))
-        label_separator.set_label(_("Use ; to separate extensions"))
-        label_emulator.set_label(_("Emulator"))
+        self.scroll.add(self.viewport)
 
         # ------------------------------------
-        #   Init widgets
+        #   Grids
         # ------------------------------------
 
-        self.entry_name = self.get_object("entry_console_name")
-        self.file_folder = self.get_object("file_console_folder")
-        self.entry_extensions = self.get_object("entry_console_extensions")
+        self.grid = Gtk.Grid()
 
-        self.button_console = self.get_object("button_console_image")
-        self.image_console = self.get_object("image_console")
+        # Properties
+        self.grid.set_row_spacing(8)
+        self.grid.set_column_spacing(8)
+        self.grid.set_column_homogeneous(False)
 
+        # ------------------------------------
+        #   Console options
+        # ------------------------------------
+
+        self.label_name = Gtk.Label()
+        self.entry_name = Gtk.Entry()
+
+        self.label_folder = Gtk.Label()
+        self.file_folder = Gtk.FileChooserButton()
+
+        self.label_extensions = Gtk.Label()
+        self.entry_extensions = Gtk.Entry()
+
+        self.button_console = Gtk.Button()
+        self.image_console = Gtk.Image()
+
+        self.label_emulator = Gtk.Label()
         self.model_emulators = Gtk.ListStore(Pixbuf, str, Pixbuf)
-        self.combo_emulators = self.get_object("combo_emulators")
+        self.combo_emulators = Gtk.ComboBox()
 
         cell_emulators_icon = Gtk.CellRendererPixbuf()
         cell_emulators_name = Gtk.CellRendererText()
         cell_emulators_warning = Gtk.CellRendererPixbuf()
 
         # Properties
+        self.label_name.set_markup("<b>%s</b>" % _("Name"))
+        self.label_name.set_use_markup(True)
+        self.label_name.set_alignment(0, .5)
+        self.entry_name.set_hexpand(True)
+        self.entry_name.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
+
+        self.label_folder.set_markup("<b>%s</b>" % _("Choose the ROMs folder"))
+        self.label_folder.set_use_markup(True)
+        self.label_folder.set_alignment(0, .5)
+        self.file_folder.set_action(Gtk.FileChooserAction.SELECT_FOLDER)
+        self.file_folder.set_hexpand(True)
+
+        self.label_extensions.set_markup("<b>%s</b>" % _("ROM's extensions"))
+        self.label_extensions.set_use_markup(True)
+        self.label_extensions.set_alignment(0, .5)
+        self.entry_extensions.set_hexpand(True)
+        self.entry_extensions.set_tooltip_text(
+            _("Use ; to separate extensions"))
+        self.entry_extensions.set_placeholder_text(
+            _("Use ; to separate extensions"))
+        self.entry_extensions.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
+
+        self.button_console.set_size_request(64, 64)
+        self.image_console.set_size_request(64, 64)
+
+        self.label_emulator.set_markup("<b>%s</b>" % _("Emulator"))
+        self.label_emulator.set_use_markup(True)
+        self.label_emulator.set_alignment(0, .5)
+
         self.model_emulators.set_sort_column_id(1, Gtk.SortType.ASCENDING)
 
+        self.combo_emulators.set_hexpand(True)
         self.combo_emulators.set_model(self.model_emulators)
         self.combo_emulators.set_id_column(1)
         self.combo_emulators.pack_start(cell_emulators_icon, False)
@@ -1149,6 +1190,38 @@ class Console(Gtk.Builder):
         self.combo_emulators.add_attribute(cell_emulators_warning, "pixbuf", 2)
 
         cell_emulators_icon.set_padding(4, 0)
+
+
+    def __init_packing(self):
+        """ Initialize widgets packing in main window
+        """
+
+        # Main widgets
+        self.dialog_box.pack_start(self.scroll, True, True, 8)
+
+        self.viewport.add(self.grid)
+
+        # Console grid
+        self.grid.attach(self.label_name, 0, 0, 1, 1)
+        self.grid.attach(self.entry_name, 1, 0, 1, 1)
+
+        self.grid.attach(self.label_folder, 0, 1, 1, 1)
+        self.grid.attach(self.file_folder, 1, 1, 1, 1)
+
+        self.grid.attach(Gtk.Separator(), 2, 0, 1, 2)
+
+        self.grid.attach(self.button_console, 3, 0, 1, 2)
+
+        self.grid.attach(self.label_extensions, 0, 2, 1, 1)
+        self.grid.attach(self.entry_extensions, 1, 2, 3, 1)
+
+        self.grid.attach(Gtk.Separator(), 0, 3, 4, 1)
+
+        self.grid.attach(self.label_emulator, 0, 4, 1, 1)
+        self.grid.attach(self.combo_emulators, 1, 4, 3, 1)
+
+        # Console options
+        self.button_console.set_image(self.image_console)
 
 
     def __init_signals(self):
@@ -1216,7 +1289,7 @@ class Console(Gtk.Builder):
                 self.combo_emulators.set_active_id(
                     self.consoles.item(self.console, "emulator", str()))
 
-            self.window.set_response_sensitive(Gtk.ResponseType.APPLY, True)
+            self.set_response_sensitive(Gtk.ResponseType.APPLY, True)
 
         # ------------------------------------
         #   Start dialog
@@ -1224,9 +1297,9 @@ class Console(Gtk.Builder):
 
         need_reload = False
 
-        self.window.show_all()
+        self.show_all()
 
-        response = self.window.run()
+        response = self.run()
 
         # Save console
         if response == Gtk.ResponseType.APPLY:
@@ -1249,7 +1322,7 @@ class Console(Gtk.Builder):
 
             need_reload = True
 
-        self.window.destroy()
+        self.destroy()
 
         if need_reload:
             self.interface.on_load_consoles()
@@ -1355,10 +1428,10 @@ class Console(Gtk.Builder):
         #   Start dialog
         # ------------------------------------
 
-        self.window.set_response_sensitive(Gtk.ResponseType.APPLY, status)
+        self.set_response_sensitive(Gtk.ResponseType.APPLY, status)
 
 
-class Emulator(Gtk.Builder):
+class Emulator(Dialog):
 
     def __init__(self, parent, modify):
         """ Constructor
@@ -1371,15 +1444,7 @@ class Emulator(Gtk.Builder):
             Use edit mode instead of append mode
         """
 
-        Gtk.Builder.__init__(self)
-
-        # Load glade file
-        try:
-            self.add_from_file(get_data(
-                path_join("ui", "preferences_dialogs.glade")))
-
-        except OSError as error:
-            raise IOError(_("Cannot open interface: %s") % error)
+        Dialog.__init__(self, parent.window, _("Emulator"), Icons.Desktop)
 
         # ------------------------------------
         #   Initialize variables
@@ -1404,6 +1469,9 @@ class Emulator(Gtk.Builder):
         # Init widgets
         self.__init_widgets()
 
+        # Init packing
+        self.__init_packing()
+
         # Init signals
         self.__init_signals()
 
@@ -1415,73 +1483,261 @@ class Emulator(Gtk.Builder):
         """ Initialize interface widgets
         """
 
-        self.window = self.get_object("dialog_emulator")
+        # ------------------------------------
+        #   Main window
+        # ------------------------------------
 
         # Properties
-        self.window.set_transient_for(self.interface.window)
+        self.set_transient_for(self.interface.window)
 
-        self.window.add_buttons(
+        self.set_size(600, 530)
+        self.set_resizable(True)
+
+        self.add_buttons(
             Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
             Gtk.STOCK_APPLY, Gtk.ResponseType.APPLY)
 
-        self.window.set_response_sensitive(Gtk.ResponseType.APPLY, False)
+        self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
+
+        self.set_help("Test")
 
         # ------------------------------------
-        #   Init localization
+        #   Main scrolling
         # ------------------------------------
 
-        label_header = self.get_object("label_header_emulator")
-        label_name = self.get_object("label_emulator_name")
-        label_binary = self.get_object("label_emulator_binary")
-        label_configuration = self.get_object("label_emulator_configuration")
+        self.scroll = Gtk.ScrolledWindow()
 
-        label_arguments = self.get_object("label_arguments")
-        label_launch = self.get_object("label_emulator_launch")
-        label_windowed = self.get_object("label_emulator_windowed")
-        label_fullscreen = self.get_object("label_emulator_fullscreen")
-
-        label_files = self.get_object("label_emulator_files")
-        label_save = self.get_object("label_emulator_save")
-        label_screenshots = self.get_object("label_emulator_screenshots")
-        label_regex = self.get_object("label_emulator_regex")
+        self.viewport = Gtk.Viewport()
 
         # Properties
-        label_header.set_label(_("Emulator"))
-        label_name.set_label(_("Name"))
-        label_binary.set_label(_("Binary"))
-        label_configuration.set_label(_("Configuration file"))
+        self.scroll.add(self.viewport)
 
-        label_arguments.set_label(_("Emulator arguments"))
-        label_launch.set_label(_("Default options"))
-        label_windowed.set_label(_("Windowed"))
-        label_fullscreen.set_label(_("Fullscreen"))
+        # ------------------------------------
+        #   Grids
+        # ------------------------------------
 
-        label_files.set_label(_("Regular expressions for files"))
-        label_save.set_label(_("Save"))
-        label_screenshots.set_label(_("Snapshots"))
-        label_regex.set_markup("<i>%s</i>" % (
+        self.grid = Gtk.Grid()
+        self.grid_misc = Gtk.Grid()
+
+        self.grid_configuration = Gtk.Box()
+        self.grid_arguments = Gtk.Box()
+        self.grid_files = Gtk.Box()
+
+        self.grid_binary = Gtk.Box()
+
+        # Properties
+        self.grid.set_row_spacing(8)
+        self.grid.set_column_spacing(8)
+        self.grid.set_column_homogeneous(False)
+
+        self.grid_misc.set_row_spacing(8)
+        self.grid_misc.set_column_spacing(8)
+        self.grid_misc.set_column_homogeneous(False)
+
+        Gtk.StyleContext.add_class(
+            self.grid_binary.get_style_context(), "linked")
+
+        # ------------------------------------
+        #   Emulator options
+        # ------------------------------------
+
+        self.label_name = Gtk.Label()
+        self.entry_name = Gtk.Entry()
+
+        self.label_binary = Gtk.Label()
+        self.entry_binary = Gtk.Entry()
+
+        self.button_binary = Gtk.Button()
+        self.image_binary = Gtk.Image()
+
+        self.image_configuration = Gtk.Image()
+        self.label_configuration = Gtk.Label()
+        self.file_configuration = Gtk.FileChooserButton()
+
+        self.button_emulator = Gtk.Button()
+        self.image_emulator = Gtk.Image()
+
+        self.image_arguments = Gtk.Image()
+        self.label_arguments = Gtk.Label()
+
+        self.label_launch = Gtk.Label()
+        self.entry_launch = Gtk.Entry()
+
+        self.label_windowed = Gtk.Label()
+        self.entry_windowed = Gtk.Entry()
+
+        self.label_fullscreen = Gtk.Label()
+        self.entry_fullscreen = Gtk.Entry()
+
+        self.image_files = Gtk.Image()
+        self.label_files = Gtk.Label()
+
+        self.label_save = Gtk.Label()
+        self.entry_save = Gtk.Entry()
+
+        self.label_screenshots = Gtk.Label()
+        self.entry_screenshots = Gtk.Entry()
+
+        self.label_regex = Gtk.Label()
+
+        # Properties
+        self.label_name.set_markup(
+            "<b>%s</b>" % _("Name"))
+        self.label_name.set_use_markup(True)
+        self.label_name.set_alignment(0, .5)
+        self.entry_name.set_hexpand(True)
+        self.entry_name.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
+
+        self.label_binary.set_markup(
+            "<b>%s</b>" % _("Binary"))
+        self.label_binary.set_use_markup(True)
+        self.label_binary.set_alignment(0, .5)
+        self.entry_binary.set_hexpand(True)
+        self.entry_binary.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
+
+        self.image_binary.set_from_icon_name(
+            Icons.Open, Gtk.IconSize.MENU)
+
+        self.button_emulator.set_size_request(64, 64)
+        self.image_emulator.set_size_request(64, 64)
+
+        self.image_configuration.set_from_icon_name(
+            Icons.Document, Gtk.IconSize.MENU)
+        self.label_configuration.set_markup(
+            "<b>%s</b>" % _("Configuration file"))
+        self.label_configuration.set_use_markup(True)
+        self.label_configuration.set_alignment(0, .5)
+        self.file_configuration.set_margin_left(32)
+
+        self.image_arguments.set_from_icon_name(
+            Icons.Terminal, Gtk.IconSize.MENU)
+        self.label_arguments.set_markup(
+            "<b>%s</b>" % _("Emulator arguments"))
+        self.label_arguments.set_use_markup(True)
+        self.label_arguments.set_alignment(0, .5)
+
+        self.label_launch.set_label(_("Default options"))
+        self.label_launch.set_alignment(0, .5)
+        self.label_launch.set_margin_left(32)
+        self.entry_launch.set_hexpand(True)
+        self.entry_launch.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
+
+        self.label_windowed.set_label(_("Windowed"))
+        self.label_windowed.set_alignment(0, .5)
+        self.label_windowed.set_margin_left(32)
+        self.entry_windowed.set_hexpand(True)
+        self.entry_windowed.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
+
+        self.label_fullscreen.set_label(_("Fullscreen"))
+        self.label_fullscreen.set_alignment(0, .5)
+        self.label_fullscreen.set_margin_left(32)
+        self.entry_fullscreen.set_hexpand(True)
+        self.entry_fullscreen.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
+
+        self.image_files.set_from_icon_name(
+            Icons.Folder, Gtk.IconSize.MENU)
+        self.label_files.set_markup(
+            "<b>%s</b>" % _("Regular expressions for files"))
+        self.label_files.set_use_markup(True)
+        self.label_files.set_alignment(0, .5)
+
+        self.label_save.set_label(_("Save"))
+        self.label_save.set_alignment(0, .5)
+        self.label_save.set_margin_left(32)
+        self.entry_save.set_hexpand(True)
+        self.entry_save.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
+
+        self.label_screenshots.set_label(_("Snapshots"))
+        self.label_screenshots.set_alignment(0, .5)
+        self.label_screenshots.set_margin_left(32)
+        self.entry_screenshots.set_hexpand(True)
+        self.entry_screenshots.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
+
+        self.label_regex.set_markup("<i>%s</i>" % (
             _("<name> = ROM filename, <lname> = ROM lowercase filename\n"
             "<rom_path> = ROM folder").replace('>', "&gt;").replace(
             '<', "&lt;")))
 
-        # ------------------------------------
-        #   Init widgets
-        # ------------------------------------
 
-        self.entry_name = self.get_object("entry_emulator_name")
-        self.entry_binary = self.get_object("entry_emulator_binary")
-        self.button_binary = self.get_object("button_emulator_binary")
-        self.file_configuration = self.get_object("file_emulator_configuration")
+    def __init_packing(self):
+        """ Initialize widgets packing in main window
+        """
 
-        self.button_emulator = self.get_object("button_emulator_image")
-        self.image_emulator = self.get_object("image_emulator")
+        # Main widgets
+        self.dialog_box.pack_start(self.scroll, True, True, 8)
 
-        self.entry_launch = self.get_object("entry_emulator_launch")
-        self.entry_windowed = self.get_object("entry_emulator_windowed")
-        self.entry_fullscreen = self.get_object("entry_emulator_fullscreen")
+        self.viewport.add(self.grid)
 
-        self.entry_save = self.get_object("entry_emulator_save")
-        self.entry_screenshots = self.get_object("entry_emulator_screenshots")
+        # Emulator grid
+        self.grid.attach(self.label_name, 0, 0, 1, 1)
+        self.grid.attach(self.entry_name, 1, 0, 1, 1)
+
+        self.grid.attach(self.label_binary, 0, 1, 1, 1)
+        self.grid.attach(self.grid_binary, 1, 1, 1, 1)
+
+        self.grid.attach(Gtk.Separator(), 2, 0, 1, 2)
+
+        self.grid.attach(self.button_emulator, 3, 0, 1, 2)
+
+        self.grid.attach(Gtk.Separator(), 0, 2, 4, 1)
+
+        self.grid.attach(self.grid_configuration, 0, 3, 4, 1)
+        self.grid.attach(self.file_configuration, 0, 4, 4, 1)
+
+        self.grid.attach(Gtk.Separator(), 0, 5, 4, 1)
+
+        self.grid.attach(self.grid_misc, 0, 6, 4, 1)
+
+        self.grid_misc.attach(self.grid_arguments, 0, 0, 2, 1)
+        self.grid_misc.attach(self.label_launch, 0, 1, 1, 1)
+        self.grid_misc.attach(self.entry_launch, 1, 1, 1, 1)
+        self.grid_misc.attach(Gtk.Separator(), 1, 2, 1, 1)
+        self.grid_misc.attach(self.label_windowed, 0, 3, 1, 1)
+        self.grid_misc.attach(self.entry_windowed, 1, 3, 1, 1)
+        self.grid_misc.attach(self.label_fullscreen, 0, 4, 1, 1)
+        self.grid_misc.attach(self.entry_fullscreen, 1, 4, 1, 1)
+
+        self.grid_misc.attach(Gtk.Separator(), 0, 5, 2, 1)
+
+        self.grid_misc.attach(self.grid_files, 0, 6, 2, 1)
+        self.grid_misc.attach(self.label_save, 0, 7, 1, 1)
+        self.grid_misc.attach(self.entry_save, 1, 7, 1, 1)
+        self.grid_misc.attach(self.label_screenshots, 0, 8, 1, 1)
+        self.grid_misc.attach(self.entry_screenshots, 1, 8, 1, 1)
+
+        # Emulator options
+        self.button_binary.set_image(self.image_binary)
+
+        self.button_emulator.set_image(self.image_emulator)
+
+        # Emulator binary
+        self.grid_binary.pack_start(self.entry_binary, True, True, 0)
+        self.grid_binary.pack_start(self.button_binary, False, False, 0)
+
+        # Emulator configuration
+        self.grid_configuration.pack_start(
+            self.image_configuration, False, False, 0)
+        self.grid_configuration.pack_start(
+            self.label_configuration, True, True, 8)
+
+        # Emulator arguments
+        self.grid_arguments.pack_start(
+            self.image_arguments, False, False, 0)
+        self.grid_arguments.pack_start(
+            self.label_arguments, True, True, 8)
+
+        # Emulator files
+        self.grid_files.pack_start(
+            self.image_files, False, False, 0)
+        self.grid_files.pack_start(
+            self.label_files, True, True, 8)
 
 
     def __init_signals(self):
@@ -1548,7 +1804,7 @@ class Emulator(Gtk.Builder):
             self.entry_fullscreen.set_text(
                 self.emulators.item(self.emulator, "fullscreen", str()))
 
-            self.window.set_response_sensitive(Gtk.ResponseType.APPLY, True)
+            self.set_response_sensitive(Gtk.ResponseType.APPLY, True)
 
         # ------------------------------------
         #   Start dialog
@@ -1556,9 +1812,9 @@ class Emulator(Gtk.Builder):
 
         need_reload = False
 
-        self.window.show_all()
+        self.show_all()
 
-        response = self.window.run()
+        response = self.run()
 
         # Save emulator
         if response == Gtk.ResponseType.APPLY:
@@ -1582,7 +1838,7 @@ class Emulator(Gtk.Builder):
 
             need_reload = True
 
-        self.window.destroy()
+        self.destroy()
 
         if need_reload:
             self.interface.on_load_emulators()
@@ -1687,10 +1943,10 @@ class Emulator(Gtk.Builder):
         # ------------------------------------
 
         if not self.error:
-            self.window.set_response_sensitive(Gtk.ResponseType.APPLY, True)
+            self.set_response_sensitive(Gtk.ResponseType.APPLY, True)
 
         else:
-            self.window.set_response_sensitive(Gtk.ResponseType.APPLY, False)
+            self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
 
 
     def __on_file_set(self, widget):
@@ -1702,7 +1958,7 @@ class Emulator(Gtk.Builder):
             Object which receive signal
         """
 
-        dialog = Gtk.FileChooserDialog(_("Select a binary"), self.window,
+        dialog = Gtk.FileChooserDialog(_("Select a binary"), self,
             Gtk.FileChooserAction.OPEN,
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
              Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
@@ -1805,8 +2061,7 @@ class IconViewer(Dialog):
             Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         view.set_shadow_type(Gtk.ShadowType.NONE)
 
-        box.set_border_width(4)
-        box.set_row_spacings(8)
+        box.set_row_spacings(4)
         box.set_col_spacings(8)
         box.set_homogeneous(False)
 

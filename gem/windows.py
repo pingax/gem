@@ -113,7 +113,7 @@ class Dialog(Gtk.Dialog):
 
         self.set_type_hint(Gdk.WindowTypeHint.DIALOG)
 
-        self.set_position(Gtk.WindowPosition.CENTER_ALWAYS)
+        self.set_position(Gtk.WindowPosition.CENTER)
 
         self.set_border_width(4)
 
@@ -131,11 +131,11 @@ class Dialog(Gtk.Dialog):
         #   Headerbar
         # ------------------------------------
 
-        headerbar = Gtk.HeaderBar()
+        self.headerbar = Gtk.HeaderBar()
 
         # Properties
-        headerbar.set_title(self.title)
-        headerbar.set_show_close_button(True)
+        self.headerbar.set_title(self.title)
+        self.headerbar.set_show_close_button(True)
 
         # ------------------------------------
         #   Header
@@ -154,11 +154,11 @@ class Dialog(Gtk.Dialog):
         #   Integrate widgets
         # ------------------------------------
 
-        self.set_titlebar(headerbar)
+        self.set_titlebar(self.headerbar)
 
         grid_header.pack_start(image_header, False, False, 0)
 
-        headerbar.pack_start(grid_header)
+        self.headerbar.pack_start(grid_header)
 
 
     def set_size(self, width, height):
@@ -174,6 +174,30 @@ class Dialog(Gtk.Dialog):
 
         self.set_size_request(width, height)
         self.set_default_size(width, height)
+
+
+    def set_help(self, text):
+        """ Set an help dialog
+
+        Parameters
+        ----------
+        text : str
+            Help string
+        """
+
+        image = Gtk.Image()
+        self.button_help = Gtk.Button()
+
+        # Properties
+        image.set_from_icon_name(Icons.Help, Gtk.IconSize.MENU)
+
+        self.button_help.set_image(image)
+
+        # ------------------------------------
+        #   Insert help into headerbar
+        # ------------------------------------
+
+        self.headerbar.pack_end(self.button_help)
 
 
 class TemplateDialog(Dialog):

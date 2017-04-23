@@ -63,6 +63,8 @@ class Icons:
     Find        = "edit-find"
     Paste       = "edit-paste"
     About       = "help-about"
+    Content     = "help-contents"
+    Faq         = "help-faq"
     Launch      = "media-playback-start"
     Menu        = "open-menu" # Not standard
     Fullscreen  = "view-fullscreen"
@@ -70,6 +72,7 @@ class Icons:
     Close       = "window-close"
     # Applications
     Editor      = "accessories-text-editor"
+    Help        = "help-browser"
     Keyboard    = "preferences-desktop-keyboard"
     Terminal    = "utilities-terminal"
     # Categories
@@ -91,6 +94,8 @@ class Icons:
     SmileBig    = "face-smile-big"
     # Mimes
     Image       = "image-x-generic"
+    # Places
+    Folder      = "folder"
 
 
 class Path:
