@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.6\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2017-03-27 20:56+0200\n"
+"PO-Revision-Date: 2017-04-25 22:26+0200\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -112,11 +112,22 @@ msgid "Action"
 msgstr "Actions"
 
 #
+# File: gem/preferences.py, line: 731
+# File: gem/preferences.py, line: 820
+msgid "Add"
+msgstr "Ajouter"
+
+#
 # File: gem/preferences.py, line: 1660
 # File: gem/preferences.py, line: 1695
 # File: gem/preferences.py, line: 1713
 msgid "All icons"
 msgstr "Toutes les icônes"
+
+#
+# File: gem/interface.py, line: 290
+msgid "Alternate game fullscreen mode"
+msgstr "Alterner le mode plein écran pour le jeu"
 
 #
 # File: gem/interface.py, line: 2112
@@ -153,6 +164,11 @@ msgid "Both"
 msgstr "Les deux"
 
 #
+# File: gem/preferences.py, line: 849
+msgid "Cancel"
+msgstr "Annuler"
+
+#
 # File: gem/interface.py, line: 1097
 #, python-format
 msgid "Cannot find %(binary)s for %(console)s"
@@ -180,12 +196,6 @@ msgstr "Impossible de trouver l'émulateur pour %s !"
 # File: gem/main.py, line: 240
 msgid "Cannot launch GEM without display"
 msgstr "Impossible de lancer GEM sans affichage"
-
-#
-# File: gem/main.py, line: 136
-#, python-format
-msgid "Cannot open interface: %s"
-msgstr "Impossible d'importer l'interface: %s"
 
 #
 # File: gem/interface.py, line: 942
@@ -532,6 +542,12 @@ msgid "Missing file"
 msgstr "Fichier manquant"
 
 #
+# File: gem/preferences.py, line: 737
+# File: gem/preferences.py, line: 826
+msgid "Modify"
+msgstr "Modifier"
+
+#
 # File: src/window.py, line: 368
 msgid "Name"
 msgstr "Nom"
@@ -606,6 +622,11 @@ msgstr "Chemin des ROMs"
 # File: gem/preferences.py, line: 1233
 msgid "Regular expressions for files"
 msgstr "Expressions régulières pour les fichiers"
+
+#
+# File: src/window.py, line: 939
+msgid "Remove"
+msgstr "Supprimer"
 
 #
 # File: src/window.py, line: 939
@@ -797,11 +818,6 @@ msgid "Start database migration"
 msgstr "Démarrage de la migration de la base de données"
 
 #
-# File: gem/interface.py, line: 290
-msgid "Switch fullscreen mode"
-msgstr "Définir le mode plein écran"
-
-#
 # File: gem/interface.py, line: 1501
 msgid "Terminate by keyboard interrupt"
 msgstr "Arrêt par interruption du clavier"
@@ -879,8 +895,8 @@ msgstr "Utilisez ; pour séparer les extensions"
 
 #
 # File: gem/interface.py, line: 391
-msgid "Use dark theme"
-msgstr "Utiliser le thème sombre"
+msgid "Use _dark theme"
+msgstr "Utiliser le thème _sombre"
 
 #
 # File: gem/preferences.py, line: 292
@@ -982,7 +998,7 @@ msgstr "_Ouvrir la destination du fichier"
 #
 # File: gem/configuration.py, line: 100
 msgid "_Preferences"
-msgstr "Préférences"
+msgstr "_Préférences"
 
 #
 # File: src/window.py, line: 239
@@ -1012,10 +1028,15 @@ msgstr "_Capture d'écran"
 #
 # File: gem/interface.py, line: 926
 msgid "translator-credits"
-msgstr ""
+msgstr "Lubert Aurélien"
 
 #
 # File: gem/preferences.py, line: 283
 msgid "use translucent icons in games list instead of empty ones"
 msgstr ""
 "Utiliser des icônes translucides dans la liste de jeux au lieu d'icônes vides"
+
+#
+# File: gem/main.py, line: 136
+#~ msgid "Cannot open interface: %s"
+#~ msgstr "Impossible d'importer l'interface: %s"

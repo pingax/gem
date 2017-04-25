@@ -168,7 +168,7 @@ def launch_gem(logger, reconstruct_db=False):
 
             database.migrate("games", Gem.OldColumns, splash.update)
 
-            splash.window.destroy()
+            splash.destroy()
 
         else:
             database.migrate("games", Gem.OldColumns)
@@ -1555,7 +1555,7 @@ class Interface(Gtk.Window):
         about.set_logo_icon_name(Gem.Icon)
 
         about.set_authors([
-            "PacMiam (Lubert Aurélien)" ])
+            "Lubert Aurélien (PacMiam)" ])
         about.set_artists([
             "Tango projects - GPLv3",
             "Gelide projects - GPLv3",
@@ -3532,7 +3532,7 @@ class Interface(Gtk.Window):
         idle_add(GObject.emit, self, *args)
 
 
-class Splash(object):
+class Splash(Gtk.Window):
     """ Splash window which inform user for database migration progress
 
     Attributes
@@ -3553,6 +3553,8 @@ class Splash(object):
         length : int
             Progress steps length
         """
+
+        Gtk.Window.__init__(self)
 
         # ------------------------------------
         #   Initialize variables
@@ -3593,19 +3595,16 @@ class Splash(object):
         #   Main window
         # ------------------------------------
 
-        self.window = Gtk.Window()
+        self.set_title("Graphical Emulators Manager")
 
-        # Properties
-        self.window.set_title("Graphical Emulators Manager")
+        self.set_modal(True)
+        self.set_can_focus(True)
+        self.set_resizable(False)
+        self.set_keep_above(True)
+        self.set_skip_taskbar_hint(True)
+        self.set_type_hint(Gdk.WindowTypeHint.SPLASHSCREEN)
 
-        self.window.set_modal(True)
-        self.window.set_can_focus(True)
-        self.window.set_resizable(False)
-        self.window.set_keep_above(True)
-        self.window.set_skip_taskbar_hint(True)
-        self.window.set_type_hint(Gdk.WindowTypeHint.SPLASHSCREEN)
-
-        self.window.set_position(Gtk.WindowPosition.CENTER)
+        self.set_position(Gtk.WindowPosition.CENTER)
 
         # ------------------------------------
         #   Grid
@@ -3653,14 +3652,14 @@ class Splash(object):
         self.grid.pack_start(self.label_splash, False, False, 8)
         self.grid.pack_start(self.progressbar, False, False, 0)
 
-        self.window.add(self.grid)
+        self.add(self.grid)
 
 
     def __start_interface(self):
         """ Load data and start interface
         """
 
-        self.window.show_all()
+        self.show_all()
 
         self.refresh()
 

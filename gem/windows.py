@@ -406,6 +406,8 @@ class DialogEditor(Dialog):
             self.add_buttons(
                 Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE)
 
+        self.set_resizable(True)
+
         # ------------------------------------
         #   Grid
         # ------------------------------------

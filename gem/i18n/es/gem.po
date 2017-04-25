@@ -113,11 +113,23 @@ msgid "Action"
 msgstr "Acción"
 
 #
+# File: gem/preferences.py, line: 731
+# File: gem/preferences.py, line: 820
+msgid "Add"
+msgstr ""
+
+#
 # File: gem/windows.py, line: 998
 # File: gem/windows.py, line: 1033
 # File: gem/windows.py, line: 1051
 msgid "All icons"
 msgstr "Todos los iconos"
+
+#
+# File: gem/interface.py, line: 451
+#, fuzzy
+msgid "Alternate game fullscreen mode"
+msgstr "Pasar a pantalla completa"
 
 #
 # File: gem/interface.py, line: 2112
@@ -155,6 +167,11 @@ msgid "Both"
 msgstr "Ambos"
 
 #
+# File: gem/preferences.py, line: 849
+msgid "Cancel"
+msgstr ""
+
+#
 # File: gem/interface.py, line: 1318
 #, python-format
 msgid "Cannot find %(binary)s for %(console)s"
@@ -182,12 +199,6 @@ msgstr "No puedo encontrar el emulador para %s"
 # File: gem/main.py, line: 240
 msgid "Cannot launch GEM without display"
 msgstr "No puedo ejecutar GEM sin una sesión gráfica"
-
-#
-# File: gem/main.py, line: 128
-#, python-format
-msgid "Cannot open interface: %s"
-msgstr "No puedo abrir la interfaz: %s"
 
 #
 # File: gem/interface.py, line: 1892
@@ -539,6 +550,12 @@ msgid "Missing file"
 msgstr "Falta archivo"
 
 #
+# File: gem/preferences.py, line: 737
+# File: gem/preferences.py, line: 826
+msgid "Modify"
+msgstr ""
+
+#
 # File: gem/interface.py, line: 635
 # File: gem/preferences.py, line: 540
 # File: gem/preferences.py, line: 603
@@ -618,6 +635,13 @@ msgstr "Ruta de las ROMs"
 # File: gem/preferences.py, line: 1624
 msgid "Regular expressions for files"
 msgstr "Expresiones regulares para los archivos"
+
+#
+# File: gem/interface.py, line: 1736
+# File: gem/preferences.py, line: 1195
+#, fuzzy
+msgid "Remove"
+msgstr "Borrar %s"
 
 #
 # File: gem/interface.py, line: 1736
@@ -813,11 +837,6 @@ msgid "Start database migration"
 msgstr "Comenzar la migración de la base de datos"
 
 #
-# File: gem/interface.py, line: 451
-msgid "Switch fullscreen mode"
-msgstr "Pasar a pantalla completa"
-
-#
 # File: gem/interface.py, line: 1501
 msgid "Terminate by keyboard interrupt"
 msgstr "Finalizado por interrupción del teclado"
@@ -894,7 +913,8 @@ msgstr "Usa ; para separar las extensiones"
 
 #
 # File: gem/interface.py, line: 391
-msgid "Use dark theme"
+#, fuzzy
+msgid "Use _dark theme"
 msgstr "Usar el tema oscuro"
 
 #
@@ -1041,6 +1061,11 @@ msgstr ""
 # File: gem/configuration.py, line: 71
 #~ msgid "Cannot open %s file"
 #~ msgstr "No puedo abrir el archivo %s"
+
+#
+# File: gem/main.py, line: 128
+#~ msgid "Cannot open interface: %s"
+#~ msgstr "No puedo abrir la interfaz: %s"
 
 #
 # File: gem/interface.py, line: 1098

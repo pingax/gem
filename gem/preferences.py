@@ -1261,8 +1261,8 @@ class Preferences(object):
             if item is not None:
                 self.combo_colorsheme.set_active_iter(item)
 
-            # self.font_editor.set_font_name(
-                # self.config.item("editor", "font", "Sans 12"))
+            self.font_editor.set_font_name(
+                self.config.item("editor", "font", "Sans 12"))
 
             self.gtksource = True
 

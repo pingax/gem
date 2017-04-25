@@ -15,7 +15,7 @@ done
 
 # Generate .po files
 xgettext -k_ -i --strict -s --omit-header -o gem/i18n/gem.pot \
-    --copyright-holder="Kawa Team" --package-name=gem \
+    --copyright-holder="Kawa Team" --package-name=gem --from-code=utf-8 \
     --package-version="0.7" gem/*.py
 
 for lang in "${translation[@]}" ; do
