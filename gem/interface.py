@@ -3578,6 +3578,9 @@ class Splash(object):
         # Init widgets
         self.__init_widgets()
 
+        # Init packing
+        self.__init_packing()
+
         # Start interface
         self.__start_interface()
 
@@ -3586,52 +3589,78 @@ class Splash(object):
         """ Load widgets into main interface
         """
 
-        # Load glade file
-        try:
-            builder = Gtk.Builder()
-
-            # Properties
-            builder.add_from_file(get_data(path_join("ui", "interface.glade")))
-
-        except OSError as error:
-            sys_exit(_("Cannot open interface: %s") % error)
-
         # ------------------------------------
         #   Main window
         # ------------------------------------
 
-        self = builder.get_object("splash")
+        self.window = Gtk.Window()
 
         # Properties
-        self.set_title("Graphical Emulators Manager")
+        self.window.set_title("Graphical Emulators Manager")
+
+        self.window.set_modal(True)
+        self.window.set_can_focus(True)
+        self.window.set_resizable(False)
+        self.window.set_keep_above(True)
+        self.window.set_skip_taskbar_hint(True)
+        self.window.set_type_hint(Gdk.WindowTypeHint.SPLASHSCREEN)
+
+        self.window.set_position(Gtk.WindowPosition.CENTER)
+
+        # ------------------------------------
+        #   Grid
+        # ------------------------------------
+
+        self.grid = Gtk.Box()
+
+        # Properties
+        self.grid.set_spacing(4)
+        self.grid.set_border_width(8)
+        self.grid.set_homogeneous(False)
+        self.grid.set_orientation(Gtk.Orientation.VERTICAL)
 
         # ------------------------------------
         #   Image
         # ------------------------------------
 
-        self.image_splash = builder.get_object("image_splash")
+        self.image_splash = Gtk.Image()
 
         # Properties
-        self.image_splash.set_from_icon_name("gem", 256)
+        self.image_splash.set_from_icon_name(Gem.Icon, Gtk.IconSize.DND)
+        self.image_splash.set_pixel_size(256)
 
         # ------------------------------------
         #   Progressbar
         # ------------------------------------
 
-        self.label_splash = builder.get_object("label_splash")
+        self.label_splash = Gtk.Label()
 
-        self.progressbar = builder.get_object("progress_splash")
+        self.progressbar = Gtk.ProgressBar()
 
         # Properties
-        self.label_splash.set_text(
-            _("Migrating entries from old database"))
+        self.label_splash.set_text(_("Migrating entries from old database"))
+        self.label_splash.set_line_wrap_mode(Pango.WrapMode.WORD)
+        self.label_splash.set_line_wrap(True)
+
+        self.progressbar.set_show_text(True)
+
+
+    def __init_packing(self):
+        """ Initialize widgets packing in main window
+        """
+
+        self.grid.pack_start(self.image_splash, True, True, 0)
+        self.grid.pack_start(self.label_splash, False, False, 8)
+        self.grid.pack_start(self.progressbar, False, False, 0)
+
+        self.window.add(self.grid)
 
 
     def __start_interface(self):
         """ Load data and start interface
         """
 
-        self.show_all()
+        self.window.show_all()
 
         self.refresh()
 

@@ -141,13 +141,9 @@ class Dialog(Gtk.Dialog):
         #   Header
         # ------------------------------------
 
-        grid_header = Gtk.Box()
-
         image_header = Gtk.Image()
 
         # Properties
-        grid_header.set_orientation(Gtk.Orientation.HORIZONTAL)
-
         image_header.set_from_icon_name(self.icon, Gtk.IconSize.DND)
 
         # ------------------------------------
@@ -156,9 +152,7 @@ class Dialog(Gtk.Dialog):
 
         self.set_titlebar(self.headerbar)
 
-        grid_header.pack_start(image_header, False, False, 0)
-
-        self.headerbar.pack_start(grid_header)
+        self.headerbar.pack_start(image_header)
 
 
     def set_size(self, width, height):

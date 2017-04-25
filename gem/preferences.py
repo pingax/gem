@@ -81,7 +81,7 @@ class Manager(object):
     EMULATOR = 1
 
 
-class Preferences(Gtk.Builder):
+class Preferences(object):
 
     def __init__(self, parent=None, logger=None):
         """ Constructor
@@ -93,15 +93,6 @@ class Preferences(Gtk.Builder):
         logger : logging.Logger
             Output logger (Default: None)
         """
-
-        Gtk.Builder.__init__(self)
-
-        # Load glade file
-        try:
-            self.add_from_file(get_data(path_join("ui", "preferences.glade")))
-
-        except OSError as error:
-            sys_exit(_("Cannot open interface: %s") % error)
 
         # ------------------------------------
         #   Initialize variables
@@ -205,6 +196,9 @@ class Preferences(Gtk.Builder):
         # Init widgets
         self.__init_widgets()
 
+        # Init packing
+        self.__init_packing()
+
         # Init signals
         self.__init_signals()
 
@@ -220,52 +214,41 @@ class Preferences(Gtk.Builder):
         #   Main window
         # ------------------------------------
 
-        grid_preferences = self.get_object("grid_preferences")
-
         # Gtk.Window
         if self.interface is None:
             self.window = Gtk.Window()
 
-            grid_preferences.pack_start(
-                self.get_object("grid_buttons"), False, True, 2)
+            self.grid = Gtk.Box()
 
-            self.window.add(grid_preferences)
+            # Packing
+            self.window.add(self.grid)
 
         # Gtk.Dialog
         else:
             self.window = Gtk.Dialog()
 
-            # Properties
-            self.window.set_transient_for(self.interface)
+            self.grid = self.window.get_content_area()
 
+            # Properties
             self.window.set_modal(True)
             self.window.set_destroy_with_parent(True)
 
-            box = self.window.get_content_area()
-
-            box.pack_start(grid_preferences, True, True, 0)
-
-            box.set_spacing(2)
-            box.get_children()[-1].set_border_width(4)
-
-            self.window.add_buttons(
-                Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                Gtk.STOCK_SAVE, Gtk.ResponseType.APPLY)
+            self.window.set_transient_for(self.interface)
 
         # Properties
+        self.window.set_title(_("Preferences"))
+
+        self.window.set_default_icon_name(Icons.Desktop)
+
         self.window.set_can_focus(True)
         self.window.set_keep_above(True)
 
-        self.window.set_border_width(4)
-
-        self.window.set_title("%s - %s (%s) - %s" % (
-            Gem.Name, Gem.Version, Gem.CodeName, _("Preferences")))
-
-        self.window.set_default_icon_name("gtk-preferences")
+        self.grid.set_border_width(0)
+        self.grid.set_orientation(Gtk.Orientation.VERTICAL)
 
         try:
-            width, height = self.config.get("windows", "preferences",
-                fallback="800x600").split('x')
+            width, height = self.config.get(
+                "windows", "preferences", fallback="800x600").split('x')
 
             self.window.set_default_size(int(width), int(height))
             self.window.resize(int(width), int(height))
@@ -280,42 +263,168 @@ class Preferences(Gtk.Builder):
         self.window.set_type_hint(Gdk.WindowTypeHint.DIALOG)
 
         # ------------------------------------
+        #   Grids
+        # ------------------------------------
+
+        self.grid_buttons = Gtk.ButtonBox()
+
+        self.box_notebook_general = Gtk.Box()
+        self.box_notebook_interface = Gtk.Box()
+        self.box_notebook_shortcuts = Gtk.Box()
+        self.box_notebook_consoles = Gtk.Box()
+        self.box_notebook_emulators = Gtk.Box()
+
+        self.grid_general = Gtk.Grid()
+        self.grid_interface = Gtk.Grid()
+        self.grid_shortcuts = Gtk.Grid()
+        self.grid_consoles = Gtk.Grid()
+        self.grid_emulators = Gtk.Grid()
+
+        self.grid_consoles_buttons = Gtk.ButtonBox()
+        self.grid_emulators_buttons = Gtk.ButtonBox()
+
+        # Properties
+        self.grid_buttons.set_spacing(8)
+        self.grid_buttons.set_border_width(8)
+        self.grid_buttons.set_layout(Gtk.ButtonBoxStyle.END)
+
+        self.box_notebook_general.set_spacing(8)
+        self.box_notebook_interface.set_spacing(8)
+        self.box_notebook_shortcuts.set_spacing(8)
+        self.box_notebook_consoles.set_spacing(8)
+        self.box_notebook_emulators.set_spacing(8)
+
+        self.grid_general.set_row_spacing(8)
+        self.grid_general.set_column_spacing(8)
+        self.grid_general.set_border_width(16)
+        self.grid_general.set_column_homogeneous(False)
+
+        self.grid_interface.set_row_spacing(8)
+        self.grid_interface.set_column_spacing(8)
+        self.grid_interface.set_border_width(16)
+        self.grid_interface.set_column_homogeneous(False)
+
+        self.grid_shortcuts.set_row_spacing(8)
+        self.grid_shortcuts.set_column_spacing(8)
+        self.grid_shortcuts.set_border_width(16)
+        self.grid_shortcuts.set_column_homogeneous(False)
+
+        self.grid_consoles.set_row_spacing(8)
+        self.grid_consoles.set_column_spacing(8)
+        self.grid_consoles.set_border_width(16)
+        self.grid_consoles.set_column_homogeneous(False)
+
+        self.grid_emulators.set_row_spacing(8)
+        self.grid_emulators.set_column_spacing(8)
+        self.grid_emulators.set_border_width(16)
+        self.grid_emulators.set_column_homogeneous(False)
+
+        self.grid_consoles_buttons.set_spacing(4)
+        self.grid_consoles_buttons.set_layout(Gtk.ButtonBoxStyle.CENTER)
+
+        self.grid_emulators_buttons.set_spacing(4)
+        self.grid_emulators_buttons.set_layout(Gtk.ButtonBoxStyle.CENTER)
+
+        # ------------------------------------
+        #   Headerbar
+        # ------------------------------------
+
+        self.headerbar = Gtk.HeaderBar()
+
+        # Properties
+        self.headerbar.set_title(_("Preferences"))
+        self.headerbar.set_show_close_button(True)
+
+        if self.interface is None:
+            self.headerbar.set_subtitle(
+                "%s - %s (%s)" % (Gem.Name, Gem.Version, Gem.CodeName))
+
+        # ------------------------------------
         #   Header
         # ------------------------------------
 
-        label_header_preferences = self.get_object("label_header_preferences")
+        self.image_header = Gtk.Image()
 
         # Properties
-        label_header_preferences.set_label(_("Preferences"))
+        self.image_header.set_from_icon_name(Icons.Desktop, Gtk.IconSize.DND)
 
         # ------------------------------------
         #   Notebook
         # ------------------------------------
 
-        label_notebook_general = self.get_object("label_notebook_general")
-        label_notebook_interface = self.get_object("label_notebook_interface")
-        label_notebook_shortcuts = self.get_object("label_notebook_shortcuts")
-        label_notebook_consoles = self.get_object("label_notebook_consoles")
-        label_notebook_emulators = self.get_object("label_notebook_emulators")
+        self.notebook = Gtk.Notebook()
+
+        self.label_notebook_general = Gtk.Label()
+        self.image_notebook_general = Gtk.Image()
+
+        self.label_notebook_interface = Gtk.Label()
+        self.image_notebook_interface = Gtk.Image()
+
+        self.label_notebook_shortcuts = Gtk.Label()
+        self.image_notebook_shortcuts = Gtk.Image()
+
+        self.label_notebook_consoles = Gtk.Label()
+        self.image_notebook_consoles = Gtk.Image()
+
+        self.label_notebook_emulators = Gtk.Label()
+        self.image_notebook_emulators = Gtk.Image()
 
         # Properties
-        label_notebook_general.set_label(_("General"))
-        label_notebook_interface.set_label(_("Interface"))
-        label_notebook_shortcuts.set_label(_("Shortcuts"))
-        label_notebook_consoles.set_label(_("Consoles"))
-        label_notebook_emulators.set_label(_("Emulators"))
+        self.notebook.set_tab_pos(Gtk.PositionType.LEFT)
+        self.notebook.set_show_border(False)
+
+        self.label_notebook_general.set_markup("<b>%s</b>" % _("General"))
+        self.label_notebook_general.set_use_markup(True)
+        self.label_notebook_general.set_alignment(0, .5)
+        self.image_notebook_general.set_from_icon_name(
+            Icons.Other, Gtk.IconSize.MENU)
+
+        self.label_notebook_interface.set_markup("<b>%s</b>" % _("Interface"))
+        self.label_notebook_interface.set_use_markup(True)
+        self.label_notebook_interface.set_alignment(0, .5)
+        self.image_notebook_interface.set_from_icon_name(
+            Icons.Video, Gtk.IconSize.MENU)
+
+        self.label_notebook_shortcuts.set_markup("<b>%s</b>" % _("Shortcuts"))
+        self.label_notebook_shortcuts.set_use_markup(True)
+        self.label_notebook_shortcuts.set_alignment(0, .5)
+        self.image_notebook_shortcuts.set_from_icon_name(
+            Icons.Keyboard, Gtk.IconSize.MENU)
+
+        self.label_notebook_consoles.set_markup("<b>%s</b>" % _("Consoles"))
+        self.label_notebook_consoles.set_use_markup(True)
+        self.label_notebook_consoles.set_alignment(0, .5)
+        self.image_notebook_consoles.set_from_icon_name(
+            Icons.Gaming, Gtk.IconSize.MENU)
+
+        self.label_notebook_emulators.set_markup("<b>%s</b>" % _("Emulators"))
+        self.label_notebook_emulators.set_use_markup(True)
+        self.label_notebook_emulators.set_alignment(0, .5)
+        self.image_notebook_emulators.set_from_icon_name(
+            Icons.Desktop, Gtk.IconSize.MENU)
+
+        # ------------------------------------
+        #   General
+        # ------------------------------------
+
+        self.scroll_general = Gtk.ScrolledWindow()
+        self.view_general = Gtk.Viewport()
 
         # ------------------------------------
         #   General - Behavior
         # ------------------------------------
 
-        label_behavior = self.get_object("label_behavior")
+        self.label_behavior = Gtk.Label()
 
-        self.check_last_console = self.get_object("check_behavior_last_console")
+        self.check_last_console = Gtk.CheckButton()
 
         # Properties
-        label_behavior.set_label(_("Behavior"))
+        self.label_behavior.set_markup("<b>%s</b>" % _("Behavior"))
+        self.label_behavior.set_use_markup(True)
+        self.label_behavior.set_alignment(0, .5)
 
+        self.check_last_console.set_hexpand(True)
+        self.check_last_console.set_margin_left(32)
         self.check_last_console.set_label(
             _("Load the last chosen console during startup"))
 
@@ -323,184 +432,575 @@ class Preferences(Gtk.Builder):
         #   General - Viewer
         # ------------------------------------
 
-        label_viewer = self.get_object("label_viewer")
-        label_viewer_binary = self.get_object("label_viewer_binary")
-        label_viewer_options = self.get_object("label_viewer_options")
+        self.label_viewer = Gtk.Label()
 
-        self.check_native_viewer = self.get_object("check_behavior_native")
+        self.label_viewer_binary = Gtk.Label()
+        self.label_viewer_options = Gtk.Label()
 
-        self.file_viewer_binary = self.get_object("file_viewer_binary")
+        self.check_native_viewer = Gtk.CheckButton()
 
-        self.entry_viewer_options = self.get_object("entry_viewer_options")
+        self.file_viewer_binary = Gtk.FileChooserButton()
+
+        self.entry_viewer_options = Gtk.Entry()
+
+        self.separator_viewer = Gtk.Separator()
 
         # Properties
-        label_viewer.set_label(_("Viewer"))
-        label_viewer_binary.set_label(_("Binary"))
-        label_viewer_options.set_label(_("Default options"))
+        self.label_viewer.set_markup("<b>%s</b>" % _("Viewer"))
+        self.label_viewer.set_use_markup(True)
+        self.label_viewer.set_alignment(0, .5)
+
+        self.label_viewer_binary.set_label(_("Binary"))
+        self.label_viewer_binary.set_alignment(0, .5)
+        self.label_viewer_binary.set_margin_left(32)
+        self.label_viewer_options.set_label(_("Default options"))
+        self.label_viewer_options.set_alignment(0, .5)
+        self.label_viewer_options.set_margin_left(32)
 
         self.check_native_viewer.set_label(_("Use native viewer"))
+        self.check_native_viewer.set_hexpand(True)
+        self.check_native_viewer.set_margin_left(32)
+
+        self.file_viewer_binary.set_hexpand(True)
+
+        self.entry_viewer_options.set_hexpand(True)
+
+        self.separator_viewer.set_margin_left(32)
 
         # ------------------------------------
         #   Interface
         # ------------------------------------
 
-        label_interface = self.get_object("label_interface")
+        self.scroll_interface = Gtk.ScrolledWindow()
+        self.view_interface = Gtk.Viewport()
 
-        self.check_header = self.get_object("check_header")
-        self.check_icons = self.get_object("check_translucent_icons")
+        self.label_interface = Gtk.Label()
+
+        self.check_header = Gtk.CheckButton()
+        self.check_icons = Gtk.CheckButton()
 
         # Properties
-        label_interface.set_label(_("Interface"))
+        self.label_interface.set_markup("<b>%s</b>" % _("Interface"))
+        self.label_interface.set_use_markup(True)
+        self.label_interface.set_alignment(0, .5)
 
         self.check_header.set_label(_("Show close buttons in header bar"))
+        self.check_header.set_hexpand(True)
+        self.check_header.set_margin_left(32)
         self.check_icons.set_label(
             _("use translucent icons in games list instead of empty ones"))
+        self.check_icons.set_hexpand(True)
+        self.check_icons.set_margin_left(32)
 
         # ------------------------------------
         #   Interface - Games list
         # ------------------------------------
 
-        label_treeview = self.get_object("label_treeview")
-        label_treeview_lines = self.get_object("label_treeview_lines")
+        self.label_treeview = Gtk.Label()
+        self.label_treeview_lines = Gtk.Label()
 
         self.model_lines = Gtk.ListStore(str)
-        self.combo_lines = self.get_object("combo_treeview_lines")
+        self.combo_lines = Gtk.ComboBox()
 
-        cell_lines = Gtk.CellRendererText()
+        self.cell_lines = Gtk.CellRendererText()
 
-        self.check_play = self.get_object("check_treeview_play")
-        self.check_last_play = self.get_object("check_treeview_last_play")
-        self.check_play_time = self.get_object("check_treeview_play_time")
-        self.check_installed = self.get_object("check_treeview_installed")
-        self.check_flags = self.get_object("check_treeview_flags")
+        self.check_play = Gtk.CheckButton()
+        self.check_last_play = Gtk.CheckButton()
+        self.check_play_time = Gtk.CheckButton()
+        self.check_installed = Gtk.CheckButton()
+        self.check_flags = Gtk.CheckButton()
+
+        self.separator_interface_game = Gtk.Separator()
 
         # Properties
-        label_treeview.set_label(_("Games list"))
-        label_treeview_lines.set_label(_("Show lines in games list"))
+        self.label_treeview.set_markup("<b>%s</b>" % _("Games list"))
+        self.label_treeview.set_use_markup(True)
+        self.label_treeview.set_alignment(0, .5)
+
+        self.label_treeview_lines.set_label(_("Show lines in games list"))
+        self.label_treeview_lines.set_hexpand(True)
+        self.label_treeview_lines.set_margin_left(32)
+        self.label_treeview_lines.set_alignment(0, .5)
 
         self.model_lines.set_sort_column_id(0, Gtk.SortType.ASCENDING)
 
         self.combo_lines.set_model(self.model_lines)
         self.combo_lines.set_id_column(0)
-        self.combo_lines.pack_start(cell_lines, True)
-        self.combo_lines.add_attribute(cell_lines, "text", 0)
+        self.combo_lines.pack_start(self.cell_lines, True)
+        self.combo_lines.add_attribute(self.cell_lines, "text", 0)
 
         self.check_play.set_label(_("Show \"Launch\" column"))
+        self.check_play.set_hexpand(True)
+        self.check_play.set_margin_left(32)
         self.check_last_play.set_label(_("Show \"Last launch\" column"))
+        self.check_last_play.set_hexpand(True)
+        self.check_last_play.set_margin_left(32)
         self.check_play_time.set_label(_("Show \"Play time\" column"))
+        self.check_play_time.set_hexpand(True)
+        self.check_play_time.set_margin_left(32)
         self.check_installed.set_label(_("Show \"Installed\" column"))
+        self.check_installed.set_hexpand(True)
+        self.check_installed.set_margin_left(32)
         self.check_flags.set_label(_("Show \"Flags\" column"))
+        self.check_flags.set_hexpand(True)
+        self.check_flags.set_margin_left(32)
+
+        self.separator_interface_game.set_hexpand(True)
+        self.separator_interface_game.set_margin_left(32)
 
         # ------------------------------------
         #   Interface - Editor
         # ------------------------------------
 
-        label_editor = self.get_object("label_editor")
-        label_editor_colorscheme = self.get_object("label_editor_colorscheme")
-        label_editor_font = self.get_object("label_editor_font")
+        self.label_editor = Gtk.Label()
+        self.label_editor_colorscheme = Gtk.Label()
+        self.label_editor_font = Gtk.Label()
 
-        self.check_lines = self.get_object("check_editor_lines")
+        self.check_lines = Gtk.CheckButton()
 
         self.model_colorsheme = Gtk.ListStore(str)
-        self.combo_colorsheme = self.get_object("combo_colorsheme")
+        self.combo_colorsheme = Gtk.ComboBox()
 
-        cell_colorsheme = Gtk.CellRendererText()
+        self.cell_colorsheme = Gtk.CellRendererText()
 
-        self.font_editor = self.get_object("font_editor")
+        self.font_editor = Gtk.FontButton()
+        self.separator_interface_editor = Gtk.Separator()
 
         # Properties
-        label_editor.set_label(_("Editor"))
-        label_editor_colorscheme.set_label(_("Colorscheme"))
-        label_editor_font.set_label(_("Font"))
+        self.label_editor.set_markup("<b>%s</b>" % _("Editor"))
+        self.label_editor.set_use_markup(True)
+        self.label_editor.set_alignment(0, .5)
+
+        self.label_editor_colorscheme.set_label(_("Colorscheme"))
+        self.label_editor_colorscheme.set_margin_left(32)
+        self.label_editor_colorscheme.set_alignment(0, .5)
+
+        self.label_editor_font.set_label(_("Font"))
+        self.label_editor_font.set_margin_left(32)
+        self.label_editor_font.set_alignment(0, .5)
 
         self.check_lines.set_label(_("Show line numbers"))
+        self.check_lines.set_hexpand(True)
+        self.check_lines.set_margin_left(32)
 
         self.combo_colorsheme.set_model(self.model_colorsheme)
         self.combo_colorsheme.set_id_column(0)
-        self.combo_colorsheme.pack_start(cell_colorsheme, True)
-        self.combo_colorsheme.add_attribute(cell_colorsheme, "text", 0)
+        self.combo_colorsheme.pack_start(self.cell_colorsheme, True)
+        self.combo_colorsheme.add_attribute(self.cell_colorsheme, "text", 0)
+        self.combo_colorsheme.set_hexpand(True)
+
+        self.font_editor.set_hexpand(True)
+
+        self.separator_interface_editor.set_hexpand(True)
+        self.separator_interface_editor.set_margin_left(32)
 
         # ------------------------------------
         #   Shortcuts
         # ------------------------------------
 
-        label_shortcuts = self.get_object("label_shortcuts")
+        self.scroll_shortcuts = Gtk.ScrolledWindow()
+        self.view_shortcuts = Gtk.Viewport()
 
-        self.model_shortcuts = self.get_object("store_shortcuts")
-        self.treeview_shortcuts = self.get_object("treeview_shortcuts")
+        self.label_shortcuts = Gtk.Label()
 
-        column_shortcuts_name = self.get_object("column_shortcuts_name")
-        column_shortcuts_key = self.get_object("column_shortcuts_key")
+        self.scroll_shortcuts_treeview = Gtk.ScrolledWindow()
 
-        self.cell_shortcuts_keys = self.get_object("cell_shortcuts_key")
+        self.model_shortcuts = Gtk.TreeStore(str, str, str, bool)
+        self.treeview_shortcuts = Gtk.TreeView()
+
+        self.column_shortcuts_name = Gtk.TreeViewColumn()
+        self.column_shortcuts_key = Gtk.TreeViewColumn()
+
+        self.cell_shortcuts_name = Gtk.CellRendererText()
+        self.cell_shortcuts_keys = Gtk.CellRendererAccel()
 
         # Properties
-        label_shortcuts.set_label(_("You can edit interface shortcuts for "
+        self.label_shortcuts.set_label(_("You can edit interface shortcuts for "
             "some actions. Click on a shortcut and insert wanted shortcut "
             "with your keyboard."))
+        self.label_shortcuts.set_line_wrap_mode(Pango.WrapMode.WORD)
+        self.label_shortcuts.set_line_wrap(True)
+        self.label_shortcuts.set_alignment(0, .5)
+
+        self.scroll_shortcuts_treeview.set_hexpand(True)
+        self.scroll_shortcuts_treeview.set_vexpand(True)
+        self.scroll_shortcuts_treeview.set_shadow_type(Gtk.ShadowType.OUT)
 
         self.model_shortcuts.set_sort_column_id(0, Gtk.SortType.ASCENDING)
 
-        column_shortcuts_name.set_expand(True)
-        column_shortcuts_name.set_title(_("Action"))
+        self.treeview_shortcuts.set_model(self.model_shortcuts)
+        self.treeview_shortcuts.set_headers_clickable(False)
+        self.treeview_shortcuts.set_hexpand(True)
+        self.treeview_shortcuts.set_vexpand(True)
 
-        column_shortcuts_key.set_expand(True)
-        column_shortcuts_key.set_title(_("Shortcut"))
+        self.column_shortcuts_name.set_expand(True)
+        self.column_shortcuts_name.set_title(_("Action"))
+
+        self.column_shortcuts_key.set_expand(True)
+        self.column_shortcuts_key.set_title(_("Shortcut"))
+
+        self.column_shortcuts_name.pack_start(
+            self.cell_shortcuts_name, True)
+        self.column_shortcuts_key.pack_start(
+            self.cell_shortcuts_keys, True)
+
+        self.column_shortcuts_name.add_attribute(
+            self.cell_shortcuts_name, "text", 0)
+        self.column_shortcuts_key.add_attribute(
+            self.cell_shortcuts_keys, "text", 1)
 
         self.cell_shortcuts_keys.set_property("editable", True)
+
+        self.treeview_shortcuts.append_column(self.column_shortcuts_name)
+        self.treeview_shortcuts.append_column(self.column_shortcuts_key)
 
         # ------------------------------------
         #   Consoles
         # ------------------------------------
 
-        self.model_consoles = self.get_object("store_consoles")
-        self.treeview_consoles = self.get_object("treeview_consoles")
+        self.scroll_consoles = Gtk.ScrolledWindow()
+        self.view_consoles = Gtk.Viewport()
 
-        column_consoles_name = self.get_object("column_consoles_name")
-        column_consoles_emulator = self.get_object("column_consoles_emulator")
+        self.scroll_consoles_treeview = Gtk.ScrolledWindow()
 
-        self.button_console_add = self.get_object("button_console_add")
-        self.button_console_modify = self.get_object("button_console_modify")
-        self.button_console_remove = self.get_object("button_console_remove")
+        self.model_consoles = Gtk.ListStore(Pixbuf, str, str, Pixbuf)
+        self.treeview_consoles = Gtk.TreeView()
+
+        self.column_consoles_name = Gtk.TreeViewColumn()
+        self.column_consoles_emulator = Gtk.TreeViewColumn()
+
+        self.cell_consoles_icon = Gtk.CellRendererPixbuf()
+        self.cell_consoles_name = Gtk.CellRendererText()
+        self.cell_consoles_emulator = Gtk.CellRendererText()
+        self.cell_consoles_check = Gtk.CellRendererPixbuf()
+
+        self.image_consoles_add = Gtk.Image()
+        self.button_consoles_add = Gtk.Button()
+
+        self.image_consoles_modify = Gtk.Image()
+        self.button_consoles_modify = Gtk.Button()
+
+        self.image_consoles_remove = Gtk.Image()
+        self.button_consoles_remove = Gtk.Button()
 
         # Properties
+        self.scroll_consoles_treeview.set_hexpand(True)
+        self.scroll_consoles_treeview.set_vexpand(True)
+        self.scroll_consoles_treeview.set_shadow_type(Gtk.ShadowType.OUT)
+
         self.model_consoles.set_sort_column_id(1, Gtk.SortType.ASCENDING)
 
-        column_consoles_name.set_expand(True)
-        column_consoles_name.set_title(_("Console"))
+        self.treeview_consoles.set_model(self.model_consoles)
+        self.treeview_consoles.set_headers_clickable(False)
+        self.treeview_consoles.set_hexpand(True)
+        self.treeview_consoles.set_vexpand(True)
 
-        column_consoles_emulator.set_expand(True)
-        column_consoles_emulator.set_title(_("ROMs path"))
+        self.column_consoles_name.set_title(_("Console"))
+        self.column_consoles_name.set_expand(True)
+        self.column_consoles_name.set_spacing(8)
+
+        self.column_consoles_emulator.set_title(_("ROMs path"))
+        self.column_consoles_emulator.set_expand(True)
+        self.column_consoles_emulator.set_spacing(8)
+
+        self.column_consoles_name.pack_start(
+            self.cell_consoles_icon, False)
+        self.column_consoles_name.pack_start(
+            self.cell_consoles_name, True)
+        self.column_consoles_emulator.pack_start(
+            self.cell_consoles_emulator, True)
+        self.column_consoles_emulator.pack_start(
+            self.cell_consoles_check, False)
+
+        self.column_consoles_name.add_attribute(
+            self.cell_consoles_icon, "pixbuf", 0)
+        self.column_consoles_name.add_attribute(
+            self.cell_consoles_name, "text", 1)
+        self.column_consoles_emulator.add_attribute(
+            self.cell_consoles_emulator, "text", 2)
+        self.column_consoles_emulator.add_attribute(
+            self.cell_consoles_check, "pixbuf", 3)
+
+        self.treeview_consoles.append_column(self.column_consoles_name)
+        self.treeview_consoles.append_column(self.column_consoles_emulator)
+
+        self.image_consoles_add.set_margin_right(4)
+        self.image_consoles_add.set_from_icon_name(
+            Icons.Add, Gtk.IconSize.MENU)
+        self.button_consoles_add.set_image(self.image_consoles_add)
+        self.button_consoles_add.set_label(_("Add"))
+
+        self.image_consoles_modify.set_margin_right(4)
+        self.image_consoles_modify.set_from_icon_name(
+            Icons.Properties, Gtk.IconSize.MENU)
+        self.button_consoles_modify.set_image(self.image_consoles_modify)
+        self.button_consoles_modify.set_label(_("Modify"))
+
+        self.image_consoles_remove.set_margin_right(4)
+        self.image_consoles_remove.set_from_icon_name(
+            Icons.Remove, Gtk.IconSize.MENU)
+        self.button_consoles_remove.set_image(self.image_consoles_remove)
+        self.button_consoles_remove.set_label(_("Remove"))
 
         # ------------------------------------
         #   Emulators
         # ------------------------------------
 
-        self.model_emulators = self.get_object("store_emulators")
-        self.treeview_emulators = self.get_object("treeview_emulators")
+        self.scroll_emulators = Gtk.ScrolledWindow()
+        self.view_emulators = Gtk.Viewport()
 
-        column_emulators_name = self.get_object("column_emulators_name")
-        column_emulators_binary = self.get_object("column_emulators_binary")
+        self.scroll_emulators_treeview = Gtk.ScrolledWindow()
 
-        self.button_emulator_add = self.get_object("button_emulator_add")
-        self.button_emulator_modify = self.get_object("button_emulator_modify")
-        self.button_emulator_remove = self.get_object("button_emulator_remove")
+        self.model_emulators = Gtk.ListStore(
+            Pixbuf, str, str, Pixbuf, Pango.Style)
+        self.treeview_emulators = Gtk.TreeView()
+
+        self.column_emulators_name = Gtk.TreeViewColumn()
+        self.column_emulators_binary = Gtk.TreeViewColumn()
+
+        self.cell_emulators_icon = Gtk.CellRendererPixbuf()
+        self.cell_emulators_name = Gtk.CellRendererText()
+        self.cell_emulators_binary = Gtk.CellRendererText()
+        self.cell_emulators_check = Gtk.CellRendererPixbuf()
+
+        self.image_emulators_add = Gtk.Image()
+        self.button_emulators_add = Gtk.Button()
+
+        self.image_emulators_modify = Gtk.Image()
+        self.button_emulators_modify = Gtk.Button()
+
+        self.image_emulators_remove = Gtk.Image()
+        self.button_emulators_remove = Gtk.Button()
 
         # Properties
+        self.scroll_emulators_treeview.set_hexpand(True)
+        self.scroll_emulators_treeview.set_vexpand(True)
+        self.scroll_emulators_treeview.set_shadow_type(Gtk.ShadowType.OUT)
+
         self.model_emulators.set_sort_column_id(1, Gtk.SortType.ASCENDING)
 
-        column_emulators_name.set_expand(True)
-        column_emulators_name.set_title(_("Emulator"))
+        self.treeview_emulators.set_model(self.model_emulators)
+        self.treeview_emulators.set_headers_clickable(False)
+        self.treeview_emulators.set_hexpand(True)
+        self.treeview_emulators.set_vexpand(True)
 
-        column_emulators_binary.set_expand(True)
-        column_emulators_binary.set_title(_("Binary"))
+        self.column_emulators_name.set_title(_("Emulator"))
+        self.column_emulators_name.set_expand(True)
+        self.column_emulators_name.set_spacing(8)
+
+        self.column_emulators_binary.set_title(_("Binary"))
+        self.column_emulators_binary.set_expand(True)
+        self.column_emulators_binary.set_spacing(8)
+
+        self.column_emulators_name.pack_start(
+            self.cell_emulators_icon, False)
+        self.column_emulators_name.pack_start(
+            self.cell_emulators_name, True)
+        self.column_emulators_binary.pack_start(
+            self.cell_emulators_binary, True)
+        self.column_emulators_binary.pack_start(
+            self.cell_emulators_check, False)
+
+        self.column_emulators_name.add_attribute(
+            self.cell_emulators_icon, "pixbuf", 0)
+        self.column_emulators_name.add_attribute(
+            self.cell_emulators_name, "text", 1)
+        self.column_emulators_binary.add_attribute(
+            self.cell_emulators_binary, "text", 2)
+        self.column_emulators_binary.add_attribute(
+            self.cell_emulators_check, "pixbuf", 3)
+
+        self.treeview_emulators.append_column(self.column_emulators_name)
+        self.treeview_emulators.append_column(self.column_emulators_binary)
+
+        self.image_emulators_add.set_margin_right(4)
+        self.image_emulators_add.set_from_icon_name(
+            Icons.Add, Gtk.IconSize.MENU)
+        self.button_emulators_add.set_image(self.image_emulators_add)
+        self.button_emulators_add.set_label(_("Add"))
+
+        self.image_emulators_modify.set_margin_right(4)
+        self.image_emulators_modify.set_from_icon_name(
+            Icons.Properties, Gtk.IconSize.MENU)
+        self.button_emulators_modify.set_image(self.image_emulators_modify)
+        self.button_emulators_modify.set_label(_("Modify"))
+
+        self.image_emulators_remove.set_margin_right(4)
+        self.image_emulators_remove.set_from_icon_name(
+            Icons.Remove, Gtk.IconSize.MENU)
+        self.button_emulators_remove.set_image(self.image_emulators_remove)
+        self.button_emulators_remove.set_label(_("Remove"))
 
         # ------------------------------------
         #   Buttons
         # ------------------------------------
 
-        self.button_cancel = self.get_object("button_cancel")
-        self.button_save = self.get_object("button_save")
+        self.image_cancel = Gtk.Image()
+        self.button_cancel = Gtk.Button()
+
+        self.image_save = Gtk.Image()
+        self.button_save = Gtk.Button()
+
+        # Properties
+        self.image_cancel.set_margin_right(4)
+        self.image_cancel.set_from_icon_name(
+            Icons.Stop, Gtk.IconSize.BUTTON)
+        self.button_cancel.set_image(self.image_cancel)
+        self.button_cancel.set_label(_("Cancel"))
+
+        self.image_save.set_margin_right(4)
+        self.image_save.set_from_icon_name(
+            Icons.Save, Gtk.IconSize.BUTTON)
+        self.button_save.set_image(self.image_save)
+        self.button_save.set_label(_("Save"))
+
+
+    def __init_packing(self):
+        """ Initialize widgets packing in main window
+        """
+
+        self.window.set_titlebar(self.headerbar)
+
+        # Main widgets
+        self.grid.pack_start(self.notebook, True, True, 0)
+        self.grid.pack_start(self.grid_buttons, False, False, 0)
+
+        # Headerbar
+        self.headerbar.pack_start(self.image_header)
+
+        # Notebook
+        self.box_notebook_general.pack_start(
+            self.image_notebook_general, False, False, 0)
+        self.box_notebook_general.pack_start(
+            self.label_notebook_general, True, True, 0)
+
+        self.box_notebook_interface.pack_start(
+            self.image_notebook_interface, False, False, 0)
+        self.box_notebook_interface.pack_start(
+            self.label_notebook_interface, True, True, 0)
+
+        self.box_notebook_shortcuts.pack_start(
+            self.image_notebook_shortcuts, False, False, 0)
+        self.box_notebook_shortcuts.pack_start(
+            self.label_notebook_shortcuts, True, True, 0)
+
+        self.box_notebook_consoles.pack_start(
+            self.image_notebook_consoles, False, False, 0)
+        self.box_notebook_consoles.pack_start(
+            self.label_notebook_consoles, True, True, 0)
+
+        self.box_notebook_emulators.pack_start(
+            self.image_notebook_emulators, False, False, 0)
+        self.box_notebook_emulators.pack_start(
+            self.label_notebook_emulators, True, True, 0)
+
+        self.notebook.append_page(
+            self.scroll_general, self.box_notebook_general)
+        self.notebook.append_page(
+            self.scroll_interface, self.box_notebook_interface)
+        self.notebook.append_page(
+            self.scroll_shortcuts, self.box_notebook_shortcuts)
+        self.notebook.append_page(
+            self.scroll_consoles, self.box_notebook_consoles)
+        self.notebook.append_page(
+            self.scroll_emulators, self.box_notebook_emulators)
+
+        # General tab
+        self.grid_general.attach(self.label_behavior, 0, 0, 2, 1)
+        self.grid_general.attach(self.check_last_console, 0, 1, 2, 1)
+
+        self.grid_general.attach(Gtk.Separator(), 0, 2, 2, 1)
+
+        self.grid_general.attach(self.label_viewer, 0, 3, 2, 1)
+        self.grid_general.attach(self.check_native_viewer, 0, 4, 2, 1)
+        self.grid_general.attach(self.separator_viewer, 0, 5, 2, 1)
+        self.grid_general.attach(self.label_viewer_binary, 0, 6, 1, 1)
+        self.grid_general.attach(self.file_viewer_binary, 1, 6, 1, 1)
+        self.grid_general.attach(self.label_viewer_options, 0, 7, 1, 1)
+        self.grid_general.attach(self.entry_viewer_options, 1, 7, 1, 1)
+
+        self.view_general.add(self.grid_general)
+
+        self.scroll_general.add(self.view_general)
+
+        # Interface tab
+        self.grid_interface.attach(self.label_interface, 0, 0, 3, 1)
+        self.grid_interface.attach(self.check_header, 0, 1, 3, 1)
+        self.grid_interface.attach(self.check_icons, 0, 2, 3, 1)
+
+        self.grid_interface.attach(Gtk.Separator(), 0, 3, 3, 1)
+
+        self.grid_interface.attach(self.label_treeview, 0, 4, 3, 1)
+        self.grid_interface.attach(self.label_treeview_lines, 0, 5, 2, 1)
+        self.grid_interface.attach(self.combo_lines, 2, 5, 1, 1)
+        self.grid_interface.attach(self.separator_interface_game, 0, 6, 3, 1)
+        self.grid_interface.attach(self.check_play, 0, 7, 3, 1)
+        self.grid_interface.attach(self.check_last_play, 0, 8, 3, 1)
+        self.grid_interface.attach(self.check_play_time, 0, 9, 3, 1)
+        self.grid_interface.attach(self.check_installed, 0, 10, 3, 1)
+        self.grid_interface.attach(self.check_flags, 0, 11, 3, 1)
+
+        self.grid_interface.attach(Gtk.Separator(), 0, 12, 3, 1)
+
+        self.grid_interface.attach(self.label_editor, 0, 13, 3, 1)
+        self.grid_interface.attach(self.check_lines, 0, 14, 3, 1)
+        self.grid_interface.attach(self.separator_interface_editor, 0, 15, 3, 1)
+        self.grid_interface.attach(self.label_editor_colorscheme, 0, 16, 1, 1)
+        self.grid_interface.attach(self.combo_colorsheme, 1, 16, 2, 1)
+        self.grid_interface.attach(self.label_editor_font, 0, 17, 1, 1)
+        self.grid_interface.attach(self.font_editor, 1, 17, 2, 1)
+
+        self.view_interface.add(self.grid_interface)
+
+        self.scroll_interface.add(self.view_interface)
+
+        # Shortcuts tab
+        self.grid_shortcuts.attach(self.label_shortcuts, 0, 0, 1, 1)
+        self.grid_shortcuts.attach(self.scroll_shortcuts_treeview, 0, 1, 1, 1)
+
+        self.scroll_shortcuts_treeview.add(self.treeview_shortcuts)
+
+        self.view_shortcuts.add(self.grid_shortcuts)
+
+        self.scroll_shortcuts.add(self.view_shortcuts)
+
+        # Consoles tab
+        self.grid_consoles.attach(self.scroll_consoles_treeview, 0, 0, 1, 1)
+        self.grid_consoles.attach(self.grid_consoles_buttons, 0, 1, 1, 1)
+
+        self.grid_consoles_buttons.pack_end(
+            self.button_consoles_add, False, False, 0)
+        self.grid_consoles_buttons.pack_end(
+            self.button_consoles_modify, False, False, 0)
+        self.grid_consoles_buttons.pack_end(
+            self.button_consoles_remove, False, False, 0)
+
+        self.scroll_consoles_treeview.add(self.treeview_consoles)
+
+        self.view_consoles.add(self.grid_consoles)
+
+        self.scroll_consoles.add(self.view_consoles)
+
+        # Emulators tab
+        self.grid_emulators.attach(self.scroll_emulators_treeview, 0, 0, 1, 1)
+        self.grid_emulators.attach(self.grid_emulators_buttons, 0, 1, 1, 1)
+
+        self.grid_emulators_buttons.pack_end(
+            self.button_emulators_add, False, False, 0)
+        self.grid_emulators_buttons.pack_end(
+            self.button_emulators_modify, False, False, 0)
+        self.grid_emulators_buttons.pack_end(
+            self.button_emulators_remove, False, False, 0)
+
+        self.scroll_emulators_treeview.add(self.treeview_emulators)
+
+        self.view_emulators.add(self.grid_emulators)
+
+        self.scroll_emulators.add(self.view_emulators)
+
+        # Buttons
+        self.grid_buttons.pack_end(self.button_cancel, False, False, 0)
+        self.grid_buttons.pack_end(self.button_save, False, False, 0)
 
 
     def __init_signals(self):
@@ -539,11 +1039,11 @@ class Preferences(Gtk.Builder):
         self.treeview_consoles.connect(
             "key-release-event", self.__on_selected_treeview, Manager.CONSOLE)
 
-        self.button_console_add.connect(
+        self.button_consoles_add.connect(
             "clicked", self.__on_modify_item, Manager.CONSOLE, False)
-        self.button_console_modify.connect(
+        self.button_consoles_modify.connect(
             "clicked", self.__on_modify_item, Manager.CONSOLE, True)
-        self.button_console_remove.connect(
+        self.button_consoles_remove.connect(
             "clicked", self.__on_remove_item, Manager.CONSOLE)
 
         # ------------------------------------
@@ -555,11 +1055,11 @@ class Preferences(Gtk.Builder):
         self.treeview_emulators.connect(
             "key-release-event", self.__on_selected_treeview, Manager.EMULATOR)
 
-        self.button_emulator_add.connect(
+        self.button_emulators_add.connect(
             "clicked", self.__on_modify_item, Manager.EMULATOR, False)
-        self.button_emulator_modify.connect(
+        self.button_emulators_modify.connect(
             "clicked", self.__on_modify_item, Manager.EMULATOR, True)
-        self.button_emulator_remove.connect(
+        self.button_emulators_remove.connect(
             "clicked", self.__on_remove_item, Manager.EMULATOR)
 
         # ------------------------------------
@@ -588,17 +1088,17 @@ class Preferences(Gtk.Builder):
 
         self.window.show_all()
 
+        self.box_notebook_general.show_all()
+        self.box_notebook_interface.show_all()
+        self.box_notebook_shortcuts.show_all()
+        self.box_notebook_consoles.show_all()
+        self.box_notebook_emulators.show_all()
+
         if self.interface is None:
             Gtk.main()
 
         else:
-            response = self.window.run()
-
-            if response == Gtk.ResponseType.APPLY:
-                self.button_save.clicked()
-
-            else:
-                self.button_cancel.clicked()
+            self.window.run()
 
 
     def __stop_interface(self, widget=None, event=None):
@@ -648,8 +1148,8 @@ class Preferences(Gtk.Builder):
                     int(self.check_lines.get_active()))
                 self.config.modify("editor", "colorscheme",
                     self.combo_colorsheme.get_active_id())
-                # self.config.modify("editor", "font",
-                    # self.font_editor.get_font_name())
+                self.config.modify("editor", "font",
+                    self.font_editor.get_font_name())
 
             for text, value, option, sensitive in self.model_shortcuts:
                 if value is not None and option is not None:
@@ -670,6 +1170,7 @@ class Preferences(Gtk.Builder):
             Gtk.main_quit()
 
         else:
+            self.window.response(Gtk.ResponseType.CANCEL)
             self.window.destroy()
 
 
@@ -2053,7 +2554,8 @@ class IconViewer(Dialog):
         scrollview = Gtk.ScrolledWindow()
         view = Gtk.Viewport()
 
-        box = Gtk.Table()
+        box = Gtk.Grid()
+        box_switch = Gtk.Box()
 
         # Properties
         scrollview.set_border_width(4)
@@ -2061,9 +2563,11 @@ class IconViewer(Dialog):
             Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         view.set_shadow_type(Gtk.ShadowType.NONE)
 
-        box.set_row_spacings(4)
-        box.set_col_spacings(8)
-        box.set_homogeneous(False)
+        box.set_row_spacing(4)
+        box.set_column_spacing(8)
+        box.set_column_homogeneous(False)
+
+        box_switch.set_spacing(0)
 
         # ------------------------------------
         #   Option
@@ -2089,10 +2593,16 @@ class IconViewer(Dialog):
         #   Custom
         # ------------------------------------
 
-        self.file_icon = Gtk.FileChooserWidget()
+        self.frame_icons = Gtk.Frame()
+
+        self.file_icons = Gtk.FileChooserWidget()
 
         # Properties
-        self.file_icon.set_current_folder(expanduser('~'))
+        self.frame_icons.set_shadow_type(Gtk.ShadowType.OUT)
+
+        self.file_icons.set_hexpand(True)
+        self.file_icons.set_vexpand(True)
+        self.file_icons.set_current_folder(expanduser('~'))
 
         # ------------------------------------
         #   Icons
@@ -2112,6 +2622,9 @@ class IconViewer(Dialog):
 
         self.model_icons.set_sort_column_id(1, Gtk.SortType.ASCENDING)
 
+        self.scroll_icons.set_hexpand(True)
+        self.scroll_icons.set_vexpand(True)
+        self.scroll_icons.set_shadow_type(Gtk.ShadowType.OUT)
         self.scroll_icons.set_policy(
             Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
 
@@ -2119,17 +2632,20 @@ class IconViewer(Dialog):
         #   Add widgets into interface
         # ------------------------------------
 
-        view.add(box)
-        scrollview.add(view)
-
-        self.scroll_icons.add(self.view_icons)
-
-        box.attach(label_option, 0, 1, 0, 1, Gtk.Align.FILL, Gtk.Align.FILL)
-        box.attach(self.combo_option, 1, 2, 0, 1, yoptions=Gtk.Align.FILL)
-        box.attach(self.file_icon, 0, 2, 1, 2)
-        box.attach(self.scroll_icons, 0, 2, 2, 3)
-
         self.dialog_box.pack_start(scrollview, True, True, 0)
+
+        scrollview.add(view)
+        view.add(box)
+
+        box.attach(label_option, 0, 0, 1, 1)
+        box.attach(self.combo_option, 1, 0, 1, 1)
+        box.attach(box_switch, 0, 1, 2, 1)
+
+        box_switch.pack_start(self.frame_icons, True, True, 0)
+        box_switch.pack_start(self.scroll_icons, True, True, 0)
+
+        self.frame_icons.add(self.file_icons)
+        self.scroll_icons.add(self.view_icons)
 
 
     def __init_signals(self):
@@ -2179,7 +2695,7 @@ class IconViewer(Dialog):
         self.model_option.append([_("All icons")])
         self.model_option.append([_("Image file")])
 
-        self.file_icon.set_visible(False)
+        self.frame_icons.set_visible(False)
         self.scroll_icons.set_visible(True)
 
         self.icons_data = dict()
@@ -2204,7 +2720,7 @@ class IconViewer(Dialog):
                     self.model_icons.get_path(self.icons_data[self.path]))
 
             else:
-                self.file_icon.set_filename(self.path)
+                self.file_icons.set_filename(self.path)
 
         self.combo_option.set_active_id(_("All icons"))
 
@@ -2220,7 +2736,7 @@ class IconViewer(Dialog):
                 self.model_icons.get_iter(selection), 1)
 
         else:
-            path = self.file_icon.get_filename()
+            path = self.file_icons.get_filename()
 
         if not path == self.path:
             self.new_path = path
@@ -2236,9 +2752,9 @@ class IconViewer(Dialog):
         """
 
         if self.combo_option.get_active_id() == _("All icons"):
-            self.file_icon.set_visible(False)
+            self.frame_icons.set_visible(False)
             self.scroll_icons.set_visible(True)
 
         else:
-            self.file_icon.set_visible(True)
+            self.frame_icons.set_visible(True)
             self.scroll_icons.set_visible(False)

@@ -55,8 +55,9 @@ class Icons:
     # Actions
     Error       = "dialog-error"
     Warning     = "dialog-warning"
-    Open        = "document-open"
     Properties  = "document-properties"
+    Open        = "document-open"
+    Save        = "document-save"
     Clear       = "edit-clear"
     Copy        = "edit-copy"
     Delete      = "edit-delete"
@@ -65,22 +66,26 @@ class Icons:
     About       = "help-about"
     Content     = "help-contents"
     Faq         = "help-faq"
+    Add         = "list-add"
+    Remove      = "list-remove"
     Launch      = "media-playback-start"
     Menu        = "open-menu" # Not standard
+    Stop        = "process-stop"
     Fullscreen  = "view-fullscreen"
     Restore     = "view-restore"
     Close       = "window-close"
     # Applications
     Editor      = "accessories-text-editor"
-    Help        = "help-browser"
     Keyboard    = "preferences-desktop-keyboard"
     Terminal    = "utilities-terminal"
+    Help        = "system-help"
     # Categories
     Desktop     = "preferences-desktop"
     Other       = "applications-other"
     System      = "preferences-system"
     # Devices
     Gaming      = "input-gaming"
+    Video       = "video-display"
     # Emblems
     Document    = "emblem-documents"
     Download    = "emblem-downloads"
