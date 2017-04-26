@@ -2358,7 +2358,8 @@ class Interface(Gtk.Window):
                 # Launch thread
                 thread.start()
 
-                self.logger.debug("Start %s into %s" % (filename, thread))
+                self.logger.debug(
+                    "Start %s into [%s]" % (filename, thread.name))
 
                 self.sensitive_interface()
 

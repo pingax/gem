@@ -30,7 +30,18 @@ try:
     from xdg.BaseDirectory import xdg_config_home
 
 except ImportError as error:
-    sys_exit("Import error with pyxdg module: %s" % str(error))
+    from os import environ
+    from os.path import expanduser
+
+    if "XDG_DATA_HOME" in environ:
+        xdg_data_home = environ["XDG_DATA_HOME"]
+    else:
+        xdg_data_home = expanduser("~/.local/share")
+
+    if "XDG_CONFIG_HOME" in environ:
+        xdg_config_home = environ["XDG_CONFIG_HOME"]
+    else:
+        xdg_config_home = expanduser("~/.config")
 
 # ------------------------------------------------------------------
 #   Class

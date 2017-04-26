@@ -153,12 +153,14 @@ def main():
     #   Check folders and launch interface
     # ------------------------------------
 
+    logger.debug("Check local folder: %s" % Path.Data)
+
     try:
         # ------------------------------------
         #   Icons folders
         # ------------------------------------
 
-        logger.debug(_("Check icons folders"))
+        logger.debug("Check icons folder: %s" % Path.Icons)
 
         # ~/.local/share/gem/icons/consoles
         if not exists(expanduser(Path.Consoles)):
@@ -184,7 +186,7 @@ def main():
         #   Create default configuration files
         # ------------------------------------
 
-        logger.debug(_("Check configuration files"))
+        logger.debug("Check config folder: %s" % Path.User)
 
         if not exists(expanduser(path_join(Path.User, "gem.conf"))):
             logger.debug("Copy gem.conf to %s" % Path.User)
