@@ -98,16 +98,6 @@ msgid "1 second"
 msgstr "1 segundo"
 
 #
-# File: gem/preferences.py, line: 1638
-msgid ""
-"<name> = ROM filename, <lname> = ROM lowercase filename\n"
-"<rom_path> = ROM folder"
-msgstr ""
-"<name> = nombre del fichero de la ROM, <lname> = nombre del fichero en "
-"minúsculas de la ROM\n"
-"<rom_path> = carpeta de la ROM"
-
-#
 # File: gem/preferences.py, line: 476
 msgid "Action"
 msgstr "Acción"
@@ -223,16 +213,6 @@ msgstr "No puedo escribir en %s. Anulando acción."
 #, python-format
 msgid "Change custom parameters for %s"
 msgstr "Cambiar los parametros personalizados para %s"
-
-#
-# File: gem/preferences.py, line: 1602
-msgid "Check configuration files"
-msgstr "Comprobar los archivos de configuración"
-
-#
-# File: gem/main.py, line: 133
-msgid "Check icons folders"
-msgstr "Comprobar las carpetas de los iconos"
 
 #
 # File: gem/windows.py, line: 1122
@@ -416,6 +396,16 @@ msgstr "Crear un acceso directo en el escritorio para un juego"
 #, python-format
 msgid "Generate menu entry for %s"
 msgstr "Crear una entrada en el menú para %s"
+
+#
+# File: gem/windows.py, line: 238
+msgid "Help"
+msgstr ""
+
+#
+# File: gem/preferences.py, line: 433
+msgid "Hide consoles whitout any game"
+msgstr ""
 
 #
 # File: gem/preferences.py, line: 98
@@ -604,6 +594,14 @@ msgstr "Abrir carpeta del juego seleccionado"
 # File: gem/interface.py, line: 572
 msgid "Output _log"
 msgstr "_Histórico de salida"
+
+#
+# File: gem/interface.py, line: 396
+# File: gem/interface.py, line: 756
+# File: gem/interface.py, line: 1667
+#, fuzzy
+msgid "Parameters"
+msgstr "_Parametros personalizados"
 
 #
 # File: gem/interface.py, line: 642
@@ -878,10 +876,24 @@ msgid "This game was removed successfully"
 msgstr "El juego fue borrado con éxito"
 
 #
+# File: gem/preferences.py, line: 2000
+msgid ""
+"This parameters are used in \"Default options\", \"Save\" and \"Snapshots\" "
+"entries."
+msgstr ""
+
+#
 # File: gem/preferences.py, line: 1418
 #, python-format
 msgid "This rom already exists in %s. Do you want to replace it ?"
 msgstr "Esta rom ya existe en %s. ¿Quieres remplazarlo?"
+
+#
+# File: gem/preferences.py, line: 1998
+msgid ""
+"To facilitate files detection with every emulators, some custom parameters "
+"has been created."
+msgstr ""
 
 #
 # File: gem/interface.py, line: 2119
@@ -912,10 +924,39 @@ msgid "Use ; to separate extensions"
 msgstr "Usa ; para separar las extensiones"
 
 #
+# File: gem/interface.py, line: 406
+# File: gem/interface.py, line: 766
+#, fuzzy
+msgid "Use ROM file path"
+msgstr "_Abrir la ruta del archivo"
+
+#
+# File: gem/preferences.py, line: 2003
+msgid "Use ROM filename"
+msgstr ""
+
+#
+# File: gem/preferences.py, line: 1309
+#, fuzzy
+msgid "Use ROM folder path"
+msgstr "Elige la carpeta de la ROM"
+
+#
+# File: gem/preferences.py, line: 2004
+msgid "Use ROM lowercase filename"
+msgstr ""
+
+#
 # File: gem/interface.py, line: 391
 #, fuzzy
 msgid "Use _dark theme"
 msgstr "Usar el tema oscuro"
+
+#
+# File: gem/preferences.py, line: 1602
+#, fuzzy
+msgid "Use emulator configuration file path"
+msgstr "Actualizar el archivo de configuración de %s"
 
 #
 # File: gem/preferences.py, line: 393
@@ -1058,6 +1099,16 @@ msgstr ""
 "usar iconos translucidos en la lista de los juegos en vez de iconos vacíos"
 
 #
+# File: gem/preferences.py, line: 1638
+#~ msgid ""
+#~ "<name> = ROM filename, <lname> = ROM lowercase filename\n"
+#~ "<rom_path> = ROM folder"
+#~ msgstr ""
+#~ "<name> = nombre del fichero de la ROM, <lname> = nombre del fichero en "
+#~ "minúsculas de la ROM\n"
+#~ "<rom_path> = carpeta de la ROM"
+
+#
 # File: gem/configuration.py, line: 71
 #~ msgid "Cannot open %s file"
 #~ msgstr "No puedo abrir el archivo %s"
@@ -1066,6 +1117,16 @@ msgstr ""
 # File: gem/main.py, line: 128
 #~ msgid "Cannot open interface: %s"
 #~ msgstr "No puedo abrir la interfaz: %s"
+
+#
+# File: gem/preferences.py, line: 1602
+#~ msgid "Check configuration files"
+#~ msgstr "Comprobar los archivos de configuración"
+
+#
+# File: gem/main.py, line: 133
+#~ msgid "Check icons folders"
+#~ msgstr "Comprobar las carpetas de los iconos"
 
 #
 # File: gem/interface.py, line: 1098

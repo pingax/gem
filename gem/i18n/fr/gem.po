@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.6\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2017-04-25 22:26+0200\n"
+"PO-Revision-Date: 2017-05-04 21:07+0200\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -96,15 +96,6 @@ msgstr "1 minute"
 # File: gem/utils.py, line: 320
 msgid "1 second"
 msgstr "1 seconde"
-
-#
-# File: gem/preferences.py, line: 1372
-msgid ""
-"<name> = ROM filename, <lname> = ROM lowercase filename\n"
-"<rom_path> = ROM folder"
-msgstr ""
-"<name> = Nom de la ROM, <lname> = Nom de la ROM en minuscules\n"
-"<rom_path> = Dossier de la ROM"
 
 #
 # File: gem/preferences.py, line: 329
@@ -220,16 +211,6 @@ msgstr "Impossible d'écrire dans %s. Annulation de l'opération."
 #, python-format
 msgid "Change custom parameters for %s"
 msgstr "Changement des paramètres personnalisés pour %s"
-
-#
-# File: gem/interface.py, line: 300
-msgid "Check configuration files"
-msgstr "Vérification des fichiers de configuration"
-
-#
-# File: gem/main.py, line: 133
-msgid "Check icons folders"
-msgstr "Vérification des fichiers d'icônes"
 
 #
 # File: gem/preferences.py, line: 102
@@ -408,6 +389,16 @@ msgstr "Générer une entrée de menu pour un jeu"
 #, python-format
 msgid "Generate menu entry for %s"
 msgstr "Générer une entrée de menu pour %s"
+
+#
+# File: gem/windows.py, line: 238
+msgid "Help"
+msgstr "Aide"
+
+#
+# File: gem/preferences.py, line: 433
+msgid "Hide consoles whitout any game"
+msgstr "Cacher les consoles sans aucun jeu"
 
 #
 # File: gem/preferences.py, line: 98
@@ -592,6 +583,11 @@ msgstr "Ouvrir le dossier du jeu sélectionné"
 # File: gem/interface.py, line: 405
 msgid "Output _log"
 msgstr "_Journal de sortie"
+
+#
+# File: gem/interface.py, line: 336
+msgid "Parameters"
+msgstr "Paramètres"
 
 #
 # File: src/window.py, line: 375
@@ -860,10 +856,28 @@ msgid "This game was removed successfully"
 msgstr "Ce jeu à été supprimé avec succès"
 
 #
+# File: gem/preferences.py, line: 2000
+msgid ""
+"This parameters are used in \"Default options\", \"Save\" and \"Snapshots\" "
+"entries."
+msgstr ""
+"Ces paramètres sont utilisés dans les champs de texte « Options par défaut », "
+"« Sauvegarde » et « Captures d'écran »."
+
+#
 # File: gem/preferences.py, line: 1020
 #, python-format
 msgid "This rom already exists in %s. Do you want to replace it ?"
 msgstr "Cette ROM existe déjà dans %s. Voulez-vous la remplacer ?"
+
+#
+# File: gem/preferences.py, line: 1998
+msgid ""
+"To facilitate files detection with every emulators, some custom parameters "
+"has been created."
+msgstr ""
+"Pour faciliter la détection de fichiers pour tous les émulateurs, des "
+"paramètres personnalisés ont été créés."
 
 #
 # File: src/window.py, line: 1066
@@ -894,9 +908,34 @@ msgid "Use ; to separate extensions"
 msgstr "Utilisez ; pour séparer les extensions"
 
 #
+# File: gem/interface.py, line: 665
+msgid "Use ROM file path"
+msgstr "Utiliser le chemin du fichier de la ROM"
+
+#
+# File: gem/preferences.py, line: 2003
+msgid "Use ROM filename"
+msgstr "Utiliser le nom du fichier de la ROM"
+
+#
+# File: gem/preferences.py, line: 908
+msgid "Use ROM folder path"
+msgstr "Utiliser le dossier qui contient la ROM"
+
+#
+# File: gem/preferences.py, line: 2004
+msgid "Use ROM lowercase filename"
+msgstr "Utiliser le nom du fichier de la ROM en minuscule"
+
+#
 # File: gem/interface.py, line: 391
 msgid "Use _dark theme"
 msgstr "Utiliser le thème _sombre"
+
+#
+# File: gem/interface.py, line: 300
+msgid "Use emulator configuration file path"
+msgstr "Utiliser le chemin du fichier de configuration de l'émulateur"
 
 #
 # File: gem/preferences.py, line: 292
@@ -1037,6 +1076,25 @@ msgstr ""
 "Utiliser des icônes translucides dans la liste de jeux au lieu d'icônes vides"
 
 #
+# File: gem/preferences.py, line: 1372
+#~ msgid ""
+#~ "<name> = ROM filename, <lname> = ROM lowercase filename\n"
+#~ "<rom_path> = ROM folder"
+#~ msgstr ""
+#~ "<name> = Nom de la ROM, <lname> = Nom de la ROM en minuscules\n"
+#~ "<rom_path> = Dossier de la ROM"
+
+#
 # File: gem/main.py, line: 136
 #~ msgid "Cannot open interface: %s"
 #~ msgstr "Impossible d'importer l'interface: %s"
+
+#
+# File: gem/interface.py, line: 300
+#~ msgid "Check configuration files"
+#~ msgstr "Vérification des fichiers de configuration"
+
+#
+# File: gem/main.py, line: 133
+#~ msgid "Check icons folders"
+#~ msgstr "Vérification des fichiers d'icônes"
