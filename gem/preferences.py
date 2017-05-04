@@ -464,6 +464,8 @@ class Preferences(object):
         self.file_viewer_binary.set_hexpand(True)
 
         self.entry_viewer_options.set_hexpand(True)
+        self.entry_viewer_options.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
 
         self.separator_viewer.set_margin_left(32)
 
