@@ -1021,6 +1021,9 @@ class Preferences(object):
         self.entry_viewer_options.connect(
             "icon-press", on_entry_clear)
 
+        self.check_native_viewer.connect("toggled",
+            self.__on_check_native_viewer)
+
         # ------------------------------------
         #   Shortcuts
         # ------------------------------------
@@ -1431,6 +1434,23 @@ class Preferences(object):
 
         if edit:
             self.__on_modify_item(None, manager, True)
+
+
+    def __on_check_native_viewer(self, widget):
+        """ Update native viewer widget from checkbutton state
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        status = not self.check_native_viewer.get_active()
+
+        self.label_viewer_binary.set_sensitive(status)
+        self.file_viewer_binary.set_sensitive(status)
+        self.label_viewer_options.set_sensitive(status)
+        self.entry_viewer_options.set_sensitive(status)
 
 
     def __on_modify_item(self, widget, manager, modification):
