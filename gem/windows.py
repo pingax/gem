@@ -170,7 +170,7 @@ class Dialog(Gtk.Dialog):
         self.set_default_size(width, height)
 
 
-    def set_help(self, parent, text):
+    def set_help(self, parent, data):
         """ Set an help dialog
 
         Parameters
@@ -188,10 +188,34 @@ class Dialog(Gtk.Dialog):
         self.button_help.set_image(image)
 
         # ------------------------------------
+        #   Generate help text
+        # ------------------------------------
+
+        text = list()
+
+        # Generate text from help dictionnary data
+        for item in sorted(data.keys(), key=lambda key: key[0]):
+
+            # Dictionnary value
+            if type(data[item]) is dict:
+                text.append("<b>%s</b>" % item)
+
+                for key, value in sorted(
+                    data[item].items(), key=lambda key: key[0]):
+
+                    text.append("\t<b>%s</b>\n\t\t%s" % (
+                        key.replace('>', "&gt;").replace('<', "&lt;"), value))
+
+            # String value
+            elif type(data[item]) is str:
+                text.append(data[item])
+
+        # ------------------------------------
         #   Connect signal
         # ------------------------------------
 
-        self.button_help.connect("clicked", self.show_help, parent, text)
+        self.button_help.connect(
+            "clicked", self.show_help, parent, '\n\n'.join(text))
 
         # ------------------------------------
         #   Insert help into headerbar

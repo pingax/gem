@@ -1963,6 +1963,20 @@ class Emulator(Dialog):
         self.emulators = parent.emulators
         self.selection = parent.selection
 
+        self.help_data = {
+            '0': _("To facilitate files detection with every emulators, some "
+                "custom parameters has been created."),
+            '1': _("This parameters are used in \"Default options\", \"Save\" "
+                "and \"Snapshots\" entries."),
+            _("Parameters"): {
+                "<name>": _("Use ROM filename"),
+                "<lname>": _("Use ROM lowercase filename"),
+                "<rom_path>": _("Use ROM folder path"),
+                "<rom_file>": _("Use ROM file path"),
+                "<conf_path>": _("Use emulator configuration file path"),
+            }
+        }
+
         # ------------------------------------
         #   Prepare interface
         # ------------------------------------
@@ -2000,20 +2014,7 @@ class Emulator(Dialog):
 
         self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
 
-        data = {
-            "<name>": _("ROM filename"),
-            "<lname>": _("ROM lowercase filemane"),
-            "<rom_path>": _("ROM folder path"),
-            "<rom_file>": _("ROM folder path"),
-            "<conf_path>": _("ROM folder path"),
-        }
-
-        text = list()
-        for key, value in sorted(data.items(), key=lambda key: key[0]):
-            text.append("<b>%s</b>\n\t%s" % (
-                key.replace('>', "&gt;").replace('<', "&lt;"), value))
-
-        self.set_help(self.interface.window, '\n\n'.join(text))
+        self.set_help(self.interface.window, self.help_data)
 
         # ------------------------------------
         #   Main scrolling
