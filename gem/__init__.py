@@ -64,8 +64,6 @@ class Gem:
 class Icons:
     Ext         = "png"
     # Actions
-    Error       = "dialog-error"
-    Warning     = "dialog-warning"
     Properties  = "document-properties"
     Open        = "document-open"
     Save        = "document-save"
@@ -74,6 +72,16 @@ class Icons:
     Delete      = "edit-delete"
     Find        = "edit-find"
     Paste       = "edit-paste"
+    Bottom      = "go-bottom"
+    Down        = "go-down"
+    First       = "go-first"
+    Home        = "go-home"
+    Jump        = "go-jump"
+    Last        = "go-last"
+    Next        = "go-next"
+    Previous    = "go-previous"
+    Top         = "go-top"
+    Up          = "go-up"
     About       = "help-about"
     Content     = "help-contents"
     Faq         = "help-faq"
@@ -82,9 +90,14 @@ class Icons:
     Launch      = "media-playback-start"
     Menu        = "open-menu" # Not standard
     Stop        = "process-stop"
+    Checkspell  = "tools-check-spelling"
     Fullscreen  = "view-fullscreen"
     Restore     = "view-restore"
     Close       = "window-close"
+    ZoomFit     = "zoom-fit-best"
+    ZoomIn      = "zoom-in"
+    Zoom        = "zoom-original"
+    ZoomOut     = "zoom-out"
     # Applications
     Editor      = "accessories-text-editor"
     Keyboard    = "preferences-desktop-keyboard"
@@ -109,9 +122,17 @@ class Icons:
     Sad         = "face-sad"
     SmileBig    = "face-smile-big"
     # Mimes
+    Text        = "text-x-generic"
     Image       = "image-x-generic"
     # Places
     Folder      = "folder"
+    # Status
+    Error       = "dialog-error"
+    Warning     = "dialog-warning"
+    Question    = "dialog-question"
+    Information = "dialog-information"
+    Loading     = "image-loading"
+    Missing     = "image-missing"
 
 
 class Path:

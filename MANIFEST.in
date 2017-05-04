@@ -1,6 +1,5 @@
-recursive-include gem/ui *.glade
-recursive-include gem/ui/icons *.png
 recursive-include gem/i18n *.mo
+recursive-include gem/icons/ui *.png
 recursive-include gem/icons/consoles *.png
 recursive-include gem/icons/emulators *.png
 recursive-include gem/config *.conf

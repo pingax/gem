@@ -170,7 +170,7 @@ class Dialog(Gtk.Dialog):
         self.set_default_size(width, height)
 
 
-    def set_help(self, text):
+    def set_help(self, parent, text):
         """ Set an help dialog
 
         Parameters
@@ -188,10 +188,33 @@ class Dialog(Gtk.Dialog):
         self.button_help.set_image(image)
 
         # ------------------------------------
+        #   Connect signal
+        # ------------------------------------
+
+        self.button_help.connect("clicked", self.show_help, parent, text)
+
+        # ------------------------------------
         #   Insert help into headerbar
         # ------------------------------------
 
         self.headerbar.pack_end(self.button_help)
+
+
+    def show_help(self, widget, parent, text):
+        """ Launch help dialog
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        text : str
+            Help message
+        """
+
+        dialog = Message(parent, _("Help"), text, center=False)
+        dialog.run()
+
+        dialog.destroy()
 
 
 class TemplateDialog(Dialog):
@@ -279,7 +302,7 @@ class TemplateDialog(Dialog):
 
 class Message(TemplateDialog):
 
-    def __init__(self, parent, title, message, icon="dialog-information",
+    def __init__(self, parent, title, message, icon=Icons.Information,
         center=True):
         """ Constructor
 
@@ -308,7 +331,7 @@ class Message(TemplateDialog):
 
 class Question(TemplateDialog):
 
-    def __init__(self, parent, title, message, icon="dialog-question",
+    def __init__(self, parent, title, message, icon=Icons.Question,
         center=True):
         """ Constructor
 
@@ -339,7 +362,7 @@ class Question(TemplateDialog):
 class DialogEditor(Dialog):
 
     def __init__(self, parent, title, file_path, size, editable=True,
-        icon="gtk-file"):
+        icon=Icons.Editor):
         """ Constructor
 
         Parameters
@@ -426,7 +449,7 @@ class DialogEditor(Dialog):
         # Properties
         self.entry_path.set_editable(False)
         self.entry_path.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.PRIMARY, "text-x-generic")
+            Gtk.EntryIconPosition.PRIMARY, Icons.Text)
         self.entry_path.set_icon_activatable(
             Gtk.EntryIconPosition.PRIMARY, False)
 
@@ -513,18 +536,18 @@ class DialogEditor(Dialog):
         # Properties
         self.entry_search.set_placeholder_text(_("Search"))
         self.entry_search.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.PRIMARY, "edit-find")
+            Gtk.EntryIconPosition.PRIMARY, Icons.Find)
         self.entry_search.set_icon_activatable(
             Gtk.EntryIconPosition.PRIMARY, False)
         self.entry_search.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, "edit-clear")
+            Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
 
-        self.image_up.set_from_icon_name("go-up", Gtk.IconSize.BUTTON)
+        self.image_up.set_from_icon_name(Icons.Up, Gtk.IconSize.BUTTON)
 
         self.button_up.set_label(str())
         self.button_up.set_image(self.image_up)
 
-        self.image_bottom.set_from_icon_name("go-down", Gtk.IconSize.BUTTON)
+        self.image_bottom.set_from_icon_name(Icons.Down, Gtk.IconSize.BUTTON)
 
         self.button_bottom.set_label(str())
         self.button_bottom.set_image(self.image_bottom)
@@ -701,7 +724,7 @@ class DialogParameters(Dialog):
             Emulator name
         """
 
-        Dialog.__init__(self, parent, title, "emblem-important")
+        Dialog.__init__(self, parent, title, Icons.Important)
 
         # ------------------------------------
         #   Initialize variables
@@ -782,7 +805,7 @@ class DialogParameters(Dialog):
         label_arguments.set_text(_("Set default arguments"))
 
         self.entry.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, "gtk-clear")
+            Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
 
         # ------------------------------------
         #   Integrate widgets
@@ -878,7 +901,7 @@ class DialogRemove(Dialog):
             Dialog title
         """
 
-        Dialog.__init__(self, parent, title, "edit-delete")
+        Dialog.__init__(self, parent, title, Icons.Delete)
 
         # ------------------------------------
         #   Prepare interface
@@ -969,7 +992,7 @@ class DialogRename(Dialog):
             Rom current name (Default: "")
         """
 
-        Dialog.__init__(self, parent, title, "tools-check-spelling")
+        Dialog.__init__(self, parent, title, Icons.Checkspell)
 
         # ------------------------------------
         #   Initialize variables
@@ -1017,7 +1040,7 @@ class DialogRename(Dialog):
         self.label.set_line_wrap_mode(Pango.WrapMode.CHAR)
 
         self.entry.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, "gtk-clear")
+            Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
 
         # ------------------------------------
         #   Integrate widgets
@@ -1059,7 +1082,7 @@ class DialogViewer(Dialog):
             Screnshots path list
         """
 
-        Dialog.__init__(self, parent, title, "image-x-generic")
+        Dialog.__init__(self, parent, title, Icons.Image)
 
         # ------------------------------------
         #   Initialize variables
@@ -1128,15 +1151,15 @@ class DialogViewer(Dialog):
         tool_separator_end.set_draw(False)
         tool_separator_end.set_expand(True)
 
-        self.tool_first.set_icon_name("gtk-goto-first")
-        self.tool_previous.set_icon_name("gtk-go-back")
-        self.tool_next.set_icon_name("gtk-go-forward")
-        self.tool_last.set_icon_name("gtk-goto-last")
+        self.tool_first.set_icon_name(Icons.First)
+        self.tool_previous.set_icon_name(Icons.Previous)
+        self.tool_next.set_icon_name(Icons.Next)
+        self.tool_last.set_icon_name(Icons.Last)
 
-        self.tool_zoom_minus.set_icon_name("gtk-zoom-out")
-        self.tool_zoom_100.set_icon_name("gtk-zoom-100")
-        self.tool_zoom_fit.set_icon_name("gtk-zoom-fit")
-        self.tool_zoom_plus.set_icon_name("gtk-zoom-in")
+        self.tool_zoom_minus.set_icon_name(Icons.ZoomOut)
+        self.tool_zoom_100.set_icon_name(Icons.Zoom)
+        self.tool_zoom_fit.set_icon_name(Icons.ZoomFit)
+        self.tool_zoom_plus.set_icon_name(Icons.ZoomIn)
 
         # ------------------------------------
         #   Integrate widgets
@@ -1323,7 +1346,7 @@ class DialogConsoles(Dialog):
             Previous selected console (Default: None)
         """
 
-        Dialog.__init__(self, parent, title, "input-gaming")
+        Dialog.__init__(self, parent, title, Icons.Gaming)
 
         # ------------------------------------
         #   Initialize variables
@@ -1527,7 +1550,7 @@ def icon_from_data(icon, fallback=None, width=24, height=24, subfolder=None):
 
     return fallback
 
-def icon_load(name, size=16, fallback="image-missing"):
+def icon_load(name, size=16, fallback=Icons.Missing):
     """ Load an icon from IconTheme
 
     This function search an icon in current user icons theme. If founded, return
@@ -1578,7 +1601,7 @@ def icon_load(name, size=16, fallback="image-missing"):
 
     # Instead, return default image
     return icons_theme.load_icon(
-        "image-missing", size, Gtk.IconLookupFlags.FORCE_SVG)
+        Icons.Missing, size, Gtk.IconLookupFlags.FORCE_SVG)
 
 def set_pixbuf_opacity(pixbuf, opacity):
     """ Changes the opacity of pixbuf

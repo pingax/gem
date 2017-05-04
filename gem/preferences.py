@@ -173,7 +173,7 @@ class Preferences(object):
             self.icons_theme = Gtk.IconTheme.get_default()
 
             self.icons_theme.append_search_path(
-                get_data(path_join("ui", "icons")))
+                get_data(path_join("icons", "ui")))
 
             # HACK: Create an empty image to avoid g_object_set_qdata warning
             self.empty = Pixbuf.new(Colorspace.RGB, True, 8, 24, 24)
@@ -1319,7 +1319,7 @@ class Preferences(object):
 
             check = self.empty
             if not exists(expanduser(path)):
-                check = icon_load("dialog-warning", 24, self.empty)
+                check = icon_load(Icons.Warning, 24, self.empty)
 
             self.model_consoles.append([image, name, path, check])
 
@@ -1340,7 +1340,7 @@ class Preferences(object):
 
             check, font = self.empty, Pango.Style.NORMAL
             if len(get_binary_path(binary)) == 0:
-                check = icon_load("dialog-warning", 24, self.empty)
+                check = icon_load(Icons.Warning, 24, self.empty)
                 font = Pango.Style.OBLIQUE
 
             self.model_emulators.append([image, name, binary, check, font])
@@ -1755,7 +1755,7 @@ class Console(Dialog):
 
             warning = self.empty
             if len(get_binary_path(path)) == 0:
-                warning = icon_load("dialog-warning", 24, self.empty)
+                warning = icon_load(Icons.Warning, 24, self.empty)
 
             emulators_rows[emulator] = self.model_emulators.append(
                 [icon, emulator, warning])
@@ -1898,7 +1898,7 @@ class Console(Dialog):
             if not self.modify or (self.modify and not name == self.console):
                 status = False
 
-                icon, tooltip = "dialog-error", _(
+                icon, tooltip = Icons.Error, _(
                     "This console already exist, please, choose another name")
 
         self.entry_name.set_icon_from_icon_name(
@@ -2000,7 +2000,20 @@ class Emulator(Dialog):
 
         self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
 
-        self.set_help("Test")
+        data = {
+            "<name>": _("ROM filename"),
+            "<lname>": _("ROM lowercase filemane"),
+            "<rom_path>": _("ROM folder path"),
+            "<rom_file>": _("ROM folder path"),
+            "<conf_path>": _("ROM folder path"),
+        }
+
+        text = list()
+        for key, value in sorted(data.items(), key=lambda key: key[0]):
+            text.append("<b>%s</b>\n\t%s" % (
+                key.replace('>', "&gt;").replace('<', "&lt;"), value))
+
+        self.set_help(self.interface.window, '\n\n'.join(text))
 
         # ------------------------------------
         #   Main scrolling
@@ -2078,8 +2091,6 @@ class Emulator(Dialog):
 
         self.label_screenshots = Gtk.Label()
         self.entry_screenshots = Gtk.Entry()
-
-        self.label_regex = Gtk.Label()
 
         # Properties
         self.label_name.set_markup(
@@ -2160,11 +2171,6 @@ class Emulator(Dialog):
         self.entry_screenshots.set_hexpand(True)
         self.entry_screenshots.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
-
-        self.label_regex.set_markup("<i>%s</i>" % (
-            _("<name> = ROM filename, <lname> = ROM lowercase filename\n"
-            "<rom_path> = ROM folder").replace('>', "&gt;").replace(
-            '<', "&lt;")))
 
 
     def __init_packing(self):
@@ -2502,7 +2508,7 @@ class IconViewer(Dialog):
             Icons folder
         """
 
-        Dialog.__init__(self, parent, title, "image-x-generic")
+        Dialog.__init__(self, parent, title, Icons.Image)
 
         # ------------------------------------
         #   Variables

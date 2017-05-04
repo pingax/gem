@@ -17,7 +17,7 @@ else
 
     echo "==> Install icon file"
     mkdir -p /usr/share/pixmaps/
-    cp gem/ui/icons/gem.svg /usr/share/pixmaps/
+    cp gem/icons/ui/gem.svg /usr/share/pixmaps/
 
     echo "==> Install desktop file"
     mkdir -p /usr/share/applications/

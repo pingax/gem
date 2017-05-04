@@ -251,7 +251,7 @@ class Interface(Gtk.Window):
         # Get user icon theme
         self.icons_theme = Gtk.IconTheme.get_default()
 
-        self.icons_theme.append_search_path(get_data(path_join("ui", "icons")))
+        self.icons_theme.append_search_path(get_data(path_join("icons", "ui")))
 
         self.icons_data = {
             "save": Icons.Download,
@@ -404,7 +404,7 @@ class Interface(Gtk.Window):
         self.tool_image_fullscreen.set_from_icon_name(
             Icons.Restore, Gtk.IconSize.LARGE_TOOLBAR)
         self.tool_image_menu.set_from_icon_name(
-            Icons.Menu, Gtk.IconSize.LARGE_TOOLBAR)
+            Icons.System, Gtk.IconSize.LARGE_TOOLBAR)
 
         # ------------------------------------
         #   Headerbar - Menu
@@ -675,6 +675,8 @@ class Interface(Gtk.Window):
         self.cell_game_last_play_time.set_alignment(1, .5)
         self.cell_game_play_time.set_alignment(.5, .5)
         self.cell_game_installed.set_alignment(.5, .5)
+
+        self.cell_game_name.set_property("ellipsize", Pango.EllipsizeMode.END)
 
         self.cell_game_snapshots.set_padding(4, 0)
         self.cell_game_multiplayer.set_padding(4, 0)
@@ -1643,8 +1645,7 @@ class Interface(Gtk.Window):
 
             else:
                 self.set_message(_("Missing binary"),
-                    _("Cannot find <b>%s</b> viewer !") % viewer,
-                    "dialog-warning")
+                    _("Cannot find <b>%s</b> viewer !") % viewer, Icons.Warning)
 
             # ----------------------------
             #   Check snapshots
@@ -1744,7 +1745,7 @@ class Interface(Gtk.Window):
                 size = (800, 600)
 
             dialog = DialogEditor(
-                self, title, expanduser(path), size, icon="emblem-documents")
+                self, title, expanduser(path), size, icon=Icons.Document)
 
             # Allow to launch games with open notes
             dialog.set_modal(False)
@@ -2761,7 +2762,7 @@ class Interface(Gtk.Window):
 
             self.set_message(
                 _("Remove %s") % self.model_games[treeiter][Columns.Name],
-                _("This game was removed successfully"), "dialog-information")
+                _("This game was removed successfully"), Icons.Information)
 
 
     def __on_game_parameters(self, widget):
@@ -3087,13 +3088,13 @@ class Interface(Gtk.Window):
                     self.set_message(
                         _("Generate menu entry for %s") % title,
                         _("%s was generated successfully")  % name,
-                        "dialog-information")
+                        Icons.Information)
 
                 except OSError as error:
                     self.set_message(
                         _("Generate menu entry for %s") % title,
                         _("An error occur during generation, consult log for "
-                        "futher details."), "dialog-error")
+                        "futher details."), Icons.Error)
 
 
     def __on_menu_show(self, treeview, event):
@@ -3572,7 +3573,7 @@ class Splash(Gtk.Window):
         # Get user icon theme
         self.icons_theme = Gtk.IconTheme.get_default()
 
-        self.icons_theme.append_search_path(get_data(path_join("ui", "icons")))
+        self.icons_theme.append_search_path(get_data(path_join("icons", "ui")))
 
         # ------------------------------------
         #   Prepare interface
