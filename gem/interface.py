@@ -1270,6 +1270,10 @@ class Interface(Gtk.Window):
         if current_console is None:
             self.model_games.clear()
 
+            if self.config.getboolean(
+                "gem", "hide_empty_console", fallback=False):
+                self.combo_consoles.set_active(0)
+
         else:
             self.combo_consoles.set_active_iter(current_console)
 
@@ -1888,14 +1892,20 @@ class Interface(Gtk.Window):
                             _("Cannot find %(binary)s for %(console)s") % {
                                 "binary": binary, "console": console })
 
-                    icon = icon_from_data(self.consoles.item(
-                        console, "icon"), self.empty, subfolder="consoles")
+                    hide_empty_console = self.config.getboolean(
+                        "gem", "hide_empty_console", fallback=False)
 
-                    row = self.model_consoles.append([icon, console, status])
+                    # Check if console ROM path is empty
+                    if not hide_empty_console or (
+                        hide_empty_console and len(listdir(path)) > 0):
+                        icon = icon_from_data(self.consoles.item(
+                            console, "icon"), self.empty, subfolder="consoles")
 
-                    if self.selection.get("console") is not None and \
-                        self.selection.get("console") == console:
-                        item = row
+                        row = self.model_consoles.append([icon, console, status])
+
+                        if self.selection.get("console") is not None and \
+                            self.selection.get("console") == console:
+                            item = row
 
         return item
 

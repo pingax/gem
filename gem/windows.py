@@ -236,8 +236,9 @@ class Dialog(Gtk.Dialog):
         """
 
         dialog = Message(parent, _("Help"), text, center=False)
-        dialog.run()
+        dialog.set_size(640, -1)
 
+        dialog.run()
         dialog.destroy()
 
 

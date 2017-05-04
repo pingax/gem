@@ -417,6 +417,7 @@ class Preferences(object):
         self.label_behavior = Gtk.Label()
 
         self.check_last_console = Gtk.CheckButton()
+        self.check_hide_console = Gtk.CheckButton()
 
         # Properties
         self.label_behavior.set_markup("<b>%s</b>" % _("Behavior"))
@@ -427,6 +428,9 @@ class Preferences(object):
         self.check_last_console.set_margin_left(32)
         self.check_last_console.set_label(
             _("Load the last chosen console during startup"))
+        self.check_hide_console.set_hexpand(True)
+        self.check_hide_console.set_margin_left(32)
+        self.check_hide_console.set_label(_("Hide consoles whitout any game"))
 
         # ------------------------------------
         #   General - Viewer
@@ -910,16 +914,17 @@ class Preferences(object):
         # General tab
         self.grid_general.attach(self.label_behavior, 0, 0, 2, 1)
         self.grid_general.attach(self.check_last_console, 0, 1, 2, 1)
+        self.grid_general.attach(self.check_hide_console, 0, 2, 2, 1)
 
-        self.grid_general.attach(Gtk.Separator(), 0, 2, 2, 1)
+        self.grid_general.attach(Gtk.Separator(), 0, 3, 2, 1)
 
-        self.grid_general.attach(self.label_viewer, 0, 3, 2, 1)
-        self.grid_general.attach(self.check_native_viewer, 0, 4, 2, 1)
-        self.grid_general.attach(self.separator_viewer, 0, 5, 2, 1)
-        self.grid_general.attach(self.label_viewer_binary, 0, 6, 1, 1)
-        self.grid_general.attach(self.file_viewer_binary, 1, 6, 1, 1)
-        self.grid_general.attach(self.label_viewer_options, 0, 7, 1, 1)
-        self.grid_general.attach(self.entry_viewer_options, 1, 7, 1, 1)
+        self.grid_general.attach(self.label_viewer, 0, 4, 2, 1)
+        self.grid_general.attach(self.check_native_viewer, 0, 5, 2, 1)
+        self.grid_general.attach(self.separator_viewer, 0, 6, 2, 1)
+        self.grid_general.attach(self.label_viewer_binary, 0, 7, 1, 1)
+        self.grid_general.attach(self.file_viewer_binary, 1, 7, 1, 1)
+        self.grid_general.attach(self.label_viewer_options, 0, 8, 1, 1)
+        self.grid_general.attach(self.entry_viewer_options, 1, 8, 1, 1)
 
         self.view_general.add(self.grid_general)
 
@@ -1121,6 +1126,8 @@ class Preferences(object):
 
             self.config.modify("gem", "load_console_startup",
                 int(self.check_last_console.get_active()))
+            self.config.modify("gem", "hide_empty_console",
+                int(self.check_hide_console.get_active()))
 
             self.config.modify("gem", "show_header",
                 int(self.check_header.get_active()))
@@ -1189,6 +1196,8 @@ class Preferences(object):
 
         self.check_last_console.set_active(self.config.getboolean(
             "gem", "load_console_startup", fallback=True))
+        self.check_hide_console.set_active(self.config.getboolean(
+            "gem", "hide_empty_console", fallback=True))
 
         # ------------------------------------
         #   Viewer
