@@ -678,8 +678,15 @@ class Interface(Gtk.Window):
 
         self.cell_game_name.set_property("ellipsize", Pango.EllipsizeMode.END)
 
+        self.cell_game_name.set_padding(4, 0)
+        self.cell_game_play.set_padding(8, 0)
+        self.cell_game_last_play.set_padding(8, 0)
+        self.cell_game_last_play_time.set_padding(8, 0)
+        self.cell_game_installed.set_padding(8, 0)
+        self.cell_game_except.set_padding(4, 0)
         self.cell_game_snapshots.set_padding(4, 0)
         self.cell_game_multiplayer.set_padding(4, 0)
+        self.cell_game_save.set_padding(4, 0)
 
         # ------------------------------------
         #   Games - Menu
