@@ -1883,25 +1883,31 @@ class Interface(Gtk.Window):
                 if path is not None and exists(expanduser(path)):
                     status = self.empty
 
-                    # Check if current emulator can be launched
-                    binary = self.emulators.item(emulator, "binary")
-                    if binary is None or len(get_binary_path(binary)) == 0:
-                        status = self.icons["warning"]
-
-                        self.logger.warning(
-                            _("Cannot find %(binary)s for %(console)s") % {
-                                "binary": binary, "console": console })
-
-                    hide_empty_console = self.config.getboolean(
+                    hide = self.config.getboolean(
                         "gem", "hide_empty_console", fallback=False)
 
+                    # ROM number in console path
+                    roms = len(listdir(expanduser(path)))
+
                     # Check if console ROM path is empty
-                    if not hide_empty_console or (
-                        hide_empty_console and len(listdir(path)) > 0):
+                    if not hide or (hide and roms > 0):
+
+                        # Check if current emulator can be launched
+                        binary = self.emulators.item(emulator, "binary")
+                        if binary is None or len(get_binary_path(binary)) == 0:
+                            status = self.icons["warning"]
+
+                            self.logger.warning(
+                                _("Cannot find %(binary)s for %(console)s") % {
+                                    "binary": binary, "console": console })
+
+                        # Get console icon
                         icon = icon_from_data(self.consoles.item(
                             console, "icon"), self.empty, subfolder="consoles")
 
-                        row = self.model_consoles.append([icon, console, status])
+                        # Append a new console in combobox model
+                        row = self.model_consoles.append(
+                            [icon, console, status])
 
                         if self.selection.get("console") is not None and \
                             self.selection.get("console") == console:
