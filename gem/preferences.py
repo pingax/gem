@@ -482,6 +482,7 @@ class Preferences(object):
 
         self.label_interface = Gtk.Label()
 
+        self.check_classic_theme = Gtk.CheckButton()
         self.check_header = Gtk.CheckButton()
         self.check_icons = Gtk.CheckButton()
 
@@ -490,7 +491,12 @@ class Preferences(object):
         self.label_interface.set_use_markup(True)
         self.label_interface.set_alignment(0, .5)
 
-        self.check_header.set_label(_("Show close buttons in header bar"))
+        self.check_classic_theme.set_label(
+            _("Use classic theme (Need to reboot GEM)"))
+        self.check_classic_theme.set_hexpand(True)
+        self.check_classic_theme.set_margin_left(32)
+        self.check_header.set_label(
+            _("Show close buttons in header bar"))
         self.check_header.set_hexpand(True)
         self.check_header.set_margin_left(32)
         self.check_icons.set_label(
@@ -932,30 +938,31 @@ class Preferences(object):
 
         # Interface tab
         self.grid_interface.attach(self.label_interface, 0, 0, 3, 1)
-        self.grid_interface.attach(self.check_header, 0, 1, 3, 1)
-        self.grid_interface.attach(self.check_icons, 0, 2, 3, 1)
+        self.grid_interface.attach(self.check_classic_theme, 0, 1, 3, 1)
+        self.grid_interface.attach(self.check_header, 0, 2, 3, 1)
+        self.grid_interface.attach(self.check_icons, 0, 3, 3, 1)
 
-        self.grid_interface.attach(Gtk.Separator(), 0, 3, 3, 1)
+        self.grid_interface.attach(Gtk.Separator(), 0, 4, 3, 1)
 
-        self.grid_interface.attach(self.label_treeview, 0, 4, 3, 1)
-        self.grid_interface.attach(self.label_treeview_lines, 0, 5, 2, 1)
-        self.grid_interface.attach(self.combo_lines, 2, 5, 1, 1)
-        self.grid_interface.attach(self.separator_interface_game, 0, 6, 3, 1)
-        self.grid_interface.attach(self.check_play, 0, 7, 3, 1)
-        self.grid_interface.attach(self.check_last_play, 0, 8, 3, 1)
-        self.grid_interface.attach(self.check_play_time, 0, 9, 3, 1)
-        self.grid_interface.attach(self.check_installed, 0, 10, 3, 1)
-        self.grid_interface.attach(self.check_flags, 0, 11, 3, 1)
+        self.grid_interface.attach(self.label_treeview, 0, 5, 3, 1)
+        self.grid_interface.attach(self.label_treeview_lines, 0, 6, 2, 1)
+        self.grid_interface.attach(self.combo_lines, 2, 6, 1, 1)
+        self.grid_interface.attach(self.separator_interface_game, 0, 7, 3, 1)
+        self.grid_interface.attach(self.check_play, 0, 8, 3, 1)
+        self.grid_interface.attach(self.check_last_play, 0, 9, 3, 1)
+        self.grid_interface.attach(self.check_play_time, 0, 10, 3, 1)
+        self.grid_interface.attach(self.check_installed, 0, 11, 3, 1)
+        self.grid_interface.attach(self.check_flags, 0, 12, 3, 1)
 
-        self.grid_interface.attach(Gtk.Separator(), 0, 12, 3, 1)
+        self.grid_interface.attach(Gtk.Separator(), 0, 13, 3, 1)
 
-        self.grid_interface.attach(self.label_editor, 0, 13, 3, 1)
-        self.grid_interface.attach(self.check_lines, 0, 14, 3, 1)
-        self.grid_interface.attach(self.separator_interface_editor, 0, 15, 3, 1)
-        self.grid_interface.attach(self.label_editor_colorscheme, 0, 16, 1, 1)
-        self.grid_interface.attach(self.combo_colorsheme, 1, 16, 2, 1)
-        self.grid_interface.attach(self.label_editor_font, 0, 17, 1, 1)
-        self.grid_interface.attach(self.font_editor, 1, 17, 2, 1)
+        self.grid_interface.attach(self.label_editor, 0, 14, 3, 1)
+        self.grid_interface.attach(self.check_lines, 0, 15, 3, 1)
+        self.grid_interface.attach(self.separator_interface_editor, 0, 16, 3, 1)
+        self.grid_interface.attach(self.label_editor_colorscheme, 0, 17, 1, 1)
+        self.grid_interface.attach(self.combo_colorsheme, 1, 17, 2, 1)
+        self.grid_interface.attach(self.label_editor_font, 0, 18, 1, 1)
+        self.grid_interface.attach(self.font_editor, 1, 18, 2, 1)
 
         self.view_interface.add(self.grid_interface)
 
@@ -1124,6 +1131,8 @@ class Preferences(object):
 
         if widget == self.button_save:
 
+            self.config.modify("gem", "use_classic_theme",
+                int(self.check_classic_theme.get_active()))
             self.config.modify("gem", "load_console_startup",
                 int(self.check_last_console.get_active()))
             self.config.modify("gem", "hide_empty_console",
@@ -1194,6 +1203,8 @@ class Preferences(object):
         #   Interface
         # ------------------------------------
 
+        self.check_classic_theme.set_active(self.config.getboolean(
+            "gem", "use_classic_theme", fallback=True))
         self.check_last_console.set_active(self.config.getboolean(
             "gem", "load_console_startup", fallback=True))
         self.check_hide_console.set_active(self.config.getboolean(

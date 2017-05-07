@@ -64,6 +64,7 @@ class Gem:
 class Icons:
     Ext         = "png"
     # Actions
+    Quit        = "application-exit"
     Properties  = "document-properties"
     Open        = "document-open"
     Save        = "document-save"

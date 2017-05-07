@@ -230,7 +230,7 @@ class Interface(Gtk.Window):
         self.keys = list()
 
         # Avoid to resize the main window everytime user modify preferences
-        self.__resize_once = False
+        self.__first_draw = False
 
         # ------------------------------------
         #   Initialize logger
@@ -432,7 +432,7 @@ class Interface(Gtk.Window):
         self.menu_image_about.set_from_icon_name(
             Icons.About, Gtk.IconSize.MENU)
         self.menu_image_quit.set_from_icon_name(
-            Icons.Close, Gtk.IconSize.MENU)
+            Icons.Quit, Gtk.IconSize.MENU)
 
         self.menu_item_preferences.set_label(_("_Preferences"))
         self.menu_item_preferences.set_image(self.menu_image_preferences)
@@ -452,6 +452,126 @@ class Interface(Gtk.Window):
 
         self.menu_item_dark_theme.set_label(_("Use _dark theme"))
         self.menu_item_dark_theme.set_use_underline(True)
+
+        # ------------------------------------
+        #   Menubar
+        # ------------------------------------
+
+        self.menubar = Gtk.MenuBar()
+
+        self.menubar_item_main = Gtk.MenuItem()
+        self.menubar_item_tools = Gtk.MenuItem()
+        self.menubar_item_help = Gtk.MenuItem()
+
+        # Properties
+        self.menubar_item_main.set_label(_("_System"))
+        self.menubar_item_main.set_use_underline(True)
+        self.menubar_item_tools.set_label(_("_Tools"))
+        self.menubar_item_tools.set_use_underline(True)
+        self.menubar_item_help.set_label(_("_Help"))
+        self.menubar_item_help.set_use_underline(True)
+
+        # ------------------------------------
+        #   Menubar - Main items
+        # ------------------------------------
+
+        self.menubar_main_menu = Gtk.Menu()
+
+        self.menubar_main_image_launch = Gtk.Image()
+        self.menubar_main_image_quit = Gtk.Image()
+
+        self.menubar_main_item_launch = Gtk.ImageMenuItem()
+        self.menubar_main_item_quit = Gtk.ImageMenuItem()
+
+        self.menubar_main_item_dark_theme = Gtk.CheckMenuItem()
+
+        # Properties
+        self.menubar_main_image_launch.set_from_icon_name(
+            Icons.Launch, Gtk.IconSize.MENU)
+        self.menubar_main_image_quit.set_from_icon_name(
+            Icons.Quit, Gtk.IconSize.MENU)
+
+        self.menubar_main_item_launch.set_label(_("_Launch"))
+        self.menubar_main_item_launch.set_image(
+            self.menubar_main_image_launch)
+        self.menubar_main_item_launch.set_use_underline(True)
+        self.menubar_main_item_quit.set_label(_("_Quit"))
+        self.menubar_main_item_quit.set_image(
+            self.menubar_main_image_quit)
+        self.menubar_main_item_quit.set_use_underline(True)
+
+        self.menubar_main_item_dark_theme.set_label(_("Use _dark theme"))
+        self.menubar_main_item_dark_theme.set_use_underline(True)
+
+        # ------------------------------------
+        #   Menubar - Tools items
+        # ------------------------------------
+
+        self.menubar_tools_menu = Gtk.Menu()
+
+        self.menubar_tools_image_screenshots = Gtk.Image()
+        self.menubar_tools_image_output = Gtk.Image()
+        self.menubar_tools_image_notes = Gtk.Image()
+        self.menubar_tools_image_preferences = Gtk.Image()
+
+        self.menubar_tools_item_screenshots = Gtk.ImageMenuItem()
+        self.menubar_tools_item_output = Gtk.ImageMenuItem()
+        self.menubar_tools_item_notes = Gtk.ImageMenuItem()
+        self.menubar_tools_item_preferences = Gtk.ImageMenuItem()
+
+        # Properties
+        self.menubar_tools_image_screenshots.set_from_icon_name(
+            Icons.Image, Gtk.IconSize.MENU)
+        self.menubar_tools_image_output.set_from_icon_name(
+            Icons.Terminal, Gtk.IconSize.MENU)
+        self.menubar_tools_image_notes.set_from_icon_name(
+            Icons.Document, Gtk.IconSize.MENU)
+        self.menubar_tools_image_preferences.set_from_icon_name(
+            Icons.System, Gtk.IconSize.MENU)
+
+        self.menubar_tools_item_screenshots.set_label(_("_Screenshots"))
+        self.menubar_tools_item_screenshots.set_image(
+            self.menubar_tools_image_screenshots)
+        self.menubar_tools_item_screenshots.set_use_underline(True)
+        self.menubar_tools_item_output.set_label(_("Output _log"))
+        self.menubar_tools_item_output.set_image(
+            self.menubar_tools_image_output)
+        self.menubar_tools_item_output.set_use_underline(True)
+        self.menubar_tools_item_notes.set_label(_("_Notes"))
+        self.menubar_tools_item_notes.set_image(
+            self.menubar_tools_image_notes)
+        self.menubar_tools_item_notes.set_use_underline(True)
+        self.menubar_tools_item_preferences.set_label(_("_Preferences"))
+        self.menubar_tools_item_preferences.set_image(
+            self.menubar_tools_image_preferences)
+        self.menubar_tools_item_preferences.set_use_underline(True)
+
+        # ------------------------------------
+        #   Menubar - Help items
+        # ------------------------------------
+
+        self.menubar_help_menu = Gtk.Menu()
+
+        self.menubar_help_image_log = Gtk.Image()
+        self.menubar_help_image_about = Gtk.Image()
+
+        self.menubar_help_item_log = Gtk.ImageMenuItem()
+        self.menubar_help_item_about = Gtk.ImageMenuItem()
+
+        # Properties
+        self.menubar_help_image_log.set_from_icon_name(
+            Icons.Terminal, Gtk.IconSize.MENU)
+        self.menubar_help_image_about.set_from_icon_name(
+            Icons.About, Gtk.IconSize.MENU)
+
+        self.menubar_help_item_log.set_label(_("Show main _log"))
+        self.menubar_help_item_log.set_image(
+            self.menubar_help_image_log)
+        self.menubar_help_item_log.set_use_underline(True)
+        self.menubar_help_item_about.set_label(_("_About"))
+        self.menubar_help_item_about.set_image(
+            self.menubar_help_image_about)
+        self.menubar_help_item_about.set_use_underline(True)
 
         # ------------------------------------
         #   Toolbar
@@ -823,14 +943,18 @@ class Interface(Gtk.Window):
         # Properties
         self.statusbar.set_no_show_all(True)
 
+        self.statusbar.get_message_area().set_margin_top(0)
+        self.statusbar.get_message_area().set_margin_left(0)
+        self.statusbar.get_message_area().set_margin_right(0)
+        self.statusbar.get_message_area().set_margin_bottom(0)
+
 
     def __init_packing(self):
         """ Initialize widgets packing in main window
         """
 
-        self.set_titlebar(self.headerbar)
-
         # Main widgets
+        self.grid.pack_start(self.menubar, False, False, 0)
         self.grid.pack_start(self.toolbar, False, False, 0)
         self.grid.pack_start(self.scroll_games, True, True, 0)
         self.grid.pack_start(self.statusbar, False, False, 0)
@@ -861,6 +985,36 @@ class Interface(Gtk.Window):
         self.menu.append(self.menu_item_about)
         self.menu.append(Gtk.SeparatorMenuItem())
         self.menu.append(self.menu_item_quit)
+
+        # Menu
+        self.menubar.insert(self.menubar_item_main, -1)
+        self.menubar.insert(self.menubar_item_tools, -1)
+        self.menubar.insert(self.menubar_item_help, -1)
+
+        # Menu - Main items
+        self.menubar_item_main.set_submenu(self.menubar_main_menu)
+
+        self.menubar_main_menu.insert(self.menubar_main_item_launch, -1)
+        self.menubar_main_menu.insert(Gtk.SeparatorMenuItem(), -1)
+        self.menubar_main_menu.insert(self.menubar_main_item_dark_theme, -1)
+        self.menubar_main_menu.insert(Gtk.SeparatorMenuItem(), -1)
+        self.menubar_main_menu.insert(self.menubar_main_item_quit, -1)
+
+        # Menu - Tools items
+        self.menubar_item_tools.set_submenu(self.menubar_tools_menu)
+
+        self.menubar_tools_menu.insert(self.menubar_tools_item_screenshots, -1)
+        self.menubar_tools_menu.insert(self.menubar_tools_item_output, -1)
+        self.menubar_tools_menu.insert(self.menubar_tools_item_notes, -1)
+        self.menubar_tools_menu.insert(Gtk.SeparatorMenuItem(), -1)
+        self.menubar_tools_menu.insert(self.menubar_tools_item_preferences, -1)
+
+        # Menu - Help items
+        self.menubar_item_help.set_submenu(self.menubar_help_menu)
+
+        self.menubar_help_menu.insert(self.menubar_help_item_log, -1)
+        self.menubar_help_menu.insert(Gtk.SeparatorMenuItem(), -1)
+        self.menubar_help_menu.insert(self.menubar_help_item_about, -1)
 
         # Toolbar
         self.toolbar.insert(self.tool_item_consoles, -1)
@@ -935,6 +1089,31 @@ class Interface(Gtk.Window):
             "key-press-event", self.__on_manage_keys)
 
         # ------------------------------------
+        #   Menubar
+        # ------------------------------------
+
+        self.menubar_main_item_launch.connect(
+            "activate", self.__on_game_launch)
+        self.dark_signal_menubar = self.menubar_main_item_dark_theme.connect(
+            "toggled", self.__on_activate_dark_theme)
+        self.menubar_main_item_quit.connect(
+            "activate", self.__stop_interface)
+
+        self.menubar_tools_item_screenshots.connect(
+            "activate", self.__on_show_viewer)
+        self.menubar_tools_item_output.connect(
+            "activate", self.__on_show_log)
+        self.menubar_tools_item_notes.connect(
+            "activate", self.__on_show_notes)
+        self.menubar_tools_item_preferences.connect(
+            "activate", self.__on_show_preferences)
+
+        self.menubar_help_item_log.connect(
+            "activate", self.__on_show_log)
+        self.menubar_help_item_about.connect(
+            "activate", self.__on_show_about)
+
+        # ------------------------------------
         #   Toolbar
         # ------------------------------------
 
@@ -1000,7 +1179,7 @@ class Interface(Gtk.Window):
             "activate", self.__on_show_preferences)
         self.menu_item_gem_log.connect(
             "activate", self.__on_show_log)
-        self.dark_theme_signal = self.menu_item_dark_theme.connect(
+        self.dark_signal_menu = self.menu_item_dark_theme.connect(
             "toggled", self.__on_activate_dark_theme)
         self.menu_item_about.connect(
             "activate", self.__on_show_about)
@@ -1155,7 +1334,10 @@ class Interface(Gtk.Window):
         # ------------------------------------
 
         # Block signal to avoid stack overflow when toggled
-        self.menu_item_dark_theme.handler_block(self.dark_theme_signal)
+        self.menu_item_dark_theme.handler_block(
+            self.dark_signal_menu)
+        self.menubar_main_item_dark_theme.handler_block(
+            self.dark_signal_menubar)
 
         dark_theme_status = self.config.getboolean(
             "gem", "dark_theme", fallback=False)
@@ -1163,9 +1345,13 @@ class Interface(Gtk.Window):
         on_change_theme(dark_theme_status)
 
         self.menu_item_dark_theme.set_active(dark_theme_status)
+        self.menubar_main_item_dark_theme.set_active(dark_theme_status)
 
         # Unblock signal
-        self.menu_item_dark_theme.handler_unblock(self.dark_theme_signal)
+        self.menu_item_dark_theme.handler_unblock(
+            self.dark_signal_menu)
+        self.menubar_main_item_dark_theme.handler_unblock(
+            self.dark_signal_menubar)
 
         # ------------------------------------
         #   Icons
@@ -1188,10 +1374,27 @@ class Interface(Gtk.Window):
                     self.alternative[icon] = self.empty
 
         # ------------------------------------
-        #   Window size
+        #   Window first drawing
         # ------------------------------------
 
-        if not self.__resize_once:
+        classic_theme = None
+
+        if not self.__first_draw:
+
+            # ------------------------------------
+            #   Window classic theme
+            # ------------------------------------
+
+            classic_theme = self.config.getboolean(
+                "gem", "use_classic_theme", fallback=False)
+
+            if not classic_theme:
+                self.set_titlebar(self.headerbar)
+
+            # ------------------------------------
+            #   Window size
+            # ------------------------------------
+
             try:
                 width, height = self.config.get("windows", "main",
                     fallback="1024x768").split('x')
@@ -1210,7 +1413,7 @@ class Interface(Gtk.Window):
             self.hide()
             self.unrealize()
 
-            self.__resize_once = True
+            self.__first_draw = True
 
         # ------------------------------------
         #   Widgets
@@ -1220,7 +1423,16 @@ class Interface(Gtk.Window):
         self.menu.show_all()
         self.menu_games.show_all()
 
-        self.statusbar.hide()
+        if classic_theme is not None:
+            if classic_theme:
+                self.logger.debug("Switch interface to classic theme")
+                self.menubar.show_all()
+                self.statusbar.show()
+
+            else:
+                self.logger.debug("Switch interface to default theme")
+                self.menubar.hide()
+                self.statusbar.hide()
 
         self.sensitive_interface()
 
@@ -1311,6 +1523,11 @@ class Interface(Gtk.Window):
         self.tool_item_notes.set_sensitive(status)
         self.tool_item_parameters.set_sensitive(status)
         self.tool_item_screenshots.set_sensitive(status)
+
+        self.menubar_main_item_launch.set_sensitive(status)
+        self.menubar_tools_item_screenshots.set_sensitive(status)
+        self.menubar_tools_item_output.set_sensitive(status)
+        self.menubar_tools_item_notes.set_sensitive(status)
 
 
     def filters_update(self, widget=None):
@@ -1404,6 +1621,8 @@ class Interface(Gtk.Window):
                 self.config.item("keys", "copy", "<Control>C"),
             self.menu_item_desktop:
                 self.config.item("keys", "desktop", "<Control>G"),
+            self.menubar_main_item_launch:
+                self.config.item("keys", "start", "Return"),
             self.menu_item_launch:
                 self.config.item("keys", "start", "Return"),
             self.tool_item_launch:
@@ -1414,12 +1633,18 @@ class Interface(Gtk.Window):
                 self.config.item("keys", "favorite", "F3"),
             self.menu_item_multiplayer:
                 self.config.item("keys", "multiplayer", "F4"),
+            self.menubar_tools_item_screenshots:
+                self.config.item("keys", "snapshots", "F5"),
             self.tool_item_screenshots:
                 self.config.item("keys", "snapshots", "F5"),
             self.menu_item_screenshots:
                 self.config.item("keys", "snapshots", "F5"),
+            self.menubar_tools_item_output:
+                self.config.item("keys", "log", "F6"),
             self.menu_item_output:
                 self.config.item("keys", "log", "F6"),
+            self.menubar_tools_item_notes:
+                self.config.item("keys", "notes", "F7"),
             self.menu_item_notes:
                 self.config.item("keys", "notes", "F7"),
             self.tool_item_parameters:
@@ -1430,10 +1655,16 @@ class Interface(Gtk.Window):
                 self.config.item("keys", "delete", "<Control>Delete"),
             self.menu_item_database:
                 self.config.item("keys", "remove", "Delete"),
+            self.menubar_tools_item_preferences:
+                self.config.item("keys", "preferences", "<Control>P"),
             self.menu_item_preferences:
                 self.config.item("keys", "preferences", "<Control>P"),
+            self.menubar_help_item_log:
+                self.config.item("keys", "gem", "<Control>L"),
             self.menu_item_gem_log:
                 self.config.item("keys", "gem", "<Control>L"),
+            self.menubar_main_item_quit:
+                self.config.item("keys", "quit", "<Control>Q"),
             self.menu_item_quit:
                 self.config.item("keys", "quit", "<Control>Q") }
 
@@ -1519,6 +1750,7 @@ class Interface(Gtk.Window):
             texts.append(basename(self.selection["game"]))
 
         self.headerbar.set_subtitle(" - ".join(texts))
+        self.statusbar.push(0, " - ".join(texts))
 
 
     def set_message(self, title, message, icon="dialog-error"):
@@ -1696,7 +1928,7 @@ class Interface(Gtk.Window):
             Object which receive signal
         """
 
-        if widget == self.menu_item_gem_log:
+        if widget in (self.menu_item_gem_log, self.menubar_help_item_log):
             path = path_join(Path.Data, "gem.log")
 
             title = _("GEM")
@@ -2255,6 +2487,9 @@ class Interface(Gtk.Window):
                 self.menu_item_database.set_sensitive(False)
                 self.menu_item_remove.set_sensitive(False)
                 self.menu_item_rename.set_sensitive(False)
+                self.menubar_main_item_launch.set_sensitive(False)
+                self.menubar_tools_item_screenshots.set_sensitive(False)
+                self.menubar_tools_item_output.set_sensitive(False)
 
             iter_snaps = model.get_value(treeiter, Columns.Snapshots)
 
@@ -2262,10 +2497,12 @@ class Interface(Gtk.Window):
             if iter_snaps == self.alternative["snap"]:
                 self.tool_item_screenshots.set_sensitive(False)
                 self.menu_item_screenshots.set_sensitive(False)
+                self.menubar_tools_item_screenshots.set_sensitive(False)
 
             if self.check_log() is None:
                 self.tool_item_output.set_sensitive(False)
                 self.menu_item_output.set_sensitive(False)
+                self.menubar_tools_item_output.set_sensitive(False)
 
             if run_game:
                 self.__on_game_launch()
@@ -2389,7 +2626,9 @@ class Interface(Gtk.Window):
 
                 self.tool_item_notes.set_sensitive(True)
                 self.menu_item_notes.set_sensitive(True)
+                self.menubar_tools_item_notes.set_sensitive(True)
                 self.menu_item_preferences.set_sensitive(False)
+                self.menubar_tools_item_preferences.set_sensitive(False)
 
 
     def __on_game_terminate(self, widget, thread):
@@ -2458,6 +2697,7 @@ class Interface(Gtk.Window):
                     self.set_game_data(
                         Columns.Snapshots, self.icons["snap"], thread_name)
                     self.tool_item_screenshots.set_sensitive(True)
+                    self.menubar_tools_image_screenshots.set_sensitive(True)
 
                 else:
                     self.set_game_data(Columns.Snapshots,
@@ -2491,6 +2731,8 @@ class Interface(Gtk.Window):
             self.menu_item_database.set_sensitive(True)
             self.menu_item_remove.set_sensitive(True)
             self.menu_item_rename.set_sensitive(True)
+            self.menubar_main_item_launch.set_sensitive(True)
+            self.menubar_tools_item_output.set_sensitive(True)
 
         # Remove this game from threads list
         if thread_name in self.threads:
@@ -2499,6 +2741,7 @@ class Interface(Gtk.Window):
 
         if len(self.threads) == 0:
             self.menu_item_preferences.set_sensitive(True)
+            self.menubar_tools_item_preferences.set_sensitive(True)
 
 
     def generate_command(self, emulator, filename):
@@ -2894,11 +3137,13 @@ class Interface(Gtk.Window):
                 self.set_game_data(
                     Columns.Snapshots, self.icons["snap"], gamename)
                 self.tool_item_screenshots.set_sensitive(True)
+                self.menubar_tools_item_screenshots.set_sensitive(True)
 
             else:
                 self.set_game_data(
                     Columns.Snapshots, self.alternative["snap"], gamename)
                 self.tool_item_screenshots.set_sensitive(False)
+                self.menubar_tools_item_screenshots.set_sensitive(False)
 
             # Save state
             if self.check_save_states(new_emulator, gamename):
@@ -3203,6 +3448,12 @@ class Interface(Gtk.Window):
             Object which receive signal
         """
 
+        # Block signal to avoid stack overflow when toggled
+        self.menu_item_dark_theme.handler_block(
+            self.dark_signal_menu)
+        self.menubar_main_item_dark_theme.handler_block(
+            self.dark_signal_menubar)
+
         dark_theme_status = self.config.getboolean(
             "gem", "dark_theme", fallback=False)
 
@@ -3212,6 +3463,13 @@ class Interface(Gtk.Window):
         self.config.update()
 
         self.menu_item_dark_theme.set_active(not dark_theme_status)
+        self.menubar_main_item_dark_theme.set_active(not dark_theme_status)
+
+        # Unblock signal
+        self.menu_item_dark_theme.handler_unblock(
+            self.dark_signal_menu)
+        self.menubar_main_item_dark_theme.handler_unblock(
+            self.dark_signal_menubar)
 
 
     def __on_dnd_send_data(self, widget, context, data, info, time):

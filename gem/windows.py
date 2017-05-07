@@ -1144,6 +1144,8 @@ class DialogViewer(Dialog):
 
         self.set_size(800, 600)
 
+        self.set_resizable(True)
+
         # ------------------------------------
         #   Image
         # ------------------------------------
