@@ -193,8 +193,8 @@ class Dialog(Gtk.Dialog):
 
         text = list()
 
-        # Generate text from help dictionnary data
-        for item in sorted(data.keys(), key=lambda key: key[0]):
+        # Get help data from specified order
+        for item in data["order"]:
 
             # Dictionnary value
             if type(data[item]) is dict:
@@ -205,6 +205,10 @@ class Dialog(Gtk.Dialog):
 
                     text.append("\t<b>%s</b>\n\t\t%s" % (
                         key.replace('>', "&gt;").replace('<', "&lt;"), value))
+
+            # List value
+            elif type(data[item]) is list:
+                text.append("\n\n".join(data[item]))
 
             # String value
             elif type(data[item]) is str:
@@ -235,8 +239,8 @@ class Dialog(Gtk.Dialog):
             Help message
         """
 
-        dialog = Message(parent, _("Help"), text, center=False)
-        dialog.set_size(640, -1)
+        dialog = DialogHelp(parent, _("Help"), text, Icons.Information)
+        dialog.set_size(640, 480)
 
         dialog.run()
         dialog.destroy()
@@ -302,6 +306,7 @@ class TemplateDialog(Dialog):
         text.set_use_markup(True)
         text.set_max_width_chars(10)
         text.set_markup(self.message)
+        text.set_line_wrap_mode(Pango.WrapMode.WORD)
 
         if(self.center):
             text.set_alignment(.5, .5)
@@ -309,7 +314,6 @@ class TemplateDialog(Dialog):
         else:
             text.set_alignment(0, .5)
             text.set_justify(Gtk.Justification.FILL)
-
 
         # ------------------------------------
         #   Integrate widgets
@@ -1516,6 +1520,88 @@ class DialogConsoles(Dialog):
 
         for row in self.model_consoles:
             row[0] = (row.path == selected_path)
+
+
+class DialogHelp(Dialog):
+
+    def __init__(self, parent, title, message, icon):
+        """ Constructor
+
+        Parameters
+        ----------
+        parent : Gtk.Window
+            Parent object
+        title : str
+            Dialog title
+        message : str
+            Dialog message
+        icon : str
+            Default icon name
+        """
+
+        Dialog.__init__(self, parent, title, icon)
+
+        # ------------------------------------
+        #   Initialize variables
+        # ------------------------------------
+
+        self.message = message
+
+        # ------------------------------------
+        #   Prepare interface
+        # ------------------------------------
+
+        # Init widgets
+        self.__init_widgets()
+
+        # Start interface
+        self.__start_interface()
+
+
+    def __init_widgets(self):
+        """ Initialize interface widgets
+        """
+
+        self.set_size(640, 480)
+
+        self.add_buttons(
+            Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE)
+
+        # ------------------------------------
+        #   Scrollview
+        # ------------------------------------
+
+        scroll = Gtk.ScrolledWindow()
+        view = Gtk.Viewport()
+
+        # ------------------------------------
+        #   Message
+        # ------------------------------------
+
+        text = Gtk.Label()
+
+        # Properties
+        text.set_line_wrap(True)
+        text.set_use_markup(True)
+        text.set_max_width_chars(10)
+        text.set_markup(self.message)
+        text.set_line_wrap_mode(Pango.WrapMode.WORD)
+
+        # ------------------------------------
+        #   Integrate widgets
+        # ------------------------------------
+
+        view.add(text)
+        scroll.add(view)
+
+        self.dialog_box.pack_start(scroll, True, True, 8)
+
+
+    def __start_interface(self):
+        """ Load data and start interface
+        """
+
+        self.show_all()
 
 
 # ------------------------------------------------------------------

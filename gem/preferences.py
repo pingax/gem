@@ -1622,7 +1622,7 @@ class Console(Dialog):
         # Properties
         self.set_transient_for(self.interface.window)
 
-        self.set_size(600, 250)
+        self.set_size(640, 250)
         self.set_resizable(True)
 
         self.add_buttons(
@@ -1995,10 +1995,16 @@ class Emulator(Dialog):
         self.selection = parent.selection
 
         self.help_data = {
-            '0': _("To facilitate files detection with every emulators, some "
-                "custom parameters has been created."),
-            '1': _("This parameters are used in \"Default options\", \"Save\" "
-                "and \"Snapshots\" entries."),
+            "order": [
+                _("Description"),
+                _("Parameters"),
+            ],
+            _("Description"): [
+                _("To facilitate files detection with every emulators, some "
+                    "custom parameters has been created."),
+                _("This parameters are used in \"Default options\", \"Save\" "
+                    "and \"Snapshots\" entries."),
+            ],
             _("Parameters"): {
                 "<name>": _("Use ROM filename"),
                 "<lname>": _("Use ROM lowercase filename"),
@@ -2036,7 +2042,7 @@ class Emulator(Dialog):
         # Properties
         self.set_transient_for(self.interface.window)
 
-        self.set_size(600, 530)
+        self.set_size(640, 530)
         self.set_resizable(True)
 
         self.add_buttons(
