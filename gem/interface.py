@@ -232,6 +232,9 @@ class Interface(Gtk.Window):
         # Avoid to resize the main window everytime user modify preferences
         self.__first_draw = False
 
+        # Avoid to reload interface when switch between default & classic theme
+        self.__theme = None
+
         # ------------------------------------
         #   Initialize logger
         # ------------------------------------
@@ -1377,7 +1380,9 @@ class Interface(Gtk.Window):
         #   Window first drawing
         # ------------------------------------
 
-        classic_theme = None
+        if self.__theme is None:
+            self.__theme = self.config.getboolean(
+                "gem", "use_classic_theme", fallback=False)
 
         if not self.__first_draw:
 
@@ -1385,10 +1390,7 @@ class Interface(Gtk.Window):
             #   Window classic theme
             # ------------------------------------
 
-            classic_theme = self.config.getboolean(
-                "gem", "use_classic_theme", fallback=False)
-
-            if not classic_theme:
+            if not self.__theme:
                 self.set_titlebar(self.headerbar)
 
             # ------------------------------------
@@ -1423,14 +1425,14 @@ class Interface(Gtk.Window):
         self.menu.show_all()
         self.menu_games.show_all()
 
-        if classic_theme is not None:
-            if classic_theme:
-                self.logger.debug("Switch interface to classic theme")
+        if self.__theme is not None:
+            if self.__theme:
+                self.logger.debug("Set interface theme to classic")
                 self.menubar.show_all()
                 self.statusbar.show()
 
             else:
-                self.logger.debug("Switch interface to default theme")
+                self.logger.debug("Set interface theme to default")
                 self.menubar.hide()
                 self.statusbar.hide()
 

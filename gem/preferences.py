@@ -922,8 +922,6 @@ class Preferences(object):
         self.grid_general.attach(self.check_last_console, 0, 1, 2, 1)
         self.grid_general.attach(self.check_hide_console, 0, 2, 2, 1)
 
-        self.grid_general.attach(Gtk.Separator(), 0, 3, 2, 1)
-
         self.grid_general.attach(self.label_viewer, 0, 4, 2, 1)
         self.grid_general.attach(self.check_native_viewer, 0, 5, 2, 1)
         self.grid_general.attach(self.separator_viewer, 0, 6, 2, 1)
@@ -942,8 +940,6 @@ class Preferences(object):
         self.grid_interface.attach(self.check_header, 0, 2, 3, 1)
         self.grid_interface.attach(self.check_icons, 0, 3, 3, 1)
 
-        self.grid_interface.attach(Gtk.Separator(), 0, 4, 3, 1)
-
         self.grid_interface.attach(self.label_treeview, 0, 5, 3, 1)
         self.grid_interface.attach(self.label_treeview_lines, 0, 6, 2, 1)
         self.grid_interface.attach(self.combo_lines, 2, 6, 1, 1)
@@ -953,8 +949,6 @@ class Preferences(object):
         self.grid_interface.attach(self.check_play_time, 0, 10, 3, 1)
         self.grid_interface.attach(self.check_installed, 0, 11, 3, 1)
         self.grid_interface.attach(self.check_flags, 0, 12, 3, 1)
-
-        self.grid_interface.attach(Gtk.Separator(), 0, 13, 3, 1)
 
         self.grid_interface.attach(self.label_editor, 0, 14, 3, 1)
         self.grid_interface.attach(self.check_lines, 0, 15, 3, 1)
