@@ -1285,7 +1285,7 @@ class Preferences(object):
 
             self.gtksource = True
 
-        except ImportError as error:
+        except Exception as error:
             self.gtksource = False
 
         # ------------------------------------
