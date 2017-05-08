@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.6\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2017-05-04 21:07+0200\n"
+"PO-Revision-Date: 2017-05-08 15:44+0200\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -101,6 +101,11 @@ msgstr "1 seconde"
 # File: gem/preferences.py, line: 329
 msgid "Action"
 msgstr "Actions"
+
+#
+# File: gem/interface.py, line: 290
+msgid "Activate game fullscreen mode"
+msgstr "Activer le mode plein écran pour le jeu"
 
 #
 # File: gem/preferences.py, line: 731
@@ -282,6 +287,12 @@ msgstr "Définir des _paramètres personnalisés"
 # File: gem/preferences.py, line: 1269
 msgid "Default options"
 msgstr "Options par défaut"
+
+#
+# File: gem/preferences.py, line: 2004
+# File: gem/preferences.py, line: 2007
+msgid "Description"
+msgstr "Description"
 
 #
 # File: gem/interface.py, line: 2054
@@ -861,8 +872,8 @@ msgid ""
 "This parameters are used in \"Default options\", \"Save\" and \"Snapshots\" "
 "entries."
 msgstr ""
-"Ces paramètres sont utilisés dans les champs de texte « Options par défaut », "
-"« Sauvegarde » et « Captures d'écran »."
+"Ces paramètres sont utilisés dans les champs de texte « Options par défaut "
+"», « Sauvegarde » et « Captures d'écran »."
 
 #
 # File: gem/preferences.py, line: 1020
@@ -931,6 +942,11 @@ msgstr "Utiliser le nom du fichier de la ROM en minuscule"
 # File: gem/interface.py, line: 391
 msgid "Use _dark theme"
 msgstr "Utiliser le thème _sombre"
+
+#
+# File: gem/preferences.py, line: 495
+msgid "Use classic theme (Need to reboot GEM)"
+msgstr "Utiliser le thème classique (Nécessite de redémarrer GEM)"
 
 #
 # File: gem/interface.py, line: 300
@@ -1015,9 +1031,19 @@ msgid "_Edit"
 msgstr "_Éditer"
 
 #
+# File: gem/preferences.py, line: 113
+msgid "_Game"
+msgstr "_Jeu"
+
+#
 # File: gem/interface.py, line: 400
 msgid "_Generate a menu entry"
 msgstr "_Générer une entrée de menu"
+
+#
+# File: gem/windows.py, line: 238
+msgid "_Help"
+msgstr "_Aide"
 
 #
 # File: src/window.py, line: 431
@@ -1063,6 +1089,11 @@ msgstr "_Nettoyer les informations du jeu"
 # File: gem/preferences.py, line: 335
 msgid "_Screenshots"
 msgstr "_Capture d'écran"
+
+#
+# File: gem/interface.py, line: 475
+msgid "_Tools"
+msgstr "_Outils"
 
 #
 # File: gem/interface.py, line: 926

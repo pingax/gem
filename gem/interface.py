@@ -463,12 +463,15 @@ class Interface(Gtk.Window):
         self.menubar = Gtk.MenuBar()
 
         self.menubar_item_main = Gtk.MenuItem()
+        self.menubar_item_edit = Gtk.MenuItem()
         self.menubar_item_tools = Gtk.MenuItem()
         self.menubar_item_help = Gtk.MenuItem()
 
         # Properties
-        self.menubar_item_main.set_label(_("_System"))
+        self.menubar_item_main.set_label(_("_Game"))
         self.menubar_item_main.set_use_underline(True)
+        self.menubar_item_edit.set_label(_("_Edit"))
+        self.menubar_item_edit.set_use_underline(True)
         self.menubar_item_tools.set_label(_("_Tools"))
         self.menubar_item_tools.set_use_underline(True)
         self.menubar_item_help.set_label(_("_Help"))
@@ -481,16 +484,36 @@ class Interface(Gtk.Window):
         self.menubar_main_menu = Gtk.Menu()
 
         self.menubar_main_image_launch = Gtk.Image()
+        self.menubar_main_image_favorite = Gtk.Image()
+        self.menubar_main_image_multiplayer = Gtk.Image()
+        self.menubar_main_image_screenshots = Gtk.Image()
+        self.menubar_main_image_output = Gtk.Image()
+        self.menubar_main_image_notes = Gtk.Image()
         self.menubar_main_image_quit = Gtk.Image()
 
         self.menubar_main_item_launch = Gtk.ImageMenuItem()
+        self.menubar_main_item_favorite = Gtk.ImageMenuItem()
+        self.menubar_main_item_multiplayer = Gtk.ImageMenuItem()
+        self.menubar_main_item_screenshots = Gtk.ImageMenuItem()
+        self.menubar_main_item_output = Gtk.ImageMenuItem()
+        self.menubar_main_item_notes = Gtk.ImageMenuItem()
         self.menubar_main_item_quit = Gtk.ImageMenuItem()
 
-        self.menubar_main_item_dark_theme = Gtk.CheckMenuItem()
+        self.menubar_main_item_fullscreen = Gtk.CheckMenuItem()
 
         # Properties
         self.menubar_main_image_launch.set_from_icon_name(
             Icons.Launch, Gtk.IconSize.MENU)
+        self.menubar_main_image_favorite.set_from_icon_name(
+            Icons.Favorite, Gtk.IconSize.MENU)
+        self.menubar_main_image_multiplayer.set_from_icon_name(
+            Icons.Users, Gtk.IconSize.MENU)
+        self.menubar_main_image_screenshots.set_from_icon_name(
+            Icons.Image, Gtk.IconSize.MENU)
+        self.menubar_main_image_output.set_from_icon_name(
+            Icons.Terminal, Gtk.IconSize.MENU)
+        self.menubar_main_image_notes.set_from_icon_name(
+            Icons.Document, Gtk.IconSize.MENU)
         self.menubar_main_image_quit.set_from_icon_name(
             Icons.Quit, Gtk.IconSize.MENU)
 
@@ -498,13 +521,113 @@ class Interface(Gtk.Window):
         self.menubar_main_item_launch.set_image(
             self.menubar_main_image_launch)
         self.menubar_main_item_launch.set_use_underline(True)
+
+        self.menubar_main_item_favorite.set_label(_("Mark as _favorite"))
+        self.menubar_main_item_favorite.set_image(
+            self.menubar_main_image_favorite)
+        self.menubar_main_item_favorite.set_use_underline(True)
+
+        self.menubar_main_item_multiplayer.set_label(_("Mark as _multiplayer"))
+        self.menubar_main_item_multiplayer.set_image(
+            self.menubar_main_image_multiplayer)
+        self.menubar_main_item_multiplayer.set_use_underline(True)
+
+        self.menubar_main_item_screenshots.set_label(_("_Screenshots"))
+        self.menubar_main_item_screenshots.set_image(
+            self.menubar_main_image_screenshots)
+        self.menubar_main_item_screenshots.set_use_underline(True)
+
+        self.menubar_main_item_output.set_label(_("Output _log"))
+        self.menubar_main_item_output.set_image(
+            self.menubar_main_image_output)
+        self.menubar_main_item_output.set_use_underline(True)
+
+        self.menubar_main_item_notes.set_label(_("_Notes"))
+        self.menubar_main_item_notes.set_image(
+            self.menubar_main_image_notes)
+        self.menubar_main_item_notes.set_use_underline(True)
+
         self.menubar_main_item_quit.set_label(_("_Quit"))
         self.menubar_main_item_quit.set_image(
             self.menubar_main_image_quit)
         self.menubar_main_item_quit.set_use_underline(True)
 
-        self.menubar_main_item_dark_theme.set_label(_("Use _dark theme"))
-        self.menubar_main_item_dark_theme.set_use_underline(True)
+        self.menubar_main_item_fullscreen.set_label(
+            _("Activate game fullscreen mode"))
+        self.menubar_main_item_fullscreen.set_use_underline(True)
+
+        # ------------------------------------
+        #   Menubar - Edit items
+        # ------------------------------------
+
+        self.menubar_edit_menu = Gtk.Menu()
+
+        self.menubar_edit_image_rename = Gtk.Image()
+        self.menubar_edit_image_parameters = Gtk.Image()
+        self.menubar_edit_image_copy = Gtk.Image()
+        self.menubar_edit_image_open = Gtk.Image()
+        self.menubar_edit_image_desktop = Gtk.Image()
+        self.menubar_edit_image_database = Gtk.Image()
+        self.menubar_edit_image_delete = Gtk.Image()
+
+        self.menubar_edit_item_rename = Gtk.ImageMenuItem()
+        self.menubar_edit_item_parameters = Gtk.ImageMenuItem()
+        self.menubar_edit_item_copy = Gtk.ImageMenuItem()
+        self.menubar_edit_item_open = Gtk.ImageMenuItem()
+        self.menubar_edit_item_desktop = Gtk.ImageMenuItem()
+        self.menubar_edit_item_database = Gtk.ImageMenuItem()
+        self.menubar_edit_item_delete = Gtk.ImageMenuItem()
+
+        # Properties
+        self.menubar_edit_image_rename.set_from_icon_name(
+            Icons.Editor, Gtk.IconSize.MENU)
+        self.menubar_edit_image_parameters.set_from_icon_name(
+            Icons.Properties, Gtk.IconSize.MENU)
+        self.menubar_edit_image_copy.set_from_icon_name(
+            Icons.Copy, Gtk.IconSize.MENU)
+        self.menubar_edit_image_open.set_from_icon_name(
+            Icons.Open, Gtk.IconSize.MENU)
+        self.menubar_edit_image_desktop.set_from_icon_name(
+            Icons.Desktop, Gtk.IconSize.MENU)
+        self.menubar_edit_image_database.set_from_icon_name(
+            Icons.Clear, Gtk.IconSize.MENU)
+        self.menubar_edit_image_delete.set_from_icon_name(
+            Icons.Delete, Gtk.IconSize.MENU)
+
+        self.menubar_edit_item_rename.set_label(_("_Rename"))
+        self.menubar_edit_item_rename.set_image(
+            self.menubar_edit_image_rename)
+        self.menubar_edit_item_rename.set_use_underline(True)
+
+        self.menubar_edit_item_parameters.set_label(_("Custom _parameters"))
+        self.menubar_edit_item_parameters.set_image(
+            self.menubar_edit_image_parameters)
+        self.menubar_edit_item_parameters.set_use_underline(True)
+
+        self.menubar_edit_item_copy.set_label(_("_Copy file path"))
+        self.menubar_edit_item_copy.set_image(
+            self.menubar_edit_image_copy)
+        self.menubar_edit_item_copy.set_use_underline(True)
+
+        self.menubar_edit_item_open.set_label(_("_Open file path"))
+        self.menubar_edit_item_open.set_image(
+            self.menubar_edit_image_open)
+        self.menubar_edit_item_open.set_use_underline(True)
+
+        self.menubar_edit_item_desktop.set_label(_("_Generate a menu entry"))
+        self.menubar_edit_item_desktop.set_image(
+            self.menubar_edit_image_desktop)
+        self.menubar_edit_item_desktop.set_use_underline(True)
+
+        self.menubar_edit_item_database.set_label(_("_Reset game informations"))
+        self.menubar_edit_item_database.set_image(
+            self.menubar_edit_image_database)
+        self.menubar_edit_item_database.set_use_underline(True)
+
+        self.menubar_edit_item_delete.set_label(_("_Remove game from disk"))
+        self.menubar_edit_item_delete.set_image(
+            self.menubar_edit_image_delete)
+        self.menubar_edit_item_delete.set_use_underline(True)
 
         # ------------------------------------
         #   Menubar - Tools items
@@ -512,42 +635,23 @@ class Interface(Gtk.Window):
 
         self.menubar_tools_menu = Gtk.Menu()
 
-        self.menubar_tools_image_screenshots = Gtk.Image()
-        self.menubar_tools_image_output = Gtk.Image()
-        self.menubar_tools_image_notes = Gtk.Image()
         self.menubar_tools_image_preferences = Gtk.Image()
 
-        self.menubar_tools_item_screenshots = Gtk.ImageMenuItem()
-        self.menubar_tools_item_output = Gtk.ImageMenuItem()
-        self.menubar_tools_item_notes = Gtk.ImageMenuItem()
         self.menubar_tools_item_preferences = Gtk.ImageMenuItem()
 
+        self.menubar_tools_item_dark_theme = Gtk.CheckMenuItem()
+
         # Properties
-        self.menubar_tools_image_screenshots.set_from_icon_name(
-            Icons.Image, Gtk.IconSize.MENU)
-        self.menubar_tools_image_output.set_from_icon_name(
-            Icons.Terminal, Gtk.IconSize.MENU)
-        self.menubar_tools_image_notes.set_from_icon_name(
-            Icons.Document, Gtk.IconSize.MENU)
         self.menubar_tools_image_preferences.set_from_icon_name(
             Icons.System, Gtk.IconSize.MENU)
 
-        self.menubar_tools_item_screenshots.set_label(_("_Screenshots"))
-        self.menubar_tools_item_screenshots.set_image(
-            self.menubar_tools_image_screenshots)
-        self.menubar_tools_item_screenshots.set_use_underline(True)
-        self.menubar_tools_item_output.set_label(_("Output _log"))
-        self.menubar_tools_item_output.set_image(
-            self.menubar_tools_image_output)
-        self.menubar_tools_item_output.set_use_underline(True)
-        self.menubar_tools_item_notes.set_label(_("_Notes"))
-        self.menubar_tools_item_notes.set_image(
-            self.menubar_tools_image_notes)
-        self.menubar_tools_item_notes.set_use_underline(True)
         self.menubar_tools_item_preferences.set_label(_("_Preferences"))
         self.menubar_tools_item_preferences.set_image(
             self.menubar_tools_image_preferences)
         self.menubar_tools_item_preferences.set_use_underline(True)
+
+        self.menubar_tools_item_dark_theme.set_label(_("Use _dark theme"))
+        self.menubar_tools_item_dark_theme.set_use_underline(True)
 
         # ------------------------------------
         #   Menubar - Help items
@@ -826,14 +930,6 @@ class Interface(Gtk.Window):
         self.menu_image_notes = Gtk.Image()
         self.menu_image_edit = Gtk.Image()
 
-        self.menu_image_rename = Gtk.Image()
-        self.menu_image_parameters = Gtk.Image()
-        self.menu_image_copy = Gtk.Image()
-        self.menu_image_open = Gtk.Image()
-        self.menu_image_desktop = Gtk.Image()
-        self.menu_image_remove = Gtk.Image()
-        self.menu_image_database = Gtk.Image()
-
         self.menu_item_launch = Gtk.ImageMenuItem()
         self.menu_item_favorite = Gtk.ImageMenuItem()
         self.menu_item_multiplayer = Gtk.ImageMenuItem()
@@ -841,14 +937,6 @@ class Interface(Gtk.Window):
         self.menu_item_output = Gtk.ImageMenuItem()
         self.menu_item_notes = Gtk.ImageMenuItem()
         self.menu_item_edit = Gtk.ImageMenuItem()
-
-        self.menu_item_rename = Gtk.ImageMenuItem()
-        self.menu_item_parameters = Gtk.ImageMenuItem()
-        self.menu_item_copy = Gtk.ImageMenuItem()
-        self.menu_item_open = Gtk.ImageMenuItem()
-        self.menu_item_desktop = Gtk.ImageMenuItem()
-        self.menu_item_remove = Gtk.ImageMenuItem()
-        self.menu_item_database = Gtk.ImageMenuItem()
 
         # Properties
         self.menu_image_launch.set_from_icon_name(
@@ -866,20 +954,9 @@ class Interface(Gtk.Window):
         self.menu_image_edit.set_from_icon_name(
             Icons.Other, Gtk.IconSize.MENU)
 
-        self.menu_image_rename.set_from_icon_name(
-            Icons.Editor, Gtk.IconSize.MENU)
-        self.menu_image_parameters.set_from_icon_name(
-            Icons.Important, Gtk.IconSize.MENU)
-        self.menu_image_copy.set_from_icon_name(
-            Icons.Copy, Gtk.IconSize.MENU)
-        self.menu_image_open.set_from_icon_name(
-            Icons.Open, Gtk.IconSize.MENU)
-        self.menu_image_desktop.set_from_icon_name(
-            Icons.Desktop, Gtk.IconSize.MENU)
-        self.menu_image_remove.set_from_icon_name(
-            Icons.Clear, Gtk.IconSize.MENU)
-        self.menu_image_database.set_from_icon_name(
-            Icons.Delete, Gtk.IconSize.MENU)
+        self.menu_item_edit.set_label(_("_Edit"))
+        self.menu_item_edit.set_image(self.menu_image_edit)
+        self.menu_item_edit.set_use_underline(True)
 
         self.menu_item_launch.set_label(_("_Launch"))
         self.menu_item_launch.set_image(self.menu_image_launch)
@@ -905,9 +982,41 @@ class Interface(Gtk.Window):
         self.menu_item_notes.set_image(self.menu_image_notes)
         self.menu_item_notes.set_use_underline(True)
 
-        self.menu_item_edit.set_label(_("_Edit"))
-        self.menu_item_edit.set_image(self.menu_image_edit)
-        self.menu_item_edit.set_use_underline(True)
+        # ------------------------------------
+        #   Games - Menu edit
+        # ------------------------------------
+
+        self.menu_image_rename = Gtk.Image()
+        self.menu_image_parameters = Gtk.Image()
+        self.menu_image_copy = Gtk.Image()
+        self.menu_image_open = Gtk.Image()
+        self.menu_image_desktop = Gtk.Image()
+        self.menu_image_remove = Gtk.Image()
+        self.menu_image_database = Gtk.Image()
+
+        self.menu_item_rename = Gtk.ImageMenuItem()
+        self.menu_item_parameters = Gtk.ImageMenuItem()
+        self.menu_item_copy = Gtk.ImageMenuItem()
+        self.menu_item_open = Gtk.ImageMenuItem()
+        self.menu_item_desktop = Gtk.ImageMenuItem()
+        self.menu_item_remove = Gtk.ImageMenuItem()
+        self.menu_item_database = Gtk.ImageMenuItem()
+
+        # Properties
+        self.menu_image_rename.set_from_icon_name(
+            Icons.Editor, Gtk.IconSize.MENU)
+        self.menu_image_parameters.set_from_icon_name(
+            Icons.Important, Gtk.IconSize.MENU)
+        self.menu_image_copy.set_from_icon_name(
+            Icons.Copy, Gtk.IconSize.MENU)
+        self.menu_image_open.set_from_icon_name(
+            Icons.Open, Gtk.IconSize.MENU)
+        self.menu_image_desktop.set_from_icon_name(
+            Icons.Desktop, Gtk.IconSize.MENU)
+        self.menu_image_remove.set_from_icon_name(
+            Icons.Clear, Gtk.IconSize.MENU)
+        self.menu_image_database.set_from_icon_name(
+            Icons.Delete, Gtk.IconSize.MENU)
 
         self.menu_item_rename.set_label(_("_Rename"))
         self.menu_item_rename.set_image(self.menu_image_rename)
@@ -991,6 +1100,7 @@ class Interface(Gtk.Window):
 
         # Menu
         self.menubar.insert(self.menubar_item_main, -1)
+        self.menubar.insert(self.menubar_item_edit, -1)
         self.menubar.insert(self.menubar_item_tools, -1)
         self.menubar.insert(self.menubar_item_help, -1)
 
@@ -999,16 +1109,34 @@ class Interface(Gtk.Window):
 
         self.menubar_main_menu.insert(self.menubar_main_item_launch, -1)
         self.menubar_main_menu.insert(Gtk.SeparatorMenuItem(), -1)
-        self.menubar_main_menu.insert(self.menubar_main_item_dark_theme, -1)
+        self.menubar_main_menu.insert(self.menubar_main_item_favorite, -1)
+        self.menubar_main_menu.insert(self.menubar_main_item_multiplayer, -1)
+        self.menubar_main_menu.insert(Gtk.SeparatorMenuItem(), -1)
+        self.menubar_main_menu.insert(self.menubar_main_item_screenshots, -1)
+        self.menubar_main_menu.insert(self.menubar_main_item_output, -1)
+        self.menubar_main_menu.insert(self.menubar_main_item_notes, -1)
+        self.menubar_main_menu.insert(Gtk.SeparatorMenuItem(), -1)
+        self.menubar_main_menu.insert(self.menubar_main_item_fullscreen, -1)
         self.menubar_main_menu.insert(Gtk.SeparatorMenuItem(), -1)
         self.menubar_main_menu.insert(self.menubar_main_item_quit, -1)
+
+        # Menu - Edit items
+        self.menubar_item_edit.set_submenu(self.menubar_edit_menu)
+
+        self.menubar_edit_menu.insert(self.menubar_edit_item_rename, -1)
+        self.menubar_edit_menu.insert(self.menubar_edit_item_parameters, -1)
+        self.menubar_edit_menu.insert(Gtk.SeparatorMenuItem(), -1)
+        self.menubar_edit_menu.insert(self.menubar_edit_item_copy, -1)
+        self.menubar_edit_menu.insert(self.menubar_edit_item_open, -1)
+        self.menubar_edit_menu.insert(self.menubar_edit_item_desktop, -1)
+        self.menubar_edit_menu.insert(Gtk.SeparatorMenuItem(), -1)
+        self.menubar_edit_menu.insert(self.menubar_edit_item_database, -1)
+        self.menubar_edit_menu.insert(self.menubar_edit_item_delete, -1)
 
         # Menu - Tools items
         self.menubar_item_tools.set_submenu(self.menubar_tools_menu)
 
-        self.menubar_tools_menu.insert(self.menubar_tools_item_screenshots, -1)
-        self.menubar_tools_menu.insert(self.menubar_tools_item_output, -1)
-        self.menubar_tools_menu.insert(self.menubar_tools_item_notes, -1)
+        self.menubar_tools_menu.insert(self.menubar_tools_item_dark_theme, -1)
         self.menubar_tools_menu.insert(Gtk.SeparatorMenuItem(), -1)
         self.menubar_tools_menu.insert(self.menubar_tools_item_preferences, -1)
 
@@ -1097,19 +1225,40 @@ class Interface(Gtk.Window):
 
         self.menubar_main_item_launch.connect(
             "activate", self.__on_game_launch)
-        self.dark_signal_menubar = self.menubar_main_item_dark_theme.connect(
-            "toggled", self.__on_activate_dark_theme)
+        self.menubar_main_item_favorite.connect(
+            "activate", self.__on_game_marked_as_favorite)
+        self.menubar_main_item_multiplayer.connect(
+            "activate", self.__on_game_marked_as_multiplayer)
+        self.menubar_main_item_screenshots.connect(
+            "activate", self.__on_show_viewer)
+        self.menubar_main_item_output.connect(
+            "activate", self.__on_show_log)
+        self.menubar_main_item_notes.connect(
+            "activate", self.__on_show_notes)
+        self.fullscreen_signal = self.menubar_main_item_fullscreen.connect(
+            "toggled", self.__on_activate_fullscreen)
         self.menubar_main_item_quit.connect(
             "activate", self.__stop_interface)
 
-        self.menubar_tools_item_screenshots.connect(
-            "activate", self.__on_show_viewer)
-        self.menubar_tools_item_output.connect(
-            "activate", self.__on_show_log)
-        self.menubar_tools_item_notes.connect(
-            "activate", self.__on_show_notes)
+        self.menubar_edit_item_rename.connect(
+            "activate", self.__on_game_renamed)
+        self.menubar_edit_item_parameters.connect(
+            "activate", self.__on_game_parameters)
+        self.menubar_edit_item_copy.connect(
+            "activate", self.__on_game_copy)
+        self.menubar_edit_item_open.connect(
+            "activate", self.__on_game_open)
+        self.menubar_edit_item_desktop.connect(
+            "activate", self.__on_game_generate_desktop)
+        self.menubar_edit_item_database.connect(
+            "activate", self.__on_game_clean)
+        self.menubar_edit_item_delete.connect(
+            "activate", self.__on_game_removed)
+
         self.menubar_tools_item_preferences.connect(
             "activate", self.__on_show_preferences)
+        self.dark_signal_menubar = self.menubar_tools_item_dark_theme.connect(
+            "toggled", self.__on_activate_dark_theme)
 
         self.menubar_help_item_log.connect(
             "activate", self.__on_show_log)
@@ -1122,7 +1271,7 @@ class Interface(Gtk.Window):
 
         self.tool_item_launch.connect(
             "clicked", self.__on_game_launch)
-        self.tool_item_fullscreen.connect(
+        self.fullscreen_signal_tool = self.tool_item_fullscreen.connect(
             "toggled", self.__on_activate_fullscreen)
         self.tool_item_screenshots.connect(
             "clicked", self.__on_show_viewer)
@@ -1339,7 +1488,7 @@ class Interface(Gtk.Window):
         # Block signal to avoid stack overflow when toggled
         self.menu_item_dark_theme.handler_block(
             self.dark_signal_menu)
-        self.menubar_main_item_dark_theme.handler_block(
+        self.menubar_tools_item_dark_theme.handler_block(
             self.dark_signal_menubar)
 
         dark_theme_status = self.config.getboolean(
@@ -1348,12 +1497,12 @@ class Interface(Gtk.Window):
         on_change_theme(dark_theme_status)
 
         self.menu_item_dark_theme.set_active(dark_theme_status)
-        self.menubar_main_item_dark_theme.set_active(dark_theme_status)
+        self.menubar_tools_item_dark_theme.set_active(dark_theme_status)
 
         # Unblock signal
         self.menu_item_dark_theme.handler_unblock(
             self.dark_signal_menu)
-        self.menubar_main_item_dark_theme.handler_unblock(
+        self.menubar_tools_item_dark_theme.handler_unblock(
             self.dark_signal_menubar)
 
         # ------------------------------------
@@ -1527,9 +1676,18 @@ class Interface(Gtk.Window):
         self.tool_item_screenshots.set_sensitive(status)
 
         self.menubar_main_item_launch.set_sensitive(status)
-        self.menubar_tools_item_screenshots.set_sensitive(status)
-        self.menubar_tools_item_output.set_sensitive(status)
-        self.menubar_tools_item_notes.set_sensitive(status)
+        self.menubar_main_item_favorite.set_sensitive(status)
+        self.menubar_main_item_multiplayer.set_sensitive(status)
+        self.menubar_main_item_screenshots.set_sensitive(status)
+        self.menubar_main_item_output.set_sensitive(status)
+        self.menubar_main_item_notes.set_sensitive(status)
+        self.menubar_edit_item_rename.set_sensitive(status)
+        self.menubar_edit_item_parameters.set_sensitive(status)
+        self.menubar_edit_item_copy.set_sensitive(status)
+        self.menubar_edit_item_open.set_sensitive(status)
+        self.menubar_edit_item_desktop.set_sensitive(status)
+        self.menubar_edit_item_database.set_sensitive(status)
+        self.menubar_edit_item_delete.set_sensitive(status)
 
 
     def filters_update(self, widget=None):
@@ -1617,10 +1775,16 @@ class Interface(Gtk.Window):
         """
 
         shortcuts = {
+            self.menubar_edit_item_open:
+                self.config.item("keys", "open", "<Control>O"),
             self.menu_item_open:
                 self.config.item("keys", "open", "<Control>O"),
+            self.menubar_edit_item_copy:
+                self.config.item("keys", "copy", "<Control>C"),
             self.menu_item_copy:
                 self.config.item("keys", "copy", "<Control>C"),
+            self.menubar_edit_item_desktop:
+                self.config.item("keys", "desktop", "<Control>G"),
             self.menu_item_desktop:
                 self.config.item("keys", "desktop", "<Control>G"),
             self.menubar_main_item_launch:
@@ -1629,32 +1793,44 @@ class Interface(Gtk.Window):
                 self.config.item("keys", "start", "Return"),
             self.tool_item_launch:
                 self.config.item("keys", "start", "Return"),
+            self.menubar_edit_item_rename:
+                self.config.item("keys", "rename", "F2"),
             self.menu_item_rename:
                 self.config.item("keys", "rename", "F2"),
+            self.menubar_main_item_favorite:
+                self.config.item("keys", "favorite", "F3"),
             self.menu_item_favorite:
                 self.config.item("keys", "favorite", "F3"),
+            self.menubar_main_item_multiplayer:
+                self.config.item("keys", "multiplayer", "F4"),
             self.menu_item_multiplayer:
                 self.config.item("keys", "multiplayer", "F4"),
-            self.menubar_tools_item_screenshots:
+            self.menubar_main_item_screenshots:
                 self.config.item("keys", "snapshots", "F5"),
             self.tool_item_screenshots:
                 self.config.item("keys", "snapshots", "F5"),
             self.menu_item_screenshots:
                 self.config.item("keys", "snapshots", "F5"),
-            self.menubar_tools_item_output:
+            self.menubar_main_item_output:
                 self.config.item("keys", "log", "F6"),
             self.menu_item_output:
                 self.config.item("keys", "log", "F6"),
-            self.menubar_tools_item_notes:
+            self.menubar_main_item_notes:
                 self.config.item("keys", "notes", "F7"),
             self.menu_item_notes:
                 self.config.item("keys", "notes", "F7"),
+            self.menubar_edit_item_parameters:
+                self.config.item("keys", "exceptions", "F12"),
             self.tool_item_parameters:
                 self.config.item("keys", "exceptions", "F12"),
             self.menu_item_parameters:
                 self.config.item("keys", "exceptions", "F12"),
+            self.menubar_edit_item_delete:
+                self.config.item("keys", "delete", "<Control>Delete"),
             self.menu_item_remove:
                 self.config.item("keys", "delete", "<Control>Delete"),
+            self.menubar_edit_item_database:
+                self.config.item("keys", "remove", "Delete"),
             self.menu_item_database:
                 self.config.item("keys", "remove", "Delete"),
             self.menubar_tools_item_preferences:
@@ -2483,15 +2659,20 @@ class Interface(Gtk.Window):
                 self.tool_item_launch.set_sensitive(False)
                 self.tool_item_parameters.set_sensitive(False)
                 self.tool_item_output.set_sensitive(False)
+
                 self.menu_item_launch.set_sensitive(False)
                 self.menu_item_output.set_sensitive(False)
                 self.menu_item_parameters.set_sensitive(False)
                 self.menu_item_database.set_sensitive(False)
                 self.menu_item_remove.set_sensitive(False)
                 self.menu_item_rename.set_sensitive(False)
+
                 self.menubar_main_item_launch.set_sensitive(False)
-                self.menubar_tools_item_screenshots.set_sensitive(False)
-                self.menubar_tools_item_output.set_sensitive(False)
+                self.menubar_main_item_output.set_sensitive(False)
+                self.menubar_edit_item_rename.set_sensitive(False)
+                self.menubar_edit_item_parameters.set_sensitive(False)
+                self.menubar_edit_item_database.set_sensitive(False)
+                self.menubar_edit_item_delete.set_sensitive(False)
 
             iter_snaps = model.get_value(treeiter, Columns.Snapshots)
 
@@ -2499,12 +2680,12 @@ class Interface(Gtk.Window):
             if iter_snaps == self.alternative["snap"]:
                 self.tool_item_screenshots.set_sensitive(False)
                 self.menu_item_screenshots.set_sensitive(False)
-                self.menubar_tools_item_screenshots.set_sensitive(False)
+                self.menubar_main_item_screenshots.set_sensitive(False)
 
             if self.check_log() is None:
                 self.tool_item_output.set_sensitive(False)
                 self.menu_item_output.set_sensitive(False)
-                self.menubar_tools_item_output.set_sensitive(False)
+                self.menubar_main_item_output.set_sensitive(False)
 
             if run_game:
                 self.__on_game_launch()
@@ -2628,7 +2809,8 @@ class Interface(Gtk.Window):
 
                 self.tool_item_notes.set_sensitive(True)
                 self.menu_item_notes.set_sensitive(True)
-                self.menubar_tools_item_notes.set_sensitive(True)
+                self.menubar_main_item_notes.set_sensitive(True)
+
                 self.menu_item_preferences.set_sensitive(False)
                 self.menubar_tools_item_preferences.set_sensitive(False)
 
@@ -2699,7 +2881,7 @@ class Interface(Gtk.Window):
                     self.set_game_data(
                         Columns.Snapshots, self.icons["snap"], thread_name)
                     self.tool_item_screenshots.set_sensitive(True)
-                    self.menubar_tools_image_screenshots.set_sensitive(True)
+                    self.menubar_main_image_screenshots.set_sensitive(True)
 
                 else:
                     self.set_game_data(Columns.Snapshots,
@@ -2727,14 +2909,20 @@ class Interface(Gtk.Window):
             self.tool_item_launch.set_sensitive(True)
             self.tool_item_output.set_sensitive(True)
             self.tool_item_parameters.set_sensitive(True)
+
             self.menu_item_launch.set_sensitive(True)
             self.menu_item_parameters.set_sensitive(True)
             self.menu_item_output.set_sensitive(True)
             self.menu_item_database.set_sensitive(True)
             self.menu_item_remove.set_sensitive(True)
             self.menu_item_rename.set_sensitive(True)
+
             self.menubar_main_item_launch.set_sensitive(True)
-            self.menubar_tools_item_output.set_sensitive(True)
+            self.menubar_main_item_output.set_sensitive(True)
+            self.menubar_edit_item_rename.set_sensitive(True)
+            self.menubar_edit_item_parameters.set_sensitive(True)
+            self.menubar_edit_item_database.set_sensitive(True)
+            self.menubar_edit_item_delete.set_sensitive(True)
 
         # Remove this game from threads list
         if thread_name in self.threads:
@@ -3139,13 +3327,13 @@ class Interface(Gtk.Window):
                 self.set_game_data(
                     Columns.Snapshots, self.icons["snap"], gamename)
                 self.tool_item_screenshots.set_sensitive(True)
-                self.menubar_tools_item_screenshots.set_sensitive(True)
+                self.menubar_main_item_screenshots.set_sensitive(True)
 
             else:
                 self.set_game_data(
                     Columns.Snapshots, self.alternative["snap"], gamename)
                 self.tool_item_screenshots.set_sensitive(False)
-                self.menubar_tools_item_screenshots.set_sensitive(False)
+                self.menubar_main_item_screenshots.set_sensitive(False)
 
             # Save state
             if self.check_save_states(new_emulator, gamename):
@@ -3427,15 +3615,39 @@ class Interface(Gtk.Window):
             Object which receive signal
         """
 
-        if self.tool_item_fullscreen.get_active():
+        # Block signal
+        self.menubar_main_item_fullscreen.handler_block(
+            self.fullscreen_signal)
+        self.tool_item_fullscreen.handler_block(
+            self.fullscreen_signal_tool)
+
+        if not widget.get_active():
             self.logger.debug("Switch game launch to windowed mode")
+
             self.tool_image_fullscreen.set_from_icon_name(
-                Icons.Fullscreen, Gtk.IconSize.LARGE_TOOLBAR)
+                Icons.Restore, Gtk.IconSize.LARGE_TOOLBAR)
+
+            self.menubar_main_item_fullscreen.set_active(False)
+
+            if widget == self.menubar_main_item_fullscreen:
+                self.tool_item_fullscreen.set_active(False)
 
         else:
             self.logger.debug("Switch game launch to fullscreen mode")
+
             self.tool_image_fullscreen.set_from_icon_name(
-                Icons.Restore, Gtk.IconSize.LARGE_TOOLBAR)
+                Icons.Fullscreen, Gtk.IconSize.LARGE_TOOLBAR)
+
+            self.menubar_main_item_fullscreen.set_active(True)
+
+            if widget == self.menubar_main_item_fullscreen:
+                self.tool_item_fullscreen.set_active(True)
+
+        # Unblock signal
+        self.menubar_main_item_fullscreen.handler_unblock(
+            self.fullscreen_signal)
+        self.tool_item_fullscreen.handler_unblock(
+            self.fullscreen_signal_tool)
 
 
     def __on_activate_dark_theme(self, widget):
@@ -3453,7 +3665,7 @@ class Interface(Gtk.Window):
         # Block signal to avoid stack overflow when toggled
         self.menu_item_dark_theme.handler_block(
             self.dark_signal_menu)
-        self.menubar_main_item_dark_theme.handler_block(
+        self.menubar_tools_item_dark_theme.handler_block(
             self.dark_signal_menubar)
 
         dark_theme_status = self.config.getboolean(
@@ -3465,12 +3677,12 @@ class Interface(Gtk.Window):
         self.config.update()
 
         self.menu_item_dark_theme.set_active(not dark_theme_status)
-        self.menubar_main_item_dark_theme.set_active(not dark_theme_status)
+        self.menubar_tools_item_dark_theme.set_active(not dark_theme_status)
 
         # Unblock signal
         self.menu_item_dark_theme.handler_unblock(
             self.dark_signal_menu)
-        self.menubar_main_item_dark_theme.handler_unblock(
+        self.menubar_tools_item_dark_theme.handler_unblock(
             self.dark_signal_menubar)
 
 

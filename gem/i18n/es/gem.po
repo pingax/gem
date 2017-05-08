@@ -103,6 +103,12 @@ msgid "Action"
 msgstr "Acción"
 
 #
+# File: gem/interface.py, line: 451
+#, fuzzy
+msgid "Activate game fullscreen mode"
+msgstr "Pasar a pantalla completa"
+
+#
 # File: gem/preferences.py, line: 731
 # File: gem/preferences.py, line: 820
 msgid "Add"
@@ -289,6 +295,12 @@ msgstr "_Parametros personalizados"
 # File: gem/preferences.py, line: 1665
 msgid "Default options"
 msgstr "Opciones por defecto"
+
+#
+# File: gem/preferences.py, line: 2004
+# File: gem/preferences.py, line: 2007
+msgid "Description"
+msgstr ""
 
 #
 # File: gem/interface.py, line: 2054
@@ -953,6 +965,11 @@ msgid "Use _dark theme"
 msgstr "Usar el tema oscuro"
 
 #
+# File: gem/preferences.py, line: 495
+msgid "Use classic theme (Need to reboot GEM)"
+msgstr ""
+
+#
 # File: gem/preferences.py, line: 1602
 #, fuzzy
 msgid "Use emulator configuration file path"
@@ -1037,9 +1054,20 @@ msgid "_Edit"
 msgstr "_Editar"
 
 #
+# File: gem/preferences.py, line: 113
+#, fuzzy
+msgid "_Game"
+msgstr "Juego"
+
+#
 # File: gem/interface.py, line: 460
 msgid "_Generate a menu entry"
 msgstr "_Generar una entrada de menú"
+
+#
+# File: gem/interface.py, line: 477
+msgid "_Help"
+msgstr ""
 
 #
 # File: gem/preferences.py, line: 84
@@ -1086,6 +1114,11 @@ msgstr "_Reinicializar los datos del juego"
 # File: gem/interface.py, line: 2006
 msgid "_Screenshots"
 msgstr "_Capturas de pantalla"
+
+#
+# File: gem/interface.py, line: 475
+msgid "_Tools"
+msgstr ""
 
 #
 # File: gem/preferences.py, line: 280
