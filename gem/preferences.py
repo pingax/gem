@@ -1546,7 +1546,7 @@ class Preferences(object):
         need_reload = False
 
         if name is not None:
-            dialog = Question(self, name,
+            dialog = Question(self.interface, name,
                 _("Would you really want to remove this entry ?"))
 
             if dialog.run() == Gtk.ResponseType.YES:
