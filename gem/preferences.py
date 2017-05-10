@@ -660,6 +660,8 @@ class Preferences(object):
             self.cell_shortcuts_name, "text", 0)
         self.column_shortcuts_key.add_attribute(
             self.cell_shortcuts_keys, "text", 1)
+        self.column_shortcuts_key.add_attribute(
+            self.cell_shortcuts_keys, "sensitive", 3)
 
         self.cell_shortcuts_keys.set_property("editable", True)
 
@@ -1378,7 +1380,7 @@ class Preferences(object):
             New accelerator keyval
         mods : Gdk.ModifierType
             New acclerator modifier mask
-        kwcode : int
+        hwcode : int
             Keycode of the new accelerator
         """
 
