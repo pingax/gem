@@ -694,7 +694,7 @@ class Game(GEMObject):
 
         Examples
         --------
-        >>> game.path()
+        >>> g.get_console("nintendo-nes").get_game("Asterix").path
         ("~/.local/share/gem/roms/nes", "asterix.nes")
         """
 
