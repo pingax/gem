@@ -416,7 +416,7 @@ msgstr ""
 
 #
 # File: gem/preferences.py, line: 433
-msgid "Hide consoles whitout any game"
+msgid "Hide consoles without any game"
 msgstr ""
 
 #

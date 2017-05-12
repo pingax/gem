@@ -430,7 +430,7 @@ class Preferences(object):
             _("Load the last chosen console during startup"))
         self.check_hide_console.set_hexpand(True)
         self.check_hide_console.set_margin_left(32)
-        self.check_hide_console.set_label(_("Hide consoles whitout any game"))
+        self.check_hide_console.set_label(_("Hide consoles without any game"))
 
         # ------------------------------------
         #   General - Viewer
