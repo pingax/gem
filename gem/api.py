@@ -350,6 +350,7 @@ class GEM(object):
 
         Examples
         --------
+        >>> g = GEM()
         >>> g.get_console("nintendo-nes")
         <gem.api.Console object at 0x7f174a986b00>
         """
@@ -444,6 +445,7 @@ class GEM(object):
 
         Examples
         --------
+        >>> g = GEM()
         >>> g.get_game("nintendo-nes", "Teenage Mutant Hero Turtles")
         <gem.api.Game object at 0x7f174a986f60>
         """
@@ -645,6 +647,7 @@ class Console(GEMObject):
 
         Examples
         --------
+        >>> g = GEM()
         >>> g.get_console("nintendo-nes").get_game("Metroid")
         <gem.api.Game object at 0x7f174a98e828>
         """
@@ -694,6 +697,7 @@ class Game(GEMObject):
 
         Examples
         --------
+        >>> g = GEM()
         >>> g.get_console("nintendo-nes").get_game("Asterix").path
         ("~/.local/share/gem/roms/nes", "asterix.nes")
         """
