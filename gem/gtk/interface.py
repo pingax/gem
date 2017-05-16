@@ -99,12 +99,14 @@ except ImportError as error:
 
 try:
     from gem import *
-    from gem.game import *
     from gem.utils import *
-    from gem.windows import *
     from gem.database import Database
-    from gem.preferences import Preferences
     from gem.configuration import Configuration
+
+    from gem.gtk import *
+    from gem.gtk.game import *
+    from gem.gtk.windows import *
+    from gem.gtk.preferences import Preferences
 
 except ImportError as error:
     sys_exit("Import error with gem module: %s" % str(error))

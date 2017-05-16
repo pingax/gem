@@ -224,11 +224,11 @@ def main():
             # ------------------------------------
 
             if args.preferences:
-                from gem.preferences import Preferences
+                from gem.gtk.preferences import Preferences
                 Preferences(logger=logger).start()
 
             else:
-                from gem.interface import launch_gem
+                from gem.gtk.interface import launch_gem
                 launch_gem(logger, args.reconstruct)
 
             # ------------------------------------

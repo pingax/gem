@@ -1,6 +1,8 @@
 # Python bytecodes files
 gem/*.pyc
 gem/__pycache__/*.pyc
+gem/gtk/*.pyc
+gem/gtk/__pycache__/*.pyc
 
 # Locale files
 gem/i18n/*/*~

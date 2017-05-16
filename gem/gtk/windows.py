@@ -56,6 +56,8 @@ try:
     from gem import *
     from gem.utils import *
 
+    from gem.gtk import *
+
 except ImportError as error:
     sys_exit("Import error with gem module: %s" % str(error))
 

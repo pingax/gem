@@ -61,81 +61,6 @@ class Gem:
     OldColumns  = dict()
 
 
-class Icons:
-    Ext         = "png"
-    # Actions
-    Quit        = "application-exit"
-    Properties  = "document-properties"
-    Open        = "document-open"
-    Save        = "document-save"
-    Clear       = "edit-clear"
-    Copy        = "edit-copy"
-    Delete      = "edit-delete"
-    Find        = "edit-find"
-    Paste       = "edit-paste"
-    Bottom      = "go-bottom"
-    Down        = "go-down"
-    First       = "go-first"
-    Home        = "go-home"
-    Jump        = "go-jump"
-    Last        = "go-last"
-    Next        = "go-next"
-    Previous    = "go-previous"
-    Top         = "go-top"
-    Up          = "go-up"
-    About       = "help-about"
-    Content     = "help-contents"
-    Faq         = "help-faq"
-    Add         = "list-add"
-    Remove      = "list-remove"
-    Launch      = "media-playback-start"
-    Menu        = "open-menu" # Not standard
-    Stop        = "process-stop"
-    Checkspell  = "tools-check-spelling"
-    Fullscreen  = "view-fullscreen"
-    Restore     = "view-restore"
-    Close       = "window-close"
-    ZoomFit     = "zoom-fit-best"
-    ZoomIn      = "zoom-in"
-    Zoom        = "zoom-original"
-    ZoomOut     = "zoom-out"
-    # Applications
-    Editor      = "accessories-text-editor"
-    Keyboard    = "preferences-desktop-keyboard"
-    Terminal    = "utilities-terminal"
-    Help        = "system-help"
-    # Categories
-    Desktop     = "preferences-desktop"
-    Other       = "applications-other"
-    System      = "preferences-system"
-    # Devices
-    Gaming      = "input-gaming"
-    Video       = "video-display"
-    # Emblems
-    Document    = "emblem-documents"
-    Download    = "emblem-downloads"
-    Favorite    = "emblem-favorite"
-    Important   = "emblem-important"
-    Photos      = "emblem-photos"
-    Users       = "system-users" # Not standard
-    # Faces
-    Monkey      = "face-monkey"
-    Sad         = "face-sad"
-    SmileBig    = "face-smile-big"
-    # Mimes
-    Text        = "text-x-generic"
-    Image       = "image-x-generic"
-    # Places
-    Folder      = "folder"
-    # Status
-    Error       = "dialog-error"
-    Warning     = "dialog-warning"
-    Question    = "dialog-question"
-    Information = "dialog-information"
-    Loading     = "image-loading"
-    Missing     = "image-missing"
-
-
 class Path:
     User        = path_join(xdg_config_home, "gem")
     Data        = path_join(xdg_data_home, "gem")
@@ -156,20 +81,4 @@ class Conf:
     Consoles    = path_join("config", "consoles.conf")
     Emulators   = path_join("config", "emulators.conf")
     Databases   = path_join("config", "databases.conf")
-
-
-class Columns:
-    Favorite        = 0
-    Icon            = 1
-    Name            = 2
-    Played          = 3
-    LastPlay        = 4
-    LastTimePlay    = 5
-    TimePlay        = 6
-    Installed       = 7
-    Except          = 8
-    Snapshots       = 9
-    Multiplayer     = 10
-    Save            = 11
-    Filename        = 12
 

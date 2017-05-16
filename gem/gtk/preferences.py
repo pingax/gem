@@ -59,8 +59,10 @@ except ImportError as error:
 try:
     from gem import *
     from gem.utils import *
-    from gem.windows import *
     from gem.configuration import Configuration
+
+    from gem.gtk import *
+    from gem.gtk.windows import *
 
 except ImportError as error:
     sys_exit("Import error with gem module: %s" % str(error))
