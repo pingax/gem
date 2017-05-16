@@ -140,7 +140,7 @@ class Path:
     User        = path_join(xdg_config_home, "gem")
     Data        = path_join(xdg_data_home, "gem")
     Apps        = path_join(xdg_data_home, "applications")
-    Lock        = path_join(xdg_data_home, ".lock")
+    Lock        = path_join(xdg_data_home, "gem", ".lock")
     Roms        = path_join(xdg_data_home, "gem", "roms")
     Logs        = path_join(xdg_data_home, "gem", "logs")
     Notes       = path_join(xdg_data_home, "gem", "notes")

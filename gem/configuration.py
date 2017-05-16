@@ -26,7 +26,7 @@ from sys import version_info
 
 # Configuration
 if(version_info[0] >= 3):
-    from configparser import SafeConfigParser
+    from configparser import ConfigParser
 else:
     from ConfigParser import SafeConfigParser
 
@@ -34,7 +34,7 @@ else:
 #   Class
 # ------------------------------------------------------------------------------
 
-class Configuration(SafeConfigParser):
+class Configuration(ConfigParser):
     """ Manage a configuration file easily with SafeConfigParser
 
     Attributes
@@ -43,7 +43,7 @@ class Configuration(SafeConfigParser):
         Configuration file path
     """
 
-    def __init__(self, filepath):
+    def __init__(self, filepath, **kwargs):
         """ Constructor
 
         Parameters
@@ -51,26 +51,39 @@ class Configuration(SafeConfigParser):
         filepath : str
             Configuration file path
 
-        Returns
-        -------
-        Configuration
-            Object Configuration
-
-        Raises
-        ------
-        OSError
-            If the configuration filepath not exists
+        Other parameters
+        ----------------
+        kwargs : dict
+            ConfigParser parameters
         """
 
-        SafeConfigParser.__init__(self)
-
-        if not exists(expanduser(filepath)):
-            raise OSError(2, "Cannot find file", filepath)
-
-        # Read contents
-        self.read(expanduser(filepath))
+        ConfigParser.__init__(self, kwargs)
 
         self.path = expanduser(filepath)
+
+        if exists(self.path):
+            self.read(self.path)
+
+
+    def __str__(self):
+        """ Formated informations
+
+        Returns
+        -------
+        str
+            Formated string
+        """
+
+        text = list()
+
+        for section in sorted(self.sections()):
+            text.append("[%s]" % section)
+
+            for key in sorted(self.options(section)):
+                text.append("%s = %s" % (
+                    key, self.get(section, key, fallback=str())))
+
+        return '\n'.join(text)
 
 
     def item(self, section, option, default=None):
