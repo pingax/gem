@@ -1,4 +1,4 @@
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation; either version 3 of the License.
@@ -12,11 +12,46 @@
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #  MA 02110-1301, USA.
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+#   Modules
+# ------------------------------------------------------------------------------
+
+# Filesystem
+from os.path import expanduser
+from os.path import join as path_join
+
+# ------------------------------------------------------------------------------
+#   Modules - XDG
+# ------------------------------------------------------------------------------
+
+try:
+    from xdg.BaseDirectory import xdg_data_home
+    from xdg.BaseDirectory import xdg_config_home
+
+except ImportError as error:
+    from os import environ
+
+    if "XDG_DATA_HOME" in environ:
+        xdg_data_home = environ["XDG_DATA_HOME"]
+    else:
+        xdg_data_home = expanduser("~/.local/share")
+
+    if "XDG_CONFIG_HOME" in environ:
+        xdg_config_home = environ["XDG_CONFIG_HOME"]
+    else:
+        xdg_config_home = expanduser("~/.config")
+
+# ------------------------------------------------------------------------------
 #   Class
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+
+class Documents:
+    Desktop     = "template.desktop"
+
+class Folders:
+    Apps        = path_join(expanduser(xdg_data_home), "applications")
 
 class Icons:
     Ext         = "png"

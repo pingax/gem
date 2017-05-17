@@ -1,4 +1,4 @@
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation; either version 3 of the License.
@@ -12,11 +12,11 @@
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #  MA 02110-1301, USA.
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #   Modules
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 # Path
 from os import W_OK
@@ -48,8 +48,10 @@ from shlex import split as shlex_split
 from shutil import move as rename
 from platform import system
 
+from datetime import date
 from datetime import datetime
-from datetime import time as dtime
+from datetime import timedelta
+from datetime import time as time
 
 from subprocess import PIPE
 from subprocess import Popen
@@ -61,14 +63,9 @@ from re import match
 # Threading
 from threading import Thread
 
-# Translation
-from gettext import gettext as _
-from gettext import textdomain
-from gettext import bindtextdomain
-
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #   Modules - Interface
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 try:
     from gi import require_version
@@ -93,12 +90,16 @@ try:
 except ImportError as error:
     sys_exit("Import error with python3-gobject module: %s" % str(error))
 
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #   Modules - GEM
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 try:
     from gem import *
+    from gem.api import GEM
+    from gem.api import Game
+    from gem.api import Console
+    from gem.api import Emulator
     from gem.utils import *
     from gem.database import Database
     from gem.configuration import Configuration
@@ -111,98 +112,41 @@ try:
 except ImportError as error:
     sys_exit("Import error with gem module: %s" % str(error))
 
-# ------------------------------------------------------------------
-#   Translation
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+#   Modules - Translation
+# ------------------------------------------------------------------------------
+
+from gettext import gettext as _
+from gettext import textdomain
+from gettext import bindtextdomain
 
 bindtextdomain("gem", get_data("i18n"))
 textdomain("gem")
 
-# ------------------------------------------------------------------
-#   Functions
-# ------------------------------------------------------------------
-
-def launch_gem(logger, reconstruct_db=False):
-    """ Launch GEM and manage his database
-
-    Parameters
-    ----------
-    logger : logging.Logger
-        Logger object
-
-    Other Parameters
-    ----------------
-    reconstruct_db : bool
-        Ask the launcher to build a new sqlite database with previous one
-        content (Default: False)
-    """
-
-    # ------------------------------------
-    #   Database
-    # ------------------------------------
-
-    # Connect database
-    database = Database(expanduser(path_join(Path.Data, "gem.db")),
-        get_data(Conf.Databases), logger)
-
-    version = database.select("gem", "version")
-    if not version == Gem.Version:
-        if version is None:
-            version = Gem.Version
-
-            logger.info(_("Generate a new database"))
-
-        else:
-            logger.info(_("Update v%(old)s database to v%(new)s.") % {
-                "old": version, "new": Gem.Version })
-
-        database.modify("gem",
-            { "version": Gem.Version, "codename": Gem.CodeName },
-            { "version": version })
-
-    # Migrate old databases
-    if not database.check_integrity() or reconstruct_db:
-        logger.warning(_("Current database need to be updated"))
-
-        logger.info(_("Start database migration"))
-        if database.select("games", '*') is not None:
-            splash = Splash(len(database.select("games", '*')))
-
-            database.migrate("games", Gem.OldColumns, splash.update)
-
-            splash.destroy()
-
-        else:
-            database.migrate("games", Gem.OldColumns)
-
-        logger.info(_("Migration complete"))
-
-    # ------------------------------------
-    #   Launch interface
-    # ------------------------------------
-
-    logger.info(_("Launch interface"))
-
-    interface = Interface(logger, database)
-
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #   Class
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 class Interface(Gtk.Window):
 
     __gsignals__ = { "game-terminate": (SIGNAL_RUN_LAST, None, [object]) }
 
-    def __init__(self, logger, database):
+    def __init__(self, api):
         """ Constructor
 
         Parameters
         ----------
-        logger : logging.Logger
-            Output logger
-        database : database.Database
-            Games database
+        api : gem.api.GEM
+            GEM API instance
+
+        Raises
+        ------
+        TypeError
+            if api type is not gem.api.GEM
         """
+
+        if not type(api) is GEM:
+            raise TypeError("Wrong type for api, expected gem.api.GEM")
 
         Gtk.Window.__init__(self)
 
@@ -210,7 +154,7 @@ class Interface(Gtk.Window):
         #   Initialize variables
         # ------------------------------------
 
-        self.title = "%s - %s (%s)" % (Gem.Name, Gem.Version, Gem.CodeName)
+        self.title = "%s - %s (%s)" % (GEM.Name, GEM.Version, GEM.CodeName)
 
         # Store thread id for game listing
         self.list_thread = int()
@@ -238,16 +182,14 @@ class Interface(Gtk.Window):
         self.__theme = None
 
         # ------------------------------------
-        #   Initialize logger
+        #   Initialize API
         # ------------------------------------
 
-        self.logger = logger
+        self.api = api
 
-        # ------------------------------------
-        #   Initialize Databases
-        # ------------------------------------
+        self.logger = api.logger
 
-        self.database = database
+        self.database = api.database
 
         # ------------------------------------
         #   Initialize icons
@@ -321,11 +263,11 @@ class Interface(Gtk.Window):
 
         self.set_title(self.title)
 
-        self.set_icon_name(Gem.Icon)
+        self.set_icon_name(GEM.Icon)
         self.set_default_icon_name(Icons.Gaming)
 
         self.set_position(Gtk.WindowPosition.CENTER)
-        self.set_wmclass(Gem.Acronym.upper(), Gem.Acronym.lower())
+        self.set_wmclass(GEM.Acronym.upper(), GEM.Acronym.lower())
 
         self.add_accel_group(self.shortcuts_group)
 
@@ -723,7 +665,8 @@ class Interface(Gtk.Window):
         self.model_consoles = Gtk.ListStore(
             Pixbuf, # Console icon
             str,    # Console name
-            Pixbuf  # Emulator binary status
+            Pixbuf, # Emulator binary status
+            str     # Console identifier
         )
 
         self.combo_consoles = Gtk.ComboBox()
@@ -1377,13 +1320,15 @@ class Interface(Gtk.Window):
 
         if self.config.getboolean("gem", "load_console_startup", fallback=True):
             console = self.config.item("gem", "last_console", str())
+
             if len(console) > 0:
                 for row in self.model_consoles:
                     if row[1] == console:
                         self.treeview_games.set_visible(True)
                         self.combo_consoles.set_active_iter(row.iter)
 
-                        self.selection["console"] = console
+                        self.selection["console"] = self.api.get_console(
+                            console)
 
                         break
 
@@ -1467,15 +1412,8 @@ class Interface(Gtk.Window):
         #   Configuration
         # ------------------------------------
 
-        self.config = Configuration(
-            expanduser(path_join(Path.User, "gem.conf")))
-        self.config.add_missing_data(get_data(Conf.Default))
-
-        self.emulators = Configuration(
-            expanduser(path_join(Path.User, "emulators.conf")))
-
-        self.consoles = Configuration(
-            expanduser(path_join(Path.User, "consoles.conf")))
+        self.config = Configuration(path_join(GEM.Config, "gem.conf"))
+        self.config.add_missing_data(get_data(path_join("config", "gem.conf")))
 
         # ------------------------------------
         #   Shortcuts
@@ -1608,7 +1546,9 @@ class Interface(Gtk.Window):
         #   Variables
         # ------------------------------------
 
-        self.selection = dict(console=None, game=None, name=None)
+        self.selection = dict(
+            console=None,
+            game=None)
 
         # ------------------------------------
         #   Games
@@ -1924,10 +1864,8 @@ class Interface(Gtk.Window):
         elif(len(self.model_games) > 1):
             texts = [_("%s games availables") % len(self.model_games)]
 
-        if self.selection["name"] is not None:
-            texts.append(self.selection["name"])
-        elif self.selection["game"] is not None:
-            texts.append(basename(self.selection["game"]))
+        if self.selection["game"] is not None:
+            texts.append(self.selection["game"].name)
 
         self.headerbar.set_subtitle(" - ".join(texts))
         self.statusbar.push(0, " - ".join(texts))
@@ -2292,45 +2230,44 @@ class Interface(Gtk.Window):
 
         self.model_consoles.clear()
 
-        for console in self.consoles.sections():
+        for console in self.api.consoles:
+            console = self.api.get_console(console)
 
-            if self.consoles.has_option(console, "emulator"):
-                emulator = self.consoles.get(console, "emulator")
+            if console.emulator is not None:
 
                 # Check if console ROM path exist
-                path = self.consoles.item(console, "roms")
-                if path is not None and exists(expanduser(path)):
+                if exists(console.path):
                     status = self.empty
 
                     hide = self.config.getboolean(
                         "gem", "hide_empty_console", fallback=False)
 
-                    # ROM number in console path
-                    roms = len(listdir(expanduser(path)))
-
                     # Check if console ROM path is empty
-                    if not hide or (hide and roms > 0):
+                    if not hide or (hide and len(console.games) > 0):
 
                         # Check if current emulator can be launched
-                        binary = self.emulators.item(emulator, "binary")
-                        if binary is None or len(get_binary_path(binary)) == 0:
+                        if not console.emulator.exists:
                             status = self.icons["warning"]
 
                             self.logger.warning(
                                 _("Cannot find %(binary)s for %(console)s") % {
-                                    "binary": binary, "console": console })
+                                    "binary": console.emulator.binary,
+                                    "console": console })
 
                         # Get console icon
-                        icon = icon_from_data(self.consoles.item(
-                            console, "icon"), self.empty, subfolder="consoles")
+                        icon = icon_from_data(
+                            console.icon, self.empty, subfolder="consoles")
 
                         # Append a new console in combobox model
                         row = self.model_consoles.append(
-                            [icon, console, status])
+                            [icon, console.name, status, console.id])
 
                         if self.selection.get("console") is not None and \
                             self.selection.get("console") == console:
                             item = row
+
+        if len(self.model_consoles) > 0:
+            self.logger.debug("Append %d consoles" % len(self.model_consoles))
 
         return item
 
@@ -2357,24 +2294,24 @@ class Interface(Gtk.Window):
         treeiter = self.combo_consoles.get_active_iter()
         if treeiter is not None:
 
-            console = self.model_consoles.get_value(treeiter, 1)
-            if console is not None:
+            console_id = self.model_consoles.get_value(treeiter, 3)
+            if console_id is not None:
+                console = self.api.get_console(console_id)
 
+                # Save selected console
                 self.selection["console"] = console
 
                 # ------------------------------------
                 #   Check emulator
                 # ------------------------------------
 
-                if not self.consoles.has_option(console, "emulator"):
-                    message = _("Cannot find emulator for %s") % console
+                if console.emulator is None:
+                    message = _("Cannot find emulator for %s") % console.name
                     error = True
 
-                emulator = self.consoles.get(console, "emulator")
-
                 # Check emulator data
-                if not self.emulators.has_section(emulator):
-                    message = _("%s emulator not exist !") % (emulator)
+                elif not console.emulator.exists:
+                    message = _("%s emulator not exist !") % (emulator.name)
                     error = True
 
                 # ------------------------------------
@@ -2384,14 +2321,13 @@ class Interface(Gtk.Window):
                 self.sensitive_interface()
 
                 # Check emulator configurator
-                configuration = self.emulators.item(emulator, "configuration")
+                if console.emulator is not None:
+                    configuration = console.emulator.configuration
 
-                if configuration is not None and \
-                    exists(expanduser(configuration)):
-                    self.tool_item_properties.set_sensitive(True)
-
-                else:
-                    self.tool_item_properties.set_sensitive(False)
+                    if configuration is not None and exists(configuration):
+                        self.tool_item_properties.set_sensitive(True)
+                    else:
+                        self.tool_item_properties.set_sensitive(False)
 
                 # ------------------------------------
                 #   Load game list
@@ -2401,7 +2337,7 @@ class Interface(Gtk.Window):
                     self.model_games.clear()
                     self.filter_games.refilter()
 
-                    self.set_message(console, message)
+                    self.set_message(console.name, message)
 
                 else:
                     if not self.list_thread == 0:
@@ -2442,16 +2378,10 @@ class Interface(Gtk.Window):
 
         self.model_games.clear()
 
-        games_path = expanduser(self.consoles.get(console, "roms"))
+        console = self.api.get_console(console.id)
 
-        if exists(games_path) and access(games_path, W_OK):
-            games_list = list()
-
-            for root, dirnames, filenames in walk(games_path):
-                for path in filenames:
-                    games_list.append(path_join(root, path))
-
-            sorted(games_list)
+        if console is not None and console.emulator is not None:
+            self.selection["console"] = console
 
             # ------------------------------------
             #   Refresh treeview
@@ -2464,121 +2394,92 @@ class Interface(Gtk.Window):
             #   Load games
             # ------------------------------------
 
-            emulator = self.consoles.get(console, "emulator")
+            emulator = self.api.get_emulator(console.emulator.id)
 
-            for game in games_list:
+            for game in console.games:
 
                 # Another thread has been called by user, close this one
                 if not current_thread_id == self.list_thread:
                     yield False
 
-                if '.' in basename(game):
-                    filename, ext = splitext(basename(game))
+                # Get path from Game
+                path, filepath = game.path
+                # Get name and extension from filename
+                filename, extension = splitext(filepath)
 
-                    # Remove dot from extension
-                    ext = ext.split('.')[-1]
+                row_data = [
+                    game.favorite,
+                    self.alternative["favorite"],
+                    game.name,
+                    str(game.played),
+                    str(),          # Last launch date
+                    str(),          # Last launch time
+                    str(),          # Total play time
+                    str(),          # Installed date
+                    self.alternative["except"],
+                    self.alternative["snap"],
+                    self.alternative["multiplayer"],
+                    self.alternative["save"],
+                    filename ]
 
-                    # Get extensions list for current console
-                    ext_list = self.consoles.get(console, "exts").split(';')
+                # Favorite
+                if game.favorite:
+                    row_data[Columns.Icon] = self.icons["favorite"]
 
-                    # Check lowercase extensions
-                    if ext in ext_list or ext.lower() in ext_list:
-                        row_data = [
-                            False,          # Favorite status
-                            self.alternative["favorite"],
-                            filename,       # File name
-                            str(),          # Play number
-                            str(),          # Last play date
-                            str(),          # Last play time
-                            str(),          # Total play time
-                            str(),          # Installed date
-                            self.alternative["except"],
-                            self.alternative["snap"],
-                            self.alternative["multiplayer"],
-                            self.alternative["save"],
-                            filename ]      # Filename without extension
+                # Multiplayer
+                if game.multiplayer:
+                    row_data[Columns.Multiplayer] = self.icons["multiplayer"]
 
-                        # Get values from database
-                        data = self.database.get("games",
-                            { "filename": basename(game) })
+                # Play informations
+                if game.last_launch_date is not None:
+                    row_data[Columns.LastPlay] = str(game.last_launch_date)
 
-                        # Get global emulator
-                        rom_emulator = emulator
+                if not game.last_launch_time.total_seconds() == 0:
+                    row_data[Columns.LastTimePlay] = \
+                        str(game.last_launch_time).split('.')[0]
 
-                        # Set specified emulator is available
-                        if data is not None and len(data.get("emulator")) > 0:
-                            if self.emulators.has_section(data.get("emulator")):
-                                rom_emulator = data.get("emulator")
+                if not game.play_time.total_seconds() == 0:
+                    row_data[Columns.TimePlay] = \
+                        str(game.play_time).split('.')[0]
 
-                        if data is not None:
+                # Parameters
+                if game.default is not None:
+                    row_data[Columns.Except] = self.icons["except"]
 
-                            # Favorite
-                            if bool(data["favorite"]):
-                                row_data[Columns.Favorite] = True
-                                row_data[Columns.Icon] = self.icons["favorite"]
+                elif game.emulator is not None:
+                    row_data[Columns.Except] = self.icons["except"]
 
-                            # Custom name
-                            if len(data["name"]) > 0:
-                                row_data[Columns.Name] = data["name"]
+                # Installed time
+                row_data[Columns.Installed] = string_from_date(
+                    datetime.fromtimestamp(
+                    getctime(game.filepath)).strftime("%d-%m-%Y %H:%M:%S"))
 
-                            # Played
-                            if data["play"] > 0:
-                                row_data[Columns.Played] = str(data["play"])
+                # Get global emulator
+                rom_emulator = emulator
 
-                            # Last time
-                            if len(data["last_play"]) > 0:
-                                row_data[Columns.LastPlay] = str(
-                                    string_from_date(data["last_play"]))
+                # Set specified emulator is available
+                if game.emulator is not None:
+                    rom_emulator = game.emulator
 
-                            # Last play time
-                            if len(data["last_play_time"]) > 0:
-                                row_data[Columns.LastTimePlay] = str(
-                                    string_from_time(data["last_play_time"]))
+                # Snap
+                if self.check_screenshots(rom_emulator, game):
+                    row_data[Columns.Snapshots] = self.icons["snap"]
 
-                            # Play time
-                            if len(data["play_time"]) > 0:
-                                row_data[Columns.TimePlay] = str(
-                                    string_from_time(data["play_time"]))
+                # Save state
+                if self.check_save_states(rom_emulator, game):
+                    row_data[Columns.Save] = self.icons["save"]
 
-                            # Exception
-                            if data["arguments"] is not None and \
-                                len(data["arguments"]) > 0:
-                                row_data[Columns.Except] = self.icons["except"]
+                row = self.model_games.append(row_data)
 
-                            elif data["emulator"] is not None and \
-                                len(data["emulator"]) > 0 and \
-                                not data["emulator"] == emulator:
-                                row_data[Columns.Except] = self.icons["except"]
+                self.game_path[filename] = [game, row]
 
-                            # Multiplayer
-                            if bool(data["multiplayer"]):
-                                row_data[Columns.Multiplayer] = \
-                                    self.icons["multiplayer"]
+                iteration += 1
+                if (iteration % 20 == 0):
+                    self.set_informations()
 
-                        # Installed time
-                        row_data[Columns.Installed] = string_from_date(
-                            datetime.fromtimestamp(
-                            getctime(game)).strftime("%d-%m-%Y %H:%M:%S"))
-
-                        # Snap
-                        if self.check_screenshots(rom_emulator, filename):
-                            row_data[Columns.Snapshots] = self.icons["snap"]
-
-                        # Save state
-                        if self.check_save_states(rom_emulator, filename):
-                            row_data[Columns.Save] = self.icons["save"]
-
-                        row = self.model_games.append(row_data)
-
-                        self.game_path[filename] = [game, row]
-
-                        iteration += 1
-                        if (iteration % 20 == 0):
-                            self.set_informations()
-
-                            self.treeview_games.thaw_child_notify()
-                            yield True
-                            self.treeview_games.freeze_child_notify()
+                    self.treeview_games.thaw_child_notify()
+                    yield True
+                    self.treeview_games.freeze_child_notify()
 
             # Restore options for packages treeviews
             self.treeview_games.set_enable_search(True)
@@ -2590,7 +2491,7 @@ class Interface(Gtk.Window):
         #   Cannot read games path
         # ------------------------------------
 
-        if not access(games_path, W_OK):
+        if not access(console.path, W_OK):
             pass
 
         # ------------------------------------
@@ -2615,7 +2516,7 @@ class Interface(Gtk.Window):
             Event which triggered this signal
         """
 
-        filename, name, snap, run_game = None, None, None, None
+        filepath, name, snap, run_game = None, None, None, None
 
         # Keyboard
         if event.type == EventType.KEY_RELEASE:
@@ -2623,7 +2524,7 @@ class Interface(Gtk.Window):
 
             if treeiter is not None:
                 name = model.get_value(treeiter, Columns.Name)
-                filename = model.get_value(treeiter, Columns.Filename)
+                filepath = model.get_value(treeiter, Columns.Filename)
 
                 if event.keyval == Gdk.KEY_Return:
                     run_game = True
@@ -2638,7 +2539,7 @@ class Interface(Gtk.Window):
 
                 treeiter = model.get_iter(selection[0])
                 name = model.get_value(treeiter, Columns.Name)
-                filename = model.get_value(treeiter, Columns.Filename)
+                filepath = model.get_value(treeiter, Columns.Filename)
 
                 if event.button == 1 and event.type == EventType._2BUTTON_PRESS:
                     run_game = True
@@ -2647,9 +2548,13 @@ class Interface(Gtk.Window):
         #   Game selected
         # ----------------------------
 
-        if filename is not None:
-            self.selection["name"] = name
-            self.selection["game"] = self.game_path[filename][0]
+        if filepath is not None:
+            # Get name and extension from filepath
+            filename, extension = splitext(filepath)
+
+            # Get Game object
+            game = self.api.get_game(self.selection["console"].id, filename)
+            self.selection["game"] = game
 
             self.sensitive_interface(True)
 
@@ -2657,7 +2562,7 @@ class Interface(Gtk.Window):
             #   Game data
             # ----------------------------
 
-            if splitext(filename)[0] in self.threads:
+            if filename in self.threads:
                 self.tool_item_launch.set_sensitive(False)
                 self.tool_item_parameters.set_sensitive(False)
                 self.tool_item_output.set_sensitive(False)
@@ -2710,11 +2615,8 @@ class Interface(Gtk.Window):
 
         name = None
 
-        if self.selection["name"] is not None:
-            name = self.selection["name"]
-
-        elif self.selection["game"] is not None:
-            name = splitext(basename(self.selection["game"]))[0]
+        if self.selection["game"] is not None:
+            name = self.selection["game"].name
 
         if name is not None:
             model, treeiter = self.treeview_games.get_selection().get_selected()
@@ -2725,7 +2627,6 @@ class Interface(Gtk.Window):
                 if not treeview_name == name:
                     self.treeview_games.get_selection().unselect_iter(treeiter)
                     self.selection["game"] = None
-                    self.selection["name"] = None
 
                     self.sensitive_interface()
                     self.set_informations()
@@ -2749,21 +2650,20 @@ class Interface(Gtk.Window):
 
         binary = str()
 
-        if self.selection["game"] is None:
-            return
+        game = self.selection["game"]
 
-        filename = basename(self.selection["game"])
-        game = self.database.get("games", { "filename": filename })
+        if game is None:
+            return False
 
         # ----------------------------
         #   Check selection
         # ----------------------------
 
         if not self.check_selection():
-            return
+            return False
 
-        if splitext(filename)[0] in self.threads:
-            return
+        if game.filename in self.threads:
+            return False
 
         # ----------------------------
         #   Check emulator
@@ -2771,41 +2671,36 @@ class Interface(Gtk.Window):
 
         console = self.selection["console"]
 
-        emulator = self.consoles.get(console, "emulator")
-        if game is not None and len(game.get("emulator")) > 0:
-            if self.emulators.has_section(game.get("emulator")):
-                emulator = game.get("emulator")
+        emulator = console.emulator
+        if game.emulator is not None:
+            emulator = game.emulator
 
-        if emulator is not None and emulator in self.emulators.sections():
-            title = filename
-            if self.selection["name"] is not None:
-                title = self.selection["name"]
-
-            self.logger.info(_("Initialize %s") % title)
+        if emulator is not None and emulator.id in self.api.emulators:
+            self.logger.info(_("Initialize %s") % game.name)
 
             # ----------------------------
             #   Generate correct command
             # ----------------------------
 
-            command = self.generate_command(emulator, self.selection["game"])
+            command = emulator.command(game,
+                self.tool_item_fullscreen.get_active())
 
-            if command is not None:
+            if len(command) > 0:
 
                 # ----------------------------
                 #   Run game
                 # ----------------------------
 
-                thread = GameThread(
-                    self, emulator, filename, command, title)
+                thread = GameThread(self, emulator, game, command)
 
                 # Save thread references
-                self.threads[splitext(filename)[0]] = thread
+                self.threads[game.filename] = thread
 
                 # Launch thread
                 thread.start()
 
                 self.logger.debug(
-                    "Start %s into [%s]" % (filename, thread.name))
+                    "Start %s into [%s]" % (game.filename, thread.name))
 
                 self.sensitive_interface()
 
@@ -2815,6 +2710,10 @@ class Interface(Gtk.Window):
 
                 self.menu_item_preferences.set_sensitive(False)
                 self.menubar_tools_item_preferences.set_sensitive(False)
+
+                return True
+
+        return False
 
 
     def __on_game_terminate(self, widget, thread):
@@ -2828,86 +2727,76 @@ class Interface(Gtk.Window):
             Game thread
         """
 
-        gamename = thread.name
-        gamefile = basename(thread.filename)
-
-        # Get file from thread
-        thread_name, thread_extension = splitext(gamefile)
+        game = thread.game
+        emulator = thread.emulator
 
         # ----------------------------
         #   Save game data
         # ----------------------------
 
         if not thread.error:
-            total = self.get_play_time(thread.filename, thread.delta)
-            play_time = self.get_play_time(thread.filename, thread.delta, False)
+            play_time = game.play_time + thread.delta
+            last_launch_time = thread.delta
 
             # ----------------------------
             #   Update data
             # ----------------------------
 
+            self.logger.debug("Update database for %s" % game.name)
+
             # Play data
-            self.database.modify("games", {
-                "play_time": total,
-                "last_play": datetime.now().strftime("%d-%m-%Y %H:%M:%S"),
-                "last_play_time": play_time,
-                }, { "filename": gamefile })
+            game.played += 1
+            game.play_time = play_time
+            game.last_launch_time = last_launch_time
+            game.last_launch_date = str(date.today())
 
-            # Set new data into games treeview
-            value = self.database.get("games", { "filename": gamefile })
-            if value is not None:
-                self.logger.debug("Update database for %s" % gamename)
+            self.api.update_game(game)
 
-                # Played
-                play = value.get("play", 0) + 1
+            # Played
+            self.set_game_data(Columns.Played, str(game.played), game.filename)
 
-                self.database.modify("games",
-                    { "play": play }, { "filename": gamefile })
+            # Last played
+            self.set_game_data(Columns.LastPlay,
+                str(game.last_launch_date), game.filename)
 
-                self.set_game_data(Columns.Played, str(play), thread_name)
+            # Last time played
+            self.set_game_data(Columns.LastTimePlay,
+                str(game.last_launch_time).split('.')[0], game.filename)
 
-                # Last played
-                self.set_game_data(Columns.LastPlay,
-                    string_from_date(value["last_play"]), thread_name)
+            # Play time
+            self.set_game_data(Columns.TimePlay,
+                str(game.play_time).split('.')[0], game.filename)
 
-                # Last time played
-                self.set_game_data(Columns.LastTimePlay,
-                    string_from_time(value["last_play_time"]), thread_name)
+            # Snaps
+            if self.check_screenshots(emulator, game):
+                self.set_game_data(
+                    Columns.Snapshots, self.icons["snap"], game.filename)
+                self.tool_item_screenshots.set_sensitive(True)
+                self.menubar_main_image_screenshots.set_sensitive(True)
 
-                # Play time
-                self.set_game_data(Columns.TimePlay,
-                    string_from_time(value["play_time"]), thread_name)
+            else:
+                self.set_game_data(Columns.Snapshots,
+                    self.alternative["snap"], game.filename)
 
-                # Snaps
-                if self.check_screenshots(thread.emulator, gamefile):
-                    self.set_game_data(
-                        Columns.Snapshots, self.icons["snap"], thread_name)
-                    self.tool_item_screenshots.set_sensitive(True)
-                    self.menubar_main_image_screenshots.set_sensitive(True)
+            # Save state
+            if self.check_save_states(emulator, game):
+                self.set_game_data(
+                    Columns.Save, self.icons["save"], game.filename)
 
-                else:
-                    self.set_game_data(Columns.Snapshots,
-                        self.alternative["snap"], thread_name)
-
-                # Save state
-                if self.check_save_states(thread.emulator, gamefile):
-                    self.set_game_data(
-                        Columns.Save, self.icons["save"], thread_name)
-
-                else:
-                    self.set_game_data(
-                        Columns.Save, self.alternative["save"], thread_name)
+            else:
+                self.set_game_data(
+                    Columns.Save, self.alternative["save"], game.filename)
 
         # ----------------------------
         #   Refresh widgets
         # ----------------------------
 
         # Get current selected file
-        name, extension = splitext(basename(self.selection["game"]))
+        select_game = self.selection["game"]
 
         # Check if current selected file is the same as thread file
-        if name == thread_name:
-            self.logger.debug("Restore widgets status for %s" % gamename)
+        if select_game is not None and select_game.filename == game.filename:
+            self.logger.debug("Restore widgets status for %s" % game.name)
             self.tool_item_launch.set_sensitive(True)
             self.tool_item_output.set_sensitive(True)
             self.tool_item_parameters.set_sensitive(True)
@@ -2927,16 +2816,17 @@ class Interface(Gtk.Window):
             self.menubar_edit_item_delete.set_sensitive(True)
 
         # Remove this game from threads list
-        if thread_name in self.threads:
-            self.logger.debug("Remove %s from process cache" % gamename)
-            del self.threads[thread_name]
+        if game.filename in self.threads:
+            self.logger.debug("Remove %s from process cache" % game.name)
+
+            del self.threads[game.filename]
 
         if len(self.threads) == 0:
             self.menu_item_preferences.set_sensitive(True)
             self.menubar_tools_item_preferences.set_sensitive(True)
 
 
-    def generate_command(self, emulator, filename):
+    def generate_command(self, emulator, game):
         """ Generate a command laucncher
 
         This function generate the command launcher for a game with his
@@ -2944,10 +2834,10 @@ class Interface(Gtk.Window):
 
         Parameters
         ----------
-        emulator : str
-            Emulator name
-        filename : str
-            Game file name
+        emulator : gem.api.Emulator
+            Emulator object
+        filename : gem.api.Game
+            Game object
 
         Returns
         -------
@@ -2957,8 +2847,9 @@ class Interface(Gtk.Window):
 
         not_use_filename = False
 
-        if not exists(filename):
-            self.set_message(_("Missing file"), _("Cannot find %s") % filename)
+        if not exists(game.filepath):
+            self.set_message(
+                _("Missing file"), _("Cannot find %s") % game.filepath)
 
             return None
 
@@ -2966,10 +2857,9 @@ class Interface(Gtk.Window):
         #   Check emulator binary
         # ----------------------------
 
-        binary = self.emulators.get(emulator, "binary")
-
-        if len(get_binary_path(binary)) == 0:
-            self.set_message(_("Missing binary"), _("Cannot find %s") % binary)
+        if not emulator.exists:
+            self.set_message(
+                _("Missing binary"), _("Cannot find %s") % emulator.binary)
 
             return None
 
@@ -3055,40 +2945,36 @@ class Interface(Gtk.Window):
             Object which receive signal
         """
 
-        gamefile = basename(self.selection["game"])
-        gamename = splitext(gamefile)[0]
+        game = self.selection["game"]
 
-        treeiter = self.game_path[gamename][1]
-
-        result = self.database.get("games", { "filename": gamefile })
-        if not result is None and len(result["name"]) > 0:
-            gamename = result["name"]
+        treeiter = self.game_path[game.filename][1]
 
         # ----------------------------
         #   Dialog
         # ----------------------------
 
+        old_name = game.name
+
         dialog = DialogRename(self, _("Rename a game"),
-            _("Set a custom name for %s") % gamefile, gamename)
+            _("Set a custom name for %s") % game.filename, game.name)
 
         if dialog.run() == Gtk.ResponseType.APPLY:
-            if not dialog.entry.get_text() == result and \
+            if not dialog.entry.get_text() == old_name and \
                 len(dialog.entry.get_text()) > 0:
 
                 self.model_games[treeiter][Columns.Name] = \
                     dialog.entry.get_text()
 
-                new_name = dialog.entry.get_text()
+                game.name = dialog.entry.get_text()
 
-                self.database.modify("games",
-                    { "name": new_name },
-                    { "filename": gamefile })
+                self.api.update_game(game)
 
-                self.selection["name"] = new_name
+                self.selection["game"] = game
+
                 self.set_informations()
 
                 self.logger.info(_("Rename %(old)s to %(new)s") % {
-                    "old": gamename, "new": new_name })
+                    "old": old_name, "new": game.name })
 
         dialog.destroy()
 
@@ -3360,30 +3246,31 @@ class Interface(Gtk.Window):
             Object which receive signal
         """
 
-        gamefile = basename(self.selection["game"])
-        gamename = splitext(gamefile)[0]
+        game = self.selection["game"]
 
-        treeiter = self.game_path[gamename][1]
+        treeiter = self.game_path[game.filename][1]
 
         if self.model_games[treeiter][Columns.Icon] == \
             self.alternative["favorite"]:
             self.model_games[treeiter][Columns.Favorite] = True
             self.model_games[treeiter][Columns.Icon] = self.icons["favorite"]
 
-            self.database.modify("games",
-                { "favorite": 1 }, { "filename": gamefile })
+            game.favorite = True
 
-            self.logger.debug("Mark %s as favorite" % gamename)
+            self.api.update_game(game)
+
+            self.logger.debug("Mark %s as favorite" % game.name)
 
         else:
             self.model_games[treeiter][Columns.Favorite] = False
             self.model_games[treeiter][Columns.Icon] = \
                 self.alternative["favorite"]
 
-            self.database.modify("games",
-                { "favorite": 0 }, { "filename": gamefile })
+            game.favorite = False
 
-            self.logger.debug("Unmark %s as favorite" % gamename)
+            self.api.update_game(game)
+
+            self.logger.debug("Unmark %s as favorite" % game.name)
 
         self.check_selection()
 
@@ -3400,29 +3287,30 @@ class Interface(Gtk.Window):
             Object which receive signal
         """
 
-        gamefile = basename(self.selection["game"])
-        gamename = splitext(gamefile)[0]
+        game = self.selection["game"]
 
-        treeiter = self.game_path[gamename][1]
+        treeiter = self.game_path[game.filename][1]
 
         if self.model_games[treeiter][Columns.Multiplayer] == \
             self.alternative["multiplayer"]:
             self.model_games[treeiter][Columns.Multiplayer] = \
                 self.icons["multiplayer"]
 
-            self.database.modify("games",
-                { "multiplayer": 1 }, { "filename": gamefile })
+            game.multiplayer = True
 
-            self.logger.debug("Mark %s as multiplayers" % gamename)
+            self.api.update_game(game)
+
+            self.logger.debug("Mark %s as multiplayers" % game.name)
 
         else:
             self.model_games[treeiter][Columns.Multiplayer] = \
                 self.alternative["multiplayer"]
 
-            self.database.modify("games",
-                { "multiplayer": 0 }, { "filename": gamefile })
+            game.multiplayer = False
 
-            self.logger.debug("Unmark %s as multiplayers" % gamename)
+            self.api.update_game(game)
+
+            self.logger.debug("Unmark %s as multiplayers" % game.name)
 
         self.check_selection()
 
@@ -3436,7 +3324,8 @@ class Interface(Gtk.Window):
             Object which receive signal
         """
 
-        self.clipboard.set_text(self.selection["game"], -1)
+        if self.selection["game"] is not None:
+            self.clipboard.set_text(self.selection["game"].filepath, -1)
 
 
     def __on_game_open(self, widget):
@@ -3453,21 +3342,22 @@ class Interface(Gtk.Window):
             Object which receive signal
         """
 
-        path = dirname(self.selection["game"])
+        if self.selection["game"] is not None:
+            path = self.selection["game"].path[0]
 
-        self.logger.debug("Open %s folder in files manager" % path)
+            self.logger.debug("Open %s folder in files manager" % path)
 
-        if system() == "Windows":
-            from os import startfile
-            startfile(path)
+            if system() == "Windows":
+                from os import startfile
+                startfile(path)
 
-        elif system() == "Darwin":
-            Popen(["open", path], stdout=PIPE, stdin=PIPE,
-                stderr=STDOUT, universal_newlines=True)
+            elif system() == "Darwin":
+                Popen(["open", path], stdout=PIPE, stdin=PIPE,
+                    stderr=STDOUT, universal_newlines=True)
 
-        else:
-            Popen(["xdg-open", path], stdout=PIPE, stdin=PIPE,
-                stderr=STDOUT, universal_newlines=True)
+            else:
+                Popen(["xdg-open", path], stdout=PIPE, stdin=PIPE,
+                    stderr=STDOUT, universal_newlines=True)
 
 
     def __on_game_generate_desktop(self, widget):
@@ -3485,74 +3375,71 @@ class Interface(Gtk.Window):
         model, treeiter = self.treeview_games.get_selection().get_selected()
 
         if treeiter is not None:
-            gamefile = basename(self.selection["game"])
-            gamename = splitext(gamefile)[0]
-
-            game = self.database.get("games", { "filename": gamefile })
+            game = self.selection["game"]
+            console = self.selection["console"]
 
             # ----------------------------
             #   Check emulator
             # ----------------------------
 
-            console = self.selection["console"]
+            emulator = console.emulator
 
-            emulator = self.consoles.get(console, "emulator")
-            if game is not None and len(game.get("emulator")) > 0:
-                if self.emulators.has_section(game.get("emulator")):
-                    emulator = game.get("emulator")
+            if game is not None and game.emulator is not None:
+                emulator = game.emulator
 
-            if emulator is not None and emulator in self.emulators.sections():
-                name = "%s.desktop" % gamename
+            if emulator is not None and emulator.id in self.api.emulators:
+                name = "%s.desktop" % game.filename
 
                 # ----------------------------
                 #   Fill template
                 # ----------------------------
 
-                title = gamename
-                if self.selection["name"] is not None:
-                    title = self.selection["name"]
-
-                icon = self.consoles.get(console, "icon")
+                icon = console.icon
                 if not exists(icon):
-                    icon = path_join(Path.Consoles, "%s.%s" % (icon, Icons.Ext))
+                    icon = path_join(GEM.Local, "icons", "consoles",
+                        '.'.join([icon, Icons.Ext]))
 
                 values = {
-                    "%name%": title,
+                    "%name%": game.name,
                     "%icon%": icon,
-                    "%path%": dirname(self.selection["game"]),
-                    "%command%": ' '.join(self.generate_command(
-                        emulator, self.selection["game"])) }
+                    "%path%": game.path[0],
+                    "%command%": ' '.join(emulator.command(game)) }
 
                 # Quote game path
                 values["%command%"] = values["%command%"].replace(
-                    self.selection["game"], "\"%s\"" % self.selection["game"])
+                    game.filepath, "\"%s\"" % game.filepath)
 
                 try:
-                    with open(get_data(Conf.Desktop), 'r') as pipe:
+                    desktop = path_join("config", Documents.Desktop)
+
+                    with open(get_data(desktop), 'r') as pipe:
                         template = pipe.readlines()
 
                     content = str()
 
+                    # Replace custom variables
                     for line in template:
                         for key in values.keys():
                             line = line.replace(key, values[key])
 
                         content += line
 
-                    if not exists(Path.Apps):
-                        mkdir(Path.Apps)
+                    # Check ~/.local/share/applications
+                    if not exists(Folder.Apps):
+                        mkdir(Folder.Apps)
 
-                    with open(path_join(Path.Apps, name), 'w') as pipe:
+                    # Write the new desktop file
+                    with open(path_join(Folder.Apps, name), 'w') as pipe:
                         pipe.write(content)
 
                     self.set_message(
-                        _("Generate menu entry for %s") % title,
+                        _("Generate menu entry for %s") % game.name,
                         _("%s was generated successfully")  % name,
                         Icons.Information)
 
                 except OSError as error:
                     self.set_message(
-                        _("Generate menu entry for %s") % title,
+                        _("Generate menu entry for %s") % game.name,
                         _("An error occur during generation, consult log for "
                         "futher details."), Icons.Error)
 
@@ -3708,7 +3595,8 @@ class Interface(Gtk.Window):
             timestamp at which the data was received
         """
 
-        data.set_uris(["file://%s" % self.selection["game"]])
+        if self.selection["game"] is not None:
+            data.set_uris(["file://%s" % self.selection["game"].filepath])
 
 
     def __on_dnd_received_data(self, widget, context, x, y, data, info, time):
@@ -3844,51 +3732,15 @@ class Interface(Gtk.Window):
             self.load_interface()
 
 
-    def get_play_time(self, gamename, interval, total=True):
-        """ Get ingame time for a game
-
-        This function calc the game session time and give the result as a string
-
-        Parameters
-        ----------
-        gamename : str
-            Game file name
-        interval : datetime.timedelta
-            Game play time length
-        total : bool
-            Append interval to result when True (Default: True)
-
-        Returns
-        -------
-        str
-            Play time string format as %H:%M:%S
-
-        Notes
-        -----
-        I need to check if total is usefull or not
-        """
-
-        result = self.database.get("games", { "filename": gamename })
-
-        if result is not None and total and len(result["play_time"]) > 0:
-            play_time = datetime.strptime(result["play_time"], "%H:%M:%S")
-            play_time += interval
-
-        else:
-            play_time = interval
-
-        return str(play_time).split('.')[0].split()[-1]
-
-
-    def check_save_states(self, emulator, filename):
+    def check_save_states(self, emulator, game):
         """ Check emulator save states path for specific game
 
         Parameters
         ----------
-        emulator : str
-            Emulator name
-        filename : str
-            Game file name
+        emulator : gem.api.Emulator
+            Emulator object
+        game : gem.api.Game
+            Game object
 
         Returns
         -------
@@ -3896,20 +3748,24 @@ class Interface(Gtk.Window):
             Game save states status
         """
 
-        if not emulator in self.emulators.sections():
+        if emulator is None or game is None:
             return False
 
-        if self.emulators.has_option(emulator, "save"):
-            save_path = expanduser(self.emulators.get(emulator, "save"))
+        if emulator.savestates is not None:
+            expression = expanduser(emulator.savestates)
 
-            if "<rom_path>" in save_path:
-                pattern = save_path.replace("<rom_path>",
-                    basename(self.selection["game"]))
+            # Get path from game
+            path, filepath = game.path
+            # Get name and extension from filepath
+            filename, extension = splitext(filepath)
 
-            if "<lname>" in save_path:
-                pattern = save_path.replace("<lname>", filename).lower()
+            if "<rom_path>" in expression:
+                pattern = expression.replace("<rom_path>", filepath)
+
+            if "<lname>" in expression:
+                pattern = expression.replace("<lname>", filename).lower()
             else:
-                pattern = save_path.replace("<name>", filename)
+                pattern = expression.replace("<name>", filename)
 
             if len(glob(pattern)) > 0:
                 return True
@@ -3917,15 +3773,15 @@ class Interface(Gtk.Window):
         return False
 
 
-    def check_screenshots(self, emulator, filename):
+    def check_screenshots(self, emulator, game):
         """ Check emulator snaps path for specific game
 
         Parameters
         ----------
-        emulator : str
-            Emulator name
-        filename : str
-            Game file name
+        emulator : gem.api.Emulator
+            Emulator object
+        game : gem.api.Game
+            Game object
 
         Returns
         -------
@@ -3933,20 +3789,24 @@ class Interface(Gtk.Window):
             Game screenshots status
         """
 
-        if not emulator in self.emulators.sections():
+        if emulator is None or game is None:
             return False
 
-        if self.emulators.has_option(emulator, "snaps"):
-            snaps_path = expanduser(self.emulators.get(emulator, "snaps"))
+        if emulator.screenshots is not None:
+            expression = expanduser(emulator.screenshots)
 
-            if "<rom_path>" in snaps_path:
-                pattern = snaps_path.replace("<rom_path>",
-                    basename(self.selection["game"]))
+            # Get path from game
+            path, filepath = game.path
+            # Get name and extension from filepath
+            filename, extension = splitext(filepath)
 
-            if "<lname>" in snaps_path:
-                pattern = snaps_path.replace("<lname>", filename).lower()
+            if "<rom_path>" in expression:
+                pattern = expression.replace("<rom_path>", filepath)
+
+            if "<lname>" in expression:
+                pattern = expression.replace("<lname>", filename).lower()
             else:
-                pattern = snaps_path.replace("<name>", filename)
+                pattern = expression.replace("<name>", filename)
 
             if len(glob(pattern)) > 0:
                 return True
@@ -3993,11 +3853,12 @@ class Interface(Gtk.Window):
             Output file path
         """
 
-        log_path = path_join(expanduser(Path.Logs),
-            "%s.log" % basename(self.selection["game"]))
+        if self.selection["game"] is not None:
+            log_path = path_join(GEM.Local, "logs",
+                self.selection["game"].filename + ".log")
 
-        if exists(expanduser(log_path)):
-            return log_path
+            if exists(expanduser(log_path)):
+                return log_path
 
         return None
 

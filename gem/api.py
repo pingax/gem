@@ -24,6 +24,7 @@ from collections import OrderedDict
 # Datetime
 from datetime import time
 from datetime import date
+from datetime import timedelta
 
 # Filesystem
 from os import mkdir
@@ -46,6 +47,7 @@ from logging.config import fileConfig
 
 # System
 from sys import exit as sys_exit
+from shlex import split as shlex_split
 
 # ------------------------------------------------------------------------------
 #   Modules - XDG
@@ -257,12 +259,12 @@ class GEM(object):
             self.add_emulator({
                 "id": section.lower().replace(' ', '-'),
                 "name": section,
-                "binary": data.get(
-                    section, "binary", fallback=str()),
+                "binary": expanduser(data.get(
+                    section, "binary", fallback=str())),
                 "icon": data.get(
                     section, "icon", fallback=str()),
-                "configuration": data.get(
-                    section, "configuration", fallback=str()),
+                "configuration": expanduser(data.get(
+                    section, "configuration", fallback=str())),
                 "savestates": data.get(
                     section, "save", fallback=str()),
                 "screenshots": data.get(
@@ -294,8 +296,8 @@ class GEM(object):
             self.add_console({
                 "id": section.lower().replace(' ', '-'),
                 "name": section,
-                "path": data.get(
-                    section, "roms", fallback=str()),
+                "path": expanduser(data.get(
+                    section, "roms", fallback=str())),
                 "icon": data.get(
                     section, "icon", fallback=str()),
                 "extensions": data.get(
@@ -745,8 +747,8 @@ class Emulator(GEMObject):
 
         Returns
         -------
-        str
-            Command launcher
+        list
+            Command launcher parameters list
 
         Raises
         ------
@@ -764,7 +766,7 @@ class Emulator(GEMObject):
         if not self.exists:
             raise OSError(2, "Emulator binary %s not found" % self.binary)
 
-        command = self.binary
+        command = str()
 
         # ----------------------------
         #   Default arguments
@@ -791,22 +793,22 @@ class Emulator(GEMObject):
         use_filepath = True
 
         if "<conf_path>" in command and self.configuration is not None:
-            args = args.replace("<conf_path>", self.configuration)
+            command = command.replace("<conf_path>", self.configuration)
 
         if "<rom_path>" in command:
-            args = args.replace("<rom_path>", game.path[0])
+            command = command.replace("<rom_path>", game.path[0])
 
             use_filepath = False
 
         if "<rom_name>" in command:
             name, extension = splitext(game.path[-1])
 
-            args = args.replace("<rom_name>", name)
+            command = command.replace("<rom_name>", name)
 
             use_filepath = False
 
         if "<rom_file>" in command:
-            args = args.replace("<rom_file>", game.filepath)
+            command = command.replace("<rom_file>", game.filepath)
 
             use_filepath = False
 
@@ -814,10 +816,20 @@ class Emulator(GEMObject):
         #   Generate correct command
         # ----------------------------
 
-        if use_filepath:
-            command += " %s" % game.filepath
+        command_data = list()
 
-        return command
+        # Append binaries
+        command_data.extend(shlex_split(self.binary))
+
+        # Append arguments
+        if len(command) > 0:
+            command_data.extend(shlex_split(command))
+
+        # Append game file
+        if use_filepath:
+            command_data.append(game.filepath)
+
+        return command_data
 
 
     def as_dict(self):
@@ -871,7 +883,7 @@ class Console(GEMObject):
 
         return (self.name, {
             "icon": self.icon,
-            "roms": self.path,
+            "roms": expanduser(self.path),
             "exts": ';'.join(self.extensions),
             "emulator": self.emulator.name
         })
@@ -934,6 +946,65 @@ class Console(GEMObject):
                     if len(data["name"]) > 0:
                         name = data["name"]
 
+                    # Set play time
+                    play_time = data["play_time"]
+                    if len(play_time) > 0:
+                        microseconds = int()
+
+                        # Parse microseconds
+                        if '.' in play_time:
+                            play_time, microseconds = play_time.split('.')
+
+                        hours, minutes, seconds = play_time.split(':')
+
+                        play_time = timedelta(
+                            hours=int(hours),
+                            minutes=int(minutes),
+                            seconds=int(seconds),
+                            microseconds=int(microseconds))
+                    else:
+                        play_time = timedelta()
+
+                    # Set last play date
+                    last_launch_date = data["last_play"]
+                    if len(last_launch_date) > 0:
+
+                        # Old GEM format
+                        if len(last_launch_date) > 10:
+                            day, month, year = \
+                                last_launch_date.split()[0].split('-')
+
+                        # ISO 8601 format
+                        else:
+                            year, month, day = last_launch_date.split('-')
+
+                        last_launch_date = date(
+                            int(year),
+                            int(month),
+                            int(day))
+                    else:
+                        last_launch_date = None
+
+                    # Set last play time
+                    last_launch_time = data["last_play_time"]
+                    if len(last_launch_time) > 0:
+                        microseconds = int()
+
+                        # Parse microseconds
+                        if '.' in last_launch_time:
+                            last_launch_time, microseconds = \
+                                last_launch_time.split('.')
+
+                        hours, minutes, seconds = last_launch_time.split(':')
+
+                        last_launch_time = timedelta(
+                            hours=int(hours),
+                            minutes=int(minutes),
+                            seconds=int(seconds),
+                            microseconds=int(microseconds))
+                    else:
+                        last_launch_time = timedelta()
+
                     # Set game emulator
                     emulator = data["emulator"]
                     if len(emulator) > 0 and emulator in emulators:
@@ -951,9 +1022,9 @@ class Console(GEMObject):
                         "favorite": bool(data["favorite"]),
                         "multiplayer": bool(data["multiplayer"]),
                         "played": int(data["play"]),
-                        "play_time": data["play_time"],
-                        "last_launch_date": data["last_play"],
-                        "last_launch_time": data["last_play_time"],
+                        "play_time": play_time,
+                        "last_launch_date": last_launch_date,
+                        "last_launch_time": last_launch_time,
                         "emulator": emulator,
                         "default": arguments,
                     })
@@ -991,7 +1062,7 @@ class Console(GEMObject):
         """
 
         for game in self.games:
-            if game.name == name:
+            if game.filename == name:
                 return game
 
         return None
@@ -1005,8 +1076,8 @@ class Game(GEMObject):
         "favorite": bool(),
         "multiplayer": bool(),
         "played": int(),
-        "play_time": time(),
-        "last_launch_time": None,
+        "play_time": timedelta(),
+        "last_launch_time": timedelta(),
         "last_launch_date": None,
         "emulator": None,
         "default": None
@@ -1074,6 +1145,21 @@ class Game(GEMObject):
             basename(expanduser(self.filepath))
         )
 
+    @property
+    def filename(self):
+        """ Return filename without extension from filepath
+
+        Returns
+        -------
+        str
+            filename
+        """
+
+        if self.filepath is None:
+            raise TypeError("Wrong type for filepath, expected str")
+
+        return splitext(basename(expanduser(self.filepath)))[0]
+
 if __name__ == "__main__":
     """ Debug GEM API
     """
@@ -1109,7 +1195,7 @@ if __name__ == "__main__":
 
     # Get a game
     if console is not None and emulator is not None:
-        game = gem.get_game(console.id, "Metroid")
+        game = gem.get_game(console.id, "Metroid (USA)")
 
         if game is not None:
-            gem.logger.info("$ %s" % emulator.command(game))
+            gem.logger.info("$ %s" % ' '.join(emulator.command(game)))

@@ -176,9 +176,9 @@ def main():
                 Preferences(logger=gem.logger).start()
 
             elif args.gtk_ui:
-                from gem.gtk.interface import launch_gem
+                from gem.gtk.interface import Interface
 
-                launch_gem(gem.logger, args.reconstruct)
+                Interface(gem)
 
             # ------------------------------------
             #   Remove lock

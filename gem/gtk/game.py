@@ -79,21 +79,19 @@ class GameThread(Thread, GObject):
 
     __gsignals__ = { "game-terminate": (SIGNAL_RUN_LAST, None, [object]) }
 
-    def __init__(self, parent, emulator, filename, command, title):
+    def __init__(self, parent, emulator, game, command):
         """ Constructor
 
         Parameters
         ----------
         parent : gem.interface.Interface
             Main interface to access public variables
-        emulator : str
-            Emulator name
-        filename : str
-            Game file name
+        emulator : gem.api.Emulator
+            Emulator object
+        game : gem.api.Game
+            Game object
         command : list
             Command parameters list
-        title : str
-            Game title for log output
         """
 
         Thread.__init__(self)
@@ -106,10 +104,10 @@ class GameThread(Thread, GObject):
         self.parent = parent
         self.logger = parent.logger
 
-        self.name = title
+        self.name = game.name
         self.command = command
         self.emulator = emulator
-        self.filename = filename
+        self.game = game
 
         self.delta = None
         self.error = False
@@ -118,7 +116,7 @@ class GameThread(Thread, GObject):
         #   Generate data
         # ----------------------------
 
-        self.path = path_join(expanduser(Path.Logs), "%s.log" % filename)
+        self.path = path_join(expanduser(Path.Logs), "%s.log" % game.filename)
 
 
     def run(self):
