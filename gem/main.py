@@ -1,4 +1,4 @@
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation; either version 3 of the License.
@@ -12,139 +12,108 @@
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #  MA 02110-1301, USA.
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #   Modules - System
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-# Logging
-import logging
-from logging.config import fileConfig
-
-# System
+# Filesystem
 from os import mkdir
 from os import getpid
 from os import remove
 from os import environ
-from os import makedirs
 
-from os.path import join as path_join
 from os.path import isfile
 from os.path import exists
-from os.path import expanduser
-
-from sys import exit as sys_exit
+from os.path import join as path_join
 
 from glob import glob
-
 from shutil import copy2 as copy
 
+# System
 from argparse import ArgumentParser
 
-# Translation
-from gettext import gettext as _
-from gettext import textdomain
-from gettext import bindtextdomain
-
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #   Modules - GEM
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 try:
-    from gem import Gem
-    from gem import Conf
-    from gem import Path
+    from gem.api import GEM
     from gem.utils import get_data
-    from gem.configuration import Configuration
 
 except ImportError as error:
     sys_exit("Cannot find gem module: %s" % str(error))
 
-# ------------------------------------------------------------------
-#   Translation
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+#   Modules - Translation
+# ------------------------------------------------------------------------------
+
+from gettext import gettext as _
+from gettext import textdomain
+from gettext import bindtextdomain
 
 bindtextdomain("gem", get_data("i18n"))
 textdomain("gem")
 
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #   Launcher
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 def main():
-    parser = ArgumentParser(description="%s - %s" % (Gem.Name, Gem.Description),
-        epilog=Gem.Copyleft, conflict_handler="resolve")
+    """ Main launcher
+    """
+
+    # Generate default arguments
+    parser = ArgumentParser(
+        description=" - ".join([ GEM.Name, GEM.Description ]),
+        epilog=GEM.Copyleft, conflict_handler="resolve")
 
     parser.add_argument("-v", "--version", action="version",
-        version="GEM %s (%s) - Licence GPLv3" % (Gem.Version, Gem.CodeName),
+        version="GEM %s (%s) - Licence GPLv3" % (GEM.Version, GEM.CodeName),
         help="show the current version")
-    parser.add_argument("-p", "--preferences", action="store_true",
-        help="configure gem")
-    parser.add_argument("-r", "--reconstruct", action="store_true",
-        help="reconstruct gem db")
-    parser.add_argument("-d", "--debug", action="store_true",
-        help="launch gem with debug flag")
+    parser.add_argument("-d", "--debug",
+        action="store_true", help="launch gem with debug flag")
+
+    parser_database = parser.add_argument_group("database arguments")
+    parser_database.add_argument("-r", "--reconstruct",
+        action="store_true", help="reconstruct gem db")
+
+    parser_interface = parser.add_argument_group("interface arguments")
+    parser_interface.add_argument("-i", "--gtk-ui", default=True,
+        action="store_true", help="launch gem with GTK+ interface (default)")
+    parser_interface.add_argument("-p", "--gtk-config",
+        action="store_true", help="configure gem with GTK+ interface")
 
     args = parser.parse_args()
 
     # ------------------------------------
-    #   Create default folders
+    #   Initialize GEM API
     # ------------------------------------
 
-    for folder in [
-        Path.User, Path.Data, Path.Logs, Path.Roms, Path.Notes, Path.Icons]:
-        if not exists(expanduser(folder)):
-            mkdir(expanduser(folder))
-
-    # Create roms folder based on default consoles.conf
-    default_consoles = Configuration(get_data(Conf.Consoles))
-
-    for console in default_consoles.sections():
-        path = default_consoles.item(console, "roms", None)
-
-        if path is not None and not exists(expanduser(path)):
-            makedirs(expanduser(path))
+    gem = GEM(args.debug)
 
     # ------------------------------------
-    #   Launch logger
+    #   Initialize lock
     # ------------------------------------
 
-    # Define log path with a global variable
-    logging.log_path = expanduser(path_join(Path.Data, "gem.log"))
-
-    # Save older log file to ~/.local/share/gem/gem.log.old
-    if(exists(logging.log_path)):
-        copy(logging.log_path, expanduser(
-            path_join(Path.Data, "gem.log.old")))
-
-    # Generate logger from log.conf
-    fileConfig(get_data(Conf.Log))
-
-    logger = logging.getLogger("gem")
-
-    if not args.debug:
-        logger.setLevel(logging.INFO)
-
-    # ------------------------------------
-    #   Check lock
-    # ------------------------------------
-
-    if exists(expanduser(Path.Lock)):
-        with open(expanduser(Path.Lock), 'r') as pipe:
+    if exists(path_join(GEM.Local, ".lock")):
+        # Read lock content
+        with open(path_join(GEM.Local, ".lock"), 'r') as pipe:
             gem_pid = pipe.read()
 
         # Lock PID still exists
         if len(gem_pid) > 0 and exists(path_join("/proc", gem_pid)):
+            path = path_join("/proc", gem_pid, "cmdline")
 
             # Check process command line
-            if exists(path_join("/proc", gem_pid, "cmdline")):
-                with open(path_join("/proc", gem_pid, "cmdline"), 'r') as pipe:
+            if exists(path):
+                with open(path, 'r') as pipe:
                     content = pipe.read()
 
                 # Check if lock process is gem
                 if "gem.main" in content or "gem-ui" in content:
-                    logger.critical(
+                    gem.logger.critical(
                         _("GEM is already running with PID %s") % gem_pid)
 
                     return True
@@ -153,59 +122,36 @@ def main():
     #   Check folders and launch interface
     # ------------------------------------
 
-    logger.debug("Check local folder: %s" % Path.Data)
-
     try:
-        # ------------------------------------
-        #   Icons folders
-        # ------------------------------------
+        # Default folders
+        for folder in [ "icons", "logs", "notes", "roms" ]:
+            if not exists(path_join(GEM.Local, folder)):
+                gem.logger.debug("Generate %s folder" % folder)
 
-        logger.debug("Check icons folder: %s" % Path.Icons)
+                mkdir(path_join(GEM.Local, folder))
 
-        # ~/.local/share/gem/icons/consoles
-        if not exists(expanduser(Path.Consoles)):
-            logger.debug("Copy consoles icons to %s" % Path.Consoles)
-            mkdir(expanduser(Path.Consoles))
+        # Icons folders
+        for path in [ "consoles", "emulators" ]:
 
-            for filename in glob(path_join(
-                get_data("icons"), "consoles", "*")):
-                if isfile(filename):
-                    copy(filename, Path.Consoles)
+            if not exists(path_join(GEM.Local, "icons", path)):
+                gem.logger.debug("Copy default %s icons" % path)
 
-        # ~/.local/share/gem/icons/emulators
-        if not exists(expanduser(Path.Emulators)):
-            logger.debug("Copy emulators icons to %s" % Path.Emulators)
-            mkdir(expanduser(Path.Emulators))
+                mkdir(path_join(GEM.Local, "icons", path))
 
-            for filename in glob(path_join(
-                get_data("icons"), "emulators", "*")):
-                if isfile(filename):
-                    copy(filename, Path.Emulators)
+                # Copy default icons
+                for path in glob(path_join(get_data("icons"), path, "*")):
+                    if isfile(path):
+                        copy(path, path_join(GEM.Local, "icons", path))
 
-        # ------------------------------------
-        #   Create default configuration files
-        # ------------------------------------
+        # Default configuration files
+        for path in [ "gem.conf", "consoles.conf", "emulators.conf" ]:
 
-        logger.debug("Check config folder: %s" % Path.User)
+            if not exists(path_join(GEM.Config, path)):
+                gem.logger.debug("Copy default %s" % path)
 
-        if not exists(expanduser(path_join(Path.User, "gem.conf"))):
-            logger.debug("Copy gem.conf to %s" % Path.User)
-            copy(get_data(Conf.Default),
-                expanduser(path_join(Path.User, "gem.conf")))
-
-        if not exists(expanduser(path_join(Path.User, "consoles.conf"))):
-            logger.debug("Copy consoles.conf to %s" % Path.User)
-            copy(get_data(Conf.Consoles),
-                expanduser(path_join(Path.User, "consoles.conf")))
-
-        if not exists(expanduser(path_join(Path.User, "emulators.conf"))):
-            logger.debug("Copy emulators.conf to %s" % Path.User)
-            copy(get_data(Conf.Emulators),
-                expanduser(path_join(Path.User, "emulators.conf")))
-
-        # ------------------------------------
-        #   Start main window
-        # ------------------------------------
+                # Copy default configuration
+                copy(get_data(path_join("config", path)),
+                    path_join(GEM.Config, path))
 
         # Check display settings
         if "DISPLAY" in environ and len(environ["DISPLAY"]) > 0:
@@ -214,43 +160,53 @@ def main():
             #   Manage lock
             # ------------------------------------
 
-            with open(expanduser(Path.Lock), 'w') as pipe:
+            # Save current PID into lock file
+            with open(path_join(GEM.Local, ".lock"), 'w') as pipe:
                 pipe.write(str(getpid()))
 
-            logger.debug("Start with PID %s" % getpid())
+            gem.logger.debug("Start with PID %s" % getpid())
 
             # ------------------------------------
             #   Launch interface
             # ------------------------------------
 
-            if args.preferences:
+            if args.gtk_config:
                 from gem.gtk.preferences import Preferences
-                Preferences(logger=logger).start()
 
-            else:
+                Preferences(logger=gem.logger).start()
+
+            elif args.gtk_ui:
                 from gem.gtk.interface import launch_gem
-                launch_gem(logger, args.reconstruct)
+
+                launch_gem(gem.logger, args.reconstruct)
 
             # ------------------------------------
             #   Remove lock
             # ------------------------------------
 
-            if exists(expanduser(Path.Lock)):
-                remove(expanduser(Path.Lock))
+            if exists(path_join(GEM.Local, ".lock")):
+                remove(path_join(GEM.Local, ".lock"))
 
         else:
-            logger.critical(_("Cannot launch GEM without display"))
+            gem.logger.critical(_("Cannot launch GEM without display"))
 
     except ImportError as error:
-        logger.critical(_("Import error with interface: %s") % str(error))
+        gem.logger.critical(_("Import error with interface: %s") % str(error))
+
+        return True
 
     except KeyboardInterrupt as error:
-        logger.warning(_("Terminate by keyboard interrupt"))
+        gem.logger.warning(_("Terminate by keyboard interrupt"))
+
+        return True
 
     except Exception as error:
-        logger.critical(
+        gem.logger.critical(
             _("An error occur during program exec: %s") % str(error))
 
+        return True
+
+    return False
 
 if __name__ == "__main__":
-    sys_exit(main())
+    main()
