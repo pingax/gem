@@ -407,6 +407,12 @@ class GEM(object):
         if emulator in self.__data["emulators"].keys():
             return self.__data["emulators"].get(emulator, None)
 
+        # Check if emulator use name instead of identifier
+        identifier = console.lower().replace(' ', '-')
+
+        if identifier in self.__data["emulators"].keys():
+            return self.__data["emulators"].get(identifier, None)
+
         return None
 
 
@@ -492,6 +498,12 @@ class GEM(object):
 
         if console in self.__data["consoles"].keys():
             return self.__data["consoles"].get(console, None)
+
+        # Check if console use name instead of identifier
+        identifier = console.lower().replace(' ', '-')
+
+        if identifier in self.__data["consoles"].keys():
+            return self.__data["consoles"].get(identifier, None)
 
         return None
 
@@ -639,6 +651,31 @@ class GEM(object):
         self.database.modify("games", data, { "filename": game.path[1] })
 
 
+    def delete_game(self, game):
+        """ Delete a specific game
+
+        Parameters
+        ----------
+        game : gem.api.Game
+            Game object
+
+        Raises
+        -------
+        TypeError
+            if game type is not gem.api.Game
+        """
+
+        if type(game) is not Game:
+            raise TypeError("Wrong type for game, expected gem.api.Game")
+
+        results = self.database.get("games", { "filename": game.path[1] })
+
+        if results is not None and len(results) > 0:
+            self.logger.info("Remove %s from database" % game.name)
+
+            self.database.remove("games", { "filename": game.path[1] })
+
+
 class GEMObject(object):
 
     def __init__(self):
@@ -730,6 +767,74 @@ class Emulator(GEMObject):
             return True
 
         return False
+
+
+    def __get_content(self, key, game):
+        """ Get content list for a specific game
+
+        Parameters
+        ----------
+        game : gem.api.Game
+            Game object
+
+        Returns
+        -------
+        list
+            return a list
+
+        Raises
+        ------
+        TypeError
+            if game type is not gem.api.Game
+        """
+
+        if type(game) is not Game:
+            raise TypeError("Wrong type for game, expected gem.api.Game")
+
+        if key is not None:
+            if "<rom_path>" in key:
+                pattern = key.replace("<rom_path>", game.path[0])
+
+            if "<lname>" in key:
+                pattern = key.replace("<lname>", game.filename).lower()
+            else:
+                pattern = key.replace("<name>", game.filename)
+
+            return glob(pattern)
+
+        return list()
+
+
+    def get_screenshots(self, game):
+        """ Get screenshots list for a specific game
+
+        Parameters
+        ----------
+        game : gem.api.Game
+            Game object
+
+        See Also
+        --------
+        gem.api.Emulator.__get_content()
+        """
+
+        return self.__get_content(self.screenshots, game)
+
+
+    def get_savestates(self, game):
+        """ Get savestates list for a specific game
+
+        Parameters
+        ----------
+        game : gem.api.Game
+            Game object
+
+        See Also
+        --------
+        gem.api.Emulator.__get_content()
+        """
+
+        return self.__get_content(self.savestates, game)
 
 
     def command(self, game, fullscreen=False):
@@ -922,7 +1027,7 @@ class Console(GEMObject):
         self.games = list()
 
         # Check each extensions in games path
-        for extension in self.extensions:
+        for extension in set(self.extensions):
 
             # List available files
             for filename in set(glob("%s/*.%s" % (self.path, extension))):
@@ -957,13 +1062,12 @@ class Console(GEMObject):
 
                         hours, minutes, seconds = play_time.split(':')
 
-                        play_time = timedelta(
-                            hours=int(hours),
-                            minutes=int(minutes),
-                            seconds=int(seconds),
-                            microseconds=int(microseconds))
+                        play_time = time(
+                            int(hours),
+                            int(minutes),
+                            int(seconds))
                     else:
-                        play_time = timedelta()
+                        play_time = time()
 
                     # Set last play date
                     last_launch_date = data["last_play"]
@@ -997,13 +1101,12 @@ class Console(GEMObject):
 
                         hours, minutes, seconds = last_launch_time.split(':')
 
-                        last_launch_time = timedelta(
-                            hours=int(hours),
-                            minutes=int(minutes),
-                            seconds=int(seconds),
-                            microseconds=int(microseconds))
+                        last_launch_time = time(
+                            int(hours),
+                            int(minutes),
+                            int(seconds))
                     else:
-                        last_launch_time = timedelta()
+                        last_launch_time = time()
 
                     # Set game emulator
                     emulator = data["emulator"]
@@ -1076,8 +1179,8 @@ class Game(GEMObject):
         "favorite": bool(),
         "multiplayer": bool(),
         "played": int(),
-        "play_time": timedelta(),
-        "last_launch_time": timedelta(),
+        "play_time": time(),
+        "last_launch_time": time(),
         "last_launch_date": None,
         "emulator": None,
         "default": None
@@ -1175,27 +1278,3 @@ if __name__ == "__main__":
 
     gem.logger.info("Found %d games" % games)
 
-    # Get a console
-    console = gem.get_console("nintendo-nes")
-    if console is not None:
-        emulator = None
-        if console.emulator is not None:
-            emulator = console.emulator.name
-
-        gem.logger.info("%s emulator is %s" % (console.name, emulator))
-
-    # Get an emulator
-    emulator = gem.get_emulator("mednafen")
-    if emulator is not None:
-        default = str()
-        if emulator.default is not None:
-            default = emulator.default
-
-        gem.logger.info("$ %s %s" % (emulator.binary, default))
-
-    # Get a game
-    if console is not None and emulator is not None:
-        game = gem.get_game(console.id, "Metroid (USA)")
-
-        if game is not None:
-            gem.logger.info("$ %s" % ' '.join(emulator.command(game)))

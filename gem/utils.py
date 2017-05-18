@@ -27,6 +27,7 @@ from os.path import splitext
 from os.path import expanduser
 from os.path import join as path_join
 
+from datetime import date
 from datetime import datetime
 
 # Translation
@@ -87,21 +88,15 @@ def get_data(path, egg="gem"):
     return None
 
 
-def string_from_date(date, date_format="%d-%m-%Y %H:%M:%S"):
+def string_from_date(date_object):
     """ Convert a datetime to a pretty string
 
     Get a pretty string from the interval between NOW() and the wanted date
 
     Parameters
     ----------
-    date : datetime.datetime
+    date_object : datetime.datetime
         Date to compare with NOW()
-
-    Other Parameters
-    ----------------
-    date_format : str
-        Format using to parse time when date type is a string
-        (Default: %d-%m-%Y %H:%M:%S)
 
     Returns
     -------
@@ -109,13 +104,10 @@ def string_from_date(date, date_format="%d-%m-%Y %H:%M:%S"):
         Convert value
     """
 
-    if date is None:
+    if date_object is None:
         return None
 
-    if type(date) is str:
-        date = datetime.strptime(str(date), date_format)
-
-    days = (datetime.now() - date).days
+    days = (date.today() - date_object).days
 
     if days == 0:
         return _("Today")
@@ -139,21 +131,15 @@ def string_from_date(date, date_format="%d-%m-%Y %H:%M:%S"):
     return _("%d years ago") % int(years)
 
 
-def string_from_time(date, date_format="%H:%M:%S"):
+def string_from_time(time_object):
     """ Convert a time to a pretty string
 
     Get a pretty string from the interval between NOW() and the wanted date
 
     Parameters
     ----------
-    date : datetime.datetime
+    time_object : datetime.datetime
         Date to compare with NOW()
-
-    Other Parameters
-    ----------------
-    date_format : str
-        Format using to parse date when date type is a string
-        (Default: %H:%M:%S)
 
     Returns
     -------
@@ -161,30 +147,27 @@ def string_from_time(date, date_format="%H:%M:%S"):
         Convert value
     """
 
-    if date is None:
+    if time_object is None:
         return None
 
-    if type(date) is str:
-        date = datetime.strptime(str(date), date_format)
-
-    if date.hour == 0:
-        if date.minute == 0:
-            if date.second == 0:
+    if time_object.hour == 0:
+        if time_object.minute == 0:
+            if time_object.second == 0:
                 return str()
-            elif date.second == 1:
+            elif time_object.second == 1:
                 return _("1 second")
 
-            return _("%d seconds") % date.second
+            return _("%d seconds") % time_object.second
 
-        elif date.minute == 1:
+        elif time_object.minute == 1:
             return _("1 minute")
 
-        return _("%d minutes") % date.minute
+        return _("%d minutes") % time_object.minute
 
-    elif date.hour == 1:
+    elif time_object.hour == 1:
         return _("1 hour")
 
-    return _("%d hours") % date.hour
+    return _("%d hours") % time_object.hour
 
 
 def get_binary_path(binary):
