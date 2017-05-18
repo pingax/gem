@@ -1,4 +1,4 @@
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation; either version 3 of the License.
@@ -12,24 +12,22 @@
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #  MA 02110-1301, USA.
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #   Modules
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-# Path
+# Filesystem
 from os.path import exists
 from os.path import expanduser
 
-# Translation
-from gettext import gettext as _
-from gettext import textdomain
-from gettext import bindtextdomain
+# System
+from sys import exit as sys_exit
 
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #   Modules - Interface
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 try:
     from gi import require_version
@@ -48,29 +46,32 @@ try:
 except ImportError as error:
     sys_exit("Import error with python3-gobject module: %s" % str(error))
 
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #   Modules - GEM
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 try:
     from gem import *
-    from gem.utils import *
-
     from gem.gtk import *
+    from gem.utils import *
 
 except ImportError as error:
     sys_exit("Import error with gem module: %s" % str(error))
 
-# ------------------------------------------------------------------
-#   Translation
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+#   Modules - Translation
+# ------------------------------------------------------------------------------
+
+from gettext import gettext as _
+from gettext import textdomain
+from gettext import bindtextdomain
 
 bindtextdomain("gem", get_data("i18n"))
 textdomain("gem")
 
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #   Class
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 class Dialog(Gtk.Dialog):
 
@@ -864,25 +865,23 @@ class DialogParameters(Dialog):
 
         self.show_all()
 
-        self.model.append([self.empty, str(), self.empty])
-
-        for emulator in self.interface.emulators.sections():
-            icon = icon_from_data(self.interface.emulators.item(
-                emulator, "icon"), self.empty, 24, 24, "emulators")
-
-            path = self.interface.emulators.item(emulator, "binary")
+        for emulator in self.interface.api.emulators.values():
+            icon = icon_from_data(
+                emulator.icon, self.empty, 24, 24, "emulators")
 
             warning = self.empty
-            if len(get_binary_path(path)) == 0:
+            if not emulator.exists:
                 warning = self.interface.icons["warning"]
 
-            row = self.model.append([icon, emulator, warning])
+            row = self.model.append([icon, emulator.name, warning])
 
-            if (self.emulator["rom"] is not None and \
-                emulator == self.emulator["rom"]) or \
-                (self.emulator["console"] is not None and \
-                emulator == self.emulator["console"]):
-                self.combo.set_active_iter(row)
+            if self.emulator["rom"] is not None:
+                if emulator.name == self.emulator["rom"].name:
+                    self.combo.set_active_iter(row)
+
+            elif self.emulator["console"] is not None:
+                if emulator.name == self.emulator["console"].name:
+                    self.combo.set_active_iter(row)
 
         if self.emulator["parameters"] is not None:
             self.entry.set_text(self.emulator["parameters"])
@@ -901,20 +900,18 @@ class DialogParameters(Dialog):
 
         default = str()
 
-        emulator = self.combo.get_active_id()
+        emulator = self.interface.api.get_emulator(self.combo.get_active_id())
 
         if emulator is not None:
-            if self.interface.emulators.has_option(emulator, "default"):
-                default = self.interface.emulators.get(emulator, "default")
-
-        path = self.interface.emulators.item(emulator, "binary")
+            if emulator.default is not None:
+                default = emulator.default
 
         # Allow to validate dialog if selected emulator binary exist
-        if len(get_binary_path(path)) == 0:
-            self.set_response_sensitive(Gtk.ResponseType.OK, False)
+        if emulator is not None and emulator.exists:
+            self.set_response_sensitive(Gtk.ResponseType.OK, True)
 
         else:
-            self.set_response_sensitive(Gtk.ResponseType.OK, True)
+            self.set_response_sensitive(Gtk.ResponseType.OK, False)
 
         self.entry.set_placeholder_text(default)
 
@@ -1495,13 +1492,13 @@ class DialogConsoles(Dialog):
 
         for console in self.consoles:
             status = False
-            if self.previous is not None and self.previous == console:
+            if self.previous is not None and self.previous.name == console.name:
                 status = True
 
                 self.current = console
                 self.set_response_sensitive(Gtk.ResponseType.APPLY, True)
 
-            self.model_consoles.append([status, console])
+            self.model_consoles.append([status, console.name])
 
 
     def on_cell_toggled(self, widget, path):
@@ -1608,9 +1605,9 @@ class DialogHelp(Dialog):
         self.show_all()
 
 
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #   Misc functions
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 def icon_from_data(icon, fallback=None, width=24, height=24, subfolder=None):
     """ Load an icon from path

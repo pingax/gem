@@ -404,14 +404,16 @@ class GEM(object):
             Found emulator
         """
 
-        if emulator in self.__data["emulators"].keys():
-            return self.__data["emulators"].get(emulator, None)
+        if len(emulator) > 0:
 
-        # Check if emulator use name instead of identifier
-        identifier = console.lower().replace(' ', '-')
+            if emulator in self.__data["emulators"].keys():
+                return self.__data["emulators"].get(emulator, None)
 
-        if identifier in self.__data["emulators"].keys():
-            return self.__data["emulators"].get(identifier, None)
+            # Check if emulator use name instead of identifier
+            identifier = console.lower().replace(' ', '-')
+
+            if identifier in self.__data["emulators"].keys():
+                return self.__data["emulators"].get(identifier, None)
 
         return None
 
@@ -496,14 +498,16 @@ class GEM(object):
         <gem.api.Console object at 0x7f174a986b00>
         """
 
-        if console in self.__data["consoles"].keys():
-            return self.__data["consoles"].get(console, None)
+        if len(console) > 0:
 
-        # Check if console use name instead of identifier
-        identifier = console.lower().replace(' ', '-')
+            if console in self.__data["consoles"].keys():
+                return self.__data["consoles"].get(console, None)
 
-        if identifier in self.__data["consoles"].keys():
-            return self.__data["consoles"].get(identifier, None)
+            # Check if console use name instead of identifier
+            identifier = console.lower().replace(' ', '-')
+
+            if identifier in self.__data["consoles"].keys():
+                return self.__data["consoles"].get(identifier, None)
 
         return None
 
@@ -644,6 +648,9 @@ class GEM(object):
 
             elif type(value) is int:
                 data[key] = str(value)
+
+            elif type(value) is Emulator:
+                data[key] = str(value.name)
 
         # Update game in database
         self.logger.info("Update %s values from database" % game.path[1])

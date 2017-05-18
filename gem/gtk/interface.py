@@ -2024,7 +2024,7 @@ class Interface(Gtk.Window):
                 #   Check screenshots
                 # ----------------------------
 
-                if len(emulator.get_screenshots(game)) > 0:
+                if len(emulator.get_screenshots(game)) == 0:
                     self.set_game_data(Columns.Snapshots,
                         self.alternative["snap"], game.filename)
 
@@ -2475,7 +2475,8 @@ class Interface(Gtk.Window):
                     row_data[Columns.Except] = self.icons["except"]
 
                 elif game.emulator is not None:
-                    row_data[Columns.Except] = self.icons["except"]
+                    if not game.emulator.name == console.emulator.name:
+                        row_data[Columns.Except] = self.icons["except"]
 
                 # Installed time
                 row_data[Columns.Installed] = string_from_date(
@@ -3079,11 +3080,15 @@ class Interface(Gtk.Window):
             dialog = DialogParameters(self, game.name, emulator)
 
             if dialog.run() == Gtk.ResponseType.OK:
-                self.logger.info(_("Change custom parameters for %s") % title)
+                self.logger.info(
+                    _("Change custom parameters for %s") % game.name)
 
                 game.emulator = self.api.get_emulator(
                     dialog.combo.get_active_id())
+
                 game.default = dialog.entry.get_text()
+                if len(game.default) == 0:
+                    game.default = None
 
                 # Update game from database
                 self.api.update_game(game)
@@ -3095,11 +3100,10 @@ class Interface(Gtk.Window):
                 custom = False
 
                 if game.emulator is not None and \
-                    not game.emulator == console.emulator:
+                    not game.emulator.name == console.emulator.name:
                     custom = True
 
-                elif game.default is not None and \
-                    not game.default == console.default:
+                elif game.default is not None:
                     custom = True
 
                 if custom:
