@@ -173,7 +173,7 @@ def main():
             if args.gtk_config:
                 from gem.gtk.preferences import Preferences
 
-                Preferences(logger=gem.logger).start()
+                Preferences(gem).start()
 
             elif args.gtk_ui:
                 from gem.gtk.interface import Interface

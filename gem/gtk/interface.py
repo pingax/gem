@@ -78,6 +78,7 @@ try:
     from gi.repository.GLib import idle_add
     from gi.repository.GLib import source_remove
 
+    from gi.repository.GObject import GObject
     from gi.repository.GObject import MainLoop
     from gi.repository.GObject import SIGNAL_RUN_LAST
 
@@ -93,7 +94,6 @@ except ImportError as error:
 # ------------------------------------------------------------------------------
 
 try:
-    from gem import *
     from gem.utils import *
     from gem.configuration import Configuration
 
@@ -103,7 +103,7 @@ try:
     from gem.api import Emulator
 
     from gem.gtk import *
-    from gem.gtk.game import *
+    from gem.gtk.game import GameThread
     from gem.gtk.windows import *
     from gem.gtk.preferences import Preferences
 
@@ -1420,6 +1420,8 @@ class Interface(Gtk.Window):
 
         # Avoid to reload API when GEM just started
         if self.__first_draw:
+            self.logger.debug("Initialize API")
+
             self.api.init_data()
 
         # ------------------------------------
@@ -1460,6 +1462,9 @@ class Interface(Gtk.Window):
             self.dark_signal_menu)
         self.menubar_tools_item_dark_theme.handler_unblock(
             self.dark_signal_menubar)
+
+        self.logger.debug(
+            "Set dark theme status to %s" % str(dark_theme_status))
 
         # ------------------------------------
         #   Icons
@@ -1908,7 +1913,7 @@ class Interface(Gtk.Window):
 
         if icon == Icons.Error:
             self.logger.error(message)
-        elif icon == Icon.Warning:
+        elif icon == Icons.Warning:
             self.logger.warning(message)
         else:
             self.logger.info(message)
@@ -2042,7 +2047,7 @@ class Interface(Gtk.Window):
 
         self.set_sensitive(False)
 
-        Preferences(self, self.logger).start()
+        Preferences(self.api, self).start()
 
         self.set_sensitive(True)
 
@@ -2281,7 +2286,8 @@ class Interface(Gtk.Window):
                             item = row
 
         if len(self.model_consoles) > 0:
-            self.logger.debug("Append %d consoles" % len(self.model_consoles))
+            self.logger.debug(
+                "%d console(s) has been added" % len(self.model_consoles))
 
         return item
 
@@ -2423,91 +2429,95 @@ class Interface(Gtk.Window):
                 if not current_thread_id == self.list_thread:
                     yield False
 
-                # Get path from Game
-                path, filepath = game.path
-                # Get name and extension from filename
-                filename, extension = splitext(filepath)
+                # Check if rome file exists
+                if exists(game.filepath):
 
-                row_data = [
-                    game.favorite,
-                    self.alternative["favorite"],
-                    game.name,
-                    str(),          # Played
-                    str(),          # Last launch date
-                    str(),          # Last launch time
-                    str(),          # Total play time
-                    str(),          # Installed date
-                    self.alternative["except"],
-                    self.alternative["snap"],
-                    self.alternative["multiplayer"],
-                    self.alternative["save"],
-                    filename ]
+                    # Get path from Game
+                    path, filepath = game.path
+                    # Get name and extension from filename
+                    filename, extension = splitext(filepath)
 
-                # Favorite
-                if game.favorite:
-                    row_data[Columns.Icon] = self.icons["favorite"]
+                    row_data = [
+                        game.favorite,
+                        self.alternative["favorite"],
+                        game.name,
+                        str(),          # Played
+                        str(),          # Last launch date
+                        str(),          # Last launch time
+                        str(),          # Total play time
+                        str(),          # Installed date
+                        self.alternative["except"],
+                        self.alternative["snap"],
+                        self.alternative["multiplayer"],
+                        self.alternative["save"],
+                        filename ]
 
-                # Multiplayer
-                if game.multiplayer:
-                    row_data[Columns.Multiplayer] = self.icons["multiplayer"]
+                    # Favorite
+                    if game.favorite:
+                        row_data[Columns.Icon] = self.icons["favorite"]
 
-                # Played
-                if game.played > 0:
-                    row_data[Columns.Played] = str(game.played)
+                    # Multiplayer
+                    if game.multiplayer:
+                        row_data[Columns.Multiplayer] = \
+                            self.icons["multiplayer"]
 
-                # Last launch date
-                if game.last_launch_date is not None:
-                    row_data[Columns.LastPlay] = \
-                        string_from_date(game.last_launch_date)
+                    # Played
+                    if game.played > 0:
+                        row_data[Columns.Played] = str(game.played)
 
-                # Last launch time
-                if not game.last_launch_time == time.min:
-                    row_data[Columns.LastTimePlay] = \
-                        string_from_time(game.last_launch_time)
+                    # Last launch date
+                    if game.last_launch_date is not None:
+                        row_data[Columns.LastPlay] = \
+                            string_from_date(game.last_launch_date)
 
-                # Play time
-                if not game.play_time == time.min:
-                    row_data[Columns.TimePlay] = \
-                        string_from_time(game.play_time)
+                    # Last launch time
+                    if not game.last_launch_time == time.min:
+                        row_data[Columns.LastTimePlay] = \
+                            string_from_time(game.last_launch_time)
 
-                # Parameters
-                if game.default is not None:
-                    row_data[Columns.Except] = self.icons["except"]
+                    # Play time
+                    if not game.play_time == time.min:
+                        row_data[Columns.TimePlay] = \
+                            string_from_time(game.play_time)
 
-                elif game.emulator is not None:
-                    if not game.emulator.name == console.emulator.name:
+                    # Parameters
+                    if game.default is not None:
                         row_data[Columns.Except] = self.icons["except"]
 
-                # Installed time
-                row_data[Columns.Installed] = string_from_date(
-                    datetime.fromtimestamp(getctime(game.filepath)).date())
+                    elif game.emulator is not None:
+                        if not game.emulator.name == console.emulator.name:
+                            row_data[Columns.Except] = self.icons["except"]
 
-                # Get global emulator
-                rom_emulator = emulator
+                    # Installed time
+                    row_data[Columns.Installed] = string_from_date(
+                        datetime.fromtimestamp(getctime(game.filepath)).date())
 
-                # Set specified emulator is available
-                if game.emulator is not None:
-                    rom_emulator = game.emulator
+                    # Get global emulator
+                    rom_emulator = emulator
 
-                # Snap
-                if len(rom_emulator.get_screenshots(game)) > 0:
-                    row_data[Columns.Snapshots] = self.icons["snap"]
+                    # Set specified emulator is available
+                    if game.emulator is not None:
+                        rom_emulator = game.emulator
 
-                # Save state
-                if len(rom_emulator.get_savestates(game)) > 0:
-                    row_data[Columns.Save] = self.icons["save"]
+                    # Snap
+                    if len(rom_emulator.get_screenshots(game)) > 0:
+                        row_data[Columns.Snapshots] = self.icons["snap"]
 
-                row = self.model_games.append(row_data)
+                    # Save state
+                    if len(rom_emulator.get_savestates(game)) > 0:
+                        row_data[Columns.Save] = self.icons["save"]
 
-                self.game_path[filename] = [game, row]
+                    row = self.model_games.append(row_data)
 
-                iteration += 1
-                if (iteration % 20 == 0):
-                    self.set_informations()
+                    self.game_path[filename] = [game, row]
 
-                    self.treeview_games.thaw_child_notify()
-                    yield True
-                    self.treeview_games.freeze_child_notify()
+                    iteration += 1
+                    if (iteration % 20 == 0):
+                        self.set_informations()
+
+                        self.treeview_games.thaw_child_notify()
+                        yield True
+                        self.treeview_games.freeze_child_notify()
 
             # Restore options for packages treeviews
             self.treeview_games.set_enable_search(True)
@@ -3350,11 +3360,11 @@ class Interface(Gtk.Window):
                         content += line
 
                     # Check ~/.local/share/applications
-                    if not exists(Folder.Apps):
-                        mkdir(Folder.Apps)
+                    if not exists(Folders.Apps):
+                        mkdir(Folders.Apps)
 
                     # Write the new desktop file
-                    with open(path_join(Folder.Apps, name), 'w') as pipe:
+                    with open(path_join(Folders.Apps, name), 'w') as pipe:
                         pipe.write(content)
 
                     self.set_message(
@@ -3834,7 +3844,7 @@ class Splash(Gtk.Window):
         self.image_splash = Gtk.Image()
 
         # Properties
-        self.image_splash.set_from_icon_name(Gem.Icon, Gtk.IconSize.DND)
+        self.image_splash.set_from_icon_name(GEM.Icon, Gtk.IconSize.DND)
         self.image_splash.set_pixel_size(256)
 
         # ------------------------------------

@@ -424,7 +424,7 @@ class DialogEditor(Dialog):
         # ------------------------------------
 
         if type(editable) is not bool:
-            raise TypeError("Wrong type for editable : bool wanted !")
+            raise TypeError("Wrong type for editable, expected bool")
 
         self.path = file_path
         self.editable = editable

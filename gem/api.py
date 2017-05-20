@@ -161,28 +161,6 @@ class GEM(object):
             self.logger.setLevel(logging.INFO)
 
         # ----------------------------
-        #   Initialize configuration
-        # ----------------------------
-
-        if not exists(GEM.Config):
-            self.logger.debug("Create %s folder" % GEM.Config)
-            mkdir(GEM.Config)
-
-        # Check GEM configuration files
-        for path in [ GEM.Consoles, GEM.Emulators ]:
-            # Get configuration filename for storage
-            name, ext = splitext(path)
-
-            # Configuration file not exists
-            if not exists(path_join(GEM.Config, path)):
-                self.logger.debug("Copy %s to %s" % (path, GEM.Config))
-                copy(path, path_join(GEM.Config, path))
-
-            # Store Configuration object
-            self.__configurations[name] = Configuration(
-                path_join(GEM.Config, path))
-
-        # ----------------------------
         #   Initialize database
         # ----------------------------
 
@@ -247,6 +225,31 @@ class GEM(object):
         self.init_data()
 
 
+    def __init_configurations(self):
+        """ Initalize configuration
+        """
+
+        if not exists(GEM.Config):
+            self.logger.debug("Create %s folder" % GEM.Config)
+            mkdir(GEM.Config)
+
+        # Check GEM configuration files
+        for path in [ GEM.Consoles, GEM.Emulators ]:
+            # Get configuration filename for storage
+            name, ext = splitext(path)
+
+            # Configuration file not exists
+            if not exists(path_join(GEM.Config, path)):
+                self.logger.debug("Copy %s to %s" % (path, GEM.Config))
+                copy(path, path_join(GEM.Config, path))
+
+            self.logger.debug("Read %s configuration file" % path)
+
+            # Store Configuration object
+            self.__configurations[name] = Configuration(
+                path_join(GEM.Config, path))
+
+
     def __init_emulators(self):
         """ Initalize emulators
         """
@@ -256,6 +259,41 @@ class GEM(object):
         data = self.__configurations["emulators"]
 
         for section in data.sections():
+            # Configuration
+            configuration = data.get(section, "configuration", fallback=None)
+            if configuration is not None:
+                # Empty string
+                if len(configuration) == 0:
+                    configuration = None
+                # Need to expanduser path
+                else:
+                    configuration = expanduser(configuration)
+
+            # Savestates
+            savestates = data.get(section, "save", fallback=None)
+            if savestates is not None and len(savestates) == 0:
+                savestates = None
+
+            # Screenshots
+            screenshots = data.get(section, "snaps", fallback=None)
+            if screenshots is not None and len(screenshots) == 0:
+                screenshots = None
+
+            # Default
+            default = data.get(section, "default", fallback=None)
+            if default is not None and len(default) == 0:
+                default = None
+
+            # Windowed
+            windowed = data.get(section, "windowed", fallback=None)
+            if windowed is not None and len(windowed) == 0:
+                windowed = None
+
+            # Fullscreen
+            fullscreen = data.get(section, "fullscreen", fallback=None)
+            if fullscreen is not None and len(fullscreen) == 0:
+                fullscreen = None
+
             self.add_emulator({
                 "id": section.lower().replace(' ', '-'),
                 "name": section,
@@ -263,19 +301,16 @@ class GEM(object):
                     section, "binary", fallback=str())),
                 "icon": data.get(
                     section, "icon", fallback=str()),
-                "configuration": expanduser(data.get(
-                    section, "configuration", fallback=str())),
-                "savestates": data.get(
-                    section, "save", fallback=str()),
-                "screenshots": data.get(
-                    section, "snaps", fallback=str()),
-                "default": data.get(
-                    section, "default", fallback=str()),
-                "windowed": data.get(
-                    section, "windowed", fallback=str()),
-                "fullscreen": data.get(
-                    section, "fullscreen", fallback=str())
+                "configuration": configuration,
+                "savestates": savestates,
+                "screenshots": screenshots,
+                "default": default,
+                "windowed": windowed,
+                "fullscreen": fullscreen
             })
+
+        self.logger.debug(
+            "%d emulator(s) has been founded" % len(self.emulators))
 
 
     def __init_consoles(self):
@@ -305,10 +340,15 @@ class GEM(object):
                 "emulator": emulator
             })
 
+        self.logger.debug(
+            "%d console(s) has been founded" % len(self.consoles))
+
 
     def init_data(self):
         """ Initalize data from configuration files
         """
+
+        self.__init_configurations()
 
         self.__init_emulators()
 
@@ -337,7 +377,7 @@ class GEM(object):
                 name, ext = splitext(path)
 
                 # Backup configuration file
-                self.logger.info("Backup ~%s configuration file" % path)
+                self.logger.debug("Backup ~%s configuration file" % path)
                 move(path_join(GEM.Config, path),
                     path_join(GEM.Config, '~' + path))
 
@@ -349,6 +389,9 @@ class GEM(object):
                     section, structure = self.__data[name][element].as_dict()
 
                     for key, value in sorted(structure.items()):
+                        if value is None:
+                            value = str()
+
                         config.modify(section, key, value)
 
                 # Write new configuration file
@@ -404,7 +447,7 @@ class GEM(object):
             Found emulator
         """
 
-        if len(emulator) > 0:
+        if emulator is not None and len(emulator) > 0:
 
             if emulator in self.__data["emulators"].keys():
                 return self.__data["emulators"].get(emulator, None)
@@ -451,7 +494,7 @@ class GEM(object):
         emulator = Emulator()
 
         for key, value in data.items():
-            if len(value) == 0:
+            if value is not None and len(value) == 0:
                 value = None
 
             setattr(emulator, key, value)
@@ -498,7 +541,7 @@ class GEM(object):
         <gem.api.Console object at 0x7f174a986b00>
         """
 
-        if len(console) > 0:
+        if console is not None and len(console) > 0:
 
             if console in self.__data["consoles"].keys():
                 return self.__data["consoles"].get(console, None)
@@ -542,7 +585,8 @@ class GEM(object):
         console = Console()
 
         for key, value in data.items():
-            if type(value) is not Emulator and len(value) == 0:
+            if type(value) is not Emulator and \
+                value is not None and len(value) == 0:
                 value = None
 
             setattr(console, key, value)

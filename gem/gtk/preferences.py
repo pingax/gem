@@ -1,4 +1,4 @@
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation; either version 3 of the License.
@@ -12,13 +12,13 @@
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #  MA 02110-1301, USA.
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #   Modules
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-# Path
+# Filesystem
 from os.path import exists
 from os.path import basename
 from os.path import splitext
@@ -27,14 +27,12 @@ from os.path import join as path_join
 
 from glob import glob
 
-# Translation
-from gettext import gettext as _
-from gettext import textdomain
-from gettext import bindtextdomain
+# System
+from sys import exit as sys_exit
 
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #   Modules - Interface
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 try:
     from gi import require_version
@@ -52,14 +50,18 @@ try:
 except ImportError as error:
     sys_exit("Import error with python3-gobject module: %s" % str(error))
 
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #   Modules - GEM
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 try:
-    from gem import *
     from gem.utils import *
     from gem.configuration import Configuration
+
+    from gem.api import GEM
+    from gem.api import Game
+    from gem.api import Console
+    from gem.api import Emulator
 
     from gem.gtk import *
     from gem.gtk.windows import *
@@ -67,16 +69,20 @@ try:
 except ImportError as error:
     sys_exit("Import error with gem module: %s" % str(error))
 
-# ------------------------------------------------------------------
-#   Translation
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+#   Modules - Translation
+# ------------------------------------------------------------------------------
+
+from gettext import gettext as _
+from gettext import textdomain
+from gettext import bindtextdomain
 
 bindtextdomain("gem", get_data("i18n"))
 textdomain("gem")
 
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #   Class
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 class Manager(object):
     CONSOLE  = 0
@@ -85,21 +91,35 @@ class Manager(object):
 
 class Preferences(object):
 
-    def __init__(self, parent=None, logger=None):
+    def __init__(self, api, parent=None):
         """ Constructor
+
+        Parameters
+        ----------
+        api : gem.api.GEM
+            GEM API instance
 
         Other Parameters
         ----------------
-        parent : Gtk.Window
-            Parent object (Default: None)
-        logger : logging.Logger
-            Output logger (Default: None)
+        parent : Gtk.Window or None
+            Parent window for transient mode (default: None)
+
+        Raises
+        ------
+        TypeError
+            if api type is not gem.api.GEM
         """
+
+        if type(api) is not GEM:
+            raise TypeError("Wrong type for api, expected gem.api.GEM")
 
         # ------------------------------------
         #   Initialize variables
         # ------------------------------------
 
+        # API instance
+        self.api = api
+        # Transient window
         self.interface = parent
 
         self.shortcuts = {
@@ -153,24 +173,16 @@ class Preferences(object):
         #   Initialize configuration files
         # ------------------------------------
 
-        if self.interface is not None:
-            self.config = self.interface.config
-            self.consoles = self.interface.consoles
-            self.emulators = self.interface.emulators
+        self.config = Configuration(
+            expanduser(path_join(Path.User, "gem.conf")))
 
+        if self.interface is not None:
             # Get user icon theme
             self.icons_theme = self.interface.icons_theme
 
             self.empty = self.interface.empty
 
         else:
-            self.config = Configuration(
-                expanduser(path_join(Path.User, "gem.conf")))
-            self.consoles = Configuration(
-                expanduser(path_join(Path.User, "consoles.conf")))
-            self.emulators = Configuration(
-                expanduser(path_join(Path.User, "emulators.conf")))
-
             # Get user icon theme
             self.icons_theme = Gtk.IconTheme.get_default()
 
@@ -182,14 +194,14 @@ class Preferences(object):
             self.empty.fill(0x00000000)
 
             # Set light/dark theme
-            on_change_theme(self.config.getboolean(
-                "gem", "dark_theme", fallback=False))
+            on_change_theme(
+                self.config.getboolean("gem", "dark_theme", fallback=False))
 
         # ------------------------------------
         #   Initialize logger
         # ------------------------------------
 
-        self.logger = logger
+        self.logger = self.api.logger
 
         # ------------------------------------
         #   Prepare interface
@@ -339,7 +351,7 @@ class Preferences(object):
 
         if self.interface is None:
             self.headerbar.set_subtitle(
-                "%s - %s (%s)" % (Gem.Name, Gem.Version, Gem.CodeName))
+                "%s - %s (%s)" % (GEM.Name, GEM.Version, GEM.CodeName))
 
         # ------------------------------------
         #   Header
@@ -679,7 +691,7 @@ class Preferences(object):
 
         self.scroll_consoles_treeview = Gtk.ScrolledWindow()
 
-        self.model_consoles = Gtk.ListStore(Pixbuf, str, str, Pixbuf)
+        self.model_consoles = Gtk.ListStore(Pixbuf, str, str, Pixbuf, str)
         self.treeview_consoles = Gtk.TreeView()
 
         self.column_consoles_name = Gtk.TreeViewColumn()
@@ -768,7 +780,7 @@ class Preferences(object):
         self.scroll_emulators_treeview = Gtk.ScrolledWindow()
 
         self.model_emulators = Gtk.ListStore(
-            Pixbuf, str, str, Pixbuf, Pango.Style)
+            Pixbuf, str, str, Pixbuf, str)
         self.treeview_emulators = Gtk.TreeView()
 
         self.column_emulators_name = Gtk.TreeViewColumn()
@@ -1128,6 +1140,8 @@ class Preferences(object):
         """
 
         if widget == self.button_save:
+            # Write emulators and consoles data
+            self.api.write_data()
 
             self.config.modify("gem", "use_classic_theme",
                 int(self.check_classic_theme.get_active()))
@@ -1177,6 +1191,7 @@ class Preferences(object):
             self.config.update()
 
             if self.interface is not None:
+                self.logger.debug("Main interface need to be reloading")
                 self.interface.load_interface()
 
         self.window.hide()
@@ -1329,22 +1344,20 @@ class Preferences(object):
 
         self.selection["console"] = None
 
-        for name in self.consoles.sections():
-            image = icon_from_data(self.consoles.item(name, "icon"),
-                self.empty, subfolder="consoles")
+        for console in self.api.consoles.values():
+            image = icon_from_data(
+                console.icon, self.empty, subfolder="consoles")
 
-            path = self.consoles.item(name, "roms")
-
-            if path is not None:
-                path = path.replace(expanduser('~'), '~')
-            else:
-                path = str()
+            path = str()
+            if console.path is not None:
+                path = console.path.replace(expanduser('~'), '~')
 
             check = self.empty
             if not exists(expanduser(path)):
                 check = icon_load(Icons.Warning, 24, self.empty)
 
-            self.model_consoles.append([image, name, path, check])
+            self.model_consoles.append([
+                image, console.name, path, check, console.id])
 
 
     def on_load_emulators(self):
@@ -1355,18 +1368,17 @@ class Preferences(object):
 
         self.selection["emulator"] = None
 
-        for name in self.emulators.sections():
-            image = icon_from_data(self.emulators.item(name, "icon"),
-                self.empty, subfolder="emulators")
-
-            binary = self.emulators.item(name, "binary")
+        for emulator in self.api.emulators.values():
+            image = icon_from_data(
+                emulator.icon, self.empty, subfolder="emulators")
 
             check, font = self.empty, Pango.Style.NORMAL
-            if len(get_binary_path(binary)) == 0:
+            if not emulator.exists:
                 check = icon_load(Icons.Warning, 24, self.empty)
                 font = Pango.Style.OBLIQUE
 
-            self.model_emulators.append([image, name, binary, check, font])
+            self.model_emulators.append([
+                image, emulator.name, emulator.binary, check, emulator.id])
 
 
     def __edit_keys(self, widget, path, key, mods, hwcode):
@@ -1490,32 +1502,36 @@ class Preferences(object):
             "console": None,
             "emulator": None }
 
+        # Select current treeview
         if manager == Manager.CONSOLE:
-            config, treeview = self.consoles, self.treeview_consoles
-
+            treeview = self.treeview_consoles
         elif manager == Manager.EMULATOR:
-            config, treeview = self.emulators, self.treeview_emulators
+            treeview = self.treeview_emulators
 
         model, treeiter = treeview.get_selection().get_selected()
 
-        name = None
+        identifier = None
         if treeiter is not None:
-            name = model.get_value(treeiter, 1)
+            identifier = model.get_value(treeiter, 4)
 
-        if modification and name is None:
+        if modification and identifier is None:
             return False
 
         if manager == Manager.CONSOLE:
-            if modification:
-                self.selection["console"] = name
+            console = self.api.get_console(identifier)
 
-            Console(self, modification)
+            if modification:
+                self.selection["console"] = console
+
+            PreferencesConsole(self, console, modification)
 
         elif manager == Manager.EMULATOR:
-            if modification:
-                self.selection["emulator"] = name
+            emulator = self.api.get_emulator(identifier)
 
-            Emulator(self, modification)
+            if modification:
+                self.selection["emulator"] = emulator
+
+            PreferencesEmulator(self, emulator, modification)
 
         return True
 
@@ -1531,17 +1547,18 @@ class Preferences(object):
             Treeview widget which receive signal
         """
 
-        name = None
+        data = None
+        identifier = None
 
+        # Select current treeview
         if manager == Manager.CONSOLE:
-            config, treeview = self.consoles, self.treeview_consoles
-
+            treeview = self.treeview_consoles
         elif manager == Manager.EMULATOR:
-            config, treeview = self.emulators, self.treeview_emulators
+            treeview = self.treeview_emulators
 
         model, treeiter = treeview.get_selection().get_selected()
         if treeiter is not None:
-            name = model.get_value(treeiter, 1)
+            identifier = model.get_value(treeiter, 4)
 
         # ----------------------------
         #   Game selected
@@ -1549,13 +1566,22 @@ class Preferences(object):
 
         need_reload = False
 
-        if name is not None:
-            dialog = Question(self.interface, name,
+        # Get correct data from identifier
+        if identifier is not None:
+            if manager == Manager.CONSOLE:
+                data = self.api.get_console(identifier)
+            elif manager == Manager.EMULATOR:
+                data = self.api.get_emulator(identifier)
+
+        if data is not None:
+            dialog = Question(self.window, data.name,
                 _("Would you really want to remove this entry ?"))
 
             if dialog.run() == Gtk.ResponseType.YES:
-                config.remove(name)
-                config.update()
+                if manager == Manager.CONSOLE:
+                    self.api.delete_console(data.id)
+                elif manager == Manager.EMULATOR:
+                    self.api.delete_emulator(data.id)
 
                 model.remove(treeiter)
 
@@ -1570,15 +1596,17 @@ class Preferences(object):
                 self.on_load_emulators()
 
 
-class Console(Dialog):
+class PreferencesConsole(Dialog):
 
-    def __init__(self, parent, modify):
+    def __init__(self, parent, console, modify):
         """ Constructor
 
         Parameters
         ----------
         parent : Gtk.Window
             Parent object (Default: None)
+        console : gem.api.Console
+            Console object
         modify : bool
             Use edit mode instead of append mode
         """
@@ -1589,6 +1617,11 @@ class Console(Dialog):
         #   Initialize variables
         # ------------------------------------
 
+        # GEM API instance
+        self.api = parent.api
+        # Console object
+        self.console = console
+
         self.path = None
 
         self.error = False
@@ -1598,10 +1631,8 @@ class Console(Dialog):
         self.interface = parent
         self.modify = modify
 
+        # Empty Pixbuf icon
         self.empty = parent.empty
-        self.consoles = parent.consoles
-        self.emulators = parent.emulators
-        self.selection = parent.selection
 
         # ------------------------------------
         #   Prepare interface
@@ -1787,48 +1818,43 @@ class Console(Dialog):
 
         emulators_rows = dict()
 
-        for emulator in self.emulators.sections():
-            icon = icon_from_data(self.emulators.item(emulator, "icon"),
-                self.empty, 24, 24, "emulators")
-
-            path = self.emulators.item(emulator, "binary")
+        for emulator in self.api.emulators.values():
+            icon = icon_from_data(
+                emulator.icon, self.empty, 24, 24, "emulators")
 
             warning = self.empty
-            if len(get_binary_path(path)) == 0:
+            if not emulator.exists:
                 warning = icon_load(Icons.Warning, 24, self.empty)
 
-            emulators_rows[emulator] = self.model_emulators.append(
-                [icon, emulator, warning])
+            emulators_rows[emulator.id] = self.model_emulators.append(
+                [icon, emulator.name, warning])
 
         # ------------------------------------
         #   Init data
         # ------------------------------------
 
-        self.console = self.selection["console"]
-
         if self.modify:
-            self.entry_name.set_text(self.console)
+            self.entry_name.set_text(self.console.name)
 
             # Folder
-            folder = expanduser(self.consoles.item(self.console, "roms", str()))
-            if exists(folder):
+            folder = self.console.path
+            if folder is not None and exists(folder):
                 self.file_folder.set_current_folder(folder)
 
             # Extensions
-            self.entry_extensions.set_text(
-                self.consoles.item(self.console, "exts", str()))
+            self.entry_extensions.set_text(';'.join(self.console.extensions))
 
             # Icon
-            self.path = self.consoles.item(self.console, "icon")
+            self.path = self.console.icon
             self.image_console.set_from_pixbuf(
                 icon_from_data(self.path, self.empty, 64, 64, "consoles"))
 
             # Emulator
-            if self.consoles.item(self.console, "emulator", str()) in \
-                self.emulators.sections():
+            if self.console.emulator is not None and \
+                self.console.emulator.id in emulators_rows:
 
                 self.combo_emulators.set_active_id(
-                    self.consoles.item(self.console, "emulator", str()))
+                    self.console.emulator.name)
 
             self.set_response_sensitive(Gtk.ResponseType.APPLY, True)
 
@@ -1847,19 +1873,11 @@ class Console(Dialog):
             self.__on_save_data()
 
             if self.data is not None:
-                if not self.section == self.console:
-                    self.consoles.remove(self.console)
+                if self.modify:
+                    self.api.delete_console(self.console.id)
 
-                self.consoles.remove(self.section)
-
-                for (option, value) in self.data.items():
-                    if value is None:
-                        value = str()
-
-                    if len(str(value)) > 0:
-                        self.consoles.modify(self.section, option, str(value))
-
-                self.consoles.update()
+                # Append a new console
+                self.api.add_console(self.data)
 
             need_reload = True
 
@@ -1873,24 +1891,35 @@ class Console(Dialog):
         """ Return all the data from interface
         """
 
-        self.data = dict()
-
         self.section = self.entry_name.get_text()
 
-        path_roms = self.file_folder.get_filename()
-        if path_roms is None or not exists(path_roms):
-            path_roms = expanduser(
-                self.consoles.item(self.console, "roms", str()))
+        identifier = None
+        if len(self.section) > 0:
+            identifier = self.section.lower().replace(' ', '-')
 
-        path_icon = self.path
-        if path_icon is not None and \
-            path_join(get_data("icons"), basename(path_icon)) == path_icon:
-            path_icon = splitext(basename(path_icon))[0]
+        path = self.file_folder.get_filename()
+        if path is None or not exists(path):
+            path = self.console.path
 
-        self.data["roms"] = path_roms
-        self.data["icon"] = path_icon
-        self.data["exts"] = self.entry_extensions.get_text()
-        self.data["emulator"] = self.combo_emulators.get_active_id()
+        icon = self.path
+        if icon is not None and path_join(
+            get_data("icons"), basename(icon)) == icon:
+
+            icon = splitext(basename(icon))[0]
+
+        extensions = list()
+        if len(self.entry_extensions.get_text()) > 0:
+            extensions = self.entry_extensions.get_text().split(';')
+
+        self.data = {
+            "id": identifier,
+            "name": self.section,
+            "path": path,
+            "icon": icon,
+            "extensions": extensions,
+            "emulator": self.api.get_emulator(
+                self.combo_emulators.get_active_id())
+        }
 
 
     def __on_select_icon(self, widget):
@@ -1934,11 +1963,14 @@ class Console(Dialog):
         if len(name) == 0:
             status = False
 
-        elif self.consoles.has_section(name):
-            if not self.modify or (self.modify and not name == self.console):
-                status = False
+        else:
+            # Always check identifier to avoid NES != NeS
+            identifier = name.lower().replace(' ', '-')
 
-                icon, tooltip = Icons.Error, _(
+            if identifier in self.api.consoles and (not self.modify or (
+                self.modify and not name == self.console.name)):
+
+                icon, status, tooltip = Icons.Error, False, _(
                     "This console already exist, please, choose another name")
 
         self.entry_name.set_icon_from_icon_name(
@@ -1958,11 +1990,10 @@ class Console(Dialog):
         #   Console emulator
         # ------------------------------------
 
-        path = self.interface.emulators.item(
-            self.combo_emulators.get_active_id(), "binary")
+        emulator = self.api.get_emulator(self.combo_emulators.get_active_id())
 
         # Allow to validate dialog if selected emulator binary exist
-        if path is None or len(get_binary_path(path)) == 0:
+        if emulator is None or emulator.binary is None or not emulator.exists:
             status = False
 
         # ------------------------------------
@@ -1972,15 +2003,17 @@ class Console(Dialog):
         self.set_response_sensitive(Gtk.ResponseType.APPLY, status)
 
 
-class Emulator(Dialog):
+class PreferencesEmulator(Dialog):
 
-    def __init__(self, parent, modify):
+    def __init__(self, parent, emulator, modify):
         """ Constructor
 
         Parameters
         ----------
         parent : Gtk.Window
             Parent object (Default: None)
+        emulator : gem.api.Emulator
+            Emulator object
         modify : bool
             Use edit mode instead of append mode
         """
@@ -1991,6 +2024,11 @@ class Emulator(Dialog):
         #   Initialize variables
         # ------------------------------------
 
+        # GEM API instance
+        self.api = parent.api
+        # Emulator object
+        self.emulator = emulator
+
         self.path = None
 
         self.error = False
@@ -1998,10 +2036,8 @@ class Emulator(Dialog):
         self.interface = parent
         self.modify = modify
 
+        # Empty Pixbuf icon
         self.empty = parent.empty
-        self.consoles = parent.consoles
-        self.emulators = parent.emulators
-        self.selection = parent.selection
 
         self.help_data = {
             "order": [
@@ -2323,40 +2359,36 @@ class Emulator(Dialog):
         #   Init data
         # ------------------------------------
 
-        self.emulator = self.selection["emulator"]
-
         if self.modify:
-            self.entry_name.set_text(self.emulator)
+            self.entry_name.set_text(self.emulator.name)
 
             # Binary
-            folder = expanduser(
-                self.emulators.item(self.emulator, "binary", str()))
-            self.entry_binary.set_text(folder)
+            if self.emulator.exists:
+                self.entry_binary.set_text(self.emulator.binary)
 
             # Configuration
-            folder = expanduser(
-                self.emulators.item(self.emulator, "configuration", str()))
-            if exists(folder):
+            folder = self.emulator.configuration
+            if folder is not None and exists(folder):
                 self.file_configuration.set_filename(folder)
 
             # Icon
-            self.path = self.emulators.item(self.emulator, "icon")
+            self.path = self.emulator.icon
             self.image_emulator.set_from_pixbuf(
                 icon_from_data(self.path, self.empty, 64, 64, "emulators"))
 
             # Regex
-            self.entry_save.set_text(
-                self.emulators.item(self.emulator, "save", str()))
-            self.entry_screenshots.set_text(
-                self.emulators.item(self.emulator, "snaps", str()))
+            if self.emulator.savestates is not None:
+                self.entry_save.set_text(self.emulator.savestates)
+            if self.emulator.screenshots is not None:
+                self.entry_screenshots.set_text(self.emulator.screenshots)
 
             # Arguments
-            self.entry_launch.set_text(
-                self.emulators.item(self.emulator, "default", str()))
-            self.entry_windowed.set_text(
-                self.emulators.item(self.emulator, "windowed", str()))
-            self.entry_fullscreen.set_text(
-                self.emulators.item(self.emulator, "fullscreen", str()))
+            if self.emulator.default is not None:
+                self.entry_launch.set_text(self.emulator.default)
+            if self.emulator.windowed is not None:
+                self.entry_windowed.set_text(self.emulator.windowed)
+            if self.emulator.fullscreen is not None:
+                self.entry_fullscreen.set_text(self.emulator.fullscreen)
 
             self.set_response_sensitive(Gtk.ResponseType.APPLY, True)
 
@@ -2376,19 +2408,10 @@ class Emulator(Dialog):
 
             if self.data is not None:
                 if self.modify:
-                    if not self.section == self.emulator:
-                        self.emulators.remove(self.emulator)
+                    self.api.delete_emulator(self.emulator.id)
 
-                    self.emulators.remove(self.section)
-
-                for (option, value) in self.data.items():
-                    if value is None:
-                        value = str()
-
-                    if len(str(value)) > 0:
-                        self.emulators.modify(self.section, option, str(value))
-
-                self.emulators.update()
+                # Append a new emulator
+                self.api.add_emulator(self.data)
 
             need_reload = True
 
@@ -2402,33 +2425,79 @@ class Emulator(Dialog):
         """ Return all the data from interface
         """
 
-        self.data = dict()
-
         self.section = self.entry_name.get_text()
 
-        path_binary = self.entry_binary.get_text()
-        if path_binary is None:
-            path_binary = expanduser(
-                self.emulators.item(self.emulator, "binary", str()))
+        identifier = None
+        if len(self.section) > 0:
+            identifier = self.section.lower().replace(' ', '-')
 
-        path_configuration = self.file_configuration.get_filename()
-        if path_configuration is None or not exists(path_configuration):
-            path_configuration = expanduser(
-                self.emulators.item(self.emulator, "configuration", str()))
+        binary = self.entry_binary.get_text()
+        if binary is None:
+            binary = str()
 
-        path_icon = self.path
-        if path_icon is not None and \
-            path_join(get_data("icons"), basename(path_icon)) == path_icon:
-            path_icon = splitext(basename(path_icon))[0]
+            if self.emulator is not None:
+                binary = self.emulator.binary
 
-        self.data["binary"] = path_binary
-        self.data["configuration"] = path_configuration
-        self.data["icon"] = path_icon
-        self.data["save"] = self.entry_save.get_text()
-        self.data["snaps"] = self.entry_screenshots.get_text()
-        self.data["default"] = self.entry_launch.get_text()
-        self.data["windowed"] = self.entry_windowed.get_text()
-        self.data["fullscreen"] = self.entry_fullscreen.get_text()
+        icon = self.path
+        if icon is not None and path_join(
+            get_data("icons"), basename(icon)) == icon:
+
+            icon = splitext(basename(icon))[0]
+
+        configuration = self.file_configuration.get_filename()
+        if configuration is None or not exists(configuration):
+            configuration = None
+
+            if self.emulator is not None:
+                configuration = self.emulator.configuration
+
+        savestates = self.entry_save.get_text()
+        if len(savestates) == 0:
+            savestates = None
+
+            if self.emulator is not None:
+                savestates = self.emulator.savestates
+
+        screenshots = self.entry_screenshots.get_text()
+        if len(screenshots) == 0:
+            screenshots = None
+
+            if self.emulator is not None:
+                screenshots = self.emulator.screenshots
+
+        default = self.entry_launch.get_text()
+        if len(default) == 0:
+            default = None
+
+            if self.emulator is not None:
+                default = self.emulator.default
+
+        windowed = self.entry_windowed.get_text()
+        if len(windowed) == 0:
+            windowed = None
+
+            if self.emulator is not None:
+                windowed = self.emulator.windowed
+
+        fullscreen = self.entry_fullscreen.get_text()
+        if len(fullscreen) == 0:
+            fullscreen = None
+
+            if self.emulator is not None:
+                fullscreen = self.emulator.fullscreen
+
+        self.data = {
+            "id": identifier,
+            "name": self.section,
+            "binary": binary,
+            "icon": icon,
+            "configuration": configuration,
+            "savestates": savestates,
+            "screenshots": screenshots,
+            "default": default,
+            "windowed": windowed,
+            "fullscreen": fullscreen
+        }
 
 
     def __on_entry_update(self, widget):
@@ -2453,17 +2522,15 @@ class Emulator(Dialog):
         if name is None or len(name) == 0:
             self.error = True
 
-        elif self.emulators.has_section(name):
+        else:
+            # Always check identifier to avoid NES != NeS
+            identifier = name.lower().replace(' ', '-')
 
-            if not self.modify or (self.modify and not name == self.emulator):
-                self.error = True
+            if identifier in self.api.emulators and (not self.modify or (
+                self.modify and not name == self.emulator.name)):
 
-                icon = "dialog-error"
-                tooltip = _(
+                icon, status, tooltip = Icons.Error, False, _(
                     "This emulator already exist, please, choose another name")
-
-            else:
-                icon, tooltip = None, None
 
         if widget == self.entry_name:
             self.entry_name.set_icon_from_icon_name(
