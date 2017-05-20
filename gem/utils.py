@@ -1,4 +1,4 @@
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation; either version 3 of the License.
@@ -12,32 +12,29 @@
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #  MA 02110-1301, USA.
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #   Modules
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-# System
-from os import environ
-
-from os.path import exists
-from os.path import basename
-from os.path import splitext
-from os.path import expanduser
-from os.path import join as path_join
-
+# Datetime
 from datetime import date
 from datetime import datetime
 
-# Translation
-from gettext import gettext as _
-from gettext import textdomain
-from gettext import bindtextdomain
+# Filesystem
+from os.path import exists
+from os.path import basename
+from os.path import expanduser
+from os.path import join as path_join
 
-# ------------------------------------------------------------------
+# System
+from os import environ
+from sys import exit as sys_exit
+
+# ------------------------------------------------------------------------------
 #   Modules - Packages
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 try:
     from pkg_resources import resource_filename
@@ -46,9 +43,17 @@ try:
 except ImportError as error:
     sys_exit("Import error with python3-pkg-resources module: %s" % str(error))
 
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+#   Modules - Translation
+# ------------------------------------------------------------------------------
+
+from gettext import gettext as _
+from gettext import textdomain
+from gettext import bindtextdomain
+
+# ------------------------------------------------------------------------------
 #   Methods
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 def get_data(path, egg="gem"):
     """ Provides easy access to data in a python egg or local folder
