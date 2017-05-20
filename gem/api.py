@@ -77,6 +77,7 @@ except ImportError as error:
 try:
     from gem.utils import get_data
     from gem.utils import get_binary_path
+    from gem.utils import generate_identifier
     from gem.database import Database
     from gem.configuration import Configuration
 
@@ -295,7 +296,7 @@ class GEM(object):
                 fullscreen = None
 
             self.add_emulator({
-                "id": section.lower().replace(' ', '-'),
+                "id": generate_identifier(section),
                 "name": section,
                 "binary": expanduser(data.get(
                     section, "binary", fallback=str())),
@@ -329,7 +330,7 @@ class GEM(object):
                 emulator = self.__data["emulators"][emulator]
 
             self.add_console({
-                "id": section.lower().replace(' ', '-'),
+                "id": generate_identifier(section),
                 "name": section,
                 "path": expanduser(data.get(
                     section, "roms", fallback=str())),
@@ -453,7 +454,7 @@ class GEM(object):
                 return self.__data["emulators"].get(emulator, None)
 
             # Check if emulator use name instead of identifier
-            identifier = console.lower().replace(' ', '-')
+            identifier = generate_identifier(console)
 
             if identifier in self.__data["emulators"].keys():
                 return self.__data["emulators"].get(identifier, None)
@@ -547,7 +548,7 @@ class GEM(object):
                 return self.__data["consoles"].get(console, None)
 
             # Check if console use name instead of identifier
-            identifier = console.lower().replace(' ', '-')
+            identifier = generate_identifier(console)
 
             if identifier in self.__data["consoles"].keys():
                 return self.__data["consoles"].get(identifier, None)
@@ -697,7 +698,7 @@ class GEM(object):
                 data[key] = str(value.name)
 
         # Update game in database
-        self.logger.info("Update %s values from database" % game.path[1])
+        self.logger.info("Update database for %s" % game.name)
 
         self.database.modify("games", data, { "filename": game.path[1] })
 
@@ -1089,9 +1090,12 @@ class Console(GEMObject):
                 # Generate Game object
                 game = Game()
 
+                game_name = splitext(basename(filename))[0]
+
                 game_data = {
+                    "id": generate_identifier(game_name),
                     "filepath": filename,
-                    "name": splitext(basename(filename))[0]
+                    "name": game_name
                 }
 
                 # This game exists in database
@@ -1172,6 +1176,7 @@ class Console(GEMObject):
                         arguments = None
 
                     game_data.update({
+                        "id": generate_identifier(name),
                         "name": name,
                         "favorite": bool(data["favorite"]),
                         "multiplayer": bool(data["multiplayer"]),
@@ -1225,6 +1230,7 @@ class Console(GEMObject):
 class Game(GEMObject):
 
     attributes = {
+        "id": str(),
         "filepath": str(),
         "name": str(),
         "favorite": bool(),

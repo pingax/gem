@@ -213,3 +213,36 @@ def get_binary_path(binary):
             available.append(binary_path)
 
     return available
+
+
+def generate_identifier(name):
+    """ Generate an identifier from a name string
+
+    Parameters
+    ----------
+    name : str
+        String to parse into indentifier
+
+    Returns
+    -------
+    str
+        Identifier string
+
+    Examples
+    --------
+    >>> generate_identifier("Double Dragon III - The Sacred Stones (Europe)")
+    'doubledragoniii-thesacredstones-europe'
+    """
+
+    data = {
+        '': [ ',', '\'', ')', '[', ']', '!', '?', '.' ],
+        '-': [ ' ', '_', '(', ':' ]
+    }
+
+    name = name.replace(' ', '')
+
+    for key, value in data.items():
+        for symbol in value:
+            name = name.replace(symbol, key)
+
+    return name.lower()

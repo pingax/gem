@@ -242,7 +242,7 @@ class Dialog(Gtk.Dialog):
             Help message
         """
 
-        dialog = DialogHelp(parent, _("Help"), text, Icons.Information)
+        dialog = DialogHelp(parent, _("Help"), text, Icons.Help)
         dialog.set_size(640, 480)
 
         dialog.run()
@@ -770,6 +770,24 @@ class DialogParameters(Dialog):
         self.empty = Pixbuf.new(Colorspace.RGB, True, 8, 24, 24)
         self.empty.fill(0x00000000)
 
+        self.help_data = {
+            "order": [
+                _("Description"),
+                _("Parameters"),
+            ],
+            _("Description"): [
+                _("Emulator default arguments can use custom parameters to "
+                    "facilitate file detection."),
+            ],
+            _("Parameters"): {
+                "<name>": _("Use ROM filename"),
+                "<lname>": _("Use ROM lowercase filename"),
+                "<rom_path>": _("Use ROM folder path"),
+                "<rom_file>": _("Use ROM file path"),
+                "<conf_path>": _("Use emulator configuration file path"),
+            }
+        }
+
         # ------------------------------------
         #   Prepare interface
         # ------------------------------------
@@ -793,6 +811,8 @@ class DialogParameters(Dialog):
         self.add_buttons(
             Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
             Gtk.STOCK_OK, Gtk.ResponseType.OK)
+
+        self.set_help(self.interface, self.help_data)
 
         # ------------------------------------
         #   Emulators
@@ -1565,6 +1585,8 @@ class DialogHelp(Dialog):
 
         self.set_size(640, 480)
 
+        self.set_resizable(True)
+
         self.add_buttons(
             Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE)
 
@@ -1586,6 +1608,7 @@ class DialogHelp(Dialog):
         text.set_use_markup(True)
         text.set_max_width_chars(10)
         text.set_markup(self.message)
+        text.set_alignment(0, 0)
         text.set_line_wrap_mode(Pango.WrapMode.WORD)
 
         # ------------------------------------

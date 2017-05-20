@@ -1,4 +1,4 @@
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation; either version 3 of the License.
@@ -12,68 +12,67 @@
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #  MA 02110-1301, USA.
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #   Modules
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 # Datetime
 from datetime import datetime
 
 # Filesystem
-from os.path import splitext
-from os.path import basename
 from os.path import expanduser
 from os.path import join as path_join
 
-# Process
+# Processus
 from subprocess import PIPE
 from subprocess import Popen
 from subprocess import STDOUT
 
+# System
+from sys import exit as sys_exit
+
 # Threading
 from threading import Thread
 
-# Translation
-from gettext import gettext as _
-from gettext import textdomain
-from gettext import bindtextdomain
-
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #   Modules - Interface
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 try:
-    from gi.repository.GObject import idle_add
-    from gi.repository.GObject import Object
     from gi.repository.GObject import GObject
     from gi.repository.GObject import SIGNAL_RUN_LAST
 
 except ImportError as error:
     sys_exit("Import error with python3-gobject module: %s" % str(error))
 
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #   Modules - GEM
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 try:
-    from gem import *
+    from gem.api import GEM
+
     from gem.utils import *
 
 except ImportError as error:
     sys_exit("Import error with gem module: %s" % str(error))
 
-# ------------------------------------------------------------------
-#   Translation
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+#   Modules - Translation
+# ------------------------------------------------------------------------------
+
+from gettext import gettext as _
+from gettext import textdomain
+from gettext import bindtextdomain
 
 bindtextdomain("gem", get_data("i18n"))
 textdomain("gem")
 
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #   Class
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 class GameThread(Thread, GObject):
 
@@ -104,7 +103,7 @@ class GameThread(Thread, GObject):
         self.parent = parent
         self.logger = parent.logger
 
-        self.name = game.name
+        self.name = game.id
         self.command = command
         self.emulator = emulator
         self.game = game
@@ -116,7 +115,7 @@ class GameThread(Thread, GObject):
         #   Generate data
         # ----------------------------
 
-        self.path = path_join(expanduser(Path.Logs), "%s.log" % game.filename)
+        self.path = path_join(GEM.Local, "logs", game.filename + ".log")
 
 
     def run(self):
@@ -128,12 +127,14 @@ class GameThread(Thread, GObject):
 
         started = datetime.now()
 
+        self.logger.info(_("Launch %s") % self.game.name)
+
         try:
             # ----------------------------
             #   Launch game
             # ----------------------------
 
-            self.logger.info(_("Launch %s") % ' '.join(self.command))
+            self.logger.debug(_("Command: %s") % ' '.join(self.command))
 
             self.proc = Popen(
                 self.command,
@@ -144,7 +145,7 @@ class GameThread(Thread, GObject):
 
             output, error_output = self.proc.communicate()
 
-            self.logger.info(_("Close %s") % self.name)
+            self.logger.info(_("Close %s") % self.game.name)
 
             self.proc.terminate()
 

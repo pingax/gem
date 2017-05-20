@@ -2743,9 +2743,6 @@ class Interface(Gtk.Window):
                     # Launch thread
                     thread.start()
 
-                    self.logger.debug(
-                        "Start %s into [%s]" % (game.filename, thread.name))
-
                     self.sensitive_interface()
 
                     self.tool_item_notes.set_sensitive(True)
@@ -2787,8 +2784,6 @@ class Interface(Gtk.Window):
             # ----------------------------
             #   Update data
             # ----------------------------
-
-            self.logger.debug("Update database for %s" % game.name)
 
             # Play data
             game.played += 1
@@ -2861,6 +2856,9 @@ class Interface(Gtk.Window):
             self.menubar_edit_item_parameters.set_sensitive(True)
             self.menubar_edit_item_database.set_sensitive(True)
             self.menubar_edit_item_delete.set_sensitive(True)
+
+            # Avoid to launch the game again when use Enter in game terminate
+            self.treeview_games.get_selection().unselect_all()
 
         # Remove this game from threads list
         if game.filename in self.threads:

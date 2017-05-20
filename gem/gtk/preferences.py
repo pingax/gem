@@ -1895,7 +1895,7 @@ class PreferencesConsole(Dialog):
 
         identifier = None
         if len(self.section) > 0:
-            identifier = self.section.lower().replace(' ', '-')
+            identifier = generate_identifier(self.section)
 
         path = self.file_folder.get_filename()
         if path is None or not exists(path):
@@ -1965,7 +1965,7 @@ class PreferencesConsole(Dialog):
 
         else:
             # Always check identifier to avoid NES != NeS
-            identifier = name.lower().replace(' ', '-')
+            identifier = generate_identifier(name)
 
             if identifier in self.api.consoles and (not self.modify or (
                 self.modify and not name == self.console.name)):
@@ -2429,7 +2429,7 @@ class PreferencesEmulator(Dialog):
 
         identifier = None
         if len(self.section) > 0:
-            identifier = self.section.lower().replace(' ', '-')
+            identifier = generate_identifier(self.section)
 
         binary = self.entry_binary.get_text()
         if binary is None:
@@ -2524,7 +2524,7 @@ class PreferencesEmulator(Dialog):
 
         else:
             # Always check identifier to avoid NES != NeS
-            identifier = name.lower().replace(' ', '-')
+            identifier = generate_identifier(name)
 
             if identifier in self.api.emulators and (not self.modify or (
                 self.modify and not name == self.emulator.name)):
