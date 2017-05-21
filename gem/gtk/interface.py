@@ -180,6 +180,9 @@ class Interface(Gtk.Window):
         # Avoid to reload interface when switch between default & classic theme
         self.__theme = None
 
+        # Check mednafen status
+        self.__mednafen_status = self.check_mednafen()
+
         # ------------------------------------
         #   Initialize API
         # ------------------------------------
@@ -3650,6 +3653,13 @@ class Interface(Gtk.Window):
                         if console == self.selection["console"]:
                             need_to_reload = True
 
+                        hide = self.config.getboolean(
+                            "gem", "hide_empty_console", fallback=False)
+
+                        # Console path is not empty
+                        if hide and len(glob(path_join(rom_path, '*'))) == 1:
+                            need_to_reload = True
+
                 # ----------------------------
                 #   Errors
                 # ----------------------------
@@ -3718,6 +3728,38 @@ class Interface(Gtk.Window):
                 return log_path
 
         return None
+
+
+    def check_mednafen(self):
+        """ Check if Mednafen exists on user system
+
+        This function read the first line of mednafen default output and check
+        if this one match "Starting Mednafen [\d+\.?]+".
+
+        Returns
+        -------
+        bool
+            Mednafen exists status
+
+        Notes
+        -----
+        Still possible to troll this function with a script call mednafen which
+        send the match string as output. But, this problem only appear if a user
+        want to do that, so ...
+        """
+
+        proc = Popen([ "mednafen" ], stdin=PIPE, stdout=PIPE, stderr=STDOUT,
+            universal_newlines=True)
+
+        output, error_output = proc.communicate()
+
+        if output is not None:
+            result = match("Starting Mednafen [\d+\.?]+", output.split('\n')[0])
+
+            if result is not None:
+                return True
+
+        return False
 
 
     def set_game_data(self, index, data, gamename):

@@ -13,7 +13,7 @@ setup(
     author = "PacMiam",
     author_email = "pacmiam@tuxfamily.org",
     description = "Graphical Emulators Manager",
-    url = "https://pacmiam.tuxfamily.org",
+    url = "https://gem.tuxfamily.org",
     license = "GPLv3",
 
     packages = find_packages(),
