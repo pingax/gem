@@ -51,9 +51,11 @@ except ImportError as error:
 # ------------------------------------------------------------------------------
 
 try:
-    from gem import *
-    from gem.gtk import *
+    from gem.api import GEM
+
     from gem.utils import *
+
+    from gem.gtk import *
 
 except ImportError as error:
     sys_exit("Import error with gem module: %s" % str(error))
@@ -1635,7 +1637,7 @@ class DialogHelp(Dialog):
 def icon_from_data(icon, fallback=None, width=24, height=24, subfolder=None):
     """ Load an icon from path
 
-    This function search if an icon is available in Path.Icons folder and return
+    This function search if an icon is available in GEM icons folder and return
     a generate Pixbuf from the icon path. If no icon was found, return an empty
     generate Pixbuf.
 
@@ -1653,7 +1655,7 @@ def icon_from_data(icon, fallback=None, width=24, height=24, subfolder=None):
     height : int
         Icon height in pixels (Default: 24)
     subfolder : str
-        Subfolder in Path.Icons (Default: None)
+        Subfolder in GEM icons path (Default: None)
 
     Returns
     -------
@@ -1665,11 +1667,11 @@ def icon_from_data(icon, fallback=None, width=24, height=24, subfolder=None):
         path = icon
 
         if not exists(expanduser(icon)):
-            path = path_join(Path.Icons, "%s.%s" % (icon, Icons.Ext))
+            path = path_join(GEM.Local, "icons", "%s.%s" % (icon, Icons.Ext))
 
             if subfolder is not None:
                 path = path_join(
-                    Path.Icons, subfolder, "%s.%s" % (icon, Icons.Ext))
+                    GEM.Local, "icons", subfolder, "%s.%s" % (icon, Icons.Ext))
 
         if path is not None and exists(expanduser(path)):
             try:

@@ -174,7 +174,7 @@ class Preferences(object):
         # ------------------------------------
 
         self.config = Configuration(
-            expanduser(path_join(Path.User, "gem.conf")))
+            expanduser(path_join(GEM.Config, "gem.conf")))
 
         if self.interface is not None:
             # Get user icon theme
@@ -2822,7 +2822,7 @@ class IconViewer(Dialog):
 
         # Fill icons view
         for icon in \
-            glob(path_join(Path.Icons, self.folder, "*.%s" % Icons.Ext)):
+            glob(path_join(GEM.Local, "icons", self.folder, "*.png")):
             name = splitext(basename(icon))[0]
 
             self.icons_data[name] = self.model_icons.append([
@@ -2832,8 +2832,8 @@ class IconViewer(Dialog):
         if self.path is not None:
 
             # Check if current path is a gem icons
-            data = path_join(Path.Icons, self.folder,
-                "%s.%s" % (self.path, Icons.Ext))
+            data = path_join(
+                GEM.Local, "icons", self.folder, self.path + ".png")
 
             if data is not None and exists(data):
                 self.view_icons.select_path(

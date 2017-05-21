@@ -39,8 +39,9 @@ from argparse import ArgumentParser
 # ------------------------------------------------------------------------------
 
 try:
-    from gem.api import GEM
     from gem.utils import get_data
+
+    from gem.api import GEM
 
 except ImportError as error:
     sys_exit("Cannot find gem module: %s" % str(error))
