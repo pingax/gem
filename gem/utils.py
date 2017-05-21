@@ -28,6 +28,9 @@ from os.path import basename
 from os.path import expanduser
 from os.path import join as path_join
 
+# Regex
+from re import sub
+
 # System
 from os import environ
 from sys import exit as sys_exit
@@ -234,15 +237,14 @@ def generate_identifier(name):
     'doubledragoniii-thesacredstones-europe'
     """
 
-    data = {
-        '': [ ',', '\'', ')', '[', ']', '!', '?', '.' ],
-        '-': [ ' ', '_', '(', ':' ]
-    }
+    # Replace special characters
+    name = sub(",|'|\)|\[|\]|!|\?|\.", ' ', name)
+    name = sub("\(|:|_", '-', name)
 
-    name = name.replace(' ', '')
+    # Replace multiple spaces with only one
+    name = sub(" +", ' ', name)
 
-    for key, value in data.items():
-        for symbol in value:
-            name = name.replace(symbol, key)
+    # Replace multiple dashs with only one
+    name = sub("-+", '-', name)
 
-    return name.lower()
+    return name.replace(' ', '').lower()
