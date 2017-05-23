@@ -2,6 +2,7 @@
 
 ## Version 0.7 - Vampire hunter
 
+* Add an API to manage emulators, consoles and games
 * Rewrite interface into python scripts instead of glade files
 * Fix game with custom name won't work correctly in self.__on_game_launch
 
