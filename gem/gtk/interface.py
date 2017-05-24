@@ -516,6 +516,7 @@ class Interface(Gtk.Window):
         self.menubar_edit_image_desktop = Gtk.Image()
         self.menubar_edit_image_database = Gtk.Image()
         self.menubar_edit_image_delete = Gtk.Image()
+        self.menubar_edit_image_mednafen = Gtk.Image()
 
         self.menubar_edit_item_rename = Gtk.ImageMenuItem()
         self.menubar_edit_item_parameters = Gtk.ImageMenuItem()
@@ -524,6 +525,7 @@ class Interface(Gtk.Window):
         self.menubar_edit_item_desktop = Gtk.ImageMenuItem()
         self.menubar_edit_item_database = Gtk.ImageMenuItem()
         self.menubar_edit_item_delete = Gtk.ImageMenuItem()
+        self.menubar_edit_item_mednafen = Gtk.ImageMenuItem()
 
         # Properties
         self.menubar_edit_image_rename.set_from_icon_name(
@@ -540,6 +542,8 @@ class Interface(Gtk.Window):
             Icons.Clear, Gtk.IconSize.MENU)
         self.menubar_edit_image_delete.set_from_icon_name(
             Icons.Delete, Gtk.IconSize.MENU)
+        self.menubar_edit_image_mednafen.set_from_icon_name(
+            Icons.Save, Gtk.IconSize.MENU)
 
         self.menubar_edit_item_rename.set_label(_("_Rename"))
         self.menubar_edit_item_rename.set_image(
@@ -575,6 +579,12 @@ class Interface(Gtk.Window):
         self.menubar_edit_item_delete.set_image(
             self.menubar_edit_image_delete)
         self.menubar_edit_item_delete.set_use_underline(True)
+
+        self.menubar_edit_item_mednafen.set_label(
+            _("Specify a _backup memory type"))
+        self.menubar_edit_item_mednafen.set_image(
+            self.menubar_edit_image_mednafen)
+        self.menubar_edit_item_mednafen.set_use_underline(True)
 
         # ------------------------------------
         #   Menubar - Tools items
@@ -1081,6 +1091,7 @@ class Interface(Gtk.Window):
 
         self.menubar_edit_menu.insert(self.menubar_edit_item_rename, -1)
         self.menubar_edit_menu.insert(self.menubar_edit_item_parameters, -1)
+        self.menubar_edit_menu.insert(self.menubar_edit_item_mednafen, -1)
         self.menubar_edit_menu.insert(Gtk.SeparatorMenuItem(), -1)
         self.menubar_edit_menu.insert(self.menubar_edit_item_copy, -1)
         self.menubar_edit_menu.insert(self.menubar_edit_item_open, -1)
@@ -1211,6 +1222,8 @@ class Interface(Gtk.Window):
             "activate", self.__on_game_clean)
         self.menubar_edit_item_delete.connect(
             "activate", self.__on_game_removed)
+        self.menubar_edit_item_mednafen.connect(
+            "activate", self.__on_game_backup_memory)
 
         self.menubar_tools_item_preferences.connect(
             "activate", self.__on_show_preferences)
@@ -1667,6 +1680,7 @@ class Interface(Gtk.Window):
         self.menubar_edit_item_desktop.set_sensitive(status)
         self.menubar_edit_item_database.set_sensitive(status)
         self.menubar_edit_item_delete.set_sensitive(status)
+        self.menubar_edit_item_mednafen.set_sensitive(status)
 
 
     def filters_update(self, widget=None):
@@ -1798,6 +1812,10 @@ class Interface(Gtk.Window):
                 self.config.item("keys", "notes", "F7"),
             self.menu_item_notes:
                 self.config.item("keys", "notes", "F7"),
+            self.menu_item_mednafen:
+                self.config.item("keys", "memory", "F8"),
+            self.menubar_edit_item_mednafen:
+                self.config.item("keys", "memory", "F8"),
             self.menubar_edit_item_parameters:
                 self.config.item("keys", "exceptions", "F12"),
             self.tool_item_parameters:
@@ -2644,12 +2662,14 @@ class Interface(Gtk.Window):
                 self.menubar_edit_item_parameters.set_sensitive(False)
                 self.menubar_edit_item_database.set_sensitive(False)
                 self.menubar_edit_item_delete.set_sensitive(False)
+                self.menubar_edit_item_mednafen.set_sensitive(False)
 
             # Check extension and emulator for GBA game on mednafen
             if not game.extension == ".gba" or \
                 not "mednafen" in emulator.binary or \
                 not self.__mednafen_status:
                 self.menu_item_mednafen.set_sensitive(False)
+                self.menubar_edit_item_mednafen.set_sensitive(False)
 
             iter_snaps = model.get_value(treeiter, Columns.Snapshots)
 

@@ -142,7 +142,9 @@ class Preferences(object):
                 "log": [
                     _("Open game log"), "F6"],
                 "notes": [
-                    _("Open game notes"), "F7"] },
+                    _("Open game notes"), "F7"],
+                "memory": [
+                    _("Generate a backup memory file"), "F8"] },
             _("Edit"): {
                 "remove": [
                     _("Remove a game from database"), "Delete"],
