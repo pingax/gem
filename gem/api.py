@@ -1320,6 +1320,21 @@ class Game(GEMObject):
 
         return splitext(basename(expanduser(self.filepath)))[0]
 
+    @property
+    def extension(self):
+        """ Return extension from filepath
+
+        Returns
+        -------
+        str
+            filename
+        """
+
+        if self.filepath is None:
+            raise TypeError("Wrong type for filepath, expected str")
+
+        return splitext(basename(expanduser(self.filepath)))[-1]
+
 if __name__ == "__main__":
     """ Debug GEM API
     """

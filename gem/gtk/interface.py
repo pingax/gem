@@ -105,6 +105,7 @@ try:
     from gem.gtk import *
     from gem.gtk.game import GameThread
     from gem.gtk.windows import *
+    from gem.gtk.mednafen import DialogMednafenMemory
     from gem.gtk.preferences import Preferences
 
 except ImportError as error:
@@ -901,10 +902,6 @@ class Interface(Gtk.Window):
         self.menu_image_edit.set_from_icon_name(
             Icons.Other, Gtk.IconSize.MENU)
 
-        self.menu_item_edit.set_label(_("_Edit"))
-        self.menu_item_edit.set_image(self.menu_image_edit)
-        self.menu_item_edit.set_use_underline(True)
-
         self.menu_item_launch.set_label(_("_Launch"))
         self.menu_item_launch.set_image(self.menu_image_launch)
         self.menu_item_launch.set_use_underline(True)
@@ -929,6 +926,10 @@ class Interface(Gtk.Window):
         self.menu_item_notes.set_image(self.menu_image_notes)
         self.menu_item_notes.set_use_underline(True)
 
+        self.menu_item_edit.set_label(_("_Edit"))
+        self.menu_item_edit.set_image(self.menu_image_edit)
+        self.menu_item_edit.set_use_underline(True)
+
         # ------------------------------------
         #   Games - Menu edit
         # ------------------------------------
@@ -940,6 +941,7 @@ class Interface(Gtk.Window):
         self.menu_image_desktop = Gtk.Image()
         self.menu_image_remove = Gtk.Image()
         self.menu_image_database = Gtk.Image()
+        self.menu_image_mednafen = Gtk.Image()
 
         self.menu_item_rename = Gtk.ImageMenuItem()
         self.menu_item_parameters = Gtk.ImageMenuItem()
@@ -948,6 +950,7 @@ class Interface(Gtk.Window):
         self.menu_item_desktop = Gtk.ImageMenuItem()
         self.menu_item_remove = Gtk.ImageMenuItem()
         self.menu_item_database = Gtk.ImageMenuItem()
+        self.menu_item_mednafen = Gtk.ImageMenuItem()
 
         # Properties
         self.menu_image_rename.set_from_icon_name(
@@ -964,6 +967,8 @@ class Interface(Gtk.Window):
             Icons.Clear, Gtk.IconSize.MENU)
         self.menu_image_database.set_from_icon_name(
             Icons.Delete, Gtk.IconSize.MENU)
+        self.menu_image_mednafen.set_from_icon_name(
+            Icons.Save, Gtk.IconSize.MENU)
 
         self.menu_item_rename.set_label(_("_Rename"))
         self.menu_item_rename.set_image(self.menu_image_rename)
@@ -992,6 +997,10 @@ class Interface(Gtk.Window):
         self.menu_item_remove.set_label(_("_Remove game from disk"))
         self.menu_item_remove.set_image(self.menu_image_remove)
         self.menu_item_remove.set_use_underline(True)
+
+        self.menu_item_mednafen.set_label(_("Specify a _backup memory type"))
+        self.menu_item_mednafen.set_image(self.menu_image_mednafen)
+        self.menu_item_mednafen.set_use_underline(True)
 
         # ------------------------------------
         #   Statusbar
@@ -1140,6 +1149,7 @@ class Interface(Gtk.Window):
 
         self.menu_games_edit.append(self.menu_item_rename)
         self.menu_games_edit.append(self.menu_item_parameters)
+        self.menu_games_edit.append(self.menu_item_mednafen)
         self.menu_games_edit.append(Gtk.SeparatorMenuItem())
         self.menu_games_edit.append(self.menu_item_copy)
         self.menu_games_edit.append(self.menu_item_open)
@@ -1273,6 +1283,8 @@ class Interface(Gtk.Window):
             "activate", self.__on_game_clean)
         self.menu_item_remove.connect(
             "activate", self.__on_game_removed)
+        self.menu_item_mednafen.connect(
+            "activate", self.__on_game_backup_memory)
 
         self.menu_item_preferences.connect(
             "activate", self.__on_show_preferences)
@@ -1634,6 +1646,7 @@ class Interface(Gtk.Window):
         self.menu_item_desktop.set_sensitive(status)
         self.menu_item_remove.set_sensitive(status)
         self.menu_item_database.set_sensitive(status)
+        self.menu_item_mednafen.set_sensitive(status)
 
         self.tool_item_launch.set_sensitive(status)
         self.tool_item_output.set_sensitive(status)
@@ -2603,6 +2616,11 @@ class Interface(Gtk.Window):
 
             self.sensitive_interface(True)
 
+            # Get Game emulator
+            emulator = console.emulator
+            if game.emulator is not None:
+                emulator = game.emulator
+
             # ----------------------------
             #   Game data
             # ----------------------------
@@ -2618,6 +2636,7 @@ class Interface(Gtk.Window):
                 self.menu_item_database.set_sensitive(False)
                 self.menu_item_remove.set_sensitive(False)
                 self.menu_item_rename.set_sensitive(False)
+                self.menu_item_mednafen.set_sensitive(False)
 
                 self.menubar_main_item_launch.set_sensitive(False)
                 self.menubar_main_item_output.set_sensitive(False)
@@ -2625,6 +2644,12 @@ class Interface(Gtk.Window):
                 self.menubar_edit_item_parameters.set_sensitive(False)
                 self.menubar_edit_item_database.set_sensitive(False)
                 self.menubar_edit_item_delete.set_sensitive(False)
+
+            # Check extension and emulator for GBA game on mednafen
+            if not game.extension == ".gba" or \
+                not "mednafen" in emulator.binary or \
+                not self.__mednafen_status:
+                self.menu_item_mednafen.set_sensitive(False)
 
             iter_snaps = model.get_value(treeiter, Columns.Snapshots)
 
@@ -3155,6 +3180,63 @@ class Interface(Gtk.Window):
                 else:
                     self.set_game_data(Columns.Save,
                         self.alternative["save"], game.filename)
+
+            dialog.hide()
+
+
+    def __on_game_backup_memory(self, widget):
+        """ Manage game backup memory
+
+        This function can only be used with a GBA game and Mednafen emulator.
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        game = self.selection["game"]
+        console = self.selection["console"]
+
+        if game is not None and console is not None:
+            content = dict()
+
+            emulator = console.emulator
+            if game.emulator is not None:
+                emulator = game.emulator
+
+            # FIXME: Maybe a better way to determine type file
+            filepath = expanduser(
+                path_join('~', ".mednafen", "sav", game.filename + ".type"))
+
+            # Check if a type file already exist in mednafen sav folder
+            if exists(filepath):
+                with open(filepath, 'r') as pipe:
+                    for line in pipe.readlines():
+                        data = line.split()
+
+                        if len(data) == 2:
+                            content[data[0]] = int(data[1])
+
+            # ----------------------------
+            #   Dialog
+            # ----------------------------
+
+            dialog = DialogMednafenMemory(self, game.name, content)
+
+            if dialog.run() == Gtk.ResponseType.APPLY:
+                data = list()
+                for key, value in dialog.model:
+                    data.append(' '.join([key, str(value)]))
+
+                # Write data into type file
+                if len(data) > 0:
+                    with open(filepath, 'w') as pipe:
+                        pipe.write('\n'.join(data))
+
+                # Remove type file when no data are available
+                elif exists(filepath):
+                    remove(filepath)
 
             dialog.hide()
 
