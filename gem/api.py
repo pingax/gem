@@ -250,7 +250,9 @@ class GEM(object):
             # Configuration file not exists
             if not exists(path_join(GEM.Config, path)):
                 self.logger.debug("Copy %s to %s" % (path, GEM.Config))
-                copy(path, path_join(GEM.Config, path))
+
+                copy(get_data(path_join("config", path)),
+                    path_join(GEM.Config, path))
 
             self.logger.debug("Read %s configuration file" % path)
 
