@@ -3850,16 +3850,18 @@ class Interface(Gtk.Window):
         want to do that, so ...
         """
 
-        proc = Popen([ "mednafen" ], stdin=PIPE, stdout=PIPE, stderr=STDOUT,
-            universal_newlines=True)
+        if len(get_binary_path("mednafen")) > 0:
+            proc = Popen([ "mednafen" ], stdin=PIPE, stdout=PIPE, stderr=STDOUT,
+                universal_newlines=True)
 
-        output, error_output = proc.communicate()
+            output, error_output = proc.communicate()
 
-        if output is not None:
-            result = match("Starting Mednafen [\d+\.?]+", output.split('\n')[0])
+            if output is not None:
+                result = match(
+                    "Starting Mednafen [\d+\.?]+", output.split('\n')[0])
 
-            if result is not None:
-                return True
+                if result is not None:
+                    return True
 
         return False
 
