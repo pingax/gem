@@ -143,6 +143,14 @@ class GEM(object):
         )
 
         # ----------------------------
+        #   Initialize folders
+        # ----------------------------
+
+        for folder in [ GEM.Config, GEM.Local ]:
+            if not exists(folder):
+                makedirs(folder, 0o755)
+
+        # ----------------------------
         #   Initialize logger
         # ----------------------------
 
