@@ -1178,6 +1178,10 @@ class Preferences(object):
             self.config.modify("viewer", "options",
                 self.entry_viewer_options.get_text())
 
+            # ------------------------------------
+            #   Editor
+            # ------------------------------------
+
             if self.gtksource:
                 self.config.modify("editor", "lines",
                     int(self.check_lines.get_active()))
@@ -1186,9 +1190,22 @@ class Preferences(object):
                 self.config.modify("editor", "font",
                     self.font_editor.get_font_name())
 
-            for text, value, option, sensitive in self.model_shortcuts:
-                if value is not None and option is not None:
-                    self.config.modify("keys", option, value)
+            # ------------------------------------
+            #   Shortcuts
+            # ------------------------------------
+
+            root = self.model_shortcuts.get_iter_first()
+
+            for line in self.__on_list_shortcuts(root):
+                key = self.model_shortcuts.get_value(line, 2)
+                value = self.model_shortcuts.get_value(line, 1)
+
+                if key is not None and value is not None:
+                    self.config.modify("keys", key, value)
+
+            # ------------------------------------
+            #   Save data
+            # ------------------------------------
 
             self.config.update()
 
@@ -1423,6 +1440,36 @@ class Preferences(object):
 
         if self.model_shortcuts.iter_parent(treeiter) is not None:
             self.model_shortcuts.set_value(treeiter, 1, None)
+
+
+    def __on_list_shortcuts(self, treeiter):
+        """ List treeiter from shortcuts treestore
+
+        Parameters
+        ----------
+        treeiter : Gtk.TreeIter
+            Current iter
+
+        Returns
+        -------
+        list
+            Treeiter list
+        """
+
+        results = list()
+
+        while treeiter is not None:
+            results.append(treeiter)
+
+            # Check if current iter has child
+            if self.model_shortcuts.iter_has_child(treeiter):
+                childiter = self.model_shortcuts.iter_children(treeiter)
+
+                results.extend(self.__on_list_shortcuts(childiter))
+
+            treeiter = self.model_shortcuts.iter_next(treeiter)
+
+        return results
 
 
     def __on_selected_treeview(self, treeview, event, manager):
