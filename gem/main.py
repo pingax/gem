@@ -26,6 +26,7 @@ from os import environ
 
 from os.path import isfile
 from os.path import exists
+from os.path import basename
 from os.path import join as path_join
 
 from glob import glob
@@ -141,9 +142,10 @@ def main():
                 mkdir(path_join(GEM.Local, "icons", path))
 
                 # Copy default icons
-                for path in glob(path_join(get_data("icons"), path, "*")):
-                    if isfile(path):
-                        copy(path, path_join(GEM.Local, "icons", path))
+                for filename in glob(path_join(get_data("icons"), path, "*")):
+                    if isfile(filename):
+                        copy(filename, path_join(
+                            GEM.Local, "icons", path, basename(filename)))
 
         # Default configuration files
         for path in [ "gem.conf", "consoles.conf", "emulators.conf" ]:
