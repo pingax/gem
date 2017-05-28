@@ -2457,7 +2457,7 @@ class Interface(Gtk.Window):
 
             emulator = self.api.get_emulator(console.emulator.id)
 
-            for game in console.games:
+            for game in console.games.values():
 
                 # Another thread has been called by user, close this one
                 if not current_thread_id == self.list_thread:
@@ -2627,65 +2627,67 @@ class Interface(Gtk.Window):
             filename, extension = splitext(filepath)
 
             # Get Game object
-            game = self.api.get_game(console.id, filename)
+            game = self.api.get_game(console.id, generate_identifier(filename))
 
             # Store game
             self.selection["game"] = game
 
-            self.sensitive_interface(True)
+            if game is not None:
 
-            # Get Game emulator
-            emulator = console.emulator
-            if game.emulator is not None:
-                emulator = game.emulator
+                self.sensitive_interface(True)
 
-            # ----------------------------
-            #   Game data
-            # ----------------------------
+                # Get Game emulator
+                emulator = console.emulator
+                if game.emulator is not None:
+                    emulator = game.emulator
 
-            if filename in self.threads:
-                self.tool_item_launch.set_sensitive(False)
-                self.tool_item_parameters.set_sensitive(False)
-                self.tool_item_output.set_sensitive(False)
+                # ----------------------------
+                #   Game data
+                # ----------------------------
 
-                self.menu_item_launch.set_sensitive(False)
-                self.menu_item_output.set_sensitive(False)
-                self.menu_item_parameters.set_sensitive(False)
-                self.menu_item_database.set_sensitive(False)
-                self.menu_item_remove.set_sensitive(False)
-                self.menu_item_rename.set_sensitive(False)
-                self.menu_item_mednafen.set_sensitive(False)
+                if filename in self.threads:
+                    self.tool_item_launch.set_sensitive(False)
+                    self.tool_item_parameters.set_sensitive(False)
+                    self.tool_item_output.set_sensitive(False)
 
-                self.menubar_main_item_launch.set_sensitive(False)
-                self.menubar_main_item_output.set_sensitive(False)
-                self.menubar_edit_item_rename.set_sensitive(False)
-                self.menubar_edit_item_parameters.set_sensitive(False)
-                self.menubar_edit_item_database.set_sensitive(False)
-                self.menubar_edit_item_delete.set_sensitive(False)
-                self.menubar_edit_item_mednafen.set_sensitive(False)
+                    self.menu_item_launch.set_sensitive(False)
+                    self.menu_item_output.set_sensitive(False)
+                    self.menu_item_parameters.set_sensitive(False)
+                    self.menu_item_database.set_sensitive(False)
+                    self.menu_item_remove.set_sensitive(False)
+                    self.menu_item_rename.set_sensitive(False)
+                    self.menu_item_mednafen.set_sensitive(False)
 
-            # Check extension and emulator for GBA game on mednafen
-            if not game.extension == ".gba" or \
-                not "mednafen" in emulator.binary or \
-                not self.__mednafen_status:
-                self.menu_item_mednafen.set_sensitive(False)
-                self.menubar_edit_item_mednafen.set_sensitive(False)
+                    self.menubar_main_item_launch.set_sensitive(False)
+                    self.menubar_main_item_output.set_sensitive(False)
+                    self.menubar_edit_item_rename.set_sensitive(False)
+                    self.menubar_edit_item_parameters.set_sensitive(False)
+                    self.menubar_edit_item_database.set_sensitive(False)
+                    self.menubar_edit_item_delete.set_sensitive(False)
+                    self.menubar_edit_item_mednafen.set_sensitive(False)
 
-            iter_snaps = model.get_value(treeiter, Columns.Snapshots)
+                # Check extension and emulator for GBA game on mednafen
+                if not game.extension == ".gba" or \
+                    not "mednafen" in emulator.binary or \
+                    not self.__mednafen_status:
+                    self.menu_item_mednafen.set_sensitive(False)
+                    self.menubar_edit_item_mednafen.set_sensitive(False)
 
-            # Check snaps icon to avoid to check screenshots again
-            if iter_snaps == self.alternative["snap"]:
-                self.tool_item_screenshots.set_sensitive(False)
-                self.menu_item_screenshots.set_sensitive(False)
-                self.menubar_main_item_screenshots.set_sensitive(False)
+                iter_snaps = model.get_value(treeiter, Columns.Snapshots)
 
-            if self.check_log() is None:
-                self.tool_item_output.set_sensitive(False)
-                self.menu_item_output.set_sensitive(False)
-                self.menubar_main_item_output.set_sensitive(False)
+                # Check snaps icon to avoid to check screenshots again
+                if iter_snaps == self.alternative["snap"]:
+                    self.tool_item_screenshots.set_sensitive(False)
+                    self.menu_item_screenshots.set_sensitive(False)
+                    self.menubar_main_item_screenshots.set_sensitive(False)
 
-            if run_game:
-                self.__on_game_launch()
+                if self.check_log() is None:
+                    self.tool_item_output.set_sensitive(False)
+                    self.menu_item_output.set_sensitive(False)
+                    self.menubar_main_item_output.set_sensitive(False)
+
+                if run_game:
+                    self.__on_game_launch()
 
         self.set_informations()
 

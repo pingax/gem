@@ -157,42 +157,48 @@ def main():
                 copy(get_data(path_join("config", path)),
                     path_join(GEM.Config, path))
 
-        # Check display settings
-        if "DISPLAY" in environ and len(environ["DISPLAY"]) > 0:
+        # ------------------------------------
+        #   GTK interface
+        # ------------------------------------
 
-            # ------------------------------------
-            #   Manage lock
-            # ------------------------------------
+        if args.gtk_ui or args.gtk_config:
 
-            # Save current PID into lock file
-            with open(path_join(GEM.Local, ".lock"), 'w') as pipe:
-                pipe.write(str(getpid()))
+            # Check display settings
+            if "DISPLAY" in environ and len(environ["DISPLAY"]) > 0:
 
-            gem.logger.debug("Start with PID %s" % getpid())
+                # ------------------------------------
+                #   Manage lock
+                # ------------------------------------
 
-            # ------------------------------------
-            #   Launch interface
-            # ------------------------------------
+                # Save current PID into lock file
+                with open(path_join(GEM.Local, ".lock"), 'w') as pipe:
+                    pipe.write(str(getpid()))
 
-            if args.gtk_config:
-                from gem.gtk.preferences import Preferences
+                gem.logger.debug("Start with PID %s" % getpid())
 
-                Preferences(gem).start()
+                # ------------------------------------
+                #   Launch interface
+                # ------------------------------------
 
-            elif args.gtk_ui:
-                from gem.gtk.interface import Interface
+                if args.gtk_config:
+                    from gem.gtk.preferences import Preferences
 
-                Interface(gem)
+                    Preferences(gem).start()
 
-            # ------------------------------------
-            #   Remove lock
-            # ------------------------------------
+                elif args.gtk_ui:
+                    from gem.gtk.interface import Interface
 
-            if exists(path_join(GEM.Local, ".lock")):
-                remove(path_join(GEM.Local, ".lock"))
+                    Interface(gem)
 
-        else:
-            gem.logger.critical(_("Cannot launch GEM without display"))
+                # ------------------------------------
+                #   Remove lock
+                # ------------------------------------
+
+                if exists(path_join(GEM.Local, ".lock")):
+                    remove(path_join(GEM.Local, ".lock"))
+
+            else:
+                gem.logger.critical(_("Cannot launch GEM without display"))
 
     except ImportError as error:
         gem.logger.critical(_("Import error with interface: %s") % str(error))

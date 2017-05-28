@@ -118,6 +118,11 @@ class GEM(object):
         ----------------
         debug : bool
             Debug mode status (default: False)
+
+        Raises
+        ------
+        TypeError
+            if debug type is not bool
         """
 
         if type(debug) is not bool:
@@ -236,6 +241,9 @@ class GEM(object):
 
     def __init_configurations(self):
         """ Initalize configuration
+
+        Check consoles.conf and emulators.conf from user config folder and copy
+        default one if not exists
         """
 
         if not exists(GEM.Config):
@@ -263,6 +271,9 @@ class GEM(object):
 
     def __init_emulators(self):
         """ Initalize emulators
+
+        Load emulators.conf from user config folder and generate Emulator
+        objects from data
         """
 
         self.__data["emulators"] = dict()
@@ -326,6 +337,9 @@ class GEM(object):
 
     def __init_consoles(self):
         """ Initalize consoles
+
+        Load consoles.conf from user config folder and generate Console objects
+        from data
         """
 
         self.__data["consoles"] = dict()
@@ -357,12 +371,17 @@ class GEM(object):
 
     def init_data(self):
         """ Initalize data from configuration files
+
+        This function allow to reset API by reloading default configuration
+        files
         """
 
+        # Check if default configuration file exists
         self.__init_configurations()
 
+        # Load user emulators
         self.__init_emulators()
-
+        # Load user consoles
         self.__init_consoles()
 
 
@@ -420,12 +439,12 @@ class GEM(object):
 
     @property
     def consoles(self):
-        """ Return consoles list
+        """ Return consoles dict
 
         Returns
         -------
-        list
-            Consoles list
+        dict
+            Consoles dictionary with identifier as keys
         """
 
         return self.__data["consoles"]
@@ -433,12 +452,12 @@ class GEM(object):
 
     @property
     def emulators(self):
-        """ Return emulators list
+        """ Return emulators dict
 
         Returns
         -------
-        list
-            emulators list
+        dict
+            emulators dictionary with identifier as keys
         """
 
         return self.__data["emulators"]
@@ -450,7 +469,7 @@ class GEM(object):
         Parameters
         ----------
         emulator : str
-            Emulator name
+            Emulator identifier or name
 
         Returns
         -------
@@ -484,10 +503,17 @@ class GEM(object):
         ------
         TypeError
             if data type is not dict
+        NameError
+            if id, name or binary not exist in data dictionary
+        ValueError
+            if identifier already exist in emulators dictionary
         """
 
         if type(data) is not dict:
             raise TypeError("Wrong type for data, expected dict")
+
+        if not "id" in data.keys():
+            raise NameError("Missing id key in data dictionary")
 
         if not "name" in data.keys():
             raise NameError("Missing name key in data dictionary")
@@ -495,8 +521,8 @@ class GEM(object):
         if not "binary" in data.keys():
             raise NameError("Missing binary key in data dictionary")
 
-        if data["name"] in self.__data["emulators"].keys():
-            raise ValueError("Emulator %s already exists" % data["name"])
+        if data["id"] in self.__data["emulators"].keys():
+            raise ValueError("Emulator %s already exists" % data["id"])
 
         # ----------------------------
         #   Generate emulator
@@ -523,7 +549,7 @@ class GEM(object):
         Parameters
         ----------
         emulator : str
-            Emulator name
+            Emulator identifier
         """
 
         if not emulator in self.__data["emulators"].keys():
@@ -538,7 +564,7 @@ class GEM(object):
         Parameters
         ----------
         console : str
-            Console name
+            Console identifier or name
 
         Returns
         -------
@@ -578,16 +604,23 @@ class GEM(object):
         ------
         TypeError
             if data type is not dict
+        NameError
+            if id or name not exist in data dictionary
+        ValueError
+            if identifier already exist in consoles dictionary
         """
 
         if type(data) is not dict:
             raise TypeError("Wrong type for data, expected dict")
 
+        if not "id" in data.keys():
+            raise NameError("Missing id key in data dictionary")
+
         if not "name" in data.keys():
             raise NameError("Missing name key in data dictionary")
 
-        if data["name"] in self.__data["consoles"].keys():
-            raise ValueError("Console %s already exists" % data["name"])
+        if data["id"] in self.__data["consoles"].keys():
+            raise ValueError("Console %s already exists" % data["id"])
 
         # ----------------------------
         #   Generate console
@@ -618,7 +651,7 @@ class GEM(object):
         Parameters
         ----------
         console : str
-            Console name
+            Console identifier
 
         Raises
         ------
@@ -638,9 +671,9 @@ class GEM(object):
         Parameters
         ----------
         console : str
-            Console name
+            Console identifier
         game : str
-            Game name
+            Game identifier
 
         Returns
         -------
@@ -655,7 +688,7 @@ class GEM(object):
         Examples
         --------
         >>> g = GEM()
-        >>> g.get_game("nintendo-nes", "Teenage Mutant Hero Turtles")
+        >>> g.get_game("nintendo-nes", "gremlins-2-the-new-batch-usa")
         <gem.api.Game object at 0x7f174a986f60>
         """
 
@@ -1086,7 +1119,7 @@ class Console(GEMObject):
         #   Check games
         # ----------------------------
 
-        self.games = list()
+        self.games = dict()
 
         # Check each extensions in games path
         for extension in set(self.extensions):
@@ -1186,7 +1219,6 @@ class Console(GEMObject):
                         arguments = None
 
                     game_data.update({
-                        "id": generate_identifier(name),
                         "name": name,
                         "favorite": bool(data["favorite"]),
                         "multiplayer": bool(data["multiplayer"]),
@@ -1204,19 +1236,16 @@ class Console(GEMObject):
                 # Remove useless keys
                 game.check_keys()
 
-                self.games.append(game)
-
-        # Sort games by name
-        self.games = sorted(self.games, key=lambda game: game.name)
+                self.games[game.id] = game
 
 
-    def get_game(self, name):
+    def get_game(self, identifier):
         """ Return specific game from current console
 
         Parameters
         ----------
-        name : str
-            Game name
+        identifier : str
+            Game identifier
 
         Returns
         -------
@@ -1226,13 +1255,12 @@ class Console(GEMObject):
         Examples
         --------
         >>> g = GEM()
-        >>> g.get_console("nintendo-nes").get_game("Metroid")
+        >>> g.get_console("nintendo-nes").get_game("metroid-usa")
         <gem.api.Game object at 0x7f174a98e828>
         """
 
-        for game in self.games:
-            if game.filename == name:
-                return game
+        if identifier in self.games.keys():
+            return self.games[identifier]
 
         return None
 

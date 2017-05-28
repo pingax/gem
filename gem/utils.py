@@ -234,17 +234,17 @@ def generate_identifier(name):
     Examples
     --------
     >>> generate_identifier("Double Dragon III - The Sacred Stones (Europe)")
-    'doubledragoniii-thesacredstones-europe'
+    'double-dragon-iii-the-sacred-stones-europe'
     """
 
     # Replace special characters
-    name = sub(",|'|\)|\[|\]|!|\?|\.", ' ', name)
+    name = sub(",|'|\)|\[|\]|!|\?|\.|~", ' ', name)
     name = sub("\(|:|_", '-', name)
+
+    # Replace multiple dashs with only one
+    name = sub("-+", ' ', name)
 
     # Replace multiple spaces with only one
     name = sub(" +", ' ', name)
 
-    # Replace multiple dashs with only one
-    name = sub("-+", '-', name)
-
-    return name.replace(' ', '').lower()
+    return name.strip().replace(' ', '-').lower()
