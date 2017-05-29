@@ -151,7 +151,7 @@ class GEM(object):
         #   Initialize folders
         # ----------------------------
 
-        for folder in [ GEM.Config, GEM.Local ]:
+        for folder in [ GEM.Config, GEM.Local, path_join(GEM.Local, "roms") ]:
             if not exists(folder):
                 makedirs(folder, 0o755)
 

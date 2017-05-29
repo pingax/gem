@@ -78,10 +78,6 @@ def main():
     parser.add_argument("-d", "--debug",
         action="store_true", help="launch gem with debug flag")
 
-    parser_database = parser.add_argument_group("database arguments")
-    parser_database.add_argument("-r", "--reconstruct",
-        action="store_true", help="reconstruct gem db")
-
     parser_interface = parser.add_argument_group("interface arguments")
     parser_interface.add_argument("-i", "--gtk-ui", default=True,
         action="store_true", help="launch gem with GTK+ interface (default)")
@@ -127,7 +123,7 @@ def main():
 
     try:
         # Default folders
-        for folder in [ "icons", "logs", "notes", "roms" ]:
+        for folder in [ "icons", "logs", "notes" ]:
             if not exists(path_join(GEM.Local, folder)):
                 gem.logger.debug("Generate %s folder" % folder)
 
