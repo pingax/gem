@@ -132,7 +132,7 @@ class DialogMednafenMemory(Dialog):
         label = Gtk.Label()
 
         # Properties
-        label.set_text(_("You can set multiple backup memory for this game."))
+        label.set_text(_("You can set multiple memory types for this game."))
         label.set_line_wrap(True)
         label.set_single_line_mode(False)
         label.set_line_wrap_mode(Pango.WrapMode.CHAR)
@@ -284,7 +284,7 @@ class DialogMednafenMemory(Dialog):
         if not widget == self.button_remove:
 
             dialog = DialogMednafenMemoryType(self.interface,
-                _("Specify a backup memory type"), key, value)
+                _("Specify a memory type"), key, value)
 
             if dialog.run() == Gtk.ResponseType.APPLY:
                 key = dialog.combo_key.get_active_id()
@@ -298,8 +298,8 @@ class DialogMednafenMemory(Dialog):
                     self.model.set_value(treeiter, 1, value)
 
         else:
-            dialog = Question(self.interface, _("Remove a backup memory"),
-                _("Do you want to remove this backup memory type ?"))
+            dialog = Question(self.interface, _("Remove a memory type"),
+                _("Do you want to remove this memory type ?"))
 
             if dialog.run() == Gtk.ResponseType.YES:
                 self.model.remove(treeiter)
@@ -386,7 +386,7 @@ class DialogMednafenMemoryType(Dialog):
         # Properties
         label_key.set_hexpand(True)
         label_key.set_alignment(0, .5)
-        label_key.set_text(_("Memory type"))
+        label_key.set_text(_("Type"))
 
         self.model_key.set_sort_column_id(0, Gtk.SortType.ASCENDING)
 
@@ -397,7 +397,7 @@ class DialogMednafenMemoryType(Dialog):
         self.combo_key.add_attribute(cell_key, "text", 0)
 
         label_value.set_alignment(0, .5)
-        label_value.set_text(_("Memory value"))
+        label_value.set_text(_("Value"))
 
         self.spin_value.set_range(0, pow(2, 32))
         self.spin_value.set_increments(32, 64)

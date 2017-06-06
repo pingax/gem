@@ -109,8 +109,9 @@ msgid "Activate game fullscreen mode"
 msgstr "Pasar a pantalla completa"
 
 #
-# File: gem/preferences.py, line: 731
-# File: gem/preferences.py, line: 820
+# File: gem/gtk/mednafen.py, line: 164
+# File: gem/gtk/preferences.py, line: 761
+# File: gem/gtk/preferences.py, line: 850
 msgid "Add"
 msgstr ""
 
@@ -163,7 +164,7 @@ msgid "Both"
 msgstr "Ambos"
 
 #
-# File: gem/preferences.py, line: 849
+# File: gem/gtk/preferences.py, line: 879
 msgid "Cancel"
 msgstr ""
 
@@ -172,12 +173,6 @@ msgstr ""
 #, python-format
 msgid "Cannot find %(binary)s for %(console)s"
 msgstr "No puedo encontrar el %(binary)s para la %(console)s"
-
-#
-# File: gem/interface.py, line: 1892
-#, python-format
-msgid "Cannot find %s"
-msgstr "No pude encontrar %s"
 
 #
 # File: gem/interface.py, line: 2033
@@ -215,12 +210,6 @@ msgid "Cannot write into %s. Canceling operation."
 msgstr "No puedo escribir en %s. Anulando acción."
 
 #
-# File: gem/interface.py, line: 460
-#, python-format
-msgid "Change custom parameters for %s"
-msgstr "Cambiar los parametros personalizados para %s"
-
-#
 # File: gem/windows.py, line: 1122
 msgid "Choose an icon"
 msgstr "Elige un icono"
@@ -229,12 +218,6 @@ msgstr "Elige un icono"
 # File: gem/preferences.py, line: 1309
 msgid "Choose the ROMs folder"
 msgstr "Elige la carpeta de la ROM"
-
-#
-# File: gem/interface.py, line: 1782
-#, python-format
-msgid "Clean %s informations"
-msgstr "Limpiar los datos de %s"
 
 #
 # File: gem/interface.py, line: 1614
@@ -251,6 +234,12 @@ msgstr "Cerrar interfaz"
 # File: gem/preferences.py, line: 434
 msgid "Colorscheme"
 msgstr "Esquema de color"
+
+#
+# File: gem/gtk/game.py, line: 137
+#, python-format
+msgid "Command: %s"
+msgstr ""
 
 #
 # File: gem/preferences.py, line: 1602
@@ -279,11 +268,6 @@ msgid "Copy selected game path"
 msgstr "Copiar la ruta del juego seleccionado"
 
 #
-# File: gem/interface.py, line: 133
-msgid "Current database need to be updated"
-msgstr "La base de datos necesita actualizarse"
-
-#
 # File: gem/interface.py, line: 396
 # File: gem/interface.py, line: 756
 # File: gem/interface.py, line: 1667
@@ -297,8 +281,10 @@ msgid "Default options"
 msgstr "Opciones por defecto"
 
 #
-# File: gem/preferences.py, line: 2004
-# File: gem/preferences.py, line: 2007
+# File: gem/gtk/preferences.py, line: 2093
+# File: gem/gtk/preferences.py, line: 2096
+# File: gem/gtk/windows.py, line: 777
+# File: gem/gtk/windows.py, line: 780
 msgid "Description"
 msgstr ""
 
@@ -307,6 +293,12 @@ msgstr ""
 #, python-format
 msgid "Destination %s not exist. Canceling operation."
 msgstr "El destino %s no existe. Anulando acción."
+
+#
+# File: gem/preferences.py, line: 1196
+#, fuzzy
+msgid "Do you want to remove this memory type ?"
+msgstr "¿Quiere borrar esta entrada?"
 
 #
 # File: gem/interface.py, line: 2017
@@ -341,6 +333,13 @@ msgstr "Emulador"
 # File: gem/preferences.py, line: 1662
 msgid "Emulator arguments"
 msgstr "Opciones del emulador"
+
+#
+# File: gem/gtk/windows.py, line: 781
+msgid ""
+"Emulator default arguments can use custom parameters to facilitate file "
+"detection."
+msgstr ""
 
 #
 # File: gem/preferences.py, line: 280
@@ -395,8 +394,9 @@ msgstr "General"
 
 #
 # File: gem/interface.py, line: 460
-msgid "Generate a new database"
-msgstr "Crear una nueva base de datos"
+#, fuzzy
+msgid "Generate a backup memory file"
+msgstr "_Generar una entrada de menú"
 
 #
 # File: gem/preferences.py, line: 90
@@ -410,12 +410,12 @@ msgid "Generate menu entry for %s"
 msgstr "Crear una entrada en el menú para %s"
 
 #
-# File: gem/windows.py, line: 238
+# File: gem/gtk/windows.py, line: 247
 msgid "Help"
 msgstr ""
 
 #
-# File: gem/preferences.py, line: 433
+# File: gem/gtk/preferences.py, line: 449
 msgid "Hide consoles without any game"
 msgstr ""
 
@@ -483,18 +483,14 @@ msgid "Launch a game"
 msgstr "Lanzar un juego"
 
 #
-# File: gem/preferences.py, line: 84
-msgid "Launch interface"
-msgstr "Lanzar la interfaz"
-
-#
 # File: gem/interface.py, line: 448
 msgid "Launch selected game"
 msgstr "Lanzar el juego seleccionado"
 
 #
 # File: gem/preferences.py, line: 304
-msgid "Load the last chosen console during startup"
+#, fuzzy
+msgid "Load the last chosen console when start GEM"
 msgstr "Cargar la última consola utilizada durante el inicio"
 
 #
@@ -526,6 +522,11 @@ msgid "Mark as _multiplayer"
 msgstr "Marcar como _mutijugador"
 
 #
+# File: gem/gtk/mednafen.py, line: 186
+msgid "Mednafen GBA documentation"
+msgstr ""
+
+#
 # File: gem/interface.py, line: 2044
 #, python-format
 msgid "MemoryError occurs: %s"
@@ -537,23 +538,14 @@ msgid "Migrating entries from old database"
 msgstr "Migrando datos desde la antigua dase de datos"
 
 #
-# File: gem/interface.py, line: 149
-msgid "Migration complete"
-msgstr "Migración finalizada"
-
-#
 # File: gem/interface.py, line: 1892
 msgid "Missing binary"
 msgstr "Falta binario"
 
 #
-# File: gem/interface.py, line: 1892
-msgid "Missing file"
-msgstr "Falta archivo"
-
-#
-# File: gem/preferences.py, line: 737
-# File: gem/preferences.py, line: 826
+# File: gem/gtk/mednafen.py, line: 170
+# File: gem/gtk/preferences.py, line: 767
+# File: gem/gtk/preferences.py, line: 856
 msgid "Modify"
 msgstr ""
 
@@ -601,11 +593,6 @@ msgstr "Abrir preferencias"
 # File: gem/preferences.py, line: 91
 msgid "Open selected game directory"
 msgstr "Abrir carpeta del juego seleccionado"
-
-#
-# File: gem/interface.py, line: 572
-msgid "Output _log"
-msgstr "_Histórico de salida"
 
 #
 # File: gem/interface.py, line: 396
@@ -669,6 +656,12 @@ msgstr "Borrar un juego de la base de datos"
 # File: gem/interface.py, line: 776
 msgid "Remove a game from disk"
 msgstr "Borrar un juego del disco"
+
+#
+# File: gem/preferences.py, line: 85
+#, fuzzy
+msgid "Remove a memory type"
+msgstr "Borrar un juego de la base de datos"
 
 #
 # File: gem/interface.py, line: 776
@@ -786,6 +779,18 @@ msgid "Show \"Play time\" column"
 msgstr "Mostrar la columna \"Tiempo de juego\""
 
 #
+# File: gem/interface.py, line: 527
+#, fuzzy
+msgid "Show _notes"
+msgstr "Mostrar los juegos favoritos"
+
+#
+# File: gem/interface.py, line: 2006
+#, fuzzy
+msgid "Show _screenshots"
+msgstr "_Capturas de pantalla"
+
+#
 # File: gem/preferences.py, line: 257
 msgid "Show close buttons in header bar"
 msgstr "Mostrar los botones de cerrar en la barra principal"
@@ -797,7 +802,8 @@ msgstr "Mostrar los juegos favoritos"
 
 #
 # File: gem/preferences.py, line: 89
-msgid "Show game snapshots"
+#, fuzzy
+msgid "Show game screenshots"
 msgstr "Mostrar las capturas de pantalla del juego"
 
 #
@@ -821,6 +827,12 @@ msgid "Show multiplayer games"
 msgstr "Mostrar los juegos mutijugador"
 
 #
+# File: gem/interface.py, line: 572
+#, fuzzy
+msgid "Show output _log"
+msgstr "_Histórico de salida"
+
+#
 # File: gem/interface.py, line: 455
 msgid "Show selected game notes"
 msgstr "Mostrar las notas del juego seleccionado"
@@ -842,9 +854,15 @@ msgid "Snapshots"
 msgstr "Capturas de pantalla"
 
 #
-# File: gem/interface.py, line: 135
-msgid "Start database migration"
-msgstr "Comenzar la migración de la base de datos"
+# File: gem/gtk/interface.py, line: 583
+# File: gem/gtk/interface.py, line: 1010
+msgid "Specify a _memory type"
+msgstr ""
+
+#
+# File: gem/gtk/mednafen.py, line: 287
+msgid "Specify a memory type"
+msgstr ""
 
 #
 # File: gem/interface.py, line: 1501
@@ -888,7 +906,7 @@ msgid "This game was removed successfully"
 msgstr "El juego fue borrado con éxito"
 
 #
-# File: gem/preferences.py, line: 2000
+# File: gem/gtk/preferences.py, line: 2099
 msgid ""
 "This parameters are used in \"Default options\", \"Save\" and \"Snapshots\" "
 "entries."
@@ -901,7 +919,7 @@ msgid "This rom already exists in %s. Do you want to replace it ?"
 msgstr "Esta rom ya existe en %s. ¿Quieres remplazarlo?"
 
 #
-# File: gem/preferences.py, line: 1998
+# File: gem/gtk/preferences.py, line: 2097
 msgid ""
 "To facilitate files detection with every emulators, some custom parameters "
 "has been created."
@@ -911,6 +929,11 @@ msgstr ""
 # File: gem/interface.py, line: 2119
 msgid "Today"
 msgstr "Hoy"
+
+#
+# File: gem/gtk/mednafen.py, line: 389
+msgid "Type"
+msgstr ""
 
 #
 # File: gem/preferences.py, line: 1602
@@ -925,15 +948,10 @@ msgid "Update %s notes"
 msgstr "Actualizar las notas %s"
 
 #
-# File: gem/preferences.py, line: 1159
-#, python-format
-msgid "Update v%(old)s database to v%(new)s."
-msgstr "Actualizar v%(old)s base de datos en v%(new)s."
-
-#
-# File: gem/preferences.py, line: 1348
-msgid "Use ; to separate extensions"
-msgstr "Usa ; para separar las extensiones"
+# File: gem/interface.py, line: 460
+#, fuzzy, python-format
+msgid "Update default parameters for %s"
+msgstr "Cambiar los parametros personalizados para %s"
 
 #
 # File: gem/interface.py, line: 406
@@ -943,9 +961,11 @@ msgid "Use ROM file path"
 msgstr "_Abrir la ruta del archivo"
 
 #
-# File: gem/preferences.py, line: 2003
+# File: gem/interface.py, line: 406
+# File: gem/interface.py, line: 766
+#, fuzzy
 msgid "Use ROM filename"
-msgstr ""
+msgstr "_Abrir la ruta del archivo"
 
 #
 # File: gem/preferences.py, line: 1309
@@ -954,9 +974,11 @@ msgid "Use ROM folder path"
 msgstr "Elige la carpeta de la ROM"
 
 #
-# File: gem/preferences.py, line: 2004
+# File: gem/interface.py, line: 406
+# File: gem/interface.py, line: 766
+#, fuzzy
 msgid "Use ROM lowercase filename"
-msgstr ""
+msgstr "_Abrir la ruta del archivo"
 
 #
 # File: gem/interface.py, line: 391
@@ -965,7 +987,7 @@ msgid "Use _dark theme"
 msgstr "Usar el tema oscuro"
 
 #
-# File: gem/preferences.py, line: 495
+# File: gem/gtk/preferences.py, line: 511
 msgid "Use classic theme (Need to reboot GEM)"
 msgstr ""
 
@@ -979,6 +1001,24 @@ msgstr "Actualizar el archivo de configuración de %s"
 # File: gem/preferences.py, line: 393
 msgid "Use native viewer"
 msgstr "Usar el visor nativo"
+
+#
+# File: gem/preferences.py, line: 1348
+#, fuzzy
+msgid "Use semicolon to separate extensions"
+msgstr "Usa ; para separar las extensiones"
+
+#
+# File: gem/preferences.py, line: 283
+#, fuzzy
+msgid "Use translucent icons in games list"
+msgstr ""
+"usar iconos translucidos en la lista de los juegos en vez de iconos vacíos"
+
+#
+# File: gem/gtk/mednafen.py, line: 400
+msgid "Value"
+msgstr ""
 
 #
 # File: gem/preferences.py, line: 99
@@ -1038,6 +1078,11 @@ msgstr ""
 "un enlace e introduce el que quiera con el teclado."
 
 #
+# File: gem/gtk/mednafen.py, line: 135
+msgid "You can set multiple memory types for this game."
+msgstr ""
+
+#
 # File: gem/interface.py, line: 419
 msgid "_About"
 msgstr "_A cerca de"
@@ -1065,7 +1110,7 @@ msgid "_Generate a menu entry"
 msgstr "_Generar una entrada de menú"
 
 #
-# File: gem/interface.py, line: 477
+# File: gem/gtk/interface.py, line: 424
 msgid "_Help"
 msgstr ""
 
@@ -1073,11 +1118,6 @@ msgstr ""
 # File: gem/preferences.py, line: 84
 msgid "_Launch"
 msgstr "_Lanzar"
-
-#
-# File: gem/interface.py, line: 384
-msgid "_Notes"
-msgstr "_Notas"
 
 #
 # File: gem/interface.py, line: 406
@@ -1111,12 +1151,7 @@ msgid "_Reset game informations"
 msgstr "_Reinicializar los datos del juego"
 
 #
-# File: gem/interface.py, line: 2006
-msgid "_Screenshots"
-msgstr "_Capturas de pantalla"
-
-#
-# File: gem/interface.py, line: 475
+# File: gem/gtk/interface.py, line: 422
 msgid "_Tools"
 msgstr ""
 
@@ -1124,12 +1159,6 @@ msgstr ""
 # File: gem/preferences.py, line: 280
 msgid "translator-credits"
 msgstr "agradecimientos a los traductores"
-
-#
-# File: gem/preferences.py, line: 283
-msgid "use translucent icons in games list instead of empty ones"
-msgstr ""
-"usar iconos translucidos en la lista de los juegos en vez de iconos vacíos"
 
 #
 # File: gem/preferences.py, line: 1638
@@ -1140,6 +1169,11 @@ msgstr ""
 #~ "<name> = nombre del fichero de la ROM, <lname> = nombre del fichero en "
 #~ "minúsculas de la ROM\n"
 #~ "<rom_path> = carpeta de la ROM"
+
+#
+# File: gem/interface.py, line: 1892
+#~ msgid "Cannot find %s"
+#~ msgstr "No pude encontrar %s"
 
 #
 # File: gem/configuration.py, line: 71
@@ -1162,6 +1196,16 @@ msgstr ""
 #~ msgstr "Comprobar las carpetas de los iconos"
 
 #
+# File: gem/interface.py, line: 1782
+#~ msgid "Clean %s informations"
+#~ msgstr "Limpiar los datos de %s"
+
+#
+# File: gem/interface.py, line: 133
+#~ msgid "Current database need to be updated"
+#~ msgstr "La base de datos necesita actualizarse"
+
+#
 # File: gem/interface.py, line: 1098
 #~ msgid ""
 #~ "GEM come with some emulators and consoles already configured. But the "
@@ -1179,3 +1223,38 @@ msgstr ""
 #~ "cambiar la ruta tanto para las consolas como para los emuladores.\n"
 #~ "\n"
 #~ "Disfruta los juegos :D"
+
+#
+# File: gem/interface.py, line: 460
+#~ msgid "Generate a new database"
+#~ msgstr "Crear una nueva base de datos"
+
+#
+# File: gem/preferences.py, line: 84
+#~ msgid "Launch interface"
+#~ msgstr "Lanzar la interfaz"
+
+#
+# File: gem/interface.py, line: 149
+#~ msgid "Migration complete"
+#~ msgstr "Migración finalizada"
+
+#
+# File: gem/interface.py, line: 1892
+#~ msgid "Missing file"
+#~ msgstr "Falta archivo"
+
+#
+# File: gem/interface.py, line: 135
+#~ msgid "Start database migration"
+#~ msgstr "Comenzar la migración de la base de datos"
+
+#
+# File: gem/preferences.py, line: 1159
+#~ msgid "Update v%(old)s database to v%(new)s."
+#~ msgstr "Actualizar v%(old)s base de datos en v%(new)s."
+
+#
+# File: gem/interface.py, line: 384
+#~ msgid "_Notes"
+#~ msgstr "_Notas"

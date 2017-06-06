@@ -138,7 +138,7 @@ class Preferences(object):
                 "multiplayer": [
                     _("Mark a game as multiplayer"), "F4"],
                 "snapshots": [
-                    _("Show game snapshots"), "F5"],
+                    _("Show game screenshots"), "F5"],
                 "log": [
                     _("Open game log"), "F6"],
                 "notes": [
@@ -443,7 +443,7 @@ class Preferences(object):
         self.check_last_console.set_hexpand(True)
         self.check_last_console.set_margin_left(32)
         self.check_last_console.set_label(
-            _("Load the last chosen console during startup"))
+            _("Load the last chosen console when start GEM"))
         self.check_hide_console.set_hexpand(True)
         self.check_hide_console.set_margin_left(32)
         self.check_hide_console.set_label(_("Hide consoles without any game"))
@@ -516,7 +516,7 @@ class Preferences(object):
         self.check_header.set_hexpand(True)
         self.check_header.set_margin_left(32)
         self.check_icons.set_label(
-            _("use translucent icons in games list instead of empty ones"))
+            _("Use translucent icons in games list"))
         self.check_icons.set_hexpand(True)
         self.check_icons.set_margin_left(32)
 
@@ -1047,8 +1047,8 @@ class Preferences(object):
         self.entry_viewer_options.connect(
             "icon-press", on_entry_clear)
 
-        self.check_native_viewer.connect("toggled",
-            self.__on_check_native_viewer)
+        self.check_native_viewer.connect(
+            "toggled", self.__on_check_native_viewer)
 
         # ------------------------------------
         #   Shortcuts
@@ -1210,7 +1210,7 @@ class Preferences(object):
             self.config.update()
 
             if self.interface is not None:
-                self.logger.debug("Main interface need to be reloading")
+                self.logger.debug("Main interface need to be reload")
                 self.interface.load_interface()
 
         self.window.hide()
@@ -1785,9 +1785,9 @@ class PreferencesConsole(Dialog):
         self.label_extensions.set_alignment(0, .5)
         self.entry_extensions.set_hexpand(True)
         self.entry_extensions.set_tooltip_text(
-            _("Use ; to separate extensions"))
+            _("Use semicolon to separate extensions"))
         self.entry_extensions.set_placeholder_text(
-            _("Use ; to separate extensions"))
+            _("Use semicolon to separate extensions"))
         self.entry_extensions.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
 

@@ -479,17 +479,17 @@ class Interface(Gtk.Window):
             self.menubar_main_image_multiplayer)
         self.menubar_main_item_multiplayer.set_use_underline(True)
 
-        self.menubar_main_item_screenshots.set_label(_("_Screenshots"))
+        self.menubar_main_item_screenshots.set_label(_("Show _screenshots"))
         self.menubar_main_item_screenshots.set_image(
             self.menubar_main_image_screenshots)
         self.menubar_main_item_screenshots.set_use_underline(True)
 
-        self.menubar_main_item_output.set_label(_("Output _log"))
+        self.menubar_main_item_output.set_label(_("Show output _log"))
         self.menubar_main_item_output.set_image(
             self.menubar_main_image_output)
         self.menubar_main_item_output.set_use_underline(True)
 
-        self.menubar_main_item_notes.set_label(_("_Notes"))
+        self.menubar_main_item_notes.set_label(_("Show _notes"))
         self.menubar_main_item_notes.set_image(
             self.menubar_main_image_notes)
         self.menubar_main_item_notes.set_use_underline(True)
@@ -580,8 +580,7 @@ class Interface(Gtk.Window):
             self.menubar_edit_image_delete)
         self.menubar_edit_item_delete.set_use_underline(True)
 
-        self.menubar_edit_item_mednafen.set_label(
-            _("Specify a _backup memory type"))
+        self.menubar_edit_item_mednafen.set_label(_("Specify a _memory type"))
         self.menubar_edit_item_mednafen.set_image(
             self.menubar_edit_image_mednafen)
         self.menubar_edit_item_mednafen.set_use_underline(True)
@@ -924,15 +923,15 @@ class Interface(Gtk.Window):
         self.menu_item_multiplayer.set_image(self.menu_image_multiplayer)
         self.menu_item_multiplayer.set_use_underline(True)
 
-        self.menu_item_screenshots.set_label(_("_Screenshots"))
+        self.menu_item_screenshots.set_label(_("Show _screenshots"))
         self.menu_item_screenshots.set_image(self.menu_image_screenshots)
         self.menu_item_screenshots.set_use_underline(True)
 
-        self.menu_item_output.set_label(_("Output _log"))
+        self.menu_item_output.set_label(_("Show output _log"))
         self.menu_item_output.set_image(self.menu_image_output)
         self.menu_item_output.set_use_underline(True)
 
-        self.menu_item_notes.set_label(_("_Notes"))
+        self.menu_item_notes.set_label(_("Show _notes"))
         self.menu_item_notes.set_image(self.menu_image_notes)
         self.menu_item_notes.set_use_underline(True)
 
@@ -1008,7 +1007,7 @@ class Interface(Gtk.Window):
         self.menu_item_remove.set_image(self.menu_image_remove)
         self.menu_item_remove.set_use_underline(True)
 
-        self.menu_item_mednafen.set_label(_("Specify a _backup memory type"))
+        self.menu_item_mednafen.set_label(_("Specify a _memory type"))
         self.menu_item_mednafen.set_image(self.menu_image_mednafen)
         self.menu_item_mednafen.set_use_underline(True)
 
@@ -2284,6 +2283,9 @@ class Interface(Gtk.Window):
         for console in self.api.consoles:
             console = self.api.get_console(console)
 
+            # Reload games list
+            console.set_games(self.api)
+
             if console.emulator is not None:
 
                 # Check if console ROM path exist
@@ -3139,7 +3141,7 @@ class Interface(Gtk.Window):
 
             if dialog.run() == Gtk.ResponseType.OK:
                 self.logger.info(
-                    _("Change custom parameters for %s") % game.name)
+                    _("Update default parameters for %s") % game.name)
 
                 game.emulator = self.api.get_emulator(
                     dialog.combo.get_active_id())
