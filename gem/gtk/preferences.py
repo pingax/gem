@@ -2094,8 +2094,8 @@ class PreferencesEmulator(Dialog):
                 _("Parameters"),
             ],
             _("Description"): [
-                _("To facilitate files detection with every emulators, some "
-                    "custom parameters has been created."),
+                _("To facilitate file detection with every emulators, some "
+                    "custom parameters have been created."),
                 _("This parameters are used in \"Default options\", \"Save\" "
                     "and \"Snapshots\" entries."),
             ],
