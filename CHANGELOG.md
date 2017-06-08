@@ -4,6 +4,7 @@
 
 * Add an API to manage emulators, consoles and games
 * Add the backup memory type file generation for Mednafen
+* Add Sony Playstation console
 * Rewrite interface into python scripts instead of glade files
 * Fix game with custom name won't work correctly in self.__on_game_launch
 * Fix shortcuts in preferences are not store correctly in main configuration
