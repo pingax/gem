@@ -1,5 +1,9 @@
 # GEM Changelog
 
+## Version 0.7.1 - Count Dracula
+
+* Fix wrong generate command for emulator without default arguments
+
 ## Version 0.7 - Vampire hunter
 
 * Add an API to manage emulators, consoles and games

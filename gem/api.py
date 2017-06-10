@@ -93,8 +93,8 @@ class GEM(object):
     # Informations
     Name        = "Graphical Emulators Manager"
     Description = "Manage your emulators easily and have fun"
-    Version     = "0.7"
-    CodeName    = "Vampire hunter"
+    Version     = "0.7.1"
+    CodeName    = "Count Dracula"
     Website     = "https://gem.tuxfamily.org/"
     Copyleft    = "Copyleft 2017 - Kawa Team"
     Acronym     = "GEM"
@@ -974,7 +974,7 @@ class Emulator(GEMObject):
 
         if game.default is not None:
             command += " %s" % str(game.default)
-        else:
+        elif self.default is not None:
             command += " %s" % str(self.default)
 
         # ----------------------------
