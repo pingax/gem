@@ -4,7 +4,7 @@
 
 * Fix wrong generate command for emulator without default arguments
 
-## Version 0.7 - Vampire hunter
+## Version 0.7 - Vampire hunter (08 June, 2017)
 
 * Add an API to manage emulators, consoles and games
 * Add the backup memory type file generation for Mednafen
