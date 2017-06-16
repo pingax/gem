@@ -47,6 +47,7 @@ from subprocess import STDOUT
 
 # Regex
 from re import match
+from re import IGNORECASE
 
 # System
 from sys import exit as sys_exit
@@ -2465,8 +2466,18 @@ class Interface(Gtk.Window):
                 if not current_thread_id == self.list_thread:
                     yield False
 
-                # Check if rome file exists
-                if exists(game.filepath):
+                # Hide games which match ignores regex
+                show = True
+                for element in console.ignores:
+                    try:
+                        if match(element, game.name, IGNORECASE) is not None:
+                            show = False
+                            break
+                    except:
+                        pass
+
+                # Check if rom file exists
+                if exists(game.filepath) and show:
 
                     # Get path from Game
                     path, filepath = game.path

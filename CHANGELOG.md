@@ -1,5 +1,9 @@
 # GEM Changelog
 
+## Version 0.8 - Shadow Blade
+
+* Add an option to hide game in games list with specific regex
+
 ## Version 0.7.1 - Count Dracula
 
 * Fix wrong generate command for emulator without default arguments

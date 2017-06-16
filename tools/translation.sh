@@ -16,7 +16,7 @@ done
 # Generate .po files
 xgettext -k_ -i --strict -s --omit-header -o gem/i18n/gem.pot \
     --copyright-holder="Kawa Team" --package-name=gem --from-code=utf-8 \
-    --package-version="0.7.1" gem/*.py gem/gtk/*.py
+    --package-version="0.8" gem/*.py gem/gtk/*.py
 
 for lang in "${translation[@]}" ; do
     msgmerge -s -U gem/i18n/$lang/gem.po gem/i18n/gem.pot

@@ -93,8 +93,8 @@ class GEM(object):
     # Informations
     Name        = "Graphical Emulators Manager"
     Description = "Manage your emulators easily and have fun"
-    Version     = "0.7.1"
-    CodeName    = "Count Dracula"
+    Version     = "0.8"
+    CodeName    = "Shadow Blade"
     Website     = "https://gem.tuxfamily.org/"
     Copyleft    = "Copyleft 2017 - Kawa Team"
     Acronym     = "GEM"
@@ -360,6 +360,8 @@ class GEM(object):
                     section, "roms", fallback=str())),
                 "icon": data.get(
                     section, "icon", fallback=str()),
+                "ignores": data.get(
+                    section, "ignores", fallback=str()).split(';'),
                 "extensions": data.get(
                     section, "exts", fallback=str()).split(';'),
                 "emulator": emulator
@@ -632,6 +634,10 @@ class GEM(object):
             if type(value) is not Emulator and \
                 value is not None and len(value) == 0:
                 value = None
+
+            # Avoid to have a list with an empty string
+            if type(value) is list and len(value) == 1 and len(value[0]) == 0:
+                value = []
 
             setattr(console, key, value)
 
@@ -1060,6 +1066,7 @@ class Console(GEMObject):
         "name": str(),
         "icon": str(),
         "path": str(),
+        "ignores": list(),
         "extensions": list(),
         "games": list(),
         "emulator": None
@@ -1085,6 +1092,7 @@ class Console(GEMObject):
             "icon": self.icon,
             "roms": expanduser(self.path),
             "exts": ';'.join(self.extensions),
+            "ignores": ';'.join(self.ignores),
             "emulator": self.emulator.name
         })
 
