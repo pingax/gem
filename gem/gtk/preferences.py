@@ -1683,6 +1683,30 @@ class PreferencesConsole(Dialog):
         # Empty Pixbuf icon
         self.empty = parent.empty
 
+        self.help_data = {
+            "order": [
+                "Description",
+                "Extensions",
+                _("Extensions examples"),
+                "Expressions"
+            ],
+            "Description": [
+                _("A console represent a games library. You can specify a default emulator which is used by this console and extensions which is readable by this emulator.")
+            ],
+            "Extensions": [
+                _("Most of the time, extensions are common between differents emulators and represent the console acronym (exemple: Nintendo NES -> nes)."),
+                _("Extensions are split by spaces and must not having the first dot (using « nes » than « .nes »).")
+            ],
+            _("Extensions examples"): {
+                "Nintendo NES": "nes",
+                "Sega Megadrive": "md smd bin 32x md cue"
+            },
+            "Expressions": [
+                _("It's possible to hide specific files from the games list with regular expressions."),
+                _("Expressions are split by carriage return.")
+            ]
+        }
+
         # ------------------------------------
         #   Prepare interface
         # ------------------------------------
@@ -1711,7 +1735,7 @@ class PreferencesConsole(Dialog):
         # Properties
         self.set_transient_for(self.interface.window)
 
-        self.set_size(640, 250)
+        self.set_size(640, 480)
         self.set_resizable(True)
 
         self.add_buttons(
@@ -1719,6 +1743,8 @@ class PreferencesConsole(Dialog):
             Gtk.STOCK_APPLY, Gtk.ResponseType.APPLY)
 
         self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
+
+        self.set_help(self.interface.window, self.help_data)
 
         # ------------------------------------
         #   Main scrolling
@@ -1737,6 +1763,9 @@ class PreferencesConsole(Dialog):
 
         self.grid = Gtk.Grid()
 
+        self.grid_emulator = Gtk.Box()
+        self.grid_ignores = Gtk.Box()
+
         # Properties
         self.grid.set_row_spacing(8)
         self.grid.set_column_spacing(8)
@@ -1752,19 +1781,8 @@ class PreferencesConsole(Dialog):
         self.label_folder = Gtk.Label()
         self.file_folder = Gtk.FileChooserButton()
 
-        self.label_extensions = Gtk.Label()
-        self.entry_extensions = Gtk.Entry()
-
         self.button_console = Gtk.Button()
         self.image_console = Gtk.Image()
-
-        self.label_emulator = Gtk.Label()
-        self.model_emulators = Gtk.ListStore(Pixbuf, str, Pixbuf)
-        self.combo_emulators = Gtk.ComboBox()
-
-        cell_emulators_icon = Gtk.CellRendererPixbuf()
-        cell_emulators_name = Gtk.CellRendererText()
-        cell_emulators_warning = Gtk.CellRendererPixbuf()
 
         # Properties
         self.label_name.set_markup("<b>%s</b>" % _("Name"))
@@ -1774,29 +1792,44 @@ class PreferencesConsole(Dialog):
         self.entry_name.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
 
-        self.label_folder.set_markup("<b>%s</b>" % _("Choose the ROMs folder"))
+        self.label_folder.set_markup("<b>%s</b>" % _("Games folder"))
         self.label_folder.set_use_markup(True)
         self.label_folder.set_alignment(0, .5)
         self.file_folder.set_action(Gtk.FileChooserAction.SELECT_FOLDER)
         self.file_folder.set_hexpand(True)
 
-        self.label_extensions.set_markup("<b>%s</b>" % _("ROM's extensions"))
-        self.label_extensions.set_use_markup(True)
-        self.label_extensions.set_alignment(0, .5)
-        self.entry_extensions.set_hexpand(True)
-        self.entry_extensions.set_tooltip_text(
-            _("Use semicolon to separate extensions"))
-        self.entry_extensions.set_placeholder_text(
-            _("Use semicolon to separate extensions"))
-        self.entry_extensions.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
-
         self.button_console.set_size_request(64, 64)
         self.image_console.set_size_request(64, 64)
 
-        self.label_emulator.set_markup("<b>%s</b>" % _("Emulator"))
+        # ------------------------------------
+        #   Emulator options
+        # ------------------------------------
+
+        self.image_emulator = Gtk.Image()
+        self.label_emulator = Gtk.Label()
+
+        self.label_default = Gtk.Label()
+
+        self.model_emulators = Gtk.ListStore(Pixbuf, str, Pixbuf)
+        self.combo_emulators = Gtk.ComboBox()
+
+        cell_emulators_icon = Gtk.CellRendererPixbuf()
+        cell_emulators_name = Gtk.CellRendererText()
+        cell_emulators_warning = Gtk.CellRendererPixbuf()
+
+        self.label_extensions = Gtk.Label()
+        self.entry_extensions = Gtk.Entry()
+
+        # Properties
+        self.image_emulator.set_from_icon_name(Icons.Gaming, Gtk.IconSize.MENU)
+        self.label_emulator.set_markup("<b>%s</b>" % _("Default emulator"))
         self.label_emulator.set_use_markup(True)
         self.label_emulator.set_alignment(0, .5)
+
+        self.label_default.set_markup(_("Emulator"))
+        self.label_default.set_use_markup(True)
+        self.label_default.set_alignment(0, .5)
+        self.label_default.set_margin_left(32)
 
         self.model_emulators.set_sort_column_id(1, Gtk.SortType.ASCENDING)
 
@@ -1811,6 +1844,44 @@ class PreferencesConsole(Dialog):
         self.combo_emulators.add_attribute(cell_emulators_warning, "pixbuf", 2)
 
         cell_emulators_icon.set_padding(4, 0)
+
+        self.label_extensions.set_markup(_("Extensions"))
+        self.label_extensions.set_use_markup(True)
+        self.label_extensions.set_alignment(0, .5)
+        self.label_extensions.set_margin_left(32)
+
+        self.entry_extensions.set_hexpand(True)
+        self.entry_extensions.set_tooltip_text(
+            _("Use space to separate extensions"))
+        self.entry_extensions.set_placeholder_text(
+            _("Use space to separate extensions"))
+        self.entry_extensions.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
+
+        # ------------------------------------
+        #   Ignores options
+        # ------------------------------------
+
+        self.image_ignores = Gtk.Image()
+        self.label_ignores = Gtk.Label()
+
+        self.text_ignores = Gtk.TextView()
+        self.buffer_ignores = self.text_ignores.get_buffer()
+
+        # Properties
+        self.image_ignores.set_from_icon_name(Icons.Document, Gtk.IconSize.MENU)
+        self.label_ignores.set_markup("<b>%s</b>" % _("Ignored games files"))
+        self.label_ignores.set_use_markup(True)
+        self.label_ignores.set_alignment(0, .5)
+
+        self.text_ignores.set_top_margin(8)
+        self.text_ignores.set_left_margin(8)
+        self.text_ignores.set_right_margin(8)
+        self.text_ignores.set_bottom_margin(8)
+        self.text_ignores.set_margin_left(32)
+        self.text_ignores.set_monospace(True)
+        self.text_ignores.set_vexpand(True)
+        self.text_ignores.set_wrap_mode(Gtk.WrapMode.NONE)
 
 
     def __init_packing(self):
@@ -1833,16 +1904,35 @@ class PreferencesConsole(Dialog):
 
         self.grid.attach(self.button_console, 3, 0, 1, 2)
 
-        self.grid.attach(self.label_extensions, 0, 2, 1, 1)
-        self.grid.attach(self.entry_extensions, 1, 2, 3, 1)
+        self.grid.attach(Gtk.Separator(), 0, 2, 4, 1)
 
-        self.grid.attach(Gtk.Separator(), 0, 3, 4, 1)
+        self.grid.attach(self.grid_emulator, 0, 3, 4, 1)
 
-        self.grid.attach(self.label_emulator, 0, 4, 1, 1)
+        self.grid.attach(self.label_default, 0, 4, 1, 1)
         self.grid.attach(self.combo_emulators, 1, 4, 3, 1)
+
+        self.grid.attach(self.label_extensions, 0, 5, 1, 1)
+        self.grid.attach(self.entry_extensions, 1, 5, 3, 1)
+
+        self.grid.attach(Gtk.Separator(), 0, 7, 4, 1)
+
+        self.grid.attach(self.grid_ignores, 0, 8, 4, 1)
+        self.grid.attach(self.text_ignores, 0, 9, 4, 1)
 
         # Console options
         self.button_console.set_image(self.image_console)
+
+        # Emulator
+        self.grid_emulator.pack_start(
+            self.image_emulator, False, False, 0)
+        self.grid_emulator.pack_start(
+            self.label_emulator, True, True, 8)
+
+        # Ignores
+        self.grid_ignores.pack_start(
+            self.image_ignores, False, False, 0)
+        self.grid_ignores.pack_start(
+            self.label_ignores, True, True, 8)
 
 
     def __init_signals(self):
@@ -1891,12 +1981,15 @@ class PreferencesConsole(Dialog):
                 self.file_folder.set_current_folder(folder)
 
             # Extensions
-            self.entry_extensions.set_text(';'.join(self.console.extensions))
+            self.entry_extensions.set_text(' '.join(self.console.extensions))
 
             # Icon
             self.path = self.console.icon
             self.image_console.set_from_pixbuf(
                 icon_from_data(self.path, self.empty, 64, 64, "consoles"))
+
+            # Ignores
+            self.buffer_ignores.set_text('\n'.join(self.console.ignores))
 
             # Emulator
             if self.console.emulator is not None and \
@@ -1958,13 +2051,21 @@ class PreferencesConsole(Dialog):
 
         extensions = list()
         if len(self.entry_extensions.get_text()) > 0:
-            extensions = self.entry_extensions.get_text().split(';')
+            extensions = self.entry_extensions.get_text().split()
+
+        ignores = list()
+        ignores_text = self.buffer_ignores.get_text(
+            self.buffer_ignores.get_start_iter(),
+            self.buffer_ignores.get_end_iter(), True)
+        if len(ignores_text) > 0:
+            ignores = ignores_text.split('\n')
 
         self.data = {
             "id": identifier,
             "name": self.section,
             "path": path,
             "icon": icon,
+            "ignores": ignores,
             "extensions": extensions,
             "emulator": self.api.get_emulator(
                 self.combo_emulators.get_active_id())

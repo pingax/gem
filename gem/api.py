@@ -637,7 +637,7 @@ class GEM(object):
 
             # Avoid to have a list with an empty string
             if type(value) is list and len(value) == 1 and len(value[0]) == 0:
-                value = []
+                value = list()
 
             setattr(console, key, value)
 

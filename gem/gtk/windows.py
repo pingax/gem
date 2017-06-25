@@ -1611,6 +1611,7 @@ class DialogHelp(Dialog):
         text.set_max_width_chars(10)
         text.set_markup(self.message)
         text.set_alignment(0, 0)
+        text.set_justify(Gtk.Justification.FILL)
         text.set_line_wrap_mode(Pango.WrapMode.WORD)
 
         # ------------------------------------
