@@ -45,6 +45,9 @@ from subprocess import PIPE
 from subprocess import Popen
 from subprocess import STDOUT
 
+# Random
+from random import randint
+
 # Regex
 from re import match
 from re import IGNORECASE
@@ -289,11 +292,24 @@ class Interface(Gtk.Window):
 
         self.grid_options = Gtk.Box()
 
+        self.grid_paned = Gtk.Box()
+        self.grid_informations = Gtk.Box()
+
         # Properties
         self.grid.set_orientation(Gtk.Orientation.VERTICAL)
 
         Gtk.StyleContext.add_class(
             self.grid_options.get_style_context(), "linked")
+
+        self.grid_paned.set_spacing(8)
+        self.grid_paned.set_border_width(8)
+        self.grid_paned.set_homogeneous(False)
+        self.grid_paned.set_size_request(432, 216)
+        self.grid_paned.set_orientation(Gtk.Orientation.HORIZONTAL)
+
+        self.grid_informations.set_spacing(8)
+        self.grid_informations.set_homogeneous(False)
+        self.grid_informations.set_orientation(Gtk.Orientation.VERTICAL)
 
         # ------------------------------------
         #   Headerbar
@@ -725,6 +741,36 @@ class Interface(Gtk.Window):
             Gtk.EntryIconPosition.PRIMARY, False)
 
         # ------------------------------------
+        #   Games - Paned
+        # ------------------------------------
+
+        self.paned_games = Gtk.Paned()
+
+        self.label_game_title = Gtk.Label()
+        self.label_game_description = Gtk.Label()
+        self.label_game_footer = Gtk.Label()
+
+        self.image_game_screen = Gtk.Image()
+
+        # Properties
+        self.paned_games.set_orientation(Gtk.Orientation.VERTICAL)
+
+        self.label_game_title.set_hexpand(True)
+        self.label_game_title.set_alignment(0, 0)
+        self.label_game_title.set_use_markup(True)
+        self.label_game_title.set_ellipsize(Pango.EllipsizeMode.END)
+
+        self.label_game_description.set_use_markup(True)
+        self.label_game_description.set_alignment(0, 0)
+        self.label_game_description.set_ellipsize(Pango.EllipsizeMode.END)
+
+        self.label_game_footer.set_use_markup(True)
+        self.label_game_footer.set_alignment(0, 0)
+        self.label_game_footer.set_ellipsize(Pango.EllipsizeMode.END)
+
+        self.image_game_screen.set_alignment(0, 0)
+
+        # ------------------------------------
         #   Games - Treeview
         # ------------------------------------
 
@@ -1034,7 +1080,7 @@ class Interface(Gtk.Window):
         # Main widgets
         self.grid.pack_start(self.menubar, False, False, 0)
         self.grid.pack_start(self.toolbar, False, False, 0)
-        self.grid.pack_start(self.scroll_games, True, True, 0)
+        self.grid.pack_start(self.paned_games, True, True, 0)
         self.grid.pack_start(self.statusbar, False, False, 0)
 
         # Headerbar
@@ -1133,7 +1179,21 @@ class Interface(Gtk.Window):
         self.tool_item_parameters.add(self.tool_image_parameters)
         self.tool_item_menu.add(self.tool_image_menu)
 
-        # Games
+        # Games paned
+        self.paned_games.pack1(self.scroll_games, True, False)
+        self.paned_games.pack2(self.grid_paned, False, False)
+
+        self.grid_paned.pack_start(self.grid_informations, True, True, 0)
+        self.grid_paned.pack_start(self.image_game_screen, False, False, 0)
+
+        self.grid_informations.pack_start(
+            self.label_game_title, False, False, 0)
+        self.grid_informations.pack_start(
+            self.label_game_description, True, True, 0)
+        self.grid_informations.pack_start(
+            self.label_game_footer, False, False, 0)
+
+        # Games treeview
         self.scroll_games.add(self.treeview_games)
 
         self.treeview_games.append_column(self.column_game_favorite)
@@ -1574,6 +1634,34 @@ class Interface(Gtk.Window):
                 self.menubar.hide()
                 self.statusbar.hide()
 
+        if self.config.getboolean("gem", "show_sidebar", fallback=True):
+            self.grid_informations.show_all()
+
+            # Avoid to reload paned_game if user has not change orientation
+            previous_mode = self.paned_games.get_orientation()
+
+            if self.config.get("gem", "sidebar_orientation") == "horizontal" and \
+                not previous_mode == Gtk.Orientation.HORIZONTAL:
+                self.paned_games.set_position(-1)
+                self.paned_games.set_orientation(Gtk.Orientation.HORIZONTAL)
+
+                self.grid_paned.set_orientation(Gtk.Orientation.VERTICAL)
+                self.grid_paned.reorder_child(self.image_game_screen, 0)
+
+                self.image_game_screen.set_alignment(0.5, 0)
+
+            elif not previous_mode == Gtk.Orientation.VERTICAL:
+                self.paned_games.set_position(-1)
+                self.paned_games.set_orientation(Gtk.Orientation.VERTICAL)
+
+                self.grid_paned.set_orientation(Gtk.Orientation.HORIZONTAL)
+                self.grid_paned.reorder_child(self.image_game_screen, -1)
+
+                self.image_game_screen.set_alignment(0, 0)
+
+        else:
+            self.grid_informations.hide()
+
         self.sensitive_interface()
 
         # ------------------------------------
@@ -1912,15 +2000,74 @@ class Interface(Gtk.Window):
         """ Update headerbar title and subtitle
         """
 
-        texts = str()
+        game = self.selection["game"]
+        console = self.selection["console"]
+
+        texts = list()
+        informations = list()
 
         if(len(self.model_games) == 1):
             texts = [_("1 game available")]
         elif(len(self.model_games) > 1):
             texts = [_("%s games availables") % len(self.model_games)]
 
-        if self.selection["game"] is not None:
-            texts.append(self.selection["game"].name)
+        if game is not None:
+            texts.append(game.name)
+
+            if console is not None:
+                self.label_game_title.set_markup(
+                    "<span weight='bold' size='x-large'>%s</span>" % \
+                    game.name.replace('&', "&amp;").replace(
+                        '<', "&lt;").replace('>', "&gt;"))
+
+                # Get rom specified emulator
+                emulator = console.emulator
+
+                if game.emulator is not None:
+                    emulator = game.emulator
+
+                # Check if rom has some screenshots
+                results = emulator.get_screenshots(game)
+
+                if len(results) > 0:
+                    pixbuf = Pixbuf.new_from_file_at_scale(
+                        results[randint(0, len(results) - 1)], -1, 200, True)
+
+                    if pixbuf is not None:
+                        self.image_game_screen.set_from_pixbuf(pixbuf)
+
+                else:
+                    self.image_game_screen.set_from_pixbuf(None)
+
+                if game.play_time is not time():
+                    informations.append([ _("Play time"),
+                        string_from_time(game.play_time) ])
+
+                if game.last_launch_date is not None:
+                    informations.append([ _("Last launch"),
+                        string_from_date(game.last_launch_date) ])
+
+                if emulator is not None:
+                    self.label_game_footer.set_markup("<b>%s</b>: %s" % (
+                        _("Emulator"), emulator.name))
+
+        else:
+            self.label_game_title.set_text(str())
+
+            self.image_game_screen.set_from_pixbuf(None)
+
+        # Show game informations
+        if len(informations) > 0:
+            text = list()
+
+            for title, data in informations:
+                text.append("<b>%s</b>: %s" % (title, data))
+
+            self.label_game_description.set_markup('\n'.join(text))
+
+        else:
+            self.label_game_description.set_text(str())
+            self.label_game_footer.set_text(str())
 
         # Default theme
         self.headerbar.set_subtitle(" - ".join(texts))
@@ -2601,7 +2748,7 @@ class Interface(Gtk.Window):
             Event which triggered this signal
         """
 
-        filepath, name, snap, run_game = None, None, None, None
+        filename, name, snap, run_game = None, None, None, None
 
         # Keyboard
         if event.type == EventType.KEY_RELEASE:
@@ -2609,7 +2756,7 @@ class Interface(Gtk.Window):
 
             if treeiter is not None:
                 name = model.get_value(treeiter, Columns.Name)
-                filepath = model.get_value(treeiter, Columns.Filename)
+                filename = model.get_value(treeiter, Columns.Filename)
 
                 if event.keyval == Gdk.KEY_Return:
                     run_game = True
@@ -2624,7 +2771,7 @@ class Interface(Gtk.Window):
 
                 treeiter = model.get_iter(selection[0])
                 name = model.get_value(treeiter, Columns.Name)
-                filepath = model.get_value(treeiter, Columns.Filename)
+                filename = model.get_value(treeiter, Columns.Filename)
 
                 if event.button == 1 and event.type == EventType._2BUTTON_PRESS:
                     run_game = True
@@ -2635,18 +2782,13 @@ class Interface(Gtk.Window):
 
         console = self.selection["console"]
 
-        if filepath is not None and console is not None:
-            # Get name and extension from filepath
-            filename, extension = splitext(filepath)
-
-            # Get Game object
+        if filename is not None and console is not None:
             game = self.api.get_game(console.id, generate_identifier(filename))
 
             # Store game
             self.selection["game"] = game
 
             if game is not None:
-
                 self.sensitive_interface(True)
 
                 # Get Game emulator
