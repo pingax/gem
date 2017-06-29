@@ -167,6 +167,10 @@ class Preferences(object):
             _("Vertical"): "vertical",
             _("Both"): "both" }
 
+        self.sidebar = {
+            _("Right"): "horizontal",
+            _("Bottom"): "vertical" }
+
         self.selection = {
             "console": None,
             "emulator": None }
@@ -500,7 +504,18 @@ class Preferences(object):
 
         self.check_classic_theme = Gtk.CheckButton()
         self.check_header = Gtk.CheckButton()
+        self.check_sidebar = Gtk.CheckButton()
         self.check_icons = Gtk.CheckButton()
+
+        self.label_sidebar = Gtk.Label()
+
+        self.model_sidebar = Gtk.ListStore(str)
+        self.combo_sidebar = Gtk.ComboBox()
+
+        self.cell_sidebar = Gtk.CellRendererText()
+
+        self.separator_interface_sidebar = Gtk.Separator()
+        self.separator_interface_icons = Gtk.Separator()
 
         # Properties
         self.label_interface.set_markup("<b>%s</b>" % _("Interface"))
@@ -511,14 +526,39 @@ class Preferences(object):
             _("Use classic theme (Need to reboot GEM)"))
         self.check_classic_theme.set_hexpand(True)
         self.check_classic_theme.set_margin_left(32)
+
         self.check_header.set_label(
             _("Show close buttons in header bar"))
         self.check_header.set_hexpand(True)
         self.check_header.set_margin_left(32)
+
+        self.check_sidebar.set_label(
+            _("Show sidebar"))
+        self.check_sidebar.set_hexpand(True)
+        self.check_sidebar.set_margin_left(32)
+
+        self.label_sidebar.set_label(_("Sidebar position"))
+        self.label_sidebar.set_hexpand(True)
+        self.label_sidebar.set_margin_left(32)
+        self.label_sidebar.set_alignment(0, .5)
+
+        self.model_sidebar.set_sort_column_id(0, Gtk.SortType.ASCENDING)
+
+        self.combo_sidebar.set_model(self.model_sidebar)
+        self.combo_sidebar.set_id_column(0)
+        self.combo_sidebar.pack_start(self.cell_sidebar, True)
+        self.combo_sidebar.add_attribute(self.cell_sidebar, "text", 0)
+
         self.check_icons.set_label(
             _("Use translucent icons in games list"))
         self.check_icons.set_hexpand(True)
         self.check_icons.set_margin_left(32)
+
+        self.separator_interface_sidebar.set_hexpand(True)
+        self.separator_interface_sidebar.set_margin_left(32)
+
+        self.separator_interface_icons.set_hexpand(True)
+        self.separator_interface_icons.set_margin_left(32)
 
         # ------------------------------------
         #   Interface - Games list
@@ -956,25 +996,30 @@ class Preferences(object):
         self.grid_interface.attach(self.label_interface, 0, 0, 3, 1)
         self.grid_interface.attach(self.check_classic_theme, 0, 1, 3, 1)
         self.grid_interface.attach(self.check_header, 0, 2, 3, 1)
-        self.grid_interface.attach(self.check_icons, 0, 3, 3, 1)
+        self.grid_interface.attach(self.separator_interface_sidebar, 0, 3, 2, 1)
+        self.grid_interface.attach(self.check_sidebar, 0, 4, 2, 1)
+        self.grid_interface.attach(self.label_sidebar, 0, 5, 2, 1)
+        self.grid_interface.attach(self.combo_sidebar, 2, 5, 1, 1)
+        self.grid_interface.attach(self.separator_interface_icons, 0, 6, 3, 1)
+        self.grid_interface.attach(self.check_icons, 0, 7, 3, 1)
 
-        self.grid_interface.attach(self.label_treeview, 0, 5, 3, 1)
-        self.grid_interface.attach(self.label_treeview_lines, 0, 6, 2, 1)
-        self.grid_interface.attach(self.combo_lines, 2, 6, 1, 1)
-        self.grid_interface.attach(self.separator_interface_game, 0, 7, 3, 1)
-        self.grid_interface.attach(self.check_play, 0, 8, 3, 1)
-        self.grid_interface.attach(self.check_last_play, 0, 9, 3, 1)
-        self.grid_interface.attach(self.check_play_time, 0, 10, 3, 1)
-        self.grid_interface.attach(self.check_installed, 0, 11, 3, 1)
-        self.grid_interface.attach(self.check_flags, 0, 12, 3, 1)
+        self.grid_interface.attach(self.label_treeview, 0, 10, 3, 1)
+        self.grid_interface.attach(self.label_treeview_lines, 0, 11, 2, 1)
+        self.grid_interface.attach(self.combo_lines, 2, 11, 1, 1)
+        self.grid_interface.attach(self.separator_interface_game, 0, 12, 3, 1)
+        self.grid_interface.attach(self.check_play, 0, 13, 3, 1)
+        self.grid_interface.attach(self.check_last_play, 0, 14, 3, 1)
+        self.grid_interface.attach(self.check_play_time, 0, 15, 3, 1)
+        self.grid_interface.attach(self.check_installed, 0, 16, 3, 1)
+        self.grid_interface.attach(self.check_flags, 0, 17, 3, 1)
 
-        self.grid_interface.attach(self.label_editor, 0, 14, 3, 1)
-        self.grid_interface.attach(self.check_lines, 0, 15, 3, 1)
-        self.grid_interface.attach(self.separator_interface_editor, 0, 16, 3, 1)
-        self.grid_interface.attach(self.label_editor_colorscheme, 0, 17, 1, 1)
-        self.grid_interface.attach(self.combo_colorsheme, 1, 17, 2, 1)
-        self.grid_interface.attach(self.label_editor_font, 0, 18, 1, 1)
-        self.grid_interface.attach(self.font_editor, 1, 18, 2, 1)
+        self.grid_interface.attach(self.label_editor, 0, 20, 3, 1)
+        self.grid_interface.attach(self.check_lines, 0, 21, 3, 1)
+        self.grid_interface.attach(self.separator_interface_editor, 0, 22, 3, 1)
+        self.grid_interface.attach(self.label_editor_colorscheme, 0, 23, 1, 1)
+        self.grid_interface.attach(self.combo_colorsheme, 1, 23, 2, 1)
+        self.grid_interface.attach(self.label_editor_font, 0, 24, 1, 1)
+        self.grid_interface.attach(self.font_editor, 1, 24, 2, 1)
 
         self.view_interface.add(self.grid_interface)
 
@@ -1051,6 +1096,13 @@ class Preferences(object):
             "toggled", self.__on_check_native_viewer)
 
         # ------------------------------------
+        #   Interface
+        # ------------------------------------
+
+        self.check_sidebar.connect(
+            "toggled", self.__on_check_sidebar)
+
+        # ------------------------------------
         #   Shortcuts
         # ------------------------------------
 
@@ -1115,6 +1167,10 @@ class Preferences(object):
         """ Start interface
         """
 
+        # Update widget sensitive status
+        self.__on_check_sidebar(None)
+        self.__on_check_native_viewer(None)
+
         self.window.show_all()
 
         self.box_notebook_general.show_all()
@@ -1145,17 +1201,22 @@ class Preferences(object):
             # Write emulators and consoles data
             self.api.write_data()
 
-            self.config.modify("gem", "use_classic_theme",
-                int(self.check_classic_theme.get_active()))
             self.config.modify("gem", "load_console_startup",
                 int(self.check_last_console.get_active()))
             self.config.modify("gem", "hide_empty_console",
                 int(self.check_hide_console.get_active()))
 
+            self.config.modify("gem", "use_classic_theme",
+                int(self.check_classic_theme.get_active()))
             self.config.modify("gem", "show_header",
                 int(self.check_header.get_active()))
+            self.config.modify("gem", "show_sidebar",
+                int(self.check_sidebar.get_active()))
             self.config.modify("gem", "use_translucent_icons",
                 int(self.check_icons.get_active()))
+
+            self.config.modify("gem", "sidebar_orientation",
+                self.sidebar[self.combo_sidebar.get_active_id()])
 
             self.config.modify("columns", "play",
                 int(self.check_play.get_active()))
@@ -1232,11 +1293,9 @@ class Preferences(object):
         """
 
         # ------------------------------------
-        #   Interface
+        #   General
         # ------------------------------------
 
-        self.check_classic_theme.set_active(self.config.getboolean(
-            "gem", "use_classic_theme", fallback=True))
         self.check_last_console.set_active(self.config.getboolean(
             "gem", "load_console_startup", fallback=True))
         self.check_hide_console.set_active(self.config.getboolean(
@@ -1258,10 +1317,24 @@ class Preferences(object):
         #   Interface
         # ------------------------------------
 
+        self.check_classic_theme.set_active(self.config.getboolean(
+            "gem", "use_classic_theme", fallback=True))
         self.check_header.set_active(self.config.getboolean(
             "gem", "show_header", fallback=True))
+        self.check_sidebar.set_active(self.config.getboolean(
+            "gem", "show_sidebar", fallback=True))
         self.check_icons.set_active(self.config.getboolean(
             "gem", "use_translucent_icons", fallback=True))
+
+        item = None
+        for key, value in self.sidebar.items():
+            row = self.model_sidebar.append([key])
+
+            if self.config.item("gem", "sidebar_orientation", "none") == value:
+                item = row
+
+        if item is not None:
+            self.combo_sidebar.set_active_iter(item)
 
         # ------------------------------------
         #   Games list
@@ -1532,6 +1605,21 @@ class Preferences(object):
         self.file_viewer_binary.set_sensitive(status)
         self.label_viewer_options.set_sensitive(status)
         self.entry_viewer_options.set_sensitive(status)
+
+
+    def __on_check_sidebar(self, widget):
+        """ Update sidebar widget from checkbutton state
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        status = self.check_sidebar.get_active()
+
+        self.label_sidebar.set_sensitive(status)
+        self.combo_sidebar.set_sensitive(status)
 
 
     def __on_modify_item(self, widget, manager, modification):
