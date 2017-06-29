@@ -124,6 +124,8 @@ class Preferences(object):
 
         self.shortcuts = {
             _("Interface"): {
+                "sidebar": [
+                    _("Show sidebar"), "F9"],
                 "gem": [
                     _("Open main log"), "<Control>L"],
                 "preferences": [

@@ -390,6 +390,7 @@ class Interface(Gtk.Window):
         self.menu_item_quit = Gtk.ImageMenuItem()
 
         self.menu_item_dark_theme = Gtk.CheckMenuItem()
+        self.menu_item_sidebar = Gtk.CheckMenuItem()
 
         # Properties
         self.menu_image_preferences.set_from_icon_name(
@@ -419,6 +420,9 @@ class Interface(Gtk.Window):
 
         self.menu_item_dark_theme.set_label(_("Use _dark theme"))
         self.menu_item_dark_theme.set_use_underline(True)
+
+        self.menu_item_sidebar.set_label(_("Show _sidebar"))
+        self.menu_item_sidebar.set_use_underline(True)
 
         # ------------------------------------
         #   Menubar
@@ -613,6 +617,7 @@ class Interface(Gtk.Window):
         self.menubar_tools_item_preferences = Gtk.ImageMenuItem()
 
         self.menubar_tools_item_dark_theme = Gtk.CheckMenuItem()
+        self.menubar_tools_item_sidebar = Gtk.CheckMenuItem()
 
         # Properties
         self.menubar_tools_image_preferences.set_from_icon_name(
@@ -625,6 +630,9 @@ class Interface(Gtk.Window):
 
         self.menubar_tools_item_dark_theme.set_label(_("Use _dark theme"))
         self.menubar_tools_item_dark_theme.set_use_underline(True)
+
+        self.menubar_tools_item_sidebar.set_label(_("Show _sidebar"))
+        self.menubar_tools_item_sidebar.set_use_underline(True)
 
         # ------------------------------------
         #   Menubar - Help items
@@ -1106,6 +1114,8 @@ class Interface(Gtk.Window):
         self.menu.append(Gtk.SeparatorMenuItem())
         self.menu.append(self.menu_item_dark_theme)
         self.menu.append(Gtk.SeparatorMenuItem())
+        self.menu.append(self.menu_item_sidebar)
+        self.menu.append(Gtk.SeparatorMenuItem())
         self.menu.append(self.menu_item_about)
         self.menu.append(Gtk.SeparatorMenuItem())
         self.menu.append(self.menu_item_quit)
@@ -1150,6 +1160,8 @@ class Interface(Gtk.Window):
         self.menubar_item_tools.set_submenu(self.menubar_tools_menu)
 
         self.menubar_tools_menu.insert(self.menubar_tools_item_dark_theme, -1)
+        self.menubar_tools_menu.insert(Gtk.SeparatorMenuItem(), -1)
+        self.menubar_tools_menu.insert(self.menubar_tools_item_sidebar, -1)
         self.menubar_tools_menu.insert(Gtk.SeparatorMenuItem(), -1)
         self.menubar_tools_menu.insert(self.menubar_tools_item_preferences, -1)
 
@@ -1289,6 +1301,8 @@ class Interface(Gtk.Window):
             "activate", self.__on_show_preferences)
         self.dark_signal_menubar = self.menubar_tools_item_dark_theme.connect(
             "toggled", self.__on_activate_dark_theme)
+        self.side_signal_menubar = self.menubar_tools_item_sidebar.connect(
+            "toggled", self.__on_activate_sidebar)
 
         self.menubar_help_item_log.connect(
             "activate", self.__on_show_log)
@@ -1365,6 +1379,8 @@ class Interface(Gtk.Window):
             "activate", self.__on_show_log)
         self.dark_signal_menu = self.menu_item_dark_theme.connect(
             "toggled", self.__on_activate_dark_theme)
+        self.side_signal_menu = self.menu_item_sidebar.connect(
+            "toggled", self.__on_activate_sidebar)
         self.menu_item_about.connect(
             "activate", self.__on_show_about)
         self.menu_item_quit.connect(
@@ -1634,8 +1650,41 @@ class Interface(Gtk.Window):
                 self.menubar.hide()
                 self.statusbar.hide()
 
-        if self.config.getboolean("gem", "show_sidebar", fallback=True):
-            self.grid_informations.show_all()
+        self.sensitive_interface()
+
+        # ------------------------------------
+        #   Header
+        # ------------------------------------
+
+        if not self.config.getboolean("gem", "show_header", fallback=True):
+            self.headerbar.set_show_close_button(False)
+        else:
+            self.headerbar.set_show_close_button(True)
+
+        # ------------------------------------
+        #   Sidebar
+        # ------------------------------------
+
+        sidebar_status = self.config.getboolean(
+            "gem", "show_sidebar", fallback=True)
+
+        # Block signal to avoid stack overflow when toggled
+        self.menu_item_sidebar.handler_block(
+            self.side_signal_menu)
+        self.menubar_tools_item_sidebar.handler_block(
+            self.side_signal_menubar)
+
+        self.menu_item_sidebar.set_active(sidebar_status)
+        self.menubar_tools_item_sidebar.set_active(sidebar_status)
+
+        # Unblock signal
+        self.menu_item_sidebar.handler_unblock(
+            self.side_signal_menu)
+        self.menubar_tools_item_sidebar.handler_unblock(
+            self.side_signal_menubar)
+
+        if sidebar_status:
+            self.grid_paned.show_all()
 
             # Avoid to reload paned_game if user has not change orientation
             previous_mode = self.paned_games.get_orientation()
@@ -1660,18 +1709,7 @@ class Interface(Gtk.Window):
                 self.image_game_screen.set_alignment(0, 0)
 
         else:
-            self.grid_informations.hide()
-
-        self.sensitive_interface()
-
-        # ------------------------------------
-        #   Header
-        # ------------------------------------
-
-        if not self.config.getboolean("gem", "show_header", fallback=True):
-            self.headerbar.set_show_close_button(False)
-        else:
-            self.headerbar.set_show_close_button(True)
+            self.grid_paned.hide()
 
         # ------------------------------------
         #   Consoles
@@ -1904,6 +1942,10 @@ class Interface(Gtk.Window):
                 self.config.item("keys", "memory", "F8"),
             self.menubar_edit_item_mednafen:
                 self.config.item("keys", "memory", "F8"),
+            self.menu_item_sidebar:
+                self.config.item("keys", "sidebar", "F9"),
+            self.menubar_tools_item_sidebar:
+                self.config.item("keys", "sidebar", "F9"),
             self.menubar_edit_item_parameters:
                 self.config.item("keys", "exceptions", "F12"),
             self.tool_item_parameters:
@@ -3752,22 +3794,59 @@ class Interface(Gtk.Window):
         self.menubar_tools_item_dark_theme.handler_block(
             self.dark_signal_menubar)
 
-        dark_theme_status = self.config.getboolean(
+        dark_theme_status = not self.config.getboolean(
             "gem", "dark_theme", fallback=False)
 
-        on_change_theme(not dark_theme_status)
+        on_change_theme(dark_theme_status)
 
-        self.config.modify("gem", "dark_theme", int(not dark_theme_status))
+        self.config.modify("gem", "dark_theme", int(dark_theme_status))
         self.config.update()
 
-        self.menu_item_dark_theme.set_active(not dark_theme_status)
-        self.menubar_tools_item_dark_theme.set_active(not dark_theme_status)
+        self.menu_item_dark_theme.set_active(dark_theme_status)
+        self.menubar_tools_item_dark_theme.set_active(dark_theme_status)
 
         # Unblock signal
         self.menu_item_dark_theme.handler_unblock(
             self.dark_signal_menu)
         self.menubar_tools_item_dark_theme.handler_unblock(
             self.dark_signal_menubar)
+
+
+    def __on_activate_sidebar(self, widget):
+        """ Update sidebar status
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        # Block signal to avoid stack overflow when toggled
+        self.menu_item_sidebar.handler_block(
+            self.side_signal_menu)
+        self.menubar_tools_item_sidebar.handler_block(
+            self.side_signal_menubar)
+
+        sidebar_status = not self.config.getboolean(
+            "gem", "show_sidebar", fallback=True)
+
+        if sidebar_status:
+            self.grid_paned.show_all()
+
+        else:
+            self.grid_paned.hide()
+
+        self.config.modify("gem", "show_sidebar", int(sidebar_status))
+        self.config.update()
+
+        self.menu_item_sidebar.set_active(sidebar_status)
+        self.menubar_tools_item_sidebar.set_active(sidebar_status)
+
+        # Unblock signal
+        self.menu_item_sidebar.handler_unblock(
+            self.side_signal_menu)
+        self.menubar_tools_item_sidebar.handler_unblock(
+            self.side_signal_menubar)
 
 
     def __on_dnd_send_data(self, widget, context, data, info, time):
