@@ -3,8 +3,11 @@
 ## Version 0.8 - Shadow Blade
 
 * Add an option to hide game in games list with specific regex
+* Add a sidebar which show game informations and a random screenshot
+* Fix reload console games when a roms has been droped
+* Fix cannot drop a game which can be on multiple consoles (like .bin extension)
 
-## Version 0.7.1 - Count Dracula
+## Version 0.7.1 - Count Dracula (13 June, 2017)
 
 * Fix wrong generate command for emulator without default arguments
 

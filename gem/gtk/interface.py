@@ -3076,6 +3076,8 @@ class Interface(Gtk.Window):
                 self.set_game_data(
                     Columns.Save, self.alternative["save"], game.filename)
 
+            self.set_informations()
+
         # ----------------------------
         #   Refresh widgets
         # ----------------------------
@@ -3909,6 +3911,7 @@ class Interface(Gtk.Window):
         previous_console = None
 
         need_to_reload = False
+        consoles_to_reload = dict()
 
         for uri in data.get_uris():
             result = urlparse(uri)
@@ -3946,7 +3949,7 @@ class Interface(Gtk.Window):
                                 basename(path), consoles_list, previous_console)
 
                             if dialog.run() == Gtk.ResponseType.APPLY:
-                                console = dialog.current
+                                console = self.api.get_console(dialog.current)
 
                             previous_console = console
 
@@ -3967,6 +3970,7 @@ class Interface(Gtk.Window):
                     exists(rom_path) and access(rom_path, W_OK):
                     move = True
 
+                    # Check if this game already exists in roms folder
                     if exists(path_join(rom_path, basename(path))):
                         dialog = Question(self, basename(path),
                             _("This rom already exists in %s. Do you want to "
@@ -3978,10 +3982,12 @@ class Interface(Gtk.Window):
 
                             self.logger.debug(
                                 "Move %s to %s" % (path, rom_path))
+
                             remove(path_join(rom_path, basename(path)))
 
                         dialog.destroy()
 
+                    # The game can be moved in roms folder
                     if move:
                         rename(path, rom_path)
 
@@ -3990,6 +3996,9 @@ class Interface(Gtk.Window):
 
                         if console == self.selection["console"]:
                             need_to_reload = True
+
+                        if not console.id in consoles_to_reload:
+                            consoles_to_reload[console.id] = console
 
                         hide = self.config.getboolean(
                             "gem", "hide_empty_console", fallback=False)
@@ -4014,6 +4023,11 @@ class Interface(Gtk.Window):
                     self.set_message(basename(path), _("Cannot write into %s. "
                         "Canceling operation.") % rom_path)
 
+        # Reload console games
+        for console in consoles_to_reload.values():
+            console.set_games(self.api)
+
+        # Reload interface when games list was modified
         if need_to_reload:
             self.load_interface()
 
