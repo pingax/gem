@@ -2053,6 +2053,10 @@ class Interface(Gtk.Window):
         elif(len(self.model_games) > 1):
             texts = [_("%s games availables") % len(self.model_games)]
 
+        # ----------------------------
+        #   Game informations
+        # ----------------------------
+
         if game is not None:
             texts.append(game.name)
 
@@ -2068,9 +2072,13 @@ class Interface(Gtk.Window):
                 if game.emulator is not None:
                     emulator = game.emulator
 
-                # Check if rom has some screenshots
+                # ----------------------------
+                #   Show screenshot
+                # ----------------------------
+
                 results = emulator.get_screenshots(game)
 
+                # Check if rom has some screenshots
                 if len(results) > 0:
                     pixbuf = Pixbuf.new_from_file_at_scale(
                         results[randint(0, len(results) - 1)], -1, 200, True)
@@ -2081,7 +2089,11 @@ class Interface(Gtk.Window):
                 else:
                     self.image_game_screen.set_from_pixbuf(None)
 
-                if game.play_time is not time():
+                # ----------------------------
+                #   Show informations
+                # ----------------------------
+
+                if not game.play_time == time.min:
                     informations.append([ _("Play time"),
                         string_from_time(game.play_time) ])
 
@@ -2093,23 +2105,27 @@ class Interface(Gtk.Window):
                     self.label_game_footer.set_markup("<b>%s</b>: %s" % (
                         _("Emulator"), emulator.name))
 
+                if len(informations) > 0:
+                    text = list()
+
+                    for title, data in informations:
+                        text.append("<b>%s</b>: %s" % (title, data))
+
+                    self.label_game_description.set_markup('\n'.join(text))
+
+                else:
+                    self.label_game_description.set_text(str())
+
         else:
             self.label_game_title.set_text(str())
+            self.label_game_footer.set_text(str())
+            self.label_game_description.set_text(str())
 
             self.image_game_screen.set_from_pixbuf(None)
 
-        # Show game informations
-        if len(informations) > 0:
-            text = list()
-
-            for title, data in informations:
-                text.append("<b>%s</b>: %s" % (title, data))
-
-            self.label_game_description.set_markup('\n'.join(text))
-
-        else:
-            self.label_game_description.set_text(str())
-            self.label_game_footer.set_text(str())
+        # ----------------------------
+        #   Interface theme specific
+        # ----------------------------
 
         # Default theme
         self.headerbar.set_subtitle(" - ".join(texts))
