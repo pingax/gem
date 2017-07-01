@@ -98,6 +98,14 @@ msgid "1 second"
 msgstr "1 segundo"
 
 #
+# File: gem/gtk/preferences.py, line: 1784
+msgid ""
+"A console represent a games library. You can specify a default emulator "
+"which is used by this console and extensions which is readable by this "
+"emulator."
+msgstr ""
+
+#
 # File: gem/preferences.py, line: 476
 msgid "Action"
 msgstr "Acción"
@@ -162,6 +170,11 @@ msgid "Both"
 msgstr "Ambos"
 
 #
+# File: gem/gtk/preferences.py, line: 174
+msgid "Bottom"
+msgstr ""
+
+#
 # File: gem/gtk/preferences.py, line: 879
 msgid "Cancel"
 msgstr "Cancelar"
@@ -211,11 +224,6 @@ msgstr "No puedo escribir en %s. Anulando acción."
 # File: gem/windows.py, line: 1122
 msgid "Choose an icon"
 msgstr "Elegir un icono"
-
-#
-# File: gem/preferences.py, line: 1309
-msgid "Choose the ROMs folder"
-msgstr "Elegir la carpeta de la ROM"
 
 #
 # File: gem/interface.py, line: 1614
@@ -271,6 +279,12 @@ msgstr "Copiar la ruta del juego seleccionado"
 # File: gem/interface.py, line: 1667
 msgid "Custom _parameters"
 msgstr "_Parametros personalizados"
+
+#
+# File: gem/preferences.py, line: 1013
+#, fuzzy
+msgid "Default emulator"
+msgstr "Establecer el emulador por defecto"
 
 #
 # File: gem/preferences.py, line: 399
@@ -346,6 +360,30 @@ msgid "Emulators"
 msgstr "Emuladores"
 
 #
+# File: gem/gtk/preferences.py, line: 1796
+msgid "Expressions are split by carriage return."
+msgstr ""
+
+#
+# File: gem/preferences.py, line: 1342
+#, fuzzy
+msgid "Extensions"
+msgstr "Extensiones de las ROM"
+
+#
+# File: gem/gtk/preferences.py, line: 1792
+msgid ""
+"Extensions are split by spaces and must not having the first dot (using \"nes"
+"\" than \".nes\")."
+msgstr ""
+
+#
+# File: gem/gtk/preferences.py, line: 1780
+# File: gem/gtk/preferences.py, line: 1790
+msgid "Extensions examples"
+msgstr ""
+
+#
 # File: gem/interface.py, line: 522
 msgid "Filter"
 msgstr "Filtro"
@@ -380,6 +418,12 @@ msgstr "GEM ya está ejecutandose con el PID %s"
 # File: gem/preferences.py, line: 113
 msgid "Game"
 msgstr "Juego"
+
+#
+# File: gem/preferences.py, line: 328
+#, fuzzy
+msgid "Games folder"
+msgstr "Lista de juegos"
 
 #
 # File: gem/preferences.py, line: 328
@@ -423,6 +467,12 @@ msgid "Horizontal"
 msgstr "Horizontal"
 
 #
+# File: gem/interface.py, line: 776
+#, fuzzy
+msgid "Ignored games files"
+msgstr "Borrar partidas guardadas del juego"
+
+#
 # File: gem/windows.py, line: 999
 msgid "Image file"
 msgstr "Archivo de imagen"
@@ -448,6 +498,13 @@ msgstr "Instalado"
 # File: gem/preferences.py, line: 268
 msgid "Interface"
 msgstr "Interfaz"
+
+#
+# File: gem/gtk/preferences.py, line: 1795
+msgid ""
+"It's possible to hide specific files from the games list with regular "
+"expressions."
+msgstr ""
 
 #
 # File: gem/interface.py, line: 2128
@@ -547,6 +604,13 @@ msgid "Modify"
 msgstr "Modificar"
 
 #
+# File: gem/gtk/preferences.py, line: 1787
+msgid ""
+"Most of the time, extensions are common between differents emulators and "
+"represent the console acronym (exemple: Nintendo NES -> nes)."
+msgstr ""
+
+#
 # File: gem/interface.py, line: 635
 # File: gem/preferences.py, line: 540
 # File: gem/preferences.py, line: 603
@@ -615,11 +679,6 @@ msgid "Quit application"
 msgstr "Salir de la aplicación"
 
 #
-# File: gem/preferences.py, line: 1342
-msgid "ROM's extensions"
-msgstr "Extensiones de las ROM"
-
-#
 # File: gem/preferences.py, line: 372
 msgid "ROMs path"
 msgstr "Ruta de las ROMs"
@@ -682,6 +741,11 @@ msgstr "Renombrar %(old)s en %(new)s"
 # File: gem/preferences.py, line: 86
 msgid "Rename a game"
 msgstr "Renombrar un juego"
+
+#
+# File: gem/gtk/preferences.py, line: 173
+msgid "Right"
+msgstr ""
 
 #
 # File: gem/preferences.py, line: 1627
@@ -783,6 +847,12 @@ msgid "Show _screenshots"
 msgstr "Mostrar las _capturas de pantalla"
 
 #
+# File: gem/preferences.py, line: 431
+#, fuzzy
+msgid "Show _sidebar"
+msgstr "Mostrar los números de línea"
+
+#
 # File: gem/preferences.py, line: 257
 msgid "Show close buttons in header bar"
 msgstr "Mostrar los botones de cerrar en la barra principal"
@@ -836,6 +906,17 @@ msgstr "Mostrar el historial de salida del juego seleccionado"
 # File: gem/interface.py, line: 455
 msgid "Show selected game screenshots"
 msgstr "Mostrar las capturas de pantalla seleccionadas del juego"
+
+#
+# File: gem/preferences.py, line: 431
+#, fuzzy
+msgid "Show sidebar"
+msgstr "Mostrar los números de línea"
+
+#
+# File: gem/gtk/preferences.py, line: 542
+msgid "Sidebar position"
+msgstr ""
 
 #
 # File: gem/interface.py, line: 453
@@ -992,7 +1073,8 @@ msgstr "Usar el visor nativo"
 
 #
 # File: gem/preferences.py, line: 1348
-msgid "Use semicolon to separate extensions"
+#, fuzzy
+msgid "Use space to separate extensions"
 msgstr "Usar el punto y coma para separar las extensiones"
 
 #
@@ -1178,6 +1260,11 @@ msgstr "agradecimientos a los traductores"
 # File: gem/main.py, line: 133
 #~ msgid "Check icons folders"
 #~ msgstr "Comprobar las carpetas de los iconos"
+
+#
+# File: gem/preferences.py, line: 1309
+#~ msgid "Choose the ROMs folder"
+#~ msgstr "Elegir la carpeta de la ROM"
 
 #
 # File: gem/interface.py, line: 1782
