@@ -1781,18 +1781,24 @@ class PreferencesConsole(Dialog):
                 "Expressions"
             ],
             "Description": [
-                _("A console represent a games library. You can specify a default emulator which is used by this console and extensions which is readable by this emulator.")
+                _("A console represent a games library. You can specify a "
+                "default emulator which is used by this console and extensions "
+                "which is readable by this emulator.")
             ],
             "Extensions": [
-                _("Most of the time, extensions are common between differents emulators and represent the console acronym (exemple: Nintendo NES -> nes)."),
-                _("Extensions are split by spaces and must not having the first dot (using « nes » than « .nes »).")
+                _("Most of the time, extensions are common between differents "
+                "emulators and represent the console acronym (exemple: "
+                "Nintendo NES -> nes)."),
+                _("Extensions are split by spaces and must not having the "
+                "first dot (using \"nes\" than \".nes\").")
             ],
             _("Extensions examples"): {
                 "Nintendo NES": "nes",
                 "Sega Megadrive": "md smd bin 32x md cue"
             },
             "Expressions": [
-                _("It's possible to hide specific files from the games list with regular expressions."),
+                _("It's possible to hide specific files from the games list "
+                "with regular expressions."),
                 _("Expressions are split by carriage return.")
             ]
         }
@@ -2148,7 +2154,8 @@ class PreferencesConsole(Dialog):
             self.buffer_ignores.get_start_iter(),
             self.buffer_ignores.get_end_iter(), True)
         if len(ignores_text) > 0:
-            ignores = ignores_text.split('\n')
+            for data in ignores_text.split('\n'):
+                ignores.append(data)
 
         self.data = {
             "id": identifier,
