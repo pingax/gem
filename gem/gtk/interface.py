@@ -175,6 +175,11 @@ class Interface(Gtk.Window):
         self.selection = dict()
         # Store shortcut with Gtk.Widget as key
         self.shortcuts_data = dict()
+        # Store sidebar description ordre
+        self.sidebar_widgets = {
+            "play_time": _("Play time"),
+            "last_play": _("Last launch")
+        }
 
         # Store user keys input
         self.keys = list()
@@ -749,7 +754,7 @@ class Interface(Gtk.Window):
             Gtk.EntryIconPosition.PRIMARY, False)
 
         # ------------------------------------
-        #   Games - Paned
+        #   Games - Sidebar
         # ------------------------------------
 
         self.paned_games = Gtk.Paned()
@@ -759,6 +764,8 @@ class Interface(Gtk.Window):
         self.label_game_footer = Gtk.Label()
 
         self.image_game_screen = Gtk.Image()
+
+        self.separator_game = Gtk.Separator()
 
         # Properties
         self.paned_games.set_orientation(Gtk.Orientation.VERTICAL)
@@ -777,6 +784,43 @@ class Interface(Gtk.Window):
         self.label_game_footer.set_ellipsize(Pango.EllipsizeMode.END)
 
         self.image_game_screen.set_alignment(0, 0)
+
+        self.separator_game.set_no_show_all(True)
+
+        # ------------------------------------
+        #   Games - Sidebar description
+        # ------------------------------------
+
+        self.widgets_sidebar = dict()
+
+        for widget in self.sidebar_widgets:
+            self.widgets_sidebar[widget] = {
+                "box": Gtk.Box(),
+                "key": Gtk.Label(),
+                "value": Gtk.Label()
+            }
+
+            # Properties
+            self.widgets_sidebar[widget]["box"].set_spacing(8)
+            self.widgets_sidebar[widget]["box"].set_orientation(
+                Gtk.Orientation.HORIZONTAL)
+
+            self.widgets_sidebar[widget]["key"].set_use_markup(True)
+            self.widgets_sidebar[widget]["key"].set_alignment(0, 0)
+            self.widgets_sidebar[widget]["key"].set_ellipsize(
+                Pango.EllipsizeMode.END)
+            self.widgets_sidebar[widget]["key"].set_markup("<b>%s</b>:" % (
+                self.sidebar_widgets[widget]))
+
+            self.widgets_sidebar[widget]["value"].set_use_markup(True)
+            self.widgets_sidebar[widget]["value"].set_alignment(0, 0)
+            self.widgets_sidebar[widget]["value"].set_ellipsize(
+                Pango.EllipsizeMode.END)
+
+            self.widgets_sidebar[widget]["box"].pack_start(
+                self.widgets_sidebar[widget]["key"], False, False, 0)
+            self.widgets_sidebar[widget]["box"].pack_start(
+                self.widgets_sidebar[widget]["value"], True, True, 0)
 
         # ------------------------------------
         #   Games - Treeview
@@ -1201,8 +1245,13 @@ class Interface(Gtk.Window):
         self.grid_informations.pack_start(
             self.label_game_title, False, False, 0)
         self.grid_informations.pack_start(
-            self.label_game_description, True, True, 0)
-        self.grid_informations.pack_start(
+            self.separator_game, False, False, 0)
+
+        for widget in self.sidebar_widgets:
+            self.grid_informations.pack_start(
+                self.widgets_sidebar[widget]["box"], False, False, 0)
+
+        self.grid_informations.pack_end(
             self.label_game_footer, False, False, 0)
 
         # Games treeview
@@ -1708,6 +1757,10 @@ class Interface(Gtk.Window):
 
                 self.image_game_screen.set_alignment(0, 0)
 
+            if not "game" in self.selection:
+                for widget in self.widgets_sidebar.values():
+                    widget["box"].hide()
+
         else:
             self.grid_paned.hide()
 
@@ -2061,6 +2114,8 @@ class Interface(Gtk.Window):
             texts.append(game.name)
 
             if console is not None:
+                self.separator_game.show()
+
                 self.label_game_title.set_markup(
                     "<span weight='bold' size='x-large'>%s</span>" % \
                     game.name.replace('&', "&amp;").replace(
@@ -2093,30 +2148,33 @@ class Interface(Gtk.Window):
                 #   Show informations
                 # ----------------------------
 
+                # Play time
                 if not game.play_time == time.min:
-                    informations.append([ _("Play time"),
-                        string_from_time(game.play_time) ])
+                    self.widgets_sidebar["play_time"]["box"].show_all()
+                    self.widgets_sidebar["play_time"]["value"].set_markup(
+                        string_from_time(game.play_time))
 
+                else:
+                    self.widgets_sidebar["play_time"]["box"].hide()
+                    self.widgets_sidebar["play_time"]["value"].set_text(str())
+
+                # Last launch
                 if game.last_launch_date is not None:
-                    informations.append([ _("Last launch"),
-                        string_from_date(game.last_launch_date) ])
+                    self.widgets_sidebar["last_play"]["box"].show_all()
+                    self.widgets_sidebar["last_play"]["value"].set_markup(
+                        string_from_date(game.last_launch_date))
+                else:
+                    self.widgets_sidebar["last_play"]["box"].hide()
+                    self.widgets_sidebar["last_play"]["value"].set_text(str())
 
+                # Game emulator
                 if emulator is not None:
                     self.label_game_footer.set_markup("<b>%s</b>: %s" % (
                         _("Emulator"), emulator.name))
 
-                if len(informations) > 0:
-                    text = list()
-
-                    for title, data in informations:
-                        text.append("<b>%s</b>: %s" % (title, data))
-
-                    self.label_game_description.set_markup('\n'.join(text))
-
-                else:
-                    self.label_game_description.set_text(str())
-
         else:
+            self.separator_game.hide()
+
             self.label_game_title.set_text(str())
             self.label_game_footer.set_text(str())
             self.label_game_description.set_text(str())
@@ -3417,6 +3475,8 @@ class Interface(Gtk.Window):
                 else:
                     self.set_game_data(Columns.Save,
                         self.alternative["save"], game.filename)
+
+                self.set_informations()
 
             dialog.hide()
 
