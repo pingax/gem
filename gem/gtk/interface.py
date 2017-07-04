@@ -1757,9 +1757,8 @@ class Interface(Gtk.Window):
 
                 self.image_game_screen.set_alignment(0, 0)
 
-            if not "game" in self.selection:
-                for widget in self.widgets_sidebar.values():
-                    widget["box"].hide()
+            for widget in self.widgets_sidebar.values():
+                widget["box"].hide()
 
         else:
             self.grid_paned.hide()
