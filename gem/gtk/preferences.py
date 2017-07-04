@@ -2104,11 +2104,9 @@ class PreferencesConsole(Dialog):
             self.buffer_ignores.set_text('\n'.join(self.console.ignores))
 
             # Emulator
-            if self.console.emulator is not None and \
-                self.console.emulator.id in emulators_rows:
-
-                self.combo_emulators.set_active_id(
-                    self.console.emulator.name)
+            emulator = self.console.emulator
+            if emulator is not None and emulator.id in emulators_rows:
+                self.combo_emulators.set_active_id(emulator.name)
 
             self.set_response_sensitive(Gtk.ResponseType.APPLY, True)
 

@@ -141,4 +141,4 @@ class Columns:
     Snapshots       = 9
     Multiplayer     = 10
     Save            = 11
-    Filename        = 12
+    Object          = 12

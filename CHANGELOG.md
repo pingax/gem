@@ -4,8 +4,13 @@
 
 * Add an option to hide game in games list with specific regex
 * Add a sidebar which show game informations and a random screenshot
+* Add a tags system for game
 * Fix reload console games when a roms has been droped
 * Fix cannot drop a game which can be on multiple consoles (like .bin extension)
+* Fix set emulator.id in consoles.conf instead of emulator.name
+* Fix wrong variable in get_emulator, console instead of emulator
+* Fix write data in api set empty list as None
+* Fix send emulator object in console.as_dict instead of emulator.name
 
 ## Version 0.7.1 - Count Dracula (13 June, 2017)
 

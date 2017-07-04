@@ -175,14 +175,15 @@ class Interface(Gtk.Window):
         self.selection = dict()
         # Store shortcut with Gtk.Widget as key
         self.shortcuts_data = dict()
-        # Store sidebar description ordre
-        self.sidebar_keys = {
-            "play_time": _("Play time"),
-            "last_play": _("Last launch")
-        }
 
         # Store user keys input
         self.keys = list()
+        # Store sidebar description ordre
+        self.sidebar_keys = [
+            ("play_time", _("Play time")),
+            ("last_play", _("Last launch")),
+            ("tags", _("Tags"))
+        ]
 
         # Avoid to resize the main window everytime user modify preferences
         self.__first_draw = False
@@ -793,34 +794,33 @@ class Interface(Gtk.Window):
 
         self.widgets_sidebar = dict()
 
-        for widget in self.sidebar_keys:
-            self.widgets_sidebar[widget] = {
+        for key, value in self.sidebar_keys:
+            self.widgets_sidebar[key] = {
                 "box": Gtk.Box(),
                 "key": Gtk.Label(),
                 "value": Gtk.Label()
             }
 
             # Properties
-            self.widgets_sidebar[widget]["box"].set_spacing(8)
-            self.widgets_sidebar[widget]["box"].set_orientation(
+            self.widgets_sidebar[key]["box"].set_spacing(8)
+            self.widgets_sidebar[key]["box"].set_orientation(
                 Gtk.Orientation.HORIZONTAL)
 
-            self.widgets_sidebar[widget]["key"].set_use_markup(True)
-            self.widgets_sidebar[widget]["key"].set_alignment(0, 0)
-            self.widgets_sidebar[widget]["key"].set_ellipsize(
+            self.widgets_sidebar[key]["key"].set_use_markup(True)
+            self.widgets_sidebar[key]["key"].set_alignment(0, 0)
+            self.widgets_sidebar[key]["key"].set_ellipsize(
                 Pango.EllipsizeMode.END)
-            self.widgets_sidebar[widget]["key"].set_markup("<b>%s</b> :" % (
-                self.sidebar_keys[widget]))
+            self.widgets_sidebar[key]["key"].set_markup("<b>%s</b> :" % value)
 
-            self.widgets_sidebar[widget]["value"].set_use_markup(True)
-            self.widgets_sidebar[widget]["value"].set_alignment(0, 0)
-            self.widgets_sidebar[widget]["value"].set_ellipsize(
+            self.widgets_sidebar[key]["value"].set_use_markup(True)
+            self.widgets_sidebar[key]["value"].set_alignment(0, 0)
+            self.widgets_sidebar[key]["value"].set_ellipsize(
                 Pango.EllipsizeMode.END)
 
-            self.widgets_sidebar[widget]["box"].pack_start(
-                self.widgets_sidebar[widget]["key"], False, False, 0)
-            self.widgets_sidebar[widget]["box"].pack_start(
-                self.widgets_sidebar[widget]["value"], True, True, 0)
+            self.widgets_sidebar[key]["box"].pack_start(
+                self.widgets_sidebar[key]["key"], False, False, 0)
+            self.widgets_sidebar[key]["box"].pack_start(
+                self.widgets_sidebar[key]["value"], True, True, 0)
 
         # ------------------------------------
         #   Games - Treeview
@@ -841,7 +841,7 @@ class Interface(Gtk.Window):
             Pixbuf, # Screenshots
             Pixbuf, # Multiplayer
             Pixbuf, # Save states
-            str     # Filename
+            object  # Game object
         )
         self.treeview_games = Gtk.TreeView()
 
@@ -1247,9 +1247,9 @@ class Interface(Gtk.Window):
         self.grid_informations.pack_start(
             self.separator_game, False, False, 0)
 
-        for widget in self.sidebar_keys:
+        for key, value in self.sidebar_keys:
             self.grid_informations.pack_start(
-                self.widgets_sidebar[widget]["box"], False, False, 0)
+                self.widgets_sidebar[key]["box"], False, False, 0)
 
         self.grid_informations.pack_end(
             self.label_game_footer, False, False, 0)
@@ -1757,8 +1757,8 @@ class Interface(Gtk.Window):
 
                 self.image_game_screen.set_alignment(0, 0)
 
-            for widget in self.sidebar_keys.keys():
-                self.widgets_sidebar[widget]["box"].hide()
+            for key, value in self.sidebar_keys:
+                self.widgets_sidebar[key]["box"].hide()
 
         else:
             self.grid_paned.hide()
@@ -1898,41 +1898,51 @@ class Interface(Gtk.Window):
             User data to pass to the visible function (Default: None)
         """
 
-        data_favorite = model.get_value(row, Columns.Favorite)
-        flag_favorite = self.tool_filter_favorite.get_active()
+        found = False
 
-        data_multiplayer = model.get_value(row, Columns.Multiplayer)
-        flag_multiplayer = self.tool_filter_multiplayer.get_active()
-
-        icon = self.alternative["multiplayer"]
+        # Get game object from treeview
+        game = model.get_value(row, Columns.Object)
 
         try:
             name = model.get_value(row, Columns.Name)
-            if name is not None:
+
+            if game.name is not None:
                 text = self.entry_filter.get_text()
 
-                found = False
-                if len(text) == 0 or match("%s$" % text, name) is not None or \
-                    text.lower() in name.lower():
+                # ------------------------------------
+                #   Check filter
+                # ------------------------------------
+
+                # No filter
+                if len(text) == 0:
                     found = True
 
+                # Regex match game.name
+                if match("%s$" % text, game.name) is not None:
+                    found = True
+
+                # Lowercase filter match lowercase game.name
+                if text.lower() in game.name.lower():
+                    found = True
+
+                # ------------------------------------
+                #   Set status
+                # ------------------------------------
+
                 # No flag
-                if not flag_favorite and not flag_multiplayer and found:
+                if not game.favorite and not game.multiplayer and found:
                     return True
 
                 # Only favorite flag
-                if flag_favorite and data_favorite and not flag_multiplayer and \
-                    found:
+                if game.favorite and not game.multiplayer and found:
                     return True
 
                 # Only multiplayer flag
-                if flag_multiplayer and not data_multiplayer == icon and \
-                    not flag_favorite and found:
+                if game.multiplayer and not game.favorite and found:
                     return True
 
                 # Both favorite and multiplayer flags
-                if flag_favorite and data_favorite and flag_multiplayer and \
-                    not data_multiplayer == icon and found:
+                if game.favorite and game.multiplayer and found:
                     return True
 
         except:
@@ -2174,14 +2184,23 @@ class Interface(Gtk.Window):
                     self.widgets_sidebar["last_play"]["box"].hide()
                     self.widgets_sidebar["last_play"]["value"].set_text(str())
 
+                # Tags
+                if len(game.tags) > 0:
+                    self.widgets_sidebar["tags"]["box"].show_all()
+                    self.widgets_sidebar["tags"]["value"].set_markup(
+                        ', '.join(game.tags))
+                else:
+                    self.widgets_sidebar["tags"]["box"].hide()
+                    self.widgets_sidebar["tags"]["value"].set_text(str())
+
                 # Game emulator
                 if emulator is not None:
                     self.label_game_footer.set_markup("<b>%s</b> : %s" % (
                         _("Emulator"), emulator.name))
 
         else:
-            for widget in self.sidebar_keys.keys():
-                self.widgets_sidebar[widget]["box"].hide()
+            for key, value in self.sidebar_keys:
+                self.widgets_sidebar[key]["box"].hide()
 
             self.separator_game.hide()
 
@@ -2579,7 +2598,7 @@ class Interface(Gtk.Window):
                             self.logger.warning(
                                 _("Cannot find %(binary)s for %(console)s") % {
                                     "binary": console.emulator.binary,
-                                    "console": console })
+                                    "console": console.name })
 
                         # Get console icon
                         icon = icon_from_data(
@@ -2752,11 +2771,6 @@ class Interface(Gtk.Window):
                 # Check if rom file exists
                 if exists(game.filepath) and show:
 
-                    # Get path from Game
-                    path, filepath = game.path
-                    # Get name and extension from filename
-                    filename, extension = splitext(filepath)
-
                     row_data = [
                         game.favorite,
                         self.alternative["favorite"],
@@ -2770,7 +2784,7 @@ class Interface(Gtk.Window):
                         self.alternative["snap"],
                         self.alternative["multiplayer"],
                         self.alternative["save"],
-                        filename ]
+                        game ]
 
                     # Favorite
                     if game.favorite:
@@ -2829,7 +2843,7 @@ class Interface(Gtk.Window):
 
                     row = self.model_games.append(row_data)
 
-                    self.game_path[filename] = [game, row]
+                    self.game_path[game.filename] = [game, row]
 
                     iteration += 1
                     if (iteration % 20 == 0):
@@ -2874,15 +2888,14 @@ class Interface(Gtk.Window):
             Event which triggered this signal
         """
 
-        filename, name, snap, run_game = None, None, None, None
+        game, run_game = None, None
 
         # Keyboard
         if event.type == EventType.KEY_RELEASE:
             model, treeiter = treeview.get_selection().get_selected()
 
             if treeiter is not None:
-                name = model.get_value(treeiter, Columns.Name)
-                filename = model.get_value(treeiter, Columns.Filename)
+                game = model.get_value(treeiter, Columns.Object)
 
                 if event.keyval == Gdk.KEY_Return:
                     run_game = True
@@ -2894,10 +2907,9 @@ class Interface(Gtk.Window):
             selection = treeview.get_path_at_pos(int(event.x), int(event.y))
             if selection is not None:
                 model = treeview.get_model()
-
                 treeiter = model.get_iter(selection[0])
-                name = model.get_value(treeiter, Columns.Name)
-                filename = model.get_value(treeiter, Columns.Filename)
+
+                game = model.get_value(treeiter, Columns.Object)
 
                 if event.button == 1 and event.type == EventType._2BUTTON_PRESS:
                     run_game = True
@@ -2906,15 +2918,12 @@ class Interface(Gtk.Window):
         #   Game selected
         # ----------------------------
 
-        console = self.selection["console"]
+        self.selection["game"] = game
 
-        if filename is not None and console is not None:
-            game = self.api.get_game(console.id, generate_identifier(filename))
+        if game is not None:
+            console = self.selection["console"]
 
-            # Store game
-            self.selection["game"] = game
-
-            if game is not None:
+            if console is not None:
                 self.sensitive_interface(True)
 
                 # Get Game emulator
@@ -2926,7 +2935,7 @@ class Interface(Gtk.Window):
                 #   Game data
                 # ----------------------------
 
-                if filename in self.threads:
+                if game.filename in self.threads:
                     self.tool_item_launch.set_sensitive(False)
                     self.tool_item_parameters.set_sensitive(False)
                     self.tool_item_output.set_sensitive(False)

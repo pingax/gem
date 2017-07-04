@@ -349,9 +349,14 @@ class GEM(object):
         for section in data.sections():
             emulator = data.get(section, "emulator", fallback=None)
 
-            # Emulator exists in GEM storage
-            if emulator is not None and emulator in self.__data["emulators"]:
-                emulator = self.__data["emulators"][emulator]
+            if emulator is not None:
+
+                # Emulator exists in GEM storage
+                if emulator in self.__data["emulators"]:
+                    emulator = self.__data["emulators"][emulator]
+
+                else:
+                    emulator = None
 
             self.add_console({
                 "id": generate_identifier(section),
@@ -408,11 +413,6 @@ class GEM(object):
                 # Get configuration filename for storage
                 name, ext = splitext(path)
 
-                # Backup configuration file
-                self.logger.debug("Backup ~%s configuration file" % path)
-                move(path_join(GEM.Config, path),
-                    path_join(GEM.Config, '~' + path))
-
                 # Create a new configuration object
                 config = Configuration(path_join(GEM.Config, path))
 
@@ -424,7 +424,15 @@ class GEM(object):
                         if value is None:
                             value = str()
 
+                        if type(value) is Emulator:
+                            value = value.id
+
                         config.modify(section, key, value)
+
+                # Backup configuration file
+                self.logger.debug("Backup ~%s configuration file" % path)
+                move(path_join(GEM.Config, path),
+                    path_join(GEM.Config, '~' + path))
 
                 # Write new configuration file
                 self.logger.info("Write %s configuration file" % path)
@@ -485,7 +493,7 @@ class GEM(object):
                 return self.__data["emulators"].get(emulator, None)
 
             # Check if emulator use name instead of identifier
-            identifier = generate_identifier(console)
+            identifier = generate_identifier(emulator)
 
             if identifier in self.__data["emulators"].keys():
                 return self.__data["emulators"].get(identifier, None)
@@ -631,13 +639,15 @@ class GEM(object):
         console = Console()
 
         for key, value in data.items():
-            if type(value) is not Emulator and \
-                value is not None and len(value) == 0:
-                value = None
 
             # Avoid to have a list with an empty string
-            if type(value) is list and len(value) == 1 and len(value[0]) == 0:
-                value = list()
+            if type(value) is list:
+                if len(value) == 1 and len(value[0]) == 0:
+                    value = list()
+
+            elif type(value) is not Emulator:
+                if value is not None and len(value) == 0:
+                    value = None
 
             setattr(console, key, value)
 
@@ -1093,7 +1103,7 @@ class Console(GEMObject):
             "roms": expanduser(self.path),
             "exts": ';'.join(self.extensions),
             "ignores": ';'.join(self.ignores),
-            "emulator": self.emulator.name
+            "emulator": self.emulator
         })
 
 
@@ -1158,8 +1168,9 @@ class Console(GEMObject):
                         name = data["name"]
 
                     # Set play time
-                    play_time = data["play_time"]
-                    if len(play_time) > 0:
+                    play_time = time()
+                    if "play_time" in data and len(data["play_time"]) > 0:
+                        play_time = data["play_time"]
                         microseconds = int()
 
                         # Parse microseconds
@@ -1172,12 +1183,11 @@ class Console(GEMObject):
                             int(hours),
                             int(minutes),
                             int(seconds))
-                    else:
-                        play_time = time()
 
                     # Set last play date
-                    last_launch_date = data["last_play"]
-                    if len(last_launch_date) > 0:
+                    last_launch_date = None
+                    if "last_play" in data and len(data["last_play"]) > 0:
+                        last_launch_date = data["last_play"]
 
                         # Old GEM format
                         if len(last_launch_date) > 10:
@@ -1192,12 +1202,12 @@ class Console(GEMObject):
                             int(year),
                             int(month),
                             int(day))
-                    else:
-                        last_launch_date = None
 
                     # Set last play time
-                    last_launch_time = data["last_play_time"]
-                    if len(last_launch_time) > 0:
+                    last_launch_time = time()
+                    if "last_play_time" in data and \
+                        len(data["last_play_time"]) > 0:
+                        last_launch_time = data["last_play_time"]
                         microseconds = int()
 
                         # Parse microseconds
@@ -1211,20 +1221,22 @@ class Console(GEMObject):
                             int(hours),
                             int(minutes),
                             int(seconds))
-                    else:
-                        last_launch_time = time()
 
                     # Set game emulator
-                    emulator = data["emulator"]
-                    if len(emulator) > 0 and emulator in emulators:
-                        emulator = emulators[emulator]
-                    else:
-                        emulator = None
+                    emulator = None
+                    if "emulator" in data["emulator"] and \
+                        len(data["emulator"]) > 0 and emulator in emulators:
+                        emulator = emulators[data["emulator"]]
 
                     # Set game arguments
-                    arguments = data["arguments"]
-                    if len(arguments) == 0:
-                        arguments = None
+                    arguments = None
+                    if "arguments" in data and len(data["arguments"]) > 0:
+                        arguments = data["arguments"]
+
+                    # Set game tags
+                    tags = list()
+                    if "tags" in data and len(data["tags"]) > 0:
+                        tags = data["tags"].split(';')
 
                     game_data.update({
                         "name": name,
@@ -1236,6 +1248,7 @@ class Console(GEMObject):
                         "last_launch_time": last_launch_time,
                         "emulator": emulator,
                         "default": arguments,
+                        "tags": tags
                     })
 
                 for key, value in game_data.items():
@@ -1286,7 +1299,8 @@ class Game(GEMObject):
         "last_launch_time": time(),
         "last_launch_date": None,
         "emulator": None,
-        "default": None
+        "default": None,
+        "tags": list()
     }
 
     def __init__(self):
@@ -1315,7 +1329,8 @@ class Game(GEMObject):
             "last_play_time": self.last_launch_time,
             "last_play": self.last_launch_date,
             "emulator": self.emulator,
-            "arguments": self.default
+            "arguments": self.default,
+            "tags": ';'.join(self.tags)
         })
 
 
