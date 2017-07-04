@@ -176,7 +176,7 @@ class Interface(Gtk.Window):
         # Store shortcut with Gtk.Widget as key
         self.shortcuts_data = dict()
         # Store sidebar description ordre
-        self.sidebar_widgets = {
+        self.sidebar_keys = {
             "play_time": _("Play time"),
             "last_play": _("Last launch")
         }
@@ -793,7 +793,7 @@ class Interface(Gtk.Window):
 
         self.widgets_sidebar = dict()
 
-        for widget in self.sidebar_widgets:
+        for widget in self.sidebar_keys:
             self.widgets_sidebar[widget] = {
                 "box": Gtk.Box(),
                 "key": Gtk.Label(),
@@ -809,8 +809,8 @@ class Interface(Gtk.Window):
             self.widgets_sidebar[widget]["key"].set_alignment(0, 0)
             self.widgets_sidebar[widget]["key"].set_ellipsize(
                 Pango.EllipsizeMode.END)
-            self.widgets_sidebar[widget]["key"].set_markup("<b>%s</b>:" % (
-                self.sidebar_widgets[widget]))
+            self.widgets_sidebar[widget]["key"].set_markup("<b>%s</b> :" % (
+                self.sidebar_keys[widget]))
 
             self.widgets_sidebar[widget]["value"].set_use_markup(True)
             self.widgets_sidebar[widget]["value"].set_alignment(0, 0)
@@ -1247,7 +1247,7 @@ class Interface(Gtk.Window):
         self.grid_informations.pack_start(
             self.separator_game, False, False, 0)
 
-        for widget in self.sidebar_widgets:
+        for widget in self.sidebar_keys:
             self.grid_informations.pack_start(
                 self.widgets_sidebar[widget]["box"], False, False, 0)
 
@@ -1757,8 +1757,8 @@ class Interface(Gtk.Window):
 
                 self.image_game_screen.set_alignment(0, 0)
 
-            for widget in self.widgets_sidebar.values():
-                widget["box"].hide()
+            for widget in self.sidebar_keys.keys():
+                self.widgets_sidebar[widget]["box"].hide()
 
         else:
             self.grid_paned.hide()
@@ -2176,10 +2176,13 @@ class Interface(Gtk.Window):
 
                 # Game emulator
                 if emulator is not None:
-                    self.label_game_footer.set_markup("<b>%s</b>: %s" % (
+                    self.label_game_footer.set_markup("<b>%s</b> : %s" % (
                         _("Emulator"), emulator.name))
 
         else:
+            for widget in self.sidebar_keys.keys():
+                self.widgets_sidebar[widget]["box"].hide()
+
             self.separator_game.hide()
 
             self.label_game_title.set_text(str())
@@ -3188,7 +3191,7 @@ class Interface(Gtk.Window):
             self.menubar_edit_item_delete.set_sensitive(True)
 
             # Avoid to launch the game again when use Enter in game terminate
-            self.treeview_games.get_selection().unselect_all()
+            # self.treeview_games.get_selection().unselect_all()
 
         # Remove this game from threads list
         if game.filename in self.threads:
