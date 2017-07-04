@@ -2135,8 +2135,16 @@ class Interface(Gtk.Window):
 
                 # Check if rom has some screenshots
                 if len(results) > 0:
+                    index = -1
+
+                    # Get a random file from rom screenshots
+                    if self.config.getboolean(
+                        "gem", "show_random_screenshot", fallback=True):
+                        index = randint(0, len(results) - 1)
+
+                    # Scale screenshot height to 200px
                     pixbuf = Pixbuf.new_from_file_at_scale(
-                        results[randint(0, len(results) - 1)], -1, 200, True)
+                        results[index], -1, 200, True)
 
                     if pixbuf is not None:
                         self.image_game_screen.set_from_pixbuf(pixbuf)
