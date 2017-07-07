@@ -111,13 +111,16 @@ class GEM(object):
     Local       = path_join(expanduser(xdg_data_home), "gem")
     Config      = path_join(expanduser(xdg_config_home), "gem")
 
-    def __init__(self, debug=False):
+    def __init__(self, debug=False, splash=None):
         """ Constructor
 
         Other parameters
         ----------------
         debug : bool
             Debug mode status (default: False)
+        splash : class
+            Class which be called by database migration to alert user
+            (default: None)
 
         Raises
         ------
@@ -213,7 +216,7 @@ class GEM(object):
                 self.logger.warning("Database need to be migrate")
 
                 self.logger.info("Start database migration")
-                self.database.migrate("games", dict())
+                self.database.migrate("games", dict(), splash=splash)
 
                 self.logger.info("Migration complete")
 

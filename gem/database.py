@@ -569,7 +569,7 @@ class Database(object):
         return True
 
 
-    def migrate(self, table, renamed_columns=None, function=None):
+    def migrate(self, table, renamed_columns=None, splash=None):
         """ Migrate old data from a database
 
         This function check if the database need to update his schema by
@@ -582,18 +582,23 @@ class Database(object):
         renamed_columns : dict
             In case of some columns need to change their name (Keys are old
             names, Values are new names)
-        function : def
-            Function to call every time a new row is inserted into database
+        splash : class
+            Class which contains functions update and close to call when
+            database is modified
         """
 
         columns_index = dict()
 
+        # Get current table columns
         old_columns = self.__get_columns(table)
+        # Get current table rows
         old_data = self.select(table, ['*'])
 
+        # Backup current table and create a new one
         self.__rename_table(table, "_%s" % table)
         self.__create_table(table)
 
+        # Check old table if new columns are available
         for column in old_columns:
             if column in self.__get_columns(table):
                 columns_index[column] = old_columns.index(column)
@@ -608,20 +613,33 @@ class Database(object):
         for column in self.__get_columns(table):
             columns_data[column] = str()
 
+        # Migrate rows from previous database to new one
         if old_data is not None:
+            counter = 1
+
+            if splash is not None:
+                splash.init(len(old_data))
+
             for row in old_data:
                 columns = deepcopy(columns_data)
 
                 for column in list(columns.keys()):
+
+                    # There is data for this row column
                     if column in columns_index:
                         columns[column] = row[columns_index[column]]
 
+                    # No data for this row column
                     else:
                         columns[column] = None
 
+                # Insert row in new database
                 self.__insert(table, columns)
 
-                if function is not None:
-                    function()
+                if splash is not None:
+                    splash.update(counter)
 
+                counter += 1
+
+        # Remove backup table
         self.__remove_table("_%s" % table)

@@ -87,10 +87,33 @@ def main():
     args = parser.parse_args()
 
     # ------------------------------------
+    #   Initialize GEM splash
+    # ------------------------------------
+
+    splash = None
+
+    try:
+        # Check GTK+ arguments
+        if args.gtk_ui or args.gtk_config:
+
+            # Check display settings
+            if "DISPLAY" in environ and len(environ["DISPLAY"]) > 0:
+                from gem.gtk.interface import Splash
+
+                splash = Splash()
+                splash.start()
+
+    except Exception as error:
+        return True
+
+    # ------------------------------------
     #   Initialize GEM API
     # ------------------------------------
 
-    gem = GEM(args.debug)
+    gem = GEM(args.debug, splash)
+
+    if splash is not None:
+        splash.close()
 
     # ------------------------------------
     #   Initialize lock
@@ -197,12 +220,14 @@ def main():
                 gem.logger.critical(_("Cannot launch GEM without display"))
 
     except ImportError as error:
-        gem.logger.critical(_("Import error with interface: %s") % str(error))
+        gem.logger.critical(
+            _("Import error with interface: %s") % str(error))
 
         return True
 
     except KeyboardInterrupt as error:
-        gem.logger.warning(_("Terminate by keyboard interrupt"))
+        gem.logger.warning(
+            _("Terminate by keyboard interrupt"))
 
         return True
 

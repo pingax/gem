@@ -4240,37 +4240,20 @@ class Interface(Gtk.Window):
         idle_add(GObject.emit, self, *args)
 
 
-class Splash(Gtk.Window):
-    """ Splash window which inform user for database migration progress
+class Splash(Thread, Gtk.Window):
 
-    Attributes
-    ----------
-    length : int
-        Steps length
-    index : int
-        Current step
-    icons_theme : Gtk.IconTheme
-        Default icons theme
-    """
-
-    def __init__(self, length):
+    def __init__(self):
         """ Constructor
-
-        Parameters
-        ----------
-        length : int
-            Progress steps length
         """
 
+        Thread.__init__(self)
         Gtk.Window.__init__(self)
 
         # ------------------------------------
         #   Initialize variables
         # ------------------------------------
 
-        self.length = length
-
-        self.index = 1
+        self.length = int()
 
         # ------------------------------------
         #   Initialize icons
@@ -4290,9 +4273,6 @@ class Splash(Gtk.Window):
 
         # Init packing
         self.__init_packing()
-
-        # Start interface
-        self.__start_interface()
 
 
     def __init_widgets (self):
@@ -4322,17 +4302,25 @@ class Splash(Gtk.Window):
 
         # Properties
         self.grid.set_spacing(4)
-        self.grid.set_border_width(8)
+        self.grid.set_border_width(16)
         self.grid.set_homogeneous(False)
         self.grid.set_orientation(Gtk.Orientation.VERTICAL)
 
         # ------------------------------------
-        #   Image
+        #   Logo
         # ------------------------------------
 
+        self.label_splash = Gtk.Label()
         self.image_splash = Gtk.Image()
 
         # Properties
+        self.label_splash.set_line_wrap(True)
+        self.label_splash.set_use_markup(True)
+        self.label_splash.set_line_wrap_mode(Pango.WrapMode.WORD)
+        self.label_splash.set_markup(
+            "<span weight='bold' size='x-large'>%s - %s</span>\n<i>%s</i>" % (
+            GEM.Name, GEM.Version, GEM.CodeName))
+
         self.image_splash.set_from_icon_name(GEM.Icon, Gtk.IconSize.DND)
         self.image_splash.set_pixel_size(256)
 
@@ -4340,14 +4328,14 @@ class Splash(Gtk.Window):
         #   Progressbar
         # ------------------------------------
 
-        self.label_splash = Gtk.Label()
+        self.label_progress = Gtk.Label()
 
         self.progressbar = Gtk.ProgressBar()
 
         # Properties
-        self.label_splash.set_text(_("Migrating entries from old database"))
-        self.label_splash.set_line_wrap_mode(Pango.WrapMode.WORD)
-        self.label_splash.set_line_wrap(True)
+        self.label_progress.set_text(_("Migrating entries from old database"))
+        self.label_progress.set_line_wrap_mode(Pango.WrapMode.WORD)
+        self.label_progress.set_line_wrap(True)
 
         self.progressbar.set_show_text(True)
 
@@ -4358,31 +4346,59 @@ class Splash(Gtk.Window):
 
         self.grid.pack_start(self.image_splash, True, True, 0)
         self.grid.pack_start(self.label_splash, False, False, 8)
+        self.grid.pack_start(self.label_progress, False, False, 8)
         self.grid.pack_start(self.progressbar, False, False, 0)
 
         self.add(self.grid)
 
 
-    def __start_interface(self):
-        """ Load data and start interface
+    def run(self):
+        """ Start interface
         """
 
         self.show_all()
 
+        self.label_progress.hide()
+        self.progressbar.hide()
+
         self.refresh()
 
+        # ------------------------------------
+        #   Main loop
+        # ------------------------------------
 
-    def update(self):
+        self.main_loop = MainLoop()
+        self.main_loop.run()
+
+
+    def close(self):
+        """ Stop interface
+        """
+
+        self.main_loop.quit()
+
+        self.destroy()
+
+
+    def init(self, length):
+        """ Initialize progressbar
+        """
+
+        self.length = length
+
+        self.label_progress.show()
+        self.progressbar.show()
+
+
+    def update(self, index):
         """ Update progress in progressbar widgets
         """
 
         self.refresh()
 
-        if self.index <= self.length:
-            self.progressbar.set_text("%d / %d" % (self.index, self.length))
-            self.progressbar.set_fraction(float(self.index) / (self.length))
-
-            self.index += 1
+        if index <= self.length:
+            self.progressbar.set_text("%d / %d" % (index, self.length))
+            self.progressbar.set_fraction(float(index) / (self.length))
 
             self.refresh()
 
