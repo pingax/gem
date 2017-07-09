@@ -438,21 +438,26 @@ class Preferences(object):
 
         self.label_behavior = Gtk.Label()
 
-        self.check_last_console = Gtk.CheckButton()
-        self.check_hide_console = Gtk.CheckButton()
+        self.label_last_console = Gtk.Label()
+        self.check_last_console = Gtk.Switch()
+        self.label_hide_console = Gtk.Label()
+        self.check_hide_console = Gtk.Switch()
 
         # Properties
-        self.label_behavior.set_markup("<b>%s</b>" % _("Behavior"))
         self.label_behavior.set_use_markup(True)
         self.label_behavior.set_alignment(0, .5)
+        self.label_behavior.set_markup("<b>%s</b>" % _("Behavior"))
 
-        self.check_last_console.set_hexpand(True)
-        self.check_last_console.set_margin_left(32)
-        self.check_last_console.set_label(
+        self.label_last_console.set_hexpand(True)
+        self.label_last_console.set_margin_left(32)
+        self.label_last_console.set_alignment(0, .5)
+        self.label_last_console.set_text(
             _("Load the last chosen console when start GEM"))
-        self.check_hide_console.set_hexpand(True)
-        self.check_hide_console.set_margin_left(32)
-        self.check_hide_console.set_label(
+
+        self.label_hide_console.set_hexpand(True)
+        self.label_hide_console.set_margin_left(32)
+        self.label_hide_console.set_alignment(0, .5)
+        self.label_hide_console.set_text(
             _("Hide consoles without any game"))
 
         # ------------------------------------
@@ -462,9 +467,9 @@ class Preferences(object):
         self.label_viewer = Gtk.Label()
 
         self.label_viewer_binary = Gtk.Label()
-        self.label_viewer_options = Gtk.Label()
 
-        self.check_native_viewer = Gtk.CheckButton()
+        self.label_native_viewer = Gtk.Label()
+        self.check_native_viewer = Gtk.Switch()
 
         self.file_viewer_binary = Gtk.FileChooserButton()
 
@@ -473,28 +478,33 @@ class Preferences(object):
         self.separator_viewer = Gtk.Separator()
 
         # Properties
-        self.label_viewer.set_markup("<b>%s</b>" % _("Viewer"))
-        self.label_viewer.set_use_markup(True)
-        self.label_viewer.set_alignment(0, .5)
         self.label_viewer.set_margin_top(16)
+        self.label_viewer.set_alignment(0, .5)
+        self.label_viewer.set_use_markup(True)
+        self.label_viewer.set_markup("<b>%s</b>" % _("Viewer"))
 
-        self.label_viewer_binary.set_label("%s :" % _("Binary"))
-        self.label_viewer_binary.set_alignment(1, .5)
         self.label_viewer_binary.set_margin_left(32)
-        self.label_viewer_options.set_label("%s :" % _("Arguments"))
-        self.label_viewer_options.set_alignment(1, .5)
-        self.label_viewer_options.set_margin_left(32)
+        self.label_viewer_binary.set_alignment(0, .5)
+        self.label_viewer_binary.set_use_markup(True)
+        self.label_viewer_binary.set_markup(
+            "<b>%s</b>" % _("Alternative viewer"))
 
-        self.check_native_viewer.set_label(_("Use native viewer"))
-        self.check_native_viewer.set_hexpand(True)
-        self.check_native_viewer.set_margin_left(32)
+        self.label_native_viewer.set_hexpand(True)
+        self.label_native_viewer.set_margin_left(32)
+        self.label_native_viewer.set_alignment(0, .5)
+        self.label_native_viewer.set_text(_("Use native viewer"))
 
         self.file_viewer_binary.set_hexpand(True)
+        self.file_viewer_binary.set_margin_left(64)
 
         self.entry_viewer_options.set_hexpand(True)
+        self.entry_viewer_options.set_margin_left(64)
+        self.entry_viewer_options.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.PRIMARY, Icons.Terminal)
         self.entry_viewer_options.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
 
+        self.separator_viewer.set_hexpand(True)
         self.separator_viewer.set_margin_left(32)
 
         # ------------------------------------
@@ -506,12 +516,16 @@ class Preferences(object):
 
         self.label_interface = Gtk.Label()
 
-        self.check_classic_theme = Gtk.CheckButton()
-        self.check_header = Gtk.CheckButton()
-        self.check_sidebar = Gtk.CheckButton()
-        self.check_sidebar_screenshot = Gtk.CheckButton()
-
+        self.label_classic_theme = Gtk.Label()
+        self.check_classic_theme = Gtk.Switch()
+        self.label_header = Gtk.Label()
+        self.check_header = Gtk.Switch()
         self.label_sidebar = Gtk.Label()
+        self.check_sidebar = Gtk.Switch()
+        self.label_sidebar_screenshot = Gtk.Label()
+        self.check_sidebar_screenshot = Gtk.Switch()
+
+        self.label_sidebar_position = Gtk.Label()
 
         self.model_sidebar = Gtk.ListStore(str)
         self.combo_sidebar = Gtk.ComboBox()
@@ -525,30 +539,33 @@ class Preferences(object):
         self.label_interface.set_use_markup(True)
         self.label_interface.set_alignment(0, .5)
 
-        self.check_classic_theme.set_label(
+        self.label_classic_theme.set_hexpand(True)
+        self.label_classic_theme.set_margin_left(32)
+        self.label_classic_theme.set_alignment(0, .5)
+        self.label_classic_theme.set_text(
             _("Use classic theme (Need to reboot GEM)"))
-        self.check_classic_theme.set_hexpand(True)
-        self.check_classic_theme.set_margin_left(32)
 
-        self.check_header.set_label(
+        self.label_header.set_hexpand(True)
+        self.label_header.set_margin_left(32)
+        self.label_header.set_alignment(0, .5)
+        self.label_header.set_text(
             _("Show close buttons in header bar"))
-        self.check_header.set_hexpand(True)
-        self.check_header.set_margin_left(32)
 
-        self.check_sidebar.set_label(
-            _("Show sidebar"))
-        self.check_sidebar.set_hexpand(True)
-        self.check_sidebar.set_margin_left(32)
-
-        self.check_sidebar_screenshot.set_label(
-            _("Randomize game screenshot in sidebar"))
-        self.check_sidebar_screenshot.set_hexpand(True)
-        self.check_sidebar_screenshot.set_margin_left(32)
-
-        self.label_sidebar.set_label("%s :" % _("Sidebar position"))
         self.label_sidebar.set_hexpand(True)
         self.label_sidebar.set_margin_left(32)
-        self.label_sidebar.set_alignment(1, .5)
+        self.label_sidebar.set_alignment(0, .5)
+        self.label_sidebar.set_text(_("Show sidebar"))
+
+        self.label_sidebar_screenshot.set_hexpand(True)
+        self.label_sidebar_screenshot.set_margin_left(64)
+        self.label_sidebar_screenshot.set_alignment(0, .5)
+        self.label_sidebar_screenshot.set_text(
+            _("Randomize game screenshot in sidebar"))
+
+        self.label_sidebar_position.set_hexpand(True)
+        self.label_sidebar_position.set_margin_left(64)
+        self.label_sidebar_position.set_alignment(0, .5)
+        self.label_sidebar_position.set_label(_("Sidebar position"))
 
         self.model_sidebar.set_sort_column_id(0, Gtk.SortType.ASCENDING)
 
@@ -572,12 +589,18 @@ class Preferences(object):
 
         self.cell_lines = Gtk.CellRendererText()
 
-        self.check_play = Gtk.CheckButton()
-        self.check_last_play = Gtk.CheckButton()
-        self.check_play_time = Gtk.CheckButton()
-        self.check_installed = Gtk.CheckButton()
-        self.check_flags = Gtk.CheckButton()
-        self.check_icons = Gtk.CheckButton()
+        self.label_play = Gtk.Label()
+        self.check_play = Gtk.Switch()
+        self.label_last_play = Gtk.Label()
+        self.check_last_play = Gtk.Switch()
+        self.label_play_time = Gtk.Label()
+        self.check_play_time = Gtk.Switch()
+        self.label_installed = Gtk.Label()
+        self.check_installed = Gtk.Switch()
+        self.label_flags = Gtk.Label()
+        self.check_flags = Gtk.Switch()
+        self.label_icons = Gtk.Label()
+        self.check_icons = Gtk.Switch()
 
         self.separator_interface_icons = Gtk.Separator()
         self.separator_interface_game = Gtk.Separator()
@@ -588,10 +611,10 @@ class Preferences(object):
         self.label_treeview.set_alignment(0, .5)
         self.label_treeview.set_margin_top(16)
 
-        self.label_treeview_lines.set_label("%s :" % _("Show lines in games list"))
         self.label_treeview_lines.set_hexpand(True)
         self.label_treeview_lines.set_margin_left(32)
-        self.label_treeview_lines.set_alignment(1, .5)
+        self.label_treeview_lines.set_alignment(0, .5)
+        self.label_treeview_lines.set_text(_("Show lines in games list"))
 
         self.model_lines.set_sort_column_id(0, Gtk.SortType.ASCENDING)
 
@@ -600,26 +623,35 @@ class Preferences(object):
         self.combo_lines.pack_start(self.cell_lines, True)
         self.combo_lines.add_attribute(self.cell_lines, "text", 0)
 
-        self.check_play.set_label(_("Show \"Launch\" column"))
-        self.check_play.set_hexpand(True)
-        self.check_play.set_margin_left(32)
-        self.check_last_play.set_label(_("Show \"Last launch\" column"))
-        self.check_last_play.set_hexpand(True)
-        self.check_last_play.set_margin_left(32)
-        self.check_play_time.set_label(_("Show \"Play time\" column"))
-        self.check_play_time.set_hexpand(True)
-        self.check_play_time.set_margin_left(32)
-        self.check_installed.set_label(_("Show \"Installed\" column"))
-        self.check_installed.set_hexpand(True)
-        self.check_installed.set_margin_left(32)
-        self.check_flags.set_label(_("Show \"Flags\" column"))
-        self.check_flags.set_hexpand(True)
-        self.check_flags.set_margin_left(32)
+        self.label_play.set_hexpand(True)
+        self.label_play.set_margin_left(32)
+        self.label_play.set_alignment(0, .5)
+        self.label_play.set_label(_("Show \"Launch\" column"))
 
-        self.check_icons.set_label(
-            _("Use translucent icons in games list"))
-        self.check_icons.set_hexpand(True)
-        self.check_icons.set_margin_left(32)
+        self.label_last_play.set_hexpand(True)
+        self.label_last_play.set_margin_left(32)
+        self.label_last_play.set_alignment(0, .5)
+        self.label_last_play.set_label(_("Show \"Last launch\" column"))
+
+        self.label_play_time.set_hexpand(True)
+        self.label_play_time.set_margin_left(32)
+        self.label_play_time.set_alignment(0, .5)
+        self.label_play_time.set_label(_("Show \"Play time\" column"))
+
+        self.label_installed.set_hexpand(True)
+        self.label_installed.set_margin_left(32)
+        self.label_installed.set_alignment(0, .5)
+        self.label_installed.set_label(_("Show \"Installed\" column"))
+
+        self.label_flags.set_hexpand(True)
+        self.label_flags.set_margin_left(32)
+        self.label_flags.set_alignment(0, .5)
+        self.label_flags.set_label(_("Show \"Flags\" column"))
+
+        self.label_icons.set_hexpand(True)
+        self.label_icons.set_margin_left(32)
+        self.label_icons.set_alignment(0, .5)
+        self.label_icons.set_label(_("Use translucent icons in games list"))
 
         self.separator_interface_icons.set_hexpand(True)
         self.separator_interface_icons.set_margin_left(32)
@@ -635,7 +667,8 @@ class Preferences(object):
         self.label_editor_colorscheme = Gtk.Label()
         self.label_editor_font = Gtk.Label()
 
-        self.check_lines = Gtk.CheckButton()
+        self.label_lines = Gtk.Label()
+        self.check_lines = Gtk.Switch()
 
         self.model_colorsheme = Gtk.ListStore(str)
         self.combo_colorsheme = Gtk.ComboBox()
@@ -646,30 +679,30 @@ class Preferences(object):
         self.separator_interface_editor = Gtk.Separator()
 
         # Properties
-        self.label_editor.set_markup("<b>%s</b>" % _("Editor"))
+        self.label_editor.set_margin_top(16)
         self.label_editor.set_use_markup(True)
         self.label_editor.set_alignment(0, .5)
-        self.label_editor.set_margin_top(16)
+        self.label_editor.set_markup("<b>%s</b>" % _("Editor"))
 
-        self.label_editor_colorscheme.set_label(_("Colorscheme"))
+        self.label_editor_colorscheme.set_hexpand(True)
         self.label_editor_colorscheme.set_margin_left(32)
-        self.label_editor_colorscheme.set_alignment(1, .5)
+        self.label_editor_colorscheme.set_alignment(0, .5)
+        self.label_editor_colorscheme.set_label(_("Colorscheme"))
 
-        self.label_editor_font.set_label(_("Font"))
+        self.label_editor_font.set_hexpand(True)
         self.label_editor_font.set_margin_left(32)
-        self.label_editor_font.set_alignment(1, .5)
+        self.label_editor_font.set_alignment(0, .5)
+        self.label_editor_font.set_label(_("Font"))
 
-        self.check_lines.set_label(_("Show line numbers"))
-        self.check_lines.set_hexpand(True)
-        self.check_lines.set_margin_left(32)
+        self.label_lines.set_hexpand(True)
+        self.label_lines.set_margin_left(32)
+        self.label_lines.set_alignment(0, .5)
+        self.label_lines.set_label(_("Show line numbers"))
 
         self.combo_colorsheme.set_model(self.model_colorsheme)
         self.combo_colorsheme.set_id_column(0)
         self.combo_colorsheme.pack_start(self.cell_colorsheme, True)
         self.combo_colorsheme.add_attribute(self.cell_colorsheme, "text", 0)
-        self.combo_colorsheme.set_hexpand(True)
-
-        self.font_editor.set_hexpand(True)
 
         self.separator_interface_editor.set_hexpand(True)
         self.separator_interface_editor.set_margin_left(32)
@@ -988,51 +1021,64 @@ class Preferences(object):
             self.scroll_emulators, self.box_notebook_emulators)
 
         # General tab
-        self.grid_general.attach(self.label_behavior, 0, 0, 2, 1)
-        self.grid_general.attach(self.check_last_console, 0, 1, 2, 1)
-        self.grid_general.attach(self.check_hide_console, 0, 2, 2, 1)
+        self.grid_general.attach(self.label_behavior, 0, 0, 4, 1)
+        self.grid_general.attach(self.label_last_console, 0, 1, 3, 1)
+        self.grid_general.attach(self.check_last_console, 3, 1, 1, 1)
+        self.grid_general.attach(self.label_hide_console, 0, 2, 3, 1)
+        self.grid_general.attach(self.check_hide_console, 3, 2, 1, 1)
 
-        self.grid_general.attach(self.label_viewer, 0, 4, 2, 1)
-        self.grid_general.attach(self.check_native_viewer, 0, 5, 2, 1)
-        self.grid_general.attach(self.separator_viewer, 0, 6, 2, 1)
-        self.grid_general.attach(self.label_viewer_binary, 0, 7, 1, 1)
-        self.grid_general.attach(self.file_viewer_binary, 1, 7, 1, 1)
-        self.grid_general.attach(self.label_viewer_options, 0, 8, 1, 1)
-        self.grid_general.attach(self.entry_viewer_options, 1, 8, 1, 1)
+        self.grid_general.attach(self.label_viewer, 0, 4, 4, 1)
+        self.grid_general.attach(self.label_native_viewer, 0, 5, 3, 1)
+        self.grid_general.attach(self.check_native_viewer, 3, 5, 1, 1)
+        self.grid_general.attach(self.separator_viewer, 0, 6, 4, 1)
+        self.grid_general.attach(self.label_viewer_binary, 0, 7, 4, 1)
+        self.grid_general.attach(self.file_viewer_binary, 0, 8, 4, 1)
+        self.grid_general.attach(self.entry_viewer_options, 0, 9, 4, 1)
 
         self.view_general.add(self.grid_general)
 
         self.scroll_general.add(self.view_general)
 
         # Interface tab
-        self.grid_interface.attach(self.label_interface, 0, 0, 3, 1)
-        self.grid_interface.attach(self.check_classic_theme, 0, 1, 3, 1)
-        self.grid_interface.attach(self.check_header, 0, 2, 3, 1)
-        self.grid_interface.attach(self.separator_interface_sidebar, 0, 3, 2, 1)
-        self.grid_interface.attach(self.check_sidebar, 0, 4, 3, 1)
-        self.grid_interface.attach(self.check_sidebar_screenshot, 0, 5, 3, 1)
-        self.grid_interface.attach(self.label_sidebar, 0, 6, 2, 1)
-        self.grid_interface.attach(self.combo_sidebar, 2, 6, 1, 1)
+        self.grid_interface.attach(self.label_interface, 0, 0, 4, 1)
+        self.grid_interface.attach(self.label_classic_theme, 0, 1, 3, 1)
+        self.grid_interface.attach(self.check_classic_theme, 3, 1, 1, 1)
+        self.grid_interface.attach(self.label_header, 0, 2, 3, 1)
+        self.grid_interface.attach(self.check_header, 3, 2, 1, 1)
+        self.grid_interface.attach(self.separator_interface_sidebar, 0, 3, 4, 1)
+        self.grid_interface.attach(self.label_sidebar, 0, 4, 3, 1)
+        self.grid_interface.attach(self.check_sidebar, 3, 4, 1, 1)
+        self.grid_interface.attach(self.label_sidebar_screenshot, 0, 5, 3, 1)
+        self.grid_interface.attach(self.check_sidebar_screenshot, 3, 5, 1, 1)
+        self.grid_interface.attach(self.label_sidebar_position, 0, 6, 2, 1)
+        self.grid_interface.attach(self.combo_sidebar, 2, 6, 2, 1)
 
-        self.grid_interface.attach(self.label_treeview, 0, 10, 3, 1)
+        self.grid_interface.attach(self.label_treeview, 0, 10, 4, 1)
         self.grid_interface.attach(self.label_treeview_lines, 0, 11, 2, 1)
-        self.grid_interface.attach(self.combo_lines, 2, 11, 1, 1)
-        self.grid_interface.attach(self.separator_interface_icons, 0, 12, 3, 1)
-        self.grid_interface.attach(self.check_icons, 0, 13, 3, 1)
-        self.grid_interface.attach(self.separator_interface_game, 0, 14, 3, 1)
-        self.grid_interface.attach(self.check_play, 0, 15, 3, 1)
-        self.grid_interface.attach(self.check_last_play, 0, 16, 3, 1)
-        self.grid_interface.attach(self.check_play_time, 0, 17, 3, 1)
-        self.grid_interface.attach(self.check_installed, 0, 18, 3, 1)
-        self.grid_interface.attach(self.check_flags, 0, 19, 3, 1)
+        self.grid_interface.attach(self.combo_lines, 2, 11, 2, 1)
+        self.grid_interface.attach(self.separator_interface_icons, 0, 12, 4, 1)
+        self.grid_interface.attach(self.label_icons, 0, 13, 3, 1)
+        self.grid_interface.attach(self.check_icons, 3, 13, 1, 1)
+        self.grid_interface.attach(self.separator_interface_game, 0, 14, 4, 1)
+        self.grid_interface.attach(self.label_play, 0, 15, 3, 1)
+        self.grid_interface.attach(self.check_play, 3, 15, 1, 1)
+        self.grid_interface.attach(self.label_last_play, 0, 16, 3, 1)
+        self.grid_interface.attach(self.check_last_play, 3, 16, 1, 1)
+        self.grid_interface.attach(self.label_play_time, 0, 17, 3, 1)
+        self.grid_interface.attach(self.check_play_time, 3, 17, 1, 1)
+        self.grid_interface.attach(self.label_installed, 0, 18, 3, 1)
+        self.grid_interface.attach(self.check_installed, 3, 18, 1, 1)
+        self.grid_interface.attach(self.label_flags, 0, 19, 3, 1)
+        self.grid_interface.attach(self.check_flags, 3, 19, 1, 1)
 
-        self.grid_interface.attach(self.label_editor, 0, 20, 3, 1)
-        self.grid_interface.attach(self.check_lines, 0, 21, 3, 1)
-        self.grid_interface.attach(self.separator_interface_editor, 0, 22, 3, 1)
-        self.grid_interface.attach(self.label_editor_colorscheme, 0, 23, 1, 1)
-        self.grid_interface.attach(self.combo_colorsheme, 1, 23, 2, 1)
-        self.grid_interface.attach(self.label_editor_font, 0, 24, 1, 1)
-        self.grid_interface.attach(self.font_editor, 1, 24, 2, 1)
+        self.grid_interface.attach(self.label_editor, 0, 20, 4, 1)
+        self.grid_interface.attach(self.label_lines, 0, 21, 3, 1)
+        self.grid_interface.attach(self.check_lines, 3, 21, 1, 1)
+        self.grid_interface.attach(self.separator_interface_editor, 0, 22, 4, 1)
+        self.grid_interface.attach(self.label_editor_colorscheme, 0, 23, 2, 1)
+        self.grid_interface.attach(self.combo_colorsheme, 2, 23, 2, 1)
+        self.grid_interface.attach(self.label_editor_font, 0, 24, 2, 1)
+        self.grid_interface.attach(self.font_editor, 2, 24, 2, 1)
 
         self.view_interface.add(self.grid_interface)
 
@@ -1106,14 +1152,14 @@ class Preferences(object):
             "icon-press", on_entry_clear)
 
         self.check_native_viewer.connect(
-            "toggled", self.__on_check_native_viewer)
+            "state_set", self.__on_check_native_viewer)
 
         # ------------------------------------
         #   Interface
         # ------------------------------------
 
         self.check_sidebar.connect(
-            "toggled", self.__on_check_sidebar)
+            "state_set", self.__on_check_sidebar)
 
         # ------------------------------------
         #   Shortcuts
@@ -1607,7 +1653,7 @@ class Preferences(object):
             self.__on_modify_item(None, manager, True)
 
 
-    def __on_check_native_viewer(self, widget):
+    def __on_check_native_viewer(self, widget, state=None):
         """ Update native viewer widget from checkbutton state
 
         Parameters
@@ -1620,11 +1666,10 @@ class Preferences(object):
 
         self.label_viewer_binary.set_sensitive(status)
         self.file_viewer_binary.set_sensitive(status)
-        self.label_viewer_options.set_sensitive(status)
         self.entry_viewer_options.set_sensitive(status)
 
 
-    def __on_check_sidebar(self, widget):
+    def __on_check_sidebar(self, widget, state=None):
         """ Update sidebar widget from checkbutton state
 
         Parameters
@@ -1635,8 +1680,9 @@ class Preferences(object):
 
         status = self.check_sidebar.get_active()
 
+        self.label_sidebar_screenshot.set_sensitive(status)
         self.check_sidebar_screenshot.set_sensitive(status)
-        self.label_sidebar.set_sensitive(status)
+        self.label_sidebar_position.set_sensitive(status)
         self.combo_sidebar.set_sensitive(status)
 
 

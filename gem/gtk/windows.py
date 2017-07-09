@@ -887,6 +887,8 @@ class DialogParameters(Dialog):
         # Properties
         self.entry_arguments.set_margin_left(16)
         self.entry_arguments.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.PRIMARY, Icons.Terminal)
+        self.entry_arguments.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
 
         # ------------------------------------
