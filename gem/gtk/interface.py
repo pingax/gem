@@ -216,7 +216,7 @@ class Interface(Gtk.Window):
         self.icons_data = {
             "save": Icons.Download,
             "snap": Icons.Photos,
-            "except": Icons.Important,
+            "except": Icons.Gaming,
             "warning": Icons.Warning,
             "favorite": Icons.Favorite,
             "multiplayer": Icons.Users }
@@ -367,7 +367,7 @@ class Interface(Gtk.Window):
         self.tool_image_launch.set_from_icon_name(
             Icons.Launch, Gtk.IconSize.LARGE_TOOLBAR)
         self.tool_image_parameters.set_from_icon_name(
-            Icons.Important, Gtk.IconSize.LARGE_TOOLBAR)
+            Icons.Gaming, Gtk.IconSize.LARGE_TOOLBAR)
         self.tool_image_screenshots.set_from_icon_name(
             Icons.Image, Gtk.IconSize.LARGE_TOOLBAR)
         self.tool_image_output.set_from_icon_name(
@@ -848,6 +848,7 @@ class Interface(Gtk.Window):
         self.filter_games = self.model_games.filter_new()
 
         self.column_game_favorite = Gtk.TreeViewColumn()
+        self.column_game_multiplayer = Gtk.TreeViewColumn()
         self.column_game_name = Gtk.TreeViewColumn()
         self.column_game_play = Gtk.TreeViewColumn()
         self.column_game_last_play = Gtk.TreeViewColumn()
@@ -890,13 +891,16 @@ class Interface(Gtk.Window):
         self.column_game_installed.set_title(_("Installed"))
         self.column_game_flags.set_title(_("Flags"))
 
+        self.column_game_favorite.pack_start(
+            self.cell_game_favorite, False)
+
+        self.column_game_multiplayer.pack_start(
+            self.cell_game_multiplayer, False)
+
         self.column_game_name.set_expand(True)
         self.column_game_name.set_resizable(True)
         self.column_game_name.set_min_width(100)
         self.column_game_name.set_fixed_width(300)
-        self.column_game_favorite.pack_start(
-            self.cell_game_favorite, False)
-
         self.column_game_name.pack_start(
             self.cell_game_name, True)
 
@@ -924,12 +928,12 @@ class Interface(Gtk.Window):
         self.column_game_flags.pack_start(
             self.cell_game_snapshots, False)
         self.column_game_flags.pack_start(
-            self.cell_game_multiplayer, False)
-        self.column_game_flags.pack_start(
             self.cell_game_save, False)
 
         self.column_game_favorite.add_attribute(
             self.cell_game_favorite, "pixbuf", Columns.Icon)
+        self.column_game_multiplayer.add_attribute(
+            self.cell_game_multiplayer, "pixbuf", Columns.Multiplayer)
         self.column_game_name.add_attribute(
             self.cell_game_name, "text", Columns.Name)
         self.column_game_play.add_attribute(
@@ -946,8 +950,6 @@ class Interface(Gtk.Window):
             self.cell_game_except, "pixbuf", Columns.Except)
         self.column_game_flags.add_attribute(
             self.cell_game_snapshots, "pixbuf", Columns.Snapshots)
-        self.column_game_flags.add_attribute(
-            self.cell_game_multiplayer, "pixbuf", Columns.Multiplayer)
         self.column_game_flags.add_attribute(
             self.cell_game_save, "pixbuf", Columns.Save)
 
@@ -1258,6 +1260,7 @@ class Interface(Gtk.Window):
         self.scroll_games.add(self.treeview_games)
 
         self.treeview_games.append_column(self.column_game_favorite)
+        self.treeview_games.append_column(self.column_game_multiplayer)
         self.treeview_games.append_column(self.column_game_name)
         self.treeview_games.append_column(self.column_game_play)
         self.treeview_games.append_column(self.column_game_last_play)
@@ -3444,7 +3447,7 @@ class Interface(Gtk.Window):
             #   Dialog
             # ----------------------------
 
-            dialog = DialogParameters(self, game.name, emulator)
+            dialog = DialogParameters(self, game, emulator)
 
             if dialog.run() == Gtk.ResponseType.OK:
                 self.logger.info(
@@ -3453,9 +3456,11 @@ class Interface(Gtk.Window):
                 game.emulator = self.api.get_emulator(
                     dialog.combo.get_active_id())
 
-                game.default = dialog.entry.get_text()
+                game.default = dialog.entry_arguments.get_text()
                 if len(game.default) == 0:
                     game.default = None
+
+                game.tags = dialog.entry_tags.get_text().split()
 
                 # Update game from database
                 self.api.update_game(game)

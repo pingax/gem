@@ -78,6 +78,7 @@ class Icons:
     About       = "help-about"
     Content     = "help-contents"
     Faq         = "help-faq"
+    AddText     = "insert-text"
     Add         = "list-add"
     Remove      = "list-remove"
     Launch      = "media-playback-start"

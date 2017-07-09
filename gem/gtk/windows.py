@@ -745,20 +745,20 @@ class DialogEditor(Dialog):
 
 class DialogParameters(Dialog):
 
-    def __init__(self, parent, title, emulator):
+    def __init__(self, parent, game, emulator):
         """ Constructor
 
         Parameters
         ----------
         parent : Gtk.Window
             Parent object
-        title : str
-            Dialog title
-        emulator : str
-            Emulator name
+        game : gem.api.Game
+            Game object
+        emulator : dict
+            Emulator data
         """
 
-        Dialog.__init__(self, parent, title, Icons.Important)
+        Dialog.__init__(self, parent, game.name, Icons.Gaming)
 
         # ------------------------------------
         #   Initialize variables
@@ -766,6 +766,7 @@ class DialogParameters(Dialog):
 
         self.interface = parent
 
+        self.game = game
         self.emulator = emulator
 
         # HACK: Create an empty image to avoid g_object_set_qdata warning
@@ -780,6 +781,7 @@ class DialogParameters(Dialog):
             _("Description"): [
                 _("Emulator default arguments can use custom parameters to "
                     "facilitate file detection."),
+                _("Tags are split by spaces.")
             ],
             _("Parameters"): {
                 "<name>": _("Use ROM filename"),
@@ -817,10 +819,28 @@ class DialogParameters(Dialog):
         self.set_help(self.interface, self.help_data)
 
         # ------------------------------------
+        #   Grids
+        # ------------------------------------
+
+        grid_emulator = Gtk.Box()
+        grid_tags = Gtk.Box()
+
+        # Properties
+        grid_emulator.set_spacing(8)
+        grid_emulator.set_homogeneous(False)
+        grid_emulator.set_orientation(Gtk.Orientation.HORIZONTAL)
+
+        grid_tags.set_spacing(8)
+        grid_tags.set_margin_top(16)
+        grid_tags.set_homogeneous(False)
+        grid_tags.set_orientation(Gtk.Orientation.HORIZONTAL)
+
+        # ------------------------------------
         #   Emulators
         # ------------------------------------
 
         label_emulator = Gtk.Label()
+        image_emulator = Gtk.Image()
 
         self.model = Gtk.ListStore(Pixbuf, str, Pixbuf)
         self.combo = Gtk.ComboBox()
@@ -831,11 +851,16 @@ class DialogParameters(Dialog):
 
         # Properties
         label_emulator.set_alignment(0, .5)
-        label_emulator.set_text(_("Set default emulator"))
+        label_emulator.set_use_markup(True)
+        label_emulator.set_markup(
+            "<b>%s</b>" % _("Set an emulator for this game"))
+
+        image_emulator.set_from_icon_name(Icons.Properties, Gtk.IconSize.MENU)
 
         self.model.set_sort_column_id(1, Gtk.SortType.ASCENDING)
 
         self.combo.set_model(self.model)
+        self.combo.set_margin_left(16)
         self.combo.set_id_column(1)
         self.combo.pack_start(cell_icon, False)
         self.combo.add_attribute(cell_icon, "pixbuf", 0)
@@ -850,26 +875,53 @@ class DialogParameters(Dialog):
         #   Arguments
         # ------------------------------------
 
-        label_arguments = Gtk.Label()
-
-        self.entry = Gtk.Entry()
+        self.entry_arguments = Gtk.Entry()
 
         # Properties
-        label_arguments.set_alignment(0, .5)
-        label_arguments.set_text(_("Set default arguments"))
+        self.entry_arguments.set_margin_left(16)
+        self.entry_arguments.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
 
-        self.entry.set_icon_from_icon_name(
+        # ------------------------------------
+        #   Tags
+        # ------------------------------------
+
+        label_tags = Gtk.Label()
+        image_tags = Gtk.Image()
+
+        self.entry_tags = Gtk.Entry()
+
+        # Properties
+        label_tags.set_alignment(0, .5)
+        label_tags.set_use_markup(True)
+        label_tags.set_markup(
+            "<b>%s</b>" % _("Set tags for this game"))
+
+        image_tags.set_from_icon_name(Icons.AddText, Gtk.IconSize.MENU)
+
+        self.entry_tags.set_margin_left(16)
+        self.entry_tags.set_tooltip_text(
+            _("Use space to separate tags"))
+        self.entry_tags.set_placeholder_text(
+            _("Use space to separate tags"))
+        self.entry_tags.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
 
         # ------------------------------------
         #   Integrate widgets
         # ------------------------------------
 
-        self.dialog_box.pack_start(label_emulator, False, True, 0)
+        self.dialog_box.pack_start(grid_emulator, False, True, 0)
         self.dialog_box.pack_start(self.combo, False, True, 0)
-        self.dialog_box.pack_start(Gtk.Separator(), False, True, 4)
-        self.dialog_box.pack_start(label_arguments, False, True, 0)
-        self.dialog_box.pack_start(self.entry, False, True, 0)
+        self.dialog_box.pack_start(self.entry_arguments, False, True, 0)
+        self.dialog_box.pack_start(grid_tags, False, True, 0)
+        self.dialog_box.pack_start(self.entry_tags, False, True, 0)
+
+        grid_emulator.pack_start(image_emulator, False, False, 0)
+        grid_emulator.pack_start(label_emulator, True, True, 0)
+
+        grid_tags.pack_start(image_tags, False, False, 0)
+        grid_tags.pack_start(label_tags, True, True, 0)
 
 
     def __init_signals(self):
@@ -878,7 +930,8 @@ class DialogParameters(Dialog):
 
         self.combo.connect("changed", self.__on_selected_emulator)
 
-        self.entry.connect("icon-press", on_entry_clear)
+        self.entry_arguments.connect("icon-press", on_entry_clear)
+        self.entry_tags.connect("icon-press", on_entry_clear)
 
 
     def __start_interface(self):
@@ -906,7 +959,10 @@ class DialogParameters(Dialog):
                     self.combo.set_active_iter(row)
 
         if self.emulator["parameters"] is not None:
-            self.entry.set_text(self.emulator["parameters"])
+            self.entry_arguments.set_text(self.emulator["parameters"])
+
+        if len(self.game.tags) > 0:
+            self.entry_tags.set_text(' '.join(self.game.tags))
 
         self.combo.grab_focus()
 
@@ -935,7 +991,7 @@ class DialogParameters(Dialog):
         else:
             self.set_response_sensitive(Gtk.ResponseType.OK, False)
 
-        self.entry.set_placeholder_text(default)
+        self.entry_arguments.set_placeholder_text(default)
 
 
 class DialogRemove(Dialog):
