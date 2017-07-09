@@ -149,7 +149,7 @@ class Dialog(Gtk.Dialog):
         image_header = Gtk.Image()
 
         # Properties
-        image_header.set_from_icon_name(self.icon, Gtk.IconSize.DND)
+        image_header.set_from_icon_name(self.icon, Gtk.IconSize.LARGE_TOOLBAR)
 
         # ------------------------------------
         #   Integrate widgets
@@ -469,10 +469,14 @@ class DialogEditor(Dialog):
         #   Grid
         # ------------------------------------
 
-        bottom_grid = Gtk.Box()
+        grid_header = Gtk.Box()
+        grid_search = Gtk.Box()
 
         # Properties
-        bottom_grid.set_orientation(Gtk.Orientation.HORIZONTAL)
+        grid_header.set_spacing(4)
+        grid_header.set_orientation(Gtk.Orientation.HORIZONTAL)
+
+        Gtk.StyleContext.add_class(grid_search.get_style_context(), "linked")
 
         # ------------------------------------
         #   Path
@@ -592,14 +596,17 @@ class DialogEditor(Dialog):
 
         scroll_editor.add(self.text_editor)
 
-        bottom_grid.pack_start(self.check_lines, False, True, 0)
-        bottom_grid.pack_end(self.button_bottom, False, True, 0)
-        bottom_grid.pack_end(self.button_up, False, True, 4)
-        bottom_grid.pack_end(self.entry_search, False, True, 0)
+        grid_header.pack_start(self.entry_path, True, True, 0)
+        grid_header.pack_start(Gtk.Separator(), False, True, 0)
+        grid_header.pack_start(self.entry_search, False, True, 0)
+        grid_header.pack_start(grid_search, False, True, 0)
 
-        self.dialog_box.pack_start(self.entry_path, False, True, 0)
+        grid_search.pack_start(self.button_up, False, True, 0)
+        grid_search.pack_start(self.button_bottom, False, True, 0)
+
+        self.dialog_box.pack_start(grid_header, False, True, 0)
         self.dialog_box.pack_start(scroll_editor, True, True, 0)
-        self.dialog_box.pack_start(bottom_grid, False, True, 0)
+        self.dialog_box.pack_start(self.check_lines, False, False, 0)
 
 
     def __init_signals(self):

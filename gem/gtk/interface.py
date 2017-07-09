@@ -558,7 +558,7 @@ class Interface(Gtk.Window):
         self.menubar_edit_image_rename.set_from_icon_name(
             Icons.Editor, Gtk.IconSize.MENU)
         self.menubar_edit_image_parameters.set_from_icon_name(
-            Icons.Properties, Gtk.IconSize.MENU)
+            Icons.Gaming, Gtk.IconSize.MENU)
         self.menubar_edit_image_copy.set_from_icon_name(
             Icons.Copy, Gtk.IconSize.MENU)
         self.menubar_edit_image_open.set_from_icon_name(
@@ -1066,7 +1066,7 @@ class Interface(Gtk.Window):
         self.menu_image_rename.set_from_icon_name(
             Icons.Editor, Gtk.IconSize.MENU)
         self.menu_image_parameters.set_from_icon_name(
-            Icons.Important, Gtk.IconSize.MENU)
+            Icons.Gaming, Gtk.IconSize.MENU)
         self.menu_image_copy.set_from_icon_name(
             Icons.Copy, Gtk.IconSize.MENU)
         self.menu_image_open.set_from_icon_name(
@@ -2998,6 +2998,9 @@ class Interface(Gtk.Window):
 
                 if run_game:
                     self.__on_game_launch()
+
+        else:
+            self.treeview_games.get_selection().unselect_all()
 
         self.set_informations()
 
