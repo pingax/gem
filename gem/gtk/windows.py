@@ -1154,6 +1154,7 @@ class DialogRename(Dialog):
         self.label.set_single_line_mode(False)
         self.label.set_line_wrap_mode(Pango.WrapMode.CHAR)
 
+        self.entry.set_activates_default(True)
         self.entry.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
 

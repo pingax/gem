@@ -686,17 +686,17 @@ class Interface(Gtk.Window):
         # Properties
         self.toolbar.set_icon_size(Gtk.IconSize.LARGE_TOOLBAR)
 
+        self.tool_item_properties.set_icon_name(Icons.Properties)
         self.tool_item_properties.set_tooltip_text(
             _("Edit emulator"))
 
+        self.tool_filter_favorite.set_icon_name(Icons.Favorite)
         self.tool_filter_favorite.set_tooltip_text(
             _("Show favorite games"))
+
+        self.tool_filter_multiplayer.set_icon_name(Icons.Users)
         self.tool_filter_multiplayer.set_tooltip_text(
             _("Show multiplayer games"))
-
-        self.tool_item_properties.set_icon_name(Icons.Properties)
-        self.tool_filter_favorite.set_icon_name(Icons.Favorite)
-        self.tool_filter_multiplayer.set_icon_name(Icons.Users)
 
         self.tool_separator.set_draw(False)
         self.tool_separator.set_expand(True)
@@ -2092,6 +2092,7 @@ class Interface(Gtk.Window):
             Event which triggered this signal
         """
 
+        # Fullscreen switch
         if event.keyval == Gdk.KEY_F11:
             self.tool_item_fullscreen.set_active(
                 not self.tool_item_fullscreen.get_active())
