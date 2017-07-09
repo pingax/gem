@@ -454,11 +454,15 @@ class Preferences(object):
         self.label_last_console.set_text(
             _("Load the last chosen console when start GEM"))
 
+        self.check_last_console.set_halign(Gtk.Align.END)
+
         self.label_hide_console.set_hexpand(True)
         self.label_hide_console.set_margin_left(32)
         self.label_hide_console.set_alignment(0, .5)
         self.label_hide_console.set_text(
             _("Hide consoles without any game"))
+
+        self.check_hide_console.set_halign(Gtk.Align.END)
 
         # ------------------------------------
         #   General - Viewer
@@ -493,6 +497,8 @@ class Preferences(object):
         self.label_native_viewer.set_margin_left(32)
         self.label_native_viewer.set_alignment(0, .5)
         self.label_native_viewer.set_text(_("Use native viewer"))
+
+        self.check_native_viewer.set_halign(Gtk.Align.END)
 
         self.file_viewer_binary.set_hexpand(True)
         self.file_viewer_binary.set_margin_left(64)
@@ -545,22 +551,30 @@ class Preferences(object):
         self.label_classic_theme.set_text(
             _("Use classic theme (Need to reboot GEM)"))
 
+        self.check_classic_theme.set_halign(Gtk.Align.END)
+
         self.label_header.set_hexpand(True)
         self.label_header.set_margin_left(32)
         self.label_header.set_alignment(0, .5)
         self.label_header.set_text(
             _("Show close buttons in header bar"))
 
+        self.check_header.set_halign(Gtk.Align.END)
+
         self.label_sidebar.set_hexpand(True)
         self.label_sidebar.set_margin_left(32)
         self.label_sidebar.set_alignment(0, .5)
         self.label_sidebar.set_text(_("Show sidebar"))
+
+        self.check_sidebar.set_halign(Gtk.Align.END)
 
         self.label_sidebar_screenshot.set_hexpand(True)
         self.label_sidebar_screenshot.set_margin_left(64)
         self.label_sidebar_screenshot.set_alignment(0, .5)
         self.label_sidebar_screenshot.set_text(
             _("Randomize game screenshot in sidebar"))
+
+        self.check_sidebar_screenshot.set_halign(Gtk.Align.END)
 
         self.label_sidebar_position.set_hexpand(True)
         self.label_sidebar_position.set_margin_left(64)
@@ -628,30 +642,42 @@ class Preferences(object):
         self.label_play.set_alignment(0, .5)
         self.label_play.set_label(_("Show \"Launch\" column"))
 
+        self.check_play.set_halign(Gtk.Align.END)
+
         self.label_last_play.set_hexpand(True)
         self.label_last_play.set_margin_left(32)
         self.label_last_play.set_alignment(0, .5)
         self.label_last_play.set_label(_("Show \"Last launch\" column"))
+
+        self.check_last_play.set_halign(Gtk.Align.END)
 
         self.label_play_time.set_hexpand(True)
         self.label_play_time.set_margin_left(32)
         self.label_play_time.set_alignment(0, .5)
         self.label_play_time.set_label(_("Show \"Play time\" column"))
 
+        self.check_play_time.set_halign(Gtk.Align.END)
+
         self.label_installed.set_hexpand(True)
         self.label_installed.set_margin_left(32)
         self.label_installed.set_alignment(0, .5)
         self.label_installed.set_label(_("Show \"Installed\" column"))
+
+        self.check_installed.set_halign(Gtk.Align.END)
 
         self.label_flags.set_hexpand(True)
         self.label_flags.set_margin_left(32)
         self.label_flags.set_alignment(0, .5)
         self.label_flags.set_label(_("Show \"Flags\" column"))
 
+        self.check_flags.set_halign(Gtk.Align.END)
+
         self.label_icons.set_hexpand(True)
         self.label_icons.set_margin_left(32)
         self.label_icons.set_alignment(0, .5)
         self.label_icons.set_label(_("Use translucent icons in games list"))
+
+        self.check_icons.set_halign(Gtk.Align.END)
 
         self.separator_interface_icons.set_hexpand(True)
         self.separator_interface_icons.set_margin_left(32)
@@ -698,6 +724,8 @@ class Preferences(object):
         self.label_lines.set_margin_left(32)
         self.label_lines.set_alignment(0, .5)
         self.label_lines.set_label(_("Show line numbers"))
+
+        self.check_lines.set_halign(Gtk.Align.END)
 
         self.combo_colorsheme.set_model(self.model_colorsheme)
         self.combo_colorsheme.set_id_column(0)
