@@ -1903,19 +1903,22 @@ class Interface(Gtk.Window):
         # Get game object from treeview
         game = model.get_value(row, Columns.Object)
 
+        favorite = self.tool_filter_favorite.get_active()
+        multiplayer = self.tool_filter_multiplayer.get_active()
+
         try:
-            name = model.get_value(row, Columns.Name)
+            text = self.entry_filter.get_text()
 
+            # No filter
+            if len(text) == 0:
+                found = True
+
+            # ------------------------------------
+            #   Check filter
+            # ------------------------------------
+
+            # Check game name first
             if game.name is not None:
-                text = self.entry_filter.get_text()
-
-                # ------------------------------------
-                #   Check filter
-                # ------------------------------------
-
-                # No filter
-                if len(text) == 0:
-                    found = True
 
                 # Regex match game.name
                 if match("%s$" % text, game.name) is not None:
@@ -1925,25 +1928,39 @@ class Interface(Gtk.Window):
                 if text.lower() in game.name.lower():
                     found = True
 
-                # ------------------------------------
-                #   Set status
-                # ------------------------------------
+            # Check game tags second
+            if len(game.tags) > 0:
 
-                # No flag
-                if not game.favorite and not game.multiplayer and found:
-                    return True
+                for tag in game.tags:
 
-                # Only favorite flag
-                if game.favorite and not game.multiplayer and found:
-                    return True
+                    # Regex match one of game tag
+                    if match("%s$" % text, tag) is not None:
+                        found = True
 
-                # Only multiplayer flag
-                if game.multiplayer and not game.favorite and found:
-                    return True
+                    # Lowercase filter match lowercase game.name
+                    if text.lower() in tag.lower():
+                        found = True
 
-                # Both favorite and multiplayer flags
-                if game.favorite and game.multiplayer and found:
-                    return True
+            # ------------------------------------
+            #   Set status
+            # ------------------------------------
+
+            # No flag
+            if not favorite and not multiplayer and found:
+                return True
+
+            # Only favorite flag
+            if game.favorite and favorite and not multiplayer and found:
+                return True
+
+            # Only multiplayer flag
+            if game.multiplayer and multiplayer and not favorite and found:
+                return True
+
+            # Both favorite and multiplayer flags
+            if game.favorite and game.multiplayer and \
+                favorite and multiplayer and found:
+                return True
 
         except:
             pass
