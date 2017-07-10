@@ -125,6 +125,7 @@ class Icons:
     Warning     = "dialog-warning"
     Question    = "dialog-question"
     Information = "dialog-information"
+    Password    = "dialog-password"
     Loading     = "image-loading"
     Missing     = "image-missing"
 

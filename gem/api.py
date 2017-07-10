@@ -914,7 +914,10 @@ class Emulator(GEMObject):
             else:
                 pattern = key.replace("<name>", game.filename)
 
-            return glob(pattern)
+            if "<key>" in key and game.key is not None:
+                pattern = key.replace("<key>", game.key)
+
+            return glob(expanduser(pattern))
 
         return list()
 
@@ -1030,6 +1033,9 @@ class Emulator(GEMObject):
             command = command.replace("<rom_file>", game.filepath)
 
             use_filepath = False
+
+        if "<key>" in command and game.key is not None:
+            command = command.replace("<key>", game.key)
 
         # ----------------------------
         #   Generate correct command
@@ -1236,6 +1242,11 @@ class Console(GEMObject):
                     if "arguments" in data and len(data["arguments"]) > 0:
                         arguments = data["arguments"]
 
+                    # Set savestates regex
+                    key = None
+                    if "key" in data and len(data["key"]) > 0:
+                        key = data["key"]
+
                     # Set game tags
                     tags = list()
                     if "tags" in data and len(data["tags"]) > 0:
@@ -1251,6 +1262,7 @@ class Console(GEMObject):
                         "last_launch_time": last_launch_time,
                         "emulator": emulator,
                         "default": arguments,
+                        "key": key,
                         "tags": tags
                     })
 
@@ -1303,6 +1315,7 @@ class Game(GEMObject):
         "last_launch_date": None,
         "emulator": None,
         "default": None,
+        "key": None,
         "tags": list()
     }
 
@@ -1333,6 +1346,7 @@ class Game(GEMObject):
             "last_play": self.last_launch_date,
             "emulator": self.emulator,
             "arguments": self.default,
+            "key": self.key,
             "tags": ';'.join(self.tags)
         })
 
@@ -1369,6 +1383,7 @@ class Game(GEMObject):
             basename(expanduser(self.filepath))
         )
 
+
     @property
     def filename(self):
         """ Return filename without extension from filepath
@@ -1384,6 +1399,7 @@ class Game(GEMObject):
 
         return splitext(basename(expanduser(self.filepath)))[0]
 
+
     @property
     def extension(self):
         """ Return extension from filepath
@@ -1398,6 +1414,7 @@ class Game(GEMObject):
             raise TypeError("Wrong type for filepath, expected str")
 
         return splitext(basename(expanduser(self.filepath)))[-1]
+
 
 if __name__ == "__main__":
     """ Debug GEM API

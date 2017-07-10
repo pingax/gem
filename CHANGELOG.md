@@ -11,6 +11,7 @@
 * Fix wrong variable in get_emulator, console instead of emulator
 * Fix write data in api set empty list as None
 * Fix send emulator object in console.as_dict instead of emulator.name
+* Fix icons viewer not load file selector by default for absolute icon path
 
 ## Version 0.7.1 - Count Dracula (13 June, 2017)
 

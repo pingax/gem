@@ -788,9 +788,14 @@ class DialogParameters(Dialog):
             _("Description"): [
                 _("Emulator default arguments can use custom parameters to "
                     "facilitate file detection."),
+                _("Nintendo console titles are identified by a 6 character "
+                    "identifier known as a GameID. This GameID is only used "
+                    "with some emulators like Dolphin-emu. For more "
+                    "informations, consult emulators documentation."),
                 _("Tags are split by spaces.")
             ],
             _("Parameters"): {
+                "<key>": _("Use game key"),
                 "<name>": _("Use ROM filename"),
                 "<lname>": _("Use ROM lowercase filename"),
                 "<rom_path>": _("Use ROM folder path"),
@@ -831,6 +836,7 @@ class DialogParameters(Dialog):
 
         grid_emulator = Gtk.Box()
         grid_tags = Gtk.Box()
+        grid_key = Gtk.Box()
 
         # Properties
         grid_emulator.set_spacing(8)
@@ -841,6 +847,11 @@ class DialogParameters(Dialog):
         grid_tags.set_margin_top(16)
         grid_tags.set_homogeneous(False)
         grid_tags.set_orientation(Gtk.Orientation.HORIZONTAL)
+
+        grid_key.set_spacing(8)
+        grid_key.set_margin_top(8)
+        grid_key.set_homogeneous(False)
+        grid_key.set_orientation(Gtk.Orientation.HORIZONTAL)
 
         # ------------------------------------
         #   Emulators
@@ -859,8 +870,7 @@ class DialogParameters(Dialog):
         # Properties
         label_emulator.set_alignment(0, .5)
         label_emulator.set_use_markup(True)
-        label_emulator.set_markup(
-            "<b>%s</b>" % _("Set an emulator for this game"))
+        label_emulator.set_markup("<b>%s</b>" % _("Alternative emulator"))
 
         image_emulator.set_from_icon_name(Icons.Properties, Gtk.IconSize.MENU)
 
@@ -892,6 +902,27 @@ class DialogParameters(Dialog):
             Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
 
         # ------------------------------------
+        #   Key
+        # ------------------------------------
+
+        label_key = Gtk.Label()
+        image_key = Gtk.Image()
+
+        self.entry_key = Gtk.Entry()
+
+        # Properties
+        label_key.set_alignment(0, .5)
+        label_key.set_use_markup(True)
+        label_key.set_markup("<b>%s</b>" % _("GameID"))
+
+        image_key.set_from_icon_name(Icons.Password, Gtk.IconSize.MENU)
+
+        self.entry_key.set_margin_left(16)
+        self.entry_key.set_placeholder_text(_("No default value"))
+        self.entry_key.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
+
+        # ------------------------------------
         #   Tags
         # ------------------------------------
 
@@ -903,8 +934,7 @@ class DialogParameters(Dialog):
         # Properties
         label_tags.set_alignment(0, .5)
         label_tags.set_use_markup(True)
-        label_tags.set_markup(
-            "<b>%s</b>" % _("Set tags for this game"))
+        label_tags.set_markup("<b>%s</b>" % _("Tags"))
 
         image_tags.set_from_icon_name(Icons.AddText, Gtk.IconSize.MENU)
 
@@ -923,11 +953,16 @@ class DialogParameters(Dialog):
         self.dialog_box.pack_start(grid_emulator, False, True, 0)
         self.dialog_box.pack_start(self.combo, False, True, 0)
         self.dialog_box.pack_start(self.entry_arguments, False, True, 0)
+        self.dialog_box.pack_start(grid_key, False, True, 0)
+        self.dialog_box.pack_start(self.entry_key, False, True, 0)
         self.dialog_box.pack_start(grid_tags, False, True, 0)
         self.dialog_box.pack_start(self.entry_tags, False, True, 0)
 
         grid_emulator.pack_start(image_emulator, False, False, 0)
         grid_emulator.pack_start(label_emulator, True, True, 0)
+
+        grid_key.pack_start(image_key, False, False, 0)
+        grid_key.pack_start(label_key, True, True, 0)
 
         grid_tags.pack_start(image_tags, False, False, 0)
         grid_tags.pack_start(label_tags, True, True, 0)
@@ -941,6 +976,7 @@ class DialogParameters(Dialog):
 
         self.entry_arguments.connect("icon-press", on_entry_clear)
         self.entry_tags.connect("icon-press", on_entry_clear)
+        self.entry_key.connect("icon-press", on_entry_clear)
 
 
     def __start_interface(self):
@@ -970,6 +1006,9 @@ class DialogParameters(Dialog):
         if self.emulator["parameters"] is not None:
             self.entry_arguments.set_text(self.emulator["parameters"])
 
+        if self.game.key is not None:
+            self.entry_key.set_text(self.game.key)
+
         if len(self.game.tags) > 0:
             self.entry_tags.set_text(' '.join(self.game.tags))
 
@@ -985,7 +1024,7 @@ class DialogParameters(Dialog):
             Object which receive signal (Default: None)
         """
 
-        default = str()
+        default = _("No default value")
 
         emulator = self.interface.api.get_emulator(self.combo.get_active_id())
 

@@ -3475,6 +3475,10 @@ class Interface(Gtk.Window):
                 if len(game.default) == 0:
                     game.default = None
 
+                game.key = dialog.entry_key.get_text()
+                if len(game.key) == 0:
+                    game.key = None
+
                 game.tags = dialog.entry_tags.get_text().split()
 
                 # Update game from database

@@ -2386,6 +2386,7 @@ class PreferencesEmulator(Dialog):
                     "and \"Snapshots\" entries."),
             ],
             _("Parameters"): {
+                "<key>": _("Use game key"),
                 "<name>": _("Use ROM filename"),
                 "<lname>": _("Use ROM lowercase filename"),
                 "<rom_path>": _("Use ROM folder path"),
