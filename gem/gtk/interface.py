@@ -1137,6 +1137,13 @@ class Interface(Gtk.Window):
         self.grid.pack_start(self.paned_games, True, True, 0)
         self.grid.pack_start(self.statusbar, False, False, 0)
 
+        self.grid.set_focus_chain([
+            self.headerbar,
+            self.menu,
+            self.toolbar,
+            self.scroll_games
+        ])
+
         # Headerbar
         self.headerbar.pack_start(self.tool_item_launch)
         self.headerbar.pack_start(self.tool_item_fullscreen)
@@ -1741,7 +1748,10 @@ class Interface(Gtk.Window):
             # Avoid to reload paned_game if user has not change orientation
             previous_mode = self.paned_games.get_orientation()
 
-            if self.config.get("gem", "sidebar_orientation") == "horizontal" and \
+            # Wanted sidebar orientation
+            sidebar_orientation = self.config.get("gem", "sidebar_orientation")
+
+            if sidebar_orientation == "horizontal" and \
                 not previous_mode == Gtk.Orientation.HORIZONTAL:
                 self.paned_games.set_position(-1)
                 self.paned_games.set_orientation(Gtk.Orientation.HORIZONTAL)
@@ -1751,7 +1761,8 @@ class Interface(Gtk.Window):
 
                 self.image_game_screen.set_alignment(0.5, 0)
 
-            elif not previous_mode == Gtk.Orientation.VERTICAL:
+            elif sidebar_orientation == "vertical" and \
+                not previous_mode == Gtk.Orientation.VERTICAL:
                 self.paned_games.set_position(-1)
                 self.paned_games.set_orientation(Gtk.Orientation.VERTICAL)
 
