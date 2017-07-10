@@ -30,6 +30,7 @@ from datetime import timedelta
 from os import mkdir
 from os import makedirs
 
+from os.path import isdir
 from os.path import exists
 from os.path import dirname
 from os.path import basename
@@ -917,7 +918,8 @@ class Emulator(GEMObject):
             if "<key>" in key and game.key is not None:
                 pattern = key.replace("<key>", game.key)
 
-            return glob(expanduser(pattern))
+            if not isdir(expanduser(pattern)):
+                return glob(expanduser(pattern))
 
         return list()
 
