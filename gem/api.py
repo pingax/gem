@@ -416,6 +416,11 @@ class GEM(object):
                 # Get configuration filename for storage
                 name, ext = splitext(path)
 
+                # Backup configuration file
+                self.logger.debug("Backup ~%s configuration file" % path)
+                move(path_join(GEM.Config, path),
+                    path_join(GEM.Config, '~' + path))
+
                 # Create a new configuration object
                 config = Configuration(path_join(GEM.Config, path))
 
@@ -431,11 +436,6 @@ class GEM(object):
                             value = value.id
 
                         config.modify(section, key, value)
-
-                # Backup configuration file
-                self.logger.debug("Backup ~%s configuration file" % path)
-                move(path_join(GEM.Config, path),
-                    path_join(GEM.Config, '~' + path))
 
                 # Write new configuration file
                 self.logger.info("Write %s configuration file" % path)
