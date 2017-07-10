@@ -1157,7 +1157,7 @@ class Console(GEMObject):
             for filename in set(glob("%s/*.%s" % (self.path, extension))):
 
                 # Get data from database
-                data = database.get("games", {"filename": basename(filename) })
+                data = database.get("games", { "filename": basename(filename) })
 
                 # Generate Game object
                 game = Game()

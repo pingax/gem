@@ -135,6 +135,18 @@ msgid "Alternate game fullscreen mode"
 msgstr "Alternar el modo pantalla completa del juego"
 
 #
+# File: gem/preferences.py, line: 1013
+#, fuzzy
+msgid "Alternative emulator"
+msgstr "Establecer el emulador por defecto"
+
+#
+# File: gem/preferences.py, line: 393
+#, fuzzy
+msgid "Alternative viewer"
+msgstr "Usar el visor nativo"
+
+#
 # File: gem/interface.py, line: 2112
 msgid "An error occur during generation, consult log for futher details."
 msgstr ""
@@ -420,6 +432,12 @@ msgid "Game"
 msgstr "Juego"
 
 #
+# File: gem/preferences.py, line: 113
+#, fuzzy
+msgid "GameID"
+msgstr "Juego"
+
+#
 # File: gem/preferences.py, line: 328
 #, fuzzy
 msgid "Games folder"
@@ -604,10 +622,10 @@ msgid "Modify"
 msgstr "Modificar"
 
 #
-# File: gem/gtk/preferences.py, line: 1787
+# File: gem/gtk/preferences.py, line: 1879
 msgid ""
 "Most of the time, extensions are common between differents emulators and "
-"represent the console acronym (exemple: Nintendo NES -> nes)."
+"represent the console acronym name (example: Nintendo NES -> nes)."
 msgstr ""
 
 #
@@ -618,6 +636,20 @@ msgstr ""
 # File: gem/preferences.py, line: 1563
 msgid "Name"
 msgstr "Nombre"
+
+#
+# File: gem/gtk/windows.py, line: 791
+msgid ""
+"Nintendo console titles are identified by a 6 character identifier known as "
+"a GameID. This GameID is only used with some emulators like Dolphin-emu. For "
+"more informations, consult emulators documentation."
+msgstr ""
+
+#
+# File: gem/preferences.py, line: 1662
+#, fuzzy
+msgid "No default value"
+msgstr "Establecer las opciones por defecto"
 
 #
 # File: gem/preferences.py, line: 97
@@ -682,6 +714,12 @@ msgstr "Salir de la aplicación"
 # File: gem/preferences.py, line: 372
 msgid "ROMs path"
 msgstr "Ruta de las ROMs"
+
+#
+# File: gem/interface.py, line: 2006
+#, fuzzy
+msgid "Randomize game screenshot in sidebar"
+msgstr "Borrar capturas de pantalla del juego"
 
 #
 # File: gem/preferences.py, line: 1624
@@ -785,16 +823,6 @@ msgstr "Crear un nombre personalizado para %s"
 # File: gem/interface.py, line: 1667
 msgid "Set custom parameters"
 msgstr "Crear parametros personalizados"
-
-#
-# File: gem/preferences.py, line: 1662
-msgid "Set default arguments"
-msgstr "Establecer las opciones por defecto"
-
-#
-# File: gem/preferences.py, line: 1013
-msgid "Set default emulator"
-msgstr "Establecer el emulador por defecto"
 
 #
 # File: gem/preferences.py, line: 90
@@ -936,6 +964,17 @@ msgid "Specify a memory type"
 msgstr "Escoge un tipo de memoria"
 
 #
+# File: gem/gtk/interface.py, line: 185
+# File: gem/gtk/windows.py, line: 960
+msgid "Tags"
+msgstr ""
+
+#
+# File: gem/gtk/windows.py, line: 791
+msgid "Tags are split by spaces."
+msgstr ""
+
+#
 # File: gem/interface.py, line: 1501
 msgid "Terminate by keyboard interrupt"
 msgstr "Finalizado por interrupción del teclado"
@@ -1067,6 +1106,12 @@ msgid "Use emulator configuration file path"
 msgstr "Usar la ruta del archivo de configuración del emulador"
 
 #
+# File: gem/gtk/preferences.py, line: 2389
+# File: gem/gtk/windows.py, line: 796
+msgid "Use game key"
+msgstr ""
+
+#
 # File: gem/preferences.py, line: 393
 msgid "Use native viewer"
 msgstr "Usar el visor nativo"
@@ -1075,6 +1120,12 @@ msgstr "Usar el visor nativo"
 # File: gem/preferences.py, line: 1348
 #, fuzzy
 msgid "Use space to separate extensions"
+msgstr "Usar el punto y coma para separar las extensiones"
+
+#
+# File: gem/preferences.py, line: 1348
+#, fuzzy
+msgid "Use space to separate tags"
 msgstr "Usar el punto y coma para separar las extensiones"
 
 #
@@ -1314,6 +1365,17 @@ msgstr "agradecimientos a los traductores"
 # File: gem/interface.py, line: 1892
 #~ msgid "Missing file"
 #~ msgstr "Falta archivo"
+
+#
+# File: gem/interface.py, line: 2006
+#, fuzzy
+#~ msgid "Screenshots regex"
+#~ msgstr "Mostrar las _capturas de pantalla"
+
+#
+# File: gem/preferences.py, line: 1013
+#~ msgid "Set default emulator"
+#~ msgstr "Establecer el emulador por defecto"
 
 #
 # File: gem/interface.py, line: 135

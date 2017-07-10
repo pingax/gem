@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.6\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2017-07-01 16:10+0200\n"
+"PO-Revision-Date: 2017-07-10 23:33+0200\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -104,6 +104,9 @@ msgid ""
 "which is used by this console and extensions which is readable by this "
 "emulator."
 msgstr ""
+"Une console représente une bibliothèque de jeux. Vous pouvez spécifier un "
+"émulateur par défaut qui est utilisé par cette console et les extensions qui "
+"seront lues par cette émulateur."
 
 #
 # File: gem/preferences.py, line: 329
@@ -132,6 +135,16 @@ msgstr "Toutes les icônes"
 # File: gem/interface.py, line: 290
 msgid "Alternate game fullscreen mode"
 msgstr "Alterner le mode plein écran pour le jeu"
+
+#
+# File: gem/interface.py, line: 300
+msgid "Alternative emulator"
+msgstr "Émulateur alternatif"
+
+#
+# File: gem/preferences.py, line: 292
+msgid "Alternative viewer"
+msgstr "Visualiseur d'images alternatif"
 
 #
 # File: gem/interface.py, line: 2112
@@ -276,7 +289,6 @@ msgstr "Définir des _paramètres personnalisés"
 
 #
 # File: gem/interface.py, line: 300
-#, fuzzy
 msgid "Default emulator"
 msgstr "Émulateur par défaut"
 
@@ -366,6 +378,8 @@ msgid ""
 "Extensions are split by spaces and must not having the first dot (using \"nes"
 "\" than \".nes\")."
 msgstr ""
+"Les extensions sont séparées par des espaces et ne doivent pas contenir le "
+"premier point (utilisez « nes » au lieu de « .nes »)."
 
 #
 # File: gem/gtk/preferences.py, line: 1780
@@ -410,8 +424,12 @@ msgid "Game"
 msgstr "Jeu"
 
 #
+# File: gem/preferences.py, line: 113
+msgid "GameID"
+msgstr "GameID"
+
+#
 # File: gem/interface.py, line: 220
-#, fuzzy
 msgid "Games folder"
 msgstr "Dossier des jeux"
 
@@ -458,7 +476,6 @@ msgstr "Horizontales"
 
 #
 # File: src/window.py, line: 446
-#, fuzzy
 msgid "Ignored games files"
 msgstr "Fichiers des jeux à ignorer"
 
@@ -495,6 +512,8 @@ msgid ""
 "It's possible to hide specific files from the games list with regular "
 "expressions."
 msgstr ""
+"Il est possible de cacher des fichiers spécifiques de la liste de jeux à "
+"l'aide d'expressions régulières."
 
 #
 # File: src/window.py, line: 380
@@ -596,13 +615,33 @@ msgstr "Modifier"
 # File: gem/gtk/preferences.py, line: 1787
 msgid ""
 "Most of the time, extensions are common between differents emulators and "
-"represent the console acronym (exemple: Nintendo NES -> nes)."
+"represent the console acronym name (example: Nintendo NES -> nes)."
 msgstr ""
+"La plupart du temps, les extensions sont communes entre les différents "
+"émulateurs et représente l'acronym du nom de la console (exemple: Nintendo "
+"NES -> nes)."
 
 #
 # File: src/window.py, line: 368
 msgid "Name"
 msgstr "Nom"
+
+#
+# File: gem/gtk/windows.py, line: 791
+msgid ""
+"Nintendo console titles are identified by a 6 character identifier known as "
+"a GameID. This GameID is only used with some emulators like Dolphin-emu. For "
+"more informations, consult emulators documentation."
+msgstr ""
+"Les titres sur console Nintendo sont identifiés par un identifieur de 6 "
+"caractères connu comme le GameID. Ce GameID est seulement utilisé avec "
+"certains émulateurs comme Dolphin-emu. Pour plus d'informations, consultez "
+"ladocumentation des émulateurs."
+
+#
+# File: gem/interface.py, line: 1286
+msgid "No default value"
+msgstr "Pas de valeurs par défaut"
 
 #
 # File: gem/preferences.py, line: 97
@@ -664,6 +703,11 @@ msgstr "Quitter l'application"
 # File: gem/preferences.py, line: 372
 msgid "ROMs path"
 msgstr "Chemin des ROMs"
+
+#
+# File: gem/preferences.py, line: 335
+msgid "Randomize game screenshot in sidebar"
+msgstr "Afficher les captures d'écran de la barre latérale aléatoirement"
 
 #
 # File: gem/preferences.py, line: 1233
@@ -765,16 +809,6 @@ msgid "Set custom parameters"
 msgstr "Définir des paramètres personnalisés"
 
 #
-# File: gem/interface.py, line: 1286
-msgid "Set default arguments"
-msgstr "Définir les arguments par défaut"
-
-#
-# File: gem/interface.py, line: 300
-msgid "Set default emulator"
-msgstr "Définir l'émulateur par défaut"
-
-#
 # File: gem/preferences.py, line: 633
 msgid "Set specific arguments for a game"
 msgstr "Définir un argument spécifique pour un jeu"
@@ -826,7 +860,6 @@ msgstr "Afficher les _captures d'écran"
 
 #
 # File: gem/preferences.py, line: 338
-#, fuzzy
 msgid "Show _sidebar"
 msgstr "Montrer la _barre latérale"
 
@@ -887,7 +920,6 @@ msgstr "Afficher les captures d'écran du jeu sélectionné"
 
 #
 # File: gem/preferences.py, line: 338
-#, fuzzy
 msgid "Show sidebar"
 msgstr "Montrer la barre latérale"
 
@@ -912,6 +944,17 @@ msgstr "Spécifier un type de mémoire"
 # File: gem/gtk/interface.py, line: 1010
 msgid "Specify a memory type"
 msgstr "Spécifier un type de mémoire"
+
+#
+# File: gem/gtk/interface.py, line: 185
+# File: gem/gtk/windows.py, line: 960
+msgid "Tags"
+msgstr "Étiquettes"
+
+#
+# File: gem/gtk/windows.py, line: 791
+msgid "Tags are split by spaces."
+msgstr "Les étiquettes sont séparées par des espaces."
 
 #
 # File: gem/interface.py, line: 1501
@@ -1043,15 +1086,25 @@ msgid "Use emulator configuration file path"
 msgstr "Utiliser le chemin du fichier de configuration de l'émulateur"
 
 #
+# File: gem/gtk/preferences.py, line: 2389
+# File: gem/gtk/windows.py, line: 796
+msgid "Use game key"
+msgstr "Utiliser la clé du jeu"
+
+#
 # File: gem/preferences.py, line: 292
 msgid "Use native viewer"
 msgstr "Utiliser le visualiseur natif"
 
 #
 # File: gem/preferences.py, line: 1050
-#, fuzzy
 msgid "Use space to separate extensions"
 msgstr "Utilisez l'espace pour séparer les extensions"
+
+#
+# File: gem/preferences.py, line: 1050
+msgid "Use space to separate tags"
+msgstr "Utilisez l'espace pour séparer les étiquettes"
 
 #
 # File: gem/preferences.py, line: 283
@@ -1206,6 +1259,11 @@ msgstr "Lubert Aurélien"
 #~ msgstr "Choisir le dossier des ROMs"
 
 #
+# File: gem/gtk/windows.py, line: 914
+#~ msgid "Key"
+#~ msgstr "Clé"
+
+#
 # File: gem/gtk/mednafen.py, line: 389
 #~ msgid "Memory type"
 #~ msgstr "Type de mémoire"
@@ -1214,3 +1272,18 @@ msgstr "Lubert Aurélien"
 # File: gem/gtk/mednafen.py, line: 400
 #~ msgid "Memory value"
 #~ msgstr "Valeur de mémoire"
+
+#
+# File: gem/gtk/windows.py, line: 917
+#~ msgid "Savestates regex"
+#~ msgstr "Expression régulière pour les sauvegardes"
+
+#
+# File: gem/preferences.py, line: 335
+#~ msgid "Screenshots regex"
+#~ msgstr "Expression régulière pour les captures d'écran"
+
+#
+# File: gem/interface.py, line: 300
+#~ msgid "Set default emulator"
+#~ msgstr "Définir l'émulateur par défaut"
