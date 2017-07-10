@@ -3174,10 +3174,15 @@ class IconViewer(Dialog):
                 self.view_icons.select_path(
                     self.model_icons.get_path(self.icons_data[self.path]))
 
+                self.combo_option.set_active_id(_("All icons"))
+
             else:
                 self.file_icons.set_filename(self.path)
 
-        self.combo_option.set_active_id(_("All icons"))
+                self.combo_option.set_active_id(_("Image file"))
+
+        else:
+            self.combo_option.set_active_id(_("All icons"))
 
 
     def save_interface(self):
