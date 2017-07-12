@@ -4096,7 +4096,17 @@ class Interface(Gtk.Window):
             # ----------------------------
 
             if console is not None:
-                rom_path = console.path
+                rom_path = expanduser(console.path)
+
+                # ----------------------------
+                #   Check roms folder
+                # ----------------------------
+
+                if not exists(rom_path):
+                    self.logger.info(
+                        _("Create %s folder to store roms") % rom_path)
+
+                    mkdir(rom_path)
 
                 # ----------------------------
                 #   Install roms
@@ -4296,6 +4306,8 @@ class Splash(Thread, Gtk.Window):
 
         self.length = int()
 
+        self.main_loop = None
+
         # ------------------------------------
         #   Initialize icons
         # ------------------------------------
@@ -4416,7 +4428,9 @@ class Splash(Thread, Gtk.Window):
         """ Stop interface
         """
 
-        self.main_loop.quit()
+        # Rare case where the mainloop is not init when close() is running
+        if self.main_loop is not None:
+            self.main_loop.quit()
 
         self.destroy()
 
