@@ -911,8 +911,9 @@ class Emulator(GEMObject):
                 pattern = key.replace("<rom_path>", game.path[0])
 
             if "<lname>" in key:
-                pattern = key.replace("<lname>", game.filename).lower()
-            else:
+                pattern = key.replace("<lname>", game.filename.lower())
+
+            elif "<name>" in key:
                 pattern = key.replace("<name>", game.filename)
 
             if "<key>" in key and game.key is not None:

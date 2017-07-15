@@ -299,7 +299,8 @@ class Interface(Gtk.Window):
         self.grid_options = Gtk.Box()
 
         self.grid_paned = Gtk.Box()
-        self.grid_informations = Gtk.Box()
+        self.grid_paned_widgets = Gtk.Box()
+        self.grid_paned_footer = Gtk.Box()
 
         # Properties
         self.grid.set_orientation(Gtk.Orientation.VERTICAL)
@@ -313,9 +314,13 @@ class Interface(Gtk.Window):
         self.grid_paned.set_size_request(432, 216)
         self.grid_paned.set_orientation(Gtk.Orientation.HORIZONTAL)
 
-        self.grid_informations.set_spacing(8)
-        self.grid_informations.set_homogeneous(False)
-        self.grid_informations.set_orientation(Gtk.Orientation.VERTICAL)
+        self.grid_paned_widgets.set_spacing(8)
+        self.grid_paned_widgets.set_homogeneous(False)
+        self.grid_paned_widgets.set_orientation(Gtk.Orientation.VERTICAL)
+
+        self.grid_paned_footer.set_spacing(8)
+        self.grid_paned_footer.set_homogeneous(False)
+        self.grid_paned_footer.set_orientation(Gtk.Orientation.HORIZONTAL)
 
         # ------------------------------------
         #   Headerbar
@@ -767,12 +772,16 @@ class Interface(Gtk.Window):
         self.image_game_screen = Gtk.Image()
 
         self.separator_game = Gtk.Separator()
+        self.separator_footer = Gtk.Separator()
+
+        self.image_paned_savestates = Gtk.Image()
+        self.image_paned_parameters = Gtk.Image()
 
         # Properties
         self.paned_games.set_orientation(Gtk.Orientation.VERTICAL)
 
         self.label_game_title.set_hexpand(True)
-        self.label_game_title.set_alignment(0, 0)
+        self.label_game_title.set_alignment(0, 0.5)
         self.label_game_title.set_use_markup(True)
         self.label_game_title.set_ellipsize(Pango.EllipsizeMode.END)
 
@@ -781,12 +790,16 @@ class Interface(Gtk.Window):
         self.label_game_description.set_ellipsize(Pango.EllipsizeMode.END)
 
         self.label_game_footer.set_use_markup(True)
-        self.label_game_footer.set_alignment(0, 0)
+        self.label_game_footer.set_alignment(0, 0.5)
         self.label_game_footer.set_ellipsize(Pango.EllipsizeMode.END)
 
         self.image_game_screen.set_alignment(0, 0)
 
         self.separator_game.set_no_show_all(True)
+        self.separator_footer.set_no_show_all(True)
+
+        self.image_paned_savestates.set_from_pixbuf(self.empty)
+        self.image_paned_parameters.set_from_pixbuf(self.empty)
 
         # ------------------------------------
         #   Games - Sidebar description
@@ -963,15 +976,15 @@ class Interface(Gtk.Window):
 
         self.cell_game_name.set_property("ellipsize", Pango.EllipsizeMode.END)
 
-        self.cell_game_name.set_padding(4, 0)
-        self.cell_game_play.set_padding(8, 0)
-        self.cell_game_last_play.set_padding(8, 0)
-        self.cell_game_last_play_time.set_padding(8, 0)
-        self.cell_game_installed.set_padding(8, 0)
-        self.cell_game_except.set_padding(4, 0)
-        self.cell_game_snapshots.set_padding(4, 0)
-        self.cell_game_multiplayer.set_padding(4, 0)
-        self.cell_game_save.set_padding(4, 0)
+        self.cell_game_name.set_padding(4, 2)
+        self.cell_game_play.set_padding(8, 2)
+        self.cell_game_last_play.set_padding(8, 2)
+        self.cell_game_last_play_time.set_padding(8, 2)
+        self.cell_game_installed.set_padding(8, 2)
+        self.cell_game_except.set_padding(4, 2)
+        self.cell_game_snapshots.set_padding(4, 2)
+        self.cell_game_multiplayer.set_padding(4, 2)
+        self.cell_game_save.set_padding(4, 2)
 
         # ------------------------------------
         #   Games - Menu
@@ -1248,20 +1261,29 @@ class Interface(Gtk.Window):
         self.paned_games.pack1(self.scroll_games, True, False)
         self.paned_games.pack2(self.grid_paned, False, False)
 
-        self.grid_paned.pack_start(self.grid_informations, True, True, 0)
+        self.grid_paned.pack_start(self.grid_paned_widgets, True, True, 0)
         self.grid_paned.pack_start(self.image_game_screen, False, False, 0)
 
-        self.grid_informations.pack_start(
+        self.grid_paned_widgets.pack_start(
             self.label_game_title, False, False, 0)
-        self.grid_informations.pack_start(
+        self.grid_paned_widgets.pack_start(
             self.separator_game, False, False, 0)
 
         for key, value in self.sidebar_keys:
-            self.grid_informations.pack_start(
+            self.grid_paned_widgets.pack_start(
                 self.widgets_sidebar[key]["box"], False, False, 0)
 
-        self.grid_informations.pack_end(
-            self.label_game_footer, False, False, 0)
+        self.grid_paned_widgets.pack_end(
+            self.grid_paned_footer, False, False, 0)
+        self.grid_paned_widgets.pack_end(
+            self.separator_footer, False, False, 0)
+
+        self.grid_paned_footer.pack_start(
+            self.label_game_footer, True, True, 0)
+        self.grid_paned_footer.pack_end(
+            self.image_paned_savestates, False, False, 0)
+        self.grid_paned_footer.pack_end(
+            self.image_paned_parameters, False, False, 4)
 
         # Games treeview
         self.scroll_games.add(self.treeview_games)
@@ -1760,6 +1782,7 @@ class Interface(Gtk.Window):
                 self.grid_paned.reorder_child(self.image_game_screen, 0)
 
                 self.image_game_screen.set_alignment(0.5, 0)
+                self.label_game_title.set_alignment(0.5, 0)
 
             elif sidebar_orientation == "vertical" and \
                 not previous_mode == Gtk.Orientation.VERTICAL:
@@ -1770,6 +1793,7 @@ class Interface(Gtk.Window):
                 self.grid_paned.reorder_child(self.image_game_screen, -1)
 
                 self.image_game_screen.set_alignment(0, 0)
+                self.label_game_title.set_alignment(0, 0)
 
             for key, value in self.sidebar_keys:
                 self.widgets_sidebar[key]["box"].hide()
@@ -2172,7 +2196,7 @@ class Interface(Gtk.Window):
                 #   Show screenshot
                 # ----------------------------
 
-                results = emulator.get_screenshots(game)
+                results = sorted(emulator.get_screenshots(game))
 
                 # Check if rom has some screenshots
                 if len(results) > 0:
@@ -2189,9 +2213,11 @@ class Interface(Gtk.Window):
 
                     if pixbuf is not None:
                         self.image_game_screen.set_from_pixbuf(pixbuf)
+                        self.grid_paned.set_spacing(8)
 
                 else:
                     self.image_game_screen.set_from_pixbuf(None)
+                    self.grid_paned.set_spacing(0)
 
                 # ----------------------------
                 #   Show informations
@@ -2227,20 +2253,49 @@ class Interface(Gtk.Window):
 
                 # Game emulator
                 if emulator is not None:
+                    self.separator_footer.show()
+
                     self.label_game_footer.set_markup("<b>%s</b> : %s" % (
                         _("Emulator"), emulator.name))
+
+                    # Game savestates
+                    if len(emulator.get_savestates(game)) > 0:
+                        self.image_paned_savestates.set_from_pixbuf(
+                            self.icons["save"])
+                    else:
+                        self.image_paned_savestates.set_from_pixbuf(
+                            self.alternative["save"])
+
+                    # Game custom parameters
+                    if game.emulator is not None or game.default is not None:
+                        self.image_paned_parameters.set_from_pixbuf(
+                            self.icons["except"])
+                    else:
+                        self.image_paned_parameters.set_from_pixbuf(
+                            self.alternative["except"])
+
+                else:
+                    self.separator_footer.hide()
+
+                    self.image_paned_savestates.set_from_pixbuf(self.empty)
+                    self.image_paned_parameters.set_from_pixbuf(self.empty)
 
         else:
             for key, value in self.sidebar_keys:
                 self.widgets_sidebar[key]["box"].hide()
 
             self.separator_game.hide()
+            self.separator_footer.hide()
 
             self.label_game_title.set_text(str())
             self.label_game_footer.set_text(str())
             self.label_game_description.set_text(str())
 
             self.image_game_screen.set_from_pixbuf(None)
+            self.grid_paned.set_spacing(0)
+
+            self.image_paned_savestates.set_from_pixbuf(self.empty)
+            self.image_paned_parameters.set_from_pixbuf(self.empty)
 
         # ----------------------------
         #   Interface theme specific
