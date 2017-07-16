@@ -308,13 +308,13 @@ class Interface(Gtk.Window):
         Gtk.StyleContext.add_class(
             self.grid_options.get_style_context(), "linked")
 
-        self.grid_paned.set_spacing(8)
         self.grid_paned.set_border_width(8)
         self.grid_paned.set_homogeneous(False)
         self.grid_paned.set_size_request(432, 216)
         self.grid_paned.set_orientation(Gtk.Orientation.HORIZONTAL)
 
         self.grid_paned_widgets.set_spacing(8)
+        self.grid_paned_widgets.set_border_width(8)
         self.grid_paned_widgets.set_homogeneous(False)
         self.grid_paned_widgets.set_orientation(Gtk.Orientation.VERTICAL)
 
@@ -2207,17 +2207,21 @@ class Interface(Gtk.Window):
                         "gem", "show_random_screenshot", fallback=True):
                         index = randint(0, len(results) - 1)
 
-                    # Scale screenshot height to 200px
-                    pixbuf = Pixbuf.new_from_file_at_scale(
-                        results[index], -1, 200, True)
+                    orientation = self.paned_games.get_orientation()
+
+                    if orientation == Gtk.Orientation.HORIZONTAL:
+                        pixbuf = Pixbuf.new_from_file_at_scale(
+                            results[index], 400, -1, True)
+
+                    else:
+                        pixbuf = Pixbuf.new_from_file_at_scale(
+                            results[index], -1, 200, True)
 
                     if pixbuf is not None:
                         self.image_game_screen.set_from_pixbuf(pixbuf)
-                        self.grid_paned.set_spacing(8)
 
                 else:
                     self.image_game_screen.set_from_pixbuf(None)
-                    self.grid_paned.set_spacing(0)
 
                 # ----------------------------
                 #   Show informations
@@ -2292,7 +2296,6 @@ class Interface(Gtk.Window):
             self.label_game_description.set_text(str())
 
             self.image_game_screen.set_from_pixbuf(None)
-            self.grid_paned.set_spacing(0)
 
             self.image_paned_savestates.set_from_pixbuf(self.empty)
             self.image_paned_parameters.set_from_pixbuf(self.empty)

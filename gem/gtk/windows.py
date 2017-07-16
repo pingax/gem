@@ -1480,7 +1480,7 @@ class DialogViewer(Dialog):
 
         self.image.set_from_pixbuf(pixbuf.scale_simple(
             int(self.zoom_factor * width), int(self.zoom_factor * height),
-             InterpType.TILES))
+            InterpType.TILES))
 
 
 class DialogConsoles(Dialog):
