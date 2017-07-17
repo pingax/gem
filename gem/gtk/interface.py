@@ -4349,14 +4349,14 @@ class Interface(Gtk.Window):
         idle_add(GObject.emit, self, *args)
 
 
-class Splash(Thread, Gtk.Window):
+class Splash(Thread, GObject):
 
     def __init__(self):
         """ Constructor
         """
 
         Thread.__init__(self)
-        Gtk.Window.__init__(self)
+        GObject.__init__(self)
 
         # ------------------------------------
         #   Initialize variables
@@ -4394,16 +4394,18 @@ class Splash(Thread, Gtk.Window):
         #   Main window
         # ------------------------------------
 
-        self.set_title("Graphical Emulators Manager")
+        self.window = Gtk.Window()
 
-        self.set_modal(True)
-        self.set_can_focus(True)
-        self.set_resizable(False)
-        self.set_keep_above(True)
-        self.set_skip_taskbar_hint(True)
-        self.set_type_hint(Gdk.WindowTypeHint.SPLASHSCREEN)
+        self.window.set_title("Graphical Emulators Manager")
 
-        self.set_position(Gtk.WindowPosition.CENTER)
+        self.window.set_modal(True)
+        self.window.set_can_focus(True)
+        self.window.set_resizable(False)
+        self.window.set_keep_above(True)
+        self.window.set_skip_taskbar_hint(True)
+        self.window.set_type_hint(Gdk.WindowTypeHint.SPLASHSCREEN)
+
+        self.window.set_position(Gtk.WindowPosition.CENTER)
 
         # ------------------------------------
         #   Grid
@@ -4460,14 +4462,14 @@ class Splash(Thread, Gtk.Window):
         self.grid.pack_start(self.label_progress, False, False, 8)
         self.grid.pack_start(self.progressbar, False, False, 0)
 
-        self.add(self.grid)
+        self.window.add(self.grid)
 
 
     def run(self):
         """ Start interface
         """
 
-        self.show_all()
+        self.window.show_all()
 
         self.label_progress.hide()
         self.progressbar.hide()
@@ -4490,7 +4492,7 @@ class Splash(Thread, Gtk.Window):
         if self.main_loop is not None:
             self.main_loop.quit()
 
-        self.destroy()
+        self.window.destroy()
 
 
     def init(self, length):
