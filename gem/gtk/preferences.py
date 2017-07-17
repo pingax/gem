@@ -2771,9 +2771,6 @@ class PreferencesEmulator(Dialog):
         if binary is None:
             binary = str()
 
-            if self.emulator is not None:
-                binary = self.emulator.binary
-
         icon = self.path
         if icon is not None and path_join(
             get_data("icons"), basename(icon)) == icon:
@@ -2784,43 +2781,25 @@ class PreferencesEmulator(Dialog):
         if configuration is None or not exists(configuration):
             configuration = None
 
-            if self.emulator is not None:
-                configuration = self.emulator.configuration
-
         savestates = self.entry_save.get_text()
         if len(savestates) == 0:
             savestates = None
-
-            if self.emulator is not None:
-                savestates = self.emulator.savestates
 
         screenshots = self.entry_screenshots.get_text()
         if len(screenshots) == 0:
             screenshots = None
 
-            if self.emulator is not None:
-                screenshots = self.emulator.screenshots
-
         default = self.entry_launch.get_text()
         if len(default) == 0:
             default = None
-
-            if self.emulator is not None:
-                default = self.emulator.default
 
         windowed = self.entry_windowed.get_text()
         if len(windowed) == 0:
             windowed = None
 
-            if self.emulator is not None:
-                windowed = self.emulator.windowed
-
         fullscreen = self.entry_fullscreen.get_text()
         if len(fullscreen) == 0:
             fullscreen = None
-
-            if self.emulator is not None:
-                fullscreen = self.emulator.fullscreen
 
         self.data = {
             "id": identifier,
