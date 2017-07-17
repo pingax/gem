@@ -39,6 +39,7 @@ from os.path import expanduser
 from os.path import join as path_join
 
 from glob import glob
+from copy import deepcopy
 from shutil import move
 from shutil import copy2 as copy
 
@@ -112,16 +113,13 @@ class GEM(object):
     Local       = path_join(expanduser(xdg_data_home), "gem")
     Config      = path_join(expanduser(xdg_config_home), "gem")
 
-    def __init__(self, debug=False, splash=None):
+    def __init__(self, debug=False):
         """ Constructor
 
         Other parameters
         ----------------
         debug : bool
             Debug mode status (default: False)
-        splash : class
-            Class which be called by database migration to alert user
-            (default: None)
 
         Raises
         ------
@@ -138,6 +136,9 @@ class GEM(object):
 
         # Debug mode
         self.debug = debug
+
+        # Migration mode
+        self.__need_migration = False
 
         # Data list
         self.__data = dict(
@@ -163,6 +164,21 @@ class GEM(object):
         #   Initialize logger
         # ----------------------------
 
+        self.__init_logger()
+
+        # ----------------------------
+        #   Initialize database
+        # ----------------------------
+
+        self.__init_database()
+
+
+    def __init_logger(self):
+        """ Initialize logger
+
+        Create a logger object based on logging library
+        """
+
         # Define log path with a global variable
         logging.log_path = path_join(GEM.Local, GEM.Log)
 
@@ -178,13 +194,13 @@ class GEM(object):
         if not self.debug:
             self.logger.setLevel(logging.INFO)
 
-        # ----------------------------
-        #   Initialize database
-        # ----------------------------
 
-        if not exists(GEM.Local):
-            self.logger.debug("Create %s folder" % GEM.Local)
-            mkdir(GEM.Local)
+    def __init_database(self):
+        """ Initialize database
+
+        Check GEM database from local folder and update if needed columns and
+        data
+        """
 
         try:
             # Check GEM database file
@@ -215,14 +231,11 @@ class GEM(object):
             self.logger.info("Check database integrity")
             if not self.database.check_integrity():
                 self.logger.warning("Database need to be migrate")
-
-                self.logger.info("Start database migration")
-                self.database.migrate("games", dict(), splash=splash)
-
-                self.logger.info("Migration complete")
+                self.__need_migration = True
 
             else:
                 self.logger.info("Current database is up-to-date")
+                self.__need_migration = False
 
         except OSError as error:
             self.logger.critical("OSError: %s" % str(error))
@@ -235,12 +248,6 @@ class GEM(object):
         except Exception as error:
             self.logger.critical("Exception: %s" % str(error))
             sys_exit(error)
-
-        # ----------------------------
-        #   Initialize data
-        # ----------------------------
-
-        self.init_data()
 
 
     def __init_configurations(self):
@@ -380,12 +387,16 @@ class GEM(object):
             "%d console(s) has been founded" % len(self.consoles))
 
 
-    def init_data(self):
+    def init(self):
         """ Initalize data from configuration files
 
         This function allow to reset API by reloading default configuration
         files
         """
+
+        if self.__need_migration:
+            raise RuntimeError(
+                "GEM database need an update to v.%s" % GEM.Version)
 
         # Check if default configuration file exists
         self.__init_configurations()
@@ -394,6 +405,95 @@ class GEM(object):
         self.__init_emulators()
         # Load user consoles
         self.__init_consoles()
+
+
+    def check_database(self, updater=None):
+        """ Check database and migrate to lastest GEM version if needed
+
+        Other Parameters
+        ----------------
+        updater : class
+            Class to call when database is modified
+        """
+
+        if self.__need_migration:
+            self.logger.info("Start database migration")
+
+            # Get current table columns
+            previous_columns = self.database.get_columns("games")
+            # Get current table rows
+            previous_data = self.database.select("games", ['*'])
+
+            # ----------------------------
+            #   Backup database
+            # ----------------------------
+
+            self.database.rename_table("games", "_%s" % "games")
+            self.database.create_table("games")
+
+            # ----------------------------
+            #   Check columns
+            # ----------------------------
+
+            # Columns data
+            data = dict()
+            # Columns template for deepcopy
+            template = dict()
+
+            # Check previous table for new columns
+            for column in previous_columns:
+                if column in self.database.get_columns("games"):
+                    data[column] = previous_columns.index(column)
+
+            # Set columns template
+            for column in self.database.get_columns("games"):
+                template[column] = str()
+
+            # ----------------------------
+            #   Migrate database
+            # ----------------------------
+
+            if previous_data is not None:
+                counter = int()
+
+                if updater is not None:
+                    updater.init(len(previous_data))
+
+                # Check each row from previous database
+                for row in previous_data:
+                    counter += 1
+
+                    # Copy default template
+                    columns = deepcopy(template)
+
+                    # Check each column from row
+                    for column in list(columns.keys()):
+
+                        # There is data for this row column
+                        if column in data:
+                            columns[column] = row[data[column]]
+
+                        # No data for this row column
+                        else:
+                            columns[column] = None
+
+                    # Insert row in new database
+                    self.database.insert("games", columns)
+
+                    if updater is not None:
+                        updater.update(counter)
+
+            # ----------------------------
+            #   Remove backup
+            # ----------------------------
+
+            self.database.remove_table("_%s" % "games")
+
+            self.logger.info("Migration complete")
+            self.__need_migration = False
+
+        if updater is not None:
+            updater.close()
 
 
     def write_data(self):
@@ -588,6 +688,7 @@ class GEM(object):
         Examples
         --------
         >>> g = GEM()
+        >>> g.init()
         >>> g.get_console("nintendo-nes")
         <gem.api.Console object at 0x7f174a986b00>
         """
@@ -708,6 +809,7 @@ class GEM(object):
         Examples
         --------
         >>> g = GEM()
+        >>> g.init()
         >>> g.get_game("nintendo-nes", "gremlins-2-the-new-batch-usa")
         <gem.api.Game object at 0x7f174a986f60>
         """
@@ -1294,6 +1396,7 @@ class Console(GEMObject):
         Examples
         --------
         >>> g = GEM()
+        >>> g.init()
         >>> g.get_console("nintendo-nes").get_game("metroid-usa")
         <gem.api.Game object at 0x7f174a98e828>
         """
@@ -1371,6 +1474,7 @@ class Game(GEMObject):
         Examples
         --------
         >>> g = GEM()
+        >>> g.init()
         >>> g.get_console("nintendo-nes").get_game("Asterix").path
         ("~/.local/share/gem/roms/nes", "asterix.nes")
         """

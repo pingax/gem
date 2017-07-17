@@ -18,16 +18,15 @@
 #   Modules
 # ------------------------------------------------------------------------------
 
-# System
-from copy import deepcopy
+# Database
+import sqlite3
 
+# Filesystem
 from os.path import exists
 from os.path import expanduser
 
+# Logging
 from logging import Logger
-
-# Database
-import sqlite3
 
 # ------------------------------------------------------------------------------
 #   Modules - GEM
@@ -109,7 +108,7 @@ class Database(object):
 
         if not exists(self.path):
             for table in self.configuration.sections():
-                self.__create_table(table)
+                self.create_table(table)
 
         else:
             tables = self.select("sqlite_master", ["name"], { "type": "table" })
@@ -117,7 +116,7 @@ class Database(object):
                 tables = [tables]
 
             for table in list(set(self.configuration.sections()) - set(tables)):
-                self.__create_table(table)
+                self.create_table(table)
 
 
     def __generate_request(self, table, data):
@@ -163,7 +162,7 @@ class Database(object):
         return values
 
 
-    def __create_table(self, table):
+    def create_table(self, table):
         """ Create a new table into database
 
         Parameters
@@ -192,7 +191,7 @@ class Database(object):
         cursor.close()
 
 
-    def __rename_table(self, table, name):
+    def rename_table(self, table, name):
         """ Rename a table from database
 
         Parameters
@@ -216,7 +215,7 @@ class Database(object):
         cursor.close()
 
 
-    def __remove_table(self, table):
+    def remove_table(self, table):
         """ Remove a table from database
 
         Parameters
@@ -238,7 +237,7 @@ class Database(object):
         cursor.close()
 
 
-    def __add_column(self, table, name, sql_type):
+    def add_column(self, table, name, sql_type):
         """ Add a new column into database
 
         Parameters
@@ -266,7 +265,7 @@ class Database(object):
         cursor.close()
 
 
-    def __get_columns(self, table):
+    def get_columns(self, table):
         """ Get all the columns from database
 
         Parameters
@@ -301,7 +300,7 @@ class Database(object):
         return columns
 
 
-    def __insert(self, table, data):
+    def insert(self, table, data):
         """ Insert a new row into database
 
         This function insert a new row into database from data dict which use
@@ -346,7 +345,7 @@ class Database(object):
         cursor.close()
 
 
-    def __update(self, table, data, where):
+    def update(self, table, data, where):
         """ Update a row from database
 
         This function update a row from database with data and where dict which
@@ -497,10 +496,10 @@ class Database(object):
             if where is not None:
                 data.update(where)
 
-            self.__insert(table, data)
+            self.insert(table, data)
 
         else:
-            self.__update(table, data, where)
+            self.update(table, data, where)
 
 
     def get(self, table, where):
@@ -532,7 +531,7 @@ class Database(object):
         values = self.select(table, ['*'], where)
 
         if values is not None:
-            columns = self.__get_columns(table)
+            columns = self.get_columns(table)
 
             result = dict()
             for column in columns:
@@ -562,84 +561,8 @@ class Database(object):
             return False
 
         for table in tables:
-            if not self.__get_columns(table) == \
+            if not self.get_columns(table) == \
                 self.configuration.options(table):
                 return False
 
         return True
-
-
-    def migrate(self, table, renamed_columns=None, splash=None):
-        """ Migrate old data from a database
-
-        This function check if the database need to update his schema by
-        checking configuration schema and possible renamed columns
-
-        Parameters
-        ----------
-        table : str
-            Table name
-        renamed_columns : dict
-            In case of some columns need to change their name (Keys are old
-            names, Values are new names)
-        splash : class
-            Class which contains functions update and close to call when
-            database is modified
-        """
-
-        columns_index = dict()
-
-        # Get current table columns
-        old_columns = self.__get_columns(table)
-        # Get current table rows
-        old_data = self.select(table, ['*'])
-
-        # Backup current table and create a new one
-        self.__rename_table(table, "_%s" % table)
-        self.__create_table(table)
-
-        # Check old table if new columns are available
-        for column in old_columns:
-            if column in self.__get_columns(table):
-                columns_index[column] = old_columns.index(column)
-
-            if renamed_columns is not None and \
-                column in list(renamed_columns.keys()):
-
-                columns_index[renamed_columns[column]] = \
-                    old_columns.index(column)
-
-        columns_data = dict()
-        for column in self.__get_columns(table):
-            columns_data[column] = str()
-
-        # Migrate rows from previous database to new one
-        if old_data is not None:
-            counter = 1
-
-            if splash is not None:
-                splash.init(len(old_data))
-
-            for row in old_data:
-                columns = deepcopy(columns_data)
-
-                for column in list(columns.keys()):
-
-                    # There is data for this row column
-                    if column in columns_index:
-                        columns[column] = row[columns_index[column]]
-
-                    # No data for this row column
-                    else:
-                        columns[column] = None
-
-                # Insert row in new database
-                self.__insert(table, columns)
-
-                if splash is not None:
-                    splash.update(counter)
-
-                counter += 1
-
-        # Remove backup table
-        self.__remove_table("_%s" % table)

@@ -87,39 +87,12 @@ def main():
     args = parser.parse_args()
 
     # ------------------------------------
-    #   Initialize GEM splash
-    # ------------------------------------
-
-    splash = None
-
-    try:
-        # Check GTK+ arguments
-        if args.gtk_ui or args.gtk_config:
-
-            # Check display settings
-            if "DISPLAY" in environ and len(environ["DISPLAY"]) > 0:
-                from gem.gtk.interface import Splash
-
-                splash = Splash()
-                splash.start()
-
-    except Exception as error:
-        return True
-
-    # ------------------------------------
-    #   Initialize GEM API
-    # ------------------------------------
-
-    gem = GEM(args.debug, splash)
-
-    if splash is not None:
-        splash.close()
-
-    # ------------------------------------
     #   Initialize lock
     # ------------------------------------
 
     if exists(path_join(GEM.Local, ".lock")):
+        gem_pid = int()
+
         # Read lock content
         with open(path_join(GEM.Local, ".lock"), 'r') as pipe:
             gem_pid = pipe.read()
@@ -135,37 +108,19 @@ def main():
 
                 # Check if lock process is gem
                 if "gem.main" in content or "gem-ui" in content:
-                    gem.logger.critical(
-                        _("GEM is already running with PID %s") % gem_pid)
-
-                    return True
+                    sys_exit(_("GEM is already running with PID %s") % gem_pid)
 
     # ------------------------------------
-    #   Check folders and launch interface
+    #   Initialize GEM API
+    # ------------------------------------
+
+    gem = GEM(args.debug)
+
+    # ------------------------------------
+    #   Launch interface
     # ------------------------------------
 
     try:
-        # Default folders
-        for folder in [ "icons", "logs", "notes" ]:
-            if not exists(path_join(GEM.Local, folder)):
-                gem.logger.debug("Generate %s folder" % folder)
-
-                mkdir(path_join(GEM.Local, folder))
-
-        # Icons folders
-        for path in [ "consoles", "emulators" ]:
-
-            if not exists(path_join(GEM.Local, "icons", path)):
-                gem.logger.debug("Copy default %s icons" % path)
-
-                mkdir(path_join(GEM.Local, "icons", path))
-
-                # Copy default icons
-                for filename in glob(path_join(get_data("icons"), path, "*")):
-                    if isfile(filename):
-                        copy(filename, path_join(
-                            GEM.Local, "icons", path, basename(filename)))
-
         # Default configuration files
         for path in [ "gem.conf", "consoles.conf", "emulators.conf" ]:
 
@@ -185,6 +140,29 @@ def main():
             # Check display settings
             if "DISPLAY" in environ and len(environ["DISPLAY"]) > 0:
 
+                # Default folders
+                for folder in [ "icons", "logs", "notes" ]:
+                    if not exists(path_join(GEM.Local, folder)):
+                        gem.logger.debug("Generate %s folder" % folder)
+
+                        mkdir(path_join(GEM.Local, folder))
+
+                # Icons folders
+                for path in [ "consoles", "emulators" ]:
+
+                    if not exists(path_join(GEM.Local, "icons", path)):
+                        gem.logger.debug("Copy default %s icons" % path)
+
+                        mkdir(path_join(GEM.Local, "icons", path))
+
+                        # Copy default icons
+                        for filename in glob(
+                            path_join(get_data("icons"), path, "*")):
+
+                            if isfile(filename):
+                                copy(filename, path_join(GEM.Local,
+                                    "icons", path, basename(filename)))
+
                 # ------------------------------------
                 #   Manage lock
                 # ------------------------------------
@@ -198,6 +176,10 @@ def main():
                 # ------------------------------------
                 #   Launch interface
                 # ------------------------------------
+
+                # Start splash
+                from gem.gtk.interface import Splash
+                Splash(gem)
 
                 if args.gtk_config:
                     from gem.gtk.preferences import Preferences
@@ -220,21 +202,15 @@ def main():
                 gem.logger.critical(_("Cannot launch GEM without display"))
 
     except ImportError as error:
-        gem.logger.critical(
-            _("Import error with interface: %s") % str(error))
-
+        gem.logger.critical(_("Import error: %s") % str(error))
         return True
 
     except KeyboardInterrupt as error:
-        gem.logger.warning(
-            _("Terminate by keyboard interrupt"))
-
+        gem.logger.warning(_("Terminate by keyboard interrupt"))
         return True
 
     except Exception as error:
-        gem.logger.critical(
-            _("An error occur during program exec: %s") % str(error))
-
+        gem.logger.critical(_("An error occur during exec: %s") % str(error))
         return True
 
     return False

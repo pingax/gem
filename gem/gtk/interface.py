@@ -54,6 +54,7 @@ from re import IGNORECASE
 
 # System
 from sys import exit as sys_exit
+from time import sleep
 from shlex import split as shlex_split
 from shutil import move as rename
 from platform import system
@@ -1607,7 +1608,7 @@ class Interface(Gtk.Window):
         if self.__first_draw:
             self.logger.debug("Initialize API")
 
-            self.api.init_data()
+            self.api.init()
 
         # ------------------------------------
         #   Configuration
@@ -4349,22 +4350,45 @@ class Interface(Gtk.Window):
         idle_add(GObject.emit, self, *args)
 
 
-class Splash(Thread, GObject):
+class Splash(Gtk.Window):
 
-    def __init__(self):
+    def __init__(self, api):
         """ Constructor
+
+        Parameters
+        ----------
+        api : gem.api.GEM
+            GEM API instance
+
+        Raises
+        ------
+        TypeError
+            if api type is not gem.api.GEM
         """
 
-        Thread.__init__(self)
-        GObject.__init__(self)
+        if not type(api) is GEM:
+            raise TypeError("Wrong type for api, expected gem.api.GEM")
+
+        Gtk.Window.__init__(self)
 
         # ------------------------------------
         #   Initialize variables
         # ------------------------------------
 
+        # Set rows number for progressbar
         self.length = int()
 
         self.main_loop = None
+
+        # ------------------------------------
+        #   Initialize API
+        # ------------------------------------
+
+        # GEM API
+        self.api = api
+
+        # Quick access to API logger
+        self.logger = api.logger
 
         # ------------------------------------
         #   Initialize icons
@@ -4385,6 +4409,9 @@ class Splash(Thread, GObject):
         # Init packing
         self.__init_packing()
 
+        # Start interface
+        self.__start_interface()
+
 
     def __init_widgets (self):
         """ Load widgets into main interface
@@ -4394,18 +4421,16 @@ class Splash(Thread, GObject):
         #   Main window
         # ------------------------------------
 
-        self.window = Gtk.Window()
+        self.set_title("Graphical Emulators Manager")
 
-        self.window.set_title("Graphical Emulators Manager")
+        self.set_modal(True)
+        self.set_can_focus(True)
+        self.set_resizable(False)
+        self.set_keep_above(True)
+        self.set_skip_taskbar_hint(True)
+        self.set_type_hint(Gdk.WindowTypeHint.SPLASHSCREEN)
 
-        self.window.set_modal(True)
-        self.window.set_can_focus(True)
-        self.window.set_resizable(False)
-        self.window.set_keep_above(True)
-        self.window.set_skip_taskbar_hint(True)
-        self.window.set_type_hint(Gdk.WindowTypeHint.SPLASHSCREEN)
-
-        self.window.set_position(Gtk.WindowPosition.CENTER)
+        self.set_position(Gtk.WindowPosition.CENTER)
 
         # ------------------------------------
         #   Grid
@@ -4462,19 +4487,25 @@ class Splash(Thread, GObject):
         self.grid.pack_start(self.label_progress, False, False, 8)
         self.grid.pack_start(self.progressbar, False, False, 0)
 
-        self.window.add(self.grid)
+        self.add(self.grid)
 
 
-    def run(self):
-        """ Start interface
+    def __start_interface(self):
+        """ Load data and start interface
         """
 
-        self.window.show_all()
+        self.show_all()
 
         self.label_progress.hide()
         self.progressbar.hide()
 
         self.refresh()
+
+        # ------------------------------------
+        #   Check migration
+        # ------------------------------------
+
+        idle_add(self.api.check_database, self)
 
         # ------------------------------------
         #   Main loop
@@ -4488,11 +4519,17 @@ class Splash(Thread, GObject):
         """ Stop interface
         """
 
+        # Sleep to avoid ultra quick splash
+        sleep(1)
+
         # Rare case where the mainloop is not init when close() is running
         if self.main_loop is not None:
             self.main_loop.quit()
 
-        self.window.destroy()
+        # Initialize API
+        self.api.init()
+
+        self.destroy()
 
 
     def init(self, length):
