@@ -181,14 +181,14 @@ def main():
                 from gem.gtk.interface import Splash
                 Splash(gem)
 
+                # Start preferences
                 if args.gtk_config:
                     from gem.gtk.preferences import Preferences
-
                     Preferences(gem).start()
 
+                # Start interface
                 elif args.gtk_ui:
                     from gem.gtk.interface import Interface
-
                     Interface(gem)
 
                 # ------------------------------------
