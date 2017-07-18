@@ -4120,6 +4120,9 @@ class Interface(Gtk.Window):
                     self.logger.debug("Check %s" % path)
                     filename, ext = splitext(basename(path))
 
+                    # Lowercase extension
+                    ext = ext.lower()
+
                     # ----------------------------
                     #   Get right console for rom
                     # ----------------------------

@@ -248,3 +248,36 @@ def generate_identifier(name):
     name = sub(" +", ' ', name)
 
     return name.strip().replace(' ', '-').lower()
+
+
+def generate_extension(extension):
+    """ Generate a regex pattern to check lower and upper case extensions
+
+    Thanks to https://stackoverflow.com/a/10148272
+
+    Parameters
+    ----------
+    extension : str
+        Extension to parse without the first dot
+
+    Returns
+    -------
+    str
+        Regex pattern
+
+    Examples
+    --------
+    >>> generate_extensions("nes")
+    '[nN][eE][sS]'
+    """
+
+    pattern = str()
+
+    for character in extension:
+        if not character == '.':
+            pattern += "[%s%s]" % (character.lower(), character.upper())
+
+        else:
+            pattern += '.'
+
+    return pattern

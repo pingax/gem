@@ -79,6 +79,7 @@ except ImportError as error:
 try:
     from gem.utils import get_data
     from gem.utils import get_binary_path
+    from gem.utils import generate_extension
     from gem.utils import generate_identifier
     from gem.database import Database
     from gem.configuration import Configuration
@@ -1257,7 +1258,8 @@ class Console(GEMObject):
         for extension in set(self.extensions):
 
             # List available files
-            for filename in set(glob("%s/*.%s" % (self.path, extension))):
+            for filename in set(
+                glob("%s/*.%s" % (self.path, generate_extension(extension)))):
 
                 # Get data from database
                 data = database.get("games", { "filename": basename(filename) })
