@@ -1011,19 +1011,19 @@ class Emulator(GEMObject):
 
         if key is not None:
             if "<rom_path>" in key:
-                pattern = key.replace("<rom_path>", game.path[0])
+                key = key.replace("<rom_path>", game.path[0])
 
             if "<lname>" in key:
-                pattern = key.replace("<lname>", game.filename.lower())
+                key = key.replace("<lname>", game.filename.lower())
 
             elif "<name>" in key:
-                pattern = key.replace("<name>", game.filename)
+                key = key.replace("<name>", game.filename)
 
             if "<key>" in key and game.key is not None:
-                pattern = key.replace("<key>", game.key)
+                key = key.replace("<key>", game.key)
 
-            if not isdir(expanduser(pattern)):
-                return glob(expanduser(pattern))
+            if not isdir(expanduser(key)):
+                return glob(expanduser(key))
 
         return list()
 
