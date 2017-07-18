@@ -436,6 +436,8 @@ class DialogEditor(Dialog):
         self.current_index = int()
         self.previous_search = str()
 
+        self.modified_buffer = False
+
         # ------------------------------------
         #   Prepare interface
         # ------------------------------------
@@ -613,6 +615,8 @@ class DialogEditor(Dialog):
         """ Initialize widgets signals
         """
 
+        self.buffer_editor.connect("changed", self.__on_buffer_modified)
+
         self.check_lines.connect("toggled", self.__on_break_line)
 
         self.entry_search.connect("activate", self.__on_entry_update)
@@ -661,6 +665,38 @@ class DialogEditor(Dialog):
             self.text_editor.set_wrap_mode(Gtk.WrapMode.NONE)
 
 
+    def __init_search(self, text):
+        """ Initialize search from search entry
+
+        Parameters
+        ----------
+        text : str
+            Text to match in text buffer
+        """
+
+        self.founded_iter = list()
+
+        if len(text) > 0:
+            # Remove previous tags from buffer
+            self.buffer_editor.remove_all_tags(
+                self.buffer_editor.get_start_iter(),
+                self.buffer_editor.get_end_iter())
+
+            # Match tags from text in buffer
+            self.__on_search_and_mark(text, self.buffer_editor.get_start_iter())
+
+            if len(self.founded_iter) > 0:
+                match = self.founded_iter[self.current_index]
+
+                self.buffer_editor.apply_tag(
+                    self.tag_current, match[0], match[1])
+
+                self.text_editor.scroll_to_iter(match[0], .25, False, .0, .0)
+
+                # Avoid to do the same search twice
+                self.previous_search = text
+
+
     def __on_move_search(self, widget=None, backward=False):
         """ Move between search results
 
@@ -672,7 +708,23 @@ class DialogEditor(Dialog):
             If True, use backward search instead of forward (Default: False)
         """
 
+        if self.modified_buffer:
+            text = self.entry_search.get_text()
+
+            # Reset cursor position if different search
+            if not text == self.previous_search:
+                self.current_index = int()
+
+            self.__init_search(text)
+
+            self.previous_search = str()
+            self.modified_buffer = False
+
         if len(self.founded_iter) > 0:
+            # Avoid to check an index which not exist anymore
+            if not self.current_index in range(len(self.founded_iter) - 1):
+                self.current_index = int()
+
             match = self.founded_iter[self.current_index]
 
             self.buffer_editor.remove_tag(self.tag_current, match[0], match[1])
@@ -709,27 +761,9 @@ class DialogEditor(Dialog):
         text = widget.get_text()
 
         if not text == self.previous_search:
-            self.founded_iter = list()
             self.current_index = int()
 
-            if len(text) > 0:
-                self.buffer_editor.remove_all_tags(
-                    self.buffer_editor.get_start_iter(),
-                    self.buffer_editor.get_end_iter())
-
-                self.__on_search_and_mark(
-                    text, self.buffer_editor.get_start_iter())
-
-                if len(self.founded_iter) > 0:
-                    match = self.founded_iter[self.current_index]
-
-                    self.buffer_editor.apply_tag(
-                        self.tag_current, match[0], match[1])
-
-                    self.text_editor.scroll_to_iter(
-                        match[0], .25, False, .0, .0)
-
-                    self.previous_search = text
+            self.__init_search(text)
 
         else:
             self.__on_move_search()
@@ -755,6 +789,18 @@ class DialogEditor(Dialog):
 
             match = match[1].forward_search(
                 text, 0, self.buffer_editor.get_end_iter())
+
+
+    def __on_buffer_modified(self, textbuffer):
+        """ Check buffer modification
+
+        Parameters
+        ----------
+        textbuffer : Gtk.TextBuffer
+            Modified buffer
+        """
+
+        self.modified_buffer = True
 
 
 class DialogParameters(Dialog):
