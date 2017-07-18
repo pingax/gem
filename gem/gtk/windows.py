@@ -632,6 +632,10 @@ class DialogEditor(Dialog):
             with open(self.path, 'r') as pipe:
                 self.buffer_editor.set_text(''.join(pipe.readlines()))
 
+        # Remove undo stack from GtkSource.Buffer
+        if type(self.buffer_editor) is not Gtk.TextBuffer:
+            self.buffer_editor.set_undo_manager(None)
+
         self.set_size(int(self.__width), int(self.__height))
 
         self.hide()
@@ -670,6 +674,7 @@ class DialogEditor(Dialog):
 
         if len(self.founded_iter) > 0:
             match = self.founded_iter[self.current_index]
+
             self.buffer_editor.remove_tag(self.tag_current, match[0], match[1])
             self.buffer_editor.apply_tag(self.tag_found, match[0], match[1])
 
@@ -686,6 +691,7 @@ class DialogEditor(Dialog):
                     self.current_index = 0
 
             match = self.founded_iter[self.current_index]
+
             self.buffer_editor.apply_tag(self.tag_current, match[0], match[1])
 
             self.text_editor.scroll_to_iter(match[0], .25, False, .0, .0)
@@ -716,6 +722,7 @@ class DialogEditor(Dialog):
 
                 if len(self.founded_iter) > 0:
                     match = self.founded_iter[self.current_index]
+
                     self.buffer_editor.apply_tag(
                         self.tag_current, match[0], match[1])
 
