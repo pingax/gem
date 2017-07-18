@@ -5,6 +5,10 @@
 * Add an option to hide game in games list with specific regex
 * Add a sidebar which show game informations and a random screenshot
 * Add a tags system for game
+* Add a GameID in game parameters for Dolphin emulator
+* Add Solus package template in contrib folder - Thanks Devil505
+* Update Snes9x
+* Update Dolphin
 * Fix reload console games when a roms has been droped
 * Fix cannot drop a game which can be on multiple consoles (like .bin extension)
 * Fix set emulator.id in consoles.conf instead of emulator.name
@@ -12,6 +16,8 @@
 * Fix write data in api set empty list as None
 * Fix send emulator object in console.as_dict instead of emulator.name
 * Fix icons viewer not load file selector by default for absolute icon path
+* Fix cannot remove options from emulator in preferences
+* Fix editor dialog which has a wrong behavior with modified buffer
 
 ## Version 0.7.1 - Count Dracula (13 June, 2017)
 
