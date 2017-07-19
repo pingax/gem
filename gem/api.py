@@ -28,10 +28,13 @@ from datetime import timedelta
 
 # Filesystem
 from os import mkdir
+from os import access
+from os import pardir
 from os import makedirs
 
 from os.path import isdir
 from os.path import exists
+from os.path import abspath
 from os.path import dirname
 from os.path import basename
 from os.path import splitext
@@ -366,23 +369,35 @@ class GEM(object):
                 # Emulator exists in GEM storage
                 if emulator in self.__data["emulators"]:
                     emulator = self.__data["emulators"][emulator]
-
                 else:
                     emulator = None
 
-            self.add_console({
-                "id": generate_identifier(section),
-                "name": section,
-                "path": expanduser(data.get(
-                    section, "roms", fallback=str())),
-                "icon": data.get(
-                    section, "icon", fallback=str()),
-                "ignores": data.get(
-                    section, "ignores", fallback=str()).split(';'),
-                "extensions": data.get(
-                    section, "exts", fallback=str()).split(';'),
-                "emulator": emulator
-            })
+            roms_path = expanduser(data.get(section, "roms", fallback=str()))
+
+            # Check consoles roms path folder
+            if not exists(roms_path):
+                parent_path = abspath(path_join(roms_path, pardir))
+
+                # Check parent folder write access
+                if access(parent_path, W_OK):
+                    makedirs(roms_path)
+                else:
+                    self.logger.error("Cannot write in %s folder" % parent_path)
+
+            # Check if roms_path exists and is a directory
+            if exists(roms_path) and isdir(roms_path):
+                self.add_console({
+                    "id": generate_identifier(section),
+                    "name": section,
+                    "path": roms_path,
+                    "icon": data.get(
+                        section, "icon", fallback=str()),
+                    "ignores": data.get(
+                        section, "ignores", fallback=str()).split(';'),
+                    "extensions": data.get(
+                        section, "exts", fallback=str()).split(';'),
+                    "emulator": emulator
+                })
 
         self.logger.debug(
             "%d console(s) has been founded" % len(self.consoles))
@@ -1530,6 +1545,7 @@ if __name__ == "__main__":
     """
 
     gem = GEM(debug=True)
+    gem.init()
 
     gem.logger.info("Found %d consoles" % len(gem.consoles))
     gem.logger.info("Found %d emulators" % len(gem.emulators))
