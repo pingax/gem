@@ -27,15 +27,11 @@ from datetime import date
 from datetime import timedelta
 
 # Filesystem
-from os import W_OK
 from os import mkdir
-from os import access
-from os import pardir
 from os import makedirs
 
 from os.path import isdir
 from os.path import exists
-from os.path import abspath
 from os.path import dirname
 from os.path import basename
 from os.path import splitext
@@ -377,13 +373,12 @@ class GEM(object):
 
             # Check consoles roms path folder
             if not exists(roms_path):
-                parent_path = abspath(path_join(roms_path, pardir))
 
-                # Check parent folder write access
-                if access(parent_path, W_OK):
+                try:
                     makedirs(roms_path)
-                else:
-                    self.logger.error("Cannot write in %s folder" % parent_path)
+
+                except Exception as error:
+                    self.logger.error("Cannot create %s folder" % roms_path)
 
             # Check if roms_path exists and is a directory
             if exists(roms_path) and isdir(roms_path):
