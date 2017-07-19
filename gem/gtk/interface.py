@@ -1503,8 +1503,12 @@ class Interface(Gtk.Window):
 
         self.load_interface()
 
+        load_console_startup = False
+
         # Check last loaded console in gem.conf
         if self.config.getboolean("gem", "load_console_startup", fallback=True):
+            load_console_startup = True
+
             console = self.config.item("gem", "last_console", str())
 
             # A console has been saved
@@ -1522,6 +1526,11 @@ class Interface(Gtk.Window):
 
         # Check welcome message status in gem.conf
         if self.config.getboolean("gem", "welcome", fallback=True):
+
+            # Load the first console to avoid mini combobox
+            if load_console_startup and self.selection["console"] is None:
+                self.combo_consoles.set_active(0)
+
             dialog = Message(self, _("Welcome !"), _("Welcome and thanks for "
                 "choosing GEM as emulators manager. Start using GEM by "
                 "droping some roms into interface.\n\nEnjoy and have fun :D"),
