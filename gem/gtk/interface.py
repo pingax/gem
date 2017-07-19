@@ -2312,7 +2312,7 @@ class Interface(Gtk.Window):
         self.statusbar.push(0, " - ".join(texts))
 
 
-    def set_message(self, title, message, icon="dialog-error"):
+    def set_message(self, title, message, icon="dialog-error", popup=True):
         """ Open a message dialog
 
         This function open a dialog to inform user and write message to logger
@@ -2335,10 +2335,11 @@ class Interface(Gtk.Window):
         else:
             self.logger.info(message)
 
-        dialog = Message(self, title, message, icon)
+        if popup:
+            dialog = Message(self, title, message, icon)
 
-        dialog.run()
-        dialog.destroy()
+            dialog.run()
+            dialog.destroy()
 
 
     def __on_show_about(self, widget):
@@ -2751,7 +2752,8 @@ class Interface(Gtk.Window):
 
                 # Check emulator data
                 elif not console.emulator.exists:
-                    message = _("%s emulator not exist !") % (emulator.name)
+                    message = _("%s emulator not exist !") % (
+                        console.emulator.name)
                     error = True
 
                 # ------------------------------------
@@ -2777,7 +2779,7 @@ class Interface(Gtk.Window):
                     self.model_games.clear()
                     self.filter_games.refilter()
 
-                    self.set_message(console.name, message)
+                    self.set_message(console.name, message, popup=False)
 
                 else:
                     if not self.list_thread == 0:
