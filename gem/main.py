@@ -46,7 +46,7 @@ try:
     from gem.api import GEM
 
 except ImportError as error:
-    sys_exit("Cannot find gem module: %s" % str(error))
+    sys_exit("Import error with gem module: %s" % str(error))
 
 # ------------------------------------------------------------------------------
 #   Modules - Translation
@@ -171,7 +171,7 @@ def main():
                 with open(path_join(GEM.Local, ".lock"), 'w') as pipe:
                     pipe.write(str(getpid()))
 
-                gem.logger.debug("Start with PID %s" % getpid())
+                gem.logger.debug("Start GEM with PID %s" % getpid())
 
                 # ------------------------------------
                 #   Launch interface
@@ -202,7 +202,7 @@ def main():
                 gem.logger.critical(_("Cannot launch GEM without display"))
 
     except ImportError as error:
-        gem.logger.critical(_("Import error: %s") % str(error))
+        gem.logger.critical(_("Cannot import modules: %s") % str(error))
         return True
 
     except KeyboardInterrupt as error:

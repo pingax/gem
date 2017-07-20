@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.6\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2017-07-10 23:33+0200\n"
+"PO-Revision-Date: 2017-07-20 15:27+0200\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -50,8 +50,8 @@ msgstr "Il y a %d ans"
 #
 # File: gem/interface.py, line: 936
 #, python-format
-msgid "%s emulator not exist !"
-msgstr "L'émulateur %s n'existe pas !"
+msgid "%s emulator not exist"
+msgstr "L'émulateur %s n'existe pas"
 
 #
 # File: gem/interface.py, line: 532
@@ -109,6 +109,12 @@ msgstr ""
 "seront lues par cette émulateur."
 
 #
+# File: gem/interface.py, line: 2044
+#, python-format
+msgid "A memory error occur: %s"
+msgstr "Une erreur mémoire est survenue: %s"
+
+#
 # File: gem/preferences.py, line: 329
 msgid "Action"
 msgstr "Actions"
@@ -147,17 +153,17 @@ msgid "Alternative viewer"
 msgstr "Visualiseur d'images alternatif"
 
 #
+# File: gem/main.py, line: 139
+#, python-format
+msgid "An error occur during exec: %s"
+msgstr "Une erreur est survenue durant l'exécution du programme: %s"
+
+#
 # File: gem/interface.py, line: 2112
 msgid "An error occur during generation, consult log for futher details."
 msgstr ""
 "Une erreur est survenu durant la génération, consultez le journal pour plus "
 "de détails."
-
-#
-# File: gem/main.py, line: 139
-#, python-format
-msgid "An error occur during program exec: %s"
-msgstr "Une erreur est survenue durant l'exécution du programme: %s"
 
 #
 # File: gem/windows.py, line: 319
@@ -191,6 +197,12 @@ msgid "Cancel"
 msgstr "Annuler"
 
 #
+# File: gem/gtk/game.py, line: 171
+#, python-format
+msgid "Cannot access to game: %s"
+msgstr "Impossible d'accéder au jeu: %s"
+
+#
 # File: gem/interface.py, line: 1097
 #, python-format
 msgid "Cannot find %(binary)s for %(console)s"
@@ -199,19 +211,30 @@ msgstr "Impossible de trouver %(binary)s pour %(console)s !"
 #
 # File: gem/interface.py, line: 942
 #, python-format
-msgid "Cannot find <b>%s</b> viewer !"
-msgstr "Impossible de trouver le visionneur <b>%s</b> !"
+msgid "Cannot find <b>%s</b>"
+msgstr "Impossible de trouver <b>%s</b>"
 
 #
 # File: gem/interface.py, line: 1097
 #, python-format
 msgid "Cannot find emulator for %s"
-msgstr "Impossible de trouver l'émulateur pour %s !"
+msgstr "Impossible de trouver l'émulateur pour %s"
+
+#
+# File: gem/interface.py, line: 1097
+#, python-format
+msgid "Cannot import modules: %s"
+msgstr "Impossible d'importer les modules: %s"
 
 #
 # File: gem/main.py, line: 240
 msgid "Cannot launch GEM without display"
 msgstr "Impossible de lancer GEM sans affichage"
+
+#
+# File: gem/preferences.py, line: 335
+msgid "Cannot open screenshots viewer"
+msgstr "Impossible d'ouvrir le visualiseur de captures d'écran"
 
 #
 # File: gem/interface.py, line: 942
@@ -253,21 +276,9 @@ msgid "Colorscheme"
 msgstr "Thème de couleurs"
 
 #
-# File: gem/gtk/game.py, line: 137
-#, python-format
-msgid "Command: %s"
-msgstr "Commande: %s"
-
-#
 # File: gem/interface.py, line: 300
 msgid "Configuration file"
 msgstr "Fichier de configuration"
-
-#
-# File: gem/interface.py, line: 300
-#, python-format
-msgid "Configuration for %s"
-msgstr "Configuration de %s"
 
 # File: src/window.py, line: 314
 msgid "Console"
@@ -324,6 +335,12 @@ msgstr "Déplace %(rom)s vers %(path)s"
 # File: gem/preferences.py, line: 336
 msgid "Edit"
 msgstr "Éditer"
+
+#
+# File: gem/interface.py, line: 300
+#, python-format
+msgid "Edit %s configuration"
+msgstr "Édition de la configuration de %s"
 
 #
 # File: gem/configuration.py, line: 144
@@ -485,12 +502,6 @@ msgid "Image file"
 msgstr "Fichier image"
 
 #
-# File: gem/main.py, line: 136
-#, python-format
-msgid "Import error with interface: %s"
-msgstr "Erreur d'importation pour l'interface: %s"
-
-#
 # File: gem/interface.py, line: 1411
 #, python-format
 msgid "Initialize %s"
@@ -590,20 +601,9 @@ msgid "Mednafen GBA documentation"
 msgstr "Documentation de Mednafen pour la GBA"
 
 #
-# File: gem/interface.py, line: 2044
-#, python-format
-msgid "MemoryError occurs: %s"
-msgstr "Une MemoryError est survenue: %s"
-
-#
 # File: src/window.py, line: 446
 msgid "Migrating entries from old database"
 msgstr "Migration des données depuis l'ancienne base de données"
-
-#
-# File: gem/interface.py, line: 1709
-msgid "Missing binary"
-msgstr "Binaire manquant"
 
 #
 # File: gem/preferences.py, line: 737
@@ -647,12 +647,6 @@ msgstr "Pas de valeurs par défaut"
 # File: gem/preferences.py, line: 97
 msgid "None"
 msgstr "Aucune"
-
-#
-# File: gem/interface.py, line: 2040
-#, python-format
-msgid "OSError occurs: %s"
-msgstr "Une OSError est survenue: %s"
 
 #
 # File: src/window.py, line: 451
@@ -779,8 +773,8 @@ msgstr "Sauvegarde"
 #
 # File: gem/interface.py, line: 602
 #, python-format
-msgid "Save %s for next startup"
-msgstr "Sauvegarde %s pour le prochain lancement"
+msgid "Save %s console for next startup"
+msgstr "Sauvegarde de la console %s pour le prochain lancement"
 
 #
 # File: gem/windows.py, line: 385
@@ -1041,14 +1035,14 @@ msgstr "Mise à jour du fichier de configuration de %s"
 #
 # File: gem/interface.py, line: 300
 #, python-format
-msgid "Update %s notes"
-msgstr "Mise à jour des notes de %s"
+msgid "Update %s parameters"
+msgstr "Mise à jour des paramètres pour %s"
 
 #
-# File: gem/interface.py, line: 477
+# File: gem/interface.py, line: 300
 #, python-format
-msgid "Update default parameters for %s"
-msgstr "Changement des paramètres par défaut pour %s"
+msgid "Update note for %s"
+msgstr "Mise à jour des notes pour %s"
 
 #
 # File: gem/interface.py, line: 665
@@ -1151,8 +1145,9 @@ msgstr "Fenêtré"
 
 #
 # File: src/window.py, line: 940
-msgid "Would you really want to clean informations for this game ?"
-msgstr "Voulez-vous vraiment nettoyer les informations de ce jeu ?"
+msgid "Would you really want to remove database entry for this game ?"
+msgstr ""
+"Voulez-vous vraiment supprimer l'entrée de la base de données pour ce jeu ?"
 
 #
 # File: src/window.py, line: 940
@@ -1251,39 +1246,4 @@ msgstr "_Outils"
 #
 # File: gem/interface.py, line: 926
 msgid "translator-credits"
-msgstr "Lubert Aurélien"
-
-#
-# File: gem/preferences.py, line: 908
-#~ msgid "Choose the ROMs folder"
-#~ msgstr "Choisir le dossier des ROMs"
-
-#
-# File: gem/gtk/windows.py, line: 914
-#~ msgid "Key"
-#~ msgstr "Clé"
-
-#
-# File: gem/gtk/mednafen.py, line: 389
-#~ msgid "Memory type"
-#~ msgstr "Type de mémoire"
-
-#
-# File: gem/gtk/mednafen.py, line: 400
-#~ msgid "Memory value"
-#~ msgstr "Valeur de mémoire"
-
-#
-# File: gem/gtk/windows.py, line: 917
-#~ msgid "Savestates regex"
-#~ msgstr "Expression régulière pour les sauvegardes"
-
-#
-# File: gem/preferences.py, line: 335
-#~ msgid "Screenshots regex"
-#~ msgstr "Expression régulière pour les captures d'écran"
-
-#
-# File: gem/interface.py, line: 300
-#~ msgid "Set default emulator"
-#~ msgstr "Définir l'émulateur par défaut"
+msgstr "Lubert Aurélien (PacMiam)"

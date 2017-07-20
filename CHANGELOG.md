@@ -18,6 +18,8 @@
 * Fix icons viewer not load file selector by default for absolute icon path
 * Fix cannot remove options from emulator in preferences
 * Fix editor dialog which has a wrong behavior with modified buffer
+* Fix editor dialog which crash without GtkSource
+* Fix create missing consoles roms folders
 
 ## Version 0.7.1 - Count Dracula (13 June, 2017)
 

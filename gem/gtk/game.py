@@ -134,7 +134,7 @@ class GameThread(Thread, GObject):
             #   Launch game
             # ----------------------------
 
-            self.logger.debug(_("Command: %s") % ' '.join(self.command))
+            self.logger.debug("Command: %s" % ' '.join(self.command))
 
             self.proc = Popen(
                 self.command,
@@ -168,11 +168,11 @@ class GameThread(Thread, GObject):
                 pipe.write(output)
 
         except OSError as error:
-            self.logger.error(_("OSError occurs: %s") % error)
+            self.logger.error(_("Cannot access to game: %s") % error)
             self.error = True
 
         except MemoryError as error:
-            self.logger.error(_("MemoryError occurs: %s") % error)
+            self.logger.error(_("A memory error occur: %s") % error)
             self.error = True
 
         except KeyboardInterrupt as error:

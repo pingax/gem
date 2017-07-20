@@ -218,8 +218,7 @@ class GEM(object):
                     version = GEM.Version
 
                 else:
-                    self.logger.info(
-                        "Update database to version %s" % GEM.Version)
+                    self.logger.info("Update database to v.%s" % GEM.Version)
 
                 self.database.modify("gem",
                     { "version": GEM.Version, "codename": GEM.CodeName },
@@ -231,7 +230,7 @@ class GEM(object):
             # Check integrity and migrate if necessary
             self.logger.info("Check database integrity")
             if not self.database.check_integrity():
-                self.logger.warning("Database need to be migrate")
+                self.logger.warning("Database need a migration")
                 self.__need_migration = True
 
             else:
@@ -239,15 +238,15 @@ class GEM(object):
                 self.__need_migration = False
 
         except OSError as error:
-            self.logger.critical("OSError: %s" % str(error))
+            self.logger.critical("Cannot access to database: %s" % str(error))
             sys_exit(error)
 
         except ValueError as error:
-            self.logger.critical("ValueError: %s" % str(error))
+            self.logger.critical("A wrong value occur: %s" % str(error))
             sys_exit(error)
 
         except Exception as error:
-            self.logger.critical("Exception: %s" % str(error))
+            self.logger.critical("An error occur: %s" % str(error))
             sys_exit(error)
 
 
@@ -259,7 +258,7 @@ class GEM(object):
         """
 
         if not exists(GEM.Config):
-            self.logger.debug("Create %s folder" % GEM.Config)
+            self.logger.debug("Generate %s folder" % GEM.Config)
             mkdir(GEM.Config)
 
         # Check GEM configuration files
@@ -407,8 +406,7 @@ class GEM(object):
         """
 
         if self.__need_migration:
-            raise RuntimeError(
-                "GEM database need an update to v.%s" % GEM.Version)
+            raise RuntimeError("GEM database need a migration")
 
         # Check if default configuration file exists
         self.__init_configurations()
@@ -530,7 +528,7 @@ class GEM(object):
                 name, ext = splitext(path)
 
                 # Backup configuration file
-                self.logger.debug("Backup ~%s configuration file" % path)
+                self.logger.debug("Backup %s file" % path)
                 move(path_join(GEM.Config, path),
                     path_join(GEM.Config, '~' + path))
 
@@ -551,12 +549,11 @@ class GEM(object):
                         config.modify(section, key, value)
 
                 # Write new configuration file
-                self.logger.info("Write %s configuration file" % path)
+                self.logger.info("Write configuration into %s file" % path)
                 config.update()
 
         except Exception as error:
-            self.logger.critical(
-                "An error occur during GEM.write_data: %s" % str(error))
+            self.logger.critical("Cannot write configuration: %s" % str(error))
 
             return False
 
@@ -875,7 +872,7 @@ class GEM(object):
                 data[key] = str(value.name)
 
         # Update game in database
-        self.logger.info("Update database for %s" % game.name)
+        self.logger.debug("Update %s database entry" % game.name)
 
         self.database.modify("games", data, { "filename": game.path[1] })
 
@@ -1103,7 +1100,7 @@ class Emulator(GEMObject):
         # ----------------------------
 
         if not self.exists:
-            raise OSError(2, "Emulator binary %s not found" % self.binary)
+            raise OSError(2, "Emulator binary %s was not found" % self.binary)
 
         command = str()
 
@@ -1496,7 +1493,7 @@ class Game(GEMObject):
             raise TypeError("Wrong type for filepath, expected str")
 
         if len(self.filepath) == 0:
-            raise ValueError("Found null length for filepath")
+            raise ValueError("File path length is empty")
 
         return (
             dirname(expanduser(self.filepath)),

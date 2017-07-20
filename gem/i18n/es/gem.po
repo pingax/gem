@@ -49,8 +49,8 @@ msgstr "hace %d años"
 
 #
 # File: gem/interface.py, line: 1354
-#, python-format
-msgid "%s emulator not exist !"
+#, fuzzy, python-format
+msgid "%s emulator not exist"
 msgstr "¡El emulador %s no existe!"
 
 #
@@ -106,6 +106,12 @@ msgid ""
 msgstr ""
 
 #
+# File: gem/interface.py, line: 2044
+#, fuzzy, python-format
+msgid "A memory error occur: %s"
+msgstr "MemoryError: %s"
+
+#
 # File: gem/preferences.py, line: 476
 msgid "Action"
 msgstr "Acción"
@@ -147,17 +153,17 @@ msgid "Alternative viewer"
 msgstr "Usar el visor nativo"
 
 #
+# File: gem/main.py, line: 132
+#, fuzzy, python-format
+msgid "An error occur during exec: %s"
+msgstr "Un error ha ocurrido durante la ejecución del programa: %s"
+
+#
 # File: gem/interface.py, line: 2112
 msgid "An error occur during generation, consult log for futher details."
 msgstr ""
 "Un error ha ocurrido durante la creación, consulta el historial para más "
 "detalles."
-
-#
-# File: gem/main.py, line: 132
-#, python-format
-msgid "An error occur during program exec: %s"
-msgstr "Un error ha ocurrido durante la ejecución del programa: %s"
 
 #
 # File: gem/windows.py, line: 319
@@ -192,6 +198,12 @@ msgid "Cancel"
 msgstr "Cancelar"
 
 #
+# File: gem/main.py, line: 128
+#, fuzzy, python-format
+msgid "Cannot access to game: %s"
+msgstr "No puedo abrir la interfaz: %s"
+
+#
 # File: gem/interface.py, line: 1318
 #, python-format
 msgid "Cannot find %(binary)s for %(console)s"
@@ -199,8 +211,8 @@ msgstr "No puedo encontrar el %(binary)s para la %(console)s"
 
 #
 # File: gem/interface.py, line: 2033
-#, python-format
-msgid "Cannot find <b>%s</b> viewer !"
+#, fuzzy, python-format
+msgid "Cannot find <b>%s</b>"
 msgstr "¡No puedo encontrar el visor <b>%s</b>!"
 
 #
@@ -210,9 +222,21 @@ msgid "Cannot find emulator for %s"
 msgstr "No puedo encontrar el emulador para %s"
 
 #
+# File: gem/interface.py, line: 1347
+#, fuzzy, python-format
+msgid "Cannot import modules: %s"
+msgstr "No puedo encontrar el emulador para %s"
+
+#
 # File: gem/main.py, line: 240
 msgid "Cannot launch GEM without display"
 msgstr "No puedo ejecutar GEM sin una sesión gráfica"
+
+#
+# File: gem/configuration.py, line: 71
+#, fuzzy
+msgid "Cannot open screenshots viewer"
+msgstr "No puedo abrir el archivo %s"
 
 #
 # File: gem/interface.py, line: 1892
@@ -254,21 +278,9 @@ msgid "Colorscheme"
 msgstr "Esquema de color"
 
 #
-# File: gem/gtk/game.py, line: 137
-#, python-format
-msgid "Command: %s"
-msgstr "Comando: %s"
-
-#
 # File: gem/preferences.py, line: 1602
 msgid "Configuration file"
 msgstr "Archivo de configuración"
-
-#
-# File: gem/preferences.py, line: 1602
-#, python-format
-msgid "Configuration for %s"
-msgstr "Configuración para %s"
 
 #
 # File: gem/interface.py, line: 494
@@ -333,6 +345,12 @@ msgstr "Dejar %(rom)s en %(path)s"
 # File: gem/preferences.py, line: 429
 msgid "Edit"
 msgstr "Editar"
+
+#
+# File: gem/preferences.py, line: 1602
+#, fuzzy, python-format
+msgid "Edit %s configuration"
+msgstr "Actualizar el archivo de configuración de %s"
 
 #
 # File: gem/interface.py, line: 1257
@@ -496,12 +514,6 @@ msgid "Image file"
 msgstr "Archivo de imagen"
 
 #
-# File: gem/main.py, line: 128
-#, python-format
-msgid "Import error with interface: %s"
-msgstr "Error de importación con la interfaz: %s"
-
-#
 # File: gem/interface.py, line: 1411
 #, python-format
 msgid "Initialize %s"
@@ -599,20 +611,9 @@ msgid "Mednafen GBA documentation"
 msgstr "Documentación Mednafen GBA"
 
 #
-# File: gem/interface.py, line: 2044
-#, python-format
-msgid "MemoryError occurs: %s"
-msgstr "MemoryError: %s"
-
-#
 # File: gem/interface.py, line: 139
 msgid "Migrating entries from old database"
 msgstr "Migrando datos desde la antigua dase de datos"
-
-#
-# File: gem/interface.py, line: 1892
-msgid "Missing binary"
-msgstr "Falta binario"
 
 #
 # File: gem/gtk/mednafen.py, line: 170
@@ -655,12 +656,6 @@ msgstr "Establecer las opciones por defecto"
 # File: gem/preferences.py, line: 97
 msgid "None"
 msgstr "Ninguno"
-
-#
-# File: gem/interface.py, line: 2040
-#, python-format
-msgid "OSError occurs: %s"
-msgstr "OSError: %s"
 
 #
 # File: gem/preferences.py, line: 86
@@ -792,8 +787,8 @@ msgstr "Guardar"
 
 #
 # File: gem/interface.py, line: 602
-#, python-format
-msgid "Save %s for next startup"
+#, fuzzy, python-format
+msgid "Save %s console for next startup"
 msgstr "Guardar %s para el próximo arranque"
 
 #
@@ -1057,15 +1052,15 @@ msgstr "Actualizar el archivo de configuración de %s"
 
 #
 # File: gem/preferences.py, line: 1602
-#, python-format
-msgid "Update %s notes"
+#, fuzzy, python-format
+msgid "Update %s parameters"
 msgstr "Actualizar las notas %s"
 
 #
-# File: gem/interface.py, line: 460
-#, python-format
-msgid "Update default parameters for %s"
-msgstr "Actualizar los parametros por defecto para %s"
+# File: gem/preferences.py, line: 1602
+#, fuzzy, python-format
+msgid "Update note for %s"
+msgstr "Actualizar las notas %s"
 
 #
 # File: gem/interface.py, line: 406
@@ -1173,8 +1168,9 @@ msgstr "Modo ventana"
 
 #
 # File: gem/preferences.py, line: 1196
-msgid "Would you really want to clean informations for this game ?"
-msgstr "¿Quiere borrar los datos de este juego?"
+#, fuzzy
+msgid "Would you really want to remove database entry for this game ?"
+msgstr "¿Quiere borrar esta entrada?"
 
 #
 # File: gem/preferences.py, line: 1196
@@ -1293,16 +1289,6 @@ msgstr "agradecimientos a los traductores"
 #~ msgstr "No pude encontrar %s"
 
 #
-# File: gem/configuration.py, line: 71
-#~ msgid "Cannot open %s file"
-#~ msgstr "No puedo abrir el archivo %s"
-
-#
-# File: gem/main.py, line: 128
-#~ msgid "Cannot open interface: %s"
-#~ msgstr "No puedo abrir la interfaz: %s"
-
-#
 # File: gem/preferences.py, line: 1602
 #~ msgid "Check configuration files"
 #~ msgstr "Comprobar los archivos de configuración"
@@ -1321,6 +1307,16 @@ msgstr "agradecimientos a los traductores"
 # File: gem/interface.py, line: 1782
 #~ msgid "Clean %s informations"
 #~ msgstr "Limpiar los datos de %s"
+
+#
+# File: gem/gtk/game.py, line: 137
+#~ msgid "Command: %s"
+#~ msgstr "Comando: %s"
+
+#
+# File: gem/preferences.py, line: 1602
+#~ msgid "Configuration for %s"
+#~ msgstr "Configuración para %s"
 
 #
 # File: gem/interface.py, line: 133
@@ -1352,6 +1348,11 @@ msgstr "agradecimientos a los traductores"
 #~ msgstr "Crear una nueva base de datos"
 
 #
+# File: gem/main.py, line: 128
+#~ msgid "Import error with interface: %s"
+#~ msgstr "Error de importación con la interfaz: %s"
+
+#
 # File: gem/preferences.py, line: 84
 #~ msgid "Launch interface"
 #~ msgstr "Lanzar la interfaz"
@@ -1363,8 +1364,18 @@ msgstr "agradecimientos a los traductores"
 
 #
 # File: gem/interface.py, line: 1892
+#~ msgid "Missing binary"
+#~ msgstr "Falta binario"
+
+#
+# File: gem/interface.py, line: 1892
 #~ msgid "Missing file"
 #~ msgstr "Falta archivo"
+
+#
+# File: gem/interface.py, line: 2040
+#~ msgid "OSError occurs: %s"
+#~ msgstr "OSError: %s"
 
 #
 # File: gem/interface.py, line: 2006
@@ -1383,9 +1394,19 @@ msgstr "agradecimientos a los traductores"
 #~ msgstr "Comenzar la migración de la base de datos"
 
 #
+# File: gem/interface.py, line: 460
+#~ msgid "Update default parameters for %s"
+#~ msgstr "Actualizar los parametros por defecto para %s"
+
+#
 # File: gem/preferences.py, line: 1159
 #~ msgid "Update v%(old)s database to v%(new)s."
 #~ msgstr "Actualizar v%(old)s base de datos en v%(new)s."
+
+#
+# File: gem/preferences.py, line: 1196
+#~ msgid "Would you really want to clean informations for this game ?"
+#~ msgstr "¿Quiere borrar los datos de este juego?"
 
 #
 # File: gem/interface.py, line: 384

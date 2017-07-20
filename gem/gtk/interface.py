@@ -1595,7 +1595,8 @@ class Interface(Gtk.Window):
                 self.config.modify("gem", "last_console", console)
                 self.config.update()
 
-                self.logger.info(_("Save %s for next startup") % console)
+                self.logger.info(
+                    _("Save %s console for next startup") % console)
 
         # ------------------------------------
         #   Windows size
@@ -1613,11 +1614,7 @@ class Interface(Gtk.Window):
         """ Load main interface
         """
 
-        # Avoid to reload API when GEM just started
-        if self.__first_draw:
-            self.logger.debug("Initialize API")
-
-            self.api.init()
+        self.api.init()
 
         # ------------------------------------
         #   Configuration
@@ -1658,8 +1655,10 @@ class Interface(Gtk.Window):
         self.menubar_tools_item_dark_theme.handler_unblock(
             self.dark_signal_menubar)
 
-        self.logger.debug(
-            "Set dark theme status to %s" % str(dark_theme_status))
+        if dark_theme_status:
+            self.logger.debug("Use dark variant for GTK+ theme")
+        else:
+            self.logger.debug("Use light variant for GTK+ theme")
 
         # ------------------------------------
         #   Icons
@@ -1732,12 +1731,12 @@ class Interface(Gtk.Window):
 
         if self.__theme is not None:
             if self.__theme:
-                self.logger.debug("Set interface theme to classic")
+                self.logger.debug("Use classic theme for GTK+ interface")
                 self.menubar.show_all()
                 self.statusbar.show()
 
             else:
-                self.logger.debug("Set interface theme to default")
+                self.logger.debug("Use default theme for GTK+ interface")
                 self.menubar.hide()
                 self.statusbar.hide()
 
@@ -2281,7 +2280,9 @@ class Interface(Gtk.Window):
                             self.alternative["save"])
 
                     # Game custom parameters
-                    if game.emulator is not None or game.default is not None:
+                    if (game.emulator is not None and \
+                        not game.emulator.name == console.emulator.name) or \
+                        game.default is not None:
                         self.image_paned_parameters.set_from_pixbuf(
                             self.icons["except"])
                     else:
@@ -2448,9 +2449,8 @@ class Interface(Gtk.Window):
                     process.wait()
 
                 else:
-                    self.set_message(_("Missing binary"),
-                        _("Cannot find <b>%s</b> viewer !") % viewer,
-                        Icons.Warning)
+                    self.set_message(_("Cannot open screenshots viewer"),
+                        _("Cannot find <b>%s</b>") % viewer, Icons.Warning)
 
                 # ----------------------------
                 #   Check screenshots
@@ -2597,7 +2597,7 @@ class Interface(Gtk.Window):
                 with open(path, 'w') as pipe:
                     pipe.write(text_buffer)
 
-                self.logger.info(_("Update %s notes") % title)
+                self.logger.info(_("Update note for %s") % title)
 
         self.config.modify("windows", "notes", "%dx%d" % dialog.get_size())
         self.config.update()
@@ -2637,7 +2637,7 @@ class Interface(Gtk.Window):
                     except ValueError as error:
                         size = (800, 600)
 
-                    dialog = DialogEditor(self, _("Configuration for %s") % (
+                    dialog = DialogEditor(self, _("Edit %s configuration") % (
                         emulator.name), expanduser(path), size)
 
                     response = dialog.run()
@@ -2756,13 +2756,14 @@ class Interface(Gtk.Window):
                 # ------------------------------------
 
                 if console.emulator is None:
-                    message = _("Cannot find emulator for %s") % console.name
+                    self.logger.error(
+                        _("Cannot find emulator for %s") % console.name)
                     error = True
 
                 # Check emulator data
                 elif not console.emulator.exists:
-                    message = _("%s emulator not exist !") % (
-                        console.emulator.name)
+                    self.logger.error(
+                        _("%s emulator not exist") % console.emulator.name)
                     error = True
 
                 # ------------------------------------
@@ -2784,21 +2785,18 @@ class Interface(Gtk.Window):
                 #   Load game list
                 # ------------------------------------
 
+                if not self.list_thread == 0:
+                    source_remove(self.list_thread)
+
                 if error:
                     self.model_games.clear()
                     self.filter_games.refilter()
 
-                    self.set_message(console.name, message, popup=False)
-
                 else:
-                    if not self.list_thread == 0:
-                        source_remove(self.list_thread)
-
-                    # Load console games list into treeview
                     loader = self.append_games(console)
                     self.list_thread = idle_add(loader.__next__)
 
-                    self.selection["game"] = None
+                self.selection["game"] = None
 
 
     def append_games(self, console):
@@ -3380,7 +3378,7 @@ class Interface(Gtk.Window):
             treeiter = self.game_path[game.filename][1]
 
             dialog = Question(self, game.name, _("Would you really want to "
-                "clean informations for this game ?"))
+                "remove database entry for this game ?"))
 
             if dialog.run() == Gtk.ResponseType.YES:
                 data = {
@@ -3536,7 +3534,7 @@ class Interface(Gtk.Window):
 
             if dialog.run() == Gtk.ResponseType.OK:
                 self.logger.info(
-                    _("Update default parameters for %s") % game.name)
+                    _("Update %s parameters") % game.name)
 
                 game.emulator = self.api.get_emulator(
                     dialog.combo.get_active_id())
@@ -4171,16 +4169,6 @@ class Interface(Gtk.Window):
                 rom_path = expanduser(console.path)
 
                 # ----------------------------
-                #   Check roms folder
-                # ----------------------------
-
-                if not exists(rom_path):
-                    self.logger.info(
-                        _("Create %s folder to store roms") % rom_path)
-
-                    mkdir(rom_path)
-
-                # ----------------------------
                 #   Install roms
                 # ----------------------------
 
@@ -4538,9 +4526,6 @@ class Splash(Gtk.Window):
         # Rare case where the mainloop is not init when close() is running
         if self.main_loop is not None:
             self.main_loop.quit()
-
-        # Initialize API
-        self.api.init()
 
         self.destroy()
 
