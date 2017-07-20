@@ -526,7 +526,7 @@ class DialogEditor(Dialog):
                     self.style_editor.get_scheme(self.interface.config.item(
                     "editor", "colorscheme", "classic")))
 
-            except ImportError as error:
+            except Exception as error:
                 self.text_editor = Gtk.TextView()
                 self.buffer_editor = Gtk.TextBuffer()
 
