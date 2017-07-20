@@ -4039,8 +4039,7 @@ class Interface(Gtk.Window):
             "gem", "show_sidebar", fallback=True)
 
         if sidebar_status:
-            self.grid_paned.show_all()
-
+            self.grid_paned.show()
         else:
             self.grid_paned.hide()
 
