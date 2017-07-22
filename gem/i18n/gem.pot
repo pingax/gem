@@ -28,7 +28,7 @@ msgstr  ""
 msgid   "%d years ago"
 msgstr  ""
 #
-# File: gem/gtk/interface.py, line: 2764
+# File: gem/gtk/interface.py, line: 2766
 #, python-format
 msgid   "%s emulator not exist"
 msgstr  ""
@@ -38,19 +38,23 @@ msgstr  ""
 msgid   "%s games availables"
 msgstr  ""
 #
-# File: gem/gtk/interface.py, line: 3468
+# File: gem/gtk/interface.py, line: 3470
 #, python-format
 msgid   "%s has been deleted from disk"
 msgstr  ""
 #
-# File: gem/gtk/interface.py, line: 4219
+# File: gem/gtk/interface.py, line: 4221
 #, python-format
 msgid   "%s is already in the roms folder. Canceling operation."
 msgstr  ""
 #
-# File: gem/gtk/interface.py, line: 3878
+# File: gem/gtk/interface.py, line: 3880
 #, python-format
 msgid   "%s was generated successfully"
+msgstr  ""
+#
+# File: gem/gtk/preferences.py, line: 2612
+msgid   "* can be used as joker"
 msgstr  ""
 #
 # File: gem/gtk/interface.py, line: 2179
@@ -69,7 +73,7 @@ msgstr  ""
 msgid   "1 second"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 1874
+# File: gem/gtk/preferences.py, line: 1877
 msgid   "A console represent a games library. You can specify a default "
         "emulator which is used by this console and extensions which is "
         "readable by this emulator."
@@ -80,7 +84,7 @@ msgstr  ""
 msgid   "A memory error occur: %s"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 778
+# File: gem/gtk/preferences.py, line: 781
 msgid   "Action"
 msgstr  ""
 #
@@ -89,16 +93,16 @@ msgid   "Activate game fullscreen mode"
 msgstr  ""
 #
 # File: gem/gtk/mednafen.py, line: 164
-# File: gem/gtk/preferences.py, line: 874
-# File: gem/gtk/preferences.py, line: 963
+# File: gem/gtk/preferences.py, line: 877
+# File: gem/gtk/preferences.py, line: 966
 msgid   "Add"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 3130
-# File: gem/gtk/preferences.py, line: 3157
-# File: gem/gtk/preferences.py, line: 3165
-# File: gem/gtk/preferences.py, line: 3172
+# File: gem/gtk/preferences.py, line: 3152
+# File: gem/gtk/preferences.py, line: 3179
+# File: gem/gtk/preferences.py, line: 3187
 # File: gem/gtk/preferences.py, line: 3194
+# File: gem/gtk/preferences.py, line: 3216
 msgid   "All icons"
 msgstr  ""
 #
@@ -110,7 +114,7 @@ msgstr  ""
 msgid   "Alternative emulator"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 494
+# File: gem/gtk/preferences.py, line: 497
 msgid   "Alternative viewer"
 msgstr  ""
 #
@@ -119,20 +123,28 @@ msgstr  ""
 msgid   "An error occur during exec: %s"
 msgstr  ""
 #
-# File: gem/gtk/interface.py, line: 3884
+# File: gem/gtk/interface.py, line: 3886
 msgid   "An error occur during generation, consult log for futher details."
+msgstr  ""
+#
+# File: gem/gtk/preferences.py, line: 2581
+msgid   "Argument which activate fullscreen mode"
+msgstr  ""
+#
+# File: gem/gtk/preferences.py, line: 2572
+msgid   "Argument which activate windowded mode"
 msgstr  ""
 #
 # File: gem/gtk/windows.py, line: 561
 msgid   "Auto line break"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 449
+# File: gem/gtk/preferences.py, line: 452
 msgid   "Behavior"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 934
-# File: gem/gtk/preferences.py, line: 2524
+# File: gem/gtk/preferences.py, line: 937
+# File: gem/gtk/preferences.py, line: 2530
 msgid   "Binary"
 msgstr  ""
 #
@@ -144,7 +156,7 @@ msgstr  ""
 msgid   "Bottom"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 992
+# File: gem/gtk/preferences.py, line: 995
 msgid   "Cancel"
 msgstr  ""
 #
@@ -153,17 +165,17 @@ msgstr  ""
 msgid   "Cannot access to game: %s"
 msgstr  ""
 #
-# File: gem/gtk/interface.py, line: 2698
+# File: gem/gtk/interface.py, line: 2700
 #, python-format
 msgid   "Cannot find %(binary)s for %(console)s"
 msgstr  ""
 #
-# File: gem/gtk/interface.py, line: 2451
+# File: gem/gtk/interface.py, line: 2453
 #, python-format
 msgid   "Cannot find <b>%s</b>"
 msgstr  ""
 #
-# File: gem/gtk/interface.py, line: 2758
+# File: gem/gtk/interface.py, line: 2760
 #, python-format
 msgid   "Cannot find emulator for %s"
 msgstr  ""
@@ -177,7 +189,7 @@ msgstr  ""
 msgid   "Cannot launch GEM without display"
 msgstr  ""
 #
-# File: gem/gtk/interface.py, line: 2450
+# File: gem/gtk/interface.py, line: 2452
 msgid   "Cannot open screenshots viewer"
 msgstr  ""
 #
@@ -186,18 +198,18 @@ msgstr  ""
 msgid   "Cannot resize main window: %s"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 280
+# File: gem/gtk/preferences.py, line: 283
 #, python-format
 msgid   "Cannot resize preferences window: %s"
 msgstr  ""
 #
-# File: gem/gtk/interface.py, line: 4227
+# File: gem/gtk/interface.py, line: 4229
 #, python-format
 msgid   "Cannot write into %s. Canceling operation."
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 2269
-# File: gem/gtk/preferences.py, line: 2912
+# File: gem/gtk/preferences.py, line: 2273
+# File: gem/gtk/preferences.py, line: 2934
 msgid   "Choose an icon"
 msgstr  ""
 #
@@ -210,20 +222,20 @@ msgstr  ""
 msgid   "Close interface"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 716
+# File: gem/gtk/preferences.py, line: 719
 msgid   "Colorscheme"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 2540
+# File: gem/gtk/preferences.py, line: 2546
 msgid   "Configuration file"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 841
-# File: gem/gtk/preferences.py, line: 1843
+# File: gem/gtk/preferences.py, line: 844
+# File: gem/gtk/preferences.py, line: 1846
 msgid   "Console"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 416
+# File: gem/gtk/preferences.py, line: 419
 msgid   "Consoles"
 msgstr  ""
 #
@@ -236,22 +248,26 @@ msgstr  ""
 msgid   "Custom _parameters"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 2011
+# File: gem/gtk/preferences.py, line: 2563
+msgid   "Default arguments to add when launch emulator"
+msgstr  ""
+#
+# File: gem/gtk/preferences.py, line: 2014
 msgid   "Default emulator"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 2552
+# File: gem/gtk/preferences.py, line: 2558
 msgid   "Default options"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 2379
-# File: gem/gtk/preferences.py, line: 2382
+# File: gem/gtk/preferences.py, line: 2383
+# File: gem/gtk/preferences.py, line: 2386
 # File: gem/gtk/windows.py, line: 838
 # File: gem/gtk/windows.py, line: 841
 msgid   "Description"
 msgstr  ""
 #
-# File: gem/gtk/interface.py, line: 4223
+# File: gem/gtk/interface.py, line: 4225
 #, python-format
 msgid   "Destination %s not exist. Canceling operation."
 msgstr  ""
@@ -260,7 +276,7 @@ msgstr  ""
 msgid   "Do you want to remove this memory type ?"
 msgstr  ""
 #
-# File: gem/gtk/interface.py, line: 4198
+# File: gem/gtk/interface.py, line: 4200
 #, python-format
 msgid   "Drop %(rom)s to %(path)s"
 msgstr  ""
@@ -269,7 +285,7 @@ msgstr  ""
 msgid   "Edit"
 msgstr  ""
 #
-# File: gem/gtk/interface.py, line: 2638
+# File: gem/gtk/interface.py, line: 2640
 #, python-format
 msgid   "Edit %s configuration"
 msgstr  ""
@@ -278,18 +294,18 @@ msgstr  ""
 msgid   "Edit emulator"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 711
+# File: gem/gtk/preferences.py, line: 714
 msgid   "Editor"
 msgstr  ""
 #
 # File: gem/gtk/interface.py, line: 2272
-# File: gem/gtk/preferences.py, line: 930
-# File: gem/gtk/preferences.py, line: 2015
-# File: gem/gtk/preferences.py, line: 2356
+# File: gem/gtk/preferences.py, line: 933
+# File: gem/gtk/preferences.py, line: 2018
+# File: gem/gtk/preferences.py, line: 2360
 msgid   "Emulator"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 2548
+# File: gem/gtk/preferences.py, line: 2554
 msgid   "Emulator arguments"
 msgstr  ""
 #
@@ -298,26 +314,30 @@ msgid   "Emulator default arguments can use custom parameters to facilitate "
         "file detection."
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 422
+# File: gem/gtk/preferences.py, line: 425
 msgid   "Emulators"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 1892
+# File: gem/gtk/preferences.py, line: 1895
 msgid   "Expressions are split by carriage return."
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 2034
+# File: gem/gtk/preferences.py, line: 2037
 msgid   "Extensions"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 1882
+# File: gem/gtk/preferences.py, line: 1885
 msgid   "Extensions are split by spaces and must not having the first dot "
         "(using \"nes\" than \".nes\")."
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 1870
-# File: gem/gtk/preferences.py, line: 1885
+# File: gem/gtk/preferences.py, line: 1873
+# File: gem/gtk/preferences.py, line: 1888
 msgid   "Extensions examples"
+msgstr  ""
+#
+# File: gem/gtk/preferences.py, line: 2588
+msgid   "Files patterns"
 msgstr  ""
 #
 # File: gem/gtk/interface.py, line: 753
@@ -328,15 +348,15 @@ msgstr  ""
 msgid   "Flags"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 721
+# File: gem/gtk/preferences.py, line: 724
 msgid   "Font"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 2566
+# File: gem/gtk/preferences.py, line: 2576
 msgid   "Fullscreen"
 msgstr  ""
 #
-# File: gem/gtk/interface.py, line: 2499
+# File: gem/gtk/interface.py, line: 2501
 msgid   "GEM"
 msgstr  ""
 #
@@ -353,15 +373,15 @@ msgstr  ""
 msgid   "GameID"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 1981
+# File: gem/gtk/preferences.py, line: 1984
 msgid   "Games folder"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 623
+# File: gem/gtk/preferences.py, line: 626
 msgid   "Games list"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 398
+# File: gem/gtk/preferences.py, line: 401
 msgid   "General"
 msgstr  ""
 #
@@ -373,8 +393,8 @@ msgstr  ""
 msgid   "Generate desktop entry for a game"
 msgstr  ""
 #
-# File: gem/gtk/interface.py, line: 3877
-# File: gem/gtk/interface.py, line: 3883
+# File: gem/gtk/interface.py, line: 3879
+# File: gem/gtk/interface.py, line: 3885
 #, python-format
 msgid   "Generate menu entry for %s"
 msgstr  ""
@@ -383,7 +403,7 @@ msgstr  ""
 msgid   "Help"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 463
+# File: gem/gtk/preferences.py, line: 466
 msgid   "Hide consoles without any game"
 msgstr  ""
 #
@@ -391,16 +411,12 @@ msgstr  ""
 msgid   "Horizontal"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 2059
-msgid   "Ignored games files"
-msgstr  ""
-#
-# File: gem/gtk/preferences.py, line: 3131
-# File: gem/gtk/preferences.py, line: 3162
+# File: gem/gtk/preferences.py, line: 3153
+# File: gem/gtk/preferences.py, line: 3184
 msgid   "Image file"
 msgstr  ""
 #
-# File: gem/gtk/interface.py, line: 3164
+# File: gem/gtk/interface.py, line: 3166
 #, python-format
 msgid   "Initialize %s"
 msgstr  ""
@@ -410,12 +426,12 @@ msgid   "Installed"
 msgstr  ""
 #
 # File: gem/gtk/preferences.py, line: 126
-# File: gem/gtk/preferences.py, line: 404
-# File: gem/gtk/preferences.py, line: 544
+# File: gem/gtk/preferences.py, line: 407
+# File: gem/gtk/preferences.py, line: 547
 msgid   "Interface"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 1890
+# File: gem/gtk/preferences.py, line: 1893
 msgid   "It's possible to hide specific files from the games list with "
         "regular expressions."
 msgstr  ""
@@ -450,7 +466,7 @@ msgstr  ""
 msgid   "Launch selected game"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 455
+# File: gem/gtk/preferences.py, line: 458
 msgid   "Load the last chosen console when start GEM"
 msgstr  ""
 #
@@ -481,25 +497,25 @@ msgstr  ""
 msgid   "Mednafen GBA documentation"
 msgstr  ""
 #
-# File: gem/gtk/interface.py, line: 4473
+# File: gem/gtk/interface.py, line: 4475
 msgid   "Migrating entries from old database"
 msgstr  ""
 #
 # File: gem/gtk/mednafen.py, line: 170
-# File: gem/gtk/preferences.py, line: 880
-# File: gem/gtk/preferences.py, line: 969
+# File: gem/gtk/preferences.py, line: 883
+# File: gem/gtk/preferences.py, line: 972
 msgid   "Modify"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 1879
+# File: gem/gtk/preferences.py, line: 1882
 msgid   "Most of the time, extensions are common between differents emulators "
         "and represent the console acronym name (example: Nintendo NES -> "
         "nes)."
 msgstr  ""
 #
 # File: gem/gtk/interface.py, line: 901
-# File: gem/gtk/preferences.py, line: 1974
-# File: gem/gtk/preferences.py, line: 2516
+# File: gem/gtk/preferences.py, line: 1977
+# File: gem/gtk/preferences.py, line: 2522
 msgid   "Name"
 msgstr  ""
 #
@@ -538,11 +554,19 @@ msgstr  ""
 msgid   "Open selected game directory"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 2380
-# File: gem/gtk/preferences.py, line: 2388
+# File: gem/gtk/preferences.py, line: 2384
+# File: gem/gtk/preferences.py, line: 2392
 # File: gem/gtk/windows.py, line: 839
 # File: gem/gtk/windows.py, line: 850
 msgid   "Parameters"
+msgstr  ""
+#
+# File: gem/gtk/preferences.py, line: 2597
+msgid   "Pattern to detect savestates files"
+msgstr  ""
+#
+# File: gem/gtk/preferences.py, line: 2606
+msgid   "Pattern to detect screenshots files"
 msgstr  ""
 #
 # File: gem/gtk/interface.py, line: 184
@@ -550,8 +574,8 @@ msgstr  ""
 msgid   "Play time"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 261
-# File: gem/gtk/preferences.py, line: 357
+# File: gem/gtk/preferences.py, line: 264
+# File: gem/gtk/preferences.py, line: 360
 msgid   "Preferences"
 msgstr  ""
 #
@@ -559,25 +583,25 @@ msgstr  ""
 msgid   "Quit application"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 845
+# File: gem/gtk/preferences.py, line: 848
 msgid   "ROMs path"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 575
+# File: gem/gtk/preferences.py, line: 578
 msgid   "Randomize game screenshot in sidebar"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 2576
-msgid   "Regular expressions for files"
+# File: gem/gtk/preferences.py, line: 2063
+msgid   "Regular expressions for ignored files"
 msgstr  ""
 #
 # File: gem/gtk/mednafen.py, line: 176
-# File: gem/gtk/preferences.py, line: 886
-# File: gem/gtk/preferences.py, line: 975
+# File: gem/gtk/preferences.py, line: 889
+# File: gem/gtk/preferences.py, line: 978
 msgid   "Remove"
 msgstr  ""
 #
-# File: gem/gtk/interface.py, line: 3480
+# File: gem/gtk/interface.py, line: 3482
 #, python-format
 msgid   "Remove %s"
 msgstr  ""
@@ -606,12 +630,12 @@ msgstr  ""
 msgid   "Remove game's data from database"
 msgstr  ""
 #
-# File: gem/gtk/interface.py, line: 3358
+# File: gem/gtk/interface.py, line: 3360
 #, python-format
 msgid   "Rename %(old)s to %(new)s"
 msgstr  ""
 #
-# File: gem/gtk/interface.py, line: 3338
+# File: gem/gtk/interface.py, line: 3340
 # File: gem/gtk/preferences.py, line: 156
 msgid   "Rename a game"
 msgstr  ""
@@ -620,8 +644,8 @@ msgstr  ""
 msgid   "Right"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 998
-# File: gem/gtk/preferences.py, line: 2580
+# File: gem/gtk/preferences.py, line: 1001
+# File: gem/gtk/preferences.py, line: 2592
 msgid   "Save"
 msgstr  ""
 #
@@ -634,15 +658,15 @@ msgstr  ""
 msgid   "Search"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 2897
+# File: gem/gtk/preferences.py, line: 2919
 msgid   "Select a binary"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 3020
+# File: gem/gtk/preferences.py, line: 3042
 msgid   "Select icon from"
 msgstr  ""
 #
-# File: gem/gtk/interface.py, line: 3339
+# File: gem/gtk/interface.py, line: 3341
 #, python-format
 msgid   "Set a custom name for %s"
 msgstr  ""
@@ -655,31 +679,31 @@ msgstr  ""
 msgid   "Set specific arguments for a game"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 781
+# File: gem/gtk/preferences.py, line: 784
 msgid   "Shortcut"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 410
+# File: gem/gtk/preferences.py, line: 413
 msgid   "Shortcuts"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 671
+# File: gem/gtk/preferences.py, line: 674
 msgid   "Show \"Flags\" column"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 664
+# File: gem/gtk/preferences.py, line: 667
 msgid   "Show \"Installed\" column"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 650
+# File: gem/gtk/preferences.py, line: 653
 msgid   "Show \"Last launch\" column"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 643
+# File: gem/gtk/preferences.py, line: 646
 msgid   "Show \"Launch\" column"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 657
+# File: gem/gtk/preferences.py, line: 660
 msgid   "Show \"Play time\" column"
 msgstr  ""
 #
@@ -698,7 +722,7 @@ msgstr  ""
 msgid   "Show _sidebar"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 560
+# File: gem/gtk/preferences.py, line: 563
 msgid   "Show close buttons in header bar"
 msgstr  ""
 #
@@ -710,11 +734,11 @@ msgstr  ""
 msgid   "Show game screenshots"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 726
+# File: gem/gtk/preferences.py, line: 729
 msgid   "Show line numbers"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 631
+# File: gem/gtk/preferences.py, line: 634
 msgid   "Show lines in games list"
 msgstr  ""
 #
@@ -745,15 +769,15 @@ msgid   "Show selected game screenshots"
 msgstr  ""
 #
 # File: gem/gtk/preferences.py, line: 128
-# File: gem/gtk/preferences.py, line: 567
+# File: gem/gtk/preferences.py, line: 570
 msgid   "Show sidebar"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 582
+# File: gem/gtk/preferences.py, line: 585
 msgid   "Sidebar position"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 2587
+# File: gem/gtk/preferences.py, line: 2601
 msgid   "Snapshots"
 msgstr  ""
 #
@@ -780,15 +804,15 @@ msgstr  ""
 msgid   "Terminate by keyboard interrupt"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 2870
+# File: gem/gtk/preferences.py, line: 2892
 msgid   "This binary not exist, please, check the path"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 2309
+# File: gem/gtk/preferences.py, line: 2313
 msgid   "This console already exist, please, choose another name"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 2848
+# File: gem/gtk/preferences.py, line: 2870
 msgid   "This emulator already exist, please, choose another name"
 msgstr  ""
 #
@@ -802,21 +826,21 @@ msgid   "This game is going to be removed from your disk and this action is "
         "irreversible."
 msgstr  ""
 #
-# File: gem/gtk/interface.py, line: 3481
+# File: gem/gtk/interface.py, line: 3483
 msgid   "This game was removed successfully"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 2385
+# File: gem/gtk/preferences.py, line: 2389
 msgid   "This parameters are used in \"Default options\", \"Save\" and "
         "\"Snapshots\" entries."
 msgstr  ""
 #
-# File: gem/gtk/interface.py, line: 4180
+# File: gem/gtk/interface.py, line: 4182
 #, python-format
 msgid   "This rom already exists in %s. Do you want to replace it ?"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 2383
+# File: gem/gtk/preferences.py, line: 2387
 msgid   "To facilitate file detection with every emulators, some custom "
         "parameters have been created."
 msgstr  ""
@@ -829,37 +853,37 @@ msgstr  ""
 msgid   "Type"
 msgstr  ""
 #
-# File: gem/gtk/interface.py, line: 2650
+# File: gem/gtk/interface.py, line: 2652
 #, python-format
 msgid   "Update %s configuration file"
 msgstr  ""
 #
-# File: gem/gtk/interface.py, line: 3535
+# File: gem/gtk/interface.py, line: 3537
 #, python-format
 msgid   "Update %s parameters"
 msgstr  ""
 #
-# File: gem/gtk/interface.py, line: 2598
+# File: gem/gtk/interface.py, line: 2600
 #, python-format
 msgid   "Update note for %s"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 2393
+# File: gem/gtk/preferences.py, line: 2397
 # File: gem/gtk/windows.py, line: 855
 msgid   "Use ROM file path"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 2390
+# File: gem/gtk/preferences.py, line: 2394
 # File: gem/gtk/windows.py, line: 852
 msgid   "Use ROM filename"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 2392
+# File: gem/gtk/preferences.py, line: 2396
 # File: gem/gtk/windows.py, line: 854
 msgid   "Use ROM folder path"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 2391
+# File: gem/gtk/preferences.py, line: 2395
 # File: gem/gtk/windows.py, line: 853
 msgid   "Use ROM lowercase filename"
 msgstr  ""
@@ -869,26 +893,26 @@ msgstr  ""
 msgid   "Use _dark theme"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 552
+# File: gem/gtk/preferences.py, line: 555
 msgid   "Use classic theme (Need to reboot GEM)"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 2394
+# File: gem/gtk/preferences.py, line: 2398
 # File: gem/gtk/windows.py, line: 856
 msgid   "Use emulator configuration file path"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 2389
+# File: gem/gtk/preferences.py, line: 2393
 # File: gem/gtk/windows.py, line: 851
 msgid   "Use game key"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 499
+# File: gem/gtk/preferences.py, line: 502
 msgid   "Use native viewer"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 2041
-# File: gem/gtk/preferences.py, line: 2043
+# File: gem/gtk/preferences.py, line: 2044
+# File: gem/gtk/preferences.py, line: 2046
 msgid   "Use space to separate extensions"
 msgstr  ""
 #
@@ -897,7 +921,7 @@ msgstr  ""
 msgid   "Use space to separate tags"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 678
+# File: gem/gtk/preferences.py, line: 681
 msgid   "Use translucent icons in games list"
 msgstr  ""
 #
@@ -909,7 +933,7 @@ msgstr  ""
 msgid   "Vertical"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 488
+# File: gem/gtk/preferences.py, line: 491
 msgid   "Viewer"
 msgstr  ""
 #
@@ -924,15 +948,15 @@ msgid   "Welcome and thanks for choosing GEM as emulators manager. Start "
         "Enjoy and have fun :D"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 2559
+# File: gem/gtk/preferences.py, line: 2567
 msgid   "Windowed"
 msgstr  ""
 #
-# File: gem/gtk/interface.py, line: 3378
+# File: gem/gtk/interface.py, line: 3380
 msgid   "Would you really want to remove database entry for this game ?"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 1807
+# File: gem/gtk/preferences.py, line: 1810
 msgid   "Would you really want to remove this entry ?"
 msgstr  ""
 #
@@ -940,7 +964,7 @@ msgstr  ""
 msgid   "Yesterday"
 msgstr  ""
 #
-# File: gem/gtk/preferences.py, line: 759
+# File: gem/gtk/preferences.py, line: 762
 msgid   "You can edit interface shortcuts for some actions. Click on a "
         "shortcut and insert wanted shortcut with your keyboard."
 msgstr  ""
@@ -1016,6 +1040,6 @@ msgstr  ""
 msgid   "_Tools"
 msgstr  ""
 #
-# File: gem/gtk/interface.py, line: 2381
+# File: gem/gtk/interface.py, line: 2383
 msgid   "translator-credits"
 msgstr  ""

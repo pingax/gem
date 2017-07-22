@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.6\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2017-07-20 15:27+0200\n"
+"PO-Revision-Date: 2017-07-22 14:19+0200\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -76,6 +76,11 @@ msgstr "%s est déjà dans le dossier des roms. Annulation de l'opération."
 #, python-format
 msgid "%s was generated successfully"
 msgstr "%s à été généré avec succès"
+
+#
+# File: gem/gtk/preferences.py, line: 2612
+msgid "* can be used as joker"
+msgstr "* peut être utilisé comme joker"
 
 #
 # File: gem/interface.py, line: 532
@@ -164,6 +169,16 @@ msgid "An error occur during generation, consult log for futher details."
 msgstr ""
 "Une erreur est survenu durant la génération, consultez le journal pour plus "
 "de détails."
+
+#
+# File: gem/interface.py, line: 290
+msgid "Argument which activate fullscreen mode"
+msgstr "Argument utilisé pour activer le mode plein écran"
+
+#
+# File: gem/gtk/preferences.py, line: 2572
+msgid "Argument which activate windowded mode"
+msgstr "Argument utilisé pour activer le mode fenêtré"
 
 #
 # File: gem/windows.py, line: 319
@@ -299,6 +314,11 @@ msgid "Custom _parameters"
 msgstr "Définir des _paramètres personnalisés"
 
 #
+# File: gem/gtk/preferences.py, line: 2563
+msgid "Default arguments to add when launch emulator"
+msgstr "Arguments par défaut à ajouter lors du lancement de l'émulateur"
+
+#
 # File: gem/interface.py, line: 300
 msgid "Default emulator"
 msgstr "Émulateur par défaut"
@@ -405,6 +425,11 @@ msgid "Extensions examples"
 msgstr "Exemples d'extensions"
 
 #
+# File: gem/gtk/preferences.py, line: 2588
+msgid "Files patterns"
+msgstr "Motifs des fichiers"
+
+#
 # File: src/window.py, line: 306
 msgid "Filter"
 msgstr "Filtres"
@@ -490,11 +515,6 @@ msgstr "Cacher les consoles sans aucun jeu"
 # File: gem/preferences.py, line: 98
 msgid "Horizontal"
 msgstr "Horizontales"
-
-#
-# File: src/window.py, line: 446
-msgid "Ignored games files"
-msgstr "Fichiers des jeux à ignorer"
 
 #
 # File: gem/preferences.py, line: 1255
@@ -679,6 +699,16 @@ msgid "Parameters"
 msgstr "Paramètres"
 
 #
+# File: gem/gtk/preferences.py, line: 2597
+msgid "Pattern to detect savestates files"
+msgstr "Motif pour détecter les fichiers de sauvegarde"
+
+#
+# File: gem/preferences.py, line: 335
+msgid "Pattern to detect screenshots files"
+msgstr "Motif pour détecter les fichiers de captures d'écran"
+
+#
 # File: src/window.py, line: 375
 msgid "Play time"
 msgstr "Temps de jeu"
@@ -705,8 +735,8 @@ msgstr "Afficher les captures d'écran de la barre latérale aléatoirement"
 
 #
 # File: gem/preferences.py, line: 1233
-msgid "Regular expressions for files"
-msgstr "Expressions régulières pour les fichiers"
+msgid "Regular expressions for ignored files"
+msgstr "Expressions régulières pour les fichiers ignorés"
 
 #
 # File: src/window.py, line: 939
@@ -1247,3 +1277,8 @@ msgstr "_Outils"
 # File: gem/interface.py, line: 926
 msgid "translator-credits"
 msgstr "Lubert Aurélien (PacMiam)"
+
+#
+# File: src/window.py, line: 446
+#~ msgid "Ignored games files"
+#~ msgstr "Fichiers des jeux à ignorer"

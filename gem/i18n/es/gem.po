@@ -78,6 +78,11 @@ msgid "%s was generated successfully"
 msgstr "%s ha sido creado con éxito"
 
 #
+# File: gem/gtk/preferences.py, line: 2612
+msgid "* can be used as joker"
+msgstr ""
+
+#
 # File: gem/interface.py, line: 910
 msgid "1 game available"
 msgstr "1 juego disponible"
@@ -164,6 +169,17 @@ msgid "An error occur during generation, consult log for futher details."
 msgstr ""
 "Un error ha ocurrido durante la creación, consulta el historial para más "
 "detalles."
+
+#
+# File: gem/interface.py, line: 451
+#, fuzzy
+msgid "Argument which activate fullscreen mode"
+msgstr "Activar el modo pantalla completa del juego"
+
+#
+# File: gem/gtk/preferences.py, line: 2572
+msgid "Argument which activate windowded mode"
+msgstr ""
 
 #
 # File: gem/windows.py, line: 319
@@ -305,6 +321,11 @@ msgid "Custom _parameters"
 msgstr "_Parametros personalizados"
 
 #
+# File: gem/gtk/preferences.py, line: 2563
+msgid "Default arguments to add when launch emulator"
+msgstr ""
+
+#
 # File: gem/preferences.py, line: 1013
 #, fuzzy
 msgid "Default emulator"
@@ -414,6 +435,11 @@ msgid "Extensions examples"
 msgstr ""
 
 #
+# File: gem/gtk/preferences.py, line: 2588
+msgid "Files patterns"
+msgstr ""
+
+#
 # File: gem/interface.py, line: 522
 msgid "Filter"
 msgstr "Filtro"
@@ -501,12 +527,6 @@ msgstr "Esconder consolas sin juego"
 # File: gem/preferences.py, line: 98
 msgid "Horizontal"
 msgstr "Horizontal"
-
-#
-# File: gem/interface.py, line: 776
-#, fuzzy
-msgid "Ignored games files"
-msgstr "Borrar partidas guardadas del juego"
 
 #
 # File: gem/windows.py, line: 999
@@ -690,6 +710,18 @@ msgid "Parameters"
 msgstr "Parámetros"
 
 #
+# File: gem/configuration.py, line: 71
+#, fuzzy
+msgid "Pattern to detect savestates files"
+msgstr "No puedo abrir el archivo %s"
+
+#
+# File: gem/configuration.py, line: 71
+#, fuzzy
+msgid "Pattern to detect screenshots files"
+msgstr "No puedo abrir el archivo %s"
+
+#
 # File: gem/interface.py, line: 642
 msgid "Play time"
 msgstr "Tiempo jugado"
@@ -718,7 +750,8 @@ msgstr "Borrar capturas de pantalla del juego"
 
 #
 # File: gem/preferences.py, line: 1624
-msgid "Regular expressions for files"
+#, fuzzy
+msgid "Regular expressions for ignored files"
 msgstr "Expresiones regulares para los archivos"
 
 #
@@ -1346,6 +1379,12 @@ msgstr "agradecimientos a los traductores"
 # File: gem/interface.py, line: 460
 #~ msgid "Generate a new database"
 #~ msgstr "Crear una nueva base de datos"
+
+#
+# File: gem/interface.py, line: 776
+#, fuzzy
+#~ msgid "Ignored games files"
+#~ msgstr "Borrar partidas guardadas del juego"
 
 #
 # File: gem/main.py, line: 128

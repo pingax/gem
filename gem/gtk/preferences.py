@@ -2585,7 +2585,7 @@ class PreferencesEmulator(Dialog):
         self.image_files.set_from_icon_name(
             Icons.Folder, Gtk.IconSize.MENU)
         self.label_files.set_markup(
-            "<b>%s</b>" % _("Files paterns"))
+            "<b>%s</b>" % _("Files patterns"))
         self.label_files.set_use_markup(True)
         self.label_files.set_alignment(0, .5)
 
@@ -2594,7 +2594,7 @@ class PreferencesEmulator(Dialog):
         self.label_save.set_margin_left(32)
         self.entry_save.set_hexpand(True)
         self.entry_save.set_placeholder_text(
-            _("Patern to detect savestates files"))
+            _("Pattern to detect savestates files"))
         self.entry_save.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
 
@@ -2603,7 +2603,7 @@ class PreferencesEmulator(Dialog):
         self.label_screenshots.set_margin_left(32)
         self.entry_screenshots.set_hexpand(True)
         self.entry_screenshots.set_placeholder_text(
-            _("Patern to detect screenshots files"))
+            _("Pattern to detect screenshots files"))
         self.entry_screenshots.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
 
