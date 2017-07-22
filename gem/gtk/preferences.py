@@ -191,6 +191,9 @@ class Preferences(object):
             self.empty = self.interface.empty
 
         else:
+            # Initialize GEM
+            self.api.init()
+
             # Get user icon theme
             self.icons_theme = Gtk.IconTheme.get_default()
 
@@ -2056,7 +2059,8 @@ class PreferencesConsole(Dialog):
 
         # Properties
         self.image_ignores.set_from_icon_name(Icons.Document, Gtk.IconSize.MENU)
-        self.label_ignores.set_markup("<b>%s</b>" % _("Ignored games files"))
+        self.label_ignores.set_markup(
+            "<b>%s</b>" % _("Regular expressions for ignored files"))
         self.label_ignores.set_use_markup(True)
         self.label_ignores.set_alignment(0, .5)
 
@@ -2423,7 +2427,7 @@ class PreferencesEmulator(Dialog):
         # Properties
         self.set_transient_for(self.interface.window)
 
-        self.set_size(640, 530)
+        self.set_size(640, 560)
         self.set_resizable(True)
 
         self.add_buttons(
@@ -2511,6 +2515,8 @@ class PreferencesEmulator(Dialog):
         self.label_screenshots = Gtk.Label()
         self.entry_screenshots = Gtk.Entry()
 
+        self.label_joker = Gtk.Label()
+
         # Properties
         self.label_name.set_markup(
             "<b>%s</b>" % _("Name"))
@@ -2553,6 +2559,8 @@ class PreferencesEmulator(Dialog):
         self.label_launch.set_alignment(0, .5)
         self.label_launch.set_margin_left(32)
         self.entry_launch.set_hexpand(True)
+        self.entry_launch.set_placeholder_text(
+            _("Default arguments to add when launch emulator"))
         self.entry_launch.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
 
@@ -2560,6 +2568,8 @@ class PreferencesEmulator(Dialog):
         self.label_windowed.set_alignment(0, .5)
         self.label_windowed.set_margin_left(32)
         self.entry_windowed.set_hexpand(True)
+        self.entry_windowed.set_placeholder_text(
+            _("Argument which activate windowded mode"))
         self.entry_windowed.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
 
@@ -2567,13 +2577,15 @@ class PreferencesEmulator(Dialog):
         self.label_fullscreen.set_alignment(0, .5)
         self.label_fullscreen.set_margin_left(32)
         self.entry_fullscreen.set_hexpand(True)
+        self.entry_fullscreen.set_placeholder_text(
+            _("Argument which activate fullscreen mode"))
         self.entry_fullscreen.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
 
         self.image_files.set_from_icon_name(
             Icons.Folder, Gtk.IconSize.MENU)
         self.label_files.set_markup(
-            "<b>%s</b>" % _("Regular expressions for files"))
+            "<b>%s</b>" % _("Files paterns"))
         self.label_files.set_use_markup(True)
         self.label_files.set_alignment(0, .5)
 
@@ -2581,6 +2593,8 @@ class PreferencesEmulator(Dialog):
         self.label_save.set_alignment(0, .5)
         self.label_save.set_margin_left(32)
         self.entry_save.set_hexpand(True)
+        self.entry_save.set_placeholder_text(
+            _("Patern to detect savestates files"))
         self.entry_save.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
 
@@ -2588,8 +2602,14 @@ class PreferencesEmulator(Dialog):
         self.label_screenshots.set_alignment(0, .5)
         self.label_screenshots.set_margin_left(32)
         self.entry_screenshots.set_hexpand(True)
+        self.entry_screenshots.set_placeholder_text(
+            _("Patern to detect screenshots files"))
         self.entry_screenshots.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
+
+        self.label_joker.set_alignment(1, .5)
+        self.label_joker.set_use_markup(True)
+        self.label_joker.set_markup("<i>%s</i>" % _("* can be used as joker"))
 
 
     def __init_packing(self):
@@ -2637,6 +2657,8 @@ class PreferencesEmulator(Dialog):
         self.grid_misc.attach(self.entry_save, 1, 7, 1, 1)
         self.grid_misc.attach(self.label_screenshots, 0, 8, 1, 1)
         self.grid_misc.attach(self.entry_screenshots, 1, 8, 1, 1)
+
+        self.grid_misc.attach(self.label_joker, 0, 9, 2, 1)
 
         # Emulator options
         self.button_binary.set_image(self.image_binary)
