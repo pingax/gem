@@ -2259,7 +2259,8 @@ class Interface(Gtk.Window):
                 if len(game.tags) > 0:
                     self.widgets_sidebar["tags"]["box"].show_all()
                     self.widgets_sidebar["tags"]["value"].set_markup(
-                        ', '.join(game.tags))
+                        ', '.join(game.tags).replace('&', "&amp;").replace(
+                        '<', "&lt;").replace('>', "&gt;"))
                 else:
                     self.widgets_sidebar["tags"]["box"].hide()
                     self.widgets_sidebar["tags"]["value"].set_text(str())
