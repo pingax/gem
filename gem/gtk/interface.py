@@ -2362,6 +2362,8 @@ class Interface(Gtk.Window):
             Object which receive signal
         """
 
+        self.set_sensitive(False)
+
         about = Gtk.AboutDialog()
 
         about.set_transient_for(self)
@@ -2386,6 +2388,8 @@ class Interface(Gtk.Window):
             Gtk.License.GPL_3_0)
 
         about.run()
+
+        self.set_sensitive(True)
         about.destroy()
 
 
@@ -2425,6 +2429,8 @@ class Interface(Gtk.Window):
             if len(results) > 0:
                 title = "%s (%s)" % (game.name, console.name)
 
+                self.set_sensitive(False)
+
                 # Get external viewer
                 viewer = self.config.get("viewer", "binary")
 
@@ -2452,6 +2458,8 @@ class Interface(Gtk.Window):
                 else:
                     self.set_message(_("Cannot open screenshots viewer"),
                         _("Cannot find <b>%s</b>") % viewer, Icons.Warning)
+
+                self.set_sensitive(True)
 
                 # ----------------------------
                 #   Check screenshots
@@ -2515,6 +2523,8 @@ class Interface(Gtk.Window):
             except ValueError as error:
                 size = (800, 600)
 
+            self.set_sensitive(False)
+
             dialog = DialogEditor(self,
                 title, expanduser(path), size, False, Icons.Terminal)
 
@@ -2522,6 +2532,8 @@ class Interface(Gtk.Window):
 
             self.config.modify("windows", "log", "%dx%d" % dialog.get_size())
             self.config.update()
+
+            self.set_sensitive(True)
 
             dialog.destroy()
 
@@ -2638,6 +2650,8 @@ class Interface(Gtk.Window):
                     except ValueError as error:
                         size = (800, 600)
 
+                    self.set_sensitive(False)
+
                     dialog = DialogEditor(self, _("Edit %s configuration") % (
                         emulator.name), expanduser(path), size)
 
@@ -2655,6 +2669,8 @@ class Interface(Gtk.Window):
                     self.config.modify(
                         "windows", "editor", "%dx%d" % dialog.get_size())
                     self.config.update()
+
+                    self.set_sensitive(True)
 
                     dialog.destroy()
 
@@ -3335,6 +3351,8 @@ class Interface(Gtk.Window):
             #   Dialog
             # ----------------------------
 
+            self.set_sensitive(False)
+
             # Save previous name for logger
             old_name = game.name
 
@@ -3361,6 +3379,8 @@ class Interface(Gtk.Window):
                     self.logger.info(_("Rename %(old)s to %(new)s") % {
                         "old": old_name, "new": game.name })
 
+            self.set_sensitive(True)
+
             dialog.destroy()
 
 
@@ -3377,6 +3397,8 @@ class Interface(Gtk.Window):
 
         if game is not None:
             treeiter = self.game_path[game.filename][1]
+
+            self.set_sensitive(False)
 
             dialog = Question(self, game.name, _("Would you really want to "
                 "remove database entry for this game ?"))
@@ -3399,6 +3421,8 @@ class Interface(Gtk.Window):
 
                 # Remove game from database
                 self.api.delete_game(game)
+
+            self.set_sensitive(True)
 
             dialog.destroy()
 
@@ -3430,6 +3454,8 @@ class Interface(Gtk.Window):
             # ----------------------------
             #   Dialog
             # ----------------------------
+
+            self.set_sensitive(False)
 
             title = game.name
 
@@ -3473,6 +3499,8 @@ class Interface(Gtk.Window):
                     remove(element)
 
                 need_to_reload = True
+
+            self.set_sensitive(True)
 
             dialog.destroy()
 
@@ -3530,6 +3558,8 @@ class Interface(Gtk.Window):
             # ----------------------------
             #   Dialog
             # ----------------------------
+
+            self.set_sensitive(False)
 
             dialog = DialogParameters(self, game, emulator)
 
@@ -3607,6 +3637,8 @@ class Interface(Gtk.Window):
 
                 self.set_informations()
 
+            self.set_sensitive(True)
+
             dialog.hide()
 
 
@@ -3648,6 +3680,8 @@ class Interface(Gtk.Window):
             #   Dialog
             # ----------------------------
 
+            self.set_sensitive(False)
+
             dialog = DialogMednafenMemory(self, game.name, content)
 
             if dialog.run() == Gtk.ResponseType.APPLY:
@@ -3663,6 +3697,8 @@ class Interface(Gtk.Window):
                 # Remove type file when no data are available
                 elif exists(filepath):
                     remove(filepath)
+
+            self.set_sensitive(True)
 
             dialog.hide()
 
@@ -3853,6 +3889,8 @@ class Interface(Gtk.Window):
                 values["%command%"] = values["%command%"].replace(
                     game.filepath, "\"%s\"" % game.filepath)
 
+                self.set_sensitive(False)
+
                 try:
                     desktop = path_join("config", Documents.Desktop)
 
@@ -3886,6 +3924,8 @@ class Interface(Gtk.Window):
                         _("Generate menu entry for %s") % game.name,
                         _("An error occur during generation, consult log for "
                         "futher details."), Icons.Error)
+
+                self.set_sensitive(True)
 
 
     def __on_menu_show(self, treeview, event):
