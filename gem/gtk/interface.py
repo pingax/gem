@@ -2923,12 +2923,12 @@ class Interface(Gtk.Window):
                             string_from_date(game.last_launch_date)
 
                     # Last launch time
-                    if not game.last_launch_time == time.min:
+                    if not game.last_launch_time == timedelta():
                         row_data[Columns.LastTimePlay] = \
                             string_from_time(game.last_launch_time)
 
                     # Play time
-                    if not game.play_time == time.min:
+                    if not game.play_time == timedelta():
                         row_data[Columns.TimePlay] = \
                             string_from_time(game.play_time)
 
