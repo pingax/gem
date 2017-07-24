@@ -21,6 +21,7 @@
 # Datetime
 from datetime import date
 from datetime import datetime
+from datetime import timedelta
 
 # Filesystem
 from os.path import exists
@@ -158,24 +159,66 @@ def string_from_time(time_object):
     if time_object is None:
         return None
 
-    if time_object.hour == 0:
-        if time_object.minute == 0:
-            if time_object.second == 0:
+    hours, minutes, seconds = int(), int(), int()
+
+    if type(time_object) is timedelta:
+        hours, seconds = divmod(time_object.seconds, 3600)
+
+        if seconds > 0:
+            minutes, seconds = divmod(seconds, 60)
+
+        hours += time_object.days * 24
+
+    if hours == 0:
+        if minutes == 0:
+            if seconds == 0:
                 return str()
-            elif time_object.second == 1:
+            elif seconds == 1:
                 return _("1 second")
 
-            return _("%d seconds") % time_object.second
+            return _("%d seconds") % seconds
 
-        elif time_object.minute == 1:
+        elif minutes == 1:
             return _("1 minute")
 
-        return _("%d minutes") % time_object.minute
+        return _("%d minutes") % minutes
 
-    elif time_object.hour == 1:
+    elif hours == 1:
         return _("1 hour")
 
-    return _("%d hours") % time_object.hour
+    return _("%d hours") % hours
+
+
+def parse_timedelta(delta):
+    """ Parse a deltatime to string
+
+    Get a string from the deltatime formated as HH:MM:SS
+
+    Parameters
+    ----------
+    delta : datetime.deltatime
+        Deltatime to parse
+
+    Returns
+    -------
+    str or None
+        Parse value
+    """
+
+    if delta is None:
+        return None
+
+    hours, minutes, seconds = int(), int(), int()
+
+    if type(delta) is timedelta:
+        hours, seconds = divmod(delta.seconds, 3600)
+
+        if seconds > 0:
+            minutes, seconds = divmod(seconds, 60)
+
+        hours += delta.days * 24
+
+    return "{:02d}:{:02d}:{:02d}".format(hours, minutes, seconds)
 
 
 def get_binary_path(binary):

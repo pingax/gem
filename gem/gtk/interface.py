@@ -22,6 +22,7 @@
 from datetime import date
 from datetime import time
 from datetime import datetime
+from datetime import timedelta
 
 # Filesystem
 from os import W_OK
@@ -2237,7 +2238,7 @@ class Interface(Gtk.Window):
                 # ----------------------------
 
                 # Play time
-                if not game.play_time == time.min:
+                if not game.play_time == timedelta():
                     self.widgets_sidebar["play_time"]["box"].show_all()
                     self.widgets_sidebar["play_time"]["value"].set_markup(
                         string_from_time(game.play_time))
@@ -3236,10 +3237,6 @@ class Interface(Gtk.Window):
         # ----------------------------
 
         if not thread.error:
-            play_time = datetime.combine(
-                date.today(), game.play_time) + thread.delta
-            last_launch_time = datetime.combine(
-                date.today(), time()) + thread.delta
 
             # ----------------------------
             #   Update data
@@ -3247,8 +3244,8 @@ class Interface(Gtk.Window):
 
             # Play data
             game.played += 1
-            game.play_time = play_time.time()
-            game.last_launch_time = last_launch_time.time()
+            game.play_time = game.play_time + thread.delta
+            game.last_launch_time = thread.delta
             game.last_launch_date = date.today()
 
             # Update game from database

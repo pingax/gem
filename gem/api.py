@@ -78,6 +78,7 @@ except ImportError as error:
 
 try:
     from gem.utils import get_data
+    from gem.utils import parse_timedelta
     from gem.utils import get_binary_path
     from gem.utils import generate_extension
     from gem.utils import generate_identifier
@@ -1303,10 +1304,10 @@ class Console(GEMObject):
 
                         hours, minutes, seconds = play_time.split(':')
 
-                        play_time = time(
-                            int(hours),
-                            int(minutes),
-                            int(seconds))
+                        play_time = timedelta(
+                            hours=int(hours),
+                            minutes=int(minutes),
+                            seconds=int(seconds))
 
                     # Set last play date
                     last_launch_date = None
@@ -1341,10 +1342,10 @@ class Console(GEMObject):
 
                         hours, minutes, seconds = last_launch_time.split(':')
 
-                        last_launch_time = time(
-                            int(hours),
-                            int(minutes),
-                            int(seconds))
+                        last_launch_time = timedelta(
+                            hours=int(hours),
+                            minutes=int(minutes),
+                            seconds=int(seconds))
 
                     # Set game emulator
                     emulator = None
@@ -1426,8 +1427,8 @@ class Game(GEMObject):
         "favorite": bool(),
         "multiplayer": bool(),
         "played": int(),
-        "play_time": time(),
-        "last_launch_time": time(),
+        "play_time": timedelta(),
+        "last_launch_time": timedelta(),
         "last_launch_date": None,
         "emulator": None,
         "default": None,
@@ -1457,8 +1458,8 @@ class Game(GEMObject):
             "favorite": self.favorite,
             "multiplayer": self.multiplayer,
             "play": self.played,
-            "play_time": self.play_time,
-            "last_play_time": self.last_launch_time,
+            "play_time": parse_timedelta(self.play_time),
+            "last_play_time": parse_timedelta(self.last_launch_time),
             "last_play": self.last_launch_date,
             "emulator": self.emulator,
             "arguments": self.default,
