@@ -1836,7 +1836,7 @@ def icon_from_data(icon, fallback=None, width=24, height=24, subfolder=None):
             try:
                 return Pixbuf.new_from_file_at_size(
                     expanduser(path), width, height)
-            except GError:
+            except:
                 pass
 
     # Return an empty icon
