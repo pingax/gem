@@ -18,6 +18,11 @@ GEM est disponible sous [licence GPLv3](http://www.gnu.org/licenses/gpl-3.0.html
 
 * Espagnol : DarkNekros (José Luis)
 
+### Paquets
+
+* Frugalware : Pingax
+* Solus : Devil505
+
 ### Icônes
 
 * Interface: [Tango](http://tango.freedesktop.org/Tango_Desktop_Project)
