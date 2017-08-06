@@ -97,8 +97,8 @@ class GEM(object):
     # Informations
     Name        = "Graphical Emulators Manager"
     Description = "Manage your emulators easily and have fun"
-    Version     = "0.8"
-    CodeName    = "Shadow Blade"
+    Version     = "0.9"
+    CodeName    = "Frog Knight"
     Website     = "https://gem.tuxfamily.org/"
     Copyleft    = "Copyleft 2017 - Kawa Team"
     Acronym     = "GEM"

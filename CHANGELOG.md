@@ -1,6 +1,8 @@
 # GEM Changelog
 
-## Version 0.8 - Shadow Blade
+## Version 0.9 - Frog Knight
+
+## Version 0.8 - Shadow Blade (26 July, 2017)
 
 * Add an option to hide game in games list with specific regex
 * Add a sidebar which show game informations and a random screenshot
