@@ -86,6 +86,7 @@ class Icons:
     Stop        = "process-stop"
     Checkspell  = "tools-check-spelling"
     Fullscreen  = "view-fullscreen"
+    Refresh     = "view-refresh"
     Restore     = "view-restore"
     Close       = "window-close"
     ZoomFit     = "zoom-fit-best"

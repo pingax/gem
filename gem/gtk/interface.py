@@ -688,6 +688,8 @@ class Interface(Gtk.Window):
         self.tool_item_consoles = Gtk.ToolItem()
         self.tool_search = Gtk.ToolItem()
 
+        self.tool_filters = Gtk.ToolItem()
+
         self.tool_separator = Gtk.SeparatorToolItem()
 
         # Properties
@@ -749,6 +751,9 @@ class Interface(Gtk.Window):
 
         self.entry_filter = Gtk.SearchEntry()
 
+        self.tool_menu_filters = Gtk.MenuButton()
+        self.tool_image_filters = Gtk.Image()
+
         # Properties
         self.entry_filter.set_size_request(300, -1)
         self.entry_filter.set_placeholder_text(_("Filter"))
@@ -760,6 +765,31 @@ class Interface(Gtk.Window):
             Gtk.EntryIconPosition.PRIMARY, False)
         self.entry_filter.set_icon_sensitive(
             Gtk.EntryIconPosition.PRIMARY, False)
+
+        self.tool_menu_filters.set_tooltip_text(_("Filters"))
+        self.tool_menu_filters.set_relief(Gtk.ReliefStyle.NONE)
+
+        self.tool_image_filters.set_from_icon_name(
+            Icons.Refresh, Gtk.IconSize.LARGE_TOOLBAR)
+
+        # ------------------------------------
+        #   Toolbar - Filter - Menu
+        # ------------------------------------
+
+        self.menu_filters = Gtk.Menu()
+
+        self.check_filter_favorite = Gtk.CheckMenuItem()
+        self.check_filter_no_favorite = Gtk.CheckMenuItem()
+        self.check_filter_multiplayer = Gtk.CheckMenuItem()
+        self.check_filter_no_multiplayer = Gtk.CheckMenuItem()
+
+        # Properties
+        self.tool_menu_filters.set_popup(self.menu_filters)
+
+        self.check_filter_favorite.set_label(_("Favorite"))
+        self.check_filter_no_favorite.set_label(_("No Favorite"))
+        self.check_filter_multiplayer.set_label(_("Multiplayers"))
+        self.check_filter_no_multiplayer.set_label(_("No Multiplayers"))
 
         # ------------------------------------
         #   Games - Sidebar
@@ -1245,11 +1275,15 @@ class Interface(Gtk.Window):
         self.toolbar.insert(self.tool_item_properties, -1)
         self.toolbar.insert(self.tool_separator, -1)
         self.toolbar.insert(self.tool_search, -1)
-        self.toolbar.insert(self.tool_filter_favorite, -1)
-        self.toolbar.insert(self.tool_filter_multiplayer, -1)
+        self.toolbar.insert(self.tool_filters, -1)
+        # self.toolbar.insert(self.tool_filter_favorite, -1)
+        # self.toolbar.insert(self.tool_filter_multiplayer, -1)
 
         self.tool_item_consoles.add(self.combo_consoles)
         self.tool_search.add(self.entry_filter)
+
+        self.tool_filters.add(self.tool_menu_filters)
+        self.tool_menu_filters.add(self.tool_image_filters)
 
         self.tool_item_launch.add(self.tool_image_launch)
         self.tool_item_fullscreen.add(self.tool_image_fullscreen)
@@ -1258,6 +1292,13 @@ class Interface(Gtk.Window):
         self.tool_item_notes.add(self.tool_image_notes)
         self.tool_item_parameters.add(self.tool_image_parameters)
         self.tool_item_menu.add(self.tool_image_menu)
+
+        # Toolbar - Filters menu
+        self.menu_filters.append(self.check_filter_favorite)
+        self.menu_filters.append(self.check_filter_no_favorite)
+        self.menu_filters.append(Gtk.SeparatorMenuItem())
+        self.menu_filters.append(self.check_filter_multiplayer)
+        self.menu_filters.append(self.check_filter_no_multiplayer)
 
         # Games paned
         self.paned_games.pack1(self.scroll_games, True, False)
@@ -1417,10 +1458,18 @@ class Interface(Gtk.Window):
         self.entry_filter.connect(
             "changed", self.filters_update)
 
-        self.tool_filter_favorite.connect(
-            "clicked", self.filters_update)
-        self.tool_filter_multiplayer.connect(
-            "clicked", self.filters_update)
+        # self.tool_filter_favorite.connect(
+            # "clicked", self.filters_update)
+        # self.tool_filter_multiplayer.connect(
+            # "clicked", self.filters_update)
+        self.check_filter_favorite.connect(
+            "toggled", self.filters_update)
+        self.check_filter_no_favorite.connect(
+            "toggled", self.filters_update)
+        self.check_filter_multiplayer.connect(
+            "toggled", self.filters_update)
+        self.check_filter_no_multiplayer.connect(
+            "toggled", self.filters_update)
 
         # ------------------------------------
         #   Menu
@@ -1545,6 +1594,12 @@ class Interface(Gtk.Window):
             # Disallow welcome message for next boot
             self.config.modify("gem", "welcome", 0)
             self.config.update()
+
+        # Set default filters flag
+        self.check_filter_favorite.set_active(True)
+        self.check_filter_no_favorite.set_active(True)
+        self.check_filter_multiplayer.set_active(True)
+        self.check_filter_no_multiplayer.set_active(True)
 
 
     def __stop_interface(self, widget=None, event=None):
@@ -1729,6 +1784,7 @@ class Interface(Gtk.Window):
         self.show_all()
         self.menu.show_all()
         self.menu_games.show_all()
+        self.menu_filters.show_all()
 
         if self.__theme is not None:
             if self.__theme:
@@ -1951,8 +2007,11 @@ class Interface(Gtk.Window):
         # Get game object from treeview
         game = model.get_value(row, Columns.Object)
 
-        favorite = self.tool_filter_favorite.get_active()
-        multiplayer = self.tool_filter_multiplayer.get_active()
+        # Get filters status
+        favorite = self.check_filter_favorite.get_active()
+        no_favorite = self.check_filter_no_favorite.get_active()
+        multiplayer = self.check_filter_multiplayer.get_active()
+        no_multiplayer = self.check_filter_no_multiplayer.get_active()
 
         try:
             text = self.entry_filter.get_text()
@@ -1994,21 +2053,42 @@ class Interface(Gtk.Window):
             # ------------------------------------
 
             # No flag
-            if not favorite and not multiplayer and found:
-                return True
+            if favorite and no_favorite and multiplayer and no_multiplayer:
+                return found
 
             # Only favorite flag
-            if game.favorite and favorite and not multiplayer and found:
-                return True
+            if favorite and no_favorite:
+                if multiplayer and game.multiplayer and not no_multiplayer:
+                    return found
+                if no_multiplayer and not game.multiplayer and not multiplayer:
+                    return found
 
             # Only multiplayer flag
-            if game.multiplayer and multiplayer and not favorite and found:
-                return True
+            if multiplayer and no_multiplayer:
+                if favorite and game.favorite and not no_favorite:
+                    return found
+                if no_favorite and not game.favorite and not favorite:
+                    return found
 
-            # Both favorite and multiplayer flags
-            if game.favorite and game.multiplayer and \
-                favorite and multiplayer and found:
-                return True
+            if favorite and game.favorite:
+                if (multiplayer and game.multiplayer) or \
+                    (no_multiplayer and not game.multiplayer):
+                    return found
+
+            elif not favorite and not game.favorite:
+                if (multiplayer and game.multiplayer) or \
+                    (no_multiplayer and not game.multiplayer):
+                    return found
+
+            if multiplayer and game.multiplayer:
+                if (favorite and game.favorite) or \
+                    (no_favorite and not game.favorite):
+                    return found
+
+            elif not multiplayer and not game.multiplayer:
+                if (favorite and game.favorite) or \
+                    (no_favorite and not game.favorite):
+                    return found
 
         except:
             pass
