@@ -65,6 +65,7 @@ class Icons:
     Delete      = "edit-delete"
     Find        = "edit-find"
     Paste       = "edit-paste"
+    Undo        = "edit-undo"
     Bottom      = "go-bottom"
     Down        = "go-down"
     First       = "go-first"
