@@ -187,9 +187,6 @@ class Interface(Gtk.Window):
             ("tags", _("Tags"))
         ]
 
-        # Avoid to resize the main window everytime user modify preferences
-        self.__first_draw = False
-
         # Avoid to reload interface when switch between default & classic theme
         self.__theme = None
 
@@ -299,6 +296,7 @@ class Interface(Gtk.Window):
         self.grid = Gtk.Box()
 
         self.grid_options = Gtk.Box()
+        self.grid_infobar = Gtk.Box()
 
         self.grid_paned = Gtk.Box()
         self.grid_paned_widgets = Gtk.Box()
@@ -791,6 +789,19 @@ class Interface(Gtk.Window):
         self.item_filter_reset.set_image(self.image_filter_reset)
 
         # ------------------------------------
+        #   Infobar
+        # ------------------------------------
+
+        self.infobar = Gtk.InfoBar()
+
+        self.label_infobar = Gtk.Label()
+
+        # Properties
+        self.infobar.set_show_close_button(False)
+
+        self.label_infobar.set_use_markup(True)
+
+        # ------------------------------------
         #   Games - Sidebar
         # ------------------------------------
 
@@ -1178,6 +1189,7 @@ class Interface(Gtk.Window):
         # Main widgets
         self.grid.pack_start(self.menubar, False, False, 0)
         self.grid.pack_start(self.toolbar, False, False, 0)
+        self.grid.pack_start(self.grid_infobar, False, False, 0)
         self.grid.pack_start(self.paned_games, True, True, 0)
         self.grid.pack_start(self.statusbar, False, False, 0)
 
@@ -1298,6 +1310,10 @@ class Interface(Gtk.Window):
         self.menu_filters.append(self.check_filter_singleplayer)
         self.menu_filters.append(Gtk.SeparatorMenuItem())
         self.menu_filters.append(self.item_filter_reset)
+
+        # Infobar
+        self.infobar.get_content_area().pack_start(
+            self.label_infobar, True, True, 4)
 
         # Games paned
         self.paned_games.pack1(self.scroll_games, True, False)
@@ -1548,7 +1564,7 @@ class Interface(Gtk.Window):
         """ Load data and start interface
         """
 
-        self.load_interface()
+        self.load_interface(True)
 
         load_console_startup = False
 
@@ -1660,11 +1676,20 @@ class Interface(Gtk.Window):
         self.main_loop.quit()
 
 
-    def load_interface(self):
+    def load_interface(self, init_interface=False):
         """ Load main interface
+
+        Others Parameters
+        -----------------
+        init_interface : bool
+            Interface first initialization (Default: False)
         """
 
         self.api.init()
+
+        self.selection = dict(
+            console=None,
+            game=None)
 
         # ------------------------------------
         #   Configuration
@@ -1738,7 +1763,7 @@ class Interface(Gtk.Window):
             self.__theme = self.config.getboolean(
                 "gem", "use_classic_theme", fallback=False)
 
-        if not self.__first_draw:
+        if init_interface:
 
             # ------------------------------------
             #   Window classic theme
@@ -1769,16 +1794,18 @@ class Interface(Gtk.Window):
             self.hide()
             self.unrealize()
 
-            self.__first_draw = True
-
         # ------------------------------------
         #   Widgets
         # ------------------------------------
 
         self.show_all()
+
         self.menu.show_all()
         self.menu_games.show_all()
         self.menu_filters.show_all()
+
+        self.infobar.show_all()
+        self.infobar.get_content_area().show_all()
 
         if self.__theme is not None:
             if self.__theme:
@@ -1791,6 +1818,7 @@ class Interface(Gtk.Window):
                 self.menubar.hide()
                 self.statusbar.hide()
 
+        self.set_infobar()
         self.sensitive_interface()
 
         # ------------------------------------
@@ -1862,20 +1890,6 @@ class Interface(Gtk.Window):
             self.grid_paned.hide()
 
         # ------------------------------------
-        #   Consoles
-        # ------------------------------------
-
-        current_console = self.append_consoles()
-
-        # ------------------------------------
-        #   Variables
-        # ------------------------------------
-
-        self.selection = dict(
-            console=None,
-            game=None)
-
-        # ------------------------------------
         #   Games
         # ------------------------------------
 
@@ -1904,15 +1918,22 @@ class Interface(Gtk.Window):
             else:
                 widget.set_visible(True)
 
-        if current_console is None:
-            self.model_games.clear()
+        # ------------------------------------
+        #   Console
+        # ------------------------------------
 
-            if self.config.getboolean(
-                "gem", "hide_empty_console", fallback=False):
-                self.combo_consoles.set_active(0)
+        current_console = self.append_consoles()
 
-        else:
-            self.combo_consoles.set_active_iter(current_console)
+        if not init_interface:
+            if current_console is None:
+                self.model_games.clear()
+
+                if self.config.getboolean(
+                    "gem", "hide_empty_console", fallback=False):
+                    self.combo_consoles.set_active(0)
+
+            else:
+                self.combo_consoles.set_active_iter(current_console)
 
 
     def sensitive_interface(self, status=False):
@@ -2438,6 +2459,45 @@ class Interface(Gtk.Window):
             dialog.destroy()
 
 
+    def set_infobar(self,
+        text=str(), log=str(), message_type=Gtk.MessageType.INFO):
+        """ Set infobar content
+
+        This function set the infobar widget to inform user for specific things
+
+        Others Parameters
+        -----------------
+        text : str
+            Message text (Default: None)
+        text : str
+            Logger text (Default: None)
+        message_type : Gtk.MessageType
+            Message type (Default: Gtk.MessageType.INFO)
+        """
+
+        if len(log) == 0 and len(text) > 0:
+            log = text
+
+        # Set a logger message
+        if len(log) > 0:
+            if message_type is Gtk.MessageType.ERROR:
+                self.logger.error(log)
+            elif message_type is Gtk.MessageType.WARNING:
+                self.logger.warning(log)
+
+        self.infobar.set_message_type(message_type)
+
+        # Set infobar visibility
+        if len(text) > 0:
+            if len(self.grid_infobar.get_children()) == 0:
+                self.grid_infobar.pack_start(self.infobar, True, True, 0)
+
+        elif len(self.grid_infobar.get_children()) > 0:
+            self.grid_infobar.remove(self.infobar)
+
+        self.label_infobar.set_markup(text)
+
+
     def __on_show_about(self, widget):
         """ Show about dialog
 
@@ -2839,6 +2899,7 @@ class Interface(Gtk.Window):
         self.selection["name"] = None
         self.selection["game"] = None
 
+        self.set_infobar()
         self.set_informations()
 
         error = False
@@ -2854,30 +2915,16 @@ class Interface(Gtk.Window):
                 self.selection["console"] = console
 
                 # ------------------------------------
-                #   Check emulator
-                # ------------------------------------
-
-                if console.emulator is None:
-                    self.logger.error(
-                        _("Cannot find emulator for %s") % console.name)
-                    error = True
-
-                # Check emulator data
-                elif not console.emulator.exists:
-                    self.logger.error(
-                        _("%s emulator not exist") % console.emulator.name)
-                    error = True
-
-                # ------------------------------------
-                #   Set sensitive widgets
+                #   Check data
                 # ------------------------------------
 
                 self.sensitive_interface()
 
-                # Check emulator configurator
+                # Check console emulator
                 if console.emulator is not None:
                     configuration = console.emulator.configuration
 
+                    # Check emulator configurator
                     if configuration is not None and exists(configuration):
                         self.tool_item_properties.set_sensitive(True)
                     else:
@@ -2890,13 +2937,8 @@ class Interface(Gtk.Window):
                 if not self.list_thread == 0:
                     source_remove(self.list_thread)
 
-                if error:
-                    self.model_games.clear()
-                    self.filter_games.refilter()
-
-                else:
-                    loader = self.append_games(console)
-                    self.list_thread = idle_add(loader.__next__)
+                loader = self.append_games(console)
+                self.list_thread = idle_add(loader.__next__)
 
                 self.selection["game"] = None
 
@@ -2933,6 +2975,22 @@ class Interface(Gtk.Window):
         self.game_path = dict()
 
         # ------------------------------------
+        #   Check errors
+        # ------------------------------------
+
+        if console.emulator is None:
+            self.set_infobar(
+                _("There is no default emulator set for this console"),
+                _("Cannot find emulator for %s") % console.name,
+                Gtk.MessageType.WARNING)
+
+        elif not console.emulator.exists:
+            self.set_infobar(_("<b>%s</b> cannot been found on your "
+                "system") % console.emulator.name,
+                _("%s emulator not exist") % console.emulator.name,
+                Gtk.MessageType.ERROR)
+
+        # ------------------------------------
         #   Load data
         # ------------------------------------
 
@@ -2954,7 +3012,7 @@ class Interface(Gtk.Window):
 
             emulator = self.api.get_emulator(console.emulator.id)
 
-            for game in console.games.values():
+            for game in console.get_games():
 
                 # Another thread has been called by user, close this one
                 if not current_thread_id == self.list_thread:
@@ -3271,8 +3329,14 @@ class Interface(Gtk.Window):
                 #   Generate correct command
                 # ----------------------------
 
-                command = emulator.command(game,
-                    self.tool_item_fullscreen.get_active())
+                try:
+                    command = emulator.command(game,
+                        self.tool_item_fullscreen.get_active())
+
+                except FileNotFoundError as error:
+                    self.set_message(_("Cannot launch game"),
+                        _("%s binary cannot be found") % emulator.name)
+                    return False
 
                 if len(command) > 0:
 

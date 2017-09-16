@@ -1390,8 +1390,8 @@ class Console(GEMObject):
 
                     # Set game emulator
                     emulator = None
-                    if "emulator" in data["emulator"] and \
-                        len(data["emulator"]) > 0 and emulator in emulators:
+                    if "emulator" in data and len(data["emulator"]) > 0 and \
+                        data["emulator"] in emulators:
                         emulator = emulators[data["emulator"]]
 
                     # Set game arguments
