@@ -114,7 +114,7 @@ def main():
     #   Initialize GEM API
     # ------------------------------------
 
-    gem = GEM(args.debug)
+    gem = GEM(debug=args.debug)
 
     # ------------------------------------
     #   Launch interface

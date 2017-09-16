@@ -574,6 +574,18 @@ class GEM(object):
         return self.__data["consoles"]
 
 
+    def get_consoles(self):
+        """ Return consoles list
+
+        Returns
+        -------
+        list
+            Consoles list
+        """
+
+        return list(self.__data["consoles"].values())
+
+
     @property
     def emulators(self):
         """ Return emulators dict
@@ -585,6 +597,18 @@ class GEM(object):
         """
 
         return self.__data["emulators"]
+
+
+    def get_emulators(self):
+        """ Return emulators list
+
+        Returns
+        -------
+        list
+            Emulators list
+        """
+
+        return list(self.__data["emulators"].values())
 
 
     def get_emulator(self, emulator):
@@ -794,6 +818,23 @@ class GEM(object):
             raise IndexError("Cannot access to %s in consoles list" % console)
 
         del self.__data["consoles"][console]
+
+
+    def get_games(self):
+        """ List all games from register consoles
+
+        Returns
+        -------
+        list
+            Games list
+        """
+
+        games = list()
+
+        for identifier, console in self.consoles.items():
+            games.extend(console.games.values())
+
+        return games
 
 
     def get_game(self, console, game):
@@ -1543,10 +1584,5 @@ if __name__ == "__main__":
 
     gem.logger.info("Found %d consoles" % len(gem.consoles))
     gem.logger.info("Found %d emulators" % len(gem.emulators))
-
-    games = int()
-    for console in sorted(gem.consoles):
-        games += len(gem.get_console(console).games)
-
-    gem.logger.info("Found %d games" % games)
+    gem.logger.info("Found %d games" % len(gem.get_games()))
 
