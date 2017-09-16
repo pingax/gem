@@ -832,7 +832,7 @@ class GEM(object):
         games = list()
 
         for identifier, console in self.consoles.items():
-            games.extend(console.games.values())
+            games.extend(list(console.games.values()))
 
         return games
 
@@ -1457,6 +1457,18 @@ class Console(GEMObject):
             return self.games[identifier]
 
         return None
+
+
+    def get_games(self):
+        """ List all games
+
+        Returns
+        -------
+        list
+            Games list
+        """
+
+        return list(self.games.values())
 
 
 class Game(GEMObject):
