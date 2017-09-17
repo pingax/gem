@@ -1310,6 +1310,8 @@ class DialogViewer(Dialog):
 
         self.screenshots = screenshots_path
 
+        self.targets = parent.targets
+
         self.__width, self.__height = size
 
         # ------------------------------------
@@ -1339,9 +1341,13 @@ class DialogViewer(Dialog):
         # ------------------------------------
 
         self.scroll_image = Gtk.ScrolledWindow()
-        view_image = Gtk.Viewport()
+        self.view_image = Gtk.Viewport()
 
         self.image = Gtk.Image()
+
+        # Properties
+        self.view_image.drag_source_set(
+            Gdk.ModifierType.BUTTON1_MASK, self.targets, Gdk.DragAction.COPY)
 
         # ------------------------------------
         #   Toolbar
@@ -1384,8 +1390,8 @@ class DialogViewer(Dialog):
         #   Integrate widgets
         # ------------------------------------
 
-        self.scroll_image.add(view_image)
-        view_image.add(self.image)
+        self.scroll_image.add(self.view_image)
+        self.view_image.add(self.image)
 
         toolbar.insert(tool_separator_start, -1)
         toolbar.insert(self.tool_first, -1)
@@ -1423,6 +1429,8 @@ class DialogViewer(Dialog):
         self.tool_zoom_fit.connect("clicked", self.change_screenshot)
         self.tool_zoom_plus.connect("clicked", self.change_screenshot)
 
+        self.view_image.connect("drag-data-get", self.__on_dnd_send_data)
+
 
     def __start_interface(self):
         """ Load data and start interface
@@ -1437,6 +1445,32 @@ class DialogViewer(Dialog):
 
         self.set_widgets_sensitive()
         self.update_screenshot()
+
+
+    def __on_dnd_send_data(self, widget, context, data, info, time):
+        """ Set screenshot file path uri
+
+        This function send rom file path uri when user drag a game from gem and
+        drop it to extern application
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        context : Gdk.DragContext
+            Drag context
+        data : Gtk.SelectionData
+            Received data
+        info : int
+            info that has been registered with the target in the Gtk.TargetList
+        time : int
+            timestamp at which the data was received
+        """
+
+        path = expanduser(self.screenshots[self.index])
+
+        if exists(path):
+            data.set_uris(["file://%s" % path])
 
 
     def change_screenshot(self, widget=None, event=None):
