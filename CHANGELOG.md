@@ -2,6 +2,16 @@
 
 ## Version 0.9 - Frog Knight
 
+* Add current screenshot path in screenshots viewer
+* Add screenshots viewer dialog size storage to gem.conf
+* Add an infobar to inform user for incorrect values without open a dialog
+* Add GEM.get_games function to API
+* Add GEM.get_consoles function to API
+* Add GEM.get_emulators function to API
+* Add a new filter system
+* Fix wrong parameter for dolphin-emu
+* Fix wrong exception in icon_from_data
+
 ## Version 0.8 - Shadow Blade (26 July, 2017)
 
 * Add an option to hide game in games list with specific regex
