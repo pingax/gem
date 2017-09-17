@@ -3178,6 +3178,8 @@ class Interface(Gtk.Window):
         #   Game selected
         # ----------------------------
 
+        same_game = (self.selection["game"] == game)
+
         self.selection["game"] = game
 
         if game is not None:
@@ -3242,7 +3244,8 @@ class Interface(Gtk.Window):
         else:
             self.treeview_games.get_selection().unselect_all()
 
-        self.set_informations()
+        if not same_game:
+            self.set_informations()
 
 
     def check_selection(self):
