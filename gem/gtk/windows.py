@@ -1277,7 +1277,7 @@ class DialogRename(Dialog):
 
 class DialogViewer(Dialog):
 
-    def __init__(self, parent, title, screenshots_path):
+    def __init__(self, parent, title, size, screenshots_path):
         """ Constructor
 
         Parameters
@@ -1286,6 +1286,8 @@ class DialogViewer(Dialog):
             Parent object
         title : str
             Dialog title
+        size : (int, int)
+            Dialog size
         screenshots_path : list
             Screnshots path list
         """
@@ -1302,6 +1304,8 @@ class DialogViewer(Dialog):
         self.zoom_fit = True
 
         self.screenshots = screenshots_path
+
+        self.__width, self.__height = size
 
         # ------------------------------------
         #   Prepare interface
@@ -1320,8 +1324,6 @@ class DialogViewer(Dialog):
     def __init_widgets(self):
         """ Initialize interface widgets
         """
-
-        self.set_size(800, 600)
 
         self.set_resizable(True)
 
@@ -1417,14 +1419,15 @@ class DialogViewer(Dialog):
         """ Load data and start interface
         """
 
+        self.set_size(int(self.__width), int(self.__height))
+
+        self.hide()
+        self.unrealize()
+
         self.show_all()
 
         self.set_widgets_sensitive()
         self.update_screenshot()
-
-        self.run()
-
-        self.destroy()
 
 
     def change_screenshot(self, widget=None, event=None):

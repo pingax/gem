@@ -2580,7 +2580,21 @@ class Interface(Gtk.Window):
                 viewer = self.config.get("viewer", "binary")
 
                 if self.config.getboolean("viewer", "native", fallback=True):
-                    DialogViewer(self, title, sorted(results))
+                    try:
+                        size = self.config.get(
+                            "windows", "viewer", fallback="800x600").split('x')
+
+                    except ValueError as error:
+                        size = (800, 600)
+
+                    dialog = DialogViewer(self, title, size, sorted(results))
+                    dialog.run()
+
+                    self.config.modify(
+                        "windows", "viewer", "%dx%d" % dialog.get_size())
+                    self.config.update()
+
+                    dialog.destroy()
 
                 elif exists(viewer):
                     command = list()
