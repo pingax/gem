@@ -177,6 +177,8 @@ class Interface(Gtk.Window):
         self.selection = dict()
         # Store shortcut with Gtk.Widget as key
         self.shortcuts_data = dict()
+        # Store consoles iters
+        self.consoles_iter = dict()
 
         # Store user keys input
         self.keys = list()
@@ -1566,26 +1568,30 @@ class Interface(Gtk.Window):
 
         self.load_interface(True)
 
-        load_console_startup = False
+        load_console_startup = \
+            self.config.getboolean("gem", "load_console_startup", fallback=True)
 
         # Check last loaded console in gem.conf
-        if self.config.getboolean("gem", "load_console_startup", fallback=True):
-            load_console_startup = True
-
+        if load_console_startup:
             console = self.config.item("gem", "last_console", str())
 
             # A console has been saved
             if len(console) > 0:
-                for row in self.model_consoles:
-                    if row[1] == console:
-                        self.treeview_games.set_visible(True)
-                        self.combo_consoles.set_active_iter(row.iter)
 
-                        # Set Console object as selected
-                        self.selection["console"] = \
-                            self.api.get_console(console)
+                # Check if this console use the old console name value (< 0.8)
+                if not console in self.api.consoles.keys():
+                    console = generate_identifier(console)
 
-                        break
+                # Check if current identifier exists
+                if console in self.api.consoles.keys():
+                    self.treeview_games.set_visible(True)
+
+                    # Set console combobox active iter
+                    self.combo_consoles.set_active_iter(
+                        self.consoles_iter[console])
+
+                    # Set Console object as selected
+                    self.selection["console"] = self.api.get_console(console)
 
         # Check welcome message status in gem.conf
         if self.config.getboolean("gem", "welcome", fallback=True):
@@ -1604,7 +1610,7 @@ class Interface(Gtk.Window):
             dialog.run()
             dialog.destroy()
 
-            # Disallow welcome message for next boot
+            # Disable welcome message for next launch
             self.config.modify("gem", "welcome", 0)
             self.config.update()
 
@@ -1652,7 +1658,7 @@ class Interface(Gtk.Window):
         # Save current console as last_console in gem.conf
         row = self.combo_consoles.get_active_iter()
         if row is not None:
-            console = self.model_consoles.get_value(row, 1)
+            console = self.model_consoles.get_value(row, 3)
 
             last_console = self.config.item("gem", "last_console", None)
 
@@ -1686,10 +1692,6 @@ class Interface(Gtk.Window):
         """
 
         self.api.init()
-
-        self.selection = dict(
-            console=None,
-            game=None)
 
         # ------------------------------------
         #   Configuration
@@ -1923,6 +1925,10 @@ class Interface(Gtk.Window):
         # ------------------------------------
 
         current_console = self.append_consoles()
+
+        self.selection = dict(
+            console=None,
+            game=None)
 
         if not init_interface:
             if current_console is None:
@@ -2848,6 +2854,8 @@ class Interface(Gtk.Window):
 
         item = None
 
+        # Reset consoles caches
+        self.consoles_iter.clear()
         self.model_consoles.clear()
 
         for console in self.api.consoles:
@@ -2856,40 +2864,40 @@ class Interface(Gtk.Window):
             # Reload games list
             console.set_games(self.api)
 
-            if console.emulator is not None:
+            # Check if console ROM path exist
+            if console.emulator is not None and exists(console.path):
+                status = self.empty
 
-                # Check if console ROM path exist
-                if exists(console.path):
-                    status = self.empty
+                hide = self.config.getboolean(
+                    "gem", "hide_empty_console", fallback=False)
 
-                    hide = self.config.getboolean(
-                        "gem", "hide_empty_console", fallback=False)
+                # Check if console ROM path is empty
+                if not hide or (hide and len(console.games) > 0):
 
-                    # Check if console ROM path is empty
-                    if not hide or (hide and len(console.games) > 0):
+                    # Check if current emulator can be launched
+                    if not console.emulator.exists:
+                        status = self.icons["warning"]
 
-                        # Check if current emulator can be launched
-                        if not console.emulator.exists:
-                            status = self.icons["warning"]
+                        self.logger.warning(
+                            _("Cannot find %(binary)s for %(console)s") % {
+                                "binary": console.emulator.binary,
+                                "console": console.name })
 
-                            self.logger.warning(
-                                _("Cannot find %(binary)s for %(console)s") % {
-                                    "binary": console.emulator.binary,
-                                    "console": console.name })
+                    # Get console icon
+                    icon = icon_from_data(
+                        console.icon, self.empty, subfolder="consoles")
 
-                        # Get console icon
-                        icon = icon_from_data(
-                            console.icon, self.empty, subfolder="consoles")
+                    # Append a new console in combobox model
+                    row = self.model_consoles.append(
+                        [icon, console.name, status, console.id])
 
-                        # Append a new console in combobox model
-                        row = self.model_consoles.append(
-                            [icon, console.name, status, console.id])
+                    # Store console iter
+                    self.consoles_iter[console.id] = row
 
-                        selection = self.selection.get("console")
+                    selection = self.selection.get("console")
 
-                        if selection is not None and \
-                            selection.name == console.name:
-                            item = row
+                    if selection is not None and selection.name == console.name:
+                        item = row
 
         if len(self.model_consoles) > 0:
             self.logger.debug(
