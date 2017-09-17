@@ -140,6 +140,7 @@ class Dialog(Gtk.Dialog):
 
         # Properties
         self.headerbar.set_title(self.title)
+        self.headerbar.set_has_subtitle(False)
         self.headerbar.set_show_close_button(True)
 
         # ------------------------------------
@@ -1303,6 +1304,10 @@ class DialogViewer(Dialog):
 
         self.zoom_fit = True
 
+        # Allow the picture to autosize (with zoom_fit) when resize dialog
+        self.auto_resize = parent.config.getboolean(
+            "viewer", "auto_resize", fallback=False)
+
         self.screenshots = screenshots_path
 
         self.__width, self.__height = size
@@ -1326,6 +1331,8 @@ class DialogViewer(Dialog):
         """
 
         self.set_resizable(True)
+
+        self.headerbar.set_has_subtitle(True)
 
         # ------------------------------------
         #   Image
@@ -1401,7 +1408,9 @@ class DialogViewer(Dialog):
         """ Initialize widgets signals
         """
 
-        # self.connect("size-allocate", self.update_screenshot)
+        if self.auto_resize:
+            self.connect("size-allocate", self.update_screenshot)
+
         self.connect("key-press-event", self.change_screenshot)
 
         self.tool_first.connect("clicked", self.change_screenshot)
@@ -1521,8 +1530,12 @@ class DialogViewer(Dialog):
             Event which triggered this signal (Default: None)
         """
 
-        pixbuf = Pixbuf.new_from_file(
-            expanduser(self.screenshots[self.index]))
+        # Get the current screenshot path
+        path = expanduser(self.screenshots[self.index])
+
+        self.headerbar.set_subtitle(path)
+
+        pixbuf = Pixbuf.new_from_file(path)
 
         width, height = pixbuf.get_width(), pixbuf.get_height()
 
