@@ -1409,10 +1409,16 @@ class Console(GEMObject):
                     if "tags" in data and len(data["tags"]) > 0:
                         tags = data["tags"].split(';')
 
+                    # Set game tags
+                    environment = list()
+                    if "environment" in data and len(data["environment"]) > 0:
+                        environment = data["environment"].split(';')
+
                     game_data.update({
                         "name": name,
                         "favorite": bool(data["favorite"]),
                         "multiplayer": bool(data["multiplayer"]),
+                        "finish": bool(data["finish"]),
                         "played": int(data["play"]),
                         "play_time": play_time,
                         "last_launch_date": last_launch_date,
@@ -1420,7 +1426,8 @@ class Console(GEMObject):
                         "emulator": emulator,
                         "default": arguments,
                         "key": key,
-                        "tags": tags
+                        "tags": tags,
+                        "environment": environment
                     })
 
                 for key, value in game_data.items():
@@ -1479,6 +1486,7 @@ class Game(GEMObject):
         "name": str(),
         "favorite": bool(),
         "multiplayer": bool(),
+        "finish": bool(),
         "played": int(),
         "play_time": timedelta(),
         "last_launch_time": timedelta(),
@@ -1486,7 +1494,8 @@ class Game(GEMObject):
         "emulator": None,
         "default": None,
         "key": None,
-        "tags": list()
+        "tags": list(),
+        "environment": list()
     }
 
     def __init__(self):
@@ -1510,6 +1519,7 @@ class Game(GEMObject):
             "name": self.name,
             "favorite": self.favorite,
             "multiplayer": self.multiplayer,
+            "finish": self.finish,
             "play": self.played,
             "play_time": parse_timedelta(self.play_time),
             "last_play_time": parse_timedelta(self.last_launch_time),
@@ -1517,7 +1527,8 @@ class Game(GEMObject):
             "emulator": self.emulator,
             "arguments": self.default,
             "key": self.key,
-            "tags": ';'.join(self.tags)
+            "tags": ';'.join(self.tags),
+            "environment": ';'.join(self.environment)
         })
 
 

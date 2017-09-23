@@ -771,6 +771,8 @@ class Interface(Gtk.Window):
         self.check_filter_unfavorite = Gtk.CheckMenuItem()
         self.check_filter_multiplayer = Gtk.CheckMenuItem()
         self.check_filter_singleplayer = Gtk.CheckMenuItem()
+        self.check_filter_finish = Gtk.CheckMenuItem()
+        self.check_filter_unfinish = Gtk.CheckMenuItem()
 
         self.image_filter_reset = Gtk.Image()
 
@@ -783,6 +785,8 @@ class Interface(Gtk.Window):
         self.check_filter_unfavorite.set_label(_("Unfavorite"))
         self.check_filter_multiplayer.set_label(_("Multiplayer"))
         self.check_filter_singleplayer.set_label(_("Singleplayer"))
+        self.check_filter_finish.set_label(_("Finish"))
+        self.check_filter_unfinish.set_label(_("Unfinish"))
 
         self.image_filter_reset.set_from_icon_name(
             Icons.Undo, Gtk.IconSize.MENU)
@@ -1311,6 +1315,9 @@ class Interface(Gtk.Window):
         self.menu_filters.append(self.check_filter_multiplayer)
         self.menu_filters.append(self.check_filter_singleplayer)
         self.menu_filters.append(Gtk.SeparatorMenuItem())
+        self.menu_filters.append(self.check_filter_finish)
+        self.menu_filters.append(self.check_filter_unfinish)
+        self.menu_filters.append(Gtk.SeparatorMenuItem())
         self.menu_filters.append(self.item_filter_reset)
 
         # Infobar
@@ -1482,6 +1489,10 @@ class Interface(Gtk.Window):
         self.check_filter_multiplayer.connect(
             "toggled", self.filters_update)
         self.check_filter_singleplayer.connect(
+            "toggled", self.filters_update)
+        self.check_filter_finish.connect(
+            "toggled", self.filters_update)
+        self.check_filter_unfinish.connect(
             "toggled", self.filters_update)
         self.item_filter_reset.connect(
             "activate", self.filters_reset)
@@ -2008,10 +2019,10 @@ class Interface(Gtk.Window):
         """ Reset game filters
         """
 
-        self.check_filter_favorite.set_active(True)
-        self.check_filter_unfavorite.set_active(True)
-        self.check_filter_multiplayer.set_active(True)
-        self.check_filter_singleplayer.set_active(True)
+        for child in self.menu_filters.get_children():
+
+            if type(child) is Gtk.CheckMenuItem:
+                child.set_active(True)
 
 
     def filters_match(self, model, row, data=None):
@@ -2037,12 +2048,6 @@ class Interface(Gtk.Window):
 
         # Get game object from treeview
         game = model.get_value(row, Columns.Object)
-
-        # Get filters status
-        favorite = self.check_filter_favorite.get_active()
-        unfavorite = self.check_filter_unfavorite.get_active()
-        multiplayer = self.check_filter_multiplayer.get_active()
-        singleplayer = self.check_filter_singleplayer.get_active()
 
         try:
             text = self.entry_filter.get_text()
@@ -2083,48 +2088,35 @@ class Interface(Gtk.Window):
             #   Set status
             # ------------------------------------
 
-            # No flag
-            if favorite and unfavorite and multiplayer and singleplayer:
-                return found
+            flags = [
+                (
+                    self.check_filter_favorite.get_active(),
+                    self.check_filter_unfavorite.get_active(),
+                    game.favorite
+                ),
+                (
+                    self.check_filter_multiplayer.get_active(),
+                    self.check_filter_singleplayer.get_active(),
+                    game.multiplayer
+                ),
+                (
+                    self.check_filter_finish.get_active(),
+                    self.check_filter_unfinish.get_active(),
+                    game.finish
+                )
+            ]
 
-            # Only favorite flag
-            if favorite and unfavorite:
-                if multiplayer and game.multiplayer and not singleplayer:
-                    return found
-                if singleplayer and not game.multiplayer and not multiplayer:
-                    return found
+            for first, second, status in flags:
 
-            # Only multiplayer flag
-            if multiplayer and singleplayer:
-                if favorite and game.favorite and not unfavorite:
-                    return found
-                if unfavorite and not game.favorite and not favorite:
-                    return found
-
-            if favorite and game.favorite:
-                if (multiplayer and game.multiplayer) or \
-                    (singleplayer and not game.multiplayer):
-                    return found
-
-            elif not favorite and not game.favorite:
-                if (multiplayer and game.multiplayer) or \
-                    (singleplayer and not game.multiplayer):
-                    return found
-
-            if multiplayer and game.multiplayer:
-                if (favorite and game.favorite) or \
-                    (unfavorite and not game.favorite):
-                    return found
-
-            elif not multiplayer and not game.multiplayer:
-                if (favorite and game.favorite) or \
-                    (unfavorite and not game.favorite):
-                    return found
+                # Only check if there is one of the two checkbox is not active
+                if not (first and second):
+                    found = found and (
+                        (status and first) or (not status and second))
 
         except:
             pass
 
-        return False
+        return found
 
 
     def __init_shortcuts(self):
