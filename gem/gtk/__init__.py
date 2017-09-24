@@ -116,7 +116,9 @@ class Icons:
     # Faces
     Monkey      = "face-monkey"
     Sad         = "face-sad"
+    Smile       = "face-smile"
     SmileBig    = "face-smile-big"
+    Uncertain   = "face-uncertain"
     # Mimes
     Text        = "text-x-generic"
     Image       = "image-x-generic"
@@ -135,14 +137,15 @@ class Icons:
 class Columns:
     Favorite        = 0
     Icon            = 1
-    Name            = 2
-    Played          = 3
-    LastPlay        = 4
-    LastTimePlay    = 5
-    TimePlay        = 6
-    Installed       = 7
-    Except          = 8
-    Snapshots       = 9
-    Multiplayer     = 10
-    Save            = 11
-    Object          = 12
+    Multiplayer     = 2
+    Finish          = 3
+    Name            = 4
+    Played          = 5
+    LastPlay        = 6
+    LastTimePlay    = 7
+    TimePlay        = 8
+    Installed       = 9
+    Except          = 10
+    Snapshots       = 11
+    Save            = 12
+    Object          = 13

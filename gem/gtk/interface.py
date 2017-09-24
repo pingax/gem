@@ -223,7 +223,10 @@ class Interface(Gtk.Window):
             "except": Icons.Gaming,
             "warning": Icons.Warning,
             "favorite": Icons.Favorite,
-            "multiplayer": Icons.Users }
+            "multiplayer": Icons.Users,
+            "finish": Icons.Smile,
+            "unfinish": Icons.Uncertain
+        }
 
         for icon in self.icons_data.keys():
             self.icons[icon] = icon_load(self.icons_data[icon], 22)
@@ -895,6 +898,8 @@ class Interface(Gtk.Window):
         self.model_games = Gtk.ListStore(
             bool,   # Favorite status
             Pixbuf, # Favorite icon
+            Pixbuf, # Multiplayer icon
+            Pixbuf, # Finish icon
             str,    # Name
             str,    # Played
             str,    # Last play
@@ -903,7 +908,6 @@ class Interface(Gtk.Window):
             str,    # Installed
             Pixbuf, # Custom parameters
             Pixbuf, # Screenshots
-            Pixbuf, # Multiplayer
             Pixbuf, # Save states
             object  # Game object
         )
@@ -913,6 +917,7 @@ class Interface(Gtk.Window):
 
         self.column_game_favorite = Gtk.TreeViewColumn()
         self.column_game_multiplayer = Gtk.TreeViewColumn()
+        self.column_game_finish = Gtk.TreeViewColumn()
         self.column_game_name = Gtk.TreeViewColumn()
         self.column_game_play = Gtk.TreeViewColumn()
         self.column_game_last_play = Gtk.TreeViewColumn()
@@ -921,6 +926,8 @@ class Interface(Gtk.Window):
         self.column_game_flags = Gtk.TreeViewColumn()
 
         self.cell_game_favorite = Gtk.CellRendererPixbuf()
+        self.cell_game_multiplayer = Gtk.CellRendererPixbuf()
+        self.cell_game_finish = Gtk.CellRendererPixbuf()
         self.cell_game_name = Gtk.CellRendererText()
         self.cell_game_play = Gtk.CellRendererText()
         self.cell_game_last_play = Gtk.CellRendererText()
@@ -929,11 +936,11 @@ class Interface(Gtk.Window):
         self.cell_game_installed = Gtk.CellRendererText()
         self.cell_game_except = Gtk.CellRendererPixbuf()
         self.cell_game_snapshots = Gtk.CellRendererPixbuf()
-        self.cell_game_multiplayer = Gtk.CellRendererPixbuf()
         self.cell_game_save = Gtk.CellRendererPixbuf()
 
         # Properties
-        self.model_games.set_sort_column_id(2, Gtk.SortType.ASCENDING)
+        self.model_games.set_sort_column_id(
+            Columns.Name, Gtk.SortType.ASCENDING)
 
         self.treeview_games.set_model(self.filter_games)
         self.treeview_games.set_headers_clickable(False)
@@ -960,6 +967,9 @@ class Interface(Gtk.Window):
 
         self.column_game_multiplayer.pack_start(
             self.cell_game_multiplayer, False)
+
+        self.column_game_finish.pack_start(
+            self.cell_game_finish, False)
 
         self.column_game_name.set_expand(True)
         self.column_game_name.set_resizable(True)
@@ -998,6 +1008,8 @@ class Interface(Gtk.Window):
             self.cell_game_favorite, "pixbuf", Columns.Icon)
         self.column_game_multiplayer.add_attribute(
             self.cell_game_multiplayer, "pixbuf", Columns.Multiplayer)
+        self.column_game_finish.add_attribute(
+            self.cell_game_finish, "pixbuf", Columns.Finish)
         self.column_game_name.add_attribute(
             self.cell_game_name, "text", Columns.Name)
         self.column_game_play.add_attribute(
@@ -1018,6 +1030,8 @@ class Interface(Gtk.Window):
             self.cell_game_save, "pixbuf", Columns.Save)
 
         self.cell_game_favorite.set_alignment(.5, .5)
+        self.cell_game_multiplayer.set_alignment(.5, .5)
+        self.cell_game_finish.set_alignment(.5, .5)
         self.cell_game_name.set_alignment(0, .5)
         self.cell_game_play.set_alignment(.5, .5)
         self.cell_game_last_play.set_alignment(0, .5)
@@ -1027,6 +1041,8 @@ class Interface(Gtk.Window):
 
         self.cell_game_name.set_property("ellipsize", Pango.EllipsizeMode.END)
 
+        self.cell_game_multiplayer.set_padding(4, 2)
+        self.cell_game_finish.set_padding(4, 2)
         self.cell_game_name.set_padding(4, 2)
         self.cell_game_play.set_padding(8, 2)
         self.cell_game_last_play.set_padding(8, 2)
@@ -1034,7 +1050,6 @@ class Interface(Gtk.Window):
         self.cell_game_installed.set_padding(8, 2)
         self.cell_game_except.set_padding(4, 2)
         self.cell_game_snapshots.set_padding(4, 2)
-        self.cell_game_multiplayer.set_padding(4, 2)
         self.cell_game_save.set_padding(4, 2)
 
         # ------------------------------------
@@ -1360,6 +1375,7 @@ class Interface(Gtk.Window):
 
         self.treeview_games.append_column(self.column_game_favorite)
         self.treeview_games.append_column(self.column_game_multiplayer)
+        self.treeview_games.append_column(self.column_game_finish)
         self.treeview_games.append_column(self.column_game_name)
         self.treeview_games.append_column(self.column_game_play)
         self.treeview_games.append_column(self.column_game_last_play)
@@ -3054,6 +3070,8 @@ class Interface(Gtk.Window):
                     row_data = [
                         game.favorite,
                         self.alternative["favorite"],
+                        self.alternative["multiplayer"],
+                        self.alternative["unfinish"],
                         game.name,
                         str(),          # Played
                         str(),          # Last launch date
@@ -3062,7 +3080,6 @@ class Interface(Gtk.Window):
                         str(),          # Installed date
                         self.alternative["except"],
                         self.alternative["snap"],
-                        self.alternative["multiplayer"],
                         self.alternative["save"],
                         game ]
 
@@ -3074,6 +3091,11 @@ class Interface(Gtk.Window):
                     if game.multiplayer:
                         row_data[Columns.Multiplayer] = \
                             self.icons["multiplayer"]
+
+                    # Finish
+                    if game.finish:
+                        row_data[Columns.Finish] = \
+                            self.icons["finish"]
 
                     # Played
                     if game.played > 0:
