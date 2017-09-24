@@ -392,6 +392,8 @@ class GEM(object):
                         section, "ignores", fallback=str()).split(';'),
                     "extensions": data.get(
                         section, "exts", fallback=str()).split(';'),
+                    "recursive": bool(data.get(
+                        section, "recursive", fallback=False)),
                     "emulator": emulator
                 })
 
@@ -784,7 +786,7 @@ class GEM(object):
                 if len(value) == 1 and len(value[0]) == 0:
                     value = list()
 
-            elif type(value) is not Emulator:
+            elif type(value) is not Emulator and type(value) is not bool:
                 if value is not None and len(value) == 0:
                     value = None
 
@@ -972,7 +974,11 @@ class GEMObject(object):
                 value = data[key]
 
                 if type(value) is list:
-                    value = len(value)
+                    if len(value) > 0:
+                        value = ', '.join(value)
+
+                if type(value) is dict or type(value) is OrderedDict:
+                    value = list(value.keys())
 
                 if type(value) is Emulator:
                     value = value.name
@@ -1244,6 +1250,7 @@ class Console(GEMObject):
         "ignores": list(),
         "extensions": list(),
         "games": list(),
+        "recursive": bool(),
         "emulator": None
     }
 
@@ -1268,7 +1275,8 @@ class Console(GEMObject):
             "roms": expanduser(self.path),
             "exts": ';'.join(self.extensions),
             "ignores": ';'.join(self.ignores),
-            "emulator": self.emulator
+            "emulator": self.emulator,
+            "recursive": self.recursive
         })
 
 
@@ -1302,14 +1310,20 @@ class Console(GEMObject):
         #   Check games
         # ----------------------------
 
-        self.games = dict()
+        self.games = OrderedDict()
 
         # Check each extensions in games path
         for extension in set(self.extensions):
 
+            regex = "%s/*.%s"
+            if self.recursive:
+                regex = "%s/**/*.%s"
+
+            files = set(glob(regex % (self.path, generate_extension(extension)),
+                recursive=self.recursive))
+
             # List available files
-            for filename in set(
-                glob("%s/*.%s" % (self.path, generate_extension(extension)))):
+            for filename in sorted(files):
 
                 # Get data from database
                 data = database.get("games", { "filename": basename(filename) })

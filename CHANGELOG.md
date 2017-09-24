@@ -9,6 +9,8 @@
 * Add GEM.get_consoles function to API
 * Add GEM.get_emulators function to API
 * Add a new filter system
+* Add finish flag field
+* Add environment variables field
 * Fix wrong parameter for dolphin-emu
 * Fix wrong exception in icon_from_data
 
