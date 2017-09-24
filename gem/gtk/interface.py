@@ -192,6 +192,9 @@ class Interface(Gtk.Window):
         # Avoid to reload interface when switch between default & classic theme
         self.__theme = None
 
+        # Avoid to reload game tooltip every time the user move in line
+        self.__current_tooltip = None
+
         # Check mednafen status
         self.__mednafen_status = self.check_mednafen()
 
@@ -1570,6 +1573,9 @@ class Interface(Gtk.Window):
         self.treeview_games.connect(
             "drag-data-received", self.__on_dnd_received_data)
 
+        self.treeview_games.connect(
+            "query-tooltip", self.__on_selected_game_tooltip)
+
         self.filter_games.set_visible_func(self.filters_match)
 
 
@@ -2108,7 +2114,7 @@ class Interface(Gtk.Window):
 
             for first, second, status in flags:
 
-                # Only check if there is one of the two checkbox is not active
+                # Check if one the two checkbox is not active
                 if not (first and second):
                     found = found and (
                         (status and first) or (not status and second))
@@ -3260,6 +3266,68 @@ class Interface(Gtk.Window):
 
         if not same_game:
             self.set_informations()
+
+
+    def __on_selected_game_tooltip(self, treeview, x, y, keyboard, tooltip):
+        """ Show game informations tooltip
+
+        Parameters
+        ----------
+        treeview : Gtk.TreeView
+            Widget which received the signal
+        x : int
+            X coordinate for mouse cursor position
+        y : int
+            Y coordinate for mouse cursor position
+        keyboard : bool
+            Set as True if the tooltip has been trigged by keyboard
+        tooltip : Gtk.Tooltip
+            Tooltip widget
+
+        Returns
+        -------
+        bool
+            Tooltip visible status
+        """
+
+        # Get relative treerow position based on absolute cursor coordinates
+        x, y = treeview.convert_widget_to_bin_window_coords(x, y)
+
+        selection = treeview.get_path_at_pos(x, y)
+        if selection is not None:
+            model = treeview.get_model()
+            treeiter = model.get_iter(selection[0])
+
+            game = model.get_value(treeiter, Columns.Object)
+
+            # Reload tooltip when another game is hovered
+            if not self.__current_tooltip == game:
+                self.__current_tooltip = game
+
+                return False
+
+            data = list()
+            data.append("<b>%s</b>" % game.name)
+
+            if not game.play_time == timedelta():
+                data.append(": ".join(["<b>%s</b>" % _("Play time"),
+                    str(game.play_time)]))
+
+            if not game.last_launch_time == timedelta():
+                data.append(": ".join(["<b>%s</b>" % _("Last launch"),
+                    str(game.last_launch_time)]))
+
+            # Fancy new line
+            if len(data) > 1:
+                data.insert(1, str())
+
+            tooltip.set_markup('\n'.join(data))
+
+            self.__current_tooltip = game
+
+            return True
+
+        return False
 
 
     def check_selection(self):
