@@ -3329,7 +3329,8 @@ class Interface(Gtk.Window):
                 return False
 
             data = list()
-            data.append("<b>%s</b>" % game.name)
+            data.append("<b>%s</b>" % game.name.replace('&', "&amp;").replace(
+                        '<', "&lt;").replace('>', "&gt;"))
 
             if not game.play_time == timedelta():
                 data.append(": ".join(["<b>%s</b>" % _("Play time"),
