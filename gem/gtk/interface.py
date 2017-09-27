@@ -190,10 +190,12 @@ class Interface(Gtk.Window):
         ]
 
         # Avoid to reload interface when switch between default & classic theme
-        self.__theme = None
+        self.__classic_theme = False
 
         # Avoid to reload game tooltip every time the user move in line
         self.__current_tooltip = None
+        self.__current_tooltip_data = list()
+        self.__current_tooltip_pixbuf = None
 
         # Check mednafen status
         self.__mednafen_status = self.check_mednafen()
@@ -1794,17 +1796,16 @@ class Interface(Gtk.Window):
         #   Window first drawing
         # ------------------------------------
 
-        if self.__theme is None:
-            self.__theme = self.config.getboolean(
-                "gem", "use_classic_theme", fallback=False)
-
         if init_interface:
+
+            self.__classic_theme = self.config.getboolean(
+                "gem", "use_classic_theme", fallback=False)
 
             # ------------------------------------
             #   Window classic theme
             # ------------------------------------
 
-            if not self.__theme:
+            if not self.__classic_theme:
                 self.set_titlebar(self.headerbar)
 
             # ------------------------------------
@@ -1842,16 +1843,15 @@ class Interface(Gtk.Window):
         self.infobar.show_all()
         self.infobar.get_content_area().show_all()
 
-        if self.__theme is not None:
-            if self.__theme:
-                self.logger.debug("Use classic theme for GTK+ interface")
-                self.menubar.show_all()
-                self.statusbar.show()
+        if self.__classic_theme:
+            self.logger.debug("Use classic theme for GTK+ interface")
+            self.menubar.show_all()
+            self.statusbar.show()
 
-            else:
-                self.logger.debug("Use default theme for GTK+ interface")
-                self.menubar.hide()
-                self.statusbar.hide()
+        else:
+            self.logger.debug("Use default theme for GTK+ interface")
+            self.menubar.hide()
+            self.statusbar.hide()
 
         self.set_infobar()
         self.sensitive_interface()
@@ -3325,30 +3325,62 @@ class Interface(Gtk.Window):
             # Reload tooltip when another game is hovered
             if not self.__current_tooltip == game:
                 self.__current_tooltip = game
+                self.__current_tooltip_data = list()
+                self.__current_tooltip_pixbuf = None
 
                 return False
 
-            data = list()
-            data.append("<b>%s</b>" % game.name.replace('&', "&amp;").replace(
-                        '<', "&lt;").replace('>', "&gt;"))
+            # Get new data from hovered game
+            if len(self.__current_tooltip_data) == 0:
+                data = list()
+                data.append("<b>%s</b>" % game.name.replace(
+                    '&', "&amp;").replace('<', "&lt;").replace('>', "&gt;"))
 
-            if not game.play_time == timedelta():
-                data.append(": ".join(["<b>%s</b>" % _("Play time"),
-                    str(game.play_time)]))
+                if not game.play_time == timedelta():
+                    data.append(": ".join(["<b>%s</b>" % _("Play time"),
+                        str(game.play_time)]))
 
-            if not game.last_launch_time == timedelta():
-                data.append(": ".join(["<b>%s</b>" % _("Last launch"),
-                    str(game.last_launch_time)]))
+                if not game.last_launch_time == timedelta():
+                    data.append(": ".join(["<b>%s</b>" % _("Last launch"),
+                        str(game.last_launch_time)]))
 
-            # Fancy new line
-            if len(data) > 1:
-                data.insert(1, str())
+                # Fancy new line
+                if len(data) > 1:
+                    data.insert(1, str())
 
-            tooltip.set_markup('\n'.join(data))
+                self.__current_tooltip_data = data
 
-            self.__current_tooltip = game
+            console = self.selection["console"]
 
-            return True
+            # Get new screenshots from hovered game
+            if console is not None and self.__current_tooltip_pixbuf is None:
+                self.sensitive_interface(True)
+
+                # Get Game emulator
+                emulator = console.emulator
+                if game.emulator is not None:
+                    emulator = game.emulator
+
+                screenshots = emulator.get_screenshots(game)
+                if len(screenshots) > 0:
+                    pixbuf = Pixbuf.new_from_file(screenshots[-1])
+
+                    # Resize pixbuf to have a 96 pixels height
+                    pixbuf = pixbuf.scale_simple(pixbuf.get_width() * float(
+                        96 / pixbuf.get_height()), 96, InterpType.TILES)
+
+                    self.__current_tooltip_pixbuf = pixbuf
+
+            # Only show tooltip when data are available
+            if len(self.__current_tooltip_data) > 0:
+                tooltip.set_markup('\n'.join(self.__current_tooltip_data))
+
+                if self.__current_tooltip_pixbuf is not None:
+                    tooltip.set_icon(self.__current_tooltip_pixbuf)
+
+                self.__current_tooltip = game
+
+                return True
 
         return False
 

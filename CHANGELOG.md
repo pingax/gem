@@ -11,6 +11,7 @@
 * Add a new filter system
 * Add finish flag field
 * Add environment variables field
+* Add a tooltip for games treeview
 * Fix wrong parameter for dolphin-emu
 * Fix wrong exception in icon_from_data
 
