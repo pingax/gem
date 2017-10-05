@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.6\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2017-07-22 14:19+0200\n"
+"PO-Revision-Date: 2017-09-29 23:10+0200\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -46,6 +46,12 @@ msgstr "%d secondes"
 #, python-format
 msgid "%d years ago"
 msgstr "Il y a %d ans"
+
+#
+# File: gem/gtk/interface.py, line: 3476
+#, python-format
+msgid "%s binary cannot be found"
+msgstr ""
 
 #
 # File: gem/interface.py, line: 936
@@ -101,6 +107,12 @@ msgstr "1 minute"
 # File: gem/utils.py, line: 320
 msgid "1 second"
 msgstr "1 seconde"
+
+#
+# File: gem/gtk/interface.py, line: 3023
+#, python-format
+msgid "<b>%s</b> cannot been found on your system"
+msgstr ""
 
 #
 # File: gem/gtk/preferences.py, line: 1784
@@ -245,6 +257,12 @@ msgstr "Impossible d'importer les modules: %s"
 # File: gem/main.py, line: 240
 msgid "Cannot launch GEM without display"
 msgstr "Impossible de lancer GEM sans affichage"
+
+#
+# File: gem/gtk/game.py, line: 171
+#, fuzzy
+msgid "Cannot launch game"
+msgstr "Impossible d'accéder au jeu: %s"
 
 #
 # File: gem/preferences.py, line: 335
@@ -425,6 +443,11 @@ msgid "Extensions examples"
 msgstr "Exemples d'extensions"
 
 #
+# File: gem/gtk/interface.py, line: 792
+msgid "Favorite"
+msgstr ""
+
+#
 # File: gem/gtk/preferences.py, line: 2588
 msgid "Files patterns"
 msgstr "Motifs des fichiers"
@@ -433,6 +456,17 @@ msgstr "Motifs des fichiers"
 # File: src/window.py, line: 306
 msgid "Filter"
 msgstr "Filtres"
+
+#
+# File: src/window.py, line: 306
+#, fuzzy
+msgid "Filters"
+msgstr "Filtres"
+
+#
+# File: gem/gtk/interface.py, line: 796
+msgid "Finish"
+msgstr ""
 
 #
 # File: src/window.py, line: 385
@@ -642,6 +676,13 @@ msgstr ""
 "NES -> nes)."
 
 #
+# File: gem/interface.py, line: 251
+# File: gem/interface.py, line: 550
+#, fuzzy
+msgid "Multiplayer"
+msgstr "Marquer comme _multi-joueurs"
+
+#
 # File: src/window.py, line: 368
 msgid "Name"
 msgstr "Nom"
@@ -707,6 +748,11 @@ msgstr "Motif pour détecter les fichiers de sauvegarde"
 # File: gem/preferences.py, line: 335
 msgid "Pattern to detect screenshots files"
 msgstr "Motif pour détecter les fichiers de captures d'écran"
+
+#
+# File: src/window.py, line: 375
+msgid "Play"
+msgstr "Jouer"
 
 #
 # File: src/window.py, line: 375
@@ -789,6 +835,11 @@ msgstr "Renomme %(old)s en %(new)s"
 # File: src/window.py, line: 451
 msgid "Rename a game"
 msgstr "Renommer un jeu"
+
+#
+# File: gem/gtk/interface.py, line: 802
+msgid "Reset filters"
+msgstr ""
 
 #
 # File: gem/gtk/preferences.py, line: 173
@@ -893,11 +944,6 @@ msgid "Show close buttons in header bar"
 msgstr "Montrer les boutons de fermeture dans la barre de titre"
 
 #
-# File: src/window.py, line: 309
-msgid "Show favorite games"
-msgstr "Afficher les favoris"
-
-#
 # File: src/window.py, line: 441
 msgid "Show game screenshots"
 msgstr "Afficher les captures d'écran d'un jeu"
@@ -916,11 +962,6 @@ msgstr "Afficher les lignes dans la liste de jeux"
 # File: gem/interface.py, line: 868
 msgid "Show main _log"
 msgstr "Montrer le _journal principal"
-
-#
-# File: src/window.py, line: 309
-msgid "Show multiplayer games"
-msgstr "Afficher les jeux multi-joueurs"
 
 #
 # File: gem/interface.py, line: 405
@@ -951,6 +992,11 @@ msgstr "Montrer la barre latérale"
 # File: gem/gtk/preferences.py, line: 542
 msgid "Sidebar position"
 msgstr "Position de la barre latérale"
+
+#
+# File: gem/gtk/interface.py, line: 795
+msgid "Singleplayer"
+msgstr ""
 
 #
 # File: src/window.py, line: 441
@@ -984,6 +1030,11 @@ msgstr "Les étiquettes sont séparées par des espaces."
 # File: gem/interface.py, line: 1501
 msgid "Terminate by keyboard interrupt"
 msgstr "Arrêt par interruption du clavier"
+
+#
+# File: gem/gtk/interface.py, line: 3018
+msgid "There is no default emulator set for this console"
+msgstr ""
 
 #
 # File: gem/preferences.py, line: 1020
@@ -1055,6 +1106,16 @@ msgstr "Aujourd'hui"
 # File: gem/gtk/mednafen.py, line: 389
 msgid "Type"
 msgstr "Type"
+
+#
+# File: gem/gtk/interface.py, line: 793
+msgid "Unfavorite"
+msgstr ""
+
+#
+# File: gem/gtk/interface.py, line: 797
+msgid "Unfinish"
+msgstr ""
 
 #
 # File: gem/interface.py, line: 300
@@ -1282,3 +1343,13 @@ msgstr "Lubert Aurélien (PacMiam)"
 # File: src/window.py, line: 446
 #~ msgid "Ignored games files"
 #~ msgstr "Fichiers des jeux à ignorer"
+
+#
+# File: src/window.py, line: 309
+#~ msgid "Show favorite games"
+#~ msgstr "Afficher les favoris"
+
+#
+# File: src/window.py, line: 309
+#~ msgid "Show multiplayer games"
+#~ msgstr "Afficher les jeux multi-joueurs"

@@ -112,6 +112,7 @@ class Icons:
     Favorite    = "emblem-favorite"
     Important   = "emblem-important"
     Photos      = "emblem-photos"
+    Sync        = "emblem-synchronizing"
     Users       = "system-users" # Not standard
     # Faces
     Monkey      = "face-monkey"
@@ -132,6 +133,10 @@ class Icons:
     Password    = "dialog-password"
     Loading     = "image-loading"
     Missing     = "image-missing"
+
+    # This class is filled with Icons values in interface initialization
+    class Symbolic:
+        pass
 
 
 class Columns:

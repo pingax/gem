@@ -45,7 +45,7 @@ try:
     from pkg_resources import DistributionNotFound
 
 except ImportError as error:
-    sys_exit("Import error with python3-pkg-resources module: %s" % str(error))
+    sys_exit("Import error with python3-setuptools module: %s" % str(error))
 
 # ------------------------------------------------------------------------------
 #   Modules - Translation

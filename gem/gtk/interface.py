@@ -239,6 +239,11 @@ class Interface(Gtk.Window):
         self.empty = Pixbuf.new(Colorspace.RGB, True, 8, 22, 22)
         self.empty.fill(0x00000000)
 
+        # Generate symbolic icons class
+        for key, value in Icons.__dict__.items():
+            if not key.startswith("__") and not key.endswith("__"):
+                setattr(Icons.Symbolic, key, "%s-symbolic" % value)
+
         # ------------------------------------
         #   Shortcuts
         # ------------------------------------
@@ -319,17 +324,14 @@ class Interface(Gtk.Window):
             self.grid_options.get_style_context(), "linked")
 
         self.grid_paned.set_border_width(8)
-        self.grid_paned.set_homogeneous(False)
         self.grid_paned.set_size_request(432, 216)
         self.grid_paned.set_orientation(Gtk.Orientation.HORIZONTAL)
 
         self.grid_paned_widgets.set_spacing(8)
         self.grid_paned_widgets.set_border_width(8)
-        self.grid_paned_widgets.set_homogeneous(False)
         self.grid_paned_widgets.set_orientation(Gtk.Orientation.VERTICAL)
 
         self.grid_paned_footer.set_spacing(8)
-        self.grid_paned_footer.set_homogeneous(False)
         self.grid_paned_footer.set_orientation(Gtk.Orientation.HORIZONTAL)
 
         # ------------------------------------
@@ -346,12 +348,12 @@ class Interface(Gtk.Window):
 
         self.tool_item_fullscreen = Gtk.ToggleButton()
 
-        self.tool_item_menu = Gtk.MenuButton()
-
         # Properties
         self.headerbar.set_title(self.title)
         self.headerbar.set_subtitle(str())
 
+        self.tool_item_launch.set_label(_("Play"))
+        self.tool_item_launch.get_style_context().add_class('suggested-action')
         self.tool_item_launch.set_tooltip_text(
             _("Launch selected game"))
         self.tool_item_parameters.set_tooltip_text(
@@ -370,7 +372,6 @@ class Interface(Gtk.Window):
         #   Headerbar - Images
         # ------------------------------------
 
-        self.tool_image_launch = Gtk.Image()
         self.tool_image_parameters = Gtk.Image()
         self.tool_image_screenshots = Gtk.Image()
         self.tool_image_output = Gtk.Image()
@@ -379,8 +380,6 @@ class Interface(Gtk.Window):
         self.tool_image_menu = Gtk.Image()
 
         # Properties
-        self.tool_image_launch.set_from_icon_name(
-            Icons.Launch, Gtk.IconSize.LARGE_TOOLBAR)
         self.tool_image_parameters.set_from_icon_name(
             Icons.Gaming, Gtk.IconSize.LARGE_TOOLBAR)
         self.tool_image_screenshots.set_from_icon_name(
@@ -390,15 +389,17 @@ class Interface(Gtk.Window):
         self.tool_image_notes.set_from_icon_name(
             Icons.Document, Gtk.IconSize.LARGE_TOOLBAR)
         self.tool_image_fullscreen.set_from_icon_name(
-            Icons.Restore, Gtk.IconSize.LARGE_TOOLBAR)
+            Icons.Symbolic.Restore, Gtk.IconSize.LARGE_TOOLBAR)
         self.tool_image_menu.set_from_icon_name(
-            Icons.System, Gtk.IconSize.LARGE_TOOLBAR)
+            Icons.Symbolic.Menu, Gtk.IconSize.LARGE_TOOLBAR)
 
         # ------------------------------------
-        #   Headerbar - Menu
+        #   Headerbar - Main menu
         # ------------------------------------
 
         self.menu = Gtk.Menu()
+
+        self.tool_item_menu = Gtk.MenuButton()
 
         self.menu_image_preferences = Gtk.Image()
         self.menu_image_gem_log = Gtk.Image()
@@ -700,9 +701,8 @@ class Interface(Gtk.Window):
         # Properties
         self.toolbar.set_icon_size(Gtk.IconSize.LARGE_TOOLBAR)
 
-        self.tool_item_properties.set_icon_name(Icons.Properties)
-        self.tool_item_properties.set_tooltip_text(
-            _("Edit emulator"))
+        self.tool_item_properties.set_icon_name(Icons.Symbolic.Properties)
+        self.tool_item_properties.set_tooltip_text(_("Edit emulator"))
 
         self.tool_separator.set_draw(False)
         self.tool_separator.set_expand(True)
@@ -755,9 +755,9 @@ class Interface(Gtk.Window):
         self.entry_filter.set_size_request(300, -1)
         self.entry_filter.set_placeholder_text(_("Filter"))
         self.entry_filter.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.PRIMARY, Icons.Find)
+            Gtk.EntryIconPosition.PRIMARY, Icons.Symbolic.Find)
         self.entry_filter.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
         self.entry_filter.set_icon_activatable(
             Gtk.EntryIconPosition.PRIMARY, False)
         self.entry_filter.set_icon_sensitive(
@@ -767,7 +767,7 @@ class Interface(Gtk.Window):
         self.tool_menu_filters.set_relief(Gtk.ReliefStyle.NONE)
 
         self.tool_image_filters.set_from_icon_name(
-            Icons.Refresh, Gtk.IconSize.LARGE_TOOLBAR)
+            Icons.Symbolic.Sync, Gtk.IconSize.LARGE_TOOLBAR)
 
         # ------------------------------------
         #   Toolbar - Filter - Menu
@@ -1228,11 +1228,11 @@ class Interface(Gtk.Window):
 
         # Headerbar
         self.headerbar.pack_start(self.tool_item_launch)
-        self.headerbar.pack_start(self.tool_item_fullscreen)
         self.headerbar.pack_start(Gtk.Separator())
         self.headerbar.pack_start(self.grid_options)
         self.headerbar.pack_start(self.tool_item_parameters)
         self.headerbar.pack_end(self.tool_item_menu)
+        self.headerbar.pack_end(self.tool_item_fullscreen)
 
         self.grid_options.pack_start(
             self.tool_item_screenshots, False, False, 0)
@@ -1320,7 +1320,6 @@ class Interface(Gtk.Window):
         self.tool_filters.add(self.tool_menu_filters)
         self.tool_menu_filters.add(self.tool_image_filters)
 
-        self.tool_item_launch.add(self.tool_image_launch)
         self.tool_item_fullscreen.add(self.tool_image_fullscreen)
         self.tool_item_screenshots.add(self.tool_image_screenshots)
         self.tool_item_output.add(self.tool_image_output)
@@ -3333,7 +3332,7 @@ class Interface(Gtk.Window):
             # Get new data from hovered game
             if len(self.__current_tooltip_data) == 0:
                 data = list()
-                data.append("<b>%s</b>" % game.name.replace(
+                data.append("<big><b>%s</b></big>" % game.name.replace(
                     '&', "&amp;").replace('<', "&lt;").replace('>', "&gt;"))
 
                 if not game.play_time == timedelta():
@@ -3354,7 +3353,6 @@ class Interface(Gtk.Window):
 
             # Get new screenshots from hovered game
             if console is not None and self.__current_tooltip_pixbuf is None:
-                self.sensitive_interface(True)
 
                 # Get Game emulator
                 emulator = console.emulator
@@ -4283,7 +4281,7 @@ class Interface(Gtk.Window):
             self.logger.debug("Switch game launch to windowed mode")
 
             self.tool_image_fullscreen.set_from_icon_name(
-                Icons.Restore, Gtk.IconSize.LARGE_TOOLBAR)
+                Icons.Symbolic.Restore, Gtk.IconSize.LARGE_TOOLBAR)
 
             self.menubar_main_item_fullscreen.set_active(False)
 
@@ -4294,7 +4292,7 @@ class Interface(Gtk.Window):
             self.logger.debug("Switch game launch to fullscreen mode")
 
             self.tool_image_fullscreen.set_from_icon_name(
-                Icons.Fullscreen, Gtk.IconSize.LARGE_TOOLBAR)
+                Icons.Symbolic.Fullscreen, Gtk.IconSize.LARGE_TOOLBAR)
 
             self.menubar_main_item_fullscreen.set_active(True)
 

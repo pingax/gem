@@ -48,6 +48,12 @@ msgid "%d years ago"
 msgstr "hace %d años"
 
 #
+# File: gem/gtk/interface.py, line: 3476
+#, python-format
+msgid "%s binary cannot be found"
+msgstr ""
+
+#
 # File: gem/interface.py, line: 1354
 #, fuzzy, python-format
 msgid "%s emulator not exist"
@@ -101,6 +107,12 @@ msgstr "1 minuto"
 # File: gem/utils.py, line: 350
 msgid "1 second"
 msgstr "1 segundo"
+
+#
+# File: gem/gtk/interface.py, line: 3023
+#, python-format
+msgid "<b>%s</b> cannot been found on your system"
+msgstr ""
 
 #
 # File: gem/gtk/preferences.py, line: 1784
@@ -247,6 +259,12 @@ msgstr "No puedo encontrar el emulador para %s"
 # File: gem/main.py, line: 240
 msgid "Cannot launch GEM without display"
 msgstr "No puedo ejecutar GEM sin una sesión gráfica"
+
+#
+# File: gem/main.py, line: 128
+#, fuzzy
+msgid "Cannot launch game"
+msgstr "No puedo abrir la interfaz: %s"
 
 #
 # File: gem/configuration.py, line: 71
@@ -435,6 +453,11 @@ msgid "Extensions examples"
 msgstr ""
 
 #
+# File: gem/gtk/interface.py, line: 792
+msgid "Favorite"
+msgstr ""
+
+#
 # File: gem/gtk/preferences.py, line: 2588
 msgid "Files patterns"
 msgstr ""
@@ -443,6 +466,17 @@ msgstr ""
 # File: gem/interface.py, line: 522
 msgid "Filter"
 msgstr "Filtro"
+
+#
+# File: gem/interface.py, line: 522
+#, fuzzy
+msgid "Filters"
+msgstr "Filtro"
+
+#
+# File: gem/gtk/interface.py, line: 796
+msgid "Finish"
+msgstr ""
 
 #
 # File: gem/interface.py, line: 672
@@ -650,6 +684,13 @@ msgid ""
 msgstr ""
 
 #
+# File: gem/interface.py, line: 386
+# File: gem/interface.py, line: 746
+#, fuzzy
+msgid "Multiplayer"
+msgstr "Marcar como _mutijugador"
+
+#
 # File: gem/interface.py, line: 635
 # File: gem/preferences.py, line: 540
 # File: gem/preferences.py, line: 603
@@ -720,6 +761,12 @@ msgstr "No puedo abrir el archivo %s"
 #, fuzzy
 msgid "Pattern to detect screenshots files"
 msgstr "No puedo abrir el archivo %s"
+
+#
+# File: gem/interface.py, line: 642
+#, fuzzy
+msgid "Play"
+msgstr "Tiempo jugado"
 
 #
 # File: gem/interface.py, line: 642
@@ -807,6 +854,11 @@ msgstr "Renombrar %(old)s en %(new)s"
 # File: gem/preferences.py, line: 86
 msgid "Rename a game"
 msgstr "Renombrar un juego"
+
+#
+# File: gem/gtk/interface.py, line: 802
+msgid "Reset filters"
+msgstr ""
 
 #
 # File: gem/gtk/preferences.py, line: 173
@@ -914,11 +966,6 @@ msgid "Show close buttons in header bar"
 msgstr "Mostrar los botones de cerrar en la barra principal"
 
 #
-# File: gem/interface.py, line: 527
-msgid "Show favorite games"
-msgstr "Mostrar los juegos favoritos"
-
-#
 # File: gem/preferences.py, line: 89
 msgid "Show game screenshots"
 msgstr "Mostrar las capturas de pantalla del juego"
@@ -937,11 +984,6 @@ msgstr "Mostrar líneas en la lista de juegos"
 # File: gem/interface.py, line: 375
 msgid "Show main _log"
 msgstr "Mostrar _histórico principal"
-
-#
-# File: gem/interface.py, line: 532
-msgid "Show multiplayer games"
-msgstr "Mostrar los juegos mutijugador"
 
 #
 # File: gem/interface.py, line: 572
@@ -972,6 +1014,11 @@ msgstr "Mostrar los números de línea"
 #
 # File: gem/gtk/preferences.py, line: 542
 msgid "Sidebar position"
+msgstr ""
+
+#
+# File: gem/gtk/interface.py, line: 795
+msgid "Singleplayer"
 msgstr ""
 
 #
@@ -1006,6 +1053,11 @@ msgstr ""
 # File: gem/interface.py, line: 1501
 msgid "Terminate by keyboard interrupt"
 msgstr "Finalizado por interrupción del teclado"
+
+#
+# File: gem/gtk/interface.py, line: 3018
+msgid "There is no default emulator set for this console"
+msgstr ""
 
 #
 # File: gem/preferences.py, line: 1418
@@ -1076,6 +1128,16 @@ msgstr "Hoy"
 # File: gem/gtk/mednafen.py, line: 389
 msgid "Type"
 msgstr "Tipo"
+
+#
+# File: gem/gtk/interface.py, line: 793
+msgid "Unfavorite"
+msgstr ""
+
+#
+# File: gem/gtk/interface.py, line: 797
+msgid "Unfinish"
+msgstr ""
 
 #
 # File: gem/preferences.py, line: 1602
@@ -1426,6 +1488,16 @@ msgstr "agradecimientos a los traductores"
 # File: gem/preferences.py, line: 1013
 #~ msgid "Set default emulator"
 #~ msgstr "Establecer el emulador por defecto"
+
+#
+# File: gem/interface.py, line: 527
+#~ msgid "Show favorite games"
+#~ msgstr "Mostrar los juegos favoritos"
+
+#
+# File: gem/interface.py, line: 532
+#~ msgid "Show multiplayer games"
+#~ msgstr "Mostrar los juegos mutijugador"
 
 #
 # File: gem/interface.py, line: 135
