@@ -104,6 +104,7 @@ class Icons:
     Other       = "applications-other"
     System      = "preferences-system"
     # Devices
+    Camera      = "camera-photo"
     Gaming      = "input-gaming"
     Video       = "video-display"
     # Emblems

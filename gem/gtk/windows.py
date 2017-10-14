@@ -476,7 +476,7 @@ class DialogEditor(Dialog):
         grid_search = Gtk.Box()
 
         # Properties
-        grid_header.set_spacing(4)
+        grid_header.set_spacing(8)
         grid_header.set_orientation(Gtk.Orientation.HORIZONTAL)
 
         Gtk.StyleContext.add_class(grid_search.get_style_context(), "linked")
@@ -490,7 +490,7 @@ class DialogEditor(Dialog):
         # Properties
         self.entry_path.set_editable(False)
         self.entry_path.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.PRIMARY, Icons.Text)
+            Gtk.EntryIconPosition.PRIMARY, Icons.Symbolic.Text)
         self.entry_path.set_icon_activatable(
             Gtk.EntryIconPosition.PRIMARY, False)
 
@@ -577,18 +577,20 @@ class DialogEditor(Dialog):
         # Properties
         self.entry_search.set_placeholder_text(_("Search"))
         self.entry_search.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.PRIMARY, Icons.Find)
+            Gtk.EntryIconPosition.PRIMARY, Icons.Symbolic.Find)
         self.entry_search.set_icon_activatable(
             Gtk.EntryIconPosition.PRIMARY, False)
         self.entry_search.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
 
-        self.image_up.set_from_icon_name(Icons.Up, Gtk.IconSize.BUTTON)
+        self.image_up.set_from_icon_name(
+            Icons.Symbolic.Previous, Gtk.IconSize.BUTTON)
 
         self.button_up.set_label(str())
         self.button_up.set_image(self.image_up)
 
-        self.image_bottom.set_from_icon_name(Icons.Down, Gtk.IconSize.BUTTON)
+        self.image_bottom.set_from_icon_name(
+            Icons.Symbolic.Next, Gtk.IconSize.BUTTON)
 
         self.button_bottom.set_label(str())
         self.button_bottom.set_image(self.image_bottom)
@@ -601,9 +603,9 @@ class DialogEditor(Dialog):
 
         grid_header.pack_start(self.entry_path, True, True, 0)
         grid_header.pack_start(Gtk.Separator(), False, True, 0)
-        grid_header.pack_start(self.entry_search, False, True, 0)
         grid_header.pack_start(grid_search, False, True, 0)
 
+        grid_search.pack_start(self.entry_search, False, True, 0)
         grid_search.pack_start(self.button_up, False, True, 0)
         grid_search.pack_start(self.button_bottom, False, True, 0)
 
@@ -926,7 +928,8 @@ class DialogParameters(Dialog):
         label_emulator.set_use_markup(True)
         label_emulator.set_markup("<b>%s</b>" % _("Alternative emulator"))
 
-        image_emulator.set_from_icon_name(Icons.Properties, Gtk.IconSize.MENU)
+        image_emulator.set_from_icon_name(
+            Icons.Symbolic.Properties, Gtk.IconSize.MENU)
 
         self.model.set_sort_column_id(1, Gtk.SortType.ASCENDING)
 
@@ -951,9 +954,9 @@ class DialogParameters(Dialog):
         # Properties
         self.entry_arguments.set_margin_left(16)
         self.entry_arguments.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.PRIMARY, Icons.Terminal)
+            Gtk.EntryIconPosition.PRIMARY, Icons.Symbolic.Terminal)
         self.entry_arguments.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
 
         # ------------------------------------
         #   Key
@@ -969,12 +972,13 @@ class DialogParameters(Dialog):
         label_key.set_use_markup(True)
         label_key.set_markup("<b>%s</b>" % _("GameID"))
 
-        image_key.set_from_icon_name(Icons.Password, Gtk.IconSize.MENU)
+        image_key.set_from_icon_name(
+            Icons.Symbolic.Password, Gtk.IconSize.MENU)
 
         self.entry_key.set_margin_left(16)
         self.entry_key.set_placeholder_text(_("No default value"))
         self.entry_key.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
 
         # ------------------------------------
         #   Tags
@@ -990,7 +994,8 @@ class DialogParameters(Dialog):
         label_tags.set_use_markup(True)
         label_tags.set_markup("<b>%s</b>" % _("Tags"))
 
-        image_tags.set_from_icon_name(Icons.AddText, Gtk.IconSize.MENU)
+        image_tags.set_from_icon_name(
+            Icons.Symbolic.AddText, Gtk.IconSize.MENU)
 
         self.entry_tags.set_margin_left(16)
         self.entry_tags.set_tooltip_text(
@@ -998,7 +1003,7 @@ class DialogParameters(Dialog):
         self.entry_tags.set_placeholder_text(
             _("Use space to separate tags"))
         self.entry_tags.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
 
         # ------------------------------------
         #   Integrate widgets
@@ -1376,15 +1381,15 @@ class DialogViewer(Dialog):
         tool_separator_end.set_draw(False)
         tool_separator_end.set_expand(True)
 
-        self.tool_first.set_icon_name(Icons.First)
-        self.tool_previous.set_icon_name(Icons.Previous)
-        self.tool_next.set_icon_name(Icons.Next)
-        self.tool_last.set_icon_name(Icons.Last)
+        self.tool_first.set_icon_name(Icons.Symbolic.First)
+        self.tool_previous.set_icon_name(Icons.Symbolic.Previous)
+        self.tool_next.set_icon_name(Icons.Symbolic.Next)
+        self.tool_last.set_icon_name(Icons.Symbolic.Last)
 
-        self.tool_zoom_minus.set_icon_name(Icons.ZoomOut)
-        self.tool_zoom_100.set_icon_name(Icons.Zoom)
-        self.tool_zoom_fit.set_icon_name(Icons.ZoomFit)
-        self.tool_zoom_plus.set_icon_name(Icons.ZoomIn)
+        self.tool_zoom_minus.set_icon_name(Icons.Symbolic.ZoomOut)
+        self.tool_zoom_100.set_icon_name(Icons.Symbolic.Zoom)
+        self.tool_zoom_fit.set_icon_name(Icons.Symbolic.ZoomFit)
+        self.tool_zoom_plus.set_icon_name(Icons.Symbolic.ZoomIn)
 
         # ------------------------------------
         #   Integrate widgets

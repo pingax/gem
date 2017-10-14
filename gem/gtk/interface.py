@@ -317,11 +317,11 @@ class Interface(Gtk.Window):
         self.grid_paned_widgets = Gtk.Box()
         self.grid_paned_footer = Gtk.Box()
 
+        self.grid_toolbar_console = Gtk.Box()
+        self.grid_toolbar_filters = Gtk.Box()
+
         # Properties
         self.grid.set_orientation(Gtk.Orientation.VERTICAL)
-
-        Gtk.StyleContext.add_class(
-            self.grid_options.get_style_context(), "linked")
 
         self.grid_paned.set_border_width(8)
         self.grid_paned.set_size_request(432, 216)
@@ -333,6 +333,21 @@ class Interface(Gtk.Window):
 
         self.grid_paned_footer.set_spacing(8)
         self.grid_paned_footer.set_orientation(Gtk.Orientation.HORIZONTAL)
+
+        Gtk.StyleContext.add_class(
+            self.grid_options.get_style_context(), "linked")
+        self.grid_options.set_spacing(-1)
+        self.grid_options.set_orientation(Gtk.Orientation.HORIZONTAL)
+
+        Gtk.StyleContext.add_class(
+            self.grid_toolbar_console.get_style_context(), "linked")
+        self.grid_toolbar_console.set_spacing(-1)
+        self.grid_toolbar_console.set_orientation(Gtk.Orientation.HORIZONTAL)
+
+        Gtk.StyleContext.add_class(
+            self.grid_toolbar_filters.get_style_context(), "linked")
+        self.grid_toolbar_filters.set_spacing(-1)
+        self.grid_toolbar_filters.set_orientation(Gtk.Orientation.HORIZONTAL)
 
         # ------------------------------------
         #   Headerbar
@@ -354,13 +369,15 @@ class Interface(Gtk.Window):
         self.headerbar.set_subtitle(str())
 
         self.headerbar_image_parameters.set_from_icon_name(
-            Icons.Symbolic.Gaming, Gtk.IconSize.LARGE_TOOLBAR)
+            Icons.Symbolic.Gaming, Gtk.IconSize.BUTTON)
+        self.headerbar_item_parameters.set_tooltip_text(
+            _("Set custom parameters"))
 
         self.headerbar_image_menu.set_from_icon_name(
-            Icons.Symbolic.Menu, Gtk.IconSize.LARGE_TOOLBAR)
+            Icons.Symbolic.Menu, Gtk.IconSize.BUTTON)
 
         self.headerbar_image_fullscreen.set_from_icon_name(
-            Icons.Symbolic.Restore, Gtk.IconSize.LARGE_TOOLBAR)
+            Icons.Symbolic.Restore, Gtk.IconSize.BUTTON)
         self.headerbar_item_fullscreen.set_tooltip_text(
             _("Alternate game fullscreen mode"))
 
@@ -662,7 +679,7 @@ class Interface(Gtk.Window):
         self.toolbar_item_screenshots = Gtk.Button()
         self.toolbar_item_output = Gtk.Button()
         self.toolbar_item_notes = Gtk.Button()
-        self.toolbar_item_properties = Gtk.ToolButton()
+        self.toolbar_item_properties = Gtk.Button()
 
         self.toolbar_item_game_launch = Gtk.ToolItem()
         self.toolbar_item_game_option = Gtk.ToolItem()
@@ -675,9 +692,10 @@ class Interface(Gtk.Window):
         self.toolbar_image_screenshots = Gtk.Image()
         self.toolbar_image_output = Gtk.Image()
         self.toolbar_image_notes = Gtk.Image()
+        self.toolbar_image_properties = Gtk.Image()
 
         # Properties
-        self.toolbar.set_icon_size(Gtk.IconSize.LARGE_TOOLBAR)
+        self.toolbar.set_icon_size(Gtk.IconSize.SMALL_TOOLBAR)
 
         self.toolbar_item_launch.set_label(_("Play"))
         self.toolbar_item_launch.get_style_context().add_class(
@@ -691,21 +709,21 @@ class Interface(Gtk.Window):
             _("Show selected game output log"))
         self.toolbar_item_notes.set_tooltip_text(
             _("Show selected game notes"))
-        self.headerbar_item_parameters.set_tooltip_text(
-            _("Set custom parameters"))
 
-        self.toolbar_item_properties.set_icon_name(Icons.Symbolic.Properties)
+        # self.toolbar_item_properties.set_icon_name(Icons.Symbolic.Properties)
         self.toolbar_item_properties.set_tooltip_text(_("Edit emulator"))
 
         self.toolbar_item_separator.set_draw(False)
         self.toolbar_item_separator.set_expand(True)
 
         self.toolbar_image_screenshots.set_from_icon_name(
-            Icons.Symbolic.Image, self.toolbar.get_icon_size())
+            Icons.Symbolic.Camera, self.toolbar.get_icon_size())
         self.toolbar_image_output.set_from_icon_name(
             Icons.Symbolic.Terminal, self.toolbar.get_icon_size())
         self.toolbar_image_notes.set_from_icon_name(
-            Icons.Symbolic.Document, self.toolbar.get_icon_size())
+            Icons.Symbolic.Editor, self.toolbar.get_icon_size())
+        self.toolbar_image_properties.set_from_icon_name(
+            Icons.Symbolic.Properties, self.toolbar.get_icon_size())
 
         # ------------------------------------
         #   Toolbar - Consoles
@@ -764,10 +782,9 @@ class Interface(Gtk.Window):
             Gtk.EntryIconPosition.PRIMARY, False)
 
         self.tool_menu_filters.set_tooltip_text(_("Filters"))
-        self.tool_menu_filters.set_relief(Gtk.ReliefStyle.NONE)
 
         self.tool_image_filters.set_from_icon_name(
-            Icons.Symbolic.Sync, Gtk.IconSize.LARGE_TOOLBAR)
+            Icons.Symbolic.Sync, Gtk.IconSize.SMALL_TOOLBAR)
 
         # ------------------------------------
         #   Toolbar - Filter - Menu
@@ -1229,15 +1246,9 @@ class Interface(Gtk.Window):
         self.headerbar.pack_end(self.headerbar_item_menu)
         self.headerbar.pack_end(self.headerbar_item_fullscreen)
 
+        self.headerbar_item_parameters.add(self.headerbar_image_parameters)
         self.headerbar_item_fullscreen.add(self.headerbar_image_fullscreen)
         self.headerbar_item_menu.add(self.headerbar_image_menu)
-
-        self.grid_options.pack_start(
-            self.toolbar_item_screenshots, False, False, 0)
-        self.grid_options.pack_start(
-            self.toolbar_item_output, False, False, 0)
-        self.grid_options.pack_start(
-            self.toolbar_item_notes, False, False, 0)
 
         # Headerbar menu
         self.headerbar_item_menu.set_popup(self.menu)
@@ -1311,24 +1322,42 @@ class Interface(Gtk.Window):
         self.toolbar.insert(self.toolbar_item_game_option, -1)
         self.toolbar.insert(self.toolbar_item_separator, -1)
         self.toolbar.insert(self.toolbar_item_consoles, -1)
-        self.toolbar.insert(self.toolbar_item_properties, -1)
+        # self.toolbar.insert(self.toolbar_item_properties, -1)
         self.toolbar.insert(Gtk.SeparatorToolItem(), -1)
         self.toolbar.insert(self.toolbar_item_search, -1)
-        self.toolbar.insert(self.toolbar_item_filters, -1)
+        # self.toolbar.insert(self.toolbar_item_filters, -1)
 
         self.toolbar_item_game_launch.add(self.toolbar_item_launch)
         self.toolbar_item_game_option.add(self.grid_options)
+        self.toolbar_item_consoles.add(self.grid_toolbar_console)
+        # self.toolbar_item_consoles.add(self.combo_consoles)
+        self.toolbar_item_search.add(self.grid_toolbar_filters)
+        # self.toolbar_item_search.add(self.entry_filter)
 
-        self.toolbar_item_consoles.add(self.combo_consoles)
-        self.toolbar_item_search.add(self.entry_filter)
+        self.grid_toolbar_console.pack_start(
+            self.combo_consoles, False, False, 0)
+        self.grid_toolbar_console.pack_start(
+            self.toolbar_item_properties, False, False, 0)
 
-        self.toolbar_item_filters.add(self.tool_menu_filters)
+        self.grid_toolbar_filters.pack_start(
+            self.entry_filter, False, False, 0)
+        self.grid_toolbar_filters.pack_start(
+            self.tool_menu_filters, False, False, 0)
+
+        self.grid_options.pack_start(
+            self.toolbar_item_screenshots, False, False, 0)
+        self.grid_options.pack_start(
+            self.toolbar_item_output, False, False, 0)
+        self.grid_options.pack_start(
+            self.toolbar_item_notes, False, False, 0)
+
+        # self.toolbar_item_filters.add(self.tool_menu_filters)
         self.tool_menu_filters.add(self.tool_image_filters)
 
         self.toolbar_item_screenshots.add(self.toolbar_image_screenshots)
         self.toolbar_item_output.add(self.toolbar_image_output)
         self.toolbar_item_notes.add(self.toolbar_image_notes)
-        self.headerbar_item_parameters.add(self.headerbar_image_parameters)
+        self.toolbar_item_properties.add(self.toolbar_image_properties)
 
         # Toolbar - Filters menu
         self.menu_filters.append(self.check_filter_favorite)
@@ -4281,7 +4310,7 @@ class Interface(Gtk.Window):
             self.logger.debug("Switch game launch to windowed mode")
 
             self.headerbar_image_fullscreen.set_from_icon_name(
-                Icons.Symbolic.Restore, Gtk.IconSize.LARGE_TOOLBAR)
+                Icons.Symbolic.Restore, Gtk.IconSize.SMALL_TOOLBAR)
 
             self.menubar_main_item_fullscreen.set_active(False)
 
@@ -4292,7 +4321,7 @@ class Interface(Gtk.Window):
             self.logger.debug("Switch game launch to fullscreen mode")
 
             self.headerbar_image_fullscreen.set_from_icon_name(
-                Icons.Symbolic.Fullscreen, Gtk.IconSize.LARGE_TOOLBAR)
+                Icons.Symbolic.Fullscreen, Gtk.IconSize.SMALL_TOOLBAR)
 
             self.menubar_main_item_fullscreen.set_active(True)
 
