@@ -3201,9 +3201,6 @@ class Interface(Gtk.Window):
             if treeiter is not None:
                 game = model.get_value(treeiter, Columns.Object)
 
-                if event.keyval == Gdk.KEY_Return:
-                    run_game = True
-
         # Mouse
         elif (event.type in [EventType.BUTTON_PRESS, EventType._2BUTTON_PRESS]) \
             and (event.button == 1 or event.button == 3):
