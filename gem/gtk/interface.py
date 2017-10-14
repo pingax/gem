@@ -3340,74 +3340,78 @@ class Interface(Gtk.Window):
             Tooltip visible status
         """
 
-        # Get relative treerow position based on absolute cursor coordinates
-        x, y = treeview.convert_widget_to_bin_window_coords(x, y)
+        # Show a tooltip when the main window is sentitive only
+        if self.get_sensitive():
 
-        selection = treeview.get_path_at_pos(x, y)
-        if selection is not None:
-            model = treeview.get_model()
-            treeiter = model.get_iter(selection[0])
+            # Get relative treerow position based on absolute cursor coordinates
+            x, y = treeview.convert_widget_to_bin_window_coords(x, y)
 
-            game = model.get_value(treeiter, Columns.Object)
+            selection = treeview.get_path_at_pos(x, y)
+            if selection is not None:
+                model = treeview.get_model()
+                treeiter = model.get_iter(selection[0])
 
-            # Reload tooltip when another game is hovered
-            if not self.__current_tooltip == game:
-                self.__current_tooltip = game
-                self.__current_tooltip_data = list()
-                self.__current_tooltip_pixbuf = None
+                game = model.get_value(treeiter, Columns.Object)
 
-                return False
+                # Reload tooltip when another game is hovered
+                if not self.__current_tooltip == game:
+                    self.__current_tooltip = game
+                    self.__current_tooltip_data = list()
+                    self.__current_tooltip_pixbuf = None
 
-            # Get new data from hovered game
-            if len(self.__current_tooltip_data) == 0:
-                data = list()
-                data.append("<big><b>%s</b></big>" % game.name.replace(
-                    '&', "&amp;").replace('<', "&lt;").replace('>', "&gt;"))
+                    return False
 
-                if not game.play_time == timedelta():
-                    data.append(": ".join(["<b>%s</b>" % _("Play time"),
-                        str(game.play_time)]))
+                # Get new data from hovered game
+                if len(self.__current_tooltip_data) == 0:
+                    data = list()
+                    data.append("<big><b>%s</b></big>" % game.name.replace(
+                        '&', "&amp;").replace('<', "&lt;").replace('>', "&gt;"))
 
-                if not game.last_launch_time == timedelta():
-                    data.append(": ".join(["<b>%s</b>" % _("Last launch"),
-                        str(game.last_launch_time)]))
+                    if not game.play_time == timedelta():
+                        data.append(": ".join(["<b>%s</b>" % _("Play time"),
+                            str(game.play_time)]))
 
-                # Fancy new line
-                if len(data) > 1:
-                    data.insert(1, str())
+                    if not game.last_launch_time == timedelta():
+                        data.append(": ".join(["<b>%s</b>" % _("Last launch"),
+                            str(game.last_launch_time)]))
 
-                self.__current_tooltip_data = data
+                    # Fancy new line
+                    if len(data) > 1:
+                        data.insert(1, str())
 
-            console = self.selection["console"]
+                    self.__current_tooltip_data = data
 
-            # Get new screenshots from hovered game
-            if console is not None and self.__current_tooltip_pixbuf is None:
+                console = self.selection["console"]
 
-                # Get Game emulator
-                emulator = console.emulator
-                if game.emulator is not None:
-                    emulator = game.emulator
+                # Get new screenshots from hovered game
+                if console is not None and \
+                    self.__current_tooltip_pixbuf is None:
 
-                screenshots = emulator.get_screenshots(game)
-                if len(screenshots) > 0:
-                    pixbuf = Pixbuf.new_from_file(screenshots[-1])
+                    # Get Game emulator
+                    emulator = console.emulator
+                    if game.emulator is not None:
+                        emulator = game.emulator
 
-                    # Resize pixbuf to have a 96 pixels height
-                    pixbuf = pixbuf.scale_simple(pixbuf.get_width() * float(
-                        96 / pixbuf.get_height()), 96, InterpType.TILES)
+                    screenshots = emulator.get_screenshots(game)
+                    if len(screenshots) > 0:
+                        pixbuf = Pixbuf.new_from_file(screenshots[-1])
 
-                    self.__current_tooltip_pixbuf = pixbuf
+                        # Resize pixbuf to have a 96 pixels height
+                        pixbuf = pixbuf.scale_simple(pixbuf.get_width() * float(
+                            96 / pixbuf.get_height()), 96, InterpType.TILES)
 
-            # Only show tooltip when data are available
-            if len(self.__current_tooltip_data) > 0:
-                tooltip.set_markup('\n'.join(self.__current_tooltip_data))
+                        self.__current_tooltip_pixbuf = pixbuf
 
-                if self.__current_tooltip_pixbuf is not None:
-                    tooltip.set_icon(self.__current_tooltip_pixbuf)
+                # Only show tooltip when data are available
+                if len(self.__current_tooltip_data) > 0:
+                    tooltip.set_markup('\n'.join(self.__current_tooltip_data))
 
-                self.__current_tooltip = game
+                    if self.__current_tooltip_pixbuf is not None:
+                        tooltip.set_icon(self.__current_tooltip_pixbuf)
 
-                return True
+                    self.__current_tooltip = game
+
+                    return True
 
         return False
 
