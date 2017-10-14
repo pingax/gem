@@ -39,6 +39,9 @@ try:
     from gi.repository import GLib
     from gi.repository import Pango
 
+    from gi.repository.GLib import idle_add
+    from gi.repository.GLib import source_remove
+
     from gi.repository.GdkPixbuf import Pixbuf
     from gi.repository.GdkPixbuf import Colorspace
     from gi.repository.GdkPixbuf import InterpType
@@ -189,7 +192,7 @@ class Dialog(Gtk.Dialog):
         self.button_help = Gtk.Button()
 
         # Properties
-        image.set_from_icon_name(Icons.Help, Gtk.IconSize.MENU)
+        image.set_from_icon_name(Icons.Symbolic.Help, Gtk.IconSize.MENU)
 
         self.button_help.set_image(image)
 
@@ -475,11 +478,17 @@ class DialogEditor(Dialog):
         grid_header = Gtk.Box()
         grid_search = Gtk.Box()
 
+        self.grid_infobar = Gtk.Box()
+
         # Properties
+        self.dialog_box.set_spacing(0)
+
         grid_header.set_spacing(8)
         grid_header.set_orientation(Gtk.Orientation.HORIZONTAL)
 
         Gtk.StyleContext.add_class(grid_search.get_style_context(), "linked")
+
+        self.grid_infobar.set_orientation(Gtk.Orientation.VERTICAL)
 
         # ------------------------------------
         #   Path
@@ -493,6 +502,19 @@ class DialogEditor(Dialog):
             Gtk.EntryIconPosition.PRIMARY, Icons.Symbolic.Text)
         self.entry_path.set_icon_activatable(
             Gtk.EntryIconPosition.PRIMARY, False)
+
+        # ------------------------------------
+        #   Infobar
+        # ------------------------------------
+
+        self.infobar = Gtk.InfoBar()
+
+        self.label_infobar = Gtk.Label()
+
+        # Properties
+        self.infobar.set_show_close_button(False)
+
+        self.label_infobar.set_use_markup(True)
 
         # ------------------------------------
         #   Editor
@@ -610,8 +632,12 @@ class DialogEditor(Dialog):
         grid_search.pack_start(self.button_bottom, False, True, 0)
 
         self.dialog_box.pack_start(grid_header, False, True, 0)
-        self.dialog_box.pack_start(scroll_editor, True, True, 0)
+        self.dialog_box.pack_start(self.grid_infobar, False, False, 0)
+        self.dialog_box.pack_start(scroll_editor, True, True, 8)
         self.dialog_box.pack_start(self.check_lines, False, False, 0)
+
+        self.infobar.get_content_area().pack_start(
+            self.label_infobar, True, True, 4)
 
 
     def __init_signals(self):
@@ -635,6 +661,31 @@ class DialogEditor(Dialog):
 
         self.entry_path.set_text(self.path)
 
+        self.set_size(int(self.__width), int(self.__height))
+
+        self.hide()
+        self.unrealize()
+
+        self.show_all()
+
+        self.infobar.show_all()
+        self.infobar.get_content_area().show_all()
+
+        self.text_editor.grab_focus()
+
+        self.set_infobar(_("Load file..."))
+        self.text_editor.set_sensitive(False)
+
+        loader = self.__on_load_file()
+        self.buffer_thread = idle_add(loader.__next__)
+
+
+    def __on_load_file(self):
+        """ Load file content into textbuffer
+        """
+
+        yield True
+
         if exists(expanduser(self.path)):
             with open(self.path, 'r') as pipe:
                 self.buffer_editor.set_text(''.join(pipe.readlines()))
@@ -643,14 +694,9 @@ class DialogEditor(Dialog):
         if type(self.buffer_editor) is not Gtk.TextBuffer:
             self.buffer_editor.set_undo_manager(None)
 
-        self.set_size(int(self.__width), int(self.__height))
-
-        self.hide()
-        self.unrealize()
-
-        self.show_all()
-
-        self.text_editor.grab_focus()
+        self.set_infobar()
+        self.text_editor.set_sensitive(True)
+        yield False
 
 
     def __on_break_line(self, widget):
@@ -804,6 +850,33 @@ class DialogEditor(Dialog):
         """
 
         self.modified_buffer = True
+
+
+    def set_infobar(self, text=str(), message_type=Gtk.MessageType.INFO):
+        """ Set infobar content
+
+        This function set the infobar widget to inform user for specific things
+
+        Others Parameters
+        -----------------
+        text : str
+            Message text (Default: None)
+        message_type : Gtk.MessageType
+            Message type (Default: Gtk.MessageType.INFO)
+        """
+
+        self.infobar.set_message_type(message_type)
+
+        # Set infobar visibility
+        if len(text) > 0:
+            if len(self.grid_infobar.get_children()) == 0:
+                self.infobar.set_margin_top(8)
+                self.grid_infobar.pack_start(self.infobar, True, True, 0)
+
+        elif len(self.grid_infobar.get_children()) > 0:
+            self.grid_infobar.remove(self.infobar)
+
+        self.label_infobar.set_markup(text)
 
 
 class DialogParameters(Dialog):

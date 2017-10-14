@@ -204,6 +204,11 @@ class Preferences(object):
             self.empty = Pixbuf.new(Colorspace.RGB, True, 8, 24, 24)
             self.empty.fill(0x00000000)
 
+            # Generate symbolic icons class
+            for key, value in Icons.__dict__.items():
+                if not key.startswith("__") and not key.endswith("__"):
+                    setattr(Icons.Symbolic, key, "%s-symbolic" % value)
+
             # Set light/dark theme
             on_change_theme(
                 self.config.getboolean("gem", "dark_theme", fallback=False))

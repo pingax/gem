@@ -710,7 +710,6 @@ class Interface(Gtk.Window):
         self.toolbar_item_notes.set_tooltip_text(
             _("Show selected game notes"))
 
-        # self.toolbar_item_properties.set_icon_name(Icons.Symbolic.Properties)
         self.toolbar_item_properties.set_tooltip_text(_("Edit emulator"))
 
         self.toolbar_item_separator.set_draw(False)
@@ -1322,17 +1321,13 @@ class Interface(Gtk.Window):
         self.toolbar.insert(self.toolbar_item_game_option, -1)
         self.toolbar.insert(self.toolbar_item_separator, -1)
         self.toolbar.insert(self.toolbar_item_consoles, -1)
-        # self.toolbar.insert(self.toolbar_item_properties, -1)
         self.toolbar.insert(Gtk.SeparatorToolItem(), -1)
         self.toolbar.insert(self.toolbar_item_search, -1)
-        # self.toolbar.insert(self.toolbar_item_filters, -1)
 
         self.toolbar_item_game_launch.add(self.toolbar_item_launch)
         self.toolbar_item_game_option.add(self.grid_options)
         self.toolbar_item_consoles.add(self.grid_toolbar_console)
-        # self.toolbar_item_consoles.add(self.combo_consoles)
         self.toolbar_item_search.add(self.grid_toolbar_filters)
-        # self.toolbar_item_search.add(self.entry_filter)
 
         self.grid_toolbar_console.pack_start(
             self.combo_consoles, False, False, 0)
@@ -1351,7 +1346,6 @@ class Interface(Gtk.Window):
         self.grid_options.pack_start(
             self.toolbar_item_notes, False, False, 0)
 
-        # self.toolbar_item_filters.add(self.tool_menu_filters)
         self.tool_menu_filters.add(self.tool_image_filters)
 
         self.toolbar_item_screenshots.add(self.toolbar_image_screenshots)
