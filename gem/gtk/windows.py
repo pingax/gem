@@ -1414,6 +1414,8 @@ class DialogViewer(Dialog):
 
         self.headerbar.set_has_subtitle(True)
 
+        self.dialog_box.set_spacing(0)
+
         # ------------------------------------
         #   Image
         # ------------------------------------
