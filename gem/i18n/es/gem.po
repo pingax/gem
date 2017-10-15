@@ -164,12 +164,6 @@ msgid "Alternative emulator"
 msgstr "Establecer el emulador por defecto"
 
 #
-# File: gem/preferences.py, line: 393
-#, fuzzy
-msgid "Alternative viewer"
-msgstr "Usar el visor nativo"
-
-#
 # File: gem/main.py, line: 132
 #, fuzzy, python-format
 msgid "An error occur during exec: %s"
@@ -310,6 +304,11 @@ msgstr "Cerrar interfaz"
 # File: gem/preferences.py, line: 434
 msgid "Colorscheme"
 msgstr "Esquema de color"
+
+#
+# File: gem/gtk/preferences.py, line: 802
+msgid "Columns appearance"
+msgstr ""
 
 #
 # File: gem/preferences.py, line: 1602
@@ -553,9 +552,9 @@ msgid "Help"
 msgstr "Ayuda"
 
 #
-# File: gem/gtk/preferences.py, line: 449
-msgid "Hide consoles without any game"
-msgstr "Esconder consolas sin juego"
+# File: gem/gtk/preferences.py, line: 489
+msgid "Hide empty consoles"
+msgstr ""
 
 #
 # File: gem/preferences.py, line: 98
@@ -627,9 +626,9 @@ msgid "Launch selected game"
 msgstr "Lanzar el juego seleccionado"
 
 #
-# File: gem/preferences.py, line: 304
-msgid "Load the last chosen console when start GEM"
-msgstr "Cargar la última consola escogida cuando inicie GEM"
+# File: gem/gtk/windows.py, line: 676
+msgid "Load file..."
+msgstr ""
 
 #
 # File: gem/interface.py, line: 1505
@@ -877,6 +876,12 @@ msgid "Save %s console for next startup"
 msgstr "Guardar %s para el próximo arranque"
 
 #
+# File: gem/interface.py, line: 2006
+#, fuzzy
+msgid "Screenshots viewer"
+msgstr "Mostrar las _capturas de pantalla"
+
+#
 # File: gem/windows.py, line: 385
 msgid "Search"
 msgstr "Buscar"
@@ -920,31 +925,6 @@ msgid "Shortcuts"
 msgstr "Enlaces"
 
 #
-# File: gem/preferences.py, line: 365
-msgid "Show \"Flags\" column"
-msgstr "Mostrar la columna \"Notificaciones\""
-
-#
-# File: gem/preferences.py, line: 364
-msgid "Show \"Installed\" column"
-msgstr "Mostrar la columna \"Instalados\""
-
-#
-# File: gem/preferences.py, line: 362
-msgid "Show \"Last launch\" column"
-msgstr "Mostrar la columna \"Último lanzamiento\""
-
-#
-# File: gem/preferences.py, line: 361
-msgid "Show \"Launch\" column"
-msgstr "Mostrar la columna \"Lanzar\""
-
-#
-# File: gem/preferences.py, line: 363
-msgid "Show \"Play time\" column"
-msgstr "Mostrar la columna \"Tiempo de juego\""
-
-#
 # File: gem/interface.py, line: 527
 msgid "Show _notes"
 msgstr "Mostrar las _notas"
@@ -961,24 +941,20 @@ msgid "Show _sidebar"
 msgstr "Mostrar los números de línea"
 
 #
-# File: gem/preferences.py, line: 257
-msgid "Show close buttons in header bar"
-msgstr "Mostrar los botones de cerrar en la barra principal"
-
-#
 # File: gem/preferences.py, line: 89
 msgid "Show game screenshots"
 msgstr "Mostrar las capturas de pantalla del juego"
 
 #
 # File: gem/preferences.py, line: 431
-msgid "Show line numbers"
+#, fuzzy
+msgid "Show grid lines"
 msgstr "Mostrar los números de línea"
 
 #
-# File: gem/preferences.py, line: 331
-msgid "Show lines in games list"
-msgstr "Mostrar líneas en la lista de juegos"
+# File: gem/preferences.py, line: 431
+msgid "Show line numbers"
+msgstr "Mostrar los números de línea"
 
 #
 # File: gem/interface.py, line: 375
@@ -1012,6 +988,18 @@ msgid "Show sidebar"
 msgstr "Mostrar los números de línea"
 
 #
+# File: gem/preferences.py, line: 257
+#, fuzzy
+msgid "Show window buttons in header bar"
+msgstr "Mostrar los botones de cerrar en la barra principal"
+
+#
+# File: gem/preferences.py, line: 431
+#, fuzzy
+msgid "Sidebar"
+msgstr "Mostrar los números de línea"
+
+#
 # File: gem/gtk/preferences.py, line: 542
 msgid "Sidebar position"
 msgstr ""
@@ -1037,6 +1025,16 @@ msgstr "Escoge un tipo de _memoria"
 # File: gem/gtk/mednafen.py, line: 287
 msgid "Specify a memory type"
 msgstr "Escoge un tipo de memoria"
+
+#
+# File: gem/gtk/preferences.py, line: 477
+msgid "Store the last selected console"
+msgstr ""
+
+#
+# File: gem/gtk/preferences.py, line: 648
+msgid "Switch to classic theme"
+msgstr ""
 
 #
 # File: gem/gtk/interface.py, line: 185
@@ -1186,9 +1184,10 @@ msgid "Use _dark theme"
 msgstr "Usar el tema _oscuro"
 
 #
-# File: gem/gtk/preferences.py, line: 511
-msgid "Use classic theme (Need to reboot GEM)"
-msgstr "Usar tema clásico (Necesita reiniciar GEM)"
+# File: gem/preferences.py, line: 393
+#, fuzzy
+msgid "Use alternative viewer"
+msgstr "Usar el visor nativo"
 
 #
 # File: gem/preferences.py, line: 1602
@@ -1200,11 +1199,6 @@ msgstr "Usar la ruta del archivo de configuración del emulador"
 # File: gem/gtk/windows.py, line: 796
 msgid "Use game key"
 msgstr ""
-
-#
-# File: gem/preferences.py, line: 393
-msgid "Use native viewer"
-msgstr "Usar el visor nativo"
 
 #
 # File: gem/preferences.py, line: 1348
@@ -1220,7 +1214,8 @@ msgstr "Usar el punto y coma para separar las extensiones"
 
 #
 # File: gem/preferences.py, line: 283
-msgid "Use translucent icons in games list"
+#, fuzzy
+msgid "Use translucent icons"
 msgstr "Usar iconos translúcidos en la lista de los juegos"
 
 #
@@ -1232,11 +1227,6 @@ msgstr "Valor"
 # File: gem/preferences.py, line: 99
 msgid "Vertical"
 msgstr "Vertical"
-
-#
-# File: gem/preferences.py, line: 156
-msgid "Viewer"
-msgstr "Visor"
 
 #
 # File: gem/interface.py, line: 1098
@@ -1379,6 +1369,12 @@ msgstr "agradecimientos a los traductores"
 #~ "<rom_path> = carpeta de la ROM"
 
 #
+# File: gem/preferences.py, line: 393
+#, fuzzy
+#~ msgid "Alternative viewer"
+#~ msgstr "Usar el visor nativo"
+
+#
 # File: gem/interface.py, line: 1892
 #~ msgid "Cannot find %s"
 #~ msgstr "No pude encontrar %s"
@@ -1443,6 +1439,11 @@ msgstr "agradecimientos a los traductores"
 #~ msgstr "Crear una nueva base de datos"
 
 #
+# File: gem/gtk/preferences.py, line: 449
+#~ msgid "Hide consoles without any game"
+#~ msgstr "Esconder consolas sin juego"
+
+#
 # File: gem/interface.py, line: 776
 #, fuzzy
 #~ msgid "Ignored games files"
@@ -1457,6 +1458,11 @@ msgstr "agradecimientos a los traductores"
 # File: gem/preferences.py, line: 84
 #~ msgid "Launch interface"
 #~ msgstr "Lanzar la interfaz"
+
+#
+# File: gem/preferences.py, line: 304
+#~ msgid "Load the last chosen console when start GEM"
+#~ msgstr "Cargar la última consola escogida cuando inicie GEM"
 
 #
 # File: gem/interface.py, line: 149
@@ -1479,10 +1485,10 @@ msgstr "agradecimientos a los traductores"
 #~ msgstr "OSError: %s"
 
 #
-# File: gem/interface.py, line: 2006
+# File: gem/preferences.py, line: 476
 #, fuzzy
-#~ msgid "Screenshots regex"
-#~ msgstr "Mostrar las _capturas de pantalla"
+#~ msgid "Options"
+#~ msgstr "Acción"
 
 #
 # File: gem/preferences.py, line: 1013
@@ -1490,9 +1496,39 @@ msgstr "agradecimientos a los traductores"
 #~ msgstr "Establecer el emulador por defecto"
 
 #
+# File: gem/preferences.py, line: 365
+#~ msgid "Show \"Flags\" column"
+#~ msgstr "Mostrar la columna \"Notificaciones\""
+
+#
+# File: gem/preferences.py, line: 364
+#~ msgid "Show \"Installed\" column"
+#~ msgstr "Mostrar la columna \"Instalados\""
+
+#
+# File: gem/preferences.py, line: 362
+#~ msgid "Show \"Last launch\" column"
+#~ msgstr "Mostrar la columna \"Último lanzamiento\""
+
+#
+# File: gem/preferences.py, line: 361
+#~ msgid "Show \"Launch\" column"
+#~ msgstr "Mostrar la columna \"Lanzar\""
+
+#
+# File: gem/preferences.py, line: 363
+#~ msgid "Show \"Play time\" column"
+#~ msgstr "Mostrar la columna \"Tiempo de juego\""
+
+#
 # File: gem/interface.py, line: 527
 #~ msgid "Show favorite games"
 #~ msgstr "Mostrar los juegos favoritos"
+
+#
+# File: gem/preferences.py, line: 331
+#~ msgid "Show lines in games list"
+#~ msgstr "Mostrar líneas en la lista de juegos"
 
 #
 # File: gem/interface.py, line: 532
@@ -1513,6 +1549,16 @@ msgstr "agradecimientos a los traductores"
 # File: gem/preferences.py, line: 1159
 #~ msgid "Update v%(old)s database to v%(new)s."
 #~ msgstr "Actualizar v%(old)s base de datos en v%(new)s."
+
+#
+# File: gem/gtk/preferences.py, line: 511
+#~ msgid "Use classic theme (Need to reboot GEM)"
+#~ msgstr "Usar tema clásico (Necesita reiniciar GEM)"
+
+#
+# File: gem/preferences.py, line: 156
+#~ msgid "Viewer"
+#~ msgstr "Visor"
 
 #
 # File: gem/preferences.py, line: 1196

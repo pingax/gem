@@ -324,36 +324,42 @@ class Preferences(object):
         self.box_notebook_consoles.set_spacing(8)
         self.box_notebook_emulators.set_spacing(8)
 
-        self.grid_general.set_row_spacing(8)
-        self.grid_general.set_column_spacing(8)
-        self.grid_general.set_border_width(16)
-        self.grid_general.set_column_homogeneous(False)
+        self.grid_general.set_row_spacing(6)
+        self.grid_general.set_column_spacing(12)
+        self.grid_general.set_border_width(18)
+        self.grid_general.set_column_homogeneous(True)
 
-        self.grid_interface.set_row_spacing(8)
-        self.grid_interface.set_column_spacing(8)
-        self.grid_interface.set_border_width(16)
-        self.grid_interface.set_column_homogeneous(False)
+        self.grid_interface.set_row_spacing(6)
+        self.grid_interface.set_column_spacing(12)
+        self.grid_interface.set_border_width(18)
+        self.grid_interface.set_column_homogeneous(True)
 
-        self.grid_shortcuts.set_row_spacing(8)
-        self.grid_shortcuts.set_column_spacing(8)
-        self.grid_shortcuts.set_border_width(16)
+        self.grid_shortcuts.set_row_spacing(6)
+        self.grid_shortcuts.set_column_spacing(12)
+        self.grid_shortcuts.set_border_width(18)
         self.grid_shortcuts.set_column_homogeneous(False)
 
-        self.grid_consoles.set_row_spacing(8)
-        self.grid_consoles.set_column_spacing(8)
-        self.grid_consoles.set_border_width(16)
+        self.grid_consoles.set_row_spacing(6)
+        self.grid_consoles.set_column_spacing(12)
+        self.grid_consoles.set_border_width(18)
         self.grid_consoles.set_column_homogeneous(False)
 
-        self.grid_emulators.set_row_spacing(8)
-        self.grid_emulators.set_column_spacing(8)
-        self.grid_emulators.set_border_width(16)
+        self.grid_emulators.set_row_spacing(6)
+        self.grid_emulators.set_column_spacing(12)
+        self.grid_emulators.set_border_width(18)
         self.grid_emulators.set_column_homogeneous(False)
 
-        self.grid_consoles_buttons.set_spacing(4)
-        self.grid_consoles_buttons.set_layout(Gtk.ButtonBoxStyle.CENTER)
+        Gtk.StyleContext.add_class(
+            self.grid_consoles_buttons.get_style_context(), "linked")
+        self.grid_consoles_buttons.set_spacing(-1)
+        self.grid_consoles_buttons.set_halign(Gtk.Align.CENTER)
+        self.grid_consoles_buttons.set_orientation(Gtk.Orientation.HORIZONTAL)
 
-        self.grid_emulators_buttons.set_spacing(4)
-        self.grid_emulators_buttons.set_layout(Gtk.ButtonBoxStyle.CENTER)
+        Gtk.StyleContext.add_class(
+            self.grid_emulators_buttons.get_style_context(), "linked")
+        self.grid_emulators_buttons.set_spacing(-1)
+        self.grid_emulators_buttons.set_halign(Gtk.Align.CENTER)
+        self.grid_emulators_buttons.set_orientation(Gtk.Orientation.HORIZONTAL)
 
         # ------------------------------------
         #   Headerbar
@@ -448,29 +454,106 @@ class Preferences(object):
 
         self.label_last_console = Gtk.Label()
         self.check_last_console = Gtk.Switch()
+
         self.label_hide_console = Gtk.Label()
         self.check_hide_console = Gtk.Switch()
 
         # Properties
+        self.label_behavior.set_hexpand(True)
         self.label_behavior.set_use_markup(True)
-        self.label_behavior.set_alignment(0, .5)
+        self.label_behavior.set_halign(Gtk.Align.CENTER)
         self.label_behavior.set_markup("<b>%s</b>" % _("Behavior"))
 
-        self.label_last_console.set_hexpand(True)
-        self.label_last_console.set_margin_left(32)
-        self.label_last_console.set_alignment(0, .5)
+        self.label_last_console.set_line_wrap(True)
+        self.label_last_console.set_alignment(1, 0.5)
+        self.label_last_console.set_halign(Gtk.Align.END)
+        self.label_last_console.set_justify(Gtk.Justification.RIGHT)
+        self.label_last_console.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
+        self.label_last_console.get_style_context().add_class("dim-label")
         self.label_last_console.set_text(
-            _("Load the last chosen console when start GEM"))
+            _("Store the last selected console"))
 
-        self.check_last_console.set_halign(Gtk.Align.END)
+        self.check_last_console.set_halign(Gtk.Align.START)
+        self.check_last_console.set_valign(Gtk.Align.CENTER)
 
-        self.label_hide_console.set_hexpand(True)
-        self.label_hide_console.set_margin_left(32)
-        self.label_hide_console.set_alignment(0, .5)
+        self.label_hide_console.set_line_wrap(True)
+        self.label_hide_console.set_alignment(1, 0.5)
+        self.label_hide_console.set_halign(Gtk.Align.END)
+        self.label_hide_console.set_justify(Gtk.Justification.RIGHT)
+        self.label_hide_console.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
+        self.label_hide_console.get_style_context().add_class("dim-label")
         self.label_hide_console.set_text(
-            _("Hide consoles without any game"))
+            _("Hide empty consoles"))
 
-        self.check_hide_console.set_halign(Gtk.Align.END)
+        self.check_hide_console.set_halign(Gtk.Align.START)
+        self.check_hide_console.set_valign(Gtk.Align.CENTER)
+
+        # ------------------------------------
+        #   General - Editor
+        # ------------------------------------
+
+        self.label_editor = Gtk.Label()
+
+        self.label_lines = Gtk.Label()
+        self.check_lines = Gtk.Switch()
+
+        self.label_editor_colorscheme = Gtk.Label()
+        self.model_colorsheme = Gtk.ListStore(str)
+        self.combo_colorsheme = Gtk.ComboBox()
+        self.cell_colorsheme = Gtk.CellRendererText()
+
+        self.label_editor_font = Gtk.Label()
+        self.font_editor = Gtk.FontButton()
+
+        # Properties
+        self.label_editor.set_margin_top(18)
+        self.label_editor.set_hexpand(True)
+        self.label_editor.set_use_markup(True)
+        self.label_editor.set_halign(Gtk.Align.CENTER)
+        self.label_editor.set_markup("<b>%s</b>" % _("Editor"))
+
+        self.label_lines.set_margin_bottom(6)
+        self.label_lines.set_line_wrap(True)
+        self.label_lines.set_alignment(1, 0.5)
+        self.label_lines.set_halign(Gtk.Align.END)
+        self.label_lines.set_justify(Gtk.Justification.RIGHT)
+        self.label_lines.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
+        self.label_lines.get_style_context().add_class("dim-label")
+        self.label_lines.set_label(
+            _("Show line numbers"))
+
+        self.check_lines.set_margin_bottom(6)
+        self.check_lines.set_halign(Gtk.Align.START)
+        self.check_lines.set_valign(Gtk.Align.CENTER)
+
+        self.label_editor_colorscheme.set_line_wrap(True)
+        self.label_editor_colorscheme.set_alignment(1, 0.5)
+        self.label_editor_colorscheme.set_halign(Gtk.Align.END)
+        self.label_editor_colorscheme.set_justify(Gtk.Justification.RIGHT)
+        self.label_editor_colorscheme.set_line_wrap_mode(
+            Pango.WrapMode.WORD_CHAR)
+        self.label_editor_colorscheme.get_style_context().add_class("dim-label")
+        self.label_editor_colorscheme.set_label(
+            _("Colorscheme"))
+
+        self.combo_colorsheme.set_model(self.model_colorsheme)
+        self.combo_colorsheme.set_id_column(0)
+        self.combo_colorsheme.pack_start(self.cell_colorsheme, True)
+        self.combo_colorsheme.add_attribute(self.cell_colorsheme, "text", 0)
+
+        self.label_editor_font.set_line_wrap(True)
+        self.label_editor_font.set_alignment(1, 0.5)
+        self.label_editor_font.set_halign(Gtk.Align.END)
+        self.label_editor_font.set_justify(Gtk.Justification.RIGHT)
+        self.label_editor_font.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
+        self.label_editor_font.get_style_context().add_class("dim-label")
+        self.label_editor_font.set_label(
+            _("Font"))
+
+        # HACK: Set an ellipsize mode for the label inside FontButton
+        for child in self.font_editor.get_child():
+            if type(child) == Gtk.Label:
+                child.set_ellipsize(Pango.EllipsizeMode.END)
 
         # ------------------------------------
         #   General - Viewer
@@ -478,48 +561,60 @@ class Preferences(object):
 
         self.label_viewer = Gtk.Label()
 
-        self.label_viewer_binary = Gtk.Label()
-
         self.label_native_viewer = Gtk.Label()
         self.check_native_viewer = Gtk.Switch()
 
+        self.label_viewer_binary = Gtk.Label()
         self.file_viewer_binary = Gtk.FileChooserButton()
 
+        self.label_viewer_options = Gtk.Label()
         self.entry_viewer_options = Gtk.Entry()
 
-        self.separator_viewer = Gtk.Separator()
-
         # Properties
-        self.label_viewer.set_margin_top(16)
-        self.label_viewer.set_alignment(0, .5)
+        self.label_viewer.set_margin_top(18)
+        self.label_viewer.set_hexpand(True)
         self.label_viewer.set_use_markup(True)
-        self.label_viewer.set_markup("<b>%s</b>" % _("Viewer"))
+        self.label_viewer.set_halign(Gtk.Align.CENTER)
+        self.label_viewer.set_markup("<b>%s</b>" % _("Screenshots viewer"))
 
-        self.label_viewer_binary.set_margin_left(32)
-        self.label_viewer_binary.set_alignment(0, .5)
-        self.label_viewer_binary.set_use_markup(True)
-        self.label_viewer_binary.set_markup(
-            "<b>%s</b>" % _("Alternative viewer"))
+        self.label_native_viewer.set_line_wrap(True)
+        self.label_native_viewer.set_alignment(1, 0.5)
+        self.label_native_viewer.set_halign(Gtk.Align.END)
+        self.label_native_viewer.set_justify(Gtk.Justification.RIGHT)
+        self.label_native_viewer.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
+        self.label_native_viewer.get_style_context().add_class("dim-label")
+        self.label_native_viewer.set_text(
+            _("Use alternative viewer"))
 
-        self.label_native_viewer.set_hexpand(True)
-        self.label_native_viewer.set_margin_left(32)
-        self.label_native_viewer.set_alignment(0, .5)
-        self.label_native_viewer.set_text(_("Use native viewer"))
+        self.check_native_viewer.set_halign(Gtk.Align.START)
+        self.check_native_viewer.set_valign(Gtk.Align.CENTER)
 
-        self.check_native_viewer.set_halign(Gtk.Align.END)
+        self.label_viewer_binary.set_line_wrap(True)
+        self.label_viewer_binary.set_alignment(1, 0.5)
+        self.label_viewer_binary.set_halign(Gtk.Align.END)
+        self.label_viewer_binary.set_justify(Gtk.Justification.RIGHT)
+        self.label_viewer_binary.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
+        self.label_viewer_binary.get_style_context().add_class("dim-label")
+        self.label_viewer_binary.set_text(
+            _("Binary"))
 
+        self.file_viewer_binary.set_margin_top(6)
         self.file_viewer_binary.set_hexpand(True)
-        self.file_viewer_binary.set_margin_left(64)
+
+        self.label_viewer_options.set_line_wrap(True)
+        self.label_viewer_options.set_alignment(1, 0.5)
+        self.label_viewer_options.set_halign(Gtk.Align.END)
+        self.label_viewer_options.set_justify(Gtk.Justification.RIGHT)
+        self.label_viewer_options.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
+        self.label_viewer_options.get_style_context().add_class("dim-label")
+        self.label_viewer_options.set_text(
+            _("Parameters"))
 
         self.entry_viewer_options.set_hexpand(True)
-        self.entry_viewer_options.set_margin_left(64)
         self.entry_viewer_options.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.PRIMARY, Icons.Terminal)
+            Gtk.EntryIconPosition.PRIMARY, Icons.Symbolic.Terminal)
         self.entry_viewer_options.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
-
-        self.separator_viewer.set_hexpand(True)
-        self.separator_viewer.set_margin_left(32)
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
 
         # ------------------------------------
         #   Interface
@@ -532,62 +627,97 @@ class Preferences(object):
 
         self.label_classic_theme = Gtk.Label()
         self.check_classic_theme = Gtk.Switch()
+
         self.label_header = Gtk.Label()
         self.check_header = Gtk.Switch()
+
+        # Properties
+        self.label_interface.set_hexpand(True)
+        self.label_interface.set_use_markup(True)
+        self.label_interface.set_halign(Gtk.Align.CENTER)
+        self.label_interface.set_markup("<b>%s</b>" % _("Interface"))
+
+        self.label_classic_theme.set_line_wrap(True)
+        self.label_classic_theme.set_alignment(1, 0.5)
+        self.label_classic_theme.set_halign(Gtk.Align.END)
+        self.label_classic_theme.set_justify(Gtk.Justification.RIGHT)
+        self.label_classic_theme.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
+        self.label_classic_theme.get_style_context().add_class("dim-label")
+        self.label_classic_theme.set_text(
+            _("Switch to classic theme"))
+
+        self.check_classic_theme.set_halign(Gtk.Align.START)
+        self.check_classic_theme.set_valign(Gtk.Align.CENTER)
+
+        self.label_header.set_line_wrap(True)
+        self.label_header.set_alignment(1, 0.5)
+        self.label_header.set_halign(Gtk.Align.END)
+        self.label_header.set_justify(Gtk.Justification.RIGHT)
+        self.label_header.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
+        self.label_header.get_style_context().add_class("dim-label")
+        self.label_header.set_text(
+            _("Show window buttons in header bar"))
+
+        self.check_header.set_halign(Gtk.Align.START)
+        self.check_header.set_valign(Gtk.Align.CENTER)
+
+        # ------------------------------------
+        #   Interface - Sidebar
+        # ------------------------------------
+
         self.label_sidebar = Gtk.Label()
-        self.check_sidebar = Gtk.Switch()
+
+        self.label_sidebar_show = Gtk.Label()
+        self.check_sidebar_show = Gtk.Switch()
+
         self.label_sidebar_screenshot = Gtk.Label()
         self.check_sidebar_screenshot = Gtk.Switch()
 
         self.label_sidebar_position = Gtk.Label()
-
         self.model_sidebar = Gtk.ListStore(str)
         self.combo_sidebar = Gtk.ComboBox()
-
         self.cell_sidebar = Gtk.CellRendererText()
 
-        self.separator_interface_sidebar = Gtk.Separator()
-
         # Properties
-        self.label_interface.set_markup("<b>%s</b>" % _("Interface"))
-        self.label_interface.set_use_markup(True)
-        self.label_interface.set_alignment(0, .5)
-
-        self.label_classic_theme.set_hexpand(True)
-        self.label_classic_theme.set_margin_left(32)
-        self.label_classic_theme.set_alignment(0, .5)
-        self.label_classic_theme.set_text(
-            _("Use classic theme (Need to reboot GEM)"))
-
-        self.check_classic_theme.set_halign(Gtk.Align.END)
-
-        self.label_header.set_hexpand(True)
-        self.label_header.set_margin_left(32)
-        self.label_header.set_alignment(0, .5)
-        self.label_header.set_text(
-            _("Show close buttons in header bar"))
-
-        self.check_header.set_halign(Gtk.Align.END)
-
+        self.label_sidebar.set_margin_top(18)
         self.label_sidebar.set_hexpand(True)
-        self.label_sidebar.set_margin_left(32)
-        self.label_sidebar.set_alignment(0, .5)
-        self.label_sidebar.set_text(_("Show sidebar"))
+        self.label_sidebar.set_use_markup(True)
+        self.label_sidebar.set_halign(Gtk.Align.CENTER)
+        self.label_sidebar.set_markup("<b>%s</b>" % _("Sidebar"))
 
-        self.check_sidebar.set_halign(Gtk.Align.END)
+        self.label_sidebar_show.set_line_wrap(True)
+        self.label_sidebar_show.set_alignment(1, 0.5)
+        self.label_sidebar_show.set_halign(Gtk.Align.END)
+        self.label_sidebar_show.set_justify(Gtk.Justification.RIGHT)
+        self.label_sidebar_show.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
+        self.label_sidebar_show.get_style_context().add_class("dim-label")
+        self.label_sidebar_show.set_text(
+            _("Show sidebar"))
 
-        self.label_sidebar_screenshot.set_hexpand(True)
-        self.label_sidebar_screenshot.set_margin_left(64)
-        self.label_sidebar_screenshot.set_alignment(0, .5)
+        self.check_sidebar_show.set_halign(Gtk.Align.START)
+        self.check_sidebar_show.set_valign(Gtk.Align.CENTER)
+
+        self.label_sidebar_screenshot.set_line_wrap(True)
+        self.label_sidebar_screenshot.set_alignment(1, 0.5)
+        self.label_sidebar_screenshot.set_halign(Gtk.Align.END)
+        self.label_sidebar_screenshot.set_justify(Gtk.Justification.RIGHT)
+        self.label_sidebar_screenshot.set_line_wrap_mode(
+            Pango.WrapMode.WORD_CHAR)
+        self.label_sidebar_screenshot.get_style_context().add_class("dim-label")
         self.label_sidebar_screenshot.set_text(
             _("Randomize game screenshot in sidebar"))
 
-        self.check_sidebar_screenshot.set_halign(Gtk.Align.END)
+        self.check_sidebar_screenshot.set_halign(Gtk.Align.START)
+        self.check_sidebar_screenshot.set_valign(Gtk.Align.CENTER)
 
-        self.label_sidebar_position.set_hexpand(True)
-        self.label_sidebar_position.set_margin_left(64)
-        self.label_sidebar_position.set_alignment(0, .5)
-        self.label_sidebar_position.set_label(_("Sidebar position"))
+        self.label_sidebar_position.set_line_wrap(True)
+        self.label_sidebar_position.set_alignment(1, 0.5)
+        self.label_sidebar_position.set_halign(Gtk.Align.END)
+        self.label_sidebar_position.set_justify(Gtk.Justification.RIGHT)
+        self.label_sidebar_position.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
+        self.label_sidebar_position.get_style_context().add_class("dim-label")
+        self.label_sidebar_position.set_label(
+            _("Sidebar position"))
 
         self.model_sidebar.set_sort_column_id(0, Gtk.SortType.ASCENDING)
 
@@ -595,9 +725,6 @@ class Preferences(object):
         self.combo_sidebar.set_id_column(0)
         self.combo_sidebar.pack_start(self.cell_sidebar, True)
         self.combo_sidebar.add_attribute(self.cell_sidebar, "text", 0)
-
-        self.separator_interface_sidebar.set_hexpand(True)
-        self.separator_interface_sidebar.set_margin_left(32)
 
         # ------------------------------------
         #   Interface - Games list
@@ -611,6 +738,50 @@ class Preferences(object):
 
         self.cell_lines = Gtk.CellRendererText()
 
+        self.label_icons = Gtk.Label()
+        self.check_icons = Gtk.Switch()
+
+        # Properties
+        self.label_treeview.set_margin_top(18)
+        self.label_treeview.set_hexpand(True)
+        self.label_treeview.set_use_markup(True)
+        self.label_treeview.set_halign(Gtk.Align.CENTER)
+        self.label_treeview.set_markup("<b>%s</b>" % _("Games list"))
+
+        self.label_treeview_lines.set_line_wrap(True)
+        self.label_treeview_lines.set_alignment(1, 0.5)
+        self.label_treeview_lines.set_halign(Gtk.Align.END)
+        self.label_treeview_lines.set_justify(Gtk.Justification.RIGHT)
+        self.label_treeview_lines.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
+        self.label_treeview_lines.get_style_context().add_class("dim-label")
+        self.label_treeview_lines.set_text(
+            _("Show grid lines"))
+
+        self.model_lines.set_sort_column_id(0, Gtk.SortType.ASCENDING)
+
+        self.combo_lines.set_model(self.model_lines)
+        self.combo_lines.set_id_column(0)
+        self.combo_lines.pack_start(self.cell_lines, True)
+        self.combo_lines.add_attribute(self.cell_lines, "text", 0)
+
+        self.label_icons.set_line_wrap(True)
+        self.label_icons.set_alignment(1, 0.5)
+        self.label_icons.set_halign(Gtk.Align.END)
+        self.label_icons.set_justify(Gtk.Justification.RIGHT)
+        self.label_icons.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
+        self.label_icons.get_style_context().add_class("dim-label")
+        self.label_icons.set_label(
+            _("Use translucent icons"))
+
+        self.check_icons.set_halign(Gtk.Align.START)
+        self.check_icons.set_valign(Gtk.Align.CENTER)
+
+        # ------------------------------------
+        #   Interface - Columns
+        # ------------------------------------
+
+        self.label_columns = Gtk.Label()
+
         self.label_play = Gtk.Label()
         self.check_play = Gtk.Switch()
         self.label_last_play = Gtk.Label()
@@ -621,127 +792,73 @@ class Preferences(object):
         self.check_installed = Gtk.Switch()
         self.label_flags = Gtk.Label()
         self.check_flags = Gtk.Switch()
-        self.label_icons = Gtk.Label()
-        self.check_icons = Gtk.Switch()
-
-        self.separator_interface_icons = Gtk.Separator()
-        self.separator_interface_game = Gtk.Separator()
 
         # Properties
-        self.label_treeview.set_markup("<b>%s</b>" % _("Games list"))
-        self.label_treeview.set_use_markup(True)
-        self.label_treeview.set_alignment(0, .5)
-        self.label_treeview.set_margin_top(16)
+        self.label_columns.set_margin_top(18)
+        self.label_columns.set_hexpand(True)
+        self.label_columns.set_use_markup(True)
+        self.label_columns.set_halign(Gtk.Align.CENTER)
+        self.label_columns.set_markup("<b>%s</b>" % _("Columns appearance"))
 
-        self.label_treeview_lines.set_hexpand(True)
-        self.label_treeview_lines.set_margin_left(32)
-        self.label_treeview_lines.set_alignment(0, .5)
-        self.label_treeview_lines.set_text(_("Show lines in games list"))
+        self.label_play.set_line_wrap(True)
+        self.label_play.set_alignment(1, 0.5)
+        self.label_play.set_halign(Gtk.Align.END)
+        self.label_play.set_justify(Gtk.Justification.RIGHT)
+        self.label_play.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
+        self.label_play.get_style_context().add_class("dim-label")
+        self.label_play.set_label(
+            _("Launch"))
 
-        self.model_lines.set_sort_column_id(0, Gtk.SortType.ASCENDING)
+        self.check_play.set_halign(Gtk.Align.START)
+        self.check_play.set_valign(Gtk.Align.CENTER)
 
-        self.combo_lines.set_model(self.model_lines)
-        self.combo_lines.set_id_column(0)
-        self.combo_lines.pack_start(self.cell_lines, True)
-        self.combo_lines.add_attribute(self.cell_lines, "text", 0)
+        self.label_last_play.set_line_wrap(True)
+        self.label_last_play.set_alignment(1, 0.5)
+        self.label_last_play.set_halign(Gtk.Align.END)
+        self.label_last_play.set_justify(Gtk.Justification.RIGHT)
+        self.label_last_play.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
+        self.label_last_play.get_style_context().add_class("dim-label")
+        self.label_last_play.set_label(
+            _("Last launch"))
 
-        self.label_play.set_hexpand(True)
-        self.label_play.set_margin_left(32)
-        self.label_play.set_alignment(0, .5)
-        self.label_play.set_label(_("Show \"Launch\" column"))
+        self.check_last_play.set_halign(Gtk.Align.START)
+        self.check_last_play.set_valign(Gtk.Align.CENTER)
 
-        self.check_play.set_halign(Gtk.Align.END)
+        self.label_play_time.set_line_wrap(True)
+        self.label_play_time.set_alignment(1, 0.5)
+        self.label_play_time.set_halign(Gtk.Align.END)
+        self.label_play_time.set_justify(Gtk.Justification.RIGHT)
+        self.label_play_time.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
+        self.label_play_time.get_style_context().add_class("dim-label")
+        self.label_play_time.set_label(
+            _("Play time"))
 
-        self.label_last_play.set_hexpand(True)
-        self.label_last_play.set_margin_left(32)
-        self.label_last_play.set_alignment(0, .5)
-        self.label_last_play.set_label(_("Show \"Last launch\" column"))
+        self.check_play_time.set_halign(Gtk.Align.START)
+        self.check_play_time.set_valign(Gtk.Align.CENTER)
 
-        self.check_last_play.set_halign(Gtk.Align.END)
+        self.label_installed.set_line_wrap(True)
+        self.label_installed.set_alignment(1, 0.5)
+        self.label_installed.set_halign(Gtk.Align.END)
+        self.label_installed.set_justify(Gtk.Justification.RIGHT)
+        self.label_installed.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
+        self.label_installed.get_style_context().add_class("dim-label")
+        self.label_installed.set_label(
+            _("Installed"))
 
-        self.label_play_time.set_hexpand(True)
-        self.label_play_time.set_margin_left(32)
-        self.label_play_time.set_alignment(0, .5)
-        self.label_play_time.set_label(_("Show \"Play time\" column"))
+        self.check_installed.set_halign(Gtk.Align.START)
+        self.check_installed.set_valign(Gtk.Align.CENTER)
 
-        self.check_play_time.set_halign(Gtk.Align.END)
+        self.label_flags.set_line_wrap(True)
+        self.label_flags.set_alignment(1, 0.5)
+        self.label_flags.set_halign(Gtk.Align.END)
+        self.label_flags.set_justify(Gtk.Justification.RIGHT)
+        self.label_flags.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
+        self.label_flags.get_style_context().add_class("dim-label")
+        self.label_flags.set_label(
+            _("Flags"))
 
-        self.label_installed.set_hexpand(True)
-        self.label_installed.set_margin_left(32)
-        self.label_installed.set_alignment(0, .5)
-        self.label_installed.set_label(_("Show \"Installed\" column"))
-
-        self.check_installed.set_halign(Gtk.Align.END)
-
-        self.label_flags.set_hexpand(True)
-        self.label_flags.set_margin_left(32)
-        self.label_flags.set_alignment(0, .5)
-        self.label_flags.set_label(_("Show \"Flags\" column"))
-
-        self.check_flags.set_halign(Gtk.Align.END)
-
-        self.label_icons.set_hexpand(True)
-        self.label_icons.set_margin_left(32)
-        self.label_icons.set_alignment(0, .5)
-        self.label_icons.set_label(_("Use translucent icons in games list"))
-
-        self.check_icons.set_halign(Gtk.Align.END)
-
-        self.separator_interface_icons.set_hexpand(True)
-        self.separator_interface_icons.set_margin_left(32)
-
-        self.separator_interface_game.set_hexpand(True)
-        self.separator_interface_game.set_margin_left(32)
-
-        # ------------------------------------
-        #   Interface - Editor
-        # ------------------------------------
-
-        self.label_editor = Gtk.Label()
-        self.label_editor_colorscheme = Gtk.Label()
-        self.label_editor_font = Gtk.Label()
-
-        self.label_lines = Gtk.Label()
-        self.check_lines = Gtk.Switch()
-
-        self.model_colorsheme = Gtk.ListStore(str)
-        self.combo_colorsheme = Gtk.ComboBox()
-
-        self.cell_colorsheme = Gtk.CellRendererText()
-
-        self.font_editor = Gtk.FontButton()
-        self.separator_interface_editor = Gtk.Separator()
-
-        # Properties
-        self.label_editor.set_margin_top(16)
-        self.label_editor.set_use_markup(True)
-        self.label_editor.set_alignment(0, .5)
-        self.label_editor.set_markup("<b>%s</b>" % _("Editor"))
-
-        self.label_editor_colorscheme.set_hexpand(True)
-        self.label_editor_colorscheme.set_margin_left(32)
-        self.label_editor_colorscheme.set_alignment(0, .5)
-        self.label_editor_colorscheme.set_label(_("Colorscheme"))
-
-        self.label_editor_font.set_hexpand(True)
-        self.label_editor_font.set_margin_left(32)
-        self.label_editor_font.set_alignment(0, .5)
-        self.label_editor_font.set_label(_("Font"))
-
-        self.label_lines.set_hexpand(True)
-        self.label_lines.set_margin_left(32)
-        self.label_lines.set_alignment(0, .5)
-        self.label_lines.set_label(_("Show line numbers"))
-
-        self.check_lines.set_halign(Gtk.Align.END)
-
-        self.combo_colorsheme.set_model(self.model_colorsheme)
-        self.combo_colorsheme.set_id_column(0)
-        self.combo_colorsheme.pack_start(self.cell_colorsheme, True)
-        self.combo_colorsheme.add_attribute(self.cell_colorsheme, "text", 0)
-
-        self.separator_interface_editor.set_hexpand(True)
-        self.separator_interface_editor.set_margin_left(32)
+        self.check_flags.set_halign(Gtk.Align.START)
+        self.check_flags.set_valign(Gtk.Align.CENTER)
 
         # ------------------------------------
         #   Shortcuts
@@ -769,7 +886,8 @@ class Preferences(object):
             "with your keyboard."))
         self.label_shortcuts.set_line_wrap_mode(Pango.WrapMode.WORD)
         self.label_shortcuts.set_line_wrap(True)
-        self.label_shortcuts.set_alignment(0, .5)
+        self.label_shortcuts.set_halign(Gtk.Align.START)
+        self.label_shortcuts.set_justify(Gtk.Justification.FILL)
 
         self.scroll_shortcuts_treeview.set_hexpand(True)
         self.scroll_shortcuts_treeview.set_vexpand(True)
@@ -1057,64 +1175,71 @@ class Preferences(object):
             self.scroll_emulators, self.box_notebook_emulators)
 
         # General tab
-        self.grid_general.attach(self.label_behavior, 0, 0, 4, 1)
-        self.grid_general.attach(self.label_last_console, 0, 1, 3, 1)
-        self.grid_general.attach(self.check_last_console, 3, 1, 1, 1)
-        self.grid_general.attach(self.label_hide_console, 0, 2, 3, 1)
-        self.grid_general.attach(self.check_hide_console, 3, 2, 1, 1)
+        self.grid_general.attach(self.label_behavior, 0, 0, 3, 1)
 
-        self.grid_general.attach(self.label_viewer, 0, 4, 4, 1)
-        self.grid_general.attach(self.label_native_viewer, 0, 5, 3, 1)
-        self.grid_general.attach(self.check_native_viewer, 3, 5, 1, 1)
-        self.grid_general.attach(self.separator_viewer, 0, 6, 4, 1)
-        self.grid_general.attach(self.label_viewer_binary, 0, 7, 4, 1)
-        self.grid_general.attach(self.file_viewer_binary, 0, 8, 4, 1)
-        self.grid_general.attach(self.entry_viewer_options, 0, 9, 4, 1)
+        self.grid_general.attach(self.label_last_console, 0, 1, 2, 1)
+        self.grid_general.attach(self.check_last_console, 2, 1, 1, 1)
+        self.grid_general.attach(self.label_hide_console, 0, 2, 2, 1)
+        self.grid_general.attach(self.check_hide_console, 2, 2, 1, 1)
+
+        self.grid_general.attach(self.label_editor, 0, 3, 3, 1)
+
+        self.grid_general.attach(self.label_lines, 0, 4, 2, 1)
+        self.grid_general.attach(self.check_lines, 2, 4, 1, 1)
+        self.grid_general.attach(self.label_editor_colorscheme, 0, 5, 2, 1)
+        self.grid_general.attach(self.combo_colorsheme, 2, 5, 1, 1)
+        self.grid_general.attach(self.label_editor_font, 0, 6, 2, 1)
+        self.grid_general.attach(self.font_editor, 2, 6, 1, 1)
+
+        self.grid_general.attach(self.label_viewer, 0, 7, 3, 1)
+
+        self.grid_general.attach(self.label_native_viewer, 0, 8, 2, 1)
+        self.grid_general.attach(self.check_native_viewer, 2, 8, 1, 1)
+        # self.grid_general.attach(self.label_viewer_binary, 0, 9, 1, 1)
+        self.grid_general.attach(self.file_viewer_binary, 0, 9, 3, 1)
+        # self.grid_general.attach(self.label_viewer_options, 0, 10, 1, 1)
+        self.grid_general.attach(self.entry_viewer_options, 0, 10, 3, 1)
 
         self.view_general.add(self.grid_general)
 
         self.scroll_general.add(self.view_general)
 
         # Interface tab
-        self.grid_interface.attach(self.label_interface, 0, 0, 4, 1)
-        self.grid_interface.attach(self.label_classic_theme, 0, 1, 3, 1)
-        self.grid_interface.attach(self.check_classic_theme, 3, 1, 1, 1)
-        self.grid_interface.attach(self.label_header, 0, 2, 3, 1)
-        self.grid_interface.attach(self.check_header, 3, 2, 1, 1)
-        self.grid_interface.attach(self.separator_interface_sidebar, 0, 3, 4, 1)
-        self.grid_interface.attach(self.label_sidebar, 0, 4, 3, 1)
-        self.grid_interface.attach(self.check_sidebar, 3, 4, 1, 1)
-        self.grid_interface.attach(self.label_sidebar_screenshot, 0, 5, 3, 1)
-        self.grid_interface.attach(self.check_sidebar_screenshot, 3, 5, 1, 1)
+        self.grid_interface.attach(self.label_interface, 0, 0, 3, 1)
+
+        self.grid_interface.attach(self.label_classic_theme, 0, 1, 2, 1)
+        self.grid_interface.attach(self.check_classic_theme, 2, 1, 1, 1)
+        self.grid_interface.attach(self.label_header, 0, 2, 2, 1)
+        self.grid_interface.attach(self.check_header, 2, 2, 1, 1)
+
+        self.grid_interface.attach(self.label_sidebar, 0, 3, 3, 1)
+
+        self.grid_interface.attach(self.label_sidebar_show, 0, 4, 2, 1)
+        self.grid_interface.attach(self.check_sidebar_show, 2, 4, 1, 1)
+        self.grid_interface.attach(self.label_sidebar_screenshot, 0, 5, 2, 1)
+        self.grid_interface.attach(self.check_sidebar_screenshot, 2, 5, 1, 1)
         self.grid_interface.attach(self.label_sidebar_position, 0, 6, 2, 1)
-        self.grid_interface.attach(self.combo_sidebar, 2, 6, 2, 1)
+        self.grid_interface.attach(self.combo_sidebar, 2, 6, 1, 1)
 
-        self.grid_interface.attach(self.label_treeview, 0, 10, 4, 1)
-        self.grid_interface.attach(self.label_treeview_lines, 0, 11, 2, 1)
-        self.grid_interface.attach(self.combo_lines, 2, 11, 2, 1)
-        self.grid_interface.attach(self.separator_interface_icons, 0, 12, 4, 1)
-        self.grid_interface.attach(self.label_icons, 0, 13, 3, 1)
-        self.grid_interface.attach(self.check_icons, 3, 13, 1, 1)
-        self.grid_interface.attach(self.separator_interface_game, 0, 14, 4, 1)
-        self.grid_interface.attach(self.label_play, 0, 15, 3, 1)
-        self.grid_interface.attach(self.check_play, 3, 15, 1, 1)
-        self.grid_interface.attach(self.label_last_play, 0, 16, 3, 1)
-        self.grid_interface.attach(self.check_last_play, 3, 16, 1, 1)
-        self.grid_interface.attach(self.label_play_time, 0, 17, 3, 1)
-        self.grid_interface.attach(self.check_play_time, 3, 17, 1, 1)
-        self.grid_interface.attach(self.label_installed, 0, 18, 3, 1)
-        self.grid_interface.attach(self.check_installed, 3, 18, 1, 1)
-        self.grid_interface.attach(self.label_flags, 0, 19, 3, 1)
-        self.grid_interface.attach(self.check_flags, 3, 19, 1, 1)
+        self.grid_interface.attach(self.label_treeview, 0, 7, 3, 1)
 
-        self.grid_interface.attach(self.label_editor, 0, 20, 4, 1)
-        self.grid_interface.attach(self.label_lines, 0, 21, 3, 1)
-        self.grid_interface.attach(self.check_lines, 3, 21, 1, 1)
-        self.grid_interface.attach(self.separator_interface_editor, 0, 22, 4, 1)
-        self.grid_interface.attach(self.label_editor_colorscheme, 0, 23, 2, 1)
-        self.grid_interface.attach(self.combo_colorsheme, 2, 23, 2, 1)
-        self.grid_interface.attach(self.label_editor_font, 0, 24, 2, 1)
-        self.grid_interface.attach(self.font_editor, 2, 24, 2, 1)
+        self.grid_interface.attach(self.label_treeview_lines, 0, 8, 2, 1)
+        self.grid_interface.attach(self.combo_lines, 2, 8, 1, 1)
+        self.grid_interface.attach(self.label_icons, 0, 9, 2, 1)
+        self.grid_interface.attach(self.check_icons, 2, 9, 1, 1)
+
+        self.grid_interface.attach(self.label_columns, 0, 10, 3, 1)
+
+        self.grid_interface.attach(self.label_play, 0, 11, 2, 1)
+        self.grid_interface.attach(self.check_play, 2, 11, 1, 1)
+        self.grid_interface.attach(self.label_last_play, 0, 12, 2, 1)
+        self.grid_interface.attach(self.check_last_play, 2, 12, 1, 1)
+        self.grid_interface.attach(self.label_play_time, 0, 13, 2, 1)
+        self.grid_interface.attach(self.check_play_time, 2, 13, 1, 1)
+        self.grid_interface.attach(self.label_installed, 0, 14, 2, 1)
+        self.grid_interface.attach(self.check_installed, 2, 14, 1, 1)
+        self.grid_interface.attach(self.label_flags, 0, 15, 2, 1)
+        self.grid_interface.attach(self.check_flags, 2, 15, 1, 1)
 
         self.view_interface.add(self.grid_interface)
 
@@ -1134,11 +1259,11 @@ class Preferences(object):
         self.grid_consoles.attach(self.scroll_consoles_treeview, 0, 0, 1, 1)
         self.grid_consoles.attach(self.grid_consoles_buttons, 0, 1, 1, 1)
 
-        self.grid_consoles_buttons.pack_end(
+        self.grid_consoles_buttons.pack_start(
             self.button_consoles_add, False, False, 0)
-        self.grid_consoles_buttons.pack_end(
+        self.grid_consoles_buttons.pack_start(
             self.button_consoles_modify, False, False, 0)
-        self.grid_consoles_buttons.pack_end(
+        self.grid_consoles_buttons.pack_start(
             self.button_consoles_remove, False, False, 0)
 
         self.scroll_consoles_treeview.add(self.treeview_consoles)
@@ -1151,11 +1276,11 @@ class Preferences(object):
         self.grid_emulators.attach(self.scroll_emulators_treeview, 0, 0, 1, 1)
         self.grid_emulators.attach(self.grid_emulators_buttons, 0, 1, 1, 1)
 
-        self.grid_emulators_buttons.pack_end(
+        self.grid_emulators_buttons.pack_start(
             self.button_emulators_add, False, False, 0)
-        self.grid_emulators_buttons.pack_end(
+        self.grid_emulators_buttons.pack_start(
             self.button_emulators_modify, False, False, 0)
-        self.grid_emulators_buttons.pack_end(
+        self.grid_emulators_buttons.pack_start(
             self.button_emulators_remove, False, False, 0)
 
         self.scroll_emulators_treeview.add(self.treeview_emulators)
@@ -1194,7 +1319,7 @@ class Preferences(object):
         #   Interface
         # ------------------------------------
 
-        self.check_sidebar.connect(
+        self.check_sidebar_show.connect(
             "state_set", self.__on_check_sidebar)
 
         # ------------------------------------
@@ -1263,8 +1388,8 @@ class Preferences(object):
         """
 
         # Update widget sensitive status
-        self.__on_check_sidebar(None)
-        self.__on_check_native_viewer(None)
+        self.__on_check_sidebar()
+        self.__on_check_native_viewer()
 
         self.window.show_all()
 
@@ -1306,7 +1431,7 @@ class Preferences(object):
             self.config.modify("gem", "show_header",
                 int(self.check_header.get_active()))
             self.config.modify("gem", "show_sidebar",
-                int(self.check_sidebar.get_active()))
+                int(self.check_sidebar_show.get_active()))
             self.config.modify("gem", "show_random_screenshot",
                 int(self.check_sidebar_screenshot.get_active()))
             self.config.modify("gem", "sidebar_orientation",
@@ -1329,7 +1454,7 @@ class Preferences(object):
                 self.lines[self.combo_lines.get_active_id()])
 
             self.config.modify("viewer", "native",
-                int(self.check_native_viewer.get_active()))
+                int(not self.check_native_viewer.get_active()))
             self.config.modify("viewer", "binary",
                 self.file_viewer_binary.get_filename())
             self.config.modify("viewer", "options",
@@ -1401,7 +1526,7 @@ class Preferences(object):
         #   Viewer
         # ------------------------------------
 
-        self.check_native_viewer.set_active(self.config.getboolean(
+        self.check_native_viewer.set_active(not self.config.getboolean(
             "viewer", "native", fallback=True))
 
         self.file_viewer_binary.set_filename(
@@ -1417,7 +1542,7 @@ class Preferences(object):
             "gem", "use_classic_theme", fallback=True))
         self.check_header.set_active(self.config.getboolean(
             "gem", "show_header", fallback=True))
-        self.check_sidebar.set_active(self.config.getboolean(
+        self.check_sidebar_show.set_active(self.config.getboolean(
             "gem", "show_sidebar", fallback=True))
         self.check_sidebar_screenshot.set_active(self.config.getboolean(
             "gem", "show_random_screenshot", fallback=True))
@@ -1689,7 +1814,7 @@ class Preferences(object):
             self.__on_modify_item(None, manager, True)
 
 
-    def __on_check_native_viewer(self, widget, state=None):
+    def __on_check_native_viewer(self, widget=None, state=None):
         """ Update native viewer widget from checkbutton state
 
         Parameters
@@ -1698,14 +1823,13 @@ class Preferences(object):
             Object which receive signal
         """
 
-        status = not self.check_native_viewer.get_active()
+        status = self.check_native_viewer.get_active()
 
-        self.label_viewer_binary.set_sensitive(status)
         self.file_viewer_binary.set_sensitive(status)
         self.entry_viewer_options.set_sensitive(status)
 
 
-    def __on_check_sidebar(self, widget, state=None):
+    def __on_check_sidebar(self, widget=None, state=None):
         """ Update sidebar widget from checkbutton state
 
         Parameters
@@ -1714,7 +1838,7 @@ class Preferences(object):
             Object which receive signal
         """
 
-        status = self.check_sidebar.get_active()
+        status = self.check_sidebar_show.get_active()
 
         self.label_sidebar_screenshot.set_sensitive(status)
         self.check_sidebar_screenshot.set_sensitive(status)
@@ -1929,7 +2053,7 @@ class PreferencesConsole(Dialog):
         # Properties
         self.set_transient_for(self.interface.window)
 
-        self.set_size(640, 480)
+        self.set_size(640, -1)
         self.set_resizable(True)
 
         self.add_buttons(
@@ -1939,6 +2063,8 @@ class PreferencesConsole(Dialog):
         self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
 
         self.set_help(self.interface.window, self.help_data)
+
+        self.dialog_box.set_border_width(18)
 
         # ------------------------------------
         #   Main scrolling
@@ -1951,18 +2077,17 @@ class PreferencesConsole(Dialog):
         # Properties
         self.scroll.add(self.viewport)
 
+        self.scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER)
+
         # ------------------------------------
         #   Grids
         # ------------------------------------
 
         self.grid = Gtk.Grid()
 
-        self.grid_emulator = Gtk.Box()
-        self.grid_ignores = Gtk.Box()
-
         # Properties
-        self.grid.set_row_spacing(8)
-        self.grid.set_column_spacing(8)
+        self.grid.set_row_spacing(6)
+        self.grid.set_column_spacing(12)
         self.grid.set_column_homogeneous(False)
 
         # ------------------------------------
@@ -1979,16 +2104,22 @@ class PreferencesConsole(Dialog):
         self.image_console = Gtk.Image()
 
         # Properties
-        self.label_name.set_markup("<b>%s</b>" % _("Name"))
-        self.label_name.set_use_markup(True)
-        self.label_name.set_alignment(0, .5)
+        self.label_name.set_alignment(1, 0.5)
+        self.label_name.set_halign(Gtk.Align.END)
+        self.label_name.set_justify(Gtk.Justification.RIGHT)
+        self.label_name.get_style_context().add_class("dim-label")
+        self.label_name.set_text(_("Name"))
+
         self.entry_name.set_hexpand(True)
         self.entry_name.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
 
-        self.label_folder.set_markup("<b>%s</b>" % _("Games folder"))
-        self.label_folder.set_use_markup(True)
-        self.label_folder.set_alignment(0, .5)
+        self.label_folder.set_alignment(1, 0.5)
+        self.label_folder.set_halign(Gtk.Align.END)
+        self.label_folder.set_justify(Gtk.Justification.RIGHT)
+        self.label_folder.get_style_context().add_class("dim-label")
+        self.label_folder.set_text(_("Games folder"))
+
         self.file_folder.set_action(Gtk.FileChooserAction.SELECT_FOLDER)
         self.file_folder.set_hexpand(True)
 
@@ -1999,7 +2130,6 @@ class PreferencesConsole(Dialog):
         #   Emulator options
         # ------------------------------------
 
-        self.image_emulator = Gtk.Image()
         self.label_emulator = Gtk.Label()
 
         self.label_default = Gtk.Label()
@@ -2015,15 +2145,17 @@ class PreferencesConsole(Dialog):
         self.entry_extensions = Gtk.Entry()
 
         # Properties
-        self.image_emulator.set_from_icon_name(Icons.Gaming, Gtk.IconSize.MENU)
-        self.label_emulator.set_markup("<b>%s</b>" % _("Default emulator"))
+        self.label_emulator.set_margin_top(18)
+        self.label_emulator.set_hexpand(True)
         self.label_emulator.set_use_markup(True)
-        self.label_emulator.set_alignment(0, .5)
+        self.label_emulator.set_halign(Gtk.Align.CENTER)
+        self.label_emulator.set_markup("<b>%s</b>" % _("Default emulator"))
 
-        self.label_default.set_markup(_("Emulator"))
-        self.label_default.set_use_markup(True)
-        self.label_default.set_alignment(0, .5)
-        self.label_default.set_margin_left(32)
+        self.label_default.set_alignment(1, 0.5)
+        self.label_default.set_halign(Gtk.Align.END)
+        self.label_default.set_justify(Gtk.Justification.RIGHT)
+        self.label_default.get_style_context().add_class("dim-label")
+        self.label_default.set_text(_("Emulator"))
 
         self.model_emulators.set_sort_column_id(1, Gtk.SortType.ASCENDING)
 
@@ -2039,10 +2171,11 @@ class PreferencesConsole(Dialog):
 
         cell_emulators_icon.set_padding(4, 0)
 
-        self.label_extensions.set_markup(_("Extensions"))
-        self.label_extensions.set_use_markup(True)
-        self.label_extensions.set_alignment(0, .5)
-        self.label_extensions.set_margin_left(32)
+        self.label_extensions.set_alignment(1, 0.5)
+        self.label_extensions.set_halign(Gtk.Align.END)
+        self.label_extensions.set_justify(Gtk.Justification.RIGHT)
+        self.label_extensions.get_style_context().add_class("dim-label")
+        self.label_extensions.set_text(_("Extensions"))
 
         self.entry_extensions.set_hexpand(True)
         self.entry_extensions.set_tooltip_text(
@@ -2050,30 +2183,36 @@ class PreferencesConsole(Dialog):
         self.entry_extensions.set_placeholder_text(
             _("Use space to separate extensions"))
         self.entry_extensions.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
 
         # ------------------------------------
         #   Ignores options
         # ------------------------------------
 
-        self.image_ignores = Gtk.Image()
+        self.scroll_ignores = Gtk.ScrolledWindow()
+
+        self.viewport_ignores = Gtk.Viewport()
+
         self.label_ignores = Gtk.Label()
 
         self.text_ignores = Gtk.TextView()
         self.buffer_ignores = self.text_ignores.get_buffer()
 
         # Properties
-        self.image_ignores.set_from_icon_name(Icons.Document, Gtk.IconSize.MENU)
+        self.scroll_ignores.add(self.viewport_ignores)
+        self.scroll_ignores.set_size_request(-1, 200)
+
+        self.label_ignores.set_margin_top(18)
+        self.label_ignores.set_hexpand(True)
+        self.label_ignores.set_use_markup(True)
+        self.label_ignores.set_halign(Gtk.Align.CENTER)
         self.label_ignores.set_markup(
             "<b>%s</b>" % _("Regular expressions for ignored files"))
-        self.label_ignores.set_use_markup(True)
-        self.label_ignores.set_alignment(0, .5)
 
         self.text_ignores.set_top_margin(8)
         self.text_ignores.set_left_margin(8)
         self.text_ignores.set_right_margin(8)
         self.text_ignores.set_bottom_margin(8)
-        self.text_ignores.set_margin_left(32)
         self.text_ignores.set_monospace(True)
         self.text_ignores.set_vexpand(True)
         self.text_ignores.set_wrap_mode(Gtk.WrapMode.NONE)
@@ -2084,7 +2223,7 @@ class PreferencesConsole(Dialog):
         """
 
         # Main widgets
-        self.dialog_box.pack_start(self.scroll, True, True, 8)
+        self.dialog_box.pack_start(self.scroll, True, True, 0)
 
         self.viewport.add(self.grid)
 
@@ -2095,39 +2234,24 @@ class PreferencesConsole(Dialog):
         self.grid.attach(self.label_folder, 0, 1, 1, 1)
         self.grid.attach(self.file_folder, 1, 1, 1, 1)
 
-        self.grid.attach(Gtk.Separator(), 2, 0, 1, 2)
+        self.grid.attach(self.button_console, 2, 0, 1, 2)
 
-        self.grid.attach(self.button_console, 3, 0, 1, 2)
+        self.grid.attach(self.label_emulator, 0, 2, 3, 1)
 
-        self.grid.attach(Gtk.Separator(), 0, 2, 4, 1)
+        self.grid.attach(self.label_default, 0, 3, 1, 1)
+        self.grid.attach(self.combo_emulators, 1, 3, 2, 1)
 
-        self.grid.attach(self.grid_emulator, 0, 3, 4, 1)
+        self.grid.attach(self.label_extensions, 0, 4, 1, 1)
+        self.grid.attach(self.entry_extensions, 1, 4, 2, 1)
 
-        self.grid.attach(self.label_default, 0, 4, 1, 1)
-        self.grid.attach(self.combo_emulators, 1, 4, 3, 1)
-
-        self.grid.attach(self.label_extensions, 0, 5, 1, 1)
-        self.grid.attach(self.entry_extensions, 1, 5, 3, 1)
-
-        self.grid.attach(Gtk.Separator(), 0, 7, 4, 1)
-
-        self.grid.attach(self.grid_ignores, 0, 8, 4, 1)
-        self.grid.attach(self.text_ignores, 0, 9, 4, 1)
+        self.grid.attach(self.label_ignores, 0, 5, 3, 1)
+        self.grid.attach(self.scroll_ignores, 0, 6, 3, 1)
 
         # Console options
         self.button_console.set_image(self.image_console)
 
-        # Emulator
-        self.grid_emulator.pack_start(
-            self.image_emulator, False, False, 0)
-        self.grid_emulator.pack_start(
-            self.label_emulator, True, True, 8)
-
         # Ignores
-        self.grid_ignores.pack_start(
-            self.image_ignores, False, False, 0)
-        self.grid_ignores.pack_start(
-            self.label_ignores, True, True, 8)
+        self.viewport_ignores.add(self.text_ignores)
 
 
     def __init_signals(self):
@@ -2158,7 +2282,7 @@ class PreferencesConsole(Dialog):
 
             warning = self.empty
             if not emulator.exists:
-                warning = icon_load(Icons.Warning, 24, self.empty)
+                warning = icon_load(Icons.Symbolic.Warning, 24, self.empty)
 
             emulators_rows[emulator.id] = self.model_emulators.append(
                 [icon, emulator.name, warning])
@@ -2200,6 +2324,10 @@ class PreferencesConsole(Dialog):
         need_reload = False
 
         self.show_all()
+
+        # Restore scrollbars when the dialog was resized to optimal size
+        self.scroll.set_policy(
+            Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
 
         response = self.run()
 
@@ -2314,7 +2442,7 @@ class PreferencesConsole(Dialog):
             if identifier in self.api.consoles and (not self.modify or (
                 self.modify and not name == self.console.name)):
 
-                icon, status, tooltip = Icons.Error, False, _(
+                icon, status, tooltip = Icons.Symbolic.Error, False, _(
                     "This console already exist, please, choose another name")
 
         self.entry_name.set_icon_from_icon_name(
@@ -2432,7 +2560,7 @@ class PreferencesEmulator(Dialog):
         # Properties
         self.set_transient_for(self.interface.window)
 
-        self.set_size(640, 560)
+        self.set_size(640, -1)
         self.set_resizable(True)
 
         self.add_buttons(
@@ -2442,6 +2570,8 @@ class PreferencesEmulator(Dialog):
         self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
 
         self.set_help(self.interface.window, self.help_data)
+
+        self.dialog_box.set_border_width(18)
 
         # ------------------------------------
         #   Main scrolling
@@ -2454,33 +2584,26 @@ class PreferencesEmulator(Dialog):
         # Properties
         self.scroll.add(self.viewport)
 
+        self.scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER)
+
         # ------------------------------------
         #   Grids
         # ------------------------------------
 
         self.grid = Gtk.Grid()
-        self.grid_misc = Gtk.Grid()
-
-        self.grid_configuration = Gtk.Box()
-        self.grid_arguments = Gtk.Box()
-        self.grid_files = Gtk.Box()
 
         self.grid_binary = Gtk.Box()
 
         # Properties
-        self.grid.set_row_spacing(8)
-        self.grid.set_column_spacing(8)
+        self.grid.set_row_spacing(6)
+        self.grid.set_column_spacing(12)
         self.grid.set_column_homogeneous(False)
-
-        self.grid_misc.set_row_spacing(8)
-        self.grid_misc.set_column_spacing(8)
-        self.grid_misc.set_column_homogeneous(False)
 
         Gtk.StyleContext.add_class(
             self.grid_binary.get_style_context(), "linked")
 
         # ------------------------------------
-        #   Emulator options
+        #   Emulator
         # ------------------------------------
 
         self.label_name = Gtk.Label()
@@ -2492,14 +2615,60 @@ class PreferencesEmulator(Dialog):
         self.button_binary = Gtk.Button()
         self.image_binary = Gtk.Image()
 
-        self.image_configuration = Gtk.Image()
-        self.label_configuration = Gtk.Label()
-        self.file_configuration = Gtk.FileChooserButton()
-
         self.button_emulator = Gtk.Button()
         self.image_emulator = Gtk.Image()
 
-        self.image_arguments = Gtk.Image()
+        # Properties
+        self.label_name.set_alignment(1, 0.5)
+        self.label_name.set_halign(Gtk.Align.END)
+        self.label_name.set_justify(Gtk.Justification.RIGHT)
+        self.label_name.get_style_context().add_class("dim-label")
+        self.label_name.set_text(
+            _("Name"))
+
+        self.entry_name.set_hexpand(True)
+        self.entry_name.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
+
+        self.label_binary.set_alignment(1, 0.5)
+        self.label_binary.set_halign(Gtk.Align.END)
+        self.label_binary.set_justify(Gtk.Justification.RIGHT)
+        self.label_binary.get_style_context().add_class("dim-label")
+        self.label_binary.set_text(
+            _("Binary"))
+
+        self.entry_binary.set_hexpand(True)
+        self.entry_binary.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
+
+        self.image_binary.set_from_icon_name(
+            Icons.Symbolic.Open, Gtk.IconSize.MENU)
+
+        self.button_emulator.set_size_request(64, 64)
+        self.image_emulator.set_size_request(64, 64)
+
+        # ------------------------------------
+        #   Emulator - Configuration
+        # ------------------------------------
+
+        self.label_configuration = Gtk.Label()
+
+        self.file_configuration = Gtk.FileChooserButton()
+
+        # Properties
+        self.label_configuration.set_alignment(1, 0.5)
+        self.label_configuration.set_halign(Gtk.Align.END)
+        self.label_configuration.set_justify(Gtk.Justification.RIGHT)
+        self.label_configuration.get_style_context().add_class("dim-label")
+        self.label_configuration.set_text(
+            _("Configuration file"))
+
+        self.file_configuration.set_hexpand(True)
+
+        # ------------------------------------
+        #   Emulator - Arguments
+        # ------------------------------------
+
         self.label_arguments = Gtk.Label()
 
         self.label_launch = Gtk.Label()
@@ -2511,7 +2680,56 @@ class PreferencesEmulator(Dialog):
         self.label_fullscreen = Gtk.Label()
         self.entry_fullscreen = Gtk.Entry()
 
-        self.image_files = Gtk.Image()
+        # Properties
+        self.label_arguments.set_margin_top(18)
+        self.label_arguments.set_hexpand(True)
+        self.label_arguments.set_use_markup(True)
+        self.label_arguments.set_halign(Gtk.Align.CENTER)
+        self.label_arguments.set_markup(
+            "<b>%s</b>" % _("Emulator arguments"))
+
+        self.label_launch.set_alignment(1, 0.5)
+        self.label_launch.set_halign(Gtk.Align.END)
+        self.label_launch.set_justify(Gtk.Justification.RIGHT)
+        self.label_launch.get_style_context().add_class("dim-label")
+        self.label_launch.set_label(
+            _("Default options"))
+
+        self.entry_launch.set_hexpand(True)
+        self.entry_launch.set_placeholder_text(
+            _("Default arguments to add when launch emulator"))
+        self.entry_launch.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
+
+        self.label_windowed.set_alignment(1, 0.5)
+        self.label_windowed.set_halign(Gtk.Align.END)
+        self.label_windowed.set_justify(Gtk.Justification.RIGHT)
+        self.label_windowed.get_style_context().add_class("dim-label")
+        self.label_windowed.set_label(
+            _("Windowed"))
+
+        self.entry_windowed.set_placeholder_text(
+            _("Argument which activate windowded mode"))
+        self.entry_windowed.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
+
+        self.label_fullscreen.set_alignment(1, 0.5)
+        self.label_fullscreen.set_halign(Gtk.Align.END)
+        self.label_fullscreen.set_justify(Gtk.Justification.RIGHT)
+        self.label_fullscreen.get_style_context().add_class("dim-label")
+        self.label_fullscreen.set_label(
+            _("Fullscreen"))
+
+        self.entry_fullscreen.set_hexpand(True)
+        self.entry_fullscreen.set_placeholder_text(
+            _("Argument which activate fullscreen mode"))
+        self.entry_fullscreen.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
+
+        # ------------------------------------
+        #   Emulator - Files pattern
+        # ------------------------------------
+
         self.label_files = Gtk.Label()
 
         self.label_save = Gtk.Label()
@@ -2523,98 +2741,46 @@ class PreferencesEmulator(Dialog):
         self.label_joker = Gtk.Label()
 
         # Properties
-        self.label_name.set_markup(
-            "<b>%s</b>" % _("Name"))
-        self.label_name.set_use_markup(True)
-        self.label_name.set_alignment(0, .5)
-        self.entry_name.set_hexpand(True)
-        self.entry_name.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
-
-        self.label_binary.set_markup(
-            "<b>%s</b>" % _("Binary"))
-        self.label_binary.set_use_markup(True)
-        self.label_binary.set_alignment(0, .5)
-        self.entry_binary.set_hexpand(True)
-        self.entry_binary.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
-
-        self.image_binary.set_from_icon_name(
-            Icons.Open, Gtk.IconSize.MENU)
-
-        self.button_emulator.set_size_request(64, 64)
-        self.image_emulator.set_size_request(64, 64)
-
-        self.image_configuration.set_from_icon_name(
-            Icons.Document, Gtk.IconSize.MENU)
-        self.label_configuration.set_markup(
-            "<b>%s</b>" % _("Configuration file"))
-        self.label_configuration.set_use_markup(True)
-        self.label_configuration.set_alignment(0, .5)
-        self.file_configuration.set_margin_left(32)
-
-        self.image_arguments.set_from_icon_name(
-            Icons.Terminal, Gtk.IconSize.MENU)
-        self.label_arguments.set_markup(
-            "<b>%s</b>" % _("Emulator arguments"))
-        self.label_arguments.set_use_markup(True)
-        self.label_arguments.set_alignment(0, .5)
-
-        self.label_launch.set_label(_("Default options"))
-        self.label_launch.set_alignment(0, .5)
-        self.label_launch.set_margin_left(32)
-        self.entry_launch.set_hexpand(True)
-        self.entry_launch.set_placeholder_text(
-            _("Default arguments to add when launch emulator"))
-        self.entry_launch.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
-
-        self.label_windowed.set_label(_("Windowed"))
-        self.label_windowed.set_alignment(0, .5)
-        self.label_windowed.set_margin_left(32)
-        self.entry_windowed.set_hexpand(True)
-        self.entry_windowed.set_placeholder_text(
-            _("Argument which activate windowded mode"))
-        self.entry_windowed.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
-
-        self.label_fullscreen.set_label(_("Fullscreen"))
-        self.label_fullscreen.set_alignment(0, .5)
-        self.label_fullscreen.set_margin_left(32)
-        self.entry_fullscreen.set_hexpand(True)
-        self.entry_fullscreen.set_placeholder_text(
-            _("Argument which activate fullscreen mode"))
-        self.entry_fullscreen.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
-
-        self.image_files.set_from_icon_name(
-            Icons.Folder, Gtk.IconSize.MENU)
+        self.label_files.set_margin_top(18)
+        self.label_files.set_hexpand(True)
+        self.label_files.set_use_markup(True)
+        self.label_files.set_halign(Gtk.Align.CENTER)
         self.label_files.set_markup(
             "<b>%s</b>" % _("Files patterns"))
-        self.label_files.set_use_markup(True)
-        self.label_files.set_alignment(0, .5)
 
-        self.label_save.set_label(_("Save"))
-        self.label_save.set_alignment(0, .5)
-        self.label_save.set_margin_left(32)
+        self.label_save.set_alignment(1, 0.5)
+        self.label_save.set_halign(Gtk.Align.END)
+        self.label_save.set_justify(Gtk.Justification.RIGHT)
+        self.label_save.get_style_context().add_class("dim-label")
+        self.label_save.set_label(
+            _("Save"))
+
         self.entry_save.set_hexpand(True)
         self.entry_save.set_placeholder_text(
             _("Pattern to detect savestates files"))
         self.entry_save.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
 
-        self.label_screenshots.set_label(_("Snapshots"))
-        self.label_screenshots.set_alignment(0, .5)
-        self.label_screenshots.set_margin_left(32)
+        self.label_screenshots.set_alignment(1, 0.5)
+        self.label_screenshots.set_halign(Gtk.Align.END)
+        self.label_screenshots.set_justify(Gtk.Justification.RIGHT)
+        self.label_screenshots.get_style_context().add_class("dim-label")
+        self.label_screenshots.set_label(
+            _("Snapshots"))
+
         self.entry_screenshots.set_hexpand(True)
         self.entry_screenshots.set_placeholder_text(
             _("Pattern to detect screenshots files"))
         self.entry_screenshots.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
 
-        self.label_joker.set_alignment(1, .5)
         self.label_joker.set_use_markup(True)
-        self.label_joker.set_markup("<i>%s</i>" % _("* can be used as joker"))
+        self.label_joker.set_alignment(1, 0.5)
+        self.label_joker.set_halign(Gtk.Align.END)
+        self.label_joker.set_justify(Gtk.Justification.RIGHT)
+        self.label_joker.get_style_context().add_class("dim-label")
+        self.label_joker.set_markup(
+            "<i>%s</i>" % _("* can be used as joker"))
 
 
     def __init_packing(self):
@@ -2622,7 +2788,7 @@ class PreferencesEmulator(Dialog):
         """
 
         # Main widgets
-        self.dialog_box.pack_start(self.scroll, True, True, 8)
+        self.dialog_box.pack_start(self.scroll, True, True, 0)
 
         self.viewport.add(self.grid)
 
@@ -2633,37 +2799,29 @@ class PreferencesEmulator(Dialog):
         self.grid.attach(self.label_binary, 0, 1, 1, 1)
         self.grid.attach(self.grid_binary, 1, 1, 1, 1)
 
-        self.grid.attach(Gtk.Separator(), 2, 0, 1, 2)
+        self.grid.attach(self.button_emulator, 2, 0, 1, 2)
 
-        self.grid.attach(self.button_emulator, 3, 0, 1, 2)
+        self.grid.attach(self.label_configuration, 0, 2, 1, 1)
+        self.grid.attach(self.file_configuration, 1, 2, 2, 1)
 
-        self.grid.attach(Gtk.Separator(), 0, 2, 4, 1)
+        self.grid.attach(self.label_arguments, 0, 4, 3, 1)
 
-        self.grid.attach(self.grid_configuration, 0, 3, 4, 1)
-        self.grid.attach(self.file_configuration, 0, 4, 4, 1)
+        self.grid.attach(self.label_launch, 0, 5, 1, 1)
+        self.grid.attach(self.entry_launch, 1, 5, 2, 1)
 
-        self.grid.attach(Gtk.Separator(), 0, 5, 4, 1)
+        self.grid.attach(self.label_windowed, 0, 6, 1, 1)
+        self.grid.attach(self.entry_windowed, 1, 6, 2, 1)
+        self.grid.attach(self.label_fullscreen, 0, 7, 1, 1)
+        self.grid.attach(self.entry_fullscreen, 1, 7, 2, 1)
 
-        self.grid.attach(self.grid_misc, 0, 6, 4, 1)
+        self.grid.attach(self.label_files, 0, 8, 3, 1)
 
-        self.grid_misc.attach(self.grid_arguments, 0, 0, 2, 1)
-        self.grid_misc.attach(self.label_launch, 0, 1, 1, 1)
-        self.grid_misc.attach(self.entry_launch, 1, 1, 1, 1)
-        self.grid_misc.attach(Gtk.Separator(), 1, 2, 1, 1)
-        self.grid_misc.attach(self.label_windowed, 0, 3, 1, 1)
-        self.grid_misc.attach(self.entry_windowed, 1, 3, 1, 1)
-        self.grid_misc.attach(self.label_fullscreen, 0, 4, 1, 1)
-        self.grid_misc.attach(self.entry_fullscreen, 1, 4, 1, 1)
+        self.grid.attach(self.label_save, 0, 9, 1, 1)
+        self.grid.attach(self.entry_save, 1, 9, 2, 1)
+        self.grid.attach(self.label_screenshots, 0, 10, 1, 1)
+        self.grid.attach(self.entry_screenshots, 1, 10, 2, 1)
 
-        self.grid_misc.attach(Gtk.Separator(), 0, 5, 2, 1)
-
-        self.grid_misc.attach(self.grid_files, 0, 6, 2, 1)
-        self.grid_misc.attach(self.label_save, 0, 7, 1, 1)
-        self.grid_misc.attach(self.entry_save, 1, 7, 1, 1)
-        self.grid_misc.attach(self.label_screenshots, 0, 8, 1, 1)
-        self.grid_misc.attach(self.entry_screenshots, 1, 8, 1, 1)
-
-        self.grid_misc.attach(self.label_joker, 0, 9, 2, 1)
+        self.grid.attach(self.label_joker, 0, 11, 3, 1)
 
         # Emulator options
         self.button_binary.set_image(self.image_binary)
@@ -2673,24 +2831,6 @@ class PreferencesEmulator(Dialog):
         # Emulator binary
         self.grid_binary.pack_start(self.entry_binary, True, True, 0)
         self.grid_binary.pack_start(self.button_binary, False, False, 0)
-
-        # Emulator configuration
-        self.grid_configuration.pack_start(
-            self.image_configuration, False, False, 0)
-        self.grid_configuration.pack_start(
-            self.label_configuration, True, True, 8)
-
-        # Emulator arguments
-        self.grid_arguments.pack_start(
-            self.image_arguments, False, False, 0)
-        self.grid_arguments.pack_start(
-            self.label_arguments, True, True, 8)
-
-        # Emulator files
-        self.grid_files.pack_start(
-            self.image_files, False, False, 0)
-        self.grid_files.pack_start(
-            self.label_files, True, True, 8)
 
 
     def __init_signals(self):
@@ -2762,6 +2902,10 @@ class PreferencesEmulator(Dialog):
         need_reload = False
 
         self.show_all()
+
+        # Restore scrollbars when the dialog was resized to optimal size
+        self.scroll.set_policy(
+            Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
 
         response = self.run()
 
@@ -2871,7 +3015,7 @@ class PreferencesEmulator(Dialog):
             if identifier in self.api.emulators and (not self.modify or (
                 self.modify and not name == self.emulator.name)):
 
-                icon, status, tooltip = Icons.Error, False, _(
+                icon, status, tooltip = Icons.Symbolic.Error, False, _(
                     "This emulator already exist, please, choose another name")
 
         if widget == self.entry_name:
@@ -3009,6 +3153,8 @@ class IconViewer(Dialog):
             Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
             Gtk.STOCK_OK, Gtk.ResponseType.OK)
 
+        self.dialog_box.set_border_width(18)
+
         # ------------------------------------
         #   Grid
         # ------------------------------------
@@ -3020,13 +3166,13 @@ class IconViewer(Dialog):
         box_switch = Gtk.Box()
 
         # Properties
-        scrollview.set_border_width(4)
+        scrollview.set_border_width(0)
         scrollview.set_policy(
             Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         view.set_shadow_type(Gtk.ShadowType.NONE)
 
-        box.set_row_spacing(4)
-        box.set_column_spacing(8)
+        box.set_row_spacing(6)
+        box.set_column_spacing(12)
         box.set_column_homogeneous(False)
 
         box_switch.set_spacing(0)
