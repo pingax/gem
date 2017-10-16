@@ -304,11 +304,33 @@ class Preferences(object):
         self.box_notebook_consoles = Gtk.Box()
         self.box_notebook_emulators = Gtk.Box()
 
-        self.grid_general = Gtk.Grid()
-        self.grid_interface = Gtk.Grid()
+        self.grid_general = Gtk.Box()
+        self.grid_interface = Gtk.Box()
         self.grid_shortcuts = Gtk.Grid()
         self.grid_consoles = Gtk.Grid()
         self.grid_emulators = Gtk.Grid()
+
+        self.grid_last_console = Gtk.Box()
+        self.grid_hide_console = Gtk.Box()
+        self.grid_lines = Gtk.Box()
+        self.grid_colorsheme = Gtk.Box()
+        self.grid_font = Gtk.Box()
+        self.grid_viewer = Gtk.Box()
+        self.grid_binary = Gtk.Box()
+        self.grid_options = Gtk.Box()
+
+        self.grid_theme_classic = Gtk.Box()
+        self.grid_theme_header = Gtk.Box()
+        self.grid_sidebar_show = Gtk.Box()
+        self.grid_sidebar_screenshot = Gtk.Box()
+        self.grid_sidebar_position = Gtk.Box()
+        self.grid_games_lines = Gtk.Box()
+        self.grid_games_icons = Gtk.Box()
+        self.grid_columns_play = Gtk.Box()
+        self.grid_columns_last_play = Gtk.Box()
+        self.grid_columns_play_time = Gtk.Box()
+        self.grid_columns_installed = Gtk.Box()
+        self.grid_columns_flags = Gtk.Box()
 
         self.grid_consoles_buttons = Gtk.ButtonBox()
         self.grid_emulators_buttons = Gtk.ButtonBox()
@@ -324,15 +346,15 @@ class Preferences(object):
         self.box_notebook_consoles.set_spacing(8)
         self.box_notebook_emulators.set_spacing(8)
 
-        self.grid_general.set_row_spacing(6)
-        self.grid_general.set_column_spacing(12)
+        self.grid_general.set_spacing(6)
         self.grid_general.set_border_width(18)
-        self.grid_general.set_column_homogeneous(True)
+        self.grid_general.set_halign(Gtk.Align.CENTER)
+        self.grid_general.set_orientation(Gtk.Orientation.VERTICAL)
 
-        self.grid_interface.set_row_spacing(6)
-        self.grid_interface.set_column_spacing(12)
+        self.grid_interface.set_spacing(6)
         self.grid_interface.set_border_width(18)
-        self.grid_interface.set_column_homogeneous(True)
+        self.grid_interface.set_halign(Gtk.Align.CENTER)
+        self.grid_interface.set_orientation(Gtk.Orientation.VERTICAL)
 
         self.grid_shortcuts.set_row_spacing(6)
         self.grid_shortcuts.set_column_spacing(12)
@@ -348,6 +370,53 @@ class Preferences(object):
         self.grid_emulators.set_column_spacing(12)
         self.grid_emulators.set_border_width(18)
         self.grid_emulators.set_column_homogeneous(False)
+
+        self.grid_last_console.set_spacing(12)
+        self.grid_last_console.set_homogeneous(True)
+        self.grid_hide_console.set_spacing(12)
+        self.grid_hide_console.set_homogeneous(True)
+
+        self.grid_lines.set_spacing(12)
+        self.grid_lines.set_homogeneous(True)
+        self.grid_colorsheme.set_spacing(12)
+        self.grid_colorsheme.set_homogeneous(True)
+        self.grid_font.set_spacing(12)
+        self.grid_font.set_homogeneous(True)
+
+        self.grid_viewer.set_spacing(12)
+        self.grid_viewer.set_homogeneous(True)
+        self.grid_binary.set_spacing(12)
+        self.grid_binary.set_homogeneous(True)
+        self.grid_options.set_spacing(12)
+        self.grid_options.set_homogeneous(True)
+
+        self.grid_theme_classic.set_spacing(12)
+        self.grid_theme_classic.set_homogeneous(True)
+        self.grid_theme_header.set_spacing(12)
+        self.grid_theme_header.set_homogeneous(True)
+
+        self.grid_sidebar_show.set_spacing(12)
+        self.grid_sidebar_show.set_homogeneous(True)
+        self.grid_sidebar_screenshot.set_spacing(12)
+        self.grid_sidebar_screenshot.set_homogeneous(True)
+        self.grid_sidebar_position.set_spacing(12)
+        self.grid_sidebar_position.set_homogeneous(True)
+
+        self.grid_games_lines.set_spacing(12)
+        self.grid_games_lines.set_homogeneous(True)
+        self.grid_games_icons.set_spacing(12)
+        self.grid_games_icons.set_homogeneous(True)
+
+        self.grid_columns_play.set_spacing(12)
+        self.grid_columns_play.set_homogeneous(True)
+        self.grid_columns_last_play.set_spacing(12)
+        self.grid_columns_last_play.set_homogeneous(True)
+        self.grid_columns_play_time.set_spacing(12)
+        self.grid_columns_play_time.set_homogeneous(True)
+        self.grid_columns_installed.set_spacing(12)
+        self.grid_columns_installed.set_homogeneous(True)
+        self.grid_columns_flags.set_spacing(12)
+        self.grid_columns_flags.set_homogeneous(True)
 
         Gtk.StyleContext.add_class(
             self.grid_consoles_buttons.get_style_context(), "linked")
@@ -467,6 +536,7 @@ class Preferences(object):
         self.label_last_console.set_line_wrap(True)
         self.label_last_console.set_alignment(1, 0.5)
         self.label_last_console.set_halign(Gtk.Align.END)
+        self.label_last_console.set_valign(Gtk.Align.CENTER)
         self.label_last_console.set_justify(Gtk.Justification.RIGHT)
         self.label_last_console.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
         self.label_last_console.get_style_context().add_class("dim-label")
@@ -479,6 +549,7 @@ class Preferences(object):
         self.label_hide_console.set_line_wrap(True)
         self.label_hide_console.set_alignment(1, 0.5)
         self.label_hide_console.set_halign(Gtk.Align.END)
+        self.label_hide_console.set_valign(Gtk.Align.CENTER)
         self.label_hide_console.set_justify(Gtk.Justification.RIGHT)
         self.label_hide_console.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
         self.label_hide_console.get_style_context().add_class("dim-label")
@@ -516,6 +587,7 @@ class Preferences(object):
         self.label_lines.set_line_wrap(True)
         self.label_lines.set_alignment(1, 0.5)
         self.label_lines.set_halign(Gtk.Align.END)
+        self.label_lines.set_valign(Gtk.Align.CENTER)
         self.label_lines.set_justify(Gtk.Justification.RIGHT)
         self.label_lines.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
         self.label_lines.get_style_context().add_class("dim-label")
@@ -529,6 +601,7 @@ class Preferences(object):
         self.label_editor_colorscheme.set_line_wrap(True)
         self.label_editor_colorscheme.set_alignment(1, 0.5)
         self.label_editor_colorscheme.set_halign(Gtk.Align.END)
+        self.label_editor_colorscheme.set_valign(Gtk.Align.CENTER)
         self.label_editor_colorscheme.set_justify(Gtk.Justification.RIGHT)
         self.label_editor_colorscheme.set_line_wrap_mode(
             Pango.WrapMode.WORD_CHAR)
@@ -544,6 +617,7 @@ class Preferences(object):
         self.label_editor_font.set_line_wrap(True)
         self.label_editor_font.set_alignment(1, 0.5)
         self.label_editor_font.set_halign(Gtk.Align.END)
+        self.label_editor_font.set_valign(Gtk.Align.CENTER)
         self.label_editor_font.set_justify(Gtk.Justification.RIGHT)
         self.label_editor_font.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
         self.label_editor_font.get_style_context().add_class("dim-label")
@@ -580,6 +654,7 @@ class Preferences(object):
         self.label_native_viewer.set_line_wrap(True)
         self.label_native_viewer.set_alignment(1, 0.5)
         self.label_native_viewer.set_halign(Gtk.Align.END)
+        self.label_native_viewer.set_valign(Gtk.Align.CENTER)
         self.label_native_viewer.set_justify(Gtk.Justification.RIGHT)
         self.label_native_viewer.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
         self.label_native_viewer.get_style_context().add_class("dim-label")
@@ -589,14 +664,16 @@ class Preferences(object):
         self.check_native_viewer.set_halign(Gtk.Align.START)
         self.check_native_viewer.set_valign(Gtk.Align.CENTER)
 
+        self.label_viewer_binary.set_margin_top(6)
         self.label_viewer_binary.set_line_wrap(True)
         self.label_viewer_binary.set_alignment(1, 0.5)
         self.label_viewer_binary.set_halign(Gtk.Align.END)
+        self.label_viewer_binary.set_valign(Gtk.Align.CENTER)
         self.label_viewer_binary.set_justify(Gtk.Justification.RIGHT)
         self.label_viewer_binary.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
         self.label_viewer_binary.get_style_context().add_class("dim-label")
         self.label_viewer_binary.set_text(
-            _("Binary"))
+            _("Viewer binary"))
 
         self.file_viewer_binary.set_margin_top(6)
         self.file_viewer_binary.set_hexpand(True)
@@ -604,6 +681,7 @@ class Preferences(object):
         self.label_viewer_options.set_line_wrap(True)
         self.label_viewer_options.set_alignment(1, 0.5)
         self.label_viewer_options.set_halign(Gtk.Align.END)
+        self.label_viewer_options.set_valign(Gtk.Align.CENTER)
         self.label_viewer_options.set_justify(Gtk.Justification.RIGHT)
         self.label_viewer_options.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
         self.label_viewer_options.get_style_context().add_class("dim-label")
@@ -1175,71 +1253,166 @@ class Preferences(object):
             self.scroll_emulators, self.box_notebook_emulators)
 
         # General tab
-        self.grid_general.attach(self.label_behavior, 0, 0, 3, 1)
+        self.grid_general.pack_start(
+            self.label_behavior, False, False, 0)
+        self.grid_general.pack_start(
+            self.grid_last_console, False, False, 0)
+        self.grid_general.pack_start(
+            self.grid_hide_console, False, False, 0)
+        self.grid_general.pack_start(
+            self.label_editor, False, False, 0)
+        self.grid_general.pack_start(
+            self.grid_lines, False, False, 0)
+        self.grid_general.pack_start(
+            self.grid_colorsheme, False, False, 0)
+        self.grid_general.pack_start(
+            self.grid_font, False, False, 0)
+        self.grid_general.pack_start(
+            self.label_viewer, False, False, 0)
+        self.grid_general.pack_start(
+            self.grid_viewer, False, False, 0)
+        self.grid_general.pack_start(
+            self.grid_binary, False, False, 0)
+        self.grid_general.pack_start(
+            self.grid_options, False, False, 0)
 
-        self.grid_general.attach(self.label_last_console, 0, 1, 2, 1)
-        self.grid_general.attach(self.check_last_console, 2, 1, 1, 1)
-        self.grid_general.attach(self.label_hide_console, 0, 2, 2, 1)
-        self.grid_general.attach(self.check_hide_console, 2, 2, 1, 1)
+        self.grid_last_console.pack_start(
+            self.label_last_console, True, True, 0)
+        self.grid_last_console.pack_start(
+            self.check_last_console, True, True, 0)
 
-        self.grid_general.attach(self.label_editor, 0, 3, 3, 1)
+        self.grid_hide_console.pack_start(
+            self.label_hide_console, True, True, 0)
+        self.grid_hide_console.pack_start(
+            self.check_hide_console, True, True, 0)
 
-        self.grid_general.attach(self.label_lines, 0, 4, 2, 1)
-        self.grid_general.attach(self.check_lines, 2, 4, 1, 1)
-        self.grid_general.attach(self.label_editor_colorscheme, 0, 5, 2, 1)
-        self.grid_general.attach(self.combo_colorsheme, 2, 5, 1, 1)
-        self.grid_general.attach(self.label_editor_font, 0, 6, 2, 1)
-        self.grid_general.attach(self.font_editor, 2, 6, 1, 1)
+        self.grid_lines.pack_start(
+            self.label_lines, True, True, 0)
+        self.grid_lines.pack_start(
+            self.check_lines, True, True, 0)
 
-        self.grid_general.attach(self.label_viewer, 0, 7, 3, 1)
+        self.grid_colorsheme.pack_start(
+            self.label_editor_colorscheme, True, True, 0)
+        self.grid_colorsheme.pack_start(
+            self.combo_colorsheme, True, True, 0)
 
-        self.grid_general.attach(self.label_native_viewer, 0, 8, 2, 1)
-        self.grid_general.attach(self.check_native_viewer, 2, 8, 1, 1)
-        # self.grid_general.attach(self.label_viewer_binary, 0, 9, 1, 1)
-        self.grid_general.attach(self.file_viewer_binary, 0, 9, 3, 1)
-        # self.grid_general.attach(self.label_viewer_options, 0, 10, 1, 1)
-        self.grid_general.attach(self.entry_viewer_options, 0, 10, 3, 1)
+        self.grid_font.pack_start(
+            self.label_editor_font, True, True, 0)
+        self.grid_font.pack_start(
+            self.font_editor, True, True, 0)
+
+        self.grid_viewer.pack_start(
+            self.label_native_viewer, True, True, 0)
+        self.grid_viewer.pack_start(
+            self.check_native_viewer, True, True, 0)
+
+        self.grid_binary.pack_start(
+            self.label_viewer_binary, True, True, 0)
+        self.grid_binary.pack_start(
+            self.file_viewer_binary, True, True, 0)
+
+        self.grid_options.pack_start(
+            self.label_viewer_options, True, True, 0)
+        self.grid_options.pack_start(
+            self.entry_viewer_options, True, True, 0)
 
         self.view_general.add(self.grid_general)
 
         self.scroll_general.add(self.view_general)
 
         # Interface tab
-        self.grid_interface.attach(self.label_interface, 0, 0, 3, 1)
+        self.grid_interface.pack_start(
+            self.label_interface, False, False, 0)
+        self.grid_interface.pack_start(
+            self.grid_theme_classic, False, False, 0)
+        self.grid_interface.pack_start(
+            self.grid_theme_header, False, False, 0)
+        self.grid_interface.pack_start(
+            self.label_sidebar, False, False, 0)
+        self.grid_interface.pack_start(
+            self.grid_sidebar_show, False, False, 0)
+        self.grid_interface.pack_start(
+            self.grid_sidebar_screenshot, False, False, 0)
+        self.grid_interface.pack_start(
+            self.grid_sidebar_position, False, False, 0)
+        self.grid_interface.pack_start(
+            self.label_treeview, False, False, 0)
+        self.grid_interface.pack_start(
+            self.grid_games_lines, False, False, 0)
+        self.grid_interface.pack_start(
+            self.grid_games_icons, False, False, 0)
+        self.grid_interface.pack_start(
+            self.label_columns, False, False, 0)
+        self.grid_interface.pack_start(
+            self.grid_columns_play, False, False, 0)
+        self.grid_interface.pack_start(
+            self.grid_columns_last_play, False, False, 0)
+        self.grid_interface.pack_start(
+            self.grid_columns_play_time, False, False, 0)
+        self.grid_interface.pack_start(
+            self.grid_columns_installed, False, False, 0)
+        self.grid_interface.pack_start(
+            self.grid_columns_flags, False, False, 0)
 
-        self.grid_interface.attach(self.label_classic_theme, 0, 1, 2, 1)
-        self.grid_interface.attach(self.check_classic_theme, 2, 1, 1, 1)
-        self.grid_interface.attach(self.label_header, 0, 2, 2, 1)
-        self.grid_interface.attach(self.check_header, 2, 2, 1, 1)
+        self.grid_theme_classic.pack_start(
+            self.label_classic_theme, True, True, 0)
+        self.grid_theme_classic.pack_start(
+            self.check_classic_theme, True, True, 0)
 
-        self.grid_interface.attach(self.label_sidebar, 0, 3, 3, 1)
+        self.grid_theme_header.pack_start(
+            self.label_header, True, True, 0)
+        self.grid_theme_header.pack_start(
+            self.check_header, True, True, 0)
 
-        self.grid_interface.attach(self.label_sidebar_show, 0, 4, 2, 1)
-        self.grid_interface.attach(self.check_sidebar_show, 2, 4, 1, 1)
-        self.grid_interface.attach(self.label_sidebar_screenshot, 0, 5, 2, 1)
-        self.grid_interface.attach(self.check_sidebar_screenshot, 2, 5, 1, 1)
-        self.grid_interface.attach(self.label_sidebar_position, 0, 6, 2, 1)
-        self.grid_interface.attach(self.combo_sidebar, 2, 6, 1, 1)
+        self.grid_sidebar_show.pack_start(
+            self.label_sidebar_show, True, True, 0)
+        self.grid_sidebar_show.pack_start(
+            self.check_sidebar_show, True, True, 0)
 
-        self.grid_interface.attach(self.label_treeview, 0, 7, 3, 1)
+        self.grid_sidebar_screenshot.pack_start(
+            self.label_sidebar_screenshot, True, True, 0)
+        self.grid_sidebar_screenshot.pack_start(
+            self.check_sidebar_screenshot, True, True, 0)
 
-        self.grid_interface.attach(self.label_treeview_lines, 0, 8, 2, 1)
-        self.grid_interface.attach(self.combo_lines, 2, 8, 1, 1)
-        self.grid_interface.attach(self.label_icons, 0, 9, 2, 1)
-        self.grid_interface.attach(self.check_icons, 2, 9, 1, 1)
+        self.grid_sidebar_position.pack_start(
+            self.label_sidebar_position, True, True, 0)
+        self.grid_sidebar_position.pack_start(
+            self.combo_sidebar, True, True, 0)
 
-        self.grid_interface.attach(self.label_columns, 0, 10, 3, 1)
+        self.grid_games_lines.pack_start(
+            self.label_treeview_lines, True, True, 0)
+        self.grid_games_lines.pack_start(
+            self.combo_lines, True, True, 0)
 
-        self.grid_interface.attach(self.label_play, 0, 11, 2, 1)
-        self.grid_interface.attach(self.check_play, 2, 11, 1, 1)
-        self.grid_interface.attach(self.label_last_play, 0, 12, 2, 1)
-        self.grid_interface.attach(self.check_last_play, 2, 12, 1, 1)
-        self.grid_interface.attach(self.label_play_time, 0, 13, 2, 1)
-        self.grid_interface.attach(self.check_play_time, 2, 13, 1, 1)
-        self.grid_interface.attach(self.label_installed, 0, 14, 2, 1)
-        self.grid_interface.attach(self.check_installed, 2, 14, 1, 1)
-        self.grid_interface.attach(self.label_flags, 0, 15, 2, 1)
-        self.grid_interface.attach(self.check_flags, 2, 15, 1, 1)
+        self.grid_games_icons.pack_start(
+            self.label_icons, True, True, 0)
+        self.grid_games_icons.pack_start(
+            self.check_icons, True, True, 0)
+
+        self.grid_columns_play.pack_start(
+            self.label_play, True, True, 0)
+        self.grid_columns_play.pack_start(
+            self.check_play, True, True, 0)
+
+        self.grid_columns_last_play.pack_start(
+            self.label_last_play, True, True, 0)
+        self.grid_columns_last_play.pack_start(
+            self.check_last_play, True, True, 0)
+
+        self.grid_columns_play_time.pack_start(
+            self.label_play_time, True, True, 0)
+        self.grid_columns_play_time.pack_start(
+            self.check_play_time, True, True, 0)
+
+        self.grid_columns_installed.pack_start(
+            self.label_installed, True, True, 0)
+        self.grid_columns_installed.pack_start(
+            self.check_installed, True, True, 0)
+
+        self.grid_columns_flags.pack_start(
+            self.label_flags, True, True, 0)
+        self.grid_columns_flags.pack_start(
+            self.check_flags, True, True, 0)
 
         self.view_interface.add(self.grid_interface)
 
@@ -1825,7 +1998,10 @@ class Preferences(object):
 
         status = self.check_native_viewer.get_active()
 
+        self.label_viewer_binary.set_sensitive(status)
         self.file_viewer_binary.set_sensitive(status)
+
+        self.label_viewer_options.set_sensitive(status)
         self.entry_viewer_options.set_sensitive(status)
 
 
