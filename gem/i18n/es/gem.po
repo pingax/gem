@@ -72,12 +72,6 @@ msgid "%s has been deleted from disk"
 msgstr "%s ha sido borrado del disco"
 
 #
-# File: gem/interface.py, line: 2050
-#, python-format
-msgid "%s is already in the roms folder. Canceling operation."
-msgstr "%s ya esta en la carpeta de roms. Anulando acción."
-
-#
 # File: gem/interface.py, line: 2106
 #, python-format
 msgid "%s was generated successfully"
@@ -426,11 +420,6 @@ msgstr ""
 # File: gem/preferences.py, line: 280
 msgid "Emulators"
 msgstr "Emuladores"
-
-#
-# File: gem/gtk/preferences.py, line: 1796
-msgid "Expressions are split by carriage return."
-msgstr ""
 
 #
 # File: gem/preferences.py, line: 1342
@@ -1229,6 +1218,12 @@ msgid "Vertical"
 msgstr "Vertical"
 
 #
+# File: gem/windows.py, line: 915
+#, fuzzy
+msgid "Viewer binary"
+msgstr "Seleccionar un binario"
+
+#
 # File: gem/interface.py, line: 1098
 msgid "Welcome !"
 msgstr "¡Bienvenido!"
@@ -1261,6 +1256,11 @@ msgstr "¿Quiere borrar esta entrada?"
 # File: gem/preferences.py, line: 1196
 msgid "Would you really want to remove this entry ?"
 msgstr "¿Quiere borrar esta entrada?"
+
+#
+# File: gem/gtk/preferences.py, line: 2433
+msgid "Write your regex here..."
+msgstr ""
 
 #
 # File: gem/interface.py, line: 2121
@@ -1357,6 +1357,11 @@ msgstr "_Herramientas"
 # File: gem/preferences.py, line: 280
 msgid "translator-credits"
 msgstr "agradecimientos a los traductores"
+
+#
+# File: gem/interface.py, line: 2050
+#~ msgid "%s is already in the roms folder. Canceling operation."
+#~ msgstr "%s ya esta en la carpeta de roms. Anulando acción."
 
 #
 # File: gem/preferences.py, line: 1638

@@ -80,7 +80,7 @@ textdomain("gem")
 
 class Dialog(Gtk.Dialog):
 
-    def __init__(self, parent, title, icon):
+    def __init__(self, parent, title, icon, remove_icon=False):
         """ Constructor
 
         Parameters
@@ -91,6 +91,11 @@ class Dialog(Gtk.Dialog):
             Dialog title
         icon : str
             Default icon name
+
+        Others Parameters
+        -----------------
+        remove_icon : bool
+            Remove the top left icon in dialog (Default: False)
         """
 
         Gtk.Dialog.__init__(self)
@@ -123,7 +128,7 @@ class Dialog(Gtk.Dialog):
 
         self.set_position(Gtk.WindowPosition.CENTER)
 
-        self.set_border_width(4)
+        self.set_border_width(0)
 
         # ------------------------------------
         #   Main grid
@@ -132,8 +137,8 @@ class Dialog(Gtk.Dialog):
         self.dialog_box = self.get_content_area()
 
         # Properties
-        self.dialog_box.set_spacing(8)
-        self.dialog_box.set_border_width(4)
+        self.dialog_box.set_spacing(12)
+        self.dialog_box.set_border_width(18)
 
         # ------------------------------------
         #   Headerbar
@@ -161,7 +166,8 @@ class Dialog(Gtk.Dialog):
 
         self.set_titlebar(self.headerbar)
 
-        self.headerbar.pack_start(image_header)
+        if not remove_icon:
+            self.headerbar.pack_start(image_header)
 
 
     def set_size(self, width, height):
@@ -423,7 +429,7 @@ class DialogEditor(Dialog):
             Default icon name (Default: gtk-file)
         """
 
-        Dialog.__init__(self, parent, title, icon)
+        Dialog.__init__(self, parent, title, icon, editable)
 
         # ------------------------------------
         #   Initialize variables
@@ -460,16 +466,10 @@ class DialogEditor(Dialog):
         """ Initialize interface widgets
         """
 
-        if self.editable:
-            self.add_buttons(
-                Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                Gtk.STOCK_SAVE, Gtk.ResponseType.APPLY)
-
-        else:
-            self.add_buttons(
-                Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE)
-
         self.set_resizable(True)
+
+        if self.editable:
+            self.headerbar.set_show_close_button(False)
 
         # ------------------------------------
         #   Grid
@@ -482,6 +482,7 @@ class DialogEditor(Dialog):
 
         # Properties
         self.dialog_box.set_spacing(0)
+        self.dialog_box.set_border_width(6)
 
         grid_header.set_spacing(8)
         grid_header.set_orientation(Gtk.Orientation.HORIZONTAL)
@@ -489,6 +490,20 @@ class DialogEditor(Dialog):
         Gtk.StyleContext.add_class(grid_search.get_style_context(), "linked")
 
         self.grid_infobar.set_orientation(Gtk.Orientation.VERTICAL)
+
+        # ------------------------------------
+        #   Action buttons
+        # ------------------------------------
+
+        self.button_close = Gtk.Button()
+
+        self.button_accept = Gtk.Button()
+
+        # Properties
+        self.button_close.set_label(_("Cancel"))
+
+        self.button_accept.set_label(_("Save"))
+        self.button_accept.get_style_context().add_class("suggested-action")
 
         # ------------------------------------
         #   Path
@@ -621,6 +636,10 @@ class DialogEditor(Dialog):
         #   Integrate widgets
         # ------------------------------------
 
+        if self.editable:
+            self.headerbar.pack_start(self.button_close)
+            self.headerbar.pack_end(self.button_accept)
+
         scroll_editor.add(self.text_editor)
 
         grid_header.pack_start(self.entry_path, True, True, 0)
@@ -643,6 +662,9 @@ class DialogEditor(Dialog):
     def __init_signals(self):
         """ Initialize widgets signals
         """
+
+        self.button_close.connect("clicked", self.__on_cancel_clicked)
+        self.button_accept.connect("clicked", self.__on_accept_clicked)
 
         self.buffer_editor.connect("changed", self.__on_buffer_modified)
 
@@ -678,6 +700,30 @@ class DialogEditor(Dialog):
 
         loader = self.__on_load_file()
         self.buffer_thread = idle_add(loader.__next__)
+
+
+    def __on_cancel_clicked(self, widget):
+        """ Click on close button
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        self.response(Gtk.ResponseType.CLOSE)
+
+
+    def __on_accept_clicked(self, widget):
+        """ Click on accept button
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        self.response(Gtk.ResponseType.APPLY)
 
 
     def __on_load_file(self):
@@ -959,35 +1005,24 @@ class DialogParameters(Dialog):
 
         self.set_help(self.interface, self.help_data)
 
+        self.dialog_box.set_spacing(18)
+
         # ------------------------------------
         #   Grids
         # ------------------------------------
 
-        grid_emulator = Gtk.Box()
-        grid_tags = Gtk.Box()
-        grid_key = Gtk.Box()
+        grid = Gtk.Box()
 
         # Properties
-        grid_emulator.set_spacing(8)
-        grid_emulator.set_homogeneous(False)
-        grid_emulator.set_orientation(Gtk.Orientation.HORIZONTAL)
-
-        grid_tags.set_spacing(8)
-        grid_tags.set_margin_top(16)
-        grid_tags.set_homogeneous(False)
-        grid_tags.set_orientation(Gtk.Orientation.HORIZONTAL)
-
-        grid_key.set_spacing(8)
-        grid_key.set_margin_top(8)
-        grid_key.set_homogeneous(False)
-        grid_key.set_orientation(Gtk.Orientation.HORIZONTAL)
+        grid.set_spacing(6)
+        grid.set_homogeneous(False)
+        grid.set_orientation(Gtk.Orientation.VERTICAL)
 
         # ------------------------------------
         #   Emulators
         # ------------------------------------
 
         label_emulator = Gtk.Label()
-        image_emulator = Gtk.Image()
 
         self.model = Gtk.ListStore(Pixbuf, str, Pixbuf)
         self.combo = Gtk.ComboBox()
@@ -997,17 +1032,13 @@ class DialogParameters(Dialog):
         cell_warning = Gtk.CellRendererPixbuf()
 
         # Properties
-        label_emulator.set_alignment(0, .5)
         label_emulator.set_use_markup(True)
+        label_emulator.set_halign(Gtk.Align.CENTER)
         label_emulator.set_markup("<b>%s</b>" % _("Alternative emulator"))
-
-        image_emulator.set_from_icon_name(
-            Icons.Symbolic.Properties, Gtk.IconSize.MENU)
 
         self.model.set_sort_column_id(1, Gtk.SortType.ASCENDING)
 
         self.combo.set_model(self.model)
-        self.combo.set_margin_left(16)
         self.combo.set_id_column(1)
         self.combo.pack_start(cell_icon, False)
         self.combo.add_attribute(cell_icon, "pixbuf", 0)
@@ -1025,7 +1056,6 @@ class DialogParameters(Dialog):
         self.entry_arguments = Gtk.Entry()
 
         # Properties
-        self.entry_arguments.set_margin_left(16)
         self.entry_arguments.set_icon_from_icon_name(
             Gtk.EntryIconPosition.PRIMARY, Icons.Symbolic.Terminal)
         self.entry_arguments.set_icon_from_icon_name(
@@ -1036,20 +1066,18 @@ class DialogParameters(Dialog):
         # ------------------------------------
 
         label_key = Gtk.Label()
-        image_key = Gtk.Image()
 
         self.entry_key = Gtk.Entry()
 
         # Properties
-        label_key.set_alignment(0, .5)
+        label_key.set_margin_top(12)
+        label_key.set_halign(Gtk.Align.CENTER)
         label_key.set_use_markup(True)
         label_key.set_markup("<b>%s</b>" % _("GameID"))
 
-        image_key.set_from_icon_name(
-            Icons.Symbolic.Password, Gtk.IconSize.MENU)
-
-        self.entry_key.set_margin_left(16)
         self.entry_key.set_placeholder_text(_("No default value"))
+        self.entry_key.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.PRIMARY, Icons.Symbolic.Password)
         self.entry_key.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
 
@@ -1058,23 +1086,21 @@ class DialogParameters(Dialog):
         # ------------------------------------
 
         label_tags = Gtk.Label()
-        image_tags = Gtk.Image()
 
         self.entry_tags = Gtk.Entry()
 
         # Properties
-        label_tags.set_alignment(0, .5)
+        label_tags.set_margin_top(12)
+        label_tags.set_halign(Gtk.Align.CENTER)
         label_tags.set_use_markup(True)
         label_tags.set_markup("<b>%s</b>" % _("Tags"))
 
-        image_tags.set_from_icon_name(
-            Icons.Symbolic.AddText, Gtk.IconSize.MENU)
-
-        self.entry_tags.set_margin_left(16)
         self.entry_tags.set_tooltip_text(
             _("Use space to separate tags"))
         self.entry_tags.set_placeholder_text(
             _("Use space to separate tags"))
+        self.entry_tags.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.PRIMARY, Icons.Symbolic.AddText)
         self.entry_tags.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
 
@@ -1082,22 +1108,15 @@ class DialogParameters(Dialog):
         #   Integrate widgets
         # ------------------------------------
 
-        self.dialog_box.pack_start(grid_emulator, False, True, 0)
-        self.dialog_box.pack_start(self.combo, False, True, 0)
-        self.dialog_box.pack_start(self.entry_arguments, False, True, 0)
-        self.dialog_box.pack_start(grid_key, False, True, 0)
-        self.dialog_box.pack_start(self.entry_key, False, True, 0)
-        self.dialog_box.pack_start(grid_tags, False, True, 0)
-        self.dialog_box.pack_start(self.entry_tags, False, True, 0)
+        grid.pack_start(label_emulator, False, False, 0)
+        grid.pack_start(self.combo, False, False, 0)
+        grid.pack_start(self.entry_arguments, False, False, 0)
+        grid.pack_start(label_key, False, False, 0)
+        grid.pack_start(self.entry_key, False, False, 0)
+        grid.pack_start(label_tags, False, False, 0)
+        grid.pack_start(self.entry_tags, False, False, 0)
 
-        grid_emulator.pack_start(image_emulator, False, False, 0)
-        grid_emulator.pack_start(label_emulator, True, True, 0)
-
-        grid_key.pack_start(image_key, False, False, 0)
-        grid_key.pack_start(label_key, True, True, 0)
-
-        grid_tags.pack_start(image_tags, False, False, 0)
-        grid_tags.pack_start(label_tags, True, True, 0)
+        self.dialog_box.pack_start(grid, False, False, 0)
 
 
     def __init_signals(self):
@@ -1371,22 +1390,32 @@ class DialogViewer(Dialog):
             Screnshots path list
         """
 
-        Dialog.__init__(self, parent, title, Icons.Image)
+        Dialog.__init__(self, parent, title, Icons.Image, True)
 
         # ------------------------------------
         #   Initialize variables
         # ------------------------------------
 
         self.index = 0
-        self.zoom_factor = 1
 
         self.zoom_fit = True
+
+        self.zoom_min = 10
+        self.zoom_max = 400
+        self.zoom_step = 5
+        self.zoom_page_step = 10
+        self.zoom_actual = 100
 
         # Allow the picture to autosize (with zoom_fit) when resize dialog
         self.auto_resize = parent.config.getboolean(
             "viewer", "auto_resize", fallback=False)
 
         self.screenshots = screenshots_path
+
+        self.current_path = None
+        self.current_pixbuf = None
+        self.current_pixbuf_zoom = None
+        self.current_pixbuf_size = tuple()
 
         self.targets = parent.targets
 
@@ -1415,6 +1444,13 @@ class DialogViewer(Dialog):
         self.headerbar.set_has_subtitle(True)
 
         self.dialog_box.set_spacing(0)
+        self.dialog_box.set_border_width(0)
+
+        # ------------------------------------
+        #   Overlay
+        # ------------------------------------
+
+        self.overlay = Gtk.Overlay()
 
         # ------------------------------------
         #   Image
@@ -1430,64 +1466,190 @@ class DialogViewer(Dialog):
             Gdk.ModifierType.BUTTON1_MASK, self.targets, Gdk.DragAction.COPY)
 
         # ------------------------------------
-        #   Toolbar
+        #   Resize buttons
         # ------------------------------------
 
-        toolbar = Gtk.Toolbar()
+        self.grid_resize_buttons = Gtk.Box()
 
-        tool_separator_start = Gtk.SeparatorToolItem()
-        tool_separator_end = Gtk.SeparatorToolItem()
+        self.image_fit = Gtk.Image()
+        self.button_fit = Gtk.Button()
 
-        self.tool_first = Gtk.ToolButton()
-        self.tool_previous = Gtk.ToolButton()
-        self.tool_next = Gtk.ToolButton()
-        self.tool_last = Gtk.ToolButton()
-
-        self.tool_zoom_minus = Gtk.ToolButton()
-        self.tool_zoom_100 = Gtk.ToolButton()
-        self.tool_zoom_fit = Gtk.ToolButton()
-        self.tool_zoom_plus = Gtk.ToolButton()
+        self.image_original = Gtk.Image()
+        self.button_original = Gtk.Button()
 
         # Properties
-        toolbar.set_orientation(Gtk.Orientation.HORIZONTAL)
+        Gtk.StyleContext.add_class(
+            self.grid_resize_buttons.get_style_context(), "linked")
+        self.grid_resize_buttons.set_spacing(-1)
+        self.grid_resize_buttons.set_orientation(Gtk.Orientation.HORIZONTAL)
 
-        tool_separator_start.set_draw(False)
-        tool_separator_start.set_expand(True)
-        tool_separator_end.set_draw(False)
-        tool_separator_end.set_expand(True)
+        self.image_fit.set_from_icon_name(
+            Icons.Symbolic.ZoomFit, Gtk.IconSize.BUTTON)
 
-        self.tool_first.set_icon_name(Icons.Symbolic.First)
-        self.tool_previous.set_icon_name(Icons.Symbolic.Previous)
-        self.tool_next.set_icon_name(Icons.Symbolic.Next)
-        self.tool_last.set_icon_name(Icons.Symbolic.Last)
+        self.button_fit.set_image(self.image_fit)
 
-        self.tool_zoom_minus.set_icon_name(Icons.Symbolic.ZoomOut)
-        self.tool_zoom_100.set_icon_name(Icons.Symbolic.Zoom)
-        self.tool_zoom_fit.set_icon_name(Icons.Symbolic.ZoomFit)
-        self.tool_zoom_plus.set_icon_name(Icons.Symbolic.ZoomIn)
+        self.image_original.set_from_icon_name(
+            Icons.Symbolic.Zoom, Gtk.IconSize.BUTTON)
+
+        self.button_original.set_image(self.image_original)
+
+        # ------------------------------------
+        #   Move buttons
+        # ------------------------------------
+
+        self.grid_move_buttons = Gtk.Box()
+
+        self.image_first = Gtk.Image()
+        self.button_first = Gtk.Button()
+
+        self.image_previous = Gtk.Image()
+        self.button_previous = Gtk.Button()
+
+        self.image_next = Gtk.Image()
+        self.button_next = Gtk.Button()
+
+        self.image_last = Gtk.Image()
+        self.button_last = Gtk.Button()
+
+        # Properties
+        Gtk.StyleContext.add_class(
+            self.grid_move_buttons.get_style_context(), "linked")
+        self.grid_move_buttons.set_spacing(-1)
+        self.grid_move_buttons.set_orientation(Gtk.Orientation.HORIZONTAL)
+
+        self.image_first.set_from_icon_name(
+            Icons.Symbolic.First, Gtk.IconSize.BUTTON)
+
+        self.button_first.set_image(self.image_first)
+
+        self.image_previous.set_from_icon_name(
+            Icons.Symbolic.Previous, Gtk.IconSize.BUTTON)
+
+        self.button_previous.set_image(self.image_previous)
+
+        self.image_next.set_from_icon_name(
+            Icons.Symbolic.Next, Gtk.IconSize.BUTTON)
+
+        self.button_next.set_image(self.image_next)
+
+        self.image_last.set_from_icon_name(
+            Icons.Symbolic.Last, Gtk.IconSize.BUTTON)
+
+        self.button_last.set_image(self.image_last)
+
+        # ------------------------------------
+        #   Zoom buttons
+        # ------------------------------------
+
+        self.grid_zoom_buttons = Gtk.Box()
+
+        self.image_zoom_minus = Gtk.Image()
+        self.button_zoom_minus = Gtk.Button()
+
+        self.image_zoom_plus = Gtk.Image()
+        self.button_zoom_plus = Gtk.Button()
+
+        self.adjustment_zoom = Gtk.Adjustment()
+
+        self.scale_zoom = Gtk.Scale()
+
+        # Properties
+        Gtk.StyleContext.add_class(
+            self.grid_zoom_buttons.get_style_context(), "linked")
+        self.grid_zoom_buttons.set_spacing(-1)
+        self.grid_zoom_buttons.set_orientation(Gtk.Orientation.HORIZONTAL)
+
+        self.image_zoom_minus.set_from_icon_name(
+            Icons.Symbolic.ZoomOut, Gtk.IconSize.BUTTON)
+
+        self.button_zoom_minus.set_image(self.image_zoom_minus)
+
+        self.image_zoom_plus.set_from_icon_name(
+            Icons.Symbolic.ZoomIn, Gtk.IconSize.BUTTON)
+
+        self.button_zoom_plus.set_image(self.image_zoom_plus)
+
+        self.adjustment_zoom.set_lower(self.zoom_min)
+        self.adjustment_zoom.set_upper(self.zoom_max)
+        self.adjustment_zoom.set_step_increment(self.zoom_step)
+        self.adjustment_zoom.set_page_increment(self.zoom_page_step)
+
+        self.scale_zoom.set_draw_value(False)
+        self.scale_zoom.set_size_request(150, -1)
+        self.scale_zoom.set_adjustment(self.adjustment_zoom)
+        self.scale_zoom.add_mark(self.zoom_min, Gtk.PositionType.BOTTOM, None)
+        self.scale_zoom.add_mark(100, Gtk.PositionType.BOTTOM, None)
+        self.scale_zoom.add_mark(self.zoom_max, Gtk.PositionType.BOTTOM, None)
+
+        # ------------------------------------
+        #   Overlay move buttons
+        # ------------------------------------
+
+        self.image_previous = Gtk.Image()
+        self.button_overlay_previous = Gtk.Button()
+
+        self.image_next = Gtk.Image()
+        self.button_overlay_next = Gtk.Button()
+
+        # Properties
+        self.image_previous.set_from_icon_name(
+            Icons.Symbolic.Previous, Gtk.IconSize.BUTTON)
+
+        self.button_overlay_previous.get_style_context().add_class("osd")
+        self.button_overlay_previous.set_image(self.image_previous)
+        self.button_overlay_previous.set_valign(Gtk.Align.CENTER)
+        self.button_overlay_previous.set_halign(Gtk.Align.START)
+        self.button_overlay_previous.set_margin_bottom(6)
+        self.button_overlay_previous.set_margin_right(6)
+        self.button_overlay_previous.set_margin_left(6)
+        self.button_overlay_previous.set_margin_top(6)
+
+        self.image_next.set_from_icon_name(
+            Icons.Symbolic.Next, Gtk.IconSize.BUTTON)
+
+        self.button_overlay_next.get_style_context().add_class("osd")
+        self.button_overlay_next.set_image(self.image_next)
+        self.button_overlay_next.set_valign(Gtk.Align.CENTER)
+        self.button_overlay_next.set_halign(Gtk.Align.END)
+        self.button_overlay_next.set_margin_bottom(6)
+        self.button_overlay_next.set_margin_right(6)
+        self.button_overlay_next.set_margin_left(6)
+        self.button_overlay_next.set_margin_top(6)
 
         # ------------------------------------
         #   Integrate widgets
         # ------------------------------------
 
+        self.headerbar.pack_start(self.grid_move_buttons)
+        self.headerbar.pack_end(self.grid_zoom_buttons)
+        self.headerbar.pack_end(self.scale_zoom)
+
         self.scroll_image.add(self.view_image)
         self.view_image.add(self.image)
 
-        toolbar.insert(tool_separator_start, -1)
-        toolbar.insert(self.tool_first, -1)
-        toolbar.insert(self.tool_previous, -1)
-        toolbar.insert(Gtk.SeparatorToolItem(), -1)
-        toolbar.insert(self.tool_zoom_minus, -1)
-        toolbar.insert(self.tool_zoom_100, -1)
-        toolbar.insert(self.tool_zoom_fit, -1)
-        toolbar.insert(self.tool_zoom_plus, -1)
-        toolbar.insert(Gtk.SeparatorToolItem(), -1)
-        toolbar.insert(self.tool_next, -1)
-        toolbar.insert(self.tool_last, -1)
-        toolbar.insert(tool_separator_end, -1)
+        self.grid_move_buttons.pack_start(
+            self.button_first, False, False, 0)
+        self.grid_move_buttons.pack_start(
+            self.button_previous, False, False, 0)
+        self.grid_move_buttons.pack_start(
+            self.button_next, False, False, 0)
+        self.grid_move_buttons.pack_start(
+            self.button_last, False, False, 0)
 
-        self.dialog_box.pack_start(self.scroll_image, True, True, 0)
-        self.dialog_box.pack_start(toolbar, False, True, 0)
+        # self.grid_zoom_buttons.pack_start(
+            # self.button_zoom_minus, False, False, 0)
+        self.grid_zoom_buttons.pack_start(
+            self.button_original, False, False, 0)
+        self.grid_zoom_buttons.pack_start(
+            self.button_fit, False, False, 0)
+        # self.grid_zoom_buttons.pack_start(
+            # self.button_zoom_plus, False, False, 0)
+
+        self.overlay.add(self.scroll_image)
+        self.overlay.add_overlay(self.button_overlay_previous)
+        self.overlay.add_overlay(self.button_overlay_next)
+
+        self.dialog_box.pack_start(self.overlay, True, True, 0)
 
 
     def __init_signals(self):
@@ -1499,17 +1661,22 @@ class DialogViewer(Dialog):
 
         self.connect("key-press-event", self.change_screenshot)
 
-        self.tool_first.connect("clicked", self.change_screenshot)
-        self.tool_previous.connect("clicked", self.change_screenshot)
-        self.tool_next.connect("clicked", self.change_screenshot)
-        self.tool_last.connect("clicked", self.change_screenshot)
+        self.button_first.connect("clicked", self.change_screenshot)
+        self.button_previous.connect("clicked", self.change_screenshot)
+        self.button_next.connect("clicked", self.change_screenshot)
+        self.button_last.connect("clicked", self.change_screenshot)
 
-        self.tool_zoom_minus.connect("clicked", self.change_screenshot)
-        self.tool_zoom_100.connect("clicked", self.change_screenshot)
-        self.tool_zoom_fit.connect("clicked", self.change_screenshot)
-        self.tool_zoom_plus.connect("clicked", self.change_screenshot)
+        self.button_zoom_minus.connect("clicked", self.change_screenshot)
+        self.button_original.connect("clicked", self.change_screenshot)
+        self.button_fit.connect("clicked", self.change_screenshot)
+        self.button_zoom_plus.connect("clicked", self.change_screenshot)
+
+        self.button_overlay_previous.connect("clicked", self.change_screenshot)
+        self.button_overlay_next.connect("clicked", self.change_screenshot)
 
         self.view_image.connect("drag-data-get", self.__on_dnd_send_data)
+
+        self.scale_zoom.connect("change_value", self.update_adjustment)
 
 
     def __start_interface(self):
@@ -1517,9 +1684,6 @@ class DialogViewer(Dialog):
         """
 
         self.set_size(int(self.__width), int(self.__height))
-
-        self.hide()
-        self.unrealize()
 
         self.show_all()
 
@@ -1547,10 +1711,8 @@ class DialogViewer(Dialog):
             timestamp at which the data was received
         """
 
-        path = expanduser(self.screenshots[self.index])
-
-        if exists(path):
-            data.set_uris(["file://%s" % path])
+        if exists(self.current_path):
+            data.set_uris(["file://%s" % self.current_path])
 
 
     def change_screenshot(self, widget=None, event=None):
@@ -1568,48 +1730,59 @@ class DialogViewer(Dialog):
         if widget is self:
             if event.keyval == Gdk.KEY_Left:
                 self.index -= 1
+
             elif event.keyval == Gdk.KEY_Right:
                 self.index += 1
 
-            elif event.keyval == Gdk.KEY_KP_Subtract and self.zoom_factor > .1:
+            elif event.keyval == Gdk.KEY_KP_Subtract:
                 self.zoom_fit = False
-                self.zoom_factor -= .1
-            elif event.keyval == Gdk.KEY_KP_Add and self.zoom_factor < 20:
+                self.zoom_actual -= self.zoom_step
+
+            elif event.keyval == Gdk.KEY_KP_Add:
                 self.zoom_fit = False
-                self.zoom_factor += .1
+                self.zoom_actual += self.zoom_step
 
         # Zoom
-        elif widget == self.tool_zoom_minus and self.zoom_factor > 1:
+        elif widget == self.button_zoom_minus:
             self.zoom_fit = False
-            self.zoom_factor -= .1
-        elif widget == self.tool_zoom_100:
+            self.zoom_actual -= self.zoom_step
+
+        elif widget == self.button_original:
             self.zoom_fit = False
-            self.zoom_factor = 1
-        elif widget == self.tool_zoom_fit:
+            self.zoom_actual = 100
+
+        elif widget == self.button_fit:
             self.zoom_fit = True
-        elif widget == self.tool_zoom_plus and self.zoom_factor < 5:
+
+        elif widget == self.button_zoom_plus:
             self.zoom_fit = False
-            self.zoom_factor += .1
+            self.zoom_actual += self.zoom_step
 
         # Move
-        elif widget == self.tool_first:
+        elif widget == self.button_first:
             self.index = 0
-        elif widget == self.tool_previous:
+
+        elif widget in (self.button_overlay_previous, self.button_previous):
             self.index -= 1
-        elif widget == self.tool_next:
+
+        elif widget in (self.button_overlay_next, self.button_next):
             self.index += 1
-        elif widget == self.tool_last:
+
+        elif widget == self.button_last:
             self.index = len(self.screenshots) - 1
 
+        #Fixes
         if self.index < 0:
             self.index = 0
+
         elif self.index > len(self.screenshots) - 1:
             self.index = len(self.screenshots) - 1
 
-        if self.zoom_factor < .1:
-            self.zoom_factor = .1
-        elif self.zoom_factor > 20:
-            self.zoom_factor = 20
+        if self.zoom_actual < self.zoom_min:
+            self.zoom_actual = self.zoom_min
+
+        elif self.zoom_actual > self.zoom_max:
+            self.zoom_actual = self.zoom_max
 
         self.update_screenshot()
         self.set_widgets_sensitive()
@@ -1619,18 +1792,48 @@ class DialogViewer(Dialog):
         """ Refresh interface's widgets
         """
 
-        self.tool_first.set_sensitive(True)
-        self.tool_previous.set_sensitive(True)
-        self.tool_next.set_sensitive(True)
-        self.tool_last.set_sensitive(True)
+        self.button_first.set_sensitive(True)
+        self.button_previous.set_sensitive(True)
+        self.button_next.set_sensitive(True)
+        self.button_last.set_sensitive(True)
 
         if self.index == 0:
-            self.tool_first.set_sensitive(False)
-            self.tool_previous.set_sensitive(False)
+            self.button_first.set_sensitive(False)
+            self.button_previous.set_sensitive(False)
+
+            self.button_overlay_previous.hide()
+
+        else:
+            self.button_overlay_previous.show()
 
         if self.index == len(self.screenshots) - 1:
-            self.tool_next.set_sensitive(False)
-            self.tool_last.set_sensitive(False)
+            self.button_last.set_sensitive(False)
+            self.button_next.set_sensitive(False)
+
+            self.button_overlay_next.hide()
+
+        else:
+            self.button_overlay_next.show()
+
+
+    def update_adjustment(self, widget, scroll, value):
+        """ Change current screenshot size
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        scroll : Gtk.ScrollType
+            Type of scroll action that was performed
+        value : float
+            New value resulting from the scroll action
+        """
+
+        if int(value) >= self.zoom_min and int(value) <= self.zoom_max:
+            self.zoom_fit = False
+            self.zoom_actual = int(value)
+
+            self.update_screenshot()
 
 
     def update_screenshot(self, widget=None, event=None):
@@ -1647,23 +1850,49 @@ class DialogViewer(Dialog):
         # Get the current screenshot path
         path = expanduser(self.screenshots[self.index])
 
-        self.headerbar.set_subtitle(path)
+        # Avoid to recreate a pixbuf for the same file
+        if not path == self.current_path:
+            self.current_path = path
 
-        pixbuf = Pixbuf.new_from_file(path)
+            # Set headerbar subtitle with current screenshot path
+            self.headerbar.set_subtitle(self.current_path)
 
-        width, height = pixbuf.get_width(), pixbuf.get_height()
+            # Generate a Pixbuf from current screenshot
+            self.current_pixbuf = Pixbuf.new_from_file(self.current_path)
 
-        if self.zoom_fit:
-            allocation = self.scroll_image.get_allocation()
+            self.current_pixbuf_size = (
+                self.current_pixbuf.get_width(),
+                self.current_pixbuf.get_height())
 
-            ratio_x = float(allocation.width / width)
-            ratio_y = float(allocation.height / height)
+            self.current_pixbuf_zoom = None
 
-            self.zoom_factor = min(ratio_x, ratio_y)
+        # Check if pixbuf has been generate correctly
+        if self.current_pixbuf is not None:
 
-        self.image.set_from_pixbuf(pixbuf.scale_simple(
-            int(self.zoom_factor * width), int(self.zoom_factor * height),
-            InterpType.TILES))
+            # Restore original image size
+            width, height = self.current_pixbuf_size
+
+            # Zoom to fit current window
+            if self.zoom_fit:
+                allocation = self.scroll_image.get_allocation()
+
+                ratio_x = float(allocation.width / width)
+                ratio_y = float(allocation.height / height)
+
+                self.zoom_actual = int(min(ratio_x, ratio_y) * 100)
+
+            if not self.current_pixbuf_zoom == self.zoom_actual:
+                self.current_pixbuf_zoom = self.zoom_actual
+
+                # Calc ratio from current zoom percent
+                ratio_width = int((self.zoom_actual * width) / 100)
+                ratio_height = int((self.zoom_actual * height) / 100)
+
+                # Update scale adjustment
+                self.adjustment_zoom.set_value(float(self.zoom_actual))
+
+                self.image.set_from_pixbuf(self.current_pixbuf.scale_simple(
+                    ratio_width, ratio_height, InterpType.TILES))
 
 
 class DialogConsoles(Dialog):
@@ -1909,7 +2138,7 @@ class DialogHelp(Dialog):
         view.add(text)
         scroll.add(view)
 
-        self.dialog_box.pack_start(scroll, True, True, 8)
+        self.dialog_box.pack_start(scroll, True, True, 0)
 
 
     def __start_interface(self):

@@ -132,7 +132,7 @@ textdomain("gem")
 #   Class
 # ------------------------------------------------------------------------------
 
-class Interface(Gtk.Window):
+class Interface(Gtk.ApplicationWindow):
 
     __gsignals__ = { "game-terminate": (SIGNAL_RUN_LAST, None, [object]) }
 
@@ -3217,7 +3217,8 @@ class Interface(Gtk.Window):
             Event which triggered this signal
         """
 
-        game, run_game = None, None
+        game = None
+        run_game = None
 
         # Keyboard
         if event.type == EventType.KEY_RELEASE:
@@ -4572,8 +4573,7 @@ class Interface(Gtk.Window):
                 # ----------------------------
 
                 if dirname(path) == rom_path:
-                    self.set_message(basename(path), _("%s is already in the "
-                        "roms folder. Canceling operation.") % basename(path))
+                    pass
 
                 elif not exists(rom_path):
                     self.set_message(basename(path), _("Destination %s not "
@@ -4875,7 +4875,7 @@ class Splash(Gtk.Window):
         """
 
         # Sleep to avoid ultra quick splash
-        sleep(1)
+        sleep(0.42)
 
         # Rare case where the mainloop is not init when close() is running
         if self.main_loop is not None:

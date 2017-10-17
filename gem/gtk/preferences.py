@@ -379,6 +379,7 @@ class Preferences(object):
         self.grid_lines.set_spacing(12)
         self.grid_lines.set_homogeneous(True)
         self.grid_colorsheme.set_spacing(12)
+        self.grid_colorsheme.set_margin_top(6)
         self.grid_colorsheme.set_homogeneous(True)
         self.grid_font.set_spacing(12)
         self.grid_font.set_homogeneous(True)
@@ -386,6 +387,7 @@ class Preferences(object):
         self.grid_viewer.set_spacing(12)
         self.grid_viewer.set_homogeneous(True)
         self.grid_binary.set_spacing(12)
+        self.grid_binary.set_margin_top(6)
         self.grid_binary.set_homogeneous(True)
         self.grid_options.set_spacing(12)
         self.grid_options.set_homogeneous(True)
@@ -583,7 +585,6 @@ class Preferences(object):
         self.label_editor.set_halign(Gtk.Align.CENTER)
         self.label_editor.set_markup("<b>%s</b>" % _("Editor"))
 
-        self.label_lines.set_margin_bottom(6)
         self.label_lines.set_line_wrap(True)
         self.label_lines.set_alignment(1, 0.5)
         self.label_lines.set_halign(Gtk.Align.END)
@@ -594,7 +595,6 @@ class Preferences(object):
         self.label_lines.set_label(
             _("Show line numbers"))
 
-        self.check_lines.set_margin_bottom(6)
         self.check_lines.set_halign(Gtk.Align.START)
         self.check_lines.set_valign(Gtk.Align.CENTER)
 
@@ -613,6 +613,9 @@ class Preferences(object):
         self.combo_colorsheme.set_id_column(0)
         self.combo_colorsheme.pack_start(self.cell_colorsheme, True)
         self.combo_colorsheme.add_attribute(self.cell_colorsheme, "text", 0)
+        self.combo_colorsheme.set_size_request(300, -1)
+        self.combo_colorsheme.set_halign(Gtk.Align.START)
+        self.combo_colorsheme.set_valign(Gtk.Align.CENTER)
 
         self.label_editor_font.set_line_wrap(True)
         self.label_editor_font.set_alignment(1, 0.5)
@@ -664,7 +667,6 @@ class Preferences(object):
         self.check_native_viewer.set_halign(Gtk.Align.START)
         self.check_native_viewer.set_valign(Gtk.Align.CENTER)
 
-        self.label_viewer_binary.set_margin_top(6)
         self.label_viewer_binary.set_line_wrap(True)
         self.label_viewer_binary.set_alignment(1, 0.5)
         self.label_viewer_binary.set_halign(Gtk.Align.END)
@@ -675,8 +677,10 @@ class Preferences(object):
         self.label_viewer_binary.set_text(
             _("Viewer binary"))
 
-        self.file_viewer_binary.set_margin_top(6)
         self.file_viewer_binary.set_hexpand(True)
+        self.file_viewer_binary.set_size_request(300, -1)
+        self.file_viewer_binary.set_halign(Gtk.Align.START)
+        self.file_viewer_binary.set_valign(Gtk.Align.CENTER)
 
         self.label_viewer_options.set_line_wrap(True)
         self.label_viewer_options.set_alignment(1, 0.5)
@@ -693,6 +697,9 @@ class Preferences(object):
             Gtk.EntryIconPosition.PRIMARY, Icons.Symbolic.Terminal)
         self.entry_viewer_options.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
+        self.entry_viewer_options.set_size_request(300, -1)
+        self.entry_viewer_options.set_halign(Gtk.Align.START)
+        self.entry_viewer_options.set_valign(Gtk.Align.CENTER)
 
         # ------------------------------------
         #   Interface
@@ -803,6 +810,9 @@ class Preferences(object):
         self.combo_sidebar.set_id_column(0)
         self.combo_sidebar.pack_start(self.cell_sidebar, True)
         self.combo_sidebar.add_attribute(self.cell_sidebar, "text", 0)
+        self.combo_sidebar.set_size_request(300, -1)
+        self.combo_sidebar.set_halign(Gtk.Align.START)
+        self.combo_sidebar.set_valign(Gtk.Align.CENTER)
 
         # ------------------------------------
         #   Interface - Games list
@@ -841,6 +851,9 @@ class Preferences(object):
         self.combo_lines.set_id_column(0)
         self.combo_lines.pack_start(self.cell_lines, True)
         self.combo_lines.add_attribute(self.cell_lines, "text", 0)
+        self.combo_lines.set_size_request(300, -1)
+        self.combo_lines.set_halign(Gtk.Align.START)
+        self.combo_lines.set_valign(Gtk.Align.CENTER)
 
         self.label_icons.set_line_wrap(True)
         self.label_icons.set_alignment(1, 0.5)
@@ -1010,7 +1023,7 @@ class Preferences(object):
 
         self.scroll_consoles_treeview = Gtk.ScrolledWindow()
 
-        self.model_consoles = Gtk.ListStore(Pixbuf, str, str, Pixbuf, str)
+        self.model_consoles = Gtk.ListStore(Pixbuf, str, str, str, str)
         self.treeview_consoles = Gtk.TreeView()
 
         self.column_consoles_name = Gtk.TreeViewColumn()
@@ -1066,7 +1079,7 @@ class Preferences(object):
         self.column_consoles_emulator.add_attribute(
             self.cell_consoles_emulator, "text", 2)
         self.column_consoles_emulator.add_attribute(
-            self.cell_consoles_check, "pixbuf", 3)
+            self.cell_consoles_check, "icon-name", 3)
 
         self.treeview_consoles.append_column(self.column_consoles_name)
         self.treeview_consoles.append_column(self.column_consoles_emulator)
@@ -1099,7 +1112,7 @@ class Preferences(object):
         self.scroll_emulators_treeview = Gtk.ScrolledWindow()
 
         self.model_emulators = Gtk.ListStore(
-            Pixbuf, str, str, Pixbuf, str)
+            Pixbuf, str, str, str, str)
         self.treeview_emulators = Gtk.TreeView()
 
         self.column_emulators_name = Gtk.TreeViewColumn()
@@ -1155,7 +1168,7 @@ class Preferences(object):
         self.column_emulators_binary.add_attribute(
             self.cell_emulators_binary, "text", 2)
         self.column_emulators_binary.add_attribute(
-            self.cell_emulators_check, "pixbuf", 3)
+            self.cell_emulators_check, "icon-name", 3)
 
         self.treeview_emulators.append_column(self.column_emulators_name)
         self.treeview_emulators.append_column(self.column_emulators_binary)
@@ -1841,9 +1854,9 @@ class Preferences(object):
             if console.path is not None:
                 path = console.path.replace(expanduser('~'), '~')
 
-            check = self.empty
+            check = str()
             if not exists(expanduser(path)):
-                check = icon_load(Icons.Warning, 24, self.empty)
+                check = Icons.Symbolic.Warning
 
             self.model_consoles.append([
                 image, console.name, path, check, console.id])
@@ -1861,9 +1874,10 @@ class Preferences(object):
             image = icon_from_data(
                 emulator.icon, self.empty, subfolder="emulators")
 
-            check, font = self.empty, Pango.Style.NORMAL
+            check = str()
+            font = Pango.Style.NORMAL
             if not emulator.exists:
-                check = icon_load(Icons.Warning, 24, self.empty)
+                check = Icons.Symbolic.Warning
                 font = Pango.Style.OBLIQUE
 
             self.model_emulators.append([
@@ -2196,8 +2210,7 @@ class PreferencesConsole(Dialog):
             },
             "Expressions": [
                 _("It's possible to hide specific files from the games list "
-                "with regular expressions."),
-                _("Expressions are split by carriage return.")
+                "with regular expressions.")
             ]
         }
 
@@ -2240,8 +2253,6 @@ class PreferencesConsole(Dialog):
 
         self.set_help(self.interface.window, self.help_data)
 
-        self.dialog_box.set_border_width(18)
-
         # ------------------------------------
         #   Main scrolling
         # ------------------------------------
@@ -2261,10 +2272,21 @@ class PreferencesConsole(Dialog):
 
         self.grid = Gtk.Grid()
 
+        self.grid_ignores = Gtk.Box()
+        self.grid_ignores_buttons = Gtk.Box()
+
         # Properties
         self.grid.set_row_spacing(6)
         self.grid.set_column_spacing(12)
         self.grid.set_column_homogeneous(False)
+
+        self.grid_ignores.set_spacing(12)
+        self.grid_ignores.set_homogeneous(False)
+
+        Gtk.StyleContext.add_class(
+            self.grid_ignores_buttons.get_style_context(), "linked")
+        self.grid_ignores_buttons.set_spacing(-1)
+        self.grid_ignores_buttons.set_orientation(Gtk.Orientation.VERTICAL)
 
         # ------------------------------------
         #   Console options
@@ -2371,8 +2393,16 @@ class PreferencesConsole(Dialog):
 
         self.label_ignores = Gtk.Label()
 
-        self.text_ignores = Gtk.TextView()
-        self.buffer_ignores = self.text_ignores.get_buffer()
+        self.image_ignores_add = Gtk.Image()
+        self.button_ignores_add = Gtk.Button()
+
+        self.image_ignores_remove = Gtk.Image()
+        self.button_ignores_remove = Gtk.Button()
+
+        self.model_ignores = Gtk.ListStore(str)
+        self.treeview_ignores = Gtk.TreeView()
+        self.column_ignores = Gtk.TreeViewColumn()
+        self.cell_ignores = Gtk.CellRendererText()
 
         # Properties
         self.scroll_ignores.add(self.viewport_ignores)
@@ -2385,13 +2415,23 @@ class PreferencesConsole(Dialog):
         self.label_ignores.set_markup(
             "<b>%s</b>" % _("Regular expressions for ignored files"))
 
-        self.text_ignores.set_top_margin(8)
-        self.text_ignores.set_left_margin(8)
-        self.text_ignores.set_right_margin(8)
-        self.text_ignores.set_bottom_margin(8)
-        self.text_ignores.set_monospace(True)
-        self.text_ignores.set_vexpand(True)
-        self.text_ignores.set_wrap_mode(Gtk.WrapMode.NONE)
+        self.image_ignores_add.set_from_icon_name(
+            Icons.Symbolic.Add, Gtk.IconSize.BUTTON)
+        self.image_ignores_remove.set_from_icon_name(
+            Icons.Symbolic.Remove, Gtk.IconSize.BUTTON)
+
+        self.treeview_ignores.set_model(self.model_ignores)
+        self.treeview_ignores.set_headers_visible(False)
+        self.treeview_ignores.set_grid_lines(Gtk.TreeViewGridLines.HORIZONTAL)
+
+        self.column_ignores.pack_start(self.cell_ignores, True)
+        self.column_ignores.add_attribute(self.cell_ignores, "text", 0)
+
+        self.cell_ignores.set_padding(4, 2)
+        self.cell_ignores.set_property("editable", True)
+        self.cell_ignores.set_property("placeholder_text",
+            _("Write your regex here..."))
+        self.cell_ignores.set_property("ellipsize", Pango.EllipsizeMode.END)
 
 
     def __init_packing(self):
@@ -2421,13 +2461,28 @@ class PreferencesConsole(Dialog):
         self.grid.attach(self.entry_extensions, 1, 4, 2, 1)
 
         self.grid.attach(self.label_ignores, 0, 5, 3, 1)
-        self.grid.attach(self.scroll_ignores, 0, 6, 3, 1)
+        self.grid.attach(self.grid_ignores, 0, 6, 3, 1)
 
         # Console options
         self.button_console.set_image(self.image_console)
 
         # Ignores
-        self.viewport_ignores.add(self.text_ignores)
+        self.button_ignores_add.add(self.image_ignores_add)
+        self.button_ignores_remove.add(self.image_ignores_remove)
+
+        self.treeview_ignores.append_column(self.column_ignores)
+
+        self.grid_ignores_buttons.pack_start(
+            self.button_ignores_add, False, False, 0)
+        self.grid_ignores_buttons.pack_start(
+            self.button_ignores_remove, False, False, 0)
+
+        self.grid_ignores.pack_start(
+            self.grid_ignores_buttons, False, False, 0)
+        self.grid_ignores.pack_start(
+            self.scroll_ignores, True, True, 0)
+
+        self.viewport_ignores.add(self.treeview_ignores)
 
 
     def __init_signals(self):
@@ -2444,6 +2499,11 @@ class PreferencesConsole(Dialog):
         self.button_console.connect("clicked", self.__on_select_icon)
 
         self.combo_emulators.connect("changed", self.__update_dialog)
+
+        self.cell_ignores.connect("edited", self.__on_edited_cell)
+
+        self.button_ignores_add.connect("clicked", self.__on_append_item)
+        self.button_ignores_remove.connect("clicked", self.__on_remove_item)
 
 
     def __start_interface(self):
@@ -2484,7 +2544,8 @@ class PreferencesConsole(Dialog):
                 icon_from_data(self.path, self.empty, 64, 64, "consoles"))
 
             # Ignores
-            self.buffer_ignores.set_text('\n'.join(self.console.ignores))
+            for ignore in self.console.ignores:
+                self.model_ignores.append([ ignore ])
 
             # Emulator
             emulator = self.console.emulator
@@ -2551,11 +2612,10 @@ class PreferencesConsole(Dialog):
             extensions = self.entry_extensions.get_text().split()
 
         ignores = list()
-        ignores_text = self.buffer_ignores.get_text(
-            self.buffer_ignores.get_start_iter(),
-            self.buffer_ignores.get_end_iter(), True)
-        if len(ignores_text) > 0:
-            for data in ignores_text.split('\n'):
+        for row in self.model_ignores:
+            data = self.model_ignores.get_value(row.iter, 0)
+
+            if data is not None and len(data) > 0:
                 ignores.append(data)
 
         self.data = {
@@ -2588,6 +2648,48 @@ class PreferencesConsole(Dialog):
             self.path = dialog.new_path
 
         dialog.destroy()
+
+
+    def __on_append_item(self, widget):
+        """ Append a new row in treeview
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        self.model_ignores.append([ str() ])
+
+
+    def __on_remove_item(self, widget):
+        """ Append a new row in treeview
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        model, treeiter = self.treeview_ignores.get_selection().get_selected()
+        if treeiter is not None:
+            self.model_ignores.remove(treeiter)
+
+
+    def __on_edited_cell(self, widget, path, text):
+        """ Update treerow when a cell has been edited
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        path : str
+            Path identifying the edited cell
+        text : str
+            New text
+        """
+
+        self.model_ignores[path][0] = str(text)
 
 
     def __update_dialog(self, widget):
@@ -2746,8 +2848,6 @@ class PreferencesEmulator(Dialog):
         self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
 
         self.set_help(self.interface.window, self.help_data)
-
-        self.dialog_box.set_border_width(18)
 
         # ------------------------------------
         #   Main scrolling
@@ -3042,8 +3142,7 @@ class PreferencesEmulator(Dialog):
             self.entry_name.set_text(self.emulator.name)
 
             # Binary
-            if self.emulator.exists:
-                self.entry_binary.set_text(self.emulator.binary)
+            self.entry_binary.set_text(self.emulator.binary)
 
             # Configuration
             folder = self.emulator.configuration
@@ -3177,7 +3276,8 @@ class PreferencesEmulator(Dialog):
         #   Emulator name
         # ------------------------------------
 
-        icon, tooltip = None, None
+        icon = None
+        tooltip = None
 
         name = self.entry_name.get_text()
 
@@ -3191,7 +3291,10 @@ class PreferencesEmulator(Dialog):
             if identifier in self.api.emulators and (not self.modify or (
                 self.modify and not name == self.emulator.name)):
 
-                icon, status, tooltip = Icons.Symbolic.Error, False, _(
+                status = False
+
+                icon = Icons.Symbolic.Error
+                tooltip = _(
                     "This emulator already exist, please, choose another name")
 
         if widget == self.entry_name:
@@ -3203,7 +3306,8 @@ class PreferencesEmulator(Dialog):
         #   Emulator binary
         # ------------------------------------
 
-        icon, tooltip = None, None
+        icon = None
+        tooltip = None
 
         path = self.entry_binary.get_text()
 
@@ -3213,7 +3317,7 @@ class PreferencesEmulator(Dialog):
         elif len(get_binary_path(path)) == 0:
             self.error = True
 
-            icon = "dialog-error"
+            icon = Icons.Symbolic.Error
             tooltip = _("This binary not exist, please, check the path")
 
         if widget == self.entry_binary:
@@ -3547,3 +3651,6 @@ class IconViewer(Dialog):
         else:
             self.frame_icons.set_visible(True)
             self.scroll_icons.set_visible(False)
+
+            # Avoid to lost the current icon when switch between the two mode
+            self.file_icons.set_filename(self.path)

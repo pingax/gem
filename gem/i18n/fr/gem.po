@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.6\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2017-10-15 18:27+0200\n"
+"PO-Revision-Date: 2017-10-17 20:25+0200\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -70,12 +70,6 @@ msgstr "%s jeux disponibles"
 #, python-format
 msgid "%s has been deleted from disk"
 msgstr "%s à été supprimé du disque"
-
-#
-# File: gem/interface.py, line: 2026
-#, python-format
-msgid "%s is already in the roms folder. Canceling operation."
-msgstr "%s est déjà dans le dossier des roms. Annulation de l'opération."
 
 #
 # File: gem/interface.py, line: 1882
@@ -415,11 +409,6 @@ msgstr ""
 # File: gem/configuration.py, line: 301
 msgid "Emulators"
 msgstr "Émulateurs"
-
-#
-# File: gem/gtk/preferences.py, line: 1796
-msgid "Expressions are split by carriage return."
-msgstr "Les expressions sont séparées par un retour à la ligne."
 
 #
 # File: gem/preferences.py, line: 938
@@ -774,7 +763,7 @@ msgstr "Chemin des ROMs"
 #
 # File: gem/preferences.py, line: 335
 msgid "Randomize game screenshot in sidebar"
-msgstr "Afficher une capture d'écran du jeu de manière aléatoirement"
+msgstr "Afficher une capture d'écran du jeu de manière aléatoire"
 
 #
 # File: gem/preferences.py, line: 1233
@@ -1031,7 +1020,7 @@ msgstr "Il n'y a pas d'émulateur par défaut pour cette console"
 #
 # File: gem/preferences.py, line: 1020
 msgid "This binary not exist, please, check the path"
-msgstr "Ce binaire existe déjà, veuillez choisir un autre chemin"
+msgstr "Ce binaire n'existe pas, veuillez vérifier le chemin"
 
 #
 # File: gem/preferences.py, line: 1020
@@ -1194,6 +1183,12 @@ msgid "Vertical"
 msgstr "Verticales"
 
 #
+# File: gem/preferences.py, line: 1577
+#, fuzzy
+msgid "Viewer binary"
+msgstr "Choisir un binaire"
+
+#
 # File: gem/interface.py, line: 829
 msgid "Welcome !"
 msgstr "Bienvenue !"
@@ -1226,6 +1221,11 @@ msgstr ""
 # File: src/window.py, line: 940
 msgid "Would you really want to remove this entry ?"
 msgstr "Voulez-vous vraiment supprimer cette entrée ?"
+
+#
+# File: gem/gtk/preferences.py, line: 2433
+msgid "Write your regex here..."
+msgstr ""
 
 #
 # File: src/window.py, line: 1062
@@ -1322,9 +1322,19 @@ msgid "translator-credits"
 msgstr "Lubert Aurélien (PacMiam)"
 
 #
+# File: gem/interface.py, line: 2026
+#~ msgid "%s is already in the roms folder. Canceling operation."
+#~ msgstr "%s est déjà dans le dossier des roms. Annulation de l'opération."
+
+#
 # File: gem/preferences.py, line: 292
 #~ msgid "Alternative viewer"
 #~ msgstr "Visualiseur d'images alternatif"
+
+#
+# File: gem/gtk/preferences.py, line: 1796
+#~ msgid "Expressions are split by carriage return."
+#~ msgstr "Les expressions sont séparées par un retour à la ligne."
 
 #
 # File: gem/preferences.py, line: 433
