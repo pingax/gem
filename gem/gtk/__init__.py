@@ -105,6 +105,7 @@ class Icons:
     System      = "preferences-system"
     # Devices
     Camera      = "camera-photo"
+    Floppy      = "media-floppy"
     Gaming      = "input-gaming"
     Video       = "video-display"
     # Emblems

@@ -940,7 +940,7 @@ class DialogParameters(Dialog):
             Emulator data
         """
 
-        Dialog.__init__(self, parent, game.name, Icons.Gaming)
+        Dialog.__init__(self, parent, _("Game properties"), Icons.Gaming)
 
         # ------------------------------------
         #   Initialize variables
@@ -1006,6 +1006,8 @@ class DialogParameters(Dialog):
         self.set_help(self.interface, self.help_data)
 
         self.dialog_box.set_spacing(18)
+
+        self.headerbar.set_subtitle(self.game.name)
 
         # ------------------------------------
         #   Grids
@@ -1683,7 +1685,7 @@ class DialogViewer(Dialog):
         """ Load data and start interface
         """
 
-        self.set_size(int(self.__width), int(self.__height))
+        self.set_default_size(int(self.__width), int(self.__height))
 
         self.show_all()
 

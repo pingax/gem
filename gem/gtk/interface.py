@@ -220,9 +220,9 @@ class Interface(Gtk.ApplicationWindow):
         self.icons_theme.append_search_path(get_data(path_join("icons", "ui")))
 
         self.icons_data = {
-            "save": Icons.Download,
+            "save": Icons.Floppy,
             "snap": Icons.Photos,
-            "except": Icons.Gaming,
+            "except": Icons.Properties,
             "warning": Icons.Warning,
             "favorite": Icons.Favorite,
             "multiplayer": Icons.Users,
