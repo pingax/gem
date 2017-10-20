@@ -1348,7 +1348,7 @@ class Console(GEMObject):
                         name = data["name"]
 
                     # Set play time
-                    play_time = time()
+                    play_time = timedelta()
                     if "play_time" in data and len(data["play_time"]) > 0:
                         play_time = data["play_time"]
                         microseconds = int()
@@ -1384,7 +1384,7 @@ class Console(GEMObject):
                             int(day))
 
                     # Set last play time
-                    last_launch_time = time()
+                    last_launch_time = timedelta()
                     if "last_play_time" in data and \
                         len(data["last_play_time"]) > 0:
                         last_launch_time = data["last_play_time"]

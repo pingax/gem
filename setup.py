@@ -21,7 +21,7 @@ setup(
 
     entry_points = {
         "console_scripts": [
-            "gem-ui = gem.main:main",
+            "gem-ui = gem.__main__:main",
         ],
     },
 
