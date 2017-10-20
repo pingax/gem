@@ -51,7 +51,7 @@ Ou directement depuis la zone de [téléchargements de GEM](https://download.tux
 Une fois à la racine des sources de GEM, exécuter la commande suivante:
 
 ```
-$ python3 -m gem.main
+$ python3 -m gem
 ```
 
 ## Installation
