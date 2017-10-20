@@ -320,6 +320,8 @@ class Interface(Gtk.ApplicationWindow):
         self.grid_toolbar_console = Gtk.Box()
         self.grid_toolbar_filters = Gtk.Box()
 
+        self.grid_menu_filters = Gtk.Grid()
+
         # Properties
         self.grid.set_orientation(Gtk.Orientation.VERTICAL)
 
@@ -348,6 +350,10 @@ class Interface(Gtk.ApplicationWindow):
             self.grid_toolbar_filters.get_style_context(), "linked")
         self.grid_toolbar_filters.set_spacing(-1)
         self.grid_toolbar_filters.set_orientation(Gtk.Orientation.HORIZONTAL)
+
+        self.grid_menu_filters.set_border_width(12)
+        self.grid_menu_filters.set_row_spacing(6)
+        self.grid_menu_filters.set_column_spacing(12)
 
         # ------------------------------------
         #   Headerbar
@@ -765,6 +771,8 @@ class Interface(Gtk.ApplicationWindow):
         self.tool_menu_filters = Gtk.MenuButton()
         self.tool_image_filters = Gtk.Image()
 
+        self.popover_menu_filters = Gtk.Popover()
+
         # Properties
         self.entry_filter.set_size_request(300, -1)
         self.entry_filter.set_placeholder_text(_("Filter"))
@@ -777,10 +785,14 @@ class Interface(Gtk.ApplicationWindow):
         self.entry_filter.set_icon_sensitive(
             Gtk.EntryIconPosition.PRIMARY, False)
 
+        self.tool_menu_filters.set_popover(self.popover_menu_filters)
         self.tool_menu_filters.set_tooltip_text(_("Filters"))
+        self.tool_menu_filters.set_use_popover(True)
 
         self.tool_image_filters.set_from_icon_name(
             Icons.Symbolic.Sync, Gtk.IconSize.SMALL_TOOLBAR)
+
+        self.popover_menu_filters.set_modal(True)
 
         # ------------------------------------
         #   Toolbar - Filter - Menu
@@ -788,31 +800,70 @@ class Interface(Gtk.ApplicationWindow):
 
         self.menu_filters = Gtk.Menu()
 
-        self.check_filter_favorite = Gtk.CheckMenuItem()
-        self.check_filter_unfavorite = Gtk.CheckMenuItem()
-        self.check_filter_multiplayer = Gtk.CheckMenuItem()
-        self.check_filter_singleplayer = Gtk.CheckMenuItem()
-        self.check_filter_finish = Gtk.CheckMenuItem()
-        self.check_filter_unfinish = Gtk.CheckMenuItem()
+        self.label_filter_favorite = Gtk.Label()
+        self.check_filter_favorite = Gtk.Switch()
+
+        self.label_filter_unfavorite = Gtk.Label()
+        self.check_filter_unfavorite = Gtk.Switch()
+
+        self.label_filter_multiplayer = Gtk.Label()
+        self.check_filter_multiplayer = Gtk.Switch()
+
+        self.label_filter_singleplayer = Gtk.Label()
+        self.check_filter_singleplayer = Gtk.Switch()
+
+        self.label_filter_finish = Gtk.Label()
+        self.check_filter_finish = Gtk.Switch()
+
+        self.label_filter_unfinish = Gtk.Label()
+        self.check_filter_unfinish = Gtk.Switch()
 
         self.image_filter_reset = Gtk.Image()
 
-        self.item_filter_reset = Gtk.ImageMenuItem()
+        self.item_filter_reset = Gtk.Button()
 
         # Properties
-        self.tool_menu_filters.set_popup(self.menu_filters)
+        self.label_filter_favorite.set_label(_("Favorite"))
+        self.label_filter_favorite.set_halign(Gtk.Align.START)
+        self.label_filter_favorite.set_valign(Gtk.Align.CENTER)
+        self.check_filter_favorite.set_active(True)
 
-        self.check_filter_favorite.set_label(_("Favorite"))
-        self.check_filter_unfavorite.set_label(_("Unfavorite"))
-        self.check_filter_multiplayer.set_label(_("Multiplayer"))
-        self.check_filter_singleplayer.set_label(_("Singleplayer"))
-        self.check_filter_finish.set_label(_("Finish"))
-        self.check_filter_unfinish.set_label(_("Unfinish"))
+        self.label_filter_unfavorite.set_label(_("Unfavorite"))
+        self.label_filter_unfavorite.set_halign(Gtk.Align.START)
+        self.label_filter_unfavorite.set_valign(Gtk.Align.CENTER)
+        self.check_filter_unfavorite.set_active(True)
+
+        self.label_filter_multiplayer.set_margin_top(12)
+        self.label_filter_multiplayer.set_label(_("Multiplayer"))
+        self.label_filter_multiplayer.set_halign(Gtk.Align.START)
+        self.label_filter_multiplayer.set_valign(Gtk.Align.CENTER)
+        self.check_filter_multiplayer.set_margin_top(12)
+        self.check_filter_multiplayer.set_active(True)
+
+        self.label_filter_singleplayer.set_label(_("Singleplayer"))
+        self.label_filter_singleplayer.set_halign(Gtk.Align.START)
+        self.label_filter_singleplayer.set_valign(Gtk.Align.CENTER)
+        self.check_filter_singleplayer.set_active(True)
+
+        self.label_filter_finish.set_margin_top(12)
+        self.label_filter_finish.set_label(_("Finish"))
+        self.label_filter_finish.set_halign(Gtk.Align.START)
+        self.label_filter_finish.set_valign(Gtk.Align.CENTER)
+        self.check_filter_finish.set_margin_top(12)
+        self.check_filter_finish.set_active(True)
+
+        self.label_filter_unfinish.set_label(_("Unfinish"))
+        self.label_filter_unfinish.set_halign(Gtk.Align.START)
+        self.label_filter_unfinish.set_valign(Gtk.Align.CENTER)
+        self.check_filter_unfinish.set_active(True)
 
         self.image_filter_reset.set_from_icon_name(
             Icons.Undo, Gtk.IconSize.MENU)
 
+        self.item_filter_reset.set_margin_top(12)
         self.item_filter_reset.set_label(_("Reset filters"))
+        self.item_filter_reset.set_halign(Gtk.Align.CENTER)
+        self.item_filter_reset.set_valign(Gtk.Align.CENTER)
         self.item_filter_reset.set_image(self.image_filter_reset)
 
         # ------------------------------------
@@ -1351,16 +1402,21 @@ class Interface(Gtk.ApplicationWindow):
         self.toolbar_item_properties.add(self.toolbar_image_properties)
 
         # Toolbar - Filters menu
-        self.menu_filters.append(self.check_filter_favorite)
-        self.menu_filters.append(self.check_filter_unfavorite)
-        self.menu_filters.append(Gtk.SeparatorMenuItem())
-        self.menu_filters.append(self.check_filter_multiplayer)
-        self.menu_filters.append(self.check_filter_singleplayer)
-        self.menu_filters.append(Gtk.SeparatorMenuItem())
-        self.menu_filters.append(self.check_filter_finish)
-        self.menu_filters.append(self.check_filter_unfinish)
-        self.menu_filters.append(Gtk.SeparatorMenuItem())
-        self.menu_filters.append(self.item_filter_reset)
+        self.grid_menu_filters.attach(self.label_filter_favorite, 0, 0, 1, 1)
+        self.grid_menu_filters.attach(self.check_filter_favorite, 1, 0, 1, 1)
+        self.grid_menu_filters.attach(self.label_filter_unfavorite, 0, 1, 1, 1)
+        self.grid_menu_filters.attach(self.check_filter_unfavorite, 1, 1, 1, 1)
+        self.grid_menu_filters.attach(self.label_filter_multiplayer, 0, 2, 1, 1)
+        self.grid_menu_filters.attach(self.check_filter_multiplayer, 1, 2, 1, 1)
+        self.grid_menu_filters.attach(self.label_filter_singleplayer, 0, 3, 1, 1)
+        self.grid_menu_filters.attach(self.check_filter_singleplayer, 1, 3, 1, 1)
+        self.grid_menu_filters.attach(self.label_filter_finish, 0, 4, 1, 1)
+        self.grid_menu_filters.attach(self.check_filter_finish, 1, 4, 1, 1)
+        self.grid_menu_filters.attach(self.label_filter_unfinish, 0, 5, 1, 1)
+        self.grid_menu_filters.attach(self.check_filter_unfinish, 1, 5, 1, 1)
+        self.grid_menu_filters.attach(self.item_filter_reset, 0, 6, 2, 1)
+
+        self.popover_menu_filters.add(self.grid_menu_filters)
 
         # Infobar
         self.infobar.get_content_area().pack_start(
@@ -1524,17 +1580,17 @@ class Interface(Gtk.ApplicationWindow):
             "changed", self.filters_update)
 
         self.check_filter_favorite.connect(
-            "toggled", self.filters_update)
+            "state_set", self.filters_update)
         self.check_filter_unfavorite.connect(
-            "toggled", self.filters_update)
+            "state_set", self.filters_update)
         self.check_filter_multiplayer.connect(
-            "toggled", self.filters_update)
+            "state_set", self.filters_update)
         self.check_filter_singleplayer.connect(
-            "toggled", self.filters_update)
+            "state_set", self.filters_update)
         self.check_filter_finish.connect(
-            "toggled", self.filters_update)
+            "state_set", self.filters_update)
         self.check_filter_unfinish.connect(
-            "toggled", self.filters_update)
+            "state_set", self.filters_update)
         self.item_filter_reset.connect(
             "activate", self.filters_reset)
 
@@ -1859,6 +1915,7 @@ class Interface(Gtk.ApplicationWindow):
         self.menu.show_all()
         self.menu_games.show_all()
         self.menu_filters.show_all()
+        self.grid_menu_filters.show_all()
 
         self.infobar.show_all()
         self.infobar.get_content_area().show_all()
@@ -2044,7 +2101,7 @@ class Interface(Gtk.ApplicationWindow):
         self.menubar_edit_item_mednafen.set_sensitive(status)
 
 
-    def filters_update(self, widget=None):
+    def filters_update(self, widget, status):
         """ Reload packages filter when user change filters from menu
 
         Other Parameters
@@ -2056,6 +2113,8 @@ class Interface(Gtk.ApplicationWindow):
         -----
         Check widget utility in this function
         """
+
+        widget.set_active(status)
 
         self.filter_games.refilter()
 
