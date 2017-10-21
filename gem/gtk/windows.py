@@ -1156,6 +1156,8 @@ class DialogParameters(Dialog):
                 if emulator.name == self.emulator["console"].name:
                     self.combo.set_active_iter(row)
 
+        self.combo.set_wrap_width(int(len(self.model) / 10))
+
         if self.emulator["parameters"] is not None:
             self.entry_arguments.set_text(self.emulator["parameters"])
 

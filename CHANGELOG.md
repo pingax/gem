@@ -14,6 +14,7 @@
 * Add a tooltip for games treeview
 * Fix wrong parameter for dolphin-emu
 * Fix wrong exception in icon_from_data
+* Fix wrong type for play_time and last_launch_time in api
 
 ## Version 0.8 - Shadow Blade (26 July, 2017)
 

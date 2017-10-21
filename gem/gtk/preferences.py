@@ -2523,6 +2523,8 @@ class PreferencesConsole(Dialog):
             emulators_rows[emulator.id] = self.model_emulators.append(
                 [icon, emulator.name, warning])
 
+        self.combo_emulators.set_wrap_width(int(len(self.model_emulators) / 10))
+
         # ------------------------------------
         #   Init data
         # ------------------------------------

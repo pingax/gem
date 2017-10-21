@@ -123,6 +123,12 @@ msgid "A memory error occur: %s"
 msgstr "MemoryError: %s"
 
 #
+# File: gem/interface.py, line: 419
+#, fuzzy
+msgid "About"
+msgstr "_A cerca de"
+
+#
 # File: gem/preferences.py, line: 476
 msgid "Action"
 msgstr "Acción"
@@ -332,6 +338,12 @@ msgid "Custom _parameters"
 msgstr "_Parametros personalizados"
 
 #
+# File: gem/interface.py, line: 391
+#, fuzzy
+msgid "Dark theme"
+msgstr "Usar el tema _oscuro"
+
+#
 # File: gem/gtk/preferences.py, line: 2563
 msgid "Default arguments to add when launch emulator"
 msgstr ""
@@ -496,6 +508,11 @@ msgstr "GEM ya está ejecutandose con el PID %s"
 # File: gem/preferences.py, line: 113
 msgid "Game"
 msgstr "Juego"
+
+#
+# File: gem/gtk/windows.py, line: 943
+msgid "Game properties"
+msgstr ""
 
 #
 # File: gem/preferences.py, line: 113
@@ -732,6 +749,12 @@ msgid "Open selected game directory"
 msgstr "Abrir carpeta del juego seleccionado"
 
 #
+# File: gem/interface.py, line: 572
+#, fuzzy
+msgid "Output log"
+msgstr "Mostrar el _registro de salida"
+
+#
 # File: gem/interface.py, line: 396
 # File: gem/interface.py, line: 756
 # File: gem/interface.py, line: 1667
@@ -766,6 +789,12 @@ msgstr "Tiempo jugado"
 # File: gem/preferences.py, line: 73
 msgid "Preferences"
 msgstr "Preferencias"
+
+#
+# File: gem/interface.py, line: 363
+#, fuzzy
+msgid "Quit"
+msgstr "_Salir"
 
 #
 # File: gem/preferences.py, line: 94
@@ -1574,3 +1603,9 @@ msgstr "agradecimientos a los traductores"
 # File: gem/interface.py, line: 384
 #~ msgid "_Notes"
 #~ msgstr "_Notas"
+
+#
+# File: gem/preferences.py, line: 431
+#, fuzzy
+#~ msgid "_Sidebar"
+#~ msgstr "Mostrar los números de línea"

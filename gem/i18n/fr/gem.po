@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.6\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2017-10-17 20:25+0200\n"
+"PO-Revision-Date: 2017-10-21 13:31+0200\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -124,6 +124,12 @@ msgstr ""
 #, python-format
 msgid "A memory error occur: %s"
 msgstr "Une erreur mémoire est survenue: %s"
+
+#
+# File: src/window.py, line: 247
+#, fuzzy
+msgid "About"
+msgstr "À _propos"
 
 #
 # File: gem/preferences.py, line: 329
@@ -325,6 +331,11 @@ msgid "Custom _parameters"
 msgstr "Définir des _paramètres personnalisés"
 
 #
+# File: gem/interface.py, line: 391
+msgid "Dark theme"
+msgstr "Thème sombre"
+
+#
 # File: gem/gtk/preferences.py, line: 2563
 msgid "Default arguments to add when launch emulator"
 msgstr "Arguments par défaut à ajouter lors du lancement de l'émulateur"
@@ -485,6 +496,11 @@ msgstr "GEM est déjà en cours de fonctionnement avec le PID %s"
 # File: gem/preferences.py, line: 113
 msgid "Game"
 msgstr "Jeu"
+
+#
+# File: gem/gtk/windows.py, line: 943
+msgid "Game properties"
+msgstr "Propriétés du jeu"
 
 #
 # File: gem/preferences.py, line: 113
@@ -721,6 +737,11 @@ msgid "Open selected game directory"
 msgstr "Ouvrir le dossier du jeu sélectionné"
 
 #
+# File: gem/interface.py, line: 405
+msgid "Output log"
+msgstr "Journal de sortie"
+
+#
 # File: gem/interface.py, line: 336
 msgid "Parameters"
 msgstr "Paramètres"
@@ -749,6 +770,12 @@ msgstr "Temps de jeu"
 # File: gem/configuration.py, line: 100
 msgid "Preferences"
 msgstr "Préférences"
+
+#
+# File: src/window.py, line: 239
+#, fuzzy
+msgid "Quit"
+msgstr "_Quitter"
 
 #
 # File: gem/preferences.py, line: 91
@@ -1184,9 +1211,8 @@ msgstr "Verticales"
 
 #
 # File: gem/preferences.py, line: 1577
-#, fuzzy
 msgid "Viewer binary"
-msgstr "Choisir un binaire"
+msgstr "Binaire du visualiseur"
 
 #
 # File: gem/interface.py, line: 829
@@ -1225,7 +1251,7 @@ msgstr "Voulez-vous vraiment supprimer cette entrée ?"
 #
 # File: gem/gtk/preferences.py, line: 2433
 msgid "Write your regex here..."
-msgstr ""
+msgstr "Écrivez votre expression régulière ici"
 
 #
 # File: src/window.py, line: 1062
@@ -1405,3 +1431,9 @@ msgstr "Lubert Aurélien (PacMiam)"
 # File: gem/ui/interface.glade, line: 1199
 #~ msgid "Viewer"
 #~ msgstr "Visualiseur"
+
+#
+# File: gem/preferences.py, line: 338
+#, fuzzy
+#~ msgid "_Sidebar"
+#~ msgstr "Barre latérale"
