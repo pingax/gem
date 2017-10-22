@@ -110,6 +110,7 @@ try:
 
     from gem.gtk import *
     from gem.gtk.game import GameThread
+    from gem.gtk.widgets import ImageMenuItem
     from gem.gtk.windows import *
     from gem.gtk.mednafen import DialogMednafenMemory
     from gem.gtk.preferences import Preferences
@@ -249,6 +250,8 @@ class Interface(Gtk.ApplicationWindow):
         # ------------------------------------
 
         self.shortcuts_group = Gtk.AccelGroup()
+
+        self.shortcuts_map = Gtk.AccelMap()
 
         # ------------------------------------
         #   Targets
@@ -506,78 +509,49 @@ class Interface(Gtk.ApplicationWindow):
 
         self.menubar_main_menu = Gtk.Menu()
 
-        self.menubar_main_image_launch = Gtk.Image()
-        self.menubar_main_image_favorite = Gtk.Image()
-        self.menubar_main_image_multiplayer = Gtk.Image()
-        self.menubar_main_image_screenshots = Gtk.Image()
-        self.menubar_main_image_output = Gtk.Image()
-        self.menubar_main_image_notes = Gtk.Image()
-        self.menubar_main_image_quit = Gtk.Image()
-
-        self.menubar_main_item_launch = Gtk.ImageMenuItem()
-        self.menubar_main_item_favorite = Gtk.ImageMenuItem()
-        self.menubar_main_item_multiplayer = Gtk.ImageMenuItem()
-        self.menubar_main_item_screenshots = Gtk.ImageMenuItem()
-        self.menubar_main_item_output = Gtk.ImageMenuItem()
-        self.menubar_main_item_notes = Gtk.ImageMenuItem()
-        self.menubar_main_item_quit = Gtk.ImageMenuItem()
+        self.menubar_main_item_launch = ImageMenuItem()
+        self.menubar_main_item_favorite = ImageMenuItem()
+        self.menubar_main_item_multiplayer = ImageMenuItem()
+        self.menubar_main_item_screenshots = ImageMenuItem()
+        self.menubar_main_item_output = ImageMenuItem()
+        self.menubar_main_item_notes = ImageMenuItem()
+        self.menubar_main_item_quit = ImageMenuItem()
 
         self.menubar_main_item_fullscreen = Gtk.CheckMenuItem()
 
         # Properties
-        self.menubar_main_image_launch.set_from_icon_name(
-            Icons.Launch, Gtk.IconSize.MENU)
-        self.menubar_main_image_favorite.set_from_icon_name(
-            Icons.Favorite, Gtk.IconSize.MENU)
-        self.menubar_main_image_multiplayer.set_from_icon_name(
-            Icons.Users, Gtk.IconSize.MENU)
-        self.menubar_main_image_screenshots.set_from_icon_name(
-            Icons.Image, Gtk.IconSize.MENU)
-        self.menubar_main_image_output.set_from_icon_name(
-            Icons.Terminal, Gtk.IconSize.MENU)
-        self.menubar_main_image_notes.set_from_icon_name(
-            Icons.Document, Gtk.IconSize.MENU)
-        self.menubar_main_image_quit.set_from_icon_name(
-            Icons.Quit, Gtk.IconSize.MENU)
+        self.menubar_main_menu.set_reserve_toggle_size(False)
 
         self.menubar_main_item_launch.set_label(_("_Launch"))
-        self.menubar_main_item_launch.set_image(
-            self.menubar_main_image_launch)
-        self.menubar_main_item_launch.set_use_underline(True)
+        self.menubar_main_item_launch.set_image_from_icon_name(
+            Icons.Symbolic.Launch)
 
         self.menubar_main_item_favorite.set_label(_("Mark as _favorite"))
-        self.menubar_main_item_favorite.set_image(
-            self.menubar_main_image_favorite)
-        self.menubar_main_item_favorite.set_use_underline(True)
+        self.menubar_main_item_favorite.set_image_from_icon_name(
+            Icons.Symbolic.Favorite)
 
         self.menubar_main_item_multiplayer.set_label(_("Mark as _multiplayer"))
-        self.menubar_main_item_multiplayer.set_image(
-            self.menubar_main_image_multiplayer)
-        self.menubar_main_item_multiplayer.set_use_underline(True)
+        self.menubar_main_item_multiplayer.set_image_from_icon_name(
+            Icons.Symbolic.Users)
 
         self.menubar_main_item_screenshots.set_label(_("Show _screenshots"))
-        self.menubar_main_item_screenshots.set_image(
-            self.menubar_main_image_screenshots)
-        self.menubar_main_item_screenshots.set_use_underline(True)
+        self.menubar_main_item_screenshots.set_image_from_icon_name(
+            Icons.Symbolic.Image)
 
         self.menubar_main_item_output.set_label(_("Show output _log"))
-        self.menubar_main_item_output.set_image(
-            self.menubar_main_image_output)
-        self.menubar_main_item_output.set_use_underline(True)
+        self.menubar_main_item_output.set_image_from_icon_name(
+            Icons.Symbolic.Terminal)
 
         self.menubar_main_item_notes.set_label(_("Show _notes"))
-        self.menubar_main_item_notes.set_image(
-            self.menubar_main_image_notes)
-        self.menubar_main_item_notes.set_use_underline(True)
+        self.menubar_main_item_notes.set_image_from_icon_name(
+            Icons.Symbolic.Document)
 
         self.menubar_main_item_quit.set_label(_("_Quit"))
-        self.menubar_main_item_quit.set_image(
-            self.menubar_main_image_quit)
-        self.menubar_main_item_quit.set_use_underline(True)
+        self.menubar_main_item_quit.set_image_from_icon_name(
+            Icons.Symbolic.Quit)
 
         self.menubar_main_item_fullscreen.set_label(
             _("Activate game fullscreen mode"))
-        self.menubar_main_item_fullscreen.set_use_underline(True)
 
         # ------------------------------------
         #   Menubar - Edit items
@@ -585,81 +559,49 @@ class Interface(Gtk.ApplicationWindow):
 
         self.menubar_edit_menu = Gtk.Menu()
 
-        self.menubar_edit_image_rename = Gtk.Image()
-        self.menubar_edit_image_parameters = Gtk.Image()
-        self.menubar_edit_image_copy = Gtk.Image()
-        self.menubar_edit_image_open = Gtk.Image()
-        self.menubar_edit_image_desktop = Gtk.Image()
-        self.menubar_edit_image_database = Gtk.Image()
-        self.menubar_edit_image_delete = Gtk.Image()
-        self.menubar_edit_image_mednafen = Gtk.Image()
-
-        self.menubar_edit_item_rename = Gtk.ImageMenuItem()
-        self.menubar_edit_item_parameters = Gtk.ImageMenuItem()
-        self.menubar_edit_item_copy = Gtk.ImageMenuItem()
-        self.menubar_edit_item_open = Gtk.ImageMenuItem()
-        self.menubar_edit_item_desktop = Gtk.ImageMenuItem()
-        self.menubar_edit_item_database = Gtk.ImageMenuItem()
-        self.menubar_edit_item_delete = Gtk.ImageMenuItem()
-        self.menubar_edit_item_mednafen = Gtk.ImageMenuItem()
+        self.menubar_edit_item_rename = ImageMenuItem()
+        self.menubar_edit_item_parameters = ImageMenuItem()
+        self.menubar_edit_item_copy = ImageMenuItem()
+        self.menubar_edit_item_open = ImageMenuItem()
+        self.menubar_edit_item_desktop = ImageMenuItem()
+        self.menubar_edit_item_database = ImageMenuItem()
+        self.menubar_edit_item_delete = ImageMenuItem()
+        self.menubar_edit_item_mednafen = ImageMenuItem()
 
         # Properties
-        self.menubar_edit_image_rename.set_from_icon_name(
-            Icons.Editor, Gtk.IconSize.MENU)
-        self.menubar_edit_image_parameters.set_from_icon_name(
-            Icons.Gaming, Gtk.IconSize.MENU)
-        self.menubar_edit_image_copy.set_from_icon_name(
-            Icons.Copy, Gtk.IconSize.MENU)
-        self.menubar_edit_image_open.set_from_icon_name(
-            Icons.Open, Gtk.IconSize.MENU)
-        self.menubar_edit_image_desktop.set_from_icon_name(
-            Icons.Desktop, Gtk.IconSize.MENU)
-        self.menubar_edit_image_database.set_from_icon_name(
-            Icons.Clear, Gtk.IconSize.MENU)
-        self.menubar_edit_image_delete.set_from_icon_name(
-            Icons.Delete, Gtk.IconSize.MENU)
-        self.menubar_edit_image_mednafen.set_from_icon_name(
-            Icons.Save, Gtk.IconSize.MENU)
+        self.menubar_edit_menu.set_reserve_toggle_size(False)
 
         self.menubar_edit_item_rename.set_label(_("_Rename"))
-        self.menubar_edit_item_rename.set_image(
-            self.menubar_edit_image_rename)
-        self.menubar_edit_item_rename.set_use_underline(True)
+        self.menubar_edit_item_rename.set_image_from_icon_name(
+            Icons.Symbolic.Editor)
 
         self.menubar_edit_item_parameters.set_label(_("Custom _parameters"))
-        self.menubar_edit_item_parameters.set_image(
-            self.menubar_edit_image_parameters)
-        self.menubar_edit_item_parameters.set_use_underline(True)
+        self.menubar_edit_item_parameters.set_image_from_icon_name(
+            Icons.Symbolic.Properties)
 
         self.menubar_edit_item_copy.set_label(_("_Copy file path"))
-        self.menubar_edit_item_copy.set_image(
-            self.menubar_edit_image_copy)
-        self.menubar_edit_item_copy.set_use_underline(True)
+        self.menubar_edit_item_copy.set_image_from_icon_name(
+            Icons.Symbolic.Copy)
 
         self.menubar_edit_item_open.set_label(_("_Open file path"))
-        self.menubar_edit_item_open.set_image(
-            self.menubar_edit_image_open)
-        self.menubar_edit_item_open.set_use_underline(True)
+        self.menubar_edit_item_open.set_image_from_icon_name(
+            Icons.Symbolic.Open)
 
         self.menubar_edit_item_desktop.set_label(_("_Generate a menu entry"))
-        self.menubar_edit_item_desktop.set_image(
-            self.menubar_edit_image_desktop)
-        self.menubar_edit_item_desktop.set_use_underline(True)
+        self.menubar_edit_item_desktop.set_image_from_icon_name(
+            Icons.Symbolic.Desktop)
 
         self.menubar_edit_item_database.set_label(_("_Reset game informations"))
-        self.menubar_edit_item_database.set_image(
-            self.menubar_edit_image_database)
-        self.menubar_edit_item_database.set_use_underline(True)
+        self.menubar_edit_item_database.set_image_from_icon_name(
+            Icons.Symbolic.Clear)
 
         self.menubar_edit_item_delete.set_label(_("_Remove game from disk"))
-        self.menubar_edit_item_delete.set_image(
-            self.menubar_edit_image_delete)
-        self.menubar_edit_item_delete.set_use_underline(True)
+        self.menubar_edit_item_delete.set_image_from_icon_name(
+            Icons.Symbolic.Delete)
 
         self.menubar_edit_item_mednafen.set_label(_("Specify a _memory type"))
-        self.menubar_edit_item_mednafen.set_image(
-            self.menubar_edit_image_mednafen)
-        self.menubar_edit_item_mednafen.set_use_underline(True)
+        self.menubar_edit_item_mednafen.set_image_from_icon_name(
+            Icons.Symbolic.Save)
 
         # ------------------------------------
         #   Menubar - Tools items
@@ -667,21 +609,17 @@ class Interface(Gtk.ApplicationWindow):
 
         self.menubar_tools_menu = Gtk.Menu()
 
-        self.menubar_tools_image_preferences = Gtk.Image()
-
-        self.menubar_tools_item_preferences = Gtk.ImageMenuItem()
+        self.menubar_tools_item_preferences = ImageMenuItem()
 
         self.menubar_tools_item_dark_theme = Gtk.CheckMenuItem()
         self.menubar_tools_item_sidebar = Gtk.CheckMenuItem()
 
         # Properties
-        self.menubar_tools_image_preferences.set_from_icon_name(
-            Icons.System, Gtk.IconSize.MENU)
+        self.menubar_tools_menu.set_reserve_toggle_size(False)
 
         self.menubar_tools_item_preferences.set_label(_("_Preferences"))
-        self.menubar_tools_item_preferences.set_image(
-            self.menubar_tools_image_preferences)
-        self.menubar_tools_item_preferences.set_use_underline(True)
+        self.menubar_tools_item_preferences.set_image_from_icon_name(
+            Icons.Symbolic.System)
 
         self.menubar_tools_item_dark_theme.set_label(_("Use _dark theme"))
         self.menubar_tools_item_dark_theme.set_use_underline(True)
@@ -695,26 +633,19 @@ class Interface(Gtk.ApplicationWindow):
 
         self.menubar_help_menu = Gtk.Menu()
 
-        self.menubar_help_image_log = Gtk.Image()
-        self.menubar_help_image_about = Gtk.Image()
-
-        self.menubar_help_item_log = Gtk.ImageMenuItem()
-        self.menubar_help_item_about = Gtk.ImageMenuItem()
+        self.menubar_help_item_log = ImageMenuItem()
+        self.menubar_help_item_about = ImageMenuItem()
 
         # Properties
-        self.menubar_help_image_log.set_from_icon_name(
-            Icons.Terminal, Gtk.IconSize.MENU)
-        self.menubar_help_image_about.set_from_icon_name(
-            Icons.About, Gtk.IconSize.MENU)
+        self.menubar_help_menu.set_reserve_toggle_size(False)
 
         self.menubar_help_item_log.set_label(_("Show main _log"))
-        self.menubar_help_item_log.set_image(
-            self.menubar_help_image_log)
-        self.menubar_help_item_log.set_use_underline(True)
+        self.menubar_help_item_log.set_image_from_icon_name(
+            Icons.Symbolic.Terminal)
+
         self.menubar_help_item_about.set_label(_("_About"))
-        self.menubar_help_item_about.set_image(
-            self.menubar_help_image_about)
-        self.menubar_help_item_about.set_use_underline(True)
+        self.menubar_help_item_about.set_image_from_icon_name(
+            Icons.Symbolic.About)
 
         # ------------------------------------
         #   Toolbar
@@ -865,35 +796,42 @@ class Interface(Gtk.ApplicationWindow):
         self.label_filter_favorite.set_label(_("Favorite"))
         self.label_filter_favorite.set_halign(Gtk.Align.END)
         self.label_filter_favorite.set_valign(Gtk.Align.CENTER)
+        self.label_filter_favorite.get_style_context().add_class("dim-label")
         self.check_filter_favorite.set_active(True)
 
         self.label_filter_unfavorite.set_label(_("Unfavorite"))
         self.label_filter_unfavorite.set_halign(Gtk.Align.END)
         self.label_filter_unfavorite.set_valign(Gtk.Align.CENTER)
+        self.label_filter_unfavorite.get_style_context().add_class("dim-label")
         self.check_filter_unfavorite.set_active(True)
 
         self.label_filter_multiplayer.set_margin_top(12)
         self.label_filter_multiplayer.set_label(_("Multiplayer"))
         self.label_filter_multiplayer.set_halign(Gtk.Align.END)
         self.label_filter_multiplayer.set_valign(Gtk.Align.CENTER)
+        self.label_filter_multiplayer.get_style_context().add_class("dim-label")
         self.check_filter_multiplayer.set_margin_top(12)
         self.check_filter_multiplayer.set_active(True)
 
         self.label_filter_singleplayer.set_label(_("Singleplayer"))
         self.label_filter_singleplayer.set_halign(Gtk.Align.END)
         self.label_filter_singleplayer.set_valign(Gtk.Align.CENTER)
+        self.label_filter_singleplayer.get_style_context().add_class(
+            "dim-label")
         self.check_filter_singleplayer.set_active(True)
 
         self.label_filter_finish.set_margin_top(12)
         self.label_filter_finish.set_label(_("Finish"))
         self.label_filter_finish.set_halign(Gtk.Align.END)
         self.label_filter_finish.set_valign(Gtk.Align.CENTER)
+        self.label_filter_finish.get_style_context().add_class("dim-label")
         self.check_filter_finish.set_margin_top(12)
         self.check_filter_finish.set_active(True)
 
         self.label_filter_unfinish.set_label(_("Unfinish"))
         self.label_filter_unfinish.set_halign(Gtk.Align.END)
         self.label_filter_unfinish.set_valign(Gtk.Align.CENTER)
+        self.label_filter_unfinish.get_style_context().add_class("dim-label")
         self.check_filter_unfinish.set_active(True)
 
         self.item_filter_reset.set_margin_top(12)
@@ -1157,138 +1095,101 @@ class Interface(Gtk.ApplicationWindow):
 
         self.menu_games = Gtk.Menu()
         self.menu_games_edit = Gtk.Menu()
+        self.menu_games_tools = Gtk.Menu()
 
-        self.menu_image_launch = Gtk.Image()
-        self.menu_image_favorite = Gtk.Image()
-        self.menu_image_multiplayer = Gtk.Image()
-        self.menu_image_screenshots = Gtk.Image()
-        self.menu_image_output = Gtk.Image()
-        self.menu_image_notes = Gtk.Image()
-        self.menu_image_edit = Gtk.Image()
-
-        self.menu_item_launch = Gtk.ImageMenuItem()
-        self.menu_item_favorite = Gtk.ImageMenuItem()
-        self.menu_item_multiplayer = Gtk.ImageMenuItem()
-        self.menu_item_screenshots = Gtk.ImageMenuItem()
-        self.menu_item_output = Gtk.ImageMenuItem()
-        self.menu_item_notes = Gtk.ImageMenuItem()
-        self.menu_item_edit = Gtk.ImageMenuItem()
+        self.menu_item_launch = ImageMenuItem()
+        self.menu_item_favorite = ImageMenuItem()
+        self.menu_item_multiplayer = ImageMenuItem()
+        self.menu_item_parameters = ImageMenuItem()
+        self.menu_item_edit = ImageMenuItem()
+        self.menu_item_tools = ImageMenuItem()
 
         # Properties
-        self.menu_image_launch.set_from_icon_name(
-            Icons.Launch, Gtk.IconSize.MENU)
-        self.menu_image_favorite.set_from_icon_name(
-            Icons.Favorite, Gtk.IconSize.MENU)
-        self.menu_image_multiplayer.set_from_icon_name(
-            Icons.Users, Gtk.IconSize.MENU)
-        self.menu_image_screenshots.set_from_icon_name(
-            Icons.Image, Gtk.IconSize.MENU)
-        self.menu_image_output.set_from_icon_name(
-            Icons.Terminal, Gtk.IconSize.MENU)
-        self.menu_image_notes.set_from_icon_name(
-            Icons.Document, Gtk.IconSize.MENU)
-        self.menu_image_edit.set_from_icon_name(
-            Icons.Other, Gtk.IconSize.MENU)
+        self.menu_games.set_reserve_toggle_size(False)
+        self.menu_games_edit.set_reserve_toggle_size(False)
+        self.menu_games_tools.set_reserve_toggle_size(False)
 
         self.menu_item_launch.set_label(_("_Launch"))
-        self.menu_item_launch.set_image(self.menu_image_launch)
-        self.menu_item_launch.set_use_underline(True)
+        self.menu_item_launch.set_image_from_icon_name(
+            Icons.Launch)
 
         self.menu_item_favorite.set_label(_("Mark as _favorite"))
-        self.menu_item_favorite.set_image(self.menu_image_favorite)
-        self.menu_item_favorite.set_use_underline(True)
+        self.menu_item_favorite.set_image_from_icon_name(
+            Icons.Favorite)
 
         self.menu_item_multiplayer.set_label(_("Mark as _multiplayer"))
-        self.menu_item_multiplayer.set_image(self.menu_image_multiplayer)
-        self.menu_item_multiplayer.set_use_underline(True)
+        self.menu_item_multiplayer.set_image_from_icon_name(
+            Icons.Users)
 
-        self.menu_item_screenshots.set_label(_("Show _screenshots"))
-        self.menu_item_screenshots.set_image(self.menu_image_screenshots)
-        self.menu_item_screenshots.set_use_underline(True)
-
-        self.menu_item_output.set_label(_("Show output _log"))
-        self.menu_item_output.set_image(self.menu_image_output)
-        self.menu_item_output.set_use_underline(True)
-
-        self.menu_item_notes.set_label(_("Show _notes"))
-        self.menu_item_notes.set_image(self.menu_image_notes)
-        self.menu_item_notes.set_use_underline(True)
+        self.menu_item_parameters.set_label(_("_Properties"))
+        self.menu_item_parameters.set_image_from_icon_name(
+            Icons.Properties)
 
         self.menu_item_edit.set_label(_("_Edit"))
-        self.menu_item_edit.set_image(self.menu_image_edit)
-        self.menu_item_edit.set_use_underline(True)
+
+        self.menu_item_tools.set_label(_("_Tools"))
 
         # ------------------------------------
         #   Games - Menu edit
         # ------------------------------------
 
-        self.menu_image_rename = Gtk.Image()
-        self.menu_image_parameters = Gtk.Image()
-        self.menu_image_copy = Gtk.Image()
-        self.menu_image_open = Gtk.Image()
-        self.menu_image_desktop = Gtk.Image()
-        self.menu_image_remove = Gtk.Image()
-        self.menu_image_database = Gtk.Image()
-        self.menu_image_mednafen = Gtk.Image()
-
-        self.menu_item_rename = Gtk.ImageMenuItem()
-        self.menu_item_parameters = Gtk.ImageMenuItem()
-        self.menu_item_copy = Gtk.ImageMenuItem()
-        self.menu_item_open = Gtk.ImageMenuItem()
-        self.menu_item_desktop = Gtk.ImageMenuItem()
-        self.menu_item_remove = Gtk.ImageMenuItem()
-        self.menu_item_database = Gtk.ImageMenuItem()
-        self.menu_item_mednafen = Gtk.ImageMenuItem()
+        self.menu_item_rename = ImageMenuItem()
+        self.menu_item_copy = ImageMenuItem()
+        self.menu_item_open = ImageMenuItem()
+        self.menu_item_remove = ImageMenuItem()
+        self.menu_item_database = ImageMenuItem()
 
         # Properties
-        self.menu_image_rename.set_from_icon_name(
-            Icons.Editor, Gtk.IconSize.MENU)
-        self.menu_image_parameters.set_from_icon_name(
-            Icons.Gaming, Gtk.IconSize.MENU)
-        self.menu_image_copy.set_from_icon_name(
-            Icons.Copy, Gtk.IconSize.MENU)
-        self.menu_image_open.set_from_icon_name(
-            Icons.Open, Gtk.IconSize.MENU)
-        self.menu_image_desktop.set_from_icon_name(
-            Icons.Desktop, Gtk.IconSize.MENU)
-        self.menu_image_remove.set_from_icon_name(
-            Icons.Clear, Gtk.IconSize.MENU)
-        self.menu_image_database.set_from_icon_name(
-            Icons.Delete, Gtk.IconSize.MENU)
-        self.menu_image_mednafen.set_from_icon_name(
-            Icons.Save, Gtk.IconSize.MENU)
-
         self.menu_item_rename.set_label(_("_Rename"))
-        self.menu_item_rename.set_image(self.menu_image_rename)
-        self.menu_item_rename.set_use_underline(True)
+        self.menu_item_rename.set_image_from_icon_name(
+            Icons.Editor)
 
-        self.menu_item_parameters.set_label(_("Custom _parameters"))
-        self.menu_item_parameters.set_image(self.menu_image_parameters)
-        self.menu_item_parameters.set_use_underline(True)
+        self.menu_item_copy.set_label(_("_Copy path"))
+        self.menu_item_copy.set_image_from_icon_name(
+            Icons.Copy)
 
-        self.menu_item_copy.set_label(_("_Copy file path"))
-        self.menu_item_copy.set_image(self.menu_image_copy)
-        self.menu_item_copy.set_use_underline(True)
-
-        self.menu_item_open.set_label(_("_Open file path"))
-        self.menu_item_open.set_image(self.menu_image_open)
-        self.menu_item_open.set_use_underline(True)
-
-        self.menu_item_desktop.set_label(_("_Generate a menu entry"))
-        self.menu_item_desktop.set_image(self.menu_image_desktop)
-        self.menu_item_desktop.set_use_underline(True)
+        self.menu_item_open.set_label(_("_Open path"))
+        self.menu_item_open.set_image_from_icon_name(
+            Icons.Open)
 
         self.menu_item_database.set_label(_("_Reset game informations"))
-        self.menu_item_database.set_image(self.menu_image_database)
-        self.menu_item_database.set_use_underline(True)
+        self.menu_item_database.set_image_from_icon_name(
+            Icons.Clear)
 
         self.menu_item_remove.set_label(_("_Remove game from disk"))
-        self.menu_item_remove.set_image(self.menu_image_remove)
-        self.menu_item_remove.set_use_underline(True)
+        self.menu_item_remove.set_image_from_icon_name(
+            Icons.Delete)
+
+        # ------------------------------------
+        #   Games - Menu tools
+        # ------------------------------------
+
+        self.menu_item_screenshots = ImageMenuItem()
+        self.menu_item_output = ImageMenuItem()
+        self.menu_item_notes = ImageMenuItem()
+        self.menu_item_desktop = ImageMenuItem()
+        self.menu_item_mednafen = ImageMenuItem()
+
+        # Properties
+        self.menu_item_screenshots.set_label(_("_Screenshots"))
+        self.menu_item_screenshots.set_image_from_icon_name(
+            Icons.Image)
+
+        self.menu_item_output.set_label(_("Output _log"))
+        self.menu_item_output.set_image_from_icon_name(
+            Icons.Terminal)
+
+        self.menu_item_notes.set_label(_("_Notes"))
+        self.menu_item_notes.set_image_from_icon_name(
+            Icons.Document)
+
+        self.menu_item_desktop.set_label(_("_Generate a menu entry"))
+        self.menu_item_desktop.set_image_from_icon_name(
+            Icons.Desktop)
 
         self.menu_item_mednafen.set_label(_("Specify a _memory type"))
-        self.menu_item_mednafen.set_image(self.menu_image_mednafen)
-        self.menu_item_mednafen.set_use_underline(True)
+        self.menu_item_mednafen.set_image_from_icon_name(
+            Icons.Save)
 
         # ------------------------------------
         #   Statusbar
@@ -1490,8 +1391,6 @@ class Interface(Gtk.ApplicationWindow):
 
         self.grid_paned_widgets.pack_start(
             self.label_game_title, False, False, 0)
-        # self.grid_paned_widgets.pack_start(
-            # self.separator_game, False, False, 0)
 
         for key, value in self.sidebar_keys:
             self.grid_paned_widgets.pack_start(
@@ -1499,8 +1398,6 @@ class Interface(Gtk.ApplicationWindow):
 
         self.grid_paned_widgets.pack_end(
             self.grid_paned_footer, False, False, 0)
-        # self.grid_paned_widgets.pack_end(
-            # self.separator_footer, False, False, 0)
 
         self.grid_paned_footer.pack_start(
             self.label_game_footer, True, True, 0)
@@ -1526,24 +1423,29 @@ class Interface(Gtk.ApplicationWindow):
         self.menu_games.append(self.menu_item_favorite)
         self.menu_games.append(self.menu_item_multiplayer)
         self.menu_games.append(Gtk.SeparatorMenuItem())
-        self.menu_games.append(self.menu_item_screenshots)
-        self.menu_games.append(self.menu_item_output)
-        self.menu_games.append(self.menu_item_notes)
+        self.menu_games.append(self.menu_item_parameters)
         self.menu_games.append(Gtk.SeparatorMenuItem())
         self.menu_games.append(self.menu_item_edit)
+        self.menu_games.append(self.menu_item_tools)
 
         self.menu_item_edit.set_submenu(self.menu_games_edit)
+        self.menu_item_tools.set_submenu(self.menu_games_tools)
 
         self.menu_games_edit.append(self.menu_item_rename)
-        self.menu_games_edit.append(self.menu_item_parameters)
-        self.menu_games_edit.append(self.menu_item_mednafen)
         self.menu_games_edit.append(Gtk.SeparatorMenuItem())
         self.menu_games_edit.append(self.menu_item_copy)
         self.menu_games_edit.append(self.menu_item_open)
-        self.menu_games_edit.append(self.menu_item_desktop)
         self.menu_games_edit.append(Gtk.SeparatorMenuItem())
         self.menu_games_edit.append(self.menu_item_remove)
         self.menu_games_edit.append(self.menu_item_database)
+
+        self.menu_games_tools.append(self.menu_item_screenshots)
+        self.menu_games_tools.append(self.menu_item_output)
+        self.menu_games_tools.append(self.menu_item_notes)
+        self.menu_games_tools.append(Gtk.SeparatorMenuItem())
+        self.menu_games_tools.append(self.menu_item_desktop)
+        self.menu_games_tools.append(Gtk.SeparatorMenuItem())
+        self.menu_games_tools.append(self.menu_item_mednafen)
 
         self.add(self.grid)
 
@@ -2283,6 +2185,7 @@ class Interface(Gtk.ApplicationWindow):
 
         shortcuts = [
             {
+                "path": "<GEM>/game/open",
                 "widgets": [
                     self.menu_item_open,
                     self.menubar_edit_item_open
@@ -2291,6 +2194,7 @@ class Interface(Gtk.ApplicationWindow):
                 "function": self.__on_game_open
             },
             {
+                "path": "<GEM>/game/copy",
                 "widgets": [
                     self.menu_item_copy,
                     self.menubar_edit_item_copy
@@ -2299,6 +2203,7 @@ class Interface(Gtk.ApplicationWindow):
                 "function": self.__on_game_copy
             },
             {
+                "path": "<GEM>/game/desktop",
                 "widgets": [
                     self.menu_item_desktop,
                     self.menubar_edit_item_desktop
@@ -2307,6 +2212,7 @@ class Interface(Gtk.ApplicationWindow):
                 "function": self.__on_game_generate_desktop
             },
             {
+                "path": "<GEM>/game/start",
                 "widgets": [
                     self.menu_item_launch,
                     self.menubar_main_item_launch
@@ -2315,6 +2221,7 @@ class Interface(Gtk.ApplicationWindow):
                 "function": self.__on_game_launch
             },
             {
+                "path": "<GEM>/game/rename",
                 "widgets": [
                     self.menu_item_rename,
                     self.menubar_edit_item_rename
@@ -2323,6 +2230,7 @@ class Interface(Gtk.ApplicationWindow):
                 "function": self.__on_game_renamed
             },
             {
+                "path": "<GEM>/game/favorite",
                 "widgets": [
                     self.menu_item_favorite,
                     self.menubar_main_item_favorite
@@ -2331,6 +2239,7 @@ class Interface(Gtk.ApplicationWindow):
                 "function": self.__on_game_marked_as_favorite
             },
             {
+                "path": "<GEM>/game/multiplayer",
                 "widgets": [
                     self.menu_item_multiplayer,
                     self.menubar_main_item_multiplayer
@@ -2339,14 +2248,17 @@ class Interface(Gtk.ApplicationWindow):
                 "function": self.__on_game_marked_as_multiplayer
             },
             {
+                "path": "<GEM>/game/screenshots",
                 "widgets": [
                     self.menu_item_screenshots,
+                    self.menubar_main_item_screenshots,
                     self.toolbar_item_screenshots
                 ],
                 "keys": self.config.item("keys", "snapshots", "F5"),
                 "function": self.__on_show_viewer
             },
             {
+                "path": "<GEM>/game/log",
                 "widgets": [
                     self.menu_item_output,
                     self.menubar_main_item_output
@@ -2355,6 +2267,7 @@ class Interface(Gtk.ApplicationWindow):
                 "function": self.__on_game_log
             },
             {
+                "path": "<GEM>/game/notes",
                 "widgets": [
                     self.menu_item_notes,
                     self.menubar_main_item_notes
@@ -2363,6 +2276,7 @@ class Interface(Gtk.ApplicationWindow):
                 "function": self.__on_show_notes
             },
             {
+                "path": "<GEM>/game/memory",
                 "widgets": [
                     self.menu_item_mednafen,
                     self.menubar_edit_item_mednafen
@@ -2371,6 +2285,7 @@ class Interface(Gtk.ApplicationWindow):
                 "function": self.__on_game_backup_memory
             },
             {
+                "path": "<GEM>/sidebar",
                 "widgets": [
                     self.menu_item_sidebar,
                     self.menubar_tools_item_sidebar
@@ -2379,6 +2294,7 @@ class Interface(Gtk.ApplicationWindow):
                 "function": self.__on_activate_sidebar
             },
             {
+                "path": "<GEM>/game/exceptions",
                 "widgets": [
                     self.menu_item_parameters,
                     self.menubar_edit_item_parameters
@@ -2387,6 +2303,7 @@ class Interface(Gtk.ApplicationWindow):
                 "function": self.__on_game_parameters
             },
             {
+                "path": "<GEM>/game/delete",
                 "widgets": [
                     self.menu_item_remove,
                     self.menubar_edit_item_delete
@@ -2395,6 +2312,7 @@ class Interface(Gtk.ApplicationWindow):
                 "function": self.__on_game_removed
             },
             {
+                "path": "<GEM>/game/remove",
                 "widgets": [
                     self.menu_item_database,
                     self.menubar_edit_item_database
@@ -2403,6 +2321,7 @@ class Interface(Gtk.ApplicationWindow):
                 "function": self.__on_game_clean
             },
             {
+                "path": "<GEM>/preferences",
                 "widgets": [
                     self.menu_item_preferences,
                     self.menubar_tools_item_preferences
@@ -2411,6 +2330,7 @@ class Interface(Gtk.ApplicationWindow):
                 "function": self.__on_show_preferences
             },
             {
+                "path": "<GEM>/log",
                 "widgets": [
                     self.menu_item_gem_log,
                     self.menubar_help_item_log
@@ -2419,6 +2339,7 @@ class Interface(Gtk.ApplicationWindow):
                 "function": self.__on_show_log
             },
             {
+                "path": "<GEM>/quit",
                 "widgets": [
                     self.menu_item_quit,
                     self.menubar_main_item_quit
@@ -2428,6 +2349,15 @@ class Interface(Gtk.ApplicationWindow):
             }
         ]
 
+        # HACK: Get the maximum characters width of every shortcuts
+        max_width = int()
+        for data in shortcuts:
+            key, mod = Gtk.accelerator_parse(data["keys"])
+            accel = len(Gtk.accelerator_get_label(key, mod))
+
+            if accel > max_width:
+                max_width = accel
+
         for data in shortcuts:
             key, mod = Gtk.accelerator_parse(data["keys"])
 
@@ -2435,10 +2365,11 @@ class Interface(Gtk.ApplicationWindow):
                 self.shortcuts_group.connect(
                     key, mod, Gtk.AccelFlags.VISIBLE, data["function"])
 
-            # for widget in data["widgets"]:
-                # if type(widget) == Gtk.ImageMenuItem:
-                    # widget.add_accelerator("activate",
-                        # self.shortcuts_group, key, mod, Gtk.AccelFlags.VISIBLE)
+                self.shortcuts_map.change_entry(data["path"], key, mod, True)
+
+                for widget in data["widgets"]:
+                    if type(widget) == ImageMenuItem:
+                        widget.set_accelerator(max_width, key, mod)
 
 
     def __on_manage_keys(self, widget, event):

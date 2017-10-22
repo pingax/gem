@@ -751,6 +751,12 @@ msgstr "Abrir carpeta del juego seleccionado"
 #
 # File: gem/interface.py, line: 572
 #, fuzzy
+msgid "Output _log"
+msgstr "Mostrar el _registro de salida"
+
+#
+# File: gem/interface.py, line: 572
+#, fuzzy
 msgid "Output log"
 msgstr "Mostrar el _registro de salida"
 
@@ -1322,6 +1328,13 @@ msgid "_Copy file path"
 msgstr "_Copiar la ruta del juego"
 
 #
+# File: gem/interface.py, line: 401
+# File: gem/interface.py, line: 761
+#, fuzzy
+msgid "_Copy path"
+msgstr "_Copiar la ruta del juego"
+
+#
 # File: gem/preferences.py, line: 429
 msgid "_Edit"
 msgstr "_Editar"
@@ -1347,15 +1360,32 @@ msgid "_Launch"
 msgstr "_Lanzar"
 
 #
+# File: gem/interface.py, line: 384
+msgid "_Notes"
+msgstr "_Notas"
+
+#
 # File: gem/interface.py, line: 406
 # File: gem/interface.py, line: 766
 msgid "_Open file path"
 msgstr "_Abrir la ruta del archivo"
 
 #
+# File: gem/interface.py, line: 406
+# File: gem/interface.py, line: 766
+#, fuzzy
+msgid "_Open path"
+msgstr "_Abrir la ruta del archivo"
+
+#
 # File: gem/interface.py, line: 358
 msgid "_Preferences"
 msgstr "_Preferencias"
+
+#
+# File: gem/gtk/interface.py, line: 1124
+msgid "_Properties"
+msgstr ""
 
 #
 # File: gem/interface.py, line: 363
@@ -1376,6 +1406,12 @@ msgstr "_Renombrar"
 # File: gem/interface.py, line: 776
 msgid "_Reset game informations"
 msgstr "_Reinicializar los datos del juego"
+
+#
+# File: gem/interface.py, line: 2006
+#, fuzzy
+msgid "_Screenshots"
+msgstr "Mostrar las _capturas de pantalla"
 
 #
 # File: gem/gtk/interface.py, line: 422
@@ -1598,11 +1634,6 @@ msgstr "agradecimientos a los traductores"
 # File: gem/preferences.py, line: 1196
 #~ msgid "Would you really want to clean informations for this game ?"
 #~ msgstr "¿Quiere borrar los datos de este juego?"
-
-#
-# File: gem/interface.py, line: 384
-#~ msgid "_Notes"
-#~ msgstr "_Notas"
 
 #
 # File: gem/preferences.py, line: 431
