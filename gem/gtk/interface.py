@@ -3637,7 +3637,7 @@ class Interface(Gtk.ApplicationWindow):
                 self.set_game_data(
                     Columns.Snapshots, self.icons["snap"], game.filename)
                 self.toolbar_item_screenshots.set_sensitive(True)
-                self.menubar_main_image_screenshots.set_sensitive(True)
+                self.menubar_main_item_screenshots.set_sensitive(True)
 
             else:
                 self.set_game_data(Columns.Snapshots,
@@ -3714,8 +3714,7 @@ class Interface(Gtk.ApplicationWindow):
             # Save previous name for logger
             old_name = game.name
 
-            dialog = DialogRename(self, _("Rename a game"),
-                _("Set a custom name for %s") % game.filename, game.name)
+            dialog = DialogRename(self, game)
 
             if dialog.run() == Gtk.ResponseType.APPLY:
                 if not dialog.entry.get_text() == old_name and \

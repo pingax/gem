@@ -104,14 +104,10 @@ class Message(TemplateDialog):
 
         TemplateDialog.__init__(self, parent, title, message, icon, center)
 
-        self.add_buttons(
-            Gtk.STOCK_OK, Gtk.ResponseType.OK)
 
+class Question(Dialog):
 
-class Question(TemplateDialog):
-
-    def __init__(self, parent, title, message, icon=Icons.Question,
-        center=True):
+    def __init__(self, parent, title, message, icon=Icons.Question):
         """ Constructor
 
         Parameters
@@ -127,15 +123,115 @@ class Question(TemplateDialog):
         ----------------
         icon : str
             Default icon name (Default: dialog-question)
-        center : bool
-            If False, use justify text insted of center (Default: True)
         """
 
-        TemplateDialog.__init__(self, parent, title, message, icon, center)
+        Dialog.__init__(self, parent, title, icon, True)
 
-        self.add_buttons(
-            Gtk.STOCK_NO, Gtk.ResponseType.NO,
-            Gtk.STOCK_YES, Gtk.ResponseType.YES)
+        # ------------------------------------
+        #   Variables
+        # ------------------------------------
+
+        self.message = message
+
+        # ------------------------------------
+        #   Prepare interface
+        # ------------------------------------
+
+        # Init widgets
+        self.__init_widgets()
+
+        # Init signals
+        self.__init_signals()
+
+        # Start interface
+        self.__start_interface()
+
+
+    def __init_widgets(self):
+        """ Initialize interface widgets
+        """
+
+        self.set_size(400, -1)
+
+        self.headerbar.set_show_close_button(False)
+
+        self.dialog_box.set_spacing(0)
+
+        # ------------------------------------
+        #   Action buttons
+        # ------------------------------------
+
+        self.button_close = Gtk.Button()
+
+        self.button_accept = Gtk.Button()
+
+        # Properties
+        self.button_close.set_label(_("No"))
+
+        self.button_accept.set_label(_("Yes"))
+        self.button_accept.get_style_context().add_class("destructive-action")
+
+        # ------------------------------------
+        #   Label
+        # ------------------------------------
+
+        self.label = Gtk.Label()
+
+        # Properties
+        self.label.set_line_wrap(True)
+        self.label.set_use_markup(True)
+        self.label.set_max_width_chars(10)
+        self.label.set_line_wrap_mode(Pango.WrapMode.WORD)
+
+        # ------------------------------------
+        #   Integrate widgets
+        # ------------------------------------
+
+        self.headerbar.pack_start(self.button_close)
+        self.headerbar.pack_end(self.button_accept)
+
+        self.dialog_box.pack_start(self.label, False, True, 0)
+
+
+    def __init_signals(self):
+        """ Initialize widgets signals
+        """
+
+        self.button_close.connect("clicked", self.__on_cancel_clicked)
+        self.button_accept.connect("clicked", self.__on_accept_clicked)
+
+
+    def __start_interface(self):
+        """ Load data and start interface
+        """
+
+        self.show_all()
+
+        self.label.set_markup(self.message)
+
+
+    def __on_cancel_clicked(self, widget):
+        """ Click on close button
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        self.response(Gtk.ResponseType.NO)
+
+
+    def __on_accept_clicked(self, widget):
+        """ Click on accept button
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        self.response(Gtk.ResponseType.YES)
 
 
 class DialogEditor(Dialog):
@@ -1018,32 +1114,25 @@ class DialogRemove(Dialog):
 
 class DialogRename(Dialog):
 
-    def __init__(self, parent, title, description, name=str()):
+    def __init__(self, parent, game):
         """ Constructor
 
         Parameters
         ----------
         parent : Gtk.Window
             Parent object
-        title : str
-            Dialog title
-        description : str
-            Dialog message
-
-        Other Parameters
-        ----------------
-        name : str
-            Rom current name (Default: "")
+        game : gem.api.Game
+            Game object
         """
 
-        Dialog.__init__(self, parent, title, Icons.Checkspell)
+        Dialog.__init__(
+            self, parent, _("Rename a game"), Icons.Checkspell, True)
 
         # ------------------------------------
         #   Initialize variables
         # ------------------------------------
 
-        self.description = description
-        self.name = name
+        self.game = game
 
         # ------------------------------------
         #   Prepare interface
@@ -1063,26 +1152,34 @@ class DialogRename(Dialog):
         """ Initialize interface widgets
         """
 
-        self.set_size(520, -1)
+        self.set_size(640, -1)
 
-        self.add_buttons(
-            Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-            Gtk.STOCK_APPLY, Gtk.ResponseType.APPLY)
+        self.headerbar.set_show_close_button(False)
+        self.headerbar.set_subtitle(self.game.name)
+
+        self.dialog_box.set_spacing(0)
+
+        # ------------------------------------
+        #   Action buttons
+        # ------------------------------------
+
+        self.button_close = Gtk.Button()
+
+        self.button_accept = Gtk.Button()
+
+        # Properties
+        self.button_close.set_label(_("Cancel"))
+
+        self.button_accept.set_label(_("Apply"))
+        self.button_accept.get_style_context().add_class("suggested-action")
 
         # ------------------------------------
         #   Widgets
         # ------------------------------------
 
-        self.label = Gtk.Label()
-
         self.entry = Gtk.Entry()
 
         # Properties
-        self.label.set_alignment(0, .5)
-        self.label.set_line_wrap(True)
-        self.label.set_single_line_mode(False)
-        self.label.set_line_wrap_mode(Pango.WrapMode.CHAR)
-
         self.entry.set_activates_default(True)
         self.entry.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, Icons.Clear)
@@ -1091,7 +1188,9 @@ class DialogRename(Dialog):
         #   Integrate widgets
         # ------------------------------------
 
-        self.dialog_box.pack_start(self.label, False, True, 0)
+        self.headerbar.pack_start(self.button_close)
+        self.headerbar.pack_end(self.button_accept)
+
         self.dialog_box.pack_start(self.entry, False, True, 0)
 
 
@@ -1099,7 +1198,11 @@ class DialogRename(Dialog):
         """ Initialize widgets signals
         """
 
+        self.button_close.connect("clicked", self.__on_cancel_clicked)
+        self.button_accept.connect("clicked", self.__on_accept_clicked)
+
         self.entry.connect("icon-press", on_entry_clear)
+        self.entry.connect("activate", self.__on_accept_clicked)
 
 
     def __start_interface(self):
@@ -1108,8 +1211,31 @@ class DialogRename(Dialog):
 
         self.show_all()
 
-        self.label.set_text(self.description)
-        self.entry.set_text(self.name)
+        self.entry.set_text(self.game.name)
+
+
+    def __on_cancel_clicked(self, widget):
+        """ Click on close button
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        self.response(Gtk.ResponseType.CLOSE)
+
+
+    def __on_accept_clicked(self, widget):
+        """ Click on accept button
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        self.response(Gtk.ResponseType.APPLY)
 
 
 class DialogViewer(Dialog):

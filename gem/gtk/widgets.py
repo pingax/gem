@@ -285,6 +285,8 @@ class TemplateDialog(Dialog):
 
         self.set_size(500, -1)
 
+        self.dialog_box.set_spacing(0)
+
         # ------------------------------------
         #   Message
         # ------------------------------------
@@ -309,7 +311,7 @@ class TemplateDialog(Dialog):
         #   Integrate widgets
         # ------------------------------------
 
-        self.dialog_box.pack_start(text, False, False, 10)
+        self.dialog_box.pack_start(text, False, False, 0)
 
 
     def __start_interface(self):
