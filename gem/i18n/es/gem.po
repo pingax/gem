@@ -177,6 +177,12 @@ msgstr ""
 "detalles."
 
 #
+# File: gem/gtk/windows.py, line: 860
+# File: gem/gtk/windows.py, line: 1214
+msgid "Apply"
+msgstr ""
+
+#
 # File: gem/interface.py, line: 451
 #, fuzzy
 msgid "Argument which activate fullscreen mode"
@@ -288,6 +294,12 @@ msgstr "No puedo escribir en %s. Anulando acción."
 # File: gem/windows.py, line: 1122
 msgid "Choose an icon"
 msgstr "Elegir un icono"
+
+#
+# File: gem/interface.py, line: 1614
+#, fuzzy
+msgid "Close"
+msgstr "Cerrar %s"
 
 #
 # File: gem/interface.py, line: 1614
@@ -713,6 +725,12 @@ msgid ""
 msgstr ""
 
 #
+# File: gem/preferences.py, line: 97
+#, fuzzy
+msgid "No"
+msgstr "Ninguno"
+
+#
 # File: gem/preferences.py, line: 1662
 #, fuzzy
 msgid "No default value"
@@ -919,12 +937,6 @@ msgstr "Seleccionar un binario"
 # File: gem/windows.py, line: 915
 msgid "Select icon from"
 msgstr "Seleccionar un icono de"
-
-#
-# File: gem/interface.py, line: 2093
-#, python-format
-msgid "Set a custom name for %s"
-msgstr "Crear un nombre personalizado para %s"
 
 #
 # File: gem/interface.py, line: 396
@@ -1298,6 +1310,11 @@ msgid "Write your regex here..."
 msgstr ""
 
 #
+# File: gem/gtk/windows.py, line: 171
+msgid "Yes"
+msgstr ""
+
+#
 # File: gem/interface.py, line: 2121
 msgid "Yesterday"
 msgstr "Ayer"
@@ -1559,6 +1576,11 @@ msgstr "agradecimientos a los traductores"
 #, fuzzy
 #~ msgid "Options"
 #~ msgstr "Acción"
+
+#
+# File: gem/interface.py, line: 2093
+#~ msgid "Set a custom name for %s"
+#~ msgstr "Crear un nombre personalizado para %s"
 
 #
 # File: gem/preferences.py, line: 1013

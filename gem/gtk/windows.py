@@ -771,7 +771,7 @@ class DialogParameters(Dialog):
             Emulator data
         """
 
-        Dialog.__init__(self, parent, _("Game properties"), Icons.Gaming)
+        Dialog.__init__(self, parent, _("Game properties"), Icons.Gaming, True)
 
         # ------------------------------------
         #   Initialize variables
@@ -830,15 +830,10 @@ class DialogParameters(Dialog):
 
         self.set_size(520, -1)
 
-        self.add_buttons(
-            Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-            Gtk.STOCK_OK, Gtk.ResponseType.OK)
-
-        self.set_help(self.interface, self.help_data)
-
-        self.dialog_box.set_spacing(18)
+        self.dialog_box.set_spacing(0)
 
         self.headerbar.set_subtitle(self.game.name)
+        self.headerbar.set_show_close_button(False)
 
         # ------------------------------------
         #   Grids
@@ -850,6 +845,20 @@ class DialogParameters(Dialog):
         grid.set_spacing(6)
         grid.set_homogeneous(False)
         grid.set_orientation(Gtk.Orientation.VERTICAL)
+
+        # ------------------------------------
+        #   Action buttons
+        # ------------------------------------
+
+        self.button_close = Gtk.Button()
+
+        self.button_accept = Gtk.Button()
+
+        # Properties
+        self.button_close.set_label(_("Close"))
+
+        self.button_accept.set_label(_("Apply"))
+        self.button_accept.get_style_context().add_class("suggested-action")
 
         # ------------------------------------
         #   Emulators
@@ -941,6 +950,9 @@ class DialogParameters(Dialog):
         #   Integrate widgets
         # ------------------------------------
 
+        self.headerbar.pack_start(self.button_close)
+        self.headerbar.pack_end(self.button_accept)
+
         grid.pack_start(label_emulator, False, False, 0)
         grid.pack_start(self.combo, False, False, 0)
         grid.pack_start(self.entry_arguments, False, False, 0)
@@ -956,6 +968,9 @@ class DialogParameters(Dialog):
         """ Initialize widgets signals
         """
 
+        self.button_close.connect("clicked", self.__on_cancel_clicked)
+        self.button_accept.connect("clicked", self.__on_accept_clicked)
+
         self.combo.connect("changed", self.__on_selected_emulator)
 
         self.entry_arguments.connect("icon-press", on_entry_clear)
@@ -966,6 +981,8 @@ class DialogParameters(Dialog):
     def __start_interface(self):
         """ Load data and start interface
         """
+
+        self.set_help(self.interface, self.help_data)
 
         self.show_all()
 
@@ -1020,12 +1037,36 @@ class DialogParameters(Dialog):
 
         # Allow to validate dialog if selected emulator binary exist
         if emulator is not None and emulator.exists:
-            self.set_response_sensitive(Gtk.ResponseType.OK, True)
+            self.button_accept.set_sensitive(True)
 
         else:
-            self.set_response_sensitive(Gtk.ResponseType.OK, False)
+            self.button_accept.set_sensitive(False)
 
         self.entry_arguments.set_placeholder_text(default)
+
+
+    def __on_cancel_clicked(self, widget):
+        """ Click on close button
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        self.response(Gtk.ResponseType.CLOSE)
+
+
+    def __on_accept_clicked(self, widget):
+        """ Click on accept button
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        self.response(Gtk.ResponseType.APPLY)
 
 
 class DialogRemove(Dialog):
@@ -1041,7 +1082,7 @@ class DialogRemove(Dialog):
             Dialog title
         """
 
-        Dialog.__init__(self, parent, title, Icons.Delete)
+        Dialog.__init__(self, parent, title, Icons.Delete, True)
 
         # ------------------------------------
         #   Prepare interface
@@ -1049,6 +1090,9 @@ class DialogRemove(Dialog):
 
         # Init widgets
         self.__init_widgets()
+
+        # Init signals
+        self.__init_signals()
 
         # Start interface
         self.__start_interface()
@@ -1060,9 +1104,23 @@ class DialogRemove(Dialog):
 
         self.set_size(520, -1)
 
-        self.add_buttons(
-            Gtk.STOCK_NO, Gtk.ResponseType.NO,
-            Gtk.STOCK_YES, Gtk.ResponseType.YES)
+        self.headerbar.set_show_close_button(False)
+
+        self.dialog_box.set_spacing(0)
+
+        # ------------------------------------
+        #   Action buttons
+        # ------------------------------------
+
+        self.button_close = Gtk.Button()
+
+        self.button_accept = Gtk.Button()
+
+        # Properties
+        self.button_close.set_label(_("No"))
+
+        self.button_accept.set_label(_("Yes"))
+        self.button_accept.get_style_context().add_class("destructive-action")
 
         # ------------------------------------
         #   Description
@@ -1083,24 +1141,40 @@ class DialogRemove(Dialog):
         # ------------------------------------
 
         self.check_database = Gtk.CheckButton()
+
         self.check_save_state = Gtk.CheckButton()
+
         self.check_screenshots = Gtk.CheckButton()
 
         # Properties
+        self.check_database.set_margin_top(18)
         self.check_database.set_label(_("Remove game's data from database"))
+
+        self.check_save_state.set_margin_top(18)
         self.check_save_state.set_label(_("Remove game save files"))
+
+        self.check_screenshots.set_margin_top(6)
         self.check_screenshots.set_label(_("Remove game screenshots"))
 
         # ------------------------------------
         #   Integrate widgets
         # ------------------------------------
 
+        self.headerbar.pack_start(self.button_close)
+        self.headerbar.pack_end(self.button_accept)
+
         self.dialog_box.pack_start(label, False, True, 0)
-        self.dialog_box.pack_start(Gtk.Separator(), False, True, 4)
         self.dialog_box.pack_start(self.check_database, False, True, 0)
-        self.dialog_box.pack_start(Gtk.Separator(), False, True, 4)
         self.dialog_box.pack_start(self.check_save_state, False, True, 0)
         self.dialog_box.pack_start(self.check_screenshots, False, True, 0)
+
+
+    def __init_signals(self):
+        """ Initialize widgets signals
+        """
+
+        self.button_close.connect("clicked", self.__on_cancel_clicked)
+        self.button_accept.connect("clicked", self.__on_accept_clicked)
 
 
     def __start_interface(self):
@@ -1110,6 +1184,30 @@ class DialogRemove(Dialog):
         self.show_all()
 
         self.check_database.set_active(True)
+
+
+    def __on_cancel_clicked(self, widget):
+        """ Click on close button
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        self.response(Gtk.ResponseType.NO)
+
+
+    def __on_accept_clicked(self, widget):
+        """ Click on accept button
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        self.response(Gtk.ResponseType.YES)
 
 
 class DialogRename(Dialog):
@@ -1925,92 +2023,6 @@ class DialogConsoles(Dialog):
 
         for row in self.model_consoles:
             row[0] = (row.path == selected_path)
-
-
-class DialogHelp(Dialog):
-
-    def __init__(self, parent, title, message, icon):
-        """ Constructor
-
-        Parameters
-        ----------
-        parent : Gtk.Window
-            Parent object
-        title : str
-            Dialog title
-        message : str
-            Dialog message
-        icon : str
-            Default icon name
-        """
-
-        Dialog.__init__(self, parent, title, icon)
-
-        # ------------------------------------
-        #   Initialize variables
-        # ------------------------------------
-
-        self.message = message
-
-        # ------------------------------------
-        #   Prepare interface
-        # ------------------------------------
-
-        # Init widgets
-        self.__init_widgets()
-
-        # Start interface
-        self.__start_interface()
-
-
-    def __init_widgets(self):
-        """ Initialize interface widgets
-        """
-
-        self.set_size(640, 480)
-
-        self.set_resizable(True)
-
-        self.add_buttons(
-            Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE)
-
-        # ------------------------------------
-        #   Scrollview
-        # ------------------------------------
-
-        scroll = Gtk.ScrolledWindow()
-        view = Gtk.Viewport()
-
-        # ------------------------------------
-        #   Message
-        # ------------------------------------
-
-        text = Gtk.Label()
-
-        # Properties
-        text.set_line_wrap(True)
-        text.set_use_markup(True)
-        text.set_max_width_chars(10)
-        text.set_markup(self.message)
-        text.set_alignment(0, 0)
-        text.set_justify(Gtk.Justification.FILL)
-        text.set_line_wrap_mode(Pango.WrapMode.WORD)
-
-        # ------------------------------------
-        #   Integrate widgets
-        # ------------------------------------
-
-        view.add(text)
-        scroll.add(view)
-
-        self.dialog_box.pack_start(scroll, True, True, 0)
-
-
-    def __start_interface(self):
-        """ Load data and start interface
-        """
-
-        self.show_all()
 
 
 # ------------------------------------------------------------------------------

@@ -3341,7 +3341,7 @@ class Interface(Gtk.ApplicationWindow):
                     self.menubar_edit_item_mednafen.set_sensitive(False)
 
                 # Check extension and emulator for GBA game on mednafen
-                if not game.extension == ".gba" or \
+                if not game.extension.lower() == ".gba" or \
                     not "mednafen" in emulator.binary or \
                     not self.__mednafen_status:
                     self.menu_item_mednafen.set_sensitive(False)
@@ -3905,7 +3905,7 @@ class Interface(Gtk.ApplicationWindow):
 
             dialog = DialogParameters(self, game, emulator)
 
-            if dialog.run() == Gtk.ResponseType.OK:
+            if dialog.run() == Gtk.ResponseType.APPLY:
                 self.logger.info(
                     _("Update %s parameters") % game.name)
 

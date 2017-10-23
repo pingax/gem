@@ -46,8 +46,21 @@ except ImportError as error:
 try:
     from gem.gtk import *
 
+    from gem.utils import *
+
 except ImportError as error:
     sys_exit("Import error with gem module: %s" % str(error))
+
+# ------------------------------------------------------------------------------
+#   Modules - Translation
+# ------------------------------------------------------------------------------
+
+from gettext import gettext as _
+from gettext import textdomain
+from gettext import bindtextdomain
+
+bindtextdomain("gem", get_data("i18n"))
+textdomain("gem")
 
 # ------------------------------------------------------------------------------
 #   Class
@@ -312,6 +325,92 @@ class TemplateDialog(Dialog):
         # ------------------------------------
 
         self.dialog_box.pack_start(text, False, False, 0)
+
+
+    def __start_interface(self):
+        """ Load data and start interface
+        """
+
+        self.show_all()
+
+
+class DialogHelp(Dialog):
+
+    def __init__(self, parent, title, message, icon):
+        """ Constructor
+
+        Parameters
+        ----------
+        parent : Gtk.Window
+            Parent object
+        title : str
+            Dialog title
+        message : str
+            Dialog message
+        icon : str
+            Default icon name
+        """
+
+        Dialog.__init__(self, parent, title, icon)
+
+        # ------------------------------------
+        #   Initialize variables
+        # ------------------------------------
+
+        self.message = message
+
+        # ------------------------------------
+        #   Prepare interface
+        # ------------------------------------
+
+        # Init widgets
+        self.__init_widgets()
+
+        # Start interface
+        self.__start_interface()
+
+
+    def __init_widgets(self):
+        """ Initialize interface widgets
+        """
+
+        self.set_size(640, 480)
+
+        self.set_resizable(True)
+
+        self.add_buttons(
+            Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE)
+
+        # ------------------------------------
+        #   Scrollview
+        # ------------------------------------
+
+        scroll = Gtk.ScrolledWindow()
+        view = Gtk.Viewport()
+
+        # ------------------------------------
+        #   Message
+        # ------------------------------------
+
+        text = Gtk.Label()
+
+        # Properties
+        text.set_line_wrap(True)
+        text.set_use_markup(True)
+        text.set_max_width_chars(10)
+        text.set_markup(self.message)
+        text.set_alignment(0, 0)
+        text.set_justify(Gtk.Justification.FILL)
+        text.set_line_wrap_mode(Pango.WrapMode.WORD)
+
+        # ------------------------------------
+        #   Integrate widgets
+        # ------------------------------------
+
+        view.add(text)
+        scroll.add(view)
+
+        self.dialog_box.pack_start(scroll, True, True, 0)
 
 
     def __start_interface(self):

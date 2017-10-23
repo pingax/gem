@@ -81,7 +81,7 @@ class DialogMednafenMemory(Dialog):
             Backup memory type dictionary (with type as key)
         """
 
-        Dialog.__init__(self, parent, title, Icons.Save)
+        Dialog.__init__(self, parent, title, Icons.Save, True)
 
         # ------------------------------------
         #   Initialize variables
@@ -111,9 +111,9 @@ class DialogMednafenMemory(Dialog):
 
         self.set_size(520, 420)
 
-        self.add_buttons(
-            Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-            Gtk.STOCK_SAVE, Gtk.ResponseType.APPLY)
+        self.dialog_box.set_spacing(0)
+
+        self.headerbar.set_show_close_button(False)
 
         # ------------------------------------
         #   Grid
@@ -124,6 +124,20 @@ class DialogMednafenMemory(Dialog):
         # Properties
         grid.set_row_spacing(8)
         grid.set_column_spacing(8)
+
+        # ------------------------------------
+        #   Action buttons
+        # ------------------------------------
+
+        self.button_close = Gtk.Button()
+
+        self.button_accept = Gtk.Button()
+
+        # Properties
+        self.button_close.set_label(_("Close"))
+
+        self.button_accept.set_label(_("Apply"))
+        self.button_accept.get_style_context().add_class("suggested-action")
 
         # ------------------------------------
         #   Description
@@ -227,6 +241,9 @@ class DialogMednafenMemory(Dialog):
         #   Integrate widgets
         # ------------------------------------
 
+        self.headerbar.pack_start(self.button_close)
+        self.headerbar.pack_end(self.button_accept)
+
         scroll.add(view)
         view.add(grid)
 
@@ -247,6 +264,9 @@ class DialogMednafenMemory(Dialog):
     def __init_signals(self):
         """ Initialize widgets signals
         """
+
+        self.button_close.connect("clicked", self.__on_cancel_clicked)
+        self.button_accept.connect("clicked", self.__on_accept_clicked)
 
         self.button_add.connect("clicked", self.__on_push_button)
         self.button_modify.connect("clicked", self.__on_push_button)
@@ -309,6 +329,30 @@ class DialogMednafenMemory(Dialog):
         self.set_sensitive(True)
 
         return True
+
+
+    def __on_cancel_clicked(self, widget):
+        """ Click on close button
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        self.response(Gtk.ResponseType.CLOSE)
+
+
+    def __on_accept_clicked(self, widget):
+        """ Click on accept button
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        self.response(Gtk.ResponseType.APPLY)
 
 
 class DialogMednafenMemoryType(Dialog):
