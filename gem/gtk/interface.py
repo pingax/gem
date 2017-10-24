@@ -1075,6 +1075,7 @@ class Interface(Gtk.ApplicationWindow):
         self.cell_game_play_time.set_alignment(.5, .5)
         self.cell_game_installed.set_alignment(.5, .5)
 
+        self.cell_game_name.set_property("editable", True)
         self.cell_game_name.set_property("ellipsize", Pango.EllipsizeMode.END)
 
         self.cell_game_favorite.set_padding(4, 2)
@@ -1487,7 +1488,7 @@ class Interface(Gtk.ApplicationWindow):
             "activate", self.__stop_interface)
 
         self.menubar_edit_item_rename.connect(
-            "activate", self.__on_game_renamed)
+            "activate", self.__on_activate_renamed)
         self.menubar_edit_item_parameters.connect(
             "activate", self.__on_game_parameters)
         self.menubar_edit_item_copy.connect(
@@ -1573,7 +1574,7 @@ class Interface(Gtk.ApplicationWindow):
             "activate", self.__on_show_notes)
 
         self.menu_item_rename.connect(
-            "activate", self.__on_game_renamed)
+            "activate", self.__on_activate_renamed)
         self.menu_item_parameters.connect(
             "activate", self.__on_game_parameters)
         self.menu_item_copy.connect(
@@ -1612,6 +1613,9 @@ class Interface(Gtk.ApplicationWindow):
         # ------------------------------------
         #   Games
         # ------------------------------------
+
+        self.cell_game_name.connect(
+            "edited", self.__on_game_renamed)
 
         self.treeview_games.connect(
             "button-press-event", self.__on_selected_game)
@@ -2227,7 +2231,7 @@ class Interface(Gtk.ApplicationWindow):
                     self.menubar_edit_item_rename
                 ],
                 "keys": self.config.item("keys", "rename", "F2"),
-                "function": self.__on_game_renamed
+                "function": self.__on_activate_renamed
             },
             {
                 "path": "<GEM>/game/favorite",
@@ -3696,8 +3700,8 @@ class Interface(Gtk.ApplicationWindow):
             self.menubar_tools_item_preferences.set_sensitive(True)
 
 
-    def __on_game_renamed(self, *args):
-        """ Set a custom name for a specific game
+    def __on_activate_renamed(self, *args):
+        """ Activate name edit mode in games treeview
         """
 
         game = self.selection["game"]
@@ -3705,40 +3709,45 @@ class Interface(Gtk.ApplicationWindow):
         if game is not None:
             treeiter = self.game_path[game.filename][1]
 
-            # ----------------------------
-            #   Dialog
-            # ----------------------------
+            # Set edit mode for selected treeiter
+            self.treeview_games.set_cursor(self.model_games.get_path(treeiter),
+                self.column_game_name, True)
 
-            self.set_sensitive(False)
 
-            # Save previous name for logger
-            old_name = game.name
+    def __on_game_renamed(self, widget, path, new_name):
+        """ Set a custom name for a specific game
 
-            dialog = DialogRename(self, game)
+        Parameters
+        ----------
+        widget : Gtk.CellRendererText
+            object which received the signal
+        path : str
+            path identifying the edited cell
+        new_name : str
+            new name
+        """
 
-            if dialog.run() == Gtk.ResponseType.APPLY:
-                if not dialog.entry.get_text() == old_name and \
-                    len(dialog.entry.get_text()) > 0:
+        game = self.selection["game"]
 
-                    self.model_games[treeiter][Columns.Name] = \
-                        dialog.entry.get_text()
+        if game is not None:
 
-                    game.name = dialog.entry.get_text()
+            # Check if game name has been changed
+            if not new_name == game.name:
+                self.logger.info(_("Rename %(old)s to %(new)s") % {
+                    "old": game.name, "new": new_name })
 
-                    # Update game from database
-                    self.api.update_game(game)
+                # Update game name
+                self.model_games[path][Columns.Name] = str(new_name)
 
-                    # Store modified game
-                    self.selection["game"] = game
+                game.name = new_name
 
-                    self.set_informations()
+                # Update game from database
+                self.api.update_game(game)
 
-                    self.logger.info(_("Rename %(old)s to %(new)s") % {
-                        "old": old_name, "new": game.name })
+                # Store modified game
+                self.selection["game"] = game
 
-            self.set_sensitive(True)
-
-            dialog.destroy()
+                self.set_informations()
 
 
     def __on_game_clean(self, *args):
