@@ -395,8 +395,11 @@ class Interface(Gtk.ApplicationWindow):
         self.headerbar.set_title(self.title)
         self.headerbar.set_subtitle(str())
 
+        self.headerbar_item_launch.set_label(_("Play"))
         self.headerbar_item_launch.set_tooltip_text(
             _("Launch selected game"))
+        self.headerbar_item_launch.get_style_context().add_class(
+            "suggested-action")
 
         self.headerbar_image_menu.set_from_icon_name(
             Icons.Symbolic.Menu, Gtk.IconSize.BUTTON)
@@ -1616,6 +1619,10 @@ class Interface(Gtk.ApplicationWindow):
 
         self.cell_game_name.connect(
             "edited", self.__on_game_renamed)
+        self.cell_game_name.connect(
+            "editing-started", self.__on_game_renamed_started)
+        self.cell_game_name.connect(
+            "editing-canceled", self.__on_game_renamed_cancel)
 
         self.treeview_games.connect(
             "button-press-event", self.__on_selected_game)
@@ -1900,10 +1907,6 @@ class Interface(Gtk.ApplicationWindow):
         else:
             self.headerbar.set_show_close_button(True)
 
-        self.headerbar_item_launch.set_label(_("Play"))
-        self.headerbar_item_launch.get_style_context().add_class(
-            "suggested-action")
-
         # ------------------------------------
         #   Sidebar
         # ------------------------------------
@@ -1967,6 +1970,9 @@ class Interface(Gtk.ApplicationWindow):
         #   Games
         # ------------------------------------
 
+        # Game rename status
+        self.is_rename = False
+
         # Games - Treeview
         lines = {
             "none": Gtk.TreeViewGridLines.NONE,
@@ -2023,6 +2029,9 @@ class Interface(Gtk.ApplicationWindow):
             Sensitive status
         """
 
+        self.__on_game_launch_button_update(True)
+        self.headerbar_item_launch.set_sensitive(status)
+
         self.menu_item_rename.set_sensitive(status)
         self.menu_item_favorite.set_sensitive(status)
         self.menu_item_multiplayer.set_sensitive(status)
@@ -2035,8 +2044,6 @@ class Interface(Gtk.ApplicationWindow):
         self.menu_item_remove.set_sensitive(status)
         self.menu_item_database.set_sensitive(status)
         self.menu_item_mednafen.set_sensitive(status)
-
-        self.headerbar_item_launch.set_sensitive(status)
 
         self.toolbar_item_output.set_sensitive(status)
         self.toolbar_item_notes.set_sensitive(status)
@@ -3322,6 +3329,7 @@ class Interface(Gtk.ApplicationWindow):
                 # ----------------------------
 
                 if game.filename in self.threads:
+                    self.__on_game_launch_button_update(False)
                     self.headerbar_item_launch.set_sensitive(False)
 
                     self.toolbar_item_parameters.set_sensitive(False)
@@ -3368,6 +3376,9 @@ class Interface(Gtk.ApplicationWindow):
 
         else:
             self.treeview_games.get_selection().unselect_all()
+
+            self.__on_game_launch_button_update(True)
+            self.headerbar_item_launch.set_sensitive(False)
 
         if not same_game:
             self.set_informations()
@@ -3520,7 +3531,31 @@ class Interface(Gtk.ApplicationWindow):
         return True
 
 
-    def __on_game_launch(self, *args):
+    def __on_game_launch_button_update(self, status):
+        """ Update game launch button
+
+        Parameters
+        ----------
+        status : bool
+            The game status
+        """
+
+        if status:
+            self.headerbar_item_launch.set_label(_("Play"))
+            self.headerbar_item_launch.get_style_context().remove_class(
+                "destructive-action")
+            self.headerbar_item_launch.get_style_context().add_class(
+                "suggested-action")
+
+        else:
+            self.headerbar_item_launch.set_label(_("Stop"))
+            self.headerbar_item_launch.get_style_context().remove_class(
+                "suggested-action")
+            self.headerbar_item_launch.get_style_context().add_class(
+                "destructive-action")
+
+
+    def __on_game_launch(self, widget=None, *args):
         """ Prepare the game launch
 
         This function prepare the game launch and start a thread when everything
@@ -3542,6 +3577,12 @@ class Interface(Gtk.ApplicationWindow):
             return False
 
         if game.filename in self.threads:
+            if widget is not None and type(widget) is Gtk.Button:
+                self.threads[game.filename].proc.terminate()
+
+            return False
+
+        if self.is_rename:
             return False
 
         # ----------------------------
@@ -3587,6 +3628,9 @@ class Interface(Gtk.ApplicationWindow):
                     thread.start()
 
                     self.sensitive_interface()
+
+                    self.__on_game_launch_button_update(False)
+                    self.headerbar_item_launch.set_sensitive(True)
 
                     self.toolbar_item_notes.set_sensitive(True)
                     self.menu_item_notes.set_sensitive(True)
@@ -3680,7 +3724,10 @@ class Interface(Gtk.ApplicationWindow):
         # Check if current selected file is the same as thread file
         if select_game is not None and select_game.filename == game.filename:
             self.logger.debug("Restore widgets status for %s" % game.name)
+
+            self.__on_game_launch_button_update(True)
             self.headerbar_item_launch.set_sensitive(True)
+
             self.toolbar_item_output.set_sensitive(True)
             self.toolbar_item_parameters.set_sensitive(True)
 
@@ -3726,6 +3773,20 @@ class Interface(Gtk.ApplicationWindow):
                 self.column_game_name, True)
 
 
+    def __on_game_renamed_started(self, *args):
+        """ Update is_rename status when started game renaming
+        """
+
+        self.is_rename = True
+
+
+    def __on_game_renamed_cancel(self, *args):
+        """ Update is_rename status when canceled game renaming
+        """
+
+        self.is_rename = False
+
+
     def __on_game_renamed(self, widget, path, new_name):
         """ Set a custom name for a specific game
 
@@ -3760,6 +3821,8 @@ class Interface(Gtk.ApplicationWindow):
                 self.selection["game"] = game
 
                 self.set_informations()
+
+        self.is_rename = False
 
 
     def __on_game_clean(self, *args):
