@@ -140,7 +140,6 @@ class Icons:
     class Symbolic:
         pass
 
-
 class Columns:
     Favorite        = 0
     Icon            = 1

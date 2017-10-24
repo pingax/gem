@@ -221,6 +221,32 @@ def parse_timedelta(delta):
     return "{:02d}:{:02d}:{:02d}".format(hours, minutes, seconds)
 
 
+def replace_for_markup(text):
+    """ Replace some characters in text for markup compatibility
+
+    Parameters
+    ----------
+    text : str
+        Text to parser
+
+    Returns
+    -------
+    str
+        Replaced text
+    """
+
+    characters = {
+        '&': "&amp;",
+        '<': "&lt;",
+        '>': "&gt;",
+    }
+
+    for key, value in characters.items():
+        text = text.replace(key, value)
+
+    return text
+
+
 def get_binary_path(binary):
     """ Get a list of available binary paths from $PATH variable
 

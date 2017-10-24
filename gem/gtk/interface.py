@@ -2443,8 +2443,7 @@ class Interface(Gtk.ApplicationWindow):
 
                 self.label_game_title.set_markup(
                     "<span weight='bold' size='x-large'>%s</span>" % \
-                    game.name.replace('&', "&amp;").replace(
-                        '<', "&lt;").replace('>', "&gt;"))
+                    replace_for_markup(game.name))
 
                 # Get rom specified emulator
                 emulator = console.emulator
@@ -2510,8 +2509,7 @@ class Interface(Gtk.ApplicationWindow):
                 if len(game.tags) > 0:
                     self.widgets_sidebar["tags"]["box"].show_all()
                     self.widgets_sidebar["tags"]["value"].set_markup(
-                        ', '.join(game.tags).replace('&', "&amp;").replace(
-                        '<', "&lt;").replace('>', "&gt;"))
+                        replace_for_markup(', '.join(game.tags)))
                 else:
                     self.widgets_sidebar["tags"]["box"].hide()
                     self.widgets_sidebar["tags"]["value"].set_text(str())
@@ -3420,16 +3418,29 @@ class Interface(Gtk.ApplicationWindow):
                 # Get new data from hovered game
                 if len(self.__current_tooltip_data) == 0:
                     data = list()
-                    data.append("<big><b>%s</b></big>" % game.name.replace(
-                        '&', "&amp;").replace('<', "&lt;").replace('>', "&gt;"))
+
+                    data.append(
+                        "<big><b>%s</b></big>" % replace_for_markup(game.name))
 
                     if not game.play_time == timedelta():
-                        data.append(": ".join(["<b>%s</b>" % _("Play time"),
-                            str(game.play_time)]))
+                        data.append(
+                            ": ".join(
+                                [
+                                    "<b>%s</b>" % _("Play time"),
+                                    parse_timedelta(game.play_time)
+                                ]
+                            )
+                        )
 
                     if not game.last_launch_time == timedelta():
-                        data.append(": ".join(["<b>%s</b>" % _("Last launch"),
-                            str(game.last_launch_time)]))
+                        data.append(
+                            ": ".join(
+                                [
+                                    "<b>%s</b>" % _("Last launch"),
+                                    parse_timedelta(game.last_launch_time)
+                                ]
+                            )
+                        )
 
                     # Fancy new line
                     if len(data) > 1:
