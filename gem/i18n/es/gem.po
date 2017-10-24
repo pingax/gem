@@ -199,6 +199,11 @@ msgid "Auto line break"
 msgstr "Salto de línea automàtico"
 
 #
+# File: gem/gtk/mednafen.py, line: 84
+msgid "Backup Memory Type"
+msgstr ""
+
+#
 # File: gem/preferences.py, line: 142
 msgid "Behavior"
 msgstr "Comportamiento"
@@ -385,11 +390,6 @@ msgstr "Descripción"
 #, python-format
 msgid "Destination %s not exist. Canceling operation."
 msgstr "El destino %s no existe. Anulando acción."
-
-#
-# File: gem/preferences.py, line: 1196
-msgid "Do you want to remove this memory type ?"
-msgstr "¿Quiere borrar este tipo de memoria?"
 
 #
 # File: gem/interface.py, line: 2017
@@ -866,11 +866,6 @@ msgid "Remove a game from disk"
 msgstr "Borrar un juego del disco"
 
 #
-# File: gem/preferences.py, line: 85
-msgid "Remove a memory type"
-msgstr "Borrar un tipo de memoria"
-
-#
 # File: gem/interface.py, line: 776
 msgid "Remove game save files"
 msgstr "Borrar partidas guardadas del juego"
@@ -1058,11 +1053,6 @@ msgid "Specify a _memory type"
 msgstr "Escoge un tipo de _memoria"
 
 #
-# File: gem/gtk/mednafen.py, line: 287
-msgid "Specify a memory type"
-msgstr "Escoge un tipo de memoria"
-
-#
 # File: gem/gtk/preferences.py, line: 477
 msgid "Store the last selected console"
 msgstr ""
@@ -1102,6 +1092,13 @@ msgstr "Este binario no existe, por favor compruebe la ruta"
 # File: gem/preferences.py, line: 1418
 msgid "This console already exist, please, choose another name"
 msgstr "Esta consola ya existe, por favor escoja otro nombre"
+
+#
+# File: gem/gtk/mednafen.py, line: 154
+msgid ""
+"This dialog allow you to specify specific backup memory type for the "
+"following game:"
+msgstr ""
 
 #
 # File: gem/preferences.py, line: 1752
@@ -1157,11 +1154,6 @@ msgstr ""
 # File: gem/interface.py, line: 2119
 msgid "Today"
 msgstr "Hoy"
-
-#
-# File: gem/gtk/mednafen.py, line: 389
-msgid "Type"
-msgstr "Tipo"
 
 #
 # File: gem/gtk/interface.py, line: 793
@@ -1255,11 +1247,6 @@ msgid "Use translucent icons"
 msgstr "Usar iconos translúcidos en la lista de los juegos"
 
 #
-# File: gem/gtk/mednafen.py, line: 400
-msgid "Value"
-msgstr "Valor"
-
-#
 # File: gem/preferences.py, line: 99
 msgid "Vertical"
 msgstr "Vertical"
@@ -1327,11 +1314,6 @@ msgid ""
 msgstr ""
 "Puede editar los enlaces de la interfaz para algunas acciones. Haz clic en "
 "un enlace e introduce el que quiera con el teclado."
-
-#
-# File: gem/gtk/mednafen.py, line: 135
-msgid "You can set multiple memory types for this game."
-msgstr "Puede fijar varios tipos de memoria para este juego."
 
 #
 # File: gem/interface.py, line: 419
@@ -1502,6 +1484,11 @@ msgstr "agradecimientos a los traductores"
 #~ msgstr "La base de datos necesita actualizarse"
 
 #
+# File: gem/preferences.py, line: 1196
+#~ msgid "Do you want to remove this memory type ?"
+#~ msgstr "¿Quiere borrar este tipo de memoria?"
+
+#
 # File: gem/interface.py, line: 1098
 #~ msgid ""
 #~ "GEM come with some emulators and consoles already configured. But the "
@@ -1578,6 +1565,11 @@ msgstr "agradecimientos a los traductores"
 #~ msgstr "Acción"
 
 #
+# File: gem/preferences.py, line: 85
+#~ msgid "Remove a memory type"
+#~ msgstr "Borrar un tipo de memoria"
+
+#
 # File: gem/interface.py, line: 2093
 #~ msgid "Set a custom name for %s"
 #~ msgstr "Crear un nombre personalizado para %s"
@@ -1628,9 +1620,19 @@ msgstr "agradecimientos a los traductores"
 #~ msgstr "Mostrar los juegos mutijugador"
 
 #
+# File: gem/gtk/mednafen.py, line: 287
+#~ msgid "Specify a memory type"
+#~ msgstr "Escoge un tipo de memoria"
+
+#
 # File: gem/interface.py, line: 135
 #~ msgid "Start database migration"
 #~ msgstr "Comenzar la migración de la base de datos"
+
+#
+# File: gem/gtk/mednafen.py, line: 389
+#~ msgid "Type"
+#~ msgstr "Tipo"
 
 #
 # File: gem/interface.py, line: 460
@@ -1648,6 +1650,11 @@ msgstr "agradecimientos a los traductores"
 #~ msgstr "Usar tema clásico (Necesita reiniciar GEM)"
 
 #
+# File: gem/gtk/mednafen.py, line: 400
+#~ msgid "Value"
+#~ msgstr "Valor"
+
+#
 # File: gem/preferences.py, line: 156
 #~ msgid "Viewer"
 #~ msgstr "Visor"
@@ -1656,6 +1663,11 @@ msgstr "agradecimientos a los traductores"
 # File: gem/preferences.py, line: 1196
 #~ msgid "Would you really want to clean informations for this game ?"
 #~ msgstr "¿Quiere borrar los datos de este juego?"
+
+#
+# File: gem/gtk/mednafen.py, line: 135
+#~ msgid "You can set multiple memory types for this game."
+#~ msgstr "Puede fijar varios tipos de memoria para este juego."
 
 #
 # File: gem/preferences.py, line: 431

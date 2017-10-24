@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.6\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2017-10-23 18:51+0200\n"
+"PO-Revision-Date: 2017-10-24 20:01+0200\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -198,6 +198,11 @@ msgid "Auto line break"
 msgstr "Retour à la ligne automatique"
 
 #
+# File: gem/gtk/mednafen.py, line: 84
+msgid "Backup Memory Type"
+msgstr "Type de mémoire de secours"
+
+#
 # File: gem/preferences.py, line: 142
 msgid "Behavior"
 msgstr "Comportement"
@@ -371,11 +376,6 @@ msgstr "Description"
 #, python-format
 msgid "Destination %s not exist. Canceling operation."
 msgstr "La destination %s n'existe pas. Annulation de l'opération."
-
-#
-# File: src/window.py, line: 940
-msgid "Do you want to remove this memory type ?"
-msgstr "Voulez-vous vraiment supprimer ce type de mémoire ?"
 
 #
 # File: gem/interface.py, line: 2017
@@ -838,11 +838,6 @@ msgid "Remove a game from disk"
 msgstr "Supprimer un jeu du disque"
 
 #
-# File: gem/gtk/mednafen.py, line: 301
-msgid "Remove a memory type"
-msgstr "Supprimer un type de mémoire"
-
-#
 # File: src/window.py, line: 446
 msgid "Remove game save files"
 msgstr "Supprimer les fichiers de sauvegarde"
@@ -1021,12 +1016,6 @@ msgid "Specify a _memory type"
 msgstr "Spécifier un type de mémoire"
 
 #
-# File: gem/gtk/interface.py, line: 583
-# File: gem/gtk/interface.py, line: 1010
-msgid "Specify a memory type"
-msgstr "Spécifier un type de mémoire"
-
-#
 # File: gem/gtk/preferences.py, line: 477
 msgid "Store the last selected console"
 msgstr "Stocker la dernière console sélectionnée"
@@ -1066,6 +1055,15 @@ msgstr "Ce binaire n'existe pas, veuillez vérifier le chemin"
 # File: gem/preferences.py, line: 1020
 msgid "This console already exist, please, choose another name"
 msgstr "Cette console existe déjà, veuillez choisir un autre nom"
+
+#
+# File: gem/gtk/mednafen.py, line: 154
+msgid ""
+"This dialog allow you to specify specific backup memory type for the "
+"following game:"
+msgstr ""
+"Cette fenêtre vous permet de spécifier des types de mémoire de secours "
+"pour le jeu suivant:"
 
 #
 # File: gem/preferences.py, line: 1366
@@ -1122,11 +1120,6 @@ msgstr ""
 # File: src/window.py, line: 1066
 msgid "Today"
 msgstr "Aujourd'hui"
-
-#
-# File: gem/gtk/mednafen.py, line: 389
-msgid "Type"
-msgstr "Type"
 
 #
 # File: gem/gtk/interface.py, line: 793
@@ -1213,11 +1206,6 @@ msgid "Use translucent icons"
 msgstr "Utiliser des icônes translucides"
 
 #
-# File: gem/gtk/mednafen.py, line: 400
-msgid "Value"
-msgstr "Valeur"
-
-#
 # File: gem/preferences.py, line: 99
 msgid "Vertical"
 msgstr "Verticales"
@@ -1284,11 +1272,6 @@ msgid ""
 msgstr ""
 "Vous pouvez éditer les raccourcis de l'interface pour différentes actions. "
 "Cliquez sur un raccourci et insérez le raccourci souhaité avec votre clavier."
-
-#
-# File: gem/gtk/mednafen.py, line: 135
-msgid "You can set multiple memory types for this game."
-msgstr "Vous pouvez spécifier plusieurs types de mémoire pour ce jeu."
 
 #
 # File: src/window.py, line: 247
@@ -1401,6 +1384,11 @@ msgstr "Lubert Aurélien (PacMiam)"
 #~ msgstr "Visualiseur d'images alternatif"
 
 #
+# File: src/window.py, line: 940
+#~ msgid "Do you want to remove this memory type ?"
+#~ msgstr "Voulez-vous vraiment supprimer ce type de mémoire ?"
+
+#
 # File: gem/gtk/preferences.py, line: 1796
 #~ msgid "Expressions are split by carriage return."
 #~ msgstr "Les expressions sont séparées par un retour à la ligne."
@@ -1424,6 +1412,11 @@ msgstr "Lubert Aurélien (PacMiam)"
 # File: gem/preferences.py, line: 329
 #~ msgid "Options"
 #~ msgstr "Options"
+
+#
+# File: gem/gtk/mednafen.py, line: 301
+#~ msgid "Remove a memory type"
+#~ msgstr "Supprimer un type de mémoire"
 
 #
 # File: gem/interface.py, line: 1286
@@ -1471,14 +1464,35 @@ msgstr "Lubert Aurélien (PacMiam)"
 #~ msgstr "Afficher les jeux multi-joueurs"
 
 #
+# File: gem/gtk/interface.py, line: 583
+# File: gem/gtk/interface.py, line: 1010
+#~ msgid "Specify a memory type"
+#~ msgstr "Spécifier un type de mémoire"
+
+#
+# File: gem/gtk/mednafen.py, line: 389
+#~ msgid "Type"
+#~ msgstr "Type"
+
+#
 # File: gem/preferences.py, line: 495
 #~ msgid "Use classic theme (Need to reboot GEM)"
 #~ msgstr "Utiliser le thème classique (Nécessite de redémarrer GEM)"
 
 #
+# File: gem/gtk/mednafen.py, line: 400
+#~ msgid "Value"
+#~ msgstr "Valeur"
+
+#
 # File: gem/ui/interface.glade, line: 1199
 #~ msgid "Viewer"
 #~ msgstr "Visualiseur"
+
+#
+# File: gem/gtk/mednafen.py, line: 135
+#~ msgid "You can set multiple memory types for this game."
+#~ msgstr "Vous pouvez spécifier plusieurs types de mémoire pour ce jeu."
 
 #
 # File: gem/preferences.py, line: 338

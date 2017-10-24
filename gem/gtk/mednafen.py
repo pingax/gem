@@ -68,20 +68,20 @@ textdomain("gem")
 
 class DialogMednafenMemory(Dialog):
 
-    def __init__(self, parent, title, data):
+    def __init__(self, parent, name, data):
         """ Constructor
 
         Parameters
         ----------
         parent : Gtk.Window
             Parent object
-        title : str
-            Dialog title
+        name : str
+            Game name
         data : dict
             Backup memory type dictionary (with type as key)
         """
 
-        Dialog.__init__(self, parent, title, Icons.Save, True)
+        Dialog.__init__(self, parent, _("Backup Memory Type"), Icons.Save, True)
 
         # ------------------------------------
         #   Initialize variables
@@ -90,6 +90,10 @@ class DialogMednafenMemory(Dialog):
         self.interface = parent
 
         self.data = data
+
+        self.name = name
+
+        self.memory_list = [ "eeprom", "flash", "rtc", "sensor", "sram" ]
 
         # ------------------------------------
         #   Prepare interface
@@ -109,7 +113,7 @@ class DialogMednafenMemory(Dialog):
         """ Initialize interface widgets
         """
 
-        self.set_size(520, 420)
+        self.set_size(640, 420)
 
         self.dialog_box.set_spacing(0)
 
@@ -122,8 +126,8 @@ class DialogMednafenMemory(Dialog):
         grid = Gtk.Grid()
 
         # Properties
-        grid.set_row_spacing(8)
-        grid.set_column_spacing(8)
+        grid.set_row_spacing(6)
+        grid.set_column_spacing(12)
 
         # ------------------------------------
         #   Action buttons
@@ -144,50 +148,47 @@ class DialogMednafenMemory(Dialog):
         # ------------------------------------
 
         label = Gtk.Label()
+        label_game = Gtk.Label()
 
         # Properties
-        label.set_text(_("You can set multiple memory types for this game."))
+        label.set_text(_("This dialog allow you to specify specific backup "
+            "memory type for the following game:"))
         label.set_line_wrap(True)
         label.set_single_line_mode(False)
-        label.set_line_wrap_mode(Pango.WrapMode.CHAR)
+        label.set_justify(Gtk.Justification.FILL)
+        label.set_line_wrap_mode(Pango.WrapMode.WORD)
+
+        label_game.set_text(self.name)
+        label_game.set_margin_bottom(12)
+        label_game.set_single_line_mode(True)
+        label_game.set_ellipsize(Pango.EllipsizeMode.END)
+        label_game.get_style_context().add_class("dim-label")
 
         # ------------------------------------
         #   Buttons
         # ------------------------------------
 
-        buttons = Gtk.ButtonBox()
+        buttons = Gtk.Box()
 
         self.image_add = Gtk.Image()
         self.button_add = Gtk.Button()
-
-        self.image_modify = Gtk.Image()
-        self.button_modify = Gtk.Button()
 
         self.image_remove = Gtk.Image()
         self.button_remove = Gtk.Button()
 
         # Properties
-        buttons.set_spacing(8)
-        buttons.set_layout(Gtk.ButtonBoxStyle.START)
+        Gtk.StyleContext.add_class(
+            buttons.get_style_context(), "linked")
+        buttons.set_spacing(-1)
         buttons.set_orientation(Gtk.Orientation.VERTICAL)
 
-        self.image_add.set_margin_right(4)
         self.image_add.set_from_icon_name(
-            Icons.Add, Gtk.IconSize.MENU)
+            Icons.Symbolic.Add, Gtk.IconSize.MENU)
         self.button_add.set_image(self.image_add)
-        self.button_add.set_label(_("Add"))
 
-        self.image_modify.set_margin_right(4)
-        self.image_modify.set_from_icon_name(
-            Icons.Properties, Gtk.IconSize.MENU)
-        self.button_modify.set_image(self.image_modify)
-        self.button_modify.set_label(_("Modify"))
-
-        self.image_remove.set_margin_right(4)
         self.image_remove.set_from_icon_name(
-            Icons.Remove, Gtk.IconSize.MENU)
+            Icons.Symbolic.Remove, Gtk.IconSize.MENU)
         self.button_remove.set_image(self.image_remove)
-        self.button_remove.set_label(_("Remove"))
 
         # ------------------------------------
         #   Link
@@ -196,7 +197,6 @@ class DialogMednafenMemory(Dialog):
         link = Gtk.LinkButton()
 
         # Properties
-        link.set_alignment(1, .5)
         link.set_label(_("Mednafen GBA documentation"))
         link.set_uri("https://mednafen.github.io/documentation/gba.html"
             "#Section_backupmem_type")
@@ -208,15 +208,24 @@ class DialogMednafenMemory(Dialog):
         scroll = Gtk.ScrolledWindow()
         view = Gtk.Viewport()
 
+        self.adjustment_value = Gtk.Adjustment()
+
+        self.model_memory_keys = Gtk.ListStore(str)
+
         self.model = Gtk.ListStore(str, int)
         self.treeview = Gtk.TreeView()
 
         column = Gtk.TreeViewColumn()
 
-        cell_key = Gtk.CellRendererText()
-        cell_value = Gtk.CellRendererText()
+        self.cell_key = Gtk.CellRendererCombo()
+        self.cell_value = Gtk.CellRendererSpin()
 
         # Properties
+        self.adjustment_value.set_lower(0)
+        self.adjustment_value.set_upper(2147483647) # INT_MAX
+        self.adjustment_value.set_step_increment(16)
+        self.adjustment_value.set_page_increment(1024)
+
         self.treeview.set_hexpand(True)
         self.treeview.set_vexpand(True)
         self.treeview.set_model(self.model)
@@ -226,16 +235,23 @@ class DialogMednafenMemory(Dialog):
         self.treeview.set_has_tooltip(False)
 
         column.set_expand(True)
-        column.pack_start(cell_key, True)
-        column.pack_start(cell_value, False)
+        column.pack_start(self.cell_key, True)
+        column.pack_start(self.cell_value, True)
 
-        column.add_attribute(cell_key, "text", 0)
-        column.add_attribute(cell_value, "text", 1)
+        column.add_attribute(self.cell_key, "text", 0)
+        column.add_attribute(self.cell_value, "text", 1)
 
-        cell_key.set_padding(8, 8)
-        cell_key.set_alignment(0, .5)
-        cell_value.set_padding(8, 8)
-        cell_value.set_alignment(0, .5)
+        self.cell_key.set_padding(12, 6)
+        self.cell_key.set_alignment(0, .5)
+        self.cell_key.set_property("text-column", 0)
+        self.cell_key.set_property("editable", True)
+        self.cell_key.set_property("has-entry", False)
+        self.cell_key.set_property("model", self.model_memory_keys)
+
+        self.cell_value.set_padding(12, 6)
+        self.cell_value.set_alignment(1, .5)
+        self.cell_value.set_property("editable", True)
+        self.cell_value.set_property("adjustment", self.adjustment_value)
 
         # ------------------------------------
         #   Integrate widgets
@@ -250,13 +266,13 @@ class DialogMednafenMemory(Dialog):
         self.treeview.append_column(column)
 
         buttons.add(self.button_add)
-        buttons.add(self.button_modify)
         buttons.add(self.button_remove)
 
         grid.attach(label, 0, 0, 2, 1)
-        grid.attach(buttons, 0, 1, 1, 1)
-        grid.attach(self.treeview, 1, 1, 1, 1)
-        grid.attach(link, 0, 2, 2, 1)
+        grid.attach(label_game, 0, 1, 2, 1)
+        grid.attach(buttons, 0, 2, 1, 1)
+        grid.attach(self.treeview, 1, 2, 1, 1)
+        grid.attach(link, 0, 3, 2, 1)
 
         self.dialog_box.pack_start(scroll, True, True, 0)
 
@@ -268,14 +284,19 @@ class DialogMednafenMemory(Dialog):
         self.button_close.connect("clicked", self.__on_cancel_clicked)
         self.button_accept.connect("clicked", self.__on_accept_clicked)
 
-        self.button_add.connect("clicked", self.__on_push_button)
-        self.button_modify.connect("clicked", self.__on_push_button)
-        self.button_remove.connect("clicked", self.__on_push_button)
+        self.button_add.connect("clicked", self.__on_append_item)
+        self.button_remove.connect("clicked", self.__on_remove_item)
+
+        self.cell_key.connect("edited", self.__on_edited_cell)
+        self.cell_value.connect("edited", self.__on_edited_cell)
 
 
     def __start_interface(self):
         """ Load data and start interface
         """
+
+        for key in self.memory_list:
+            self.model_memory_keys.append([key])
 
         for key, value in self.data.items():
             self.model.append([key, value])
@@ -283,52 +304,50 @@ class DialogMednafenMemory(Dialog):
         self.show_all()
 
 
-    def __on_push_button(self, widget):
+    def __on_append_item(self, widget):
+        """ Append a new row in treeview
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
         """
+
+        self.model.append([ self.memory_list[0], int() ])
+
+
+    def __on_remove_item(self, widget):
+        """ Remove a row in treeview
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
         """
 
-        key, value = None, None
+        model, treeiter = self.treeview.get_selection().get_selected()
+        if treeiter is not None:
+            self.model.remove(treeiter)
 
-        if not widget == self.button_add:
-            model, treeiter = self.treeview.get_selection().get_selected()
 
-            # No selection in treeview
-            if treeiter is None:
-                return False
+    def __on_edited_cell(self, widget, path, text):
+        """ Update treerow when a cell has been edited
 
-            key = model.get_value(treeiter, 0)
-            value = model.get_value(treeiter, 1)
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        path : str
+            Path identifying the edited cell
+        text : str
+            New text
+        """
 
-        self.set_sensitive(False)
+        if type(widget) == Gtk.CellRendererCombo:
+            self.model[path][0] = str(text)
 
-        if not widget == self.button_remove:
-
-            dialog = DialogMednafenMemoryType(self.interface,
-                _("Specify a memory type"), key, value)
-
-            if dialog.run() == Gtk.ResponseType.APPLY:
-                key = dialog.combo_key.get_active_id()
-                value = dialog.spin_value.get_value()
-
-                if widget == self.button_add:
-                    self.model.append([key, int(value)])
-
-                elif widget == self.button_modify and treeiter is not None:
-                    self.model.set_value(treeiter, 0, key)
-                    self.model.set_value(treeiter, 1, value)
-
-        else:
-            dialog = Question(self.interface, _("Remove a memory type"),
-                _("Do you want to remove this memory type ?"))
-
-            if dialog.run() == Gtk.ResponseType.YES:
-                self.model.remove(treeiter)
-
-        dialog.hide()
-
-        self.set_sensitive(True)
-
-        return True
+        elif type(widget) == Gtk.CellRendererSpin:
+            self.model[path][1] = int(text)
 
 
     def __on_cancel_clicked(self, widget):
@@ -353,126 +372,3 @@ class DialogMednafenMemory(Dialog):
         """
 
         self.response(Gtk.ResponseType.APPLY)
-
-
-class DialogMednafenMemoryType(Dialog):
-
-    def __init__(self, parent, title, key=None, value=None):
-        """ Constructor
-
-        Parameters
-        ----------
-        parent : Gtk.Window
-            Parent object
-        title : str
-            Dialog title
-        key : str
-            Backup memory type (default: None)
-        value : str
-            Backup memory value (default: None)
-        """
-
-        Dialog.__init__(self, parent, title, Icons.Save)
-
-        # ------------------------------------
-        #   Initialize variables
-        # ------------------------------------
-
-        self.key = key
-        self.value = value
-
-        # ------------------------------------
-        #   Prepare interface
-        # ------------------------------------
-
-        # Init widgets
-        self.__init_widgets()
-
-        # Start interface
-        self.__start_interface()
-
-
-    def __init_widgets(self):
-        """ Initialize interface widgets
-        """
-
-        self.set_size(420, -1)
-
-        self.add_buttons(
-            Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-            Gtk.STOCK_APPLY, Gtk.ResponseType.APPLY)
-
-        # ------------------------------------
-        #   Grids
-        # ------------------------------------
-
-        grid = Gtk.Grid()
-
-        # Properties
-        grid.set_row_spacing(8)
-        grid.set_column_spacing(8)
-        grid.set_column_homogeneous(False)
-
-        # ------------------------------------
-        #   Widgets
-        # ------------------------------------
-
-        label_key = Gtk.Label()
-
-        self.model_key = Gtk.ListStore(str)
-        self.combo_key = Gtk.ComboBox()
-        cell_key = Gtk.CellRendererText()
-
-        label_value = Gtk.Label()
-
-        self.spin_value = Gtk.SpinButton()
-
-        # Properties
-        label_key.set_hexpand(True)
-        label_key.set_alignment(0, .5)
-        label_key.set_text(_("Type"))
-
-        self.model_key.set_sort_column_id(0, Gtk.SortType.ASCENDING)
-
-        self.combo_key.set_hexpand(True)
-        self.combo_key.set_model(self.model_key)
-        self.combo_key.set_id_column(0)
-        self.combo_key.pack_start(cell_key, False)
-        self.combo_key.add_attribute(cell_key, "text", 0)
-
-        label_value.set_alignment(0, .5)
-        label_value.set_text(_("Value"))
-
-        self.spin_value.set_range(0, pow(2, 32))
-        self.spin_value.set_increments(32, 64)
-
-        # ------------------------------------
-        #   Integrate widgets
-        # ------------------------------------
-
-        grid.attach(label_key, 0, 0, 1, 1)
-        grid.attach(self.combo_key, 1, 0, 1, 1)
-        grid.attach(label_value, 0, 1, 1, 1)
-        grid.attach(self.spin_value, 1, 1, 1, 1)
-
-        self.dialog_box.pack_start(grid, True, True, 0)
-
-
-    def __start_interface(self):
-        """ Load data and start interface
-        """
-
-        for element in [ "sram", "flash", "eeprom", "sensor", "rtc" ]:
-            self.model_key.append([element])
-
-        if self.key is None:
-            self.combo_key.set_active(0)
-        else:
-            self.combo_key.set_active_id(self.key)
-
-        if self.value is None:
-            self.spin_value.set_value(0)
-        else:
-            self.spin_value.set_value(self.value)
-
-        self.show_all()

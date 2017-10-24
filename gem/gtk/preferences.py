@@ -2665,7 +2665,7 @@ class PreferencesConsole(Dialog):
 
 
     def __on_remove_item(self, widget):
-        """ Append a new row in treeview
+        """ Remove a row in treeview
 
         Parameters
         ----------
