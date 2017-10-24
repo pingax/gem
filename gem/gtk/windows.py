@@ -832,7 +832,6 @@ class DialogParameters(Dialog):
 
         self.dialog_box.set_spacing(0)
 
-        self.headerbar.set_subtitle(self.game.name)
         self.headerbar.set_show_close_button(False)
 
         # ------------------------------------

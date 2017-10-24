@@ -2059,7 +2059,7 @@ class Interface(Gtk.ApplicationWindow):
         self.menubar_edit_item_mednafen.set_sensitive(status)
 
 
-    def filters_update(self, widget, status):
+    def filters_update(self, widget, status=None):
         """ Reload packages filter when user change filters from menu
 
         Other Parameters
@@ -2072,7 +2072,8 @@ class Interface(Gtk.ApplicationWindow):
         Check widget utility in this function
         """
 
-        widget.set_active(status)
+        if status is not None and type(status) is bool:
+            widget.set_active(status)
 
         self.filter_games.refilter()
 
