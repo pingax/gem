@@ -897,6 +897,12 @@ msgid "Reset filters"
 msgstr ""
 
 #
+# File: gem/preferences.py, line: 86
+#, fuzzy
+msgid "Reset game"
+msgstr "Renombrar un juego"
+
+#
 # File: gem/gtk/preferences.py, line: 173
 msgid "Right"
 msgstr ""
@@ -1282,13 +1288,13 @@ msgstr "Modo ventana"
 
 #
 # File: gem/preferences.py, line: 1196
-#, fuzzy
-msgid "Would you really want to remove database entry for this game ?"
+msgid "Would you really want to remove this entry ?"
 msgstr "¿Quiere borrar esta entrada?"
 
 #
 # File: gem/preferences.py, line: 1196
-msgid "Would you really want to remove this entry ?"
+#, fuzzy
+msgid "Would you really want to reset this game informations ?"
 msgstr "¿Quiere borrar esta entrada?"
 
 #
@@ -1663,6 +1669,12 @@ msgstr "agradecimientos a los traductores"
 # File: gem/preferences.py, line: 1196
 #~ msgid "Would you really want to clean informations for this game ?"
 #~ msgstr "¿Quiere borrar los datos de este juego?"
+
+#
+# File: gem/preferences.py, line: 1196
+#, fuzzy
+#~ msgid "Would you really want to remove database entry for this game ?"
+#~ msgstr "¿Quiere borrar esta entrada?"
 
 #
 # File: gem/gtk/mednafen.py, line: 135

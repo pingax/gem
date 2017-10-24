@@ -1329,14 +1329,12 @@ class Console(GEMObject):
                 data = database.get("games", { "filename": basename(filename) })
 
                 # Generate Game object
-                game = Game()
-
-                game_name = splitext(basename(filename))[0]
+                game = Game.new(filename)
 
                 game_data = {
-                    "id": generate_identifier(game_name),
-                    "filepath": filename,
-                    "name": game_name
+                    "id": game.id,
+                    "name": game.name,
+                    "filepath": game.filepath
                 }
 
                 # This game exists in database
@@ -1544,6 +1542,44 @@ class Game(GEMObject):
             "tags": ';'.join(self.tags),
             "environment": ';'.join(self.environment)
         })
+
+    @staticmethod
+    def new(path):
+        """ Define a new Game object from game file path
+
+        Parameters
+        ----------
+        path : str
+            Game file path
+        """
+
+        game = Game()
+
+        name = splitext(basename(path))[0]
+
+        game.id = generate_identifier(name)
+        game.name = name
+        game.filepath = path
+
+        return game
+
+
+    def reset(self):
+        """ Reset game data
+        """
+
+        # Get default data
+        path = self.filepath
+        name = splitext(basename(path))[0]
+
+        # Replace all data with default values
+        for key, value in self.attributes.items():
+            setattr(self, key, value)
+
+        # Set default game values
+        self.id = generate_identifier(name)
+        self.name = name
+        self.filepath = path
 
 
     @property

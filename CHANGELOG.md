@@ -8,6 +8,8 @@
 * Add GEM.get_games function to API
 * Add GEM.get_consoles function to API
 * Add GEM.get_emulators function to API
+* Add Game.new static function to API
+* Add Game.reset function to API
 * Add a new filter system
 * Add finish flag field
 * Add environment variables field
@@ -15,6 +17,7 @@
 * Fix wrong parameter for dolphin-emu
 * Fix wrong exception in icon_from_data
 * Fix wrong type for play_time and last_launch_time in api
+* Fix reset a game not remove it from database
 
 ## Version 0.8 - Shadow Blade (26 July, 2017)
 

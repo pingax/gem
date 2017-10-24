@@ -3773,12 +3773,12 @@ class Interface(Gtk.ApplicationWindow):
 
             self.set_sensitive(False)
 
-            dialog = Question(self, game.name, _("Would you really want to "
-                "remove database entry for this game ?"))
+            dialog = Question(self, _("Reset game"),
+                _("Would you really want to reset this game informations ?"))
 
             if dialog.run() == Gtk.ResponseType.YES:
                 data = {
-                    Columns.Name: game.name,
+                    Columns.Name: game.filename,
                     Columns.Favorite: False,
                     Columns.Icon: self.alternative["favorite"],
                     Columns.Played: None,
@@ -3792,8 +3792,12 @@ class Interface(Gtk.ApplicationWindow):
                 for key, value in data.items():
                     self.model_games[treeiter][key] = value
 
-                # Remove game from database
-                self.api.delete_game(game)
+                game.reset()
+
+                # Update game from database
+                self.api.update_game(game)
+
+                self.set_informations()
 
             self.set_sensitive(True)
 
