@@ -3722,7 +3722,7 @@ class Interface(Gtk.ApplicationWindow):
         select_game = self.selection["game"]
 
         # Check if current selected file is the same as thread file
-        if select_game is not None and select_game.filename == game.filename:
+        if select_game is not None and select_game.id == game.id:
             self.logger.debug("Restore widgets status for %s" % game.name)
 
             self.__on_game_launch_button_update(True)
@@ -3803,24 +3803,28 @@ class Interface(Gtk.ApplicationWindow):
         game = self.model_games[path][Columns.Object]
 
         if game is not None:
+            selected_game = self.selection["game"]
 
-            # Check if game name has been changed
-            if not new_name == game.name:
-                self.logger.info(_("Rename %(old)s to %(new)s") % {
-                    "old": game.name, "new": new_name })
+            # Avoid to validate rename when the user click outside
+            if selected_game is not None and game.id == selected_game.id:
 
-                # Update game name
-                self.model_games[path][Columns.Name] = str(new_name)
+                # Check if game name has been changed
+                if not new_name == game.name:
+                    self.logger.info(_("Rename %(old)s to %(new)s") % {
+                        "old": game.name, "new": new_name })
 
-                game.name = new_name
+                    # Update game name
+                    self.model_games[path][Columns.Name] = str(new_name)
 
-                # Update game from database
-                self.api.update_game(game)
+                    game.name = new_name
 
-                # Store modified game
-                self.selection["game"] = game
+                    # Update game from database
+                    self.api.update_game(game)
 
-                self.set_informations()
+                    # Store modified game
+                    self.selection["game"] = game
+
+                    self.set_informations()
 
         self.is_rename = False
 
