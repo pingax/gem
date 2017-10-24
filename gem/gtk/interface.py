@@ -3800,7 +3800,7 @@ class Interface(Gtk.ApplicationWindow):
             new name
         """
 
-        game = self.selection["game"]
+        game = self.model_games[path][Columns.Object]
 
         if game is not None:
 
