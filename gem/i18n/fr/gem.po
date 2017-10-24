@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.6\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2017-10-24 21:02+0200\n"
+"PO-Revision-Date: 2017-10-24 21:16+0200\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -822,10 +822,9 @@ msgid "Remove"
 msgstr "Supprimer"
 
 #
-# File: src/window.py, line: 939
-#, python-format
-msgid "Remove %s"
-msgstr "Supprimer %s"
+# File: src/window.py, line: 451
+msgid "Remove a game"
+msgstr "Supprimer un jeu"
 
 #
 # File: src/window.py, line: 446
@@ -1047,6 +1046,15 @@ msgid "Terminate by keyboard interrupt"
 msgstr "Arrêt par interruption du clavier"
 
 #
+# File: gem/ui/interface.glade, line: 960
+msgid ""
+"The following game going to be removed from your harddrive. This action is "
+"irreversible !"
+msgstr ""
+"Le jeu suivant va être supprimé de votre disque dur. Cette action est "
+"irréversible !"
+
+#
 # File: gem/gtk/interface.py, line: 3018
 msgid "There is no default emulator set for this console"
 msgstr "Il n'y a pas d'émulateur par défaut pour cette console"
@@ -1083,14 +1091,6 @@ msgid ""
 msgstr ""
 "Cette extension est disponible pour plusieurs consoles. Laquelle GEM doit "
 "utiliser pour ce fichier ?"
-
-#
-# File: gem/ui/interface.glade, line: 960
-msgid ""
-"This game is going to be removed from your disk and this action is "
-"irreversible."
-msgstr ""
-"Ce jeu va être supprimé de votre disque et cette action est irréversible."
 
 #
 # File: gem/interface.py, line: 1882
@@ -1416,6 +1416,11 @@ msgstr "Lubert Aurélien (PacMiam)"
 # File: gem/preferences.py, line: 329
 #~ msgid "Options"
 #~ msgstr "Options"
+
+#
+# File: src/window.py, line: 939
+#~ msgid "Remove %s"
+#~ msgstr "Supprimer %s"
 
 #
 # File: gem/gtk/mednafen.py, line: 301

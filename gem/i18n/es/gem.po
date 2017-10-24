@@ -849,11 +849,10 @@ msgid "Remove"
 msgstr "Borrar"
 
 #
-# File: gem/interface.py, line: 1736
-# File: gem/preferences.py, line: 1195
-#, python-format
-msgid "Remove %s"
-msgstr "Borrar %s"
+# File: gem/preferences.py, line: 86
+#, fuzzy
+msgid "Remove a game"
+msgstr "Renombrar un juego"
 
 #
 # File: gem/preferences.py, line: 85
@@ -1085,6 +1084,14 @@ msgid "Terminate by keyboard interrupt"
 msgstr "Finalizado por interrupción del teclado"
 
 #
+# File: gem/ui/interface.glade, line: 960
+#, fuzzy
+msgid ""
+"The following game going to be removed from your harddrive. This action is "
+"irreversible !"
+msgstr "Este juego va a ser borrado de tu disco y esta acción es irreversible."
+
+#
 # File: gem/gtk/interface.py, line: 3018
 msgid "There is no default emulator set for this console"
 msgstr ""
@@ -1119,13 +1126,6 @@ msgid ""
 msgstr ""
 "Esta extensión està disponible en multiples consolas. ¿Cuàl debe usar GEM "
 "para mover este archivo?"
-
-#
-# File: gem/ui/interface.glade, line: 960
-msgid ""
-"This game is going to be removed from your disk and this action is "
-"irreversible."
-msgstr "Este juego va a ser borrado de tu disco y esta acción es irreversible."
 
 #
 # File: gem/interface.py, line: 1218
@@ -1569,6 +1569,12 @@ msgstr "agradecimientos a los traductores"
 #, fuzzy
 #~ msgid "Options"
 #~ msgstr "Acción"
+
+#
+# File: gem/interface.py, line: 1736
+# File: gem/preferences.py, line: 1195
+#~ msgid "Remove %s"
+#~ msgstr "Borrar %s"
 
 #
 # File: gem/preferences.py, line: 85

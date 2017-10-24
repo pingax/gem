@@ -3829,9 +3829,7 @@ class Interface(Gtk.ApplicationWindow):
 
             self.set_sensitive(False)
 
-            title = game.name
-
-            dialog = DialogRemove(self, title)
+            dialog = DialogRemove(self, game)
 
             if dialog.run() == Gtk.ResponseType.YES:
                 file_to_remove.append(game.filepath)
@@ -3879,8 +3877,7 @@ class Interface(Gtk.ApplicationWindow):
             if need_to_reload:
                 self.load_interface()
 
-                self.set_message(
-                    _("Remove %s") % title,
+                self.set_message(_("Remove a game"),
                     _("This game was removed successfully"), Icons.Information)
 
 

@@ -43,7 +43,7 @@ msgstr  ""
 msgid   "%s games availables"
 msgstr  ""
 #
-# File: gem/gtk/interface.py, line: 3866
+# File: gem/gtk/interface.py, line: 3867
 #, python-format
 msgid   "%s has been deleted from disk"
 msgstr  ""
@@ -572,7 +572,7 @@ msgid   "Nintendo console titles are identified by a 6 character identifier "
 msgstr  ""
 #
 # File: gem/gtk/windows.py, line: 169
-# File: gem/gtk/windows.py, line: 1119
+# File: gem/gtk/windows.py, line: 1125
 msgid   "No"
 msgstr  ""
 #
@@ -672,8 +672,8 @@ msgid   "Remove"
 msgstr  ""
 #
 # File: gem/gtk/interface.py, line: 3880
-#, python-format
-msgid   "Remove %s"
+# File: gem/gtk/windows.py, line: 1084
+msgid   "Remove a game"
 msgstr  ""
 #
 # File: gem/gtk/preferences.py, line: 152
@@ -684,15 +684,15 @@ msgstr  ""
 msgid   "Remove a game from disk"
 msgstr  ""
 #
-# File: gem/gtk/windows.py, line: 1153
+# File: gem/gtk/windows.py, line: 1166
 msgid   "Remove game save files"
 msgstr  ""
 #
-# File: gem/gtk/windows.py, line: 1156
+# File: gem/gtk/windows.py, line: 1169
 msgid   "Remove game screenshots"
 msgstr  ""
 #
-# File: gem/gtk/windows.py, line: 1150
+# File: gem/gtk/windows.py, line: 1163
 msgid   "Remove game's data from database"
 msgstr  ""
 #
@@ -857,6 +857,11 @@ msgstr  ""
 msgid   "Terminate by keyboard interrupt"
 msgstr  ""
 #
+# File: gem/gtk/windows.py, line: 1138
+msgid   "The following game going to be removed from your harddrive. This "
+        "action is irreversible !"
+msgstr  ""
+#
 # File: gem/gtk/interface.py, line: 3103
 msgid   "There is no default emulator set for this console"
 msgstr  ""
@@ -878,14 +883,9 @@ msgstr  ""
 msgid   "This emulator already exist, please, choose another name"
 msgstr  ""
 #
-# File: gem/gtk/windows.py, line: 1807
+# File: gem/gtk/windows.py, line: 1821
 msgid   "This extension is available in multiple consoles. Which one GEM must "
         "use to move this file ?"
-msgstr  ""
-#
-# File: gem/gtk/windows.py, line: 1132
-msgid   "This game is going to be removed from your disk and this action is "
-        "irreversible."
 msgstr  ""
 #
 # File: gem/gtk/interface.py, line: 3881
@@ -1022,7 +1022,7 @@ msgid   "Write your regex here..."
 msgstr  ""
 #
 # File: gem/gtk/windows.py, line: 171
-# File: gem/gtk/windows.py, line: 1121
+# File: gem/gtk/windows.py, line: 1127
 msgid   "Yes"
 msgstr  ""
 #

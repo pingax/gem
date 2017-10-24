@@ -1070,18 +1070,24 @@ class DialogParameters(Dialog):
 
 class DialogRemove(Dialog):
 
-    def __init__(self, parent, title):
+    def __init__(self, parent, game):
         """ Constructor
 
         Parameters
         ----------
         parent : Gtk.Window
             Parent object
-        title : str
-            Dialog title
+        game : gem.api.Game
+            Game object
         """
 
-        Dialog.__init__(self, parent, title, Icons.Delete, True)
+        Dialog.__init__(self, parent, _("Remove a game"), Icons.Delete, True)
+
+        # ------------------------------------
+        #   Variables
+        # ------------------------------------
+
+        self.game = game
 
         # ------------------------------------
         #   Prepare interface
@@ -1108,6 +1114,16 @@ class DialogRemove(Dialog):
         self.dialog_box.set_spacing(0)
 
         # ------------------------------------
+        #   Grid
+        # ------------------------------------
+
+        grid = Gtk.Box()
+
+        # Properties
+        grid.set_spacing(6)
+        grid.set_orientation(Gtk.Orientation.VERTICAL)
+
+        # ------------------------------------
         #   Action buttons
         # ------------------------------------
 
@@ -1126,14 +1142,21 @@ class DialogRemove(Dialog):
         # ------------------------------------
 
         label = Gtk.Label()
+        label_game = Gtk.Label()
 
         # Properties
-        label.set_alignment(0, .5)
-        label.set_text(_("This game is going to be removed from your disk and "
-            "this action is irreversible."))
+        label.set_text(_("The following game going to be removed from your "
+            "harddrive. This action is irreversible !"))
         label.set_line_wrap(True)
         label.set_single_line_mode(False)
-        label.set_line_wrap_mode(Pango.WrapMode.CHAR)
+        label.set_justify(Gtk.Justification.FILL)
+        label.set_line_wrap_mode(Pango.WrapMode.WORD)
+
+        label_game.set_text(self.game.name)
+        label_game.set_margin_top(12)
+        label_game.set_single_line_mode(True)
+        label_game.set_ellipsize(Pango.EllipsizeMode.END)
+        label_game.get_style_context().add_class("dim-label")
 
         # ------------------------------------
         #   Options
@@ -1146,13 +1169,12 @@ class DialogRemove(Dialog):
         self.check_screenshots = Gtk.CheckButton()
 
         # Properties
-        self.check_database.set_margin_top(18)
+        self.check_database.set_margin_top(12)
         self.check_database.set_label(_("Remove game's data from database"))
 
-        self.check_save_state.set_margin_top(18)
+        self.check_save_state.set_margin_top(12)
         self.check_save_state.set_label(_("Remove game save files"))
 
-        self.check_screenshots.set_margin_top(6)
         self.check_screenshots.set_label(_("Remove game screenshots"))
 
         # ------------------------------------
@@ -1162,10 +1184,13 @@ class DialogRemove(Dialog):
         self.headerbar.pack_start(self.button_close)
         self.headerbar.pack_end(self.button_accept)
 
-        self.dialog_box.pack_start(label, False, True, 0)
-        self.dialog_box.pack_start(self.check_database, False, True, 0)
-        self.dialog_box.pack_start(self.check_save_state, False, True, 0)
-        self.dialog_box.pack_start(self.check_screenshots, False, True, 0)
+        grid.pack_start(label, False, True, 0)
+        grid.pack_start(label_game, False, True, 0)
+        grid.pack_start(self.check_database, False, True, 0)
+        grid.pack_start(self.check_save_state, False, True, 0)
+        grid.pack_start(self.check_screenshots, False, True, 0)
+
+        self.dialog_box.pack_start(grid, False, True, 0)
 
 
     def __init_signals(self):
