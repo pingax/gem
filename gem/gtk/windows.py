@@ -1148,6 +1148,7 @@ class DialogRemove(Dialog):
         label.set_text(_("The following game going to be removed from your "
             "harddrive. This action is irreversible !"))
         label.set_line_wrap(True)
+        label.set_max_width_chars(8)
         label.set_single_line_mode(False)
         label.set_justify(Gtk.Justification.FILL)
         label.set_line_wrap_mode(Pango.WrapMode.WORD)
@@ -1758,15 +1759,15 @@ class DialogViewer(Dialog):
 
 class DialogConsoles(Dialog):
 
-    def __init__(self, parent, title, consoles, previous=None):
+    def __init__(self, parent, filename, consoles, previous=None):
         """ Constructor
 
         Parameters
         ----------
         parent : Gtk.Window
             Parent object
-        title : str
-            Dialog title
+        filename : str
+            File name
         consoles : list
             Consoles list
 
@@ -1776,13 +1777,15 @@ class DialogConsoles(Dialog):
             Previous selected console (Default: None)
         """
 
-        Dialog.__init__(self, parent, title, Icons.Gaming)
+        Dialog.__init__(self, parent, _("Drag & Drop"), Icons.Gaming, True)
 
         # ------------------------------------
         #   Initialize variables
         # ------------------------------------
 
         self.current = None
+
+        self.filename = filename
 
         self.consoles = consoles
         self.previous = previous
@@ -1805,79 +1808,172 @@ class DialogConsoles(Dialog):
         """ Initialize interface widgets
         """
 
-        self.set_size(500, 300)
+        self.set_size(640, 480)
 
-        self.add_buttons(
-            Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-            Gtk.STOCK_SAVE, Gtk.ResponseType.APPLY)
+        self.dialog_box.set_spacing(0)
+
+        self.headerbar.set_show_close_button(False)
+
+        # ------------------------------------
+        #   Grids
+        # ------------------------------------
+
+        grid = Gtk.Box()
+
+        grid_checkbutton = Gtk.Box()
+
+        # Properties
+        grid.set_spacing(6)
+        grid.set_homogeneous(False)
+        grid.set_orientation(Gtk.Orientation.VERTICAL)
+
+        grid_checkbutton.set_spacing(12)
+        grid_checkbutton.set_margin_top(12)
+        grid_checkbutton.set_homogeneous(False)
+        grid_checkbutton.set_orientation(Gtk.Orientation.HORIZONTAL)
+
+        # ------------------------------------
+        #   Action buttons
+        # ------------------------------------
+
+        self.button_close = Gtk.Button()
+
+        self.button_accept = Gtk.Button()
+
+        # Properties
+        self.button_close.set_label(_("Close"))
+
+        self.button_accept.set_label(_("Apply"))
+        self.button_accept.get_style_context().add_class("suggested-action")
 
         # ------------------------------------
         #   Scroll
         # ------------------------------------
 
-        scroll_consoles = Gtk.ScrolledWindow()
-        view_consoles = Gtk.Viewport()
+        self.scroll_consoles = Gtk.ScrolledWindow()
+        self.view_consoles = Gtk.Viewport()
 
         # ------------------------------------
         #   Description
         # ------------------------------------
 
-        label_description = Gtk.Label()
+        self.label_description = Gtk.Label()
+        self.label_game = Gtk.Label()
 
         # Properties
-        label_description.set_alignment(0, .5)
-        label_description.set_max_width_chars(10)
-        label_description.set_line_wrap(True)
-        label_description.set_justify(Gtk.Justification.FILL)
-        label_description.set_label(_("This extension is available in multiple "
-            "consoles. Which one GEM must use to move this file ?"))
+        self.label_description.set_label(_("The following game can be "
+            "installed on multiple consoles. Select the console where to "
+            "install this game:"))
+        self.label_description.set_line_wrap(True)
+        self.label_description.set_max_width_chars(8)
+        self.label_description.set_single_line_mode(False)
+        self.label_description.set_justify(Gtk.Justification.FILL)
+        self.label_description.set_line_wrap_mode(Pango.WrapMode.WORD)
+
+        self.label_game.set_label(self.filename)
+        self.label_game.set_margin_bottom(12)
+        self.label_game.set_single_line_mode(True)
+        self.label_game.set_ellipsize(Pango.EllipsizeMode.END)
+        self.label_game.get_style_context().add_class("dim-label")
 
         # ------------------------------------
         #   Consoles
         # ------------------------------------
 
-        self.model_consoles = Gtk.ListStore(bool, str)
+        self.model_consoles = Gtk.ListStore(bool, Pixbuf, str)
         self.treeview_consoles = Gtk.TreeView()
 
-        column_consoles = Gtk.TreeViewColumn()
+        self.column_consoles = Gtk.TreeViewColumn()
 
         self.cell_consoles_status = Gtk.CellRendererToggle()
-        cell_consoles_name = Gtk.CellRendererText()
+        self.cell_consoles_icon = Gtk.CellRendererPixbuf()
+        self.cell_consoles_name = Gtk.CellRendererText()
 
         # Properties
-        self.model_consoles.set_sort_column_id(1, Gtk.SortType.ASCENDING)
+        self.model_consoles.set_sort_column_id(2, Gtk.SortType.ASCENDING)
 
         self.treeview_consoles.set_model(self.model_consoles)
         self.treeview_consoles.set_headers_visible(False)
 
-        column_consoles.set_expand(True)
-        column_consoles.pack_start(self.cell_consoles_status, False)
-        column_consoles.set_attributes(self.cell_consoles_status, active=0)
-        column_consoles.pack_start(cell_consoles_name, True)
-        column_consoles.set_attributes(cell_consoles_name, text=1)
+        self.column_consoles.set_expand(True)
+        self.column_consoles.pack_start(self.cell_consoles_status, False)
+        self.column_consoles.pack_start(self.cell_consoles_icon, False)
+        self.column_consoles.pack_start(self.cell_consoles_name, True)
 
-        self.cell_consoles_status.set_radio(True)
+        self.column_consoles.add_attribute(
+            self.cell_consoles_status, "active", 0)
+        self.column_consoles.add_attribute(
+            self.cell_consoles_icon, "pixbuf", 1)
+        self.column_consoles.add_attribute(
+            self.cell_consoles_name, "text", 2)
+
+        self.cell_consoles_status.set_padding(6, 6)
         self.cell_consoles_status.set_activatable(True)
+        self.cell_consoles_status.set_radio(True)
 
-        cell_consoles_name.set_padding(8, 0)
-        cell_consoles_name.set_alignment(0, .5)
+        self.cell_consoles_icon.set_padding(6, 6)
+        self.cell_consoles_icon.set_alignment(0, .5)
 
-        self.treeview_consoles.append_column(column_consoles)
+        self.cell_consoles_name.set_padding(6, 6)
+        self.cell_consoles_name.set_alignment(0, .5)
+
+        self.treeview_consoles.append_column(self.column_consoles)
+
+        # ------------------------------------
+        #   CheckButton
+        # ------------------------------------
+
+        self.switch = Gtk.Switch()
+
+        self.label_checkbutton = Gtk.Label()
+        self.label_explanation = Gtk.Label()
+
+        # Properties
+        self.label_checkbutton.set_label(
+            _("Keep this selection for every games in queue"))
+        self.label_checkbutton.set_line_wrap(True)
+        self.label_checkbutton.set_single_line_mode(False)
+        self.label_checkbutton.set_halign(Gtk.Align.START)
+        self.label_checkbutton.set_justify(Gtk.Justification.FILL)
+        self.label_checkbutton.set_line_wrap_mode(Pango.WrapMode.WORD)
+
+        self.label_explanation.set_label(
+            _("Be careful, this option cannot be undo during the process."))
+        self.label_explanation.set_line_wrap(True)
+        self.label_explanation.set_single_line_mode(False)
+        self.label_explanation.set_halign(Gtk.Align.START)
+        self.label_explanation.set_justify(Gtk.Justification.FILL)
+        self.label_explanation.set_line_wrap_mode(Pango.WrapMode.WORD)
+        self.label_explanation.get_style_context().add_class("dim-label")
 
         # ------------------------------------
         #   Integrate widgets
         # ------------------------------------
 
-        scroll_consoles.add(view_consoles)
-        view_consoles.add(self.treeview_consoles)
+        self.headerbar.pack_start(self.button_close)
+        self.headerbar.pack_end(self.button_accept)
 
-        self.dialog_box.pack_start(label_description, False, True, 0)
-        self.dialog_box.pack_start(scroll_consoles, True, True, 0)
+        self.scroll_consoles.add(self.view_consoles)
+        self.view_consoles.add(self.treeview_consoles)
+
+        grid.pack_start(self.label_description, False, False, 0)
+        grid.pack_start(self.label_game, False, False, 0)
+        grid.pack_start(self.scroll_consoles, True, True, 0)
+        grid.pack_start(grid_checkbutton, False, False, 0)
+        grid.pack_start(self.label_explanation, False, False, 0)
+
+        grid_checkbutton.pack_start(self.label_checkbutton, True, True, 0)
+        grid_checkbutton.pack_start(self.switch, False, False, 0)
+
+        self.dialog_box.pack_start(grid, True, True, 0)
 
 
     def __init_signals(self):
         """ Initialize widgets signals
         """
+
+        self.button_close.connect("clicked", self.__on_cancel_clicked)
+        self.button_accept.connect("clicked", self.__on_accept_clicked)
 
         self.cell_consoles_status.connect("toggled", self.on_cell_toggled)
 
@@ -1886,9 +1982,9 @@ class DialogConsoles(Dialog):
         """ Load data and start interface
         """
 
-        self.show_all()
+        self.button_accept.set_sensitive(False)
 
-        self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
+        self.show_all()
 
         for console in self.consoles:
             status = False
@@ -1896,9 +1992,37 @@ class DialogConsoles(Dialog):
                 status = True
 
                 self.current = console
-                self.set_response_sensitive(Gtk.ResponseType.APPLY, True)
+                self.button_accept.set_sensitive(True)
 
-            self.model_consoles.append([status, console.name])
+            # Get console icon
+            icon = icon_from_data(
+                console.icon, self.interface.empty, subfolder="consoles")
+
+            self.model_consoles.append([status, icon, console.name])
+
+
+    def __on_cancel_clicked(self, widget):
+        """ Click on close button
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        self.response(Gtk.ResponseType.CLOSE)
+
+
+    def __on_accept_clicked(self, widget):
+        """ Click on accept button
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        self.response(Gtk.ResponseType.APPLY)
 
 
     def on_cell_toggled(self, widget, path):
@@ -1912,12 +2036,12 @@ class DialogConsoles(Dialog):
             Path to be activated
         """
 
-        self.set_response_sensitive(Gtk.ResponseType.APPLY, True)
+        self.button_accept.set_sensitive(True)
 
         selected_path = Gtk.TreePath(path)
 
         treeiter = self.model_consoles.get_iter(selected_path)
-        self.current = self.model_consoles.get_value(treeiter, 1)
+        self.current = self.model_consoles.get_value(treeiter, 2)
 
         for row in self.model_consoles:
             row[0] = (row.path == selected_path)

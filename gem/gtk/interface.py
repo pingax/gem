@@ -4636,7 +4636,9 @@ class Interface(Gtk.ApplicationWindow):
 
         previous_console = None
 
+        keep_console = False
         need_to_reload = False
+
         consoles_to_reload = dict()
 
         for uri in data.get_uris():
@@ -4658,31 +4660,41 @@ class Interface(Gtk.ApplicationWindow):
                     #   Get right console for rom
                     # ----------------------------
 
-                    consoles_list = list()
-                    for console in self.api.consoles:
-                        console = self.api.get_console(console)
+                    if not keep_console:
 
-                        if console is not None:
-                            extensions = console.extensions
+                        consoles_list = list()
+                        for console in self.api.consoles:
+                            console = self.api.get_console(console)
 
-                            if extensions is not None and ext[1:] in extensions:
-                                consoles_list.append(console)
+                            if console is not None:
+                                extensions = console.extensions
 
-                    console = None
+                                if extensions is not None and \
+                                    ext[1:] in extensions:
+                                    consoles_list.append(console)
 
-                    if len(consoles_list) > 0:
-                        console = consoles_list[0]
+                        console = None
 
-                        if len(consoles_list) > 1:
-                            dialog = DialogConsoles(self,
-                                basename(path), consoles_list, previous_console)
+                        if len(consoles_list) > 0:
+                            console = consoles_list[0]
 
-                            if dialog.run() == Gtk.ResponseType.APPLY:
-                                console = self.api.get_console(dialog.current)
+                            if len(consoles_list) > 1:
+                                self.set_sensitive(False)
 
-                            previous_console = console
+                                dialog = DialogConsoles(self, basename(path),
+                                    consoles_list, previous_console)
 
-                            dialog.destroy()
+                                if dialog.run() == Gtk.ResponseType.APPLY:
+                                    console = self.api.get_console(
+                                        dialog.current)
+
+                                keep_console = dialog.switch.get_active()
+
+                                previous_console = console
+
+                                dialog.destroy()
+
+                                self.set_sensitive(True)
 
             # ----------------------------
             #   Check console

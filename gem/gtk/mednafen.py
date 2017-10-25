@@ -154,6 +154,7 @@ class DialogMednafenMemory(Dialog):
         label.set_text(_("This dialog allow you to specify specific backup "
             "memory type for the following game:"))
         label.set_line_wrap(True)
+        label.set_max_width_chars(8)
         label.set_single_line_mode(False)
         label.set_justify(Gtk.Justification.FILL)
         label.set_line_wrap_mode(Pango.WrapMode.WORD)
