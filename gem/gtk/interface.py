@@ -1530,7 +1530,7 @@ class Interface(Gtk.ApplicationWindow):
         self.toolbar_item_screenshots.connect(
             "clicked", self.__on_show_viewer)
         self.toolbar_item_output.connect(
-            "clicked", self.__on_show_log)
+            "clicked", self.__on_game_log)
         self.toolbar_item_notes.connect(
             "clicked", self.__on_show_notes)
         self.toolbar_item_parameters.connect(
