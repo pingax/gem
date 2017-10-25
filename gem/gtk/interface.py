@@ -3281,34 +3281,55 @@ class Interface(Gtk.ApplicationWindow):
             Event which triggered this signal
         """
 
-        game = None
-        run_game = None
+        available_events = [
+            EventType.BUTTON_PRESS,
+            EventType._2BUTTON_PRESS,
+            EventType._3BUTTON_PRESS
+        ]
 
-        # Keyboard
+        game = None
+        treeiter = None
+
+        run_game = False
+
+        # ----------------------------
+        #   Keyboard
+        # ----------------------------
+
         if event.type == EventType.KEY_RELEASE:
             model, treeiter = treeview.get_selection().get_selected()
 
-            if treeiter is not None:
-                game = model.get_value(treeiter, Columns.Object)
+        # ----------------------------
+        #   Mouse
+        # ----------------------------
 
-        # Mouse
-        elif (event.type in [EventType.BUTTON_PRESS, EventType._2BUTTON_PRESS]) \
-            and (event.button == 1 or event.button == 3):
+        elif event.type in available_events and event.button in (1, 3):
 
-            selection = treeview.get_path_at_pos(int(event.x), int(event.y))
-            if selection is not None:
-                model = treeview.get_model()
-                treeiter = model.get_iter(selection[0])
+            # Get selection from cursor position
+            if event.type == EventType.BUTTON_PRESS:
+                selection = treeview.get_path_at_pos(int(event.x), int(event.y))
 
-                game = model.get_value(treeiter, Columns.Object)
+                if selection is not None:
+                    model = treeview.get_model()
+                    treeiter = model.get_iter(selection[0])
 
-                if event.button == 1 and event.type == EventType._2BUTTON_PRESS:
-                    run_game = True
+            # Get selection from treeview
+            else:
+                model, treeiter = treeview.get_selection().get_selected()
+
+            # Mouse - Double click with left mouse button
+            if event.type == EventType._2BUTTON_PRESS and event.button == 1:
+                run_game = True and not self.is_rename
 
         # ----------------------------
         #   Game selected
         # ----------------------------
 
+        # Get game data
+        if treeiter is not None:
+            game = model.get_value(treeiter, Columns.Object)
+
+        # Check if the selected game has already been showed
         same_game = (self.selection["game"] == game)
 
         self.selection["game"] = game
@@ -3330,7 +3351,7 @@ class Interface(Gtk.ApplicationWindow):
 
                 if game.filename in self.threads:
                     self.__on_game_launch_button_update(False)
-                    self.headerbar_item_launch.set_sensitive(False)
+                    self.headerbar_item_launch.set_sensitive(True)
 
                     self.toolbar_item_parameters.set_sensitive(False)
                     self.toolbar_item_output.set_sensitive(False)
@@ -3351,31 +3372,34 @@ class Interface(Gtk.ApplicationWindow):
                     self.menubar_edit_item_delete.set_sensitive(False)
                     self.menubar_edit_item_mednafen.set_sensitive(False)
 
-                # Check extension and emulator for GBA game on mednafen
-                if not game.extension.lower() == ".gba" or \
-                    not "mednafen" in emulator.binary or \
-                    not self.__mednafen_status:
-                    self.menu_item_mednafen.set_sensitive(False)
-                    self.menubar_edit_item_mednafen.set_sensitive(False)
+                if not same_game:
+                    # Check extension and emulator for GBA game on mednafen
+                    if not game.extension.lower() == ".gba" or \
+                        not "mednafen" in emulator.binary or \
+                        not self.__mednafen_status:
+                        self.menu_item_mednafen.set_sensitive(False)
+                        self.menubar_edit_item_mednafen.set_sensitive(False)
 
-                iter_snaps = model.get_value(treeiter, Columns.Snapshots)
+                    iter_snaps = model.get_value(treeiter, Columns.Snapshots)
 
-                # Check snaps icon to avoid to check screenshots again
-                if iter_snaps == self.alternative["snap"]:
-                    self.toolbar_item_screenshots.set_sensitive(False)
-                    self.menu_item_screenshots.set_sensitive(False)
-                    self.menubar_main_item_screenshots.set_sensitive(False)
+                    # Check snaps icon to avoid to check screenshots again
+                    if iter_snaps == self.alternative["snap"]:
+                        self.toolbar_item_screenshots.set_sensitive(False)
+                        self.menu_item_screenshots.set_sensitive(False)
+                        self.menubar_main_item_screenshots.set_sensitive(False)
 
-                if self.check_log() is None:
-                    self.toolbar_item_output.set_sensitive(False)
-                    self.menu_item_output.set_sensitive(False)
-                    self.menubar_main_item_output.set_sensitive(False)
+                    if self.check_log() is None:
+                        self.toolbar_item_output.set_sensitive(False)
+                        self.menu_item_output.set_sensitive(False)
+                        self.menubar_main_item_output.set_sensitive(False)
 
                 if run_game:
                     self.__on_game_launch()
 
         else:
             self.treeview_games.get_selection().unselect_all()
+
+            self.selection["game"] = None
 
             self.__on_game_launch_button_update(True)
             self.headerbar_item_launch.set_sensitive(False)
@@ -3540,14 +3564,16 @@ class Interface(Gtk.ApplicationWindow):
             The game status
         """
 
-        if status:
+        label = self.headerbar_item_launch.get_label()
+
+        if status and not label == _("Play"):
             self.headerbar_item_launch.set_label(_("Play"))
             self.headerbar_item_launch.get_style_context().remove_class(
                 "destructive-action")
             self.headerbar_item_launch.get_style_context().add_class(
                 "suggested-action")
 
-        else:
+        elif not status and not label == _("Stop"):
             self.headerbar_item_launch.set_label(_("Stop"))
             self.headerbar_item_launch.get_style_context().remove_class(
                 "suggested-action")
@@ -3826,7 +3852,7 @@ class Interface(Gtk.ApplicationWindow):
 
                     self.set_informations()
 
-        self.is_rename = False
+        self.__on_game_renamed_cancel()
 
 
     def __on_game_clean(self, *args):
