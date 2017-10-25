@@ -3645,7 +3645,7 @@ class Interface(Gtk.ApplicationWindow):
                     #   Run game
                     # ----------------------------
 
-                    thread = GameThread(self, emulator, game, command)
+                    thread = GameThread(self, console, emulator, game, command)
 
                     # Save thread references
                     self.threads[game.filename] = thread
@@ -3681,14 +3681,16 @@ class Interface(Gtk.ApplicationWindow):
             Game thread
         """
 
-        game = thread.game
-        emulator = thread.emulator
-
         # ----------------------------
         #   Save game data
         # ----------------------------
 
         if not thread.error:
+
+            emulator = thread.emulator
+
+            # Get the last occurence from database
+            game = self.api.get_game(thread.console.id, thread.game.id)
 
             # ----------------------------
             #   Update data
@@ -3696,7 +3698,7 @@ class Interface(Gtk.ApplicationWindow):
 
             # Play data
             game.played += 1
-            game.play_time = game.play_time + thread.delta
+            game.play_time = thread.game.play_time + thread.delta
             game.last_launch_time = thread.delta
             game.last_launch_date = date.today()
 

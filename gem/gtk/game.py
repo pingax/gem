@@ -78,13 +78,15 @@ class GameThread(Thread, GObject):
 
     __gsignals__ = { "game-terminate": (SIGNAL_RUN_LAST, None, [object]) }
 
-    def __init__(self, parent, emulator, game, command):
+    def __init__(self, parent, console, emulator, game, command):
         """ Constructor
 
         Parameters
         ----------
         parent : gem.interface.Interface
             Main interface to access public variables
+        emulator : gem.api.Console
+            Console object
         emulator : gem.api.Emulator
             Emulator object
         game : gem.api.Game
@@ -105,6 +107,7 @@ class GameThread(Thread, GObject):
 
         self.name = game.id
         self.command = command
+        self.console = console
         self.emulator = emulator
         self.game = game
 
