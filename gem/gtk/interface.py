@@ -3910,70 +3910,74 @@ class Interface(Gtk.ApplicationWindow):
         console = self.selection["console"]
 
         if game is not None and console is not None:
-            treeiter = self.game_path[game.filename][1]
 
-            emulator = console.emulator
+            # Avoid trying to remove an executed game
+            if not game.filename in self.threads:
+                treeiter = self.game_path[game.filename][1]
 
-            file_to_remove = list()
+                emulator = console.emulator
 
-            need_to_reload = False
+                file_to_remove = list()
 
-            # ----------------------------
-            #   Dialog
-            # ----------------------------
-
-            self.set_sensitive(False)
-
-            dialog = DialogRemove(self, game)
-
-            if dialog.run() == Gtk.ResponseType.YES:
-                file_to_remove.append(game.filepath)
+                need_to_reload = False
 
                 # ----------------------------
-                #   Database
+                #   Dialog
                 # ----------------------------
 
-                if dialog.check_database.get_active():
-                    # Remove game from database
-                    self.api.delete_game(game)
+                self.set_sensitive(False)
 
-                # ----------------------------
-                #   Emulator specific files
-                # ----------------------------
+                dialog = DialogRemove(self, game)
 
-                if emulator is not None:
+                if dialog.run() == Gtk.ResponseType.YES:
+                    file_to_remove.append(game.filepath)
 
-                    # Savestates files
-                    if dialog.check_save_state.get_active():
-                        file_to_remove.extend(
-                            emulator.get_savestates(game))
+                    # ----------------------------
+                    #   Database
+                    # ----------------------------
 
-                    # Screenshots files
-                    if dialog.check_screenshots.get_active():
-                        file_to_remove.extend(
-                            emulator.get_screenshots(game))
+                    if dialog.check_database.get_active():
+                        # Remove game from database
+                        self.api.delete_game(game)
 
-                # ----------------------------
-                #   Remove files from disk
-                # ----------------------------
+                    # ----------------------------
+                    #   Emulator specific files
+                    # ----------------------------
 
-                for element in file_to_remove:
-                    self.logger.info(
-                        _("%s has been deleted from disk") % element)
+                    if emulator is not None:
 
-                    remove(element)
+                        # Savestates files
+                        if dialog.check_save_state.get_active():
+                            file_to_remove.extend(
+                                emulator.get_savestates(game))
 
-                need_to_reload = True
+                        # Screenshots files
+                        if dialog.check_screenshots.get_active():
+                            file_to_remove.extend(
+                                emulator.get_screenshots(game))
 
-            self.set_sensitive(True)
+                    # ----------------------------
+                    #   Remove files from disk
+                    # ----------------------------
 
-            dialog.destroy()
+                    for element in file_to_remove:
+                        self.logger.info(
+                            _("%s has been deleted from disk") % element)
 
-            if need_to_reload:
-                self.load_interface()
+                        remove(element)
 
-                self.set_message(_("Remove a game"),
-                    _("This game was removed successfully"), Icons.Information)
+                    need_to_reload = True
+
+                self.set_sensitive(True)
+
+                dialog.destroy()
+
+                if need_to_reload:
+                    self.load_interface()
+
+                    self.set_message(_("Remove a game"),
+                        _("This game was removed successfully"),
+                        Icons.Information)
 
 
     def __on_game_parameters(self, *args):
