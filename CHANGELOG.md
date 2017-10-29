@@ -14,6 +14,7 @@
 * Add finish flag field
 * Add environment variables field
 * Add a tooltip for games treeview
+* Add a console reminder option when use D&D
 * Fix wrong parameter for dolphin-emu
 * Fix wrong exception in icon_from_data
 * Fix wrong type for play_time and last_launch_time in api

@@ -3338,7 +3338,8 @@ class Interface(Gtk.ApplicationWindow):
             console = self.selection["console"]
 
             if console is not None:
-                self.sensitive_interface(True)
+                if not same_game:
+                    self.sensitive_interface(True)
 
                 # Get Game emulator
                 emulator = console.emulator
