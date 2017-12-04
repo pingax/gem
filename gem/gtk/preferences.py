@@ -1589,6 +1589,11 @@ class Preferences(object):
             Gtk.main()
 
         else:
+            # Avoid to remove console or emulator when games are launched
+            if len(self.interface.threads) > 0:
+                self.button_consoles_remove.set_sensitive(False)
+                self.button_emulators_remove.set_sensitive(False)
+
             self.window.run()
 
 

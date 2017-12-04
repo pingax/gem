@@ -3651,9 +3651,6 @@ class Interface(Gtk.ApplicationWindow):
                     self.toolbar_item_output.set_sensitive(True)
                     self.menubar_main_item_output.set_sensitive(True)
 
-                    self.menu_item_preferences.set_sensitive(False)
-                    self.menubar_tools_item_preferences.set_sensitive(False)
-
                     return True
 
         return False
