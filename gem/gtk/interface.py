@@ -3348,21 +3348,12 @@ class Interface(Gtk.ApplicationWindow):
                     self.__on_game_launch_button_update(False)
                     self.headerbar_item_launch.set_sensitive(True)
 
-                    self.toolbar_item_parameters.set_sensitive(False)
-                    self.toolbar_item_output.set_sensitive(False)
-
                     self.menu_item_launch.set_sensitive(False)
-                    self.menu_item_output.set_sensitive(False)
-                    self.menu_item_parameters.set_sensitive(False)
                     self.menu_item_database.set_sensitive(False)
                     self.menu_item_remove.set_sensitive(False)
-                    self.menu_item_rename.set_sensitive(False)
                     self.menu_item_mednafen.set_sensitive(False)
 
                     self.menubar_main_item_launch.set_sensitive(False)
-                    self.menubar_main_item_output.set_sensitive(False)
-                    self.menubar_edit_item_rename.set_sensitive(False)
-                    self.menubar_edit_item_parameters.set_sensitive(False)
                     self.menubar_edit_item_database.set_sensitive(False)
                     self.menubar_edit_item_delete.set_sensitive(False)
                     self.menubar_edit_item_mednafen.set_sensitive(False)
@@ -3495,8 +3486,13 @@ class Interface(Gtk.ApplicationWindow):
                         pixbuf = Pixbuf.new_from_file(screenshots[-1])
 
                         # Resize pixbuf to have a 96 pixels height
-                        pixbuf = pixbuf.scale_simple(pixbuf.get_width() * float(
-                            96 / pixbuf.get_height()), 96, InterpType.TILES)
+                        pixbuf = pixbuf.scale_simple(
+                            pixbuf.get_width() * float(
+                                96 / pixbuf.get_height()
+                            ),
+                            96,
+                            InterpType.TILES
+                        )
 
                         self.__current_tooltip_pixbuf = pixbuf
 
@@ -3648,14 +3644,12 @@ class Interface(Gtk.ApplicationWindow):
                     # Launch thread
                     thread.start()
 
-                    self.sensitive_interface()
-
                     self.__on_game_launch_button_update(False)
                     self.headerbar_item_launch.set_sensitive(True)
 
-                    self.toolbar_item_notes.set_sensitive(True)
-                    self.menu_item_notes.set_sensitive(True)
-                    self.menubar_main_item_notes.set_sensitive(True)
+                    self.menu_item_output.set_sensitive(True)
+                    self.toolbar_item_output.set_sensitive(True)
+                    self.menubar_main_item_output.set_sensitive(True)
 
                     self.menu_item_preferences.set_sensitive(False)
                     self.menubar_tools_item_preferences.set_sensitive(False)
@@ -3680,9 +3674,9 @@ class Interface(Gtk.ApplicationWindow):
         #   Save game data
         # ----------------------------
 
-        if not thread.error:
+        emulator = thread.emulator
 
-            emulator = thread.emulator
+        if not thread.error:
 
             # Get the last occurence from database
             game = self.api.get_game(thread.console.id, thread.game.id)
@@ -3751,22 +3745,20 @@ class Interface(Gtk.ApplicationWindow):
             self.__on_game_launch_button_update(True)
             self.headerbar_item_launch.set_sensitive(True)
 
-            self.toolbar_item_output.set_sensitive(True)
-            self.toolbar_item_parameters.set_sensitive(True)
-
             self.menu_item_launch.set_sensitive(True)
-            self.menu_item_parameters.set_sensitive(True)
-            self.menu_item_output.set_sensitive(True)
             self.menu_item_database.set_sensitive(True)
             self.menu_item_remove.set_sensitive(True)
-            self.menu_item_rename.set_sensitive(True)
 
             self.menubar_main_item_launch.set_sensitive(True)
-            self.menubar_main_item_output.set_sensitive(True)
-            self.menubar_edit_item_rename.set_sensitive(True)
-            self.menubar_edit_item_parameters.set_sensitive(True)
             self.menubar_edit_item_database.set_sensitive(True)
             self.menubar_edit_item_delete.set_sensitive(True)
+
+            # Check extension and emulator for GBA game on mednafen
+            if not game.extension.lower() == ".gba" or \
+                not "mednafen" in emulator.binary or \
+                not self.__mednafen_status:
+                self.menu_item_mednafen.set_sensitive(True)
+                self.menubar_edit_item_mednafen.set_sensitive(True)
 
             # Avoid to launch the game again when use Enter in game terminate
             # self.treeview_games.get_selection().unselect_all()
