@@ -1648,6 +1648,19 @@ class Game(GEMObject):
         return splitext(basename(expanduser(self.filepath)))[-1]
 
 
+    @property
+    def log(self):
+        """ Return relative log file path
+
+        Returns
+        -------
+        str
+            filepath
+        """
+
+        return path_join("logs", self.path[-1] + ".log")
+
+
 if __name__ == "__main__":
     """ Debug GEM API
     """

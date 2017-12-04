@@ -753,15 +753,9 @@ class Interface(Gtk.ApplicationWindow):
 
         # Properties
         self.entry_filter.set_size_request(300, -1)
-        self.entry_filter.set_placeholder_text(_("Filter"))
-        self.entry_filter.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.PRIMARY, Icons.Symbolic.Find)
+        self.entry_filter.set_placeholder_text(_("Filter..."))
         self.entry_filter.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
-        self.entry_filter.set_icon_activatable(
-            Gtk.EntryIconPosition.PRIMARY, False)
-        self.entry_filter.set_icon_sensitive(
-            Gtk.EntryIconPosition.PRIMARY, False)
 
         self.tool_menu_filters.set_tooltip_text(_("Filters"))
         self.tool_menu_filters.set_use_popover(True)
@@ -4815,7 +4809,7 @@ class Interface(Gtk.ApplicationWindow):
         game = self.selection["game"]
 
         if game is not None:
-            log_path = path_join(GEM.Local, "logs", game.filename + ".log")
+            log_path = path_join(GEM.Local, game.log)
 
             if exists(expanduser(log_path)):
                 return log_path
@@ -4842,7 +4836,11 @@ class Interface(Gtk.ApplicationWindow):
         """
 
         if len(get_binary_path("mednafen")) > 0:
-            proc = Popen([ "mednafen" ], stdin=PIPE, stdout=PIPE, stderr=STDOUT,
+            proc = Popen(
+                [ "mednafen" ],
+                stdin=PIPE,
+                stdout=PIPE,
+                stderr=STDOUT,
                 universal_newlines=True)
 
             output, error_output = proc.communicate()

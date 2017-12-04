@@ -22,6 +22,7 @@
 from datetime import datetime
 
 # Filesystem
+from os import environ
 from os.path import expanduser
 from os.path import join as path_join
 
@@ -118,7 +119,7 @@ class GameThread(Thread, GObject):
         #   Generate data
         # ----------------------------
 
-        self.path = path_join(GEM.Local, "logs", game.filename + ".log")
+        self.path = path_join(GEM.Local, game.log)
 
 
     def run(self):
@@ -133,20 +134,38 @@ class GameThread(Thread, GObject):
         self.logger.info(_("Launch %s") % self.game.name)
 
         try:
-            # ----------------------------
-            #   Launch game
-            # ----------------------------
-
             self.logger.debug("Command: %s" % ' '.join(self.command))
 
-            self.proc = Popen(
-                self.command,
-                stdin=PIPE,
-                stdout=PIPE,
-                stderr=STDOUT,
-                universal_newlines=True)
+            # ----------------------------
+            #   Check environment
+            # ----------------------------
 
-            output, error_output = self.proc.communicate()
+            # Get a copy of current environment
+            environment = environ.copy()
+
+            # Check if current game has specific environment variable
+            for envvar in self.game.environment:
+                key, value = envvar.strip().split('=')
+
+                environment[key] = value
+
+            # ----------------------------
+            #   Start process
+            # ----------------------------
+
+            self.logger.info(_("Log to %s") % self.path)
+
+            # Logging process output
+            with open(self.path, 'w') as pipe:
+                self.proc = Popen(
+                    self.command,
+                    stdin=PIPE,
+                    stdout=pipe,
+                    stderr=pipe,
+                    env=environment,
+                    universal_newlines=True)
+
+                output, error_output = self.proc.communicate()
 
             self.logger.info(_("Close %s") % self.game.name)
 
@@ -158,28 +177,20 @@ class GameThread(Thread, GObject):
 
             self.delta = (datetime.now() - started)
 
-            # ----------------------------
-            #   Log data
-            # ----------------------------
-
-            self.logger.info(_("Log to %s") % self.path)
-
-            # Write output into game's log
-            with open(self.path, 'w') as pipe:
-                pipe.write(str())
-                pipe.write("%s\n\n" % " ".join(self.command))
-                pipe.write(output)
-
         except OSError as error:
-            self.logger.error(_("Cannot access to game: %s") % error)
+            self.logger.error(_("Cannot access to game: %s") % str(error))
             self.error = True
 
         except MemoryError as error:
-            self.logger.error(_("A memory error occur: %s") % error)
+            self.logger.error(_("A memory error occur: %s") % str(error))
             self.error = True
 
         except KeyboardInterrupt as error:
             self.logger.info(_("Terminate by keyboard interrupt"))
+
+        except Exception as error:
+            self.logger.info(_("An exception error occur: %s") % str(error))
+            self.error = True
 
         # Call game-terminate signal on main window
         self.parent.emit("game-terminate", self)
