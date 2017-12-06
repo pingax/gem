@@ -3197,10 +3197,18 @@ class PreferencesEmulator(Dialog):
 
             if self.data is not None:
                 if self.modify:
+                    # Store identifier for rename function
+                    previous_identifier = self.emulator.id
+
                     self.api.delete_emulator(self.emulator.id)
 
                 # Append a new emulator
                 self.api.add_emulator(self.data)
+
+                # This emulator has been renamed
+                if self.modify and not self.data["id"] == previous_identifier:
+                    self.api.rename_emulator(
+                        previous_identifier, self.data["id"])
 
             need_reload = True
 

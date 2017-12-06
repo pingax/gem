@@ -148,6 +148,9 @@ class GEM(object):
             emulators=list()
         )
 
+        # Rename list
+        self.__rename = OrderedDict()
+
         # Configurations
         self.__configurations = dict(
             consoles=None,
@@ -510,7 +513,7 @@ class GEM(object):
 
 
     def write_data(self):
-        """ Write data into configuration files
+        """ Write data into configuration files and database
 
         Returns
         -------
@@ -523,6 +526,10 @@ class GEM(object):
         """
 
         self.logger.debug("Store GEM data into disk")
+
+        # ----------------------------
+        #   Configuration files
+        # ----------------------------
 
         try:
             # Check GEM configuration files
@@ -557,6 +564,27 @@ class GEM(object):
 
         except Exception as error:
             self.logger.critical("Cannot write configuration: %s" % str(error))
+
+            return False
+
+        # ----------------------------
+        #   Database file
+        # ----------------------------
+
+        try:
+            for previous, emulator in self.__rename.items():
+
+                # Update games which use a renamed emulator
+                self.database.update("games",
+                    { "emulator": emulator.id },
+                    { "emulator": previous })
+
+                self.logger.info(
+                    "Update old %s references from database to %s" % (
+                        previous, emulator.id))
+
+        except Exception as error:
+            self.logger.critical("Cannot write database: %s" % str(error))
 
             return False
 
@@ -700,12 +728,51 @@ class GEM(object):
         ----------
         emulator : str
             Emulator identifier
+
+        Raises
+        ------
+        IndexError
+            if emulator not exists
         """
 
         if not emulator in self.__data["emulators"].keys():
             raise IndexError("Cannot access to %s in emulators list" % emulator)
 
         del self.__data["emulators"][emulator]
+
+
+    def rename_emulator(self, previous, identifier):
+        """ Rename an emulator and all associate objects (consoles and games)
+
+        Parameters
+        ----------
+        previous : str
+            Emulator previous identifier
+        identifier : str
+            Emulator new identifier
+
+        Raises
+        ------
+        IndexError
+            if emulator not exists
+        """
+
+        # Avoid to rename an emulator with the same name :D
+        if not previous == identifier:
+
+            if not identifier in self.__data["emulators"].keys():
+                raise IndexError(
+                    "Cannot access to %s in emulators list" % identifier)
+
+            # Retrieve emulator object
+            self.__rename[previous] = self.__data["emulators"][identifier]
+
+            # Update consoles which use previous emulator
+            for console_identifier in self.__data["consoles"].keys():
+                console = self.__data["consoles"][console_identifier]
+
+                if console is not None and console.emulator.id == previous:
+                    console.emulator = self.__rename[previous]
 
 
     def get_console(self, console):
