@@ -395,7 +395,7 @@ class GEM(object):
                         section, "ignores", fallback=str()).split(';'),
                     "extensions": data.get(
                         section, "exts", fallback=str()).split(';'),
-                    "recursive": bool(data.get(
+                    "recursive": bool(data.getint(
                         section, "recursive", fallback=False)),
                     "emulator": emulator
                 })
@@ -1317,7 +1317,7 @@ class Console(GEMObject):
         "ignores": list(),
         "extensions": list(),
         "games": list(),
-        "recursive": bool(),
+        "recursive": False,
         "emulator": None
     }
 
@@ -1343,7 +1343,7 @@ class Console(GEMObject):
             "exts": ';'.join(self.extensions),
             "ignores": ';'.join(self.ignores),
             "emulator": self.emulator,
-            "recursive": self.recursive
+            "recursive": int(self.recursive)
         })
 
 
