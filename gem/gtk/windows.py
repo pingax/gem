@@ -278,6 +278,7 @@ class DialogEditor(Dialog):
         self.previous_search = str()
 
         self.modified_buffer = False
+        self.refresh_buffer = True
 
         # ------------------------------------
         #   Prepare interface
@@ -348,6 +349,10 @@ class DialogEditor(Dialog):
             Gtk.EntryIconPosition.PRIMARY, Icons.Symbolic.Text)
         self.entry_path.set_icon_activatable(
             Gtk.EntryIconPosition.PRIMARY, False)
+
+        if not self.editable:
+            self.entry_path.set_icon_from_icon_name(
+                Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Refresh)
 
         # ------------------------------------
         #   Infobar
@@ -507,6 +512,11 @@ class DialogEditor(Dialog):
         self.button_bottom.connect("clicked", self.__on_move_search)
         self.button_up.connect("clicked", self.__on_move_search, True)
 
+        if not self.editable:
+            self.entry_path.connect("icon-press", self.__on_refresh_buffer)
+
+            self.connect("key-press-event", self.__on_manage_keys)
+
 
     def __start_interface(self):
         """ Load data and start interface
@@ -526,11 +536,30 @@ class DialogEditor(Dialog):
 
         self.text_editor.grab_focus()
 
-        self.set_infobar(_("Load file..."))
-        self.text_editor.set_sensitive(False)
+        self.__on_refresh_buffer()
 
-        loader = self.__on_load_file()
-        self.buffer_thread = idle_add(loader.__next__)
+
+    def __on_refresh_buffer(self, widget=None, pos=None, event=None):
+        """ Load buffer text into editor area
+
+        Others Parameters
+        -----------------
+        widget : Gtk.Entry
+            Entry widget
+        pos : Gtk.EntryIconPosition
+            Position of the clicked icon
+        event : Gdk.EventButton or Gdk.EventKey
+            Event which triggered this signal
+        """
+
+        if self.refresh_buffer:
+            self.refresh_buffer = False
+
+            self.set_infobar(_("Load file..."))
+            self.text_editor.set_sensitive(False)
+
+            loader = self.__on_load_file()
+            self.buffer_thread = idle_add(loader.__next__)
 
 
     def __on_cancel_clicked(self, widget):
@@ -564,7 +593,7 @@ class DialogEditor(Dialog):
         yield True
 
         if exists(expanduser(self.path)):
-            with open(self.path, 'r') as pipe:
+            with open(self.path, 'r', errors="replace") as pipe:
                 self.buffer_editor.set_text(''.join(pipe.readlines()))
 
         # Remove undo stack from GtkSource.Buffer
@@ -573,7 +602,26 @@ class DialogEditor(Dialog):
 
         self.set_infobar()
         self.text_editor.set_sensitive(True)
+
+        self.refresh_buffer = True
+
         yield False
+
+
+    def __on_manage_keys(self, widget, event):
+        """ Manage widgets for specific keymaps
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        event : Gdk.EventButton or Gdk.EventKey
+            Event which triggered this signal
+        """
+
+        # Refresh buffer
+        if event.keyval == Gdk.KEY_F5:
+            self.__on_refresh_buffer()
 
 
     def __on_break_line(self, widget):
