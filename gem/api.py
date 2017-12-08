@@ -395,7 +395,7 @@ class GEM(object):
                         section, "ignores", fallback=str()).split(';'),
                     "extensions": data.get(
                         section, "exts", fallback=str()).split(';'),
-                    "recursive": bool(data.getint(
+                    "recursive": bool(data.getboolean(
                         section, "recursive", fallback=False)),
                     "emulator": emulator
                 })
