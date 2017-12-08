@@ -3589,14 +3589,20 @@ class Interface(Gtk.ApplicationWindow):
         label = self.headerbar_item_launch.get_label()
 
         if status and not label == _("Play"):
-            self.headerbar_item_launch.set_label(_("Play"))
+            self.headerbar_item_launch.set_label(
+                _("Play"))
+            self.headerbar_item_launch.set_tooltip_text(
+                _("Launch selected game"))
             self.headerbar_item_launch.get_style_context().remove_class(
                 "destructive-action")
             self.headerbar_item_launch.get_style_context().add_class(
                 "suggested-action")
 
         elif not status and not label == _("Stop"):
-            self.headerbar_item_launch.set_label(_("Stop"))
+            self.headerbar_item_launch.set_label(
+                _("Stop"))
+            self.headerbar_item_launch.set_tooltip_text(
+                _("Stop selected game"))
             self.headerbar_item_launch.get_style_context().remove_class(
                 "suggested-action")
             self.headerbar_item_launch.get_style_context().add_class(
