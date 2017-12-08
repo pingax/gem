@@ -1332,6 +1332,24 @@ class DialogViewer(Dialog):
         self.__width, self.__height = size
 
         # ------------------------------------
+        #   Manage monitor geometry
+        # ------------------------------------
+
+        self.__default_size = 800
+
+        # Get default display
+        display = Gdk.DisplayManager.get().get_default_display()
+
+        if display is not None:
+            # Retrieve default display screen
+            screen = display.get_default_screen()
+            # Retrieve default monitor geometry
+            geometry = screen.get_monitor_geometry(screen.get_primary_monitor())
+
+            self.__default_size = min(
+                int(geometry.width / 2), int(geometry.height / 2))
+
+        # ------------------------------------
         #   Prepare interface
         # ------------------------------------
 
@@ -1488,7 +1506,7 @@ class DialogViewer(Dialog):
         self.scale_zoom.set_size_request(150, -1)
         self.scale_zoom.set_adjustment(self.adjustment_zoom)
         self.scale_zoom.add_mark(self.zoom_min, Gtk.PositionType.BOTTOM, None)
-        self.scale_zoom.add_mark(100, Gtk.PositionType.BOTTOM, None)
+        self.scale_zoom.add_mark(200, Gtk.PositionType.BOTTOM, None)
         self.scale_zoom.add_mark(self.zoom_max, Gtk.PositionType.BOTTOM, None)
 
         # ------------------------------------
@@ -1659,7 +1677,7 @@ class DialogViewer(Dialog):
 
         elif widget == self.button_original:
             self.zoom_fit = False
-            self.zoom_actual = 100
+            self.zoom_actual = 200
 
         elif widget == self.button_fit:
             self.zoom_fit = True
@@ -1781,6 +1799,14 @@ class DialogViewer(Dialog):
 
             # Restore original image size
             width, height = self.current_pixbuf_size
+
+            if width > height:
+                height = int((height * self.__default_size) / width)
+                width = self.__default_size
+
+            else:
+                width = int((width * self.__default_size) / height)
+                height = self.__default_size
 
             # Zoom to fit current window
             if self.zoom_fit:
