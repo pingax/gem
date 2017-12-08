@@ -2272,6 +2272,15 @@ class Interface(Gtk.ApplicationWindow):
                 "function": self.__on_game_marked_as_multiplayer
             },
             {
+                "path": "<GEM>/game/finish",
+                "widgets": [
+                    self.menu_item_finish,
+                    self.menubar_main_item_finish
+                ],
+                "keys": self.config.item("keys", "finish", "<Control>F3"),
+                "function": self.__on_game_marked_as_finish
+            },
+            {
                 "path": "<GEM>/game/screenshots",
                 "widgets": [
                     self.menu_item_screenshots,

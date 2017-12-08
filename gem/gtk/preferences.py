@@ -139,6 +139,8 @@ class Preferences(object):
                     _("Mark a game as favorite"), "F3"],
                 "multiplayer": [
                     _("Mark a game as multiplayer"), "F4"],
+                "finish": [
+                    _("Mark a game as finish"), "<Control>F3"],
                 "snapshots": [
                     _("Show game screenshots"), "F5"],
                 "log": [
