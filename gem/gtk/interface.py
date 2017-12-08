@@ -515,6 +515,7 @@ class Interface(Gtk.ApplicationWindow):
         self.menubar_main_item_launch = ImageMenuItem()
         self.menubar_main_item_favorite = ImageMenuItem()
         self.menubar_main_item_multiplayer = ImageMenuItem()
+        self.menubar_main_item_finish = ImageMenuItem()
         self.menubar_main_item_screenshots = ImageMenuItem()
         self.menubar_main_item_output = ImageMenuItem()
         self.menubar_main_item_notes = ImageMenuItem()
@@ -536,6 +537,10 @@ class Interface(Gtk.ApplicationWindow):
         self.menubar_main_item_multiplayer.set_label(_("Mark as _multiplayer"))
         self.menubar_main_item_multiplayer.set_image_from_icon_name(
             Icons.Symbolic.Users)
+
+        self.menubar_main_item_finish.set_label(_("Mark as _finish"))
+        self.menubar_main_item_finish.set_image_from_icon_name(
+            Icons.Symbolic.Smile)
 
         self.menubar_main_item_screenshots.set_label(_("Show _screenshots"))
         self.menubar_main_item_screenshots.set_image_from_icon_name(
@@ -1098,6 +1103,7 @@ class Interface(Gtk.ApplicationWindow):
         self.menu_item_launch = ImageMenuItem()
         self.menu_item_favorite = ImageMenuItem()
         self.menu_item_multiplayer = ImageMenuItem()
+        self.menu_item_finish = ImageMenuItem()
         self.menu_item_parameters = ImageMenuItem()
         self.menu_item_edit = ImageMenuItem()
         self.menu_item_tools = ImageMenuItem()
@@ -1118,6 +1124,10 @@ class Interface(Gtk.ApplicationWindow):
         self.menu_item_multiplayer.set_label(_("Mark as _multiplayer"))
         self.menu_item_multiplayer.set_image_from_icon_name(
             Icons.Users)
+
+        self.menu_item_finish.set_label(_("Mark as _finish"))
+        self.menu_item_finish.set_image_from_icon_name(
+            Icons.Smile)
 
         self.menu_item_parameters.set_label(_("_Properties"))
         self.menu_item_parameters.set_image_from_icon_name(
@@ -1267,6 +1277,7 @@ class Interface(Gtk.ApplicationWindow):
         self.menubar_main_menu.insert(Gtk.SeparatorMenuItem(), -1)
         self.menubar_main_menu.insert(self.menubar_main_item_favorite, -1)
         self.menubar_main_menu.insert(self.menubar_main_item_multiplayer, -1)
+        self.menubar_main_menu.insert(self.menubar_main_item_finish, -1)
         self.menubar_main_menu.insert(Gtk.SeparatorMenuItem(), -1)
         self.menubar_main_menu.insert(self.menubar_main_item_screenshots, -1)
         self.menubar_main_menu.insert(self.menubar_main_item_output, -1)
@@ -1420,6 +1431,7 @@ class Interface(Gtk.ApplicationWindow):
         self.menu_games.append(Gtk.SeparatorMenuItem())
         self.menu_games.append(self.menu_item_favorite)
         self.menu_games.append(self.menu_item_multiplayer)
+        self.menu_games.append(self.menu_item_finish)
         self.menu_games.append(Gtk.SeparatorMenuItem())
         self.menu_games.append(self.menu_item_parameters)
         self.menu_games.append(Gtk.SeparatorMenuItem())
@@ -1473,6 +1485,8 @@ class Interface(Gtk.ApplicationWindow):
             "activate", self.__on_game_marked_as_favorite)
         self.menubar_main_item_multiplayer.connect(
             "activate", self.__on_game_marked_as_multiplayer)
+        self.menubar_main_item_finish.connect(
+            "activate", self.__on_game_marked_as_finish)
         self.menubar_main_item_screenshots.connect(
             "activate", self.__on_show_viewer)
         self.menubar_main_item_output.connect(
@@ -1563,6 +1577,8 @@ class Interface(Gtk.ApplicationWindow):
             "activate", self.__on_game_marked_as_favorite)
         self.menu_item_multiplayer.connect(
             "activate", self.__on_game_marked_as_multiplayer)
+        self.menu_item_finish.connect(
+            "activate", self.__on_game_marked_as_finish)
         self.menu_item_screenshots.connect(
             "activate", self.__on_show_viewer)
         self.menu_item_output.connect(
@@ -2029,6 +2045,7 @@ class Interface(Gtk.ApplicationWindow):
         self.menu_item_rename.set_sensitive(status)
         self.menu_item_favorite.set_sensitive(status)
         self.menu_item_multiplayer.set_sensitive(status)
+        self.menu_item_finish.set_sensitive(status)
         self.menu_item_screenshots.set_sensitive(status)
         self.menu_item_output.set_sensitive(status)
         self.menu_item_notes.set_sensitive(status)
@@ -2047,6 +2064,7 @@ class Interface(Gtk.ApplicationWindow):
         self.menubar_main_item_launch.set_sensitive(status)
         self.menubar_main_item_favorite.set_sensitive(status)
         self.menubar_main_item_multiplayer.set_sensitive(status)
+        self.menubar_main_item_finish.set_sensitive(status)
         self.menubar_main_item_screenshots.set_sensitive(status)
         self.menubar_main_item_output.set_sensitive(status)
         self.menubar_main_item_notes.set_sensitive(status)
@@ -4192,8 +4210,7 @@ class Interface(Gtk.ApplicationWindow):
         if game is not None:
             treeiter = self.game_path[game.filename][1]
 
-            if self.model_games[treeiter][Columns.Icon] == \
-                self.alternative["favorite"]:
+            if not game.favorite:
                 self.model_games[treeiter][Columns.Favorite] = True
                 self.model_games[treeiter][Columns.Icon] = \
                     self.icons["favorite"]
@@ -4232,8 +4249,7 @@ class Interface(Gtk.ApplicationWindow):
         if game is not None:
             treeiter = self.game_path[game.filename][1]
 
-            if self.model_games[treeiter][Columns.Multiplayer] == \
-                self.alternative["multiplayer"]:
+            if not game.multiplayer:
                 self.model_games[treeiter][Columns.Multiplayer] = \
                     self.icons["multiplayer"]
 
@@ -4254,6 +4270,43 @@ class Interface(Gtk.ApplicationWindow):
                 self.api.update_game(game)
 
                 self.logger.debug("Unmark %s as multiplayers" % game.name)
+
+            self.check_selection()
+
+
+    def __on_game_marked_as_finish(self, *args):
+        """ Mark or unmark a game as finish
+
+        This function update the database when user change the game finish
+        status
+        """
+
+        game = self.selection["game"]
+
+        if game is not None:
+            treeiter = self.game_path[game.filename][1]
+
+            if not game.finish:
+                self.model_games[treeiter][Columns.Finish] = \
+                    self.icons["finish"]
+
+                game.finish = True
+
+                # Update game from database
+                self.api.update_game(game)
+
+                self.logger.debug("Mark %s as finish" % game.name)
+
+            else:
+                self.model_games[treeiter][Columns.Finish] = \
+                    self.alternative["finish"]
+
+                game.finish = False
+
+                # Update game from database
+                self.api.update_game(game)
+
+                self.logger.debug("Unmark %s as finish" % game.name)
 
             self.check_selection()
 
