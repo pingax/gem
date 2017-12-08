@@ -416,7 +416,6 @@ class Interface(Gtk.ApplicationWindow):
         #   Headerbar - Main menu
         # ------------------------------------
 
-
         self.menu_image_preferences = Gtk.Image()
         self.menu_item_preferences = Gtk.Button()
 
@@ -1553,17 +1552,17 @@ class Interface(Gtk.ApplicationWindow):
             "changed", self.filters_update)
 
         self.check_filter_favorite.connect(
-            "state_set", self.filters_update)
+            "state-set", self.filters_update)
         self.check_filter_unfavorite.connect(
-            "state_set", self.filters_update)
+            "state-set", self.filters_update)
         self.check_filter_multiplayer.connect(
-            "state_set", self.filters_update)
+            "state-set", self.filters_update)
         self.check_filter_singleplayer.connect(
-            "state_set", self.filters_update)
+            "state-set", self.filters_update)
         self.check_filter_finish.connect(
-            "state_set", self.filters_update)
+            "state-set", self.filters_update)
         self.check_filter_unfinish.connect(
-            "state_set", self.filters_update)
+            "state-set", self.filters_update)
         self.item_filter_reset.connect(
             "clicked", self.filters_reset)
 
@@ -1608,9 +1607,9 @@ class Interface(Gtk.ApplicationWindow):
         self.menu_item_gem_log.connect(
             "clicked", self.__on_show_log)
         self.dark_signal_menu = self.menu_item_dark_theme.connect(
-            "state_set", self.__on_activate_dark_theme)
+            "state-set", self.__on_activate_dark_theme)
         self.side_signal_menu = self.menu_item_sidebar.connect(
-            "state_set", self.__on_activate_sidebar)
+            "state-set", self.__on_activate_sidebar)
         self.menu_item_about.connect(
             "clicked", self.__on_show_about)
         self.menu_item_quit.connect(
@@ -2081,10 +2080,15 @@ class Interface(Gtk.ApplicationWindow):
     def filters_update(self, widget, status=None):
         """ Reload packages filter when user change filters from menu
 
-        Other Parameters
-        ----------------
+        Parameters
+        ----------
         widget : Gtk.Widget
             Object which receive signal
+
+        Other Parameters
+        ----------------
+        status : bool or None
+            New status for current widget
 
         Notes
         -----

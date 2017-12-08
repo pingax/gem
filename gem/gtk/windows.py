@@ -312,6 +312,8 @@ class DialogEditor(Dialog):
 
         self.grid_infobar = Gtk.Box()
 
+        self.grid_menu_options = Gtk.Grid()
+
         # Properties
         self.dialog_box.set_spacing(0)
         self.dialog_box.set_border_width(6)
@@ -321,7 +323,12 @@ class DialogEditor(Dialog):
 
         Gtk.StyleContext.add_class(grid_search.get_style_context(), "linked")
 
+        self.grid_infobar.set_margin_bottom(8)
         self.grid_infobar.set_orientation(Gtk.Orientation.VERTICAL)
+
+        self.grid_menu_options.set_border_width(12)
+        self.grid_menu_options.set_row_spacing(6)
+        self.grid_menu_options.set_column_spacing(12)
 
         # ------------------------------------
         #   Action buttons
@@ -353,6 +360,37 @@ class DialogEditor(Dialog):
         if not self.editable:
             self.entry_path.set_icon_from_icon_name(
                 Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Refresh)
+
+        # ------------------------------------
+        #   Menu
+        # ------------------------------------
+
+        self.image_menu = Gtk.Image()
+        self.button_menu = Gtk.MenuButton()
+
+        self.popover_menu = Gtk.Popover()
+
+        self.item_menu_label_line = Gtk.Label()
+        self.item_menu_switch_line = Gtk.Switch()
+
+        # Properties
+        self.image_menu.set_from_icon_name(
+            Icons.Symbolic.Menu, Gtk.IconSize.BUTTON)
+
+        self.button_menu.add(self.image_menu)
+        self.button_menu.set_use_popover(True)
+        self.button_menu.set_popover(self.popover_menu)
+
+        self.popover_menu.add(self.grid_menu_options)
+        self.popover_menu.set_modal(True)
+
+        self.item_menu_label_line.set_label(_("Auto line break"))
+        self.item_menu_label_line.set_halign(Gtk.Align.END)
+        self.item_menu_label_line.set_valign(Gtk.Align.CENTER)
+        self.item_menu_label_line.get_style_context().add_class("dim-label")
+
+        self.item_menu_switch_line.set_halign(Gtk.Align.START)
+        self.item_menu_switch_line.set_valign(Gtk.Align.CENTER)
 
         # ------------------------------------
         #   Infobar
@@ -424,17 +462,6 @@ class DialogEditor(Dialog):
         self.tag_current = self.buffer_editor.create_tag("current",
             background="cyan", foreground="black")
 
-
-        # ------------------------------------
-        #   Back lines
-        # ------------------------------------
-
-        self.check_lines = Gtk.CheckButton()
-
-        # Properties
-        self.check_lines.set_label(_("Auto line break"))
-        self.check_lines.set_active(False)
-
         # ------------------------------------
         #   Search
         # ------------------------------------
@@ -481,6 +508,8 @@ class DialogEditor(Dialog):
         grid_header.pack_start(self.entry_path, True, True, 0)
         grid_header.pack_start(Gtk.Separator(), False, True, 0)
         grid_header.pack_start(grid_search, False, True, 0)
+        grid_header.pack_start(Gtk.Separator(), False, True, 0)
+        grid_header.pack_start(self.button_menu, False, True, 0)
 
         grid_search.pack_start(self.entry_search, False, True, 0)
         grid_search.pack_start(self.button_up, False, True, 0)
@@ -488,8 +517,10 @@ class DialogEditor(Dialog):
 
         self.dialog_box.pack_start(grid_header, False, True, 0)
         self.dialog_box.pack_start(self.grid_infobar, False, False, 0)
-        self.dialog_box.pack_start(scroll_editor, True, True, 8)
-        self.dialog_box.pack_start(self.check_lines, False, False, 0)
+        self.dialog_box.pack_start(scroll_editor, True, True, 0)
+
+        self.grid_menu_options.attach(self.item_menu_label_line, 0, 0, 1, 1)
+        self.grid_menu_options.attach(self.item_menu_switch_line, 1, 0, 1, 1)
 
         self.infobar.get_content_area().pack_start(
             self.label_infobar, True, True, 4)
@@ -504,7 +535,7 @@ class DialogEditor(Dialog):
 
         self.buffer_editor.connect("changed", self.__on_buffer_modified)
 
-        self.check_lines.connect("toggled", self.__on_break_line)
+        self.item_menu_switch_line.connect("state-set", self.__on_break_line)
 
         self.entry_search.connect("activate", self.__on_entry_update)
         self.entry_search.connect("icon-press", on_entry_clear)
@@ -530,6 +561,8 @@ class DialogEditor(Dialog):
         self.unrealize()
 
         self.show_all()
+
+        self.grid_menu_options.show_all()
 
         self.infobar.show_all()
         self.infobar.get_content_area().show_all()
@@ -624,17 +657,30 @@ class DialogEditor(Dialog):
             self.__on_refresh_buffer()
 
 
-    def __on_break_line(self, widget):
+    def __on_break_line(self, widget, status=None):
         """ Set break line mode for textview
 
         Parameters
         ----------
         widget : Gtk.Widget
             Object which receive signal
+
+        Other Parameters
+        ----------------
+        status : bool or None
+            New status for current widget
+
+        Notes
+        -----
+        Check widget utility in this function
         """
 
-        if self.check_lines.get_active():
+        if status is not None and type(status) is bool:
+            widget.set_active(status)
+
+        if status:
             self.text_editor.set_wrap_mode(Gtk.WrapMode.WORD)
+
         else:
             self.text_editor.set_wrap_mode(Gtk.WrapMode.NONE)
 

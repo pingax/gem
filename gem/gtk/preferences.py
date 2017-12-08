@@ -1501,14 +1501,14 @@ class Preferences(object):
             "icon-press", on_entry_clear)
 
         self.check_native_viewer.connect(
-            "state_set", self.__on_check_native_viewer)
+            "state-set", self.__on_check_native_viewer)
 
         # ------------------------------------
         #   Interface
         # ------------------------------------
 
         self.check_sidebar_show.connect(
-            "state_set", self.__on_check_sidebar)
+            "state-set", self.__on_check_sidebar)
 
         # ------------------------------------
         #   Shortcuts
