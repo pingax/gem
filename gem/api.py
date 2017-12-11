@@ -1488,10 +1488,10 @@ class Console(GEMObject):
                     if "tags" in data and len(data["tags"]) > 0:
                         tags = data["tags"].split(';')
 
-                    # Set game tags
+                    # Set game environment variables
                     environment = list()
                     if "environment" in data and len(data["environment"]) > 0:
-                        environment = data["environment"].split(';')
+                        environment = data["environment"].split('\n')
 
                     game_data.update({
                         "name": name,
@@ -1607,7 +1607,7 @@ class Game(GEMObject):
             "arguments": self.default,
             "key": self.key,
             "tags": ';'.join(self.tags),
-            "environment": ';'.join(self.environment)
+            "environment": '\n'.join(self.environment)
         })
 
     @staticmethod

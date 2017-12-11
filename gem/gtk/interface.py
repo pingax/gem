@@ -3517,13 +3517,8 @@ class Interface(Gtk.ApplicationWindow):
                         pixbuf = Pixbuf.new_from_file(screenshots[-1])
 
                         # Resize pixbuf to have a 96 pixels height
-                        pixbuf = pixbuf.scale_simple(
-                            pixbuf.get_width() * float(
-                                96 / pixbuf.get_height()
-                            ),
-                            96,
-                            InterpType.TILES
-                        )
+                        pixbuf = pixbuf.scale_simple(pixbuf.get_width() * float(
+                            96 / pixbuf.get_height()), 96, InterpType.TILES)
 
                         self.__current_tooltip_pixbuf = pixbuf
 
