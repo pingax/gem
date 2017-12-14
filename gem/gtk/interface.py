@@ -260,6 +260,18 @@ class Interface(Gtk.ApplicationWindow):
         self.targets = [ Gtk.TargetEntry.new("text/uri-list", 0, 1337) ]
 
         # ------------------------------------
+        #   Toolbar size constants
+        # ------------------------------------
+
+        self.toolbar_sizes = {
+            "menu": Gtk.IconSize.MENU,
+            "small-toolbar": Gtk.IconSize.SMALL_TOOLBAR,
+            "large-toolbar": Gtk.IconSize.LARGE_TOOLBAR,
+            "button": Gtk.IconSize.BUTTON,
+            "dnd": Gtk.IconSize.DND,
+            "dialog": Gtk.IconSize.DIALOG }
+
+        # ------------------------------------
         #   Prepare interface
         # ------------------------------------
 
@@ -401,12 +413,8 @@ class Interface(Gtk.ApplicationWindow):
         self.headerbar_item_launch.get_style_context().add_class(
             "suggested-action")
 
-        self.headerbar_image_menu.set_from_icon_name(
-            Icons.Symbolic.Menu, Gtk.IconSize.BUTTON)
         self.headerbar_item_menu.set_use_popover(True)
 
-        self.headerbar_image_fullscreen.set_from_icon_name(
-            Icons.Symbolic.Restore, Gtk.IconSize.BUTTON)
         self.headerbar_item_fullscreen.set_tooltip_text(
             _("Alternate game fullscreen mode"))
 
@@ -436,22 +444,13 @@ class Interface(Gtk.ApplicationWindow):
         self.menu_item_sidebar = Gtk.Switch()
 
         # Properties
-        self.menu_image_preferences.set_from_icon_name(
-            Icons.Symbolic.System, Gtk.IconSize.MENU)
-
         self.menu_item_preferences.set_tooltip_text(_("Preferences"))
         self.menu_item_preferences.set_image(self.menu_image_preferences)
         self.menu_item_preferences.set_use_underline(True)
 
-        self.menu_image_about.set_from_icon_name(
-            Icons.Symbolic.About, Gtk.IconSize.MENU)
-
         self.menu_item_about.set_tooltip_text(_("About"))
         self.menu_item_about.set_image(self.menu_image_about)
         self.menu_item_about.set_use_underline(True)
-
-        self.menu_image_quit.set_from_icon_name(
-            Icons.Symbolic.Quit, Gtk.IconSize.MENU)
 
         self.menu_item_quit.set_tooltip_text(_("Quit"))
         self.menu_item_quit.set_image(self.menu_image_quit)
@@ -459,8 +458,6 @@ class Interface(Gtk.ApplicationWindow):
 
         self.menu_image_gem_log.set_halign(Gtk.Align.CENTER)
         self.menu_image_gem_log.set_valign(Gtk.Align.CENTER)
-        self.menu_image_gem_log.set_from_icon_name(
-            Icons.Symbolic.Terminal, Gtk.IconSize.MENU)
 
         self.menu_label_gem_log.set_label(_("Output log"))
         self.menu_label_gem_log.set_halign(Gtk.Align.START)
@@ -681,10 +678,6 @@ class Interface(Gtk.ApplicationWindow):
         self.toolbar_image_properties = Gtk.Image()
 
         # Properties
-        self.toolbar.set_icon_size(Gtk.IconSize.SMALL_TOOLBAR)
-
-        self.toolbar_image_parameters.set_from_icon_name(
-            Icons.Symbolic.Gaming, Gtk.IconSize.BUTTON)
         self.toolbar_item_parameters.set_tooltip_text(
             _("Set custom parameters"))
 
@@ -699,15 +692,6 @@ class Interface(Gtk.ApplicationWindow):
 
         self.toolbar_item_separator.set_draw(False)
         self.toolbar_item_separator.set_expand(True)
-
-        self.toolbar_image_screenshots.set_from_icon_name(
-            Icons.Symbolic.Camera, self.toolbar.get_icon_size())
-        self.toolbar_image_output.set_from_icon_name(
-            Icons.Symbolic.Terminal, self.toolbar.get_icon_size())
-        self.toolbar_image_notes.set_from_icon_name(
-            Icons.Symbolic.Editor, self.toolbar.get_icon_size())
-        self.toolbar_image_properties.set_from_icon_name(
-            Icons.Symbolic.Properties, self.toolbar.get_icon_size())
 
         # ------------------------------------
         #   Toolbar - Consoles
@@ -763,9 +747,6 @@ class Interface(Gtk.ApplicationWindow):
 
         self.tool_menu_filters.set_tooltip_text(_("Filters"))
         self.tool_menu_filters.set_use_popover(True)
-
-        self.tool_image_filters.set_from_icon_name(
-            Icons.Symbolic.Sync, Gtk.IconSize.SMALL_TOOLBAR)
 
         self.popover_menu_filters.set_modal(True)
 
@@ -1821,6 +1802,45 @@ class Interface(Gtk.ApplicationWindow):
             self.logger.debug("Use dark variant for GTK+ theme")
         else:
             self.logger.debug("Use light variant for GTK+ theme")
+
+        # ------------------------------------
+        #   Toolbar
+        # ------------------------------------
+
+        icon_size = self.config.get(
+            "gem", "toolbar_icons_size", fallback="small-toolbar")
+
+        if init_interface or \
+            not self.toolbar_sizes[icon_size] == self.toolbar.get_icon_size():
+            self.headerbar_image_menu.set_from_icon_name(
+                Icons.Symbolic.Menu, self.toolbar_sizes[icon_size])
+            self.headerbar_image_fullscreen.set_from_icon_name(
+                Icons.Symbolic.Restore, self.toolbar_sizes[icon_size])
+
+            self.menu_image_preferences.set_from_icon_name(
+                Icons.Symbolic.System, self.toolbar_sizes[icon_size])
+            self.menu_image_about.set_from_icon_name(
+                Icons.Symbolic.About, self.toolbar_sizes[icon_size])
+            self.menu_image_quit.set_from_icon_name(
+                Icons.Symbolic.Quit, self.toolbar_sizes[icon_size])
+            self.menu_image_gem_log.set_from_icon_name(
+                Icons.Symbolic.Terminal, self.toolbar_sizes[icon_size])
+
+            self.toolbar.set_icon_size(self.toolbar_sizes[icon_size])
+
+            self.toolbar_image_parameters.set_from_icon_name(
+                Icons.Symbolic.Gaming, self.toolbar.get_icon_size())
+            self.toolbar_image_screenshots.set_from_icon_name(
+                Icons.Symbolic.Camera, self.toolbar.get_icon_size())
+            self.toolbar_image_output.set_from_icon_name(
+                Icons.Symbolic.Terminal, self.toolbar.get_icon_size())
+            self.toolbar_image_notes.set_from_icon_name(
+                Icons.Symbolic.Editor, self.toolbar.get_icon_size())
+            self.toolbar_image_properties.set_from_icon_name(
+                Icons.Symbolic.Properties, self.toolbar.get_icon_size())
+
+            self.tool_image_filters.set_from_icon_name(
+                Icons.Symbolic.Sync, self.toolbar.get_icon_size())
 
         # ------------------------------------
         #   Icons
@@ -2982,9 +3002,17 @@ class Interface(Gtk.ApplicationWindow):
 
         item = None
 
+        size = 24
+
         # Reset consoles caches
         self.consoles_iter.clear()
         self.model_consoles.clear()
+
+        # Get toolbar icons size
+        data = Gtk.IconSize.lookup(self.toolbar.get_icon_size())
+        if data is not None and len(data) == 3:
+            # Get maximum icon size (this size cannot be under 24 pixels)
+            size = max(size, data[1], data[2])
 
         for console in self.api.consoles:
             console = self.api.get_console(console)
@@ -3012,8 +3040,8 @@ class Interface(Gtk.ApplicationWindow):
                                 "console": console.name })
 
                     # Get console icon
-                    icon = icon_from_data(
-                        console.icon, self.empty, subfolder="consoles")
+                    icon = icon_from_data(console.icon, self.empty, size, size,
+                        subfolder="consoles")
 
                     # Append a new console in combobox model
                     row = self.model_consoles.append(
@@ -3252,12 +3280,22 @@ class Interface(Gtk.ApplicationWindow):
                         rom_emulator = game.emulator
 
                     # Snap
-                    if len(rom_emulator.get_screenshots(game)) > 0:
-                        row_data[Columns.Snapshots] = self.icons["snap"]
+                    try:
+                        if len(rom_emulator.get_screenshots(game)) > 0:
+                            row_data[Columns.Snapshots] = self.icons["snap"]
+
+                    except Exception as error:
+                        self.logger.error(
+                            "Cannot check screenshots for %s" % game.filepath)
 
                     # Save state
-                    if len(rom_emulator.get_savestates(game)) > 0:
-                        row_data[Columns.Save] = self.icons["save"]
+                    try:
+                        if len(rom_emulator.get_savestates(game)) > 0:
+                            row_data[Columns.Save] = self.icons["save"]
+
+                    except Exception as error:
+                        self.logger.error(
+                            "Cannot check savestates for %s" % game.filepath)
 
                     row = self.model_games.append(row_data)
 

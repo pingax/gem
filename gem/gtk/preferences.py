@@ -175,6 +175,14 @@ class Preferences(object):
             _("Right"): "horizontal",
             _("Bottom"): "vertical" }
 
+        self.toolbar = {
+            _("Menu"): "menu",
+            _("Small Toolbar"): "small-toolbar",
+            _("Large Toolbar"): "large-toolbar",
+            _("Button"): "button",
+            _("Drag and Drop"): "dnd",
+            _("Dialog"): "dialog" }
+
         self.selection = {
             "console": None,
             "emulator": None }
@@ -323,6 +331,7 @@ class Preferences(object):
 
         self.grid_theme_classic = Gtk.Box()
         self.grid_theme_header = Gtk.Box()
+        self.grid_toolbar_icons = Gtk.Box()
         self.grid_sidebar_show = Gtk.Box()
         self.grid_sidebar_screenshot = Gtk.Box()
         self.grid_sidebar_position = Gtk.Box()
@@ -398,6 +407,9 @@ class Preferences(object):
         self.grid_theme_classic.set_homogeneous(True)
         self.grid_theme_header.set_spacing(12)
         self.grid_theme_header.set_homogeneous(True)
+
+        self.grid_toolbar_icons.set_spacing(12)
+        self.grid_toolbar_icons.set_homogeneous(True)
 
         self.grid_sidebar_show.set_spacing(12)
         self.grid_sidebar_show.set_homogeneous(True)
@@ -747,6 +759,43 @@ class Preferences(object):
 
         self.check_header.set_halign(Gtk.Align.START)
         self.check_header.set_valign(Gtk.Align.CENTER)
+
+        # ------------------------------------
+        #   Interface - Sidebar
+        # ------------------------------------
+
+        self.label_toolbar = Gtk.Label()
+
+        self.label_toolbar_icons = Gtk.Label()
+        self.model_toolbar = Gtk.ListStore(str)
+        self.combo_toolbar = Gtk.ComboBox()
+        self.cell_toolbar = Gtk.CellRendererText()
+
+        # Properties
+        self.label_toolbar.set_margin_top(18)
+        self.label_toolbar.set_hexpand(True)
+        self.label_toolbar.set_use_markup(True)
+        self.label_toolbar.set_halign(Gtk.Align.CENTER)
+        self.label_toolbar.set_markup("<b>%s</b>" % _("Toolbar"))
+
+        self.label_toolbar_icons.set_line_wrap(True)
+        self.label_toolbar_icons.set_alignment(1, 0.5)
+        self.label_toolbar_icons.set_halign(Gtk.Align.END)
+        self.label_toolbar_icons.set_justify(Gtk.Justification.RIGHT)
+        self.label_toolbar_icons.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
+        self.label_toolbar_icons.get_style_context().add_class("dim-label")
+        self.label_toolbar_icons.set_label(
+            _("Toolbar icons size"))
+
+        self.model_toolbar.set_sort_column_id(0, Gtk.SortType.ASCENDING)
+
+        self.combo_toolbar.set_model(self.model_toolbar)
+        self.combo_toolbar.set_id_column(0)
+        self.combo_toolbar.pack_start(self.cell_toolbar, True)
+        self.combo_toolbar.add_attribute(self.cell_toolbar, "text", 0)
+        self.combo_toolbar.set_size_request(300, -1)
+        self.combo_toolbar.set_halign(Gtk.Align.START)
+        self.combo_toolbar.set_valign(Gtk.Align.CENTER)
 
         # ------------------------------------
         #   Interface - Sidebar
@@ -1343,6 +1392,10 @@ class Preferences(object):
         self.grid_interface.pack_start(
             self.grid_theme_header, False, False, 0)
         self.grid_interface.pack_start(
+            self.label_toolbar, False, False, 0)
+        self.grid_interface.pack_start(
+            self.grid_toolbar_icons, False, False, 0)
+        self.grid_interface.pack_start(
             self.label_sidebar, False, False, 0)
         self.grid_interface.pack_start(
             self.grid_sidebar_show, False, False, 0)
@@ -1378,6 +1431,11 @@ class Preferences(object):
             self.label_header, True, True, 0)
         self.grid_theme_header.pack_start(
             self.check_header, True, True, 0)
+
+        self.grid_toolbar_icons.pack_start(
+            self.label_toolbar_icons, True, True, 0)
+        self.grid_toolbar_icons.pack_start(
+            self.combo_toolbar, True, True, 0)
 
         self.grid_sidebar_show.pack_start(
             self.label_sidebar_show, True, True, 0)
@@ -1619,6 +1677,9 @@ class Preferences(object):
             self.config.modify("gem", "hide_empty_console",
                 int(self.check_hide_console.get_active()))
 
+            self.config.modify("gem", "toolbar_icons_size",
+                self.toolbar[self.combo_toolbar.get_active_id()])
+
             self.config.modify("gem", "use_classic_theme",
                 int(self.check_classic_theme.get_active()))
             self.config.modify("gem", "show_header",
@@ -1739,6 +1800,17 @@ class Preferences(object):
             "gem", "show_sidebar", fallback=True))
         self.check_sidebar_screenshot.set_active(self.config.getboolean(
             "gem", "show_random_screenshot", fallback=True))
+
+        item = None
+        for key, value in self.toolbar.items():
+            row = self.model_toolbar.append([key])
+
+            if self.config.item(
+                "gem", "toolbar_icons_size", "small-toolbar") == value:
+                item = row
+
+        if item is not None:
+            self.combo_toolbar.set_active_iter(item)
 
         item = None
         for key, value in self.sidebar.items():
