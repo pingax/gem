@@ -1624,7 +1624,7 @@ class Game(GEMObject):
 
         name = splitext(basename(path))[0]
 
-        game.id = generate_identifier(name)
+        game.id = generate_identifier(basename(path))
         game.name = name
         game.filepath = path
 

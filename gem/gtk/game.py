@@ -106,7 +106,7 @@ class GameThread(Thread, GObject):
         self.parent = parent
         self.logger = parent.logger
 
-        self.name = game.id
+        self.name = generate_identifier(game.name)
         self.command = command
         self.console = console
         self.emulator = emulator
