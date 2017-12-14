@@ -662,6 +662,7 @@ class Interface(Gtk.ApplicationWindow):
         self.toolbar_item_output = Gtk.Button()
         self.toolbar_item_notes = Gtk.Button()
         self.toolbar_item_properties = Gtk.Button()
+        self.toolbar_item_refresh = Gtk.Button()
 
         self.toolbar_item_game_launch = Gtk.ToolItem()
         self.toolbar_item_game_option = Gtk.ToolItem()
@@ -676,6 +677,7 @@ class Interface(Gtk.ApplicationWindow):
         self.toolbar_image_output = Gtk.Image()
         self.toolbar_image_notes = Gtk.Image()
         self.toolbar_image_properties = Gtk.Image()
+        self.toolbar_image_refresh = Gtk.Image()
 
         # Properties
         self.toolbar_item_parameters.set_tooltip_text(
@@ -689,6 +691,7 @@ class Interface(Gtk.ApplicationWindow):
             _("Show selected game notes"))
 
         self.toolbar_item_properties.set_tooltip_text(_("Edit emulator"))
+        self.toolbar_item_refresh.set_tooltip_text(_("Refresh games list"))
 
         self.toolbar_item_separator.set_draw(False)
         self.toolbar_item_separator.set_expand(True)
@@ -1315,6 +1318,8 @@ class Interface(Gtk.ApplicationWindow):
             self.combo_consoles, False, False, 0)
         self.grid_toolbar_console.pack_start(
             self.toolbar_item_properties, False, False, 0)
+        self.grid_toolbar_console.pack_start(
+            self.toolbar_item_refresh, False, False, 0)
 
         self.grid_toolbar_filters.pack_start(
             self.entry_filter, False, False, 0)
@@ -1334,6 +1339,7 @@ class Interface(Gtk.ApplicationWindow):
         self.toolbar_item_output.add(self.toolbar_image_output)
         self.toolbar_item_notes.add(self.toolbar_image_notes)
         self.toolbar_item_properties.add(self.toolbar_image_properties)
+        self.toolbar_item_refresh.add(self.toolbar_image_refresh)
 
         # Toolbar - Filters menu
         self.tool_menu_filters.set_popover(self.popover_menu_filters)
@@ -1526,6 +1532,8 @@ class Interface(Gtk.ApplicationWindow):
 
         self.toolbar_item_properties.connect(
             "clicked", self.__on_show_emulator_config)
+        self.toolbar_item_refresh.connect(
+            "clicked", self.__on_selected_console)
 
         self.entry_filter.connect(
             "icon-press", on_entry_clear)
@@ -1838,6 +1846,8 @@ class Interface(Gtk.ApplicationWindow):
                 Icons.Symbolic.Editor, self.toolbar.get_icon_size())
             self.toolbar_image_properties.set_from_icon_name(
                 Icons.Symbolic.Properties, self.toolbar.get_icon_size())
+            self.toolbar_image_refresh.set_from_icon_name(
+                Icons.Symbolic.Refresh, self.toolbar.get_icon_size())
 
             self.tool_image_filters.set_from_icon_name(
                 Icons.Symbolic.Sync, self.toolbar.get_icon_size())
@@ -3189,6 +3199,8 @@ class Interface(Gtk.ApplicationWindow):
             # ------------------------------------
             #   Load games
             # ------------------------------------
+
+            console.set_games(self.api)
 
             emulator = self.api.get_emulator(console.emulator.id)
 
