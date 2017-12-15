@@ -3050,8 +3050,8 @@ class Interface(Gtk.ApplicationWindow):
                                 "console": console.name })
 
                     # Get console icon
-                    icon = icon_from_data(console.icon, self.empty, size, size,
-                        subfolder="consoles")
+                    icon = icon_from_data(
+                        console.icon, self.empty, size, size, "consoles")
 
                     # Append a new console in combobox model
                     row = self.model_consoles.append(

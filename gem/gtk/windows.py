@@ -18,11 +18,16 @@
 #   Modules
 # ------------------------------------------------------------------------------
 
+# Collections
+from collections import OrderedDict
+
 # Filesystem
 from os.path import exists
 from os.path import expanduser
 
 # System
+from os import environ
+
 from sys import exit as sys_exit
 
 # ------------------------------------------------------------------------------
@@ -932,12 +937,32 @@ class DialogParameters(Dialog):
         #   Grids
         # ------------------------------------
 
-        grid = Gtk.Box()
+        stack = Gtk.Stack()
+        stack_switcher = Gtk.StackSwitcher()
+
+        grid_parameters = Gtk.Box()
+
+        grid_environment = Gtk.Box()
+        grid_environment_buttons = Gtk.Box()
 
         # Properties
-        grid.set_spacing(6)
-        grid.set_homogeneous(False)
-        grid.set_orientation(Gtk.Orientation.VERTICAL)
+        stack.set_transition_type(Gtk.StackTransitionType.NONE)
+
+        stack_switcher.set_stack(stack)
+        stack_switcher.set_margin_bottom(18)
+        stack_switcher.set_halign(Gtk.Align.CENTER)
+
+        grid_parameters.set_spacing(6)
+        grid_parameters.set_homogeneous(False)
+        grid_parameters.set_orientation(Gtk.Orientation.VERTICAL)
+
+        grid_environment.set_spacing(12)
+        grid_environment.set_homogeneous(False)
+
+        Gtk.StyleContext.add_class(
+            grid_environment_buttons.get_style_context(), "linked")
+        grid_environment_buttons.set_spacing(-1)
+        grid_environment_buttons.set_orientation(Gtk.Orientation.VERTICAL)
 
         # ------------------------------------
         #   Action buttons
@@ -1040,21 +1065,110 @@ class DialogParameters(Dialog):
             Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
 
         # ------------------------------------
+        #   Statistics
+        # ------------------------------------
+
+        scroll_statistic = Gtk.ScrolledWindow()
+        viewport_statistic = Gtk.Viewport()
+
+        self.label_statistic = Gtk.Label()
+
+        # Properties
+        self.label_statistic.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
+        self.label_statistic.set_justify(Gtk.Justification.LEFT)
+        self.label_statistic.set_halign(Gtk.Align.START)
+        self.label_statistic.set_valign(Gtk.Align.START)
+        self.label_statistic.set_single_line_mode(False)
+        self.label_statistic.set_use_markup(True)
+        self.label_statistic.set_line_wrap(True)
+        self.label_statistic.set_xalign(0)
+        self.label_statistic.set_yalign(0)
+        self.label_statistic.set_lines(-1)
+
+        # ------------------------------------
+        #   Environment variables
+        # ------------------------------------
+
+        scroll_environment = Gtk.ScrolledWindow()
+        viewport_environment = Gtk.Viewport()
+
+        image_environment_add = Gtk.Image()
+        self.button_environment_add = Gtk.Button()
+
+        image_environment_remove = Gtk.Image()
+        self.button_environment_remove = Gtk.Button()
+
+        self.store_environment = Gtk.ListStore(str, str)
+        self.treeview_environment = Gtk.TreeView()
+
+        treeview_column_environment = Gtk.TreeViewColumn()
+
+        treeview_cell_environment_key = Gtk.CellRendererText()
+        treeview_cell_environment_value = Gtk.CellRendererText()
+
+        # Properties
+        image_environment_add.set_from_icon_name(
+            Icons.Symbolic.Add, Gtk.IconSize.BUTTON)
+        image_environment_remove.set_from_icon_name(
+            Icons.Symbolic.Remove, Gtk.IconSize.BUTTON)
+
+        self.treeview_environment.set_model(self.store_environment)
+        self.treeview_environment.set_headers_clickable(False)
+        self.treeview_environment.set_headers_visible(False)
+
+        treeview_column_environment.pack_start(
+            treeview_cell_environment_key, True)
+        treeview_column_environment.pack_start(
+            treeview_cell_environment_value, True)
+
+        treeview_column_environment.add_attribute(
+            treeview_cell_environment_key, "text", 0)
+        treeview_column_environment.add_attribute(
+            treeview_cell_environment_value, "text", 1)
+
+        self.treeview_environment.append_column(
+            treeview_column_environment)
+
+        # ------------------------------------
         #   Integrate widgets
         # ------------------------------------
 
         self.headerbar.pack_start(self.button_close)
         self.headerbar.pack_end(self.button_accept)
 
-        grid.pack_start(label_emulator, False, False, 0)
-        grid.pack_start(self.combo, False, False, 0)
-        grid.pack_start(self.entry_arguments, False, False, 0)
-        grid.pack_start(label_key, False, False, 0)
-        grid.pack_start(self.entry_key, False, False, 0)
-        grid.pack_start(label_tags, False, False, 0)
-        grid.pack_start(self.entry_tags, False, False, 0)
+        stack.add_titled(grid_parameters, "parameters", _("Parameters"))
 
-        self.dialog_box.pack_start(grid, False, False, 0)
+        grid_parameters.pack_start(label_emulator, False, False, 0)
+        grid_parameters.pack_start(self.combo, False, False, 0)
+        grid_parameters.pack_start(self.entry_arguments, False, False, 0)
+        grid_parameters.pack_start(label_key, False, False, 0)
+        grid_parameters.pack_start(self.entry_key, False, False, 0)
+        grid_parameters.pack_start(label_tags, False, False, 0)
+        grid_parameters.pack_start(self.entry_tags, False, False, 0)
+
+        stack.add_titled(scroll_statistic, "statistic", _("Statistic"))
+
+        scroll_statistic.add(viewport_statistic)
+        viewport_statistic.add(self.label_statistic)
+
+        stack.add_titled(grid_environment, "environment", _("Environment"))
+
+        scroll_environment.add(viewport_environment)
+        viewport_environment.add(self.treeview_environment)
+
+        self.button_environment_add.add(image_environment_add)
+        self.button_environment_remove.add(image_environment_remove)
+
+        grid_environment_buttons.pack_start(
+            self.button_environment_add, False, False, 0)
+        grid_environment_buttons.pack_start(
+            self.button_environment_remove, False, False, 0)
+
+        grid_environment.pack_start(grid_environment_buttons, False, False, 0)
+        grid_environment.pack_start(scroll_environment, True, True, 0)
+
+        self.dialog_box.pack_start(stack_switcher, False, False, 0)
+        self.dialog_box.pack_start(stack, False, False, 0)
 
 
     def __init_signals(self):
@@ -1099,14 +1213,33 @@ class DialogParameters(Dialog):
 
         self.combo.set_wrap_width(int(len(self.model) / 10))
 
+        # Emulator parameters
         if self.emulator["parameters"] is not None:
             self.entry_arguments.set_text(self.emulator["parameters"])
 
+        # Game ID
         if self.game.key is not None:
             self.entry_key.set_text(self.game.key)
 
+        # Game tags
         if len(self.game.tags) > 0:
             self.entry_tags.set_text(' '.join(self.game.tags))
+
+        # Game statistics
+        statistics = OrderedDict({
+            _("Total play time"):
+                parse_timedelta(self.game.play_time),
+        })
+
+        text = list()
+        for key in statistics.keys():
+            text.append("<b>%s</b>: %s" % (key, statistics[key]))
+
+        self.label_statistic.set_markup('\n'.join(text))
+
+        # Environment variables
+        for key in sorted(self.game.environment.keys()):
+            self.store_environment.append([key, self.game.environment[key]])
 
         self.combo.grab_focus()
 

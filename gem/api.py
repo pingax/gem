@@ -438,80 +438,95 @@ class GEM(object):
         """
 
         if self.__need_migration:
-            self.logger.info("Start database migration")
+            self.logger.info("Backup database")
 
-            # Get current table columns
-            previous_columns = self.database.get_columns("games")
-            # Get current table rows
-            previous_data = self.database.select("games", ['*'])
+            copy(path_join(GEM.Local, "gem.db"),
+                path_join(GEM.Local, "save.gem.db"))
 
-            # ----------------------------
-            #   Backup database
-            # ----------------------------
+            try:
+                self.logger.info("Start database migration")
 
-            self.database.rename_table("games", "_%s" % "games")
-            self.database.create_table("games")
+                # Get current table columns
+                previous_columns = self.database.get_columns("games")
+                # Get current table rows
+                previous_data = self.database.select("games", ['*'])
 
-            # ----------------------------
-            #   Check columns
-            # ----------------------------
+                # ----------------------------
+                #   Backup database tables
+                # ----------------------------
 
-            # Columns data
-            data = dict()
-            # Columns template for deepcopy
-            template = dict()
+                self.database.rename_table("games", "_%s" % "games")
+                self.database.create_table("games")
 
-            # Check previous table for new columns
-            for column in previous_columns:
-                if column in self.database.get_columns("games"):
-                    data[column] = previous_columns.index(column)
+                # ----------------------------
+                #   Check columns
+                # ----------------------------
 
-            # Set columns template
-            for column in self.database.get_columns("games"):
-                template[column] = str()
+                # Columns data
+                data = dict()
+                # Columns template for deepcopy
+                template = dict()
 
-            # ----------------------------
-            #   Migrate database
-            # ----------------------------
+                # Check previous table for new columns
+                for column in previous_columns:
+                    if column in self.database.get_columns("games"):
+                        data[column] = previous_columns.index(column)
 
-            if previous_data is not None:
-                counter = int()
+                # Set columns template
+                for column in self.database.get_columns("games"):
+                    template[column] = str()
 
-                if updater is not None:
-                    updater.init(len(previous_data))
+                # ----------------------------
+                #   Migrate database
+                # ----------------------------
 
-                # Check each row from previous database
-                for row in previous_data:
-                    counter += 1
-
-                    # Copy default template
-                    columns = deepcopy(template)
-
-                    # Check each column from row
-                    for column in list(columns.keys()):
-
-                        # There is data for this row column
-                        if column in data:
-                            columns[column] = row[data[column]]
-
-                        # No data for this row column
-                        else:
-                            columns[column] = None
-
-                    # Insert row in new database
-                    self.database.insert("games", columns)
+                if previous_data is not None:
+                    counter = int()
 
                     if updater is not None:
-                        updater.update(counter)
+                        updater.init(len(previous_data))
 
-            # ----------------------------
-            #   Remove backup
-            # ----------------------------
+                    # Check each row from previous database
+                    for row in previous_data:
+                        counter += 1
 
-            self.database.remove_table("_%s" % "games")
+                        # Copy default template
+                        columns = deepcopy(template)
 
-            self.logger.info("Migration complete")
-            self.__need_migration = False
+                        # Check each column from row
+                        for column in list(columns.keys()):
+
+                            # There is data for this row column
+                            if column in data:
+                                columns[column] = row[data[column]]
+
+                            # No data for this row column
+                            else:
+                                columns[column] = None
+
+                        # Insert row in new database
+                        self.database.insert("games", columns)
+
+                        if updater is not None:
+                            updater.update(counter)
+
+                # ----------------------------
+                #   Remove backup
+                # ----------------------------
+
+                self.database.remove_table("_%s" % "games")
+
+                self.logger.info("Migration complete")
+                self.__need_migration = False
+
+            except Exception as error:
+                self.logger.error(
+                    "An error occurs during migration: %s" % str(error))
+
+                self.logger.info("Restore database backup")
+
+                copy(path_join(GEM.Local, "save.gem.db"),
+                    path_join(GEM.Local, "gem.db"))
 
         if updater is not None:
             updater.close()

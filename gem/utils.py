@@ -94,6 +94,9 @@ def get_data(path, egg="gem"):
     except DistributionNotFound as error:
         return path
 
+    except KeyError as error:
+        return path
+
     return None
 
 
