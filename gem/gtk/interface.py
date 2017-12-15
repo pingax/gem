@@ -3292,22 +3292,12 @@ class Interface(Gtk.ApplicationWindow):
                         rom_emulator = game.emulator
 
                     # Snap
-                    try:
-                        if len(rom_emulator.get_screenshots(game)) > 0:
-                            row_data[Columns.Snapshots] = self.icons["snap"]
-
-                    except Exception as error:
-                        self.logger.error(
-                            "Cannot check screenshots for %s" % game.filepath)
+                    if len(rom_emulator.get_screenshots(game)) > 0:
+                        row_data[Columns.Snapshots] = self.icons["snap"]
 
                     # Save state
-                    try:
-                        if len(rom_emulator.get_savestates(game)) > 0:
-                            row_data[Columns.Save] = self.icons["save"]
-
-                    except Exception as error:
-                        self.logger.error(
-                            "Cannot check savestates for %s" % game.filepath)
+                    if len(rom_emulator.get_savestates(game)) > 0:
+                        row_data[Columns.Save] = self.icons["save"]
 
                     row = self.model_games.append(row_data)
 

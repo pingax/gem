@@ -1146,7 +1146,7 @@ class Emulator(GEMObject):
                 key = key.replace("<key>", game.key)
 
             if not isdir(expanduser(key)):
-                return glob(expanduser(key))
+                return glob(expanduser(key).replace('[', '?').replace(']', '?'))
 
         return list()
 
