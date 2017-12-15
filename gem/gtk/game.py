@@ -144,9 +144,7 @@ class GameThread(Thread, GObject):
             environment = environ.copy()
 
             # Check if current game has specific environment variable
-            for envvar in self.game.environment:
-                key, value = envvar.strip().split('=')
-
+            for key, value in self.game.environment.items():
                 environment[key] = value
 
             # ----------------------------

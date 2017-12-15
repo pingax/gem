@@ -110,6 +110,7 @@ class GEM(object):
     Consoles    = "consoles.conf"
     Emulators   = "emulators.conf"
     Databases   = "databases.conf"
+    Environment = "environment.conf"
 
     # Paths
     Local       = path_join(expanduser(xdg_data_home), "gem")
@@ -154,7 +155,8 @@ class GEM(object):
         # Configurations
         self.__configurations = dict(
             consoles=None,
-            emulators=None
+            emulators=None,
+            environment=None
         )
 
         # ----------------------------
@@ -266,16 +268,19 @@ class GEM(object):
             mkdir(GEM.Config)
 
         # Check GEM configuration files
-        for path in [ GEM.Consoles, GEM.Emulators ]:
+        for path in [ GEM.Consoles, GEM.Emulators, GEM.Environment ]:
             # Get configuration filename for storage
             name, ext = splitext(path)
 
             # Configuration file not exists
             if not exists(path_join(GEM.Config, path)):
-                self.logger.debug("Copy %s to %s" % (path, GEM.Config))
 
-                copy(get_data(path_join("config", path)),
-                    path_join(GEM.Config, path))
+                # Check if a default configuration file exists
+                if exists(get_data(path_join("config", path))):
+                    self.logger.debug("Copy %s to %s" % (path, GEM.Config))
+
+                    copy(get_data(path_join("config", path)),
+                        path_join(GEM.Config, path))
 
             self.logger.debug("Read %s configuration file" % path)
 
@@ -533,14 +538,15 @@ class GEM(object):
 
         try:
             # Check GEM configuration files
-            for path in [ GEM.Consoles, GEM.Emulators ]:
+            for path in [ GEM.Consoles, GEM.Emulators, GEM.Environment ]:
                 # Get configuration filename for storage
                 name, ext = splitext(path)
 
                 # Backup configuration file
-                self.logger.debug("Backup %s file" % path)
-                move(path_join(GEM.Config, path),
-                    path_join(GEM.Config, '~' + path))
+                if exists(path_join(GEM.Config, path)):
+                    self.logger.debug("Backup %s file" % path)
+                    move(path_join(GEM.Config, path),
+                        path_join(GEM.Config, '~' + path))
 
                 # Create a new configuration object
                 config = Configuration(path_join(GEM.Config, path))
@@ -589,31 +595,6 @@ class GEM(object):
             return False
 
         return True
-
-
-    @property
-    def consoles(self):
-        """ Return consoles dict
-
-        Returns
-        -------
-        dict
-            Consoles dictionary with identifier as keys
-        """
-
-        return self.__data["consoles"]
-
-
-    def get_consoles(self):
-        """ Return consoles list
-
-        Returns
-        -------
-        list
-            Consoles list
-        """
-
-        return list(self.__data["consoles"].values())
 
 
     @property
@@ -775,6 +756,31 @@ class GEM(object):
                     console.emulator = self.__rename[previous]
 
 
+    @property
+    def consoles(self):
+        """ Return consoles dict
+
+        Returns
+        -------
+        dict
+            Consoles dictionary with identifier as keys
+        """
+
+        return self.__data["consoles"]
+
+
+    def get_consoles(self):
+        """ Return consoles list
+
+        Returns
+        -------
+        list
+            Consoles list
+        """
+
+        return list(self.__data["consoles"].values())
+
+
     def get_console(self, console):
         """ Get a specific console
 
@@ -889,6 +895,19 @@ class GEM(object):
         del self.__data["consoles"][console]
 
 
+    @property
+    def environment(self):
+        """ Return environment dict
+
+        Returns
+        -------
+        dict
+            environment dictionary
+        """
+
+        return self.__configurations["environment"]
+
+
     def get_games(self):
         """ List all games from register consoles
 
@@ -986,6 +1005,19 @@ class GEM(object):
         self.logger.debug("Update %s database entry" % game.name)
 
         self.database.modify("games", data, { "filename": game.path[1] })
+
+        # Update game environment variables
+        self.logger.debug("Update %s environment variables" % game.name)
+
+        self.environment.remove_section(game.id)
+
+        if len(game.environment) > 0:
+            self.environment.add_section(game.id)
+
+            for key, value in game.environment.items():
+                self.environment.set(game.id, key.upper(), value)
+
+        self.environment.update()
 
 
     def delete_game(self, game):
@@ -1401,8 +1433,17 @@ class Console(GEMObject):
                 game_data = {
                     "id": game.id,
                     "name": game.name,
-                    "filepath": game.filepath
+                    "filepath": game.filepath,
+                    "environment": dict()
                 }
+
+                # Set game environment variables
+                if game.id in parent.environment.sections():
+
+                    for option in parent.environment.options(game.id):
+                        game_data["environment"][option.upper()] = \
+                            parent.environment.get(
+                            game.id, option, fallback=str())
 
                 # This game exists in database
                 if data is not None:
@@ -1488,11 +1529,6 @@ class Console(GEMObject):
                     if "tags" in data and len(data["tags"]) > 0:
                         tags = data["tags"].split(';')
 
-                    # Set game environment variables
-                    environment = list()
-                    if "environment" in data and len(data["environment"]) > 0:
-                        environment = data["environment"].split('\n')
-
                     game_data.update({
                         "name": name,
                         "favorite": bool(data["favorite"]),
@@ -1505,8 +1541,7 @@ class Console(GEMObject):
                         "emulator": emulator,
                         "default": arguments,
                         "key": key,
-                        "tags": tags,
-                        "environment": environment
+                        "tags": tags
                     })
 
                 for key, value in game_data.items():
@@ -1574,7 +1609,7 @@ class Game(GEMObject):
         "default": None,
         "key": None,
         "tags": list(),
-        "environment": list()
+        "environment": dict()
     }
 
     def __init__(self):
@@ -1606,8 +1641,7 @@ class Game(GEMObject):
             "emulator": self.emulator,
             "arguments": self.default,
             "key": self.key,
-            "tags": ';'.join(self.tags),
-            "environment": '\n'.join(self.environment)
+            "tags": ';'.join(self.tags)
         })
 
     @staticmethod
