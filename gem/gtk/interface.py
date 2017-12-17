@@ -2132,6 +2132,8 @@ class Interface(Gtk.ApplicationWindow):
 
         self.check_selection()
 
+        self.set_informations_headerbar(self.selection["game"])
+
 
     def filters_reset(self, widget=None, events=None):
         """ Reset game filters
@@ -2486,20 +2488,13 @@ class Interface(Gtk.ApplicationWindow):
         game = self.selection["game"]
         console = self.selection["console"]
 
-        texts = list()
-        informations = list()
-
-        if(len(self.model_games) == 1):
-            texts = [_("1 game available")]
-        elif(len(self.model_games) > 1):
-            texts = [_("%s games availables") % len(self.model_games)]
+        self.set_informations_headerbar(game)
 
         # ----------------------------
         #   Game informations
         # ----------------------------
 
         if game is not None:
-            texts.append(game.name)
 
             if console is not None:
                 self.separator_game.show()
@@ -2623,6 +2618,26 @@ class Interface(Gtk.ApplicationWindow):
 
             self.image_paned_savestates.set_from_pixbuf(self.empty)
             self.image_paned_parameters.set_from_pixbuf(self.empty)
+
+
+    def set_informations_headerbar(self, game):
+        """ Update headerbar and statusbar informations from games list
+
+        Parameters
+        ----------
+        game : gem.api.Game
+            Game object
+        """
+
+        texts = list()
+
+        if(len(self.filter_games) == 1):
+            texts = [_("1 game available")]
+        elif(len(self.filter_games) > 1):
+            texts = [_("%s games availables") % len(self.filter_games)]
+
+        if game is not None:
+            texts.append(game.name)
 
         # ----------------------------
         #   Interface theme specific
