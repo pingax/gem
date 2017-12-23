@@ -1227,6 +1227,8 @@ class DialogParameters(Dialog):
 
         # Game statistics
         statistics = OrderedDict({
+            # _("Average play time"):
+                # parse_timedelta(self.game.play_time / self.game.played),
             _("Total play time"):
                 parse_timedelta(self.game.play_time),
         })
@@ -1856,7 +1858,7 @@ class DialogViewer(Dialog):
 
         elif widget == self.button_original:
             self.zoom_fit = False
-            self.zoom_actual = 200
+            self.zoom_actual = None
 
         elif widget == self.button_fit:
             self.zoom_fit = True
@@ -1885,11 +1887,12 @@ class DialogViewer(Dialog):
         elif self.index > len(self.screenshots) - 1:
             self.index = len(self.screenshots) - 1
 
-        if self.zoom_actual < self.zoom_min:
-            self.zoom_actual = self.zoom_min
+        if self.zoom_actual is not None and type(self.zoom_actual) is int:
+            if self.zoom_actual < self.zoom_min:
+                self.zoom_actual = self.zoom_min
 
-        elif self.zoom_actual > self.zoom_max:
-            self.zoom_actual = self.zoom_max
+            elif self.zoom_actual > self.zoom_max:
+                self.zoom_actual = self.zoom_max
 
         self.update_screenshot()
         self.set_widgets_sensitive()
@@ -1980,28 +1983,50 @@ class DialogViewer(Dialog):
             width, height = self.current_pixbuf_size
 
             if width > height:
-                height = int((height * self.__default_size) / width)
-                width = self.__default_size
+                screen_height = int((height * self.__default_size) / width)
+                screen_width = self.__default_size
 
             else:
-                width = int((width * self.__default_size) / height)
-                height = self.__default_size
+                screen_width = int((width * self.__default_size) / height)
+                screen_height = self.__default_size
 
-            # Zoom to fit current window
-            if self.zoom_fit:
-                allocation = self.scroll_image.get_allocation()
+            # ------------------------------------
+            #   Check zoom features
+            # ------------------------------------
 
-                ratio_x = float(allocation.width / width)
-                ratio_y = float(allocation.height / height)
+            # Zoom to original size
+            if self.zoom_actual is None:
+                ratio_x = float(width / screen_width)
+                ratio_y = float(height / screen_height)
 
                 self.zoom_actual = int(min(ratio_x, ratio_y) * 100)
+
+            # Zoom to fit current window
+            elif self.zoom_fit:
+                allocation = self.scroll_image.get_allocation()
+
+                ratio_x = float(allocation.width / screen_width)
+                ratio_y = float(allocation.height / screen_height)
+
+                self.zoom_actual = int(min(ratio_x, ratio_y) * 100)
+
+            # ------------------------------------
+            #   Reload pixbuf
+            # ------------------------------------
+
+            # Avoid to have a zoom above maximum allowed
+            if self.zoom_actual > self.zoom_max:
+                self.zoom_actual = self.zoom_max
+            # Avoid to have a zoom under minimum allowed
+            if self.zoom_actual < self.zoom_min:
+                self.zoom_actual = self.zoom_min
 
             if not self.current_pixbuf_zoom == self.zoom_actual:
                 self.current_pixbuf_zoom = self.zoom_actual
 
                 # Calc ratio from current zoom percent
-                ratio_width = int((self.zoom_actual * width) / 100)
-                ratio_height = int((self.zoom_actual * height) / 100)
+                ratio_width = int((self.zoom_actual * screen_width) / 100)
+                ratio_height = int((self.zoom_actual * screen_height) / 100)
 
                 # Update scale adjustment
                 self.adjustment_zoom.set_value(float(self.zoom_actual))
