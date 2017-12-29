@@ -3567,7 +3567,7 @@ class Interface(Gtk.ApplicationWindow):
                     if game.emulator is not None:
                         emulator = game.emulator
 
-                    screenshots = emulator.get_screenshots(game)
+                    screenshots = sorted(emulator.get_screenshots(game))
                     if len(screenshots) > 0:
                         pixbuf = Pixbuf.new_from_file(screenshots[-1])
 

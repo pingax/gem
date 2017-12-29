@@ -2840,11 +2840,11 @@ class PreferencesConsole(Dialog):
         #   Console emulator
         # ------------------------------------
 
-        emulator = self.api.get_emulator(self.combo_emulators.get_active_id())
+        # emulator = self.api.get_emulator(self.combo_emulators.get_active_id())
 
         # Allow to validate dialog if selected emulator binary exist
-        if emulator is None or emulator.binary is None or not emulator.exists:
-            status = False
+        # if emulator is None or emulator.binary is None or not emulator.exists:
+            # status = False
 
         # ------------------------------------
         #   Start dialog
