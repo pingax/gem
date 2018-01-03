@@ -66,9 +66,9 @@ textdomain("gem")
 #   Class
 # ------------------------------------------------------------------------------
 
-class Dialog(Gtk.Dialog):
+class CommonWindow(object):
 
-    def __init__(self, parent, title, icon, remove_icon=False):
+    def __init__(self, parent, title, icon, classic=False):
         """ Constructor
 
         Parameters
@@ -82,80 +82,494 @@ class Dialog(Gtk.Dialog):
 
         Others Parameters
         -----------------
-        remove_icon : bool
-            Remove the top left icon in dialog (Default: False)
+        classic : bool
+            Using classic theme (Default: False)
         """
-
-        Gtk.Dialog.__init__(self)
 
         # ------------------------------------
         #   Initialize variables
         # ------------------------------------
 
-        self.interface = parent
+        self.parent = parent
         self.title = title
         self.icon = icon
 
-        # ------------------------------------
-        #   Main dialog
-        # ------------------------------------
+        self.use_classic_theme = classic
 
-        self.set_title(title)
-        self.set_default_icon_name(icon)
+        self.has_help_button = False
 
-        if parent is not None:
-            self.set_transient_for(parent)
-
-        self.set_modal(True)
-        self.set_can_focus(True)
-        self.set_resizable(False)
-        self.set_keep_above(True)
-        self.set_destroy_with_parent(True)
-
-        self.set_type_hint(Gdk.WindowTypeHint.DIALOG)
-
-        self.set_position(Gtk.WindowPosition.CENTER)
-
-        self.set_border_width(0)
+        self.help_data = list()
+        self.sensitive_data = dict()
 
         # ------------------------------------
-        #   Main grid
+        #   Prepare interface
         # ------------------------------------
 
-        self.dialog_box = self.get_content_area()
+        # Init widgets
+        self.__init_widgets()
+
+
+    def __init_widgets(self):
+        """ Initialize interface widgets
+        """
+
+        # Gtk.Window
+        if self.parent is None:
+            self.window = Gtk.Window()
+
+        # Gtk.Dialog
+        else:
+            self.window = Gtk.Dialog(use_header_bar=not self.use_classic_theme)
+
+            if hasattr(self.parent, "window"):
+                self.window.set_transient_for(self.parent.window)
+
+            else:
+                self.window.set_transient_for(self.parent)
+
+            self.window.set_modal(True)
+            self.window.set_destroy_with_parent(True)
 
         # Properties
-        self.dialog_box.set_spacing(12)
-        self.dialog_box.set_border_width(18)
+        self.window.set_title(self.title)
+        self.window.set_default_icon_name(self.icon)
+        self.window.set_can_focus(True)
+        self.window.set_resizable(False)
+        self.window.set_keep_above(True)
+
+        self.window.set_type_hint(Gdk.WindowTypeHint.DIALOG)
+
+        self.window.set_position(Gtk.WindowPosition.CENTER)
+
+        self.window.set_border_width(0)
+
+        # ------------------------------------
+        #   Grid
+        # ------------------------------------
+
+        # Gtk.Window
+        if self.parent is None:
+            self.grid = Gtk.Box()
+
+            # Properties
+            self.grid.set_orientation(Gtk.Orientation.VERTICAL)
+
+        # Gtk.Dialog
+        else:
+            self.grid = self.window.get_content_area()
+
+            # Remove the old action grid
+            self.grid.remove(self.grid.get_children()[0])
+
+        self.grid_tools = Gtk.Box()
+        self.grid_actions = Gtk.Box()
+        self.grid_actions_buttons = Gtk.ButtonBox()
+
+        # Properties
+        self.grid.set_spacing(18)
+        self.grid.set_border_width(18)
+
+        self.grid_tools.set_spacing(6)
+
+        self.grid_actions.set_spacing(12)
+
+        self.grid_actions_buttons.set_spacing(12)
+        self.grid_actions_buttons.set_layout(Gtk.ButtonBoxStyle.END)
 
         # ------------------------------------
         #   Headerbar
         # ------------------------------------
 
-        self.headerbar = Gtk.HeaderBar()
+        if not self.use_classic_theme:
 
-        # Properties
-        self.headerbar.set_title(self.title)
-        self.headerbar.set_has_subtitle(False)
-        self.headerbar.set_show_close_button(True)
+            # Gtk.Window
+            if self.parent is None:
+                self.headerbar = Gtk.HeaderBar()
+
+                # Properties
+                self.headerbar.set_title(self.title)
+
+                self.window.set_titlebar(self.headerbar)
+
+            # Gtk.Dialog
+            else:
+                self.headerbar = self.window.get_header_bar()
 
         # ------------------------------------
-        #   Header
+        #   Help button
         # ------------------------------------
 
-        image_header = Gtk.Image()
+        self.image_help = Gtk.Image()
+
+        self.button_help = Gtk.Button()
 
         # Properties
-        image_header.set_from_icon_name(self.icon, Gtk.IconSize.LARGE_TOOLBAR)
+        self.image_help.set_from_icon_name(
+            Icons.Symbolic.Help, Gtk.IconSize.MENU)
+
+        self.button_help.set_image(self.image_help)
+        self.button_help.set_relief(Gtk.ReliefStyle.NONE)
+        self.button_help.set_tooltip_text(_("Get some help about this dialog"))
 
         # ------------------------------------
         #   Integrate widgets
         # ------------------------------------
 
-        self.set_titlebar(self.headerbar)
+        if self.use_classic_theme:
+            self.grid.pack_start(self.grid_tools, False, False, 0)
 
-        if not remove_icon:
-            self.headerbar.pack_start(image_header)
+            self.grid.pack_end(self.grid_actions, False, False, 0)
+
+            self.grid_actions.pack_end(
+                self.grid_actions_buttons, False, False, 0)
+
+        # Gtk.Window
+        if self.parent is None:
+            self.window.add(self.grid)
+
+
+    def __init_signals(self):
+        """ Initialize widgets signals
+        """
+
+        # Gtk.Window
+        if self.parent is None:
+            self.window.connect("delete-event", self.destroy)
+
+
+    def __on_show_help(self, widget):
+        """ Launch help dialog
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        dialog = DialogHelp(
+            self.parent, _("Help"), '\n\n'.join(self.help_data), Icons.Help)
+
+        dialog.set_size(640, 480)
+
+        dialog.run()
+        dialog.destroy()
+
+
+    def show_all(self):
+        """ Recursively shows a widget, and any child widgets
+        """
+
+        if len(self.grid_tools.get_children()) == 0:
+            self.grid.remove(self.grid_tools)
+
+        if len(self.grid_actions_buttons.get_children()) == 0:
+            self.grid.remove(self.grid_actions)
+
+        self.window.hide()
+        self.window.unrealize()
+
+        self.window.show_all()
+
+
+    def run(self):
+        """ Start dialog
+
+        Returns
+        -------
+        Gtk.ResponseType
+            Dialog response
+        """
+
+        self.show_all()
+
+        # Gtk.Dialog
+        if self.parent is not None:
+            return self.window.run()
+
+        # Gtk.Window
+        Gtk.main()
+
+
+    def destroy(self):
+        """ Destroy dialog
+        """
+
+        # Gtk.Window
+        if self.parent is None:
+            Gtk.main_quit()
+
+        # Gtk.Dialog
+        else:
+            self.window.destroy()
+
+
+    def add_widget(self, widget, align=Gtk.Align.START,
+        expand=False, fill=False, padding=0):
+        """ Add a widget to dialog headerbar
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Widget to add
+
+        Others Parameters
+        -----------------
+        align : Gtk.Align
+            Widget alignment (Default: Gtk.Align.START)
+        expand : bool
+            Extra space will be divided evenly between all children that use
+            this option (Default: False)
+        fill : bool
+            Always allocated the full size of a Gtk.Box (Default: False)
+        padding : int
+            Extra space in pixels to put between this child and its neighbors
+            (Default: 0)
+
+        Raises
+        ------
+        TypeError
+            if align type is not Gtk.Align
+        """
+
+        if type(align) is not Gtk.Align:
+            raise TypeError(
+                "Wrong type for align, expected Gtk.Align")
+
+        # Using default theme
+        if not self.use_classic_theme:
+
+            if align == Gtk.Align.END:
+                self.headerbar.pack_end(widget)
+            else:
+                self.headerbar.pack_start(widget)
+
+        # Using classic theme
+        else:
+
+            if align == Gtk.Align.END:
+                self.grid_tools.pack_end(widget, expand, fill, padding)
+            else:
+                self.grid_tools.pack_start(widget, expand, fill, padding)
+
+
+    def add_button(self, label, response, align=Gtk.Align.START):
+        """ Add a button to dialog interface
+
+        Parameters
+        ----------
+        label : str
+            Button label
+        response : Gtk.ResponseType
+            Button response type
+
+        Others Parameters
+        -----------------
+        align : Gtk.Align
+            Button alignment (Default: Gtk.Align.START)
+
+        Returns
+        -------
+        Gtk.Button
+            Generated button to allow signals connecting when no parent
+            available (Gtk.Window mode)
+
+        Raises
+        ------
+        TypeError
+            if align type is not Gtk.Align
+        TypeError
+            if response type is not Gtk.ResponseType
+        ValueError
+            if a button with response type already exists
+        """
+
+        if type(response) is not Gtk.ResponseType:
+            raise TypeError(
+                "Wrong type for response, expected Gtk.ResponseType")
+
+        if type(align) is not Gtk.Align:
+            raise TypeError(
+                "Wrong type for align, expected Gtk.Align")
+
+        if response in self.sensitive_data.keys():
+            raise ValueError(
+                "Response type %s already set" % str(response))
+
+        # ------------------------------------
+        #   Button
+        # ------------------------------------
+
+        button = Gtk.Button()
+        button.set_label(str(label))
+
+        self.sensitive_data[response] = button
+
+        # ------------------------------------
+        #   Manage themes
+        # ------------------------------------
+
+        # Using default theme
+        if not self.use_classic_theme:
+
+            # Add a style to button for specific responses
+            if response == Gtk.ResponseType.APPLY:
+                button.get_style_context().add_class("suggested-action")
+            elif response == Gtk.ResponseType.YES:
+                button.get_style_context().add_class("destructive-action")
+
+            if align == Gtk.Align.END:
+                self.headerbar.pack_end(button)
+            else:
+                self.headerbar.pack_start(button)
+
+            if self.headerbar.get_show_close_button():
+                self.headerbar.set_show_close_button(False)
+
+        # Using classic theme
+        else:
+
+            if align == Gtk.Align.END:
+                self.grid_actions_buttons.pack_end(button, False, False, 0)
+            else:
+                self.grid_actions_buttons.pack_start(button, False, False, 0)
+
+        # Gtk.Dialog
+        if self.parent is not None:
+            button.connect("clicked", self.emit_response, response)
+
+        return button
+
+
+    def add_help(self, data):
+        """ Add a button to dialog interface
+
+        Parameters
+        ----------
+        data : dict
+            Help data dictionary
+        """
+
+        self.help_data = list()
+
+        # Get help data from specified order
+        for item in data["order"]:
+
+            # Dictionary value
+            if type(data[item]) is dict:
+                self.help_data.append("<b>%s</b>" % item)
+
+                for key, value in sorted(
+                    data[item].items(), key=lambda key: key[0]):
+
+                    self.help_data.append("\t<b>%s</b>\n\t\t%s" % (
+                        key.replace('>', "&gt;").replace('<', "&lt;"), value))
+
+            # List value
+            elif type(data[item]) is list:
+                self.help_data.append("\n\n".join(data[item]))
+
+            # String value
+            elif type(data[item]) is str:
+                self.help_data.append(data[item])
+
+        # ------------------------------------
+        #   Generate button data
+        # ------------------------------------
+
+        if not self.has_help_button:
+            self.has_help_button = True
+
+            self.button_help.connect("clicked", self.__on_show_help)
+
+            # Using default theme
+            if not self.use_classic_theme:
+                self.headerbar.pack_end(self.button_help)
+
+            # Using classic theme
+            else:
+                self.grid_actions.pack_start(self.button_help, False, False, 0)
+
+
+    def pack_end(self, child, expand=True, fill=True, padding=0):
+        """ Packing child widget into dialog grid
+
+        Parameters
+        ----------
+        child : Gtk.Widget
+            Child widget to pack
+
+        Others Parameters
+        -----------------
+        expand : bool
+            Extra space will be divided evenly between all children that use
+            this option (Default: True)
+        fill : bool
+            Always allocated the full size of a Gtk.Box (Default: True)
+        padding : int
+            Extra space in pixels to put between this child and its neighbors
+            (Default: 0)
+        """
+
+        self.grid.pack_end(child, expand, fill, padding)
+
+
+    def pack_start(self, child, expand=True, fill=True, padding=0):
+        """ Packing child widget into dialog grid
+
+        Parameters
+        ----------
+        child : Gtk.Widget
+            Child widget to pack
+
+        Others Parameters
+        -----------------
+        expand : bool
+            Extra space will be divided evenly between all children that use
+            this option (Default: True)
+        fill : bool
+            Always allocated the full size of a Gtk.Box (Default: True)
+        padding : int
+            Extra space in pixels to put between this child and its neighbors
+            (Default: 0)
+        """
+
+        self.grid.pack_start(child, expand, fill, padding)
+
+
+    def set_border_width(self, border_width):
+        """ Set the dialog grid border width value
+
+        Parameters
+        ----------
+        border_width : int
+            Container border with in pixels
+        """
+
+        self.grid.set_border_width(border_width)
+
+
+    def set_spacing(self, spacing):
+        """ Set the dialog grid spacing value
+
+        Parameters
+        ----------
+        spacing : int
+            Number of pixels between each child
+        """
+
+        self.grid.set_spacing(spacing)
+
+
+    def get_size(self):
+        """ Get current dialog size
+
+        Returns
+        -------
+        tuple
+            dialog size
+        """
+
+        return self.window.get_size()
 
 
     def set_size(self, width, height):
@@ -169,172 +583,123 @@ class Dialog(Gtk.Dialog):
             Dialog height
         """
 
-        self.set_size_request(width, height)
-        self.set_default_size(width, height)
+        self.window.set_size_request(width, height)
+        self.window.set_default_size(width, height)
 
 
-    def set_help(self, parent, data):
-        """ Set an help dialog
-
-        Parameters
-        ----------
-        text : str
-            Help string
-        """
-
-        image = Gtk.Image()
-        self.button_help = Gtk.Button()
-
-        # Properties
-        image.set_from_icon_name(Icons.Symbolic.Help, Gtk.IconSize.MENU)
-
-        self.button_help.set_image(image)
-
-        # ------------------------------------
-        #   Generate help text
-        # ------------------------------------
-
-        text = list()
-
-        # Get help data from specified order
-        for item in data["order"]:
-
-            # Dictionnary value
-            if type(data[item]) is dict:
-                text.append("<b>%s</b>" % item)
-
-                for key, value in sorted(
-                    data[item].items(), key=lambda key: key[0]):
-
-                    text.append("\t<b>%s</b>\n\t\t%s" % (
-                        key.replace('>', "&gt;").replace('<', "&lt;"), value))
-
-            # List value
-            elif type(data[item]) is list:
-                text.append("\n\n".join(data[item]))
-
-            # String value
-            elif type(data[item]) is str:
-                text.append(data[item])
-
-        # ------------------------------------
-        #   Connect signal
-        # ------------------------------------
-
-        self.button_help.connect(
-            "clicked", self.show_help, parent, '\n\n'.join(text))
-
-        # ------------------------------------
-        #   Insert help into headerbar
-        # ------------------------------------
-
-        self.headerbar.pack_end(self.button_help)
-
-
-    def show_help(self, widget, parent, text):
-        """ Launch help dialog
+    def set_modal(self, modal):
+        """ Set dialog modal status
 
         Parameters
         ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        text : str
-            Help message
+        modal : bool
+            New dialog modal status
         """
 
-        dialog = DialogHelp(parent, _("Help"), text, Icons.Help)
-        dialog.set_size(640, 480)
-
-        dialog.run()
-        dialog.destroy()
+        self.window.set_modal(modal)
 
 
-class TemplateDialog(Dialog):
-
-    def __init__(self, parent, title, message, icon, center=True):
-        """ Constructor
+    def set_orientation(self, orientation):
+        """ Set dialog grid orientation
 
         Parameters
         ----------
-        parent : Gtk.Window
-            Parent object
-        title : str
-            Dialog title
-        message : str
-            Dialog message
-        icon : str
-            Default icon name
+        orientation : Gtk.Orientation
+            Dialog grid orientation
 
-        Other Parameters
-        ----------------
-        center : bool
-            If False, use justify text insted of center (Default: True)
+        Raises
+        ------
+        TypeError
+            if orientation type is not Gtk.Orientation
         """
 
-        Dialog.__init__(self, parent, title, icon)
+        if type(orientation) is not Gtk.Orientation:
+            raise TypeError(
+                "Wrong type for orientation, expected Gtk.Orientation")
 
-        # ------------------------------------
-        #   Initialize variables
-        # ------------------------------------
-
-        self.message = message
-
-        self.center = center
-
-        # ------------------------------------
-        #   Prepare interface
-        # ------------------------------------
-
-        # Init widgets
-        self.__init_widgets()
-
-        # Start interface
-        self.__start_interface()
+        self.grid.set_orientation(orientation)
 
 
-    def __init_widgets(self):
-        """ Initialize interface widgets
+    def set_resizable(self, resizable):
+        """ Set dialog resizable mode
+
+        Parameters
+        ----------
+        resizable : bool
+            Dialog resizable status
         """
 
-        self.set_size(500, -1)
+        self.window.set_resizable(resizable)
 
-        self.dialog_box.set_spacing(0)
 
-        # ------------------------------------
-        #   Message
-        # ------------------------------------
+    def set_response_sensitive(self, response, sensitive):
+        """ Set button sensitive status
 
-        text = Gtk.Label()
+        Parameters
+        ----------
+        response : Gtk.ResponseType
+            Button response type
+        sensitive : bool
+            Button sensitive status
 
-        # Properties
-        text.set_line_wrap(True)
-        text.set_use_markup(True)
-        text.set_max_width_chars(10)
-        text.set_markup(self.message)
-        text.set_line_wrap_mode(Pango.WrapMode.WORD)
+        Raises
+        ------
+        NameError
+            if button response type has not been set previously
+        """
 
-        if(self.center):
-            text.set_alignment(.5, .5)
-            text.set_justify(Gtk.Justification.CENTER)
+        # Gtk.Window
+        if self.parent is None or not self.use_classic_theme:
+
+            if not response in self.sensitive_data.keys():
+                raise NameError(
+                    "%s type did not exists in data dictionary" % str(response))
+
+            self.sensitive_data[response].set_sensitive(sensitive)
+
+        # Gtk.Dialog
         else:
-            text.set_alignment(0, .5)
-            text.set_justify(Gtk.Justification.FILL)
-
-        # ------------------------------------
-        #   Integrate widgets
-        # ------------------------------------
-
-        self.dialog_box.pack_start(text, False, False, 0)
+            self.window.set_response_sensitive(response, sensitive)
 
 
-    def __start_interface(self):
-        """ Load data and start interface
+
+    def set_subtitle(self, subtitle):
+        """ Set headerbar subtitle if available
+
+        Parameters
+        ----------
+        subtitle : str
+            Headerbar subtitle string
         """
 
-        self.show_all()
+        if not self.use_classic_theme:
+            self.headerbar.set_subtitle(subtitle)
 
 
-class DialogHelp(Dialog):
+    def emit_response(self, widget, response):
+        """ Close dialog and emit specified response
+
+        Parameters
+        ----------
+        widget : Gtk.Button
+            Object which received the signal
+        response : Gtk.ResponseType
+            Response to emit when pushing button
+
+        Raises
+        ------
+        TypeError
+            if response type is not Gtk.ResponseType
+        """
+
+        if type(response) is not Gtk.ResponseType:
+            raise TypeError(
+                "Wrong type for response, expected Gtk.ResponseType")
+
+        self.window.response(response)
+
+
+class DialogHelp(CommonWindow):
 
     def __init__(self, parent, title, message, icon):
         """ Constructor
@@ -351,7 +716,11 @@ class DialogHelp(Dialog):
             Default icon name
         """
 
-        Dialog.__init__(self, parent, title, icon)
+        classic_theme = False
+        if parent is not None:
+            classic_theme = parent.use_classic_theme
+
+        CommonWindow.__init__(self, parent, title, icon, classic_theme)
 
         # ------------------------------------
         #   Initialize variables
@@ -378,9 +747,6 @@ class DialogHelp(Dialog):
 
         self.set_resizable(True)
 
-        self.add_buttons(
-            Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE)
-
         # ------------------------------------
         #   Scrollview
         # ------------------------------------
@@ -395,11 +761,11 @@ class DialogHelp(Dialog):
         text = Gtk.Label()
 
         # Properties
+        text.set_alignment(0, 0)
         text.set_line_wrap(True)
         text.set_use_markup(True)
         text.set_max_width_chars(10)
         text.set_markup(self.message)
-        text.set_alignment(0, 0)
         text.set_justify(Gtk.Justification.FILL)
         text.set_line_wrap_mode(Pango.WrapMode.WORD)
 
@@ -410,7 +776,7 @@ class DialogHelp(Dialog):
         view.add(text)
         scroll.add(view)
 
-        self.dialog_box.pack_start(scroll, True, True, 0)
+        self.pack_start(scroll, True, True)
 
 
     def __start_interface(self):

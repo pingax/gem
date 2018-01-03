@@ -45,7 +45,7 @@ try:
     from gem.utils import *
 
     from gem.gtk import *
-    from gem.gtk.windows import Dialog
+    from gem.gtk.windows import CommonWindow
     from gem.gtk.windows import Question
 
 except ImportError as error:
@@ -66,7 +66,7 @@ textdomain("gem")
 #   Class
 # ------------------------------------------------------------------------------
 
-class DialogMednafenMemory(Dialog):
+class DialogMednafenMemory(CommonWindow):
 
     def __init__(self, parent, name, data):
         """ Constructor
@@ -81,13 +81,16 @@ class DialogMednafenMemory(Dialog):
             Backup memory type dictionary (with type as key)
         """
 
-        Dialog.__init__(self, parent, _("Backup Memory Type"), Icons.Save, True)
+        classic_theme = False
+        if parent is not None:
+            classic_theme = parent.use_classic_theme
+
+        CommonWindow.__init__(self, parent, _("Backup Memory Type"), Icons.Save,
+            classic_theme, True)
 
         # ------------------------------------
         #   Initialize variables
         # ------------------------------------
-
-        self.interface = parent
 
         self.data = data
 
@@ -115,10 +118,6 @@ class DialogMednafenMemory(Dialog):
 
         self.set_size(640, 420)
 
-        self.dialog_box.set_spacing(0)
-
-        self.headerbar.set_show_close_button(False)
-
         # ------------------------------------
         #   Grid
         # ------------------------------------
@@ -128,20 +127,6 @@ class DialogMednafenMemory(Dialog):
         # Properties
         grid.set_row_spacing(6)
         grid.set_column_spacing(12)
-
-        # ------------------------------------
-        #   Action buttons
-        # ------------------------------------
-
-        self.button_close = Gtk.Button()
-
-        self.button_accept = Gtk.Button()
-
-        # Properties
-        self.button_close.set_label(_("Close"))
-
-        self.button_accept.set_label(_("Apply"))
-        self.button_accept.get_style_context().add_class("suggested-action")
 
         # ------------------------------------
         #   Description
@@ -258,9 +243,6 @@ class DialogMednafenMemory(Dialog):
         #   Integrate widgets
         # ------------------------------------
 
-        self.headerbar.pack_start(self.button_close)
-        self.headerbar.pack_end(self.button_accept)
-
         scroll.add(view)
         view.add(grid)
 
@@ -275,15 +257,12 @@ class DialogMednafenMemory(Dialog):
         grid.attach(self.treeview, 1, 2, 1, 1)
         grid.attach(link, 0, 3, 2, 1)
 
-        self.dialog_box.pack_start(scroll, True, True, 0)
+        self.pack_start(scroll, True, True)
 
 
     def __init_signals(self):
         """ Initialize widgets signals
         """
-
-        self.button_close.connect("clicked", self.__on_cancel_clicked)
-        self.button_accept.connect("clicked", self.__on_accept_clicked)
 
         self.button_add.connect("clicked", self.__on_append_item)
         self.button_remove.connect("clicked", self.__on_remove_item)
@@ -295,6 +274,9 @@ class DialogMednafenMemory(Dialog):
     def __start_interface(self):
         """ Load data and start interface
         """
+
+        self.add_button(_("Cancel"), Gtk.ResponseType.CLOSE)
+        self.add_button(_("Apply"), Gtk.ResponseType.APPLY, Gtk.Align.END)
 
         for key in self.memory_list:
             self.model_memory_keys.append([key])
@@ -349,27 +331,3 @@ class DialogMednafenMemory(Dialog):
 
         elif type(widget) == Gtk.CellRendererSpin:
             self.model[path][1] = int(text)
-
-
-    def __on_cancel_clicked(self, widget):
-        """ Click on close button
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        """
-
-        self.response(Gtk.ResponseType.CLOSE)
-
-
-    def __on_accept_clicked(self, widget):
-        """ Click on accept button
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        """
-
-        self.response(Gtk.ResponseType.APPLY)

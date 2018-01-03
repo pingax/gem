@@ -191,7 +191,7 @@ class Interface(Gtk.ApplicationWindow):
         ]
 
         # Avoid to reload interface when switch between default & classic theme
-        self.__classic_theme = False
+        self.use_classic_theme = False
 
         # Avoid to reload game tooltip every time the user move in line
         self.__current_tooltip = None
@@ -1878,14 +1878,14 @@ class Interface(Gtk.ApplicationWindow):
 
         if init_interface:
 
-            self.__classic_theme = self.config.getboolean(
+            self.use_classic_theme = self.config.getboolean(
                 "gem", "use_classic_theme", fallback=False)
 
             # ------------------------------------
             #   Window classic theme
             # ------------------------------------
 
-            if not self.__classic_theme:
+            if not self.use_classic_theme:
                 self.set_titlebar(self.headerbar)
 
             # ------------------------------------
@@ -1924,7 +1924,7 @@ class Interface(Gtk.ApplicationWindow):
         self.infobar.show_all()
         self.infobar.get_content_area().show_all()
 
-        if self.__classic_theme:
+        if self.use_classic_theme:
             self.logger.debug("Use classic theme for GTK+ interface")
             self.menubar.show_all()
             self.statusbar.show()
@@ -2470,7 +2470,7 @@ class Interface(Gtk.ApplicationWindow):
                     "kind of code is usefull in a game, not in an emulators "
                     "manager !", Icons.Monkey)
 
-                dialog.set_size_request(500, -1)
+                dialog.set_size(500, -1)
 
                 dialog.run()
                 dialog.destroy()
@@ -2725,7 +2725,7 @@ class Interface(Gtk.ApplicationWindow):
 
         self.set_sensitive(False)
 
-        about = Gtk.AboutDialog()
+        about = Gtk.AboutDialog(use_header_bar=not self.use_classic_theme)
 
         about.set_transient_for(self)
 
@@ -2747,6 +2747,16 @@ class Interface(Gtk.ApplicationWindow):
             _("translator-credits"))
         about.set_license_type(
             Gtk.License.GPL_3_0)
+
+        # Strange case... With an headerbar, the AboutDialog got some useless
+        # buttons whitout any reasons. To avoid this, I remove any widget from
+        # headerbar which is not a Gtk.StackSwitcher.
+        if not self.use_classic_theme:
+            children = about.get_header_bar().get_children()
+
+            for child in children:
+                if type(child) is not Gtk.StackSwitcher:
+                    about.get_header_bar().remove(child)
 
         about.run()
 
@@ -2913,10 +2923,10 @@ class Interface(Gtk.ApplicationWindow):
                 # Allow to launch games with open notes
                 dialog.set_modal(False)
 
-                dialog.connect("response", self.__on_show_notes_response,
-                    game.name, expanduser(path))
+                dialog.window.connect("response", self.__on_show_notes_response,
+                    dialog, game.name, expanduser(path))
 
-                dialog.show()
+                dialog.show_all()
 
                 # Save dialogs to close it properly when gem terminate and avoid
                 # to reopen existing one
@@ -2926,7 +2936,7 @@ class Interface(Gtk.ApplicationWindow):
                 self.notes[expanduser(path)].grab_focus()
 
 
-    def __on_show_notes_response(self, dialog, response, title, path):
+    def __on_show_notes_response(self, widget, response, dialog, title, path):
         """ Close notes dialog
 
         This function close current notes dialog and save his textview buffer to
@@ -2934,10 +2944,12 @@ class Interface(Gtk.ApplicationWindow):
 
         Parameters
         ----------
-        dialog : Gtk.Dialog
+        widget : Gtk.Dialog
             Dialog object
         response : Gtk.ResponseType
             Dialog object user response
+        dialog : gem.windows.DialogEditor
+            Dialog editor object
         title : str
             Dialog title, it's game name by default
         path : str
@@ -2993,9 +3005,7 @@ class Interface(Gtk.ApplicationWindow):
                     dialog = DialogEditor(self, _("Edit %s configuration") % (
                         emulator.name), expanduser(path), size)
 
-                    response = dialog.run()
-
-                    if response == Gtk.ResponseType.APPLY:
+                    if dialog.run() == Gtk.ResponseType.APPLY:
                         with open(path, 'w') as pipe:
                             pipe.write(dialog.buffer_editor.get_text(
                                 dialog.buffer_editor.get_start_iter(),
@@ -4173,7 +4183,7 @@ class Interface(Gtk.ApplicationWindow):
 
             self.set_sensitive(True)
 
-            dialog.hide()
+            dialog.destroy()
 
 
     def __on_game_log(self, *args):
@@ -4264,7 +4274,7 @@ class Interface(Gtk.ApplicationWindow):
 
                 self.set_sensitive(True)
 
-                dialog.hide()
+                dialog.destroy()
 
 
     def __on_game_marked_as_favorite(self, *args):
@@ -4794,9 +4804,12 @@ class Interface(Gtk.ApplicationWindow):
                                     console = self.api.get_console(
                                         dialog.current)
 
-                                keep_console = dialog.switch.get_active()
+                                    keep_console = dialog.switch.get_active()
 
-                                previous_console = console
+                                    previous_console = console
+
+                                else:
+                                    console = None
 
                                 dialog.destroy()
 

@@ -89,7 +89,7 @@ class Manager(object):
     EMULATOR = 1
 
 
-class Preferences(object):
+class Preferences(CommonWindow):
 
     def __init__(self, api, parent=None):
         """ Constructor
@@ -119,8 +119,6 @@ class Preferences(object):
 
         # API instance
         self.api = api
-        # Transient window
-        self.interface = parent
 
         self.shortcuts = {
             _("Interface"): {
@@ -194,11 +192,13 @@ class Preferences(object):
         self.config = Configuration(
             expanduser(path_join(GEM.Config, "gem.conf")))
 
-        if self.interface is not None:
+        if parent is not None:
             # Get user icon theme
-            self.icons_theme = self.interface.icons_theme
+            self.icons_theme = parent.icons_theme
 
-            self.empty = self.interface.empty
+            self.empty = parent.empty
+
+            self.use_classic_theme = parent.use_classic_theme
 
         else:
             # Initialize GEM
@@ -220,8 +220,14 @@ class Preferences(object):
                     setattr(Icons.Symbolic, key, "%s-symbolic" % value)
 
             # Set light/dark theme
-            on_change_theme(
-                self.config.getboolean("gem", "dark_theme", fallback=False))
+            on_change_theme(self.config.getboolean(
+                "gem", "dark_theme", fallback=False))
+
+            self.use_classic_theme = self.config.getboolean(
+                "gem", "use_classic_theme", fallback=False)
+
+        CommonWindow.__init__(self, parent, _("Preferences"), Icons.Desktop,
+            self.use_classic_theme)
 
         # ------------------------------------
         #   Initialize logger
@@ -250,63 +256,21 @@ class Preferences(object):
         """ Initialize interface widgets
         """
 
-        # ------------------------------------
-        #   Main window
-        # ------------------------------------
+        self.set_resizable(True)
 
-        # Gtk.Window
-        if self.interface is None:
-            self.window = Gtk.Window()
+        self.set_spacing(6)
 
-            self.grid = Gtk.Box()
-
-            # Packing
-            self.window.add(self.grid)
-
-        # Gtk.Dialog
+        if self.use_classic_theme:
+            self.set_border_width(6)
         else:
-            self.window = Gtk.Dialog()
+            self.set_border_width(0)
 
-            self.grid = self.window.get_content_area()
-
-            # Properties
-            self.window.set_modal(True)
-            self.window.set_destroy_with_parent(True)
-
-            self.window.set_transient_for(self.interface)
-
-        # Properties
-        self.window.set_title(_("Preferences"))
-
-        self.window.set_default_icon_name(Icons.Desktop)
-
-        self.window.set_can_focus(True)
-        self.window.set_keep_above(True)
-
-        self.grid.set_border_width(0)
-        self.grid.set_orientation(Gtk.Orientation.VERTICAL)
-
-        try:
-            width, height = self.config.get(
-                "windows", "preferences", fallback="800x600").split('x')
-
-            self.window.set_default_size(int(width), int(height))
-            self.window.resize(int(width), int(height))
-
-        except ValueError as error:
-            self.logger.error(
-                _("Cannot resize preferences window: %s") % str(error))
-
-            self.window.set_default_size(800, 600)
-
-        self.window.set_position(Gtk.WindowPosition.CENTER)
-        self.window.set_type_hint(Gdk.WindowTypeHint.DIALOG)
+        self.set_subtitle(
+            "%s - %s (%s)" % (GEM.Name, GEM.Version, GEM.CodeName))
 
         # ------------------------------------
         #   Grids
         # ------------------------------------
-
-        self.grid_buttons = Gtk.ButtonBox()
 
         self.box_notebook_general = Gtk.Box()
         self.box_notebook_interface = Gtk.Box()
@@ -347,10 +311,6 @@ class Preferences(object):
         self.grid_emulators_buttons = Gtk.ButtonBox()
 
         # Properties
-        self.grid_buttons.set_spacing(8)
-        self.grid_buttons.set_border_width(8)
-        self.grid_buttons.set_layout(Gtk.ButtonBoxStyle.END)
-
         self.box_notebook_general.set_spacing(8)
         self.box_notebook_interface.set_spacing(8)
         self.box_notebook_shortcuts.set_spacing(8)
@@ -445,29 +405,6 @@ class Preferences(object):
         self.grid_emulators_buttons.set_spacing(-1)
         self.grid_emulators_buttons.set_halign(Gtk.Align.CENTER)
         self.grid_emulators_buttons.set_orientation(Gtk.Orientation.HORIZONTAL)
-
-        # ------------------------------------
-        #   Headerbar
-        # ------------------------------------
-
-        self.headerbar = Gtk.HeaderBar()
-
-        # Properties
-        self.headerbar.set_title(_("Preferences"))
-        self.headerbar.set_show_close_button(True)
-
-        if self.interface is None:
-            self.headerbar.set_subtitle(
-                "%s - %s (%s)" % (GEM.Name, GEM.Version, GEM.CodeName))
-
-        # ------------------------------------
-        #   Header
-        # ------------------------------------
-
-        self.image_header = Gtk.Image()
-
-        # Properties
-        self.image_header.set_from_icon_name(Icons.Desktop, Gtk.IconSize.DND)
 
         # ------------------------------------
         #   Notebook
@@ -1242,42 +1179,13 @@ class Preferences(object):
         self.button_emulators_remove.set_image(self.image_emulators_remove)
         self.button_emulators_remove.set_label(_("Remove"))
 
-        # ------------------------------------
-        #   Buttons
-        # ------------------------------------
-
-        self.image_cancel = Gtk.Image()
-        self.button_cancel = Gtk.Button()
-
-        self.image_save = Gtk.Image()
-        self.button_save = Gtk.Button()
-
-        # Properties
-        self.image_cancel.set_margin_right(4)
-        self.image_cancel.set_from_icon_name(
-            Icons.Stop, Gtk.IconSize.BUTTON)
-        self.button_cancel.set_image(self.image_cancel)
-        self.button_cancel.set_label(_("Cancel"))
-
-        self.image_save.set_margin_right(4)
-        self.image_save.set_from_icon_name(
-            Icons.Save, Gtk.IconSize.BUTTON)
-        self.button_save.set_image(self.image_save)
-        self.button_save.set_label(_("Save"))
-
 
     def __init_packing(self):
         """ Initialize widgets packing in main window
         """
 
-        self.window.set_titlebar(self.headerbar)
-
         # Main widgets
-        self.grid.pack_start(self.notebook, True, True, 0)
-        self.grid.pack_start(self.grid_buttons, False, False, 0)
-
-        # Headerbar
-        self.headerbar.pack_start(self.image_header)
+        self.pack_start(self.notebook, True, True)
 
         # Notebook
         self.box_notebook_general.pack_start(
@@ -1535,10 +1443,6 @@ class Preferences(object):
 
         self.scroll_emulators.add(self.view_emulators)
 
-        # Buttons
-        self.grid_buttons.pack_end(self.button_cancel, False, False, 0)
-        self.grid_buttons.pack_end(self.button_save, False, False, 0)
-
 
     def __init_signals(self):
         """ Initialize widgets signals
@@ -1609,19 +1513,19 @@ class Preferences(object):
         self.button_emulators_remove.connect(
             "clicked", self.__on_remove_item, Manager.EMULATOR)
 
-        # ------------------------------------
-        #   Buttons
-        # ------------------------------------
-
-        self.button_cancel.connect(
-            "clicked", self.__stop_interface)
-        self.button_save.connect(
-            "clicked", self.__stop_interface)
-
 
     def __start_interface(self):
         """ Load data and start interface
         """
+
+        self.button_cancel = self.add_button(
+            _("Close"), Gtk.ResponseType.CLOSE)
+
+        self.button_save = self.add_button(
+            _("Apply"), Gtk.ResponseType.APPLY, Gtk.Align.END)
+
+        self.button_cancel.connect("clicked", self.__stop_interface)
+        self.button_save.connect("clicked", self.__stop_interface)
 
         self.load_configuration()
 
@@ -1633,11 +1537,24 @@ class Preferences(object):
         """ Start interface
         """
 
+        try:
+            width, height = self.config.get(
+                "windows", "preferences", fallback="800x600").split('x')
+
+            self.window.set_default_size(int(width), int(height))
+            self.window.resize(int(width), int(height))
+
+        except ValueError as error:
+            self.logger.error(
+                _("Cannot resize preferences window: %s") % str(error))
+
+            self.window.set_default_size(800, 600)
+
         # Update widget sensitive status
         self.__on_check_sidebar()
         self.__on_check_native_viewer()
 
-        self.window.show_all()
+        self.show_all()
 
         self.box_notebook_general.show_all()
         self.box_notebook_interface.show_all()
@@ -1645,16 +1562,12 @@ class Preferences(object):
         self.box_notebook_consoles.show_all()
         self.box_notebook_emulators.show_all()
 
-        if self.interface is None:
-            Gtk.main()
+        # Avoid to remove console or emulator when games are launched
+        if self.parent is not None and len(self.parent.threads) > 0:
+            self.button_consoles_remove.set_sensitive(False)
+            self.button_emulators_remove.set_sensitive(False)
 
-        else:
-            # Avoid to remove console or emulator when games are launched
-            if len(self.interface.threads) > 0:
-                self.button_consoles_remove.set_sensitive(False)
-                self.button_emulators_remove.set_sensitive(False)
-
-            self.window.run()
+        self.run()
 
 
     def __stop_interface(self, widget=None, event=None):
@@ -1745,22 +1658,19 @@ class Preferences(object):
 
             self.config.update()
 
-            if self.interface is not None:
+            if self.parent is not None:
                 self.logger.debug("Main interface need to be reload")
-                self.interface.load_interface()
+                self.parent.load_interface()
 
         self.window.hide()
 
-        self.config.modify(
-            "windows", "preferences", "%dx%d" % self.window.get_size())
+        self.config.modify("windows", "preferences", "%dx%d" % self.get_size())
         self.config.update()
 
-        if self.interface is None:
-            Gtk.main_quit()
-
-        else:
+        if self.parent is not None:
             self.window.response(Gtk.ResponseType.CANCEL)
-            self.window.destroy()
+
+        self.destroy()
 
 
     def load_configuration(self):
@@ -2204,7 +2114,7 @@ class Preferences(object):
                 data = self.api.get_emulator(identifier)
 
         if data is not None:
-            dialog = Question(self.window, data.name,
+            dialog = Question(self, data.name,
                 _("Would you really want to remove this entry ?"))
 
             if dialog.run() == Gtk.ResponseType.YES:
@@ -2226,7 +2136,7 @@ class Preferences(object):
                 self.on_load_emulators()
 
 
-class PreferencesConsole(Dialog):
+class PreferencesConsole(CommonWindow):
 
     def __init__(self, parent, console, modify):
         """ Constructor
@@ -2241,7 +2151,8 @@ class PreferencesConsole(Dialog):
             Use edit mode instead of append mode
         """
 
-        Dialog.__init__(self, parent.window, _("Console"), Icons.Gaming)
+        CommonWindow.__init__(self, parent, _("Console"), Icons.Gaming,
+            parent.use_classic_theme)
 
         # ------------------------------------
         #   Initialize variables
@@ -2314,50 +2225,23 @@ class PreferencesConsole(Dialog):
         """ Initialize interface widgets
         """
 
-        # ------------------------------------
-        #   Main window
-        # ------------------------------------
-
-        # Properties
-        self.set_transient_for(self.interface.window)
-
         self.set_size(640, -1)
+
         self.set_resizable(True)
-
-        self.add_buttons(
-            Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-            Gtk.STOCK_APPLY, Gtk.ResponseType.APPLY)
-
-        self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
-
-        self.set_help(self.interface.window, self.help_data)
-
-        # ------------------------------------
-        #   Main scrolling
-        # ------------------------------------
-
-        self.scroll = Gtk.ScrolledWindow()
-
-        self.viewport = Gtk.Viewport()
-
-        # Properties
-        self.scroll.add(self.viewport)
-
-        self.scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER)
 
         # ------------------------------------
         #   Grids
         # ------------------------------------
 
-        self.grid = Gtk.Grid()
+        self.grid_preferences = Gtk.Grid()
 
         self.grid_ignores = Gtk.Box()
         self.grid_ignores_buttons = Gtk.Box()
 
         # Properties
-        self.grid.set_row_spacing(6)
-        self.grid.set_column_spacing(12)
-        self.grid.set_column_homogeneous(False)
+        self.grid_preferences.set_row_spacing(6)
+        self.grid_preferences.set_column_spacing(12)
+        self.grid_preferences.set_column_homogeneous(False)
 
         self.grid_ignores.set_spacing(12)
         self.grid_ignores.set_homogeneous(False)
@@ -2511,6 +2395,7 @@ class PreferencesConsole(Dialog):
         self.image_ignores_remove.set_from_icon_name(
             Icons.Symbolic.Remove, Gtk.IconSize.BUTTON)
 
+        self.treeview_ignores.set_vexpand(True)
         self.treeview_ignores.set_model(self.model_ignores)
         self.treeview_ignores.set_headers_visible(False)
         self.treeview_ignores.set_grid_lines(Gtk.TreeViewGridLines.HORIZONTAL)
@@ -2518,7 +2403,7 @@ class PreferencesConsole(Dialog):
         self.column_ignores.pack_start(self.cell_ignores, True)
         self.column_ignores.add_attribute(self.cell_ignores, "text", 0)
 
-        self.cell_ignores.set_padding(4, 2)
+        self.cell_ignores.set_padding(12, 6)
         self.cell_ignores.set_property("editable", True)
         self.cell_ignores.set_property("placeholder_text",
             _("Write your regex here..."))
@@ -2530,32 +2415,30 @@ class PreferencesConsole(Dialog):
         """
 
         # Main widgets
-        self.dialog_box.pack_start(self.scroll, True, True, 0)
-
-        self.viewport.add(self.grid)
+        self.pack_start(self.grid_preferences, True, True)
 
         # Console grid
-        self.grid.attach(self.label_name, 0, 0, 1, 1)
-        self.grid.attach(self.entry_name, 1, 0, 1, 1)
+        self.grid_preferences.attach(self.label_name, 0, 0, 1, 1)
+        self.grid_preferences.attach(self.entry_name, 1, 0, 1, 1)
 
-        self.grid.attach(self.label_folder, 0, 1, 1, 1)
-        self.grid.attach(self.file_folder, 1, 1, 1, 1)
+        self.grid_preferences.attach(self.label_folder, 0, 1, 1, 1)
+        self.grid_preferences.attach(self.file_folder, 1, 1, 1, 1)
 
-        self.grid.attach(self.button_console, 2, 0, 1, 2)
+        self.grid_preferences.attach(self.button_console, 2, 0, 1, 2)
 
-        self.grid.attach(self.label_recursive, 0, 2, 1, 1)
-        self.grid.attach(self.switch_recursive, 1, 2, 2, 1)
+        self.grid_preferences.attach(self.label_recursive, 0, 2, 1, 1)
+        self.grid_preferences.attach(self.switch_recursive, 1, 2, 2, 1)
 
-        self.grid.attach(self.label_emulator, 0, 3, 3, 1)
+        self.grid_preferences.attach(self.label_emulator, 0, 3, 3, 1)
 
-        self.grid.attach(self.label_default, 0, 4, 1, 1)
-        self.grid.attach(self.combo_emulators, 1, 4, 2, 1)
+        self.grid_preferences.attach(self.label_default, 0, 4, 1, 1)
+        self.grid_preferences.attach(self.combo_emulators, 1, 4, 2, 1)
 
-        self.grid.attach(self.label_extensions, 0, 5, 1, 1)
-        self.grid.attach(self.entry_extensions, 1, 5, 2, 1)
+        self.grid_preferences.attach(self.label_extensions, 0, 5, 1, 1)
+        self.grid_preferences.attach(self.entry_extensions, 1, 5, 2, 1)
 
-        self.grid.attach(self.label_ignores, 0, 6, 3, 1)
-        self.grid.attach(self.grid_ignores, 0, 7, 3, 1)
+        self.grid_preferences.attach(self.label_ignores, 0, 6, 3, 1)
+        self.grid_preferences.attach(self.grid_ignores, 0, 7, 3, 1)
 
         # Console options
         self.button_console.set_image(self.image_console)
@@ -2603,6 +2486,13 @@ class PreferencesConsole(Dialog):
     def __start_interface(self):
         """ Load data and start interface
         """
+
+        self.add_button(_("Close"), Gtk.ResponseType.CLOSE)
+        self.add_button(_("Apply"), Gtk.ResponseType.APPLY, Gtk.Align.END)
+
+        self.add_help(self.help_data)
+
+        self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
 
         emulators_rows = dict()
 
@@ -2658,12 +2548,6 @@ class PreferencesConsole(Dialog):
         # ------------------------------------
 
         need_reload = False
-
-        self.show_all()
-
-        # Restore scrollbars when the dialog was resized to optimal size
-        self.scroll.set_policy(
-            Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
 
         response = self.run()
 
@@ -2853,7 +2737,7 @@ class PreferencesConsole(Dialog):
         self.set_response_sensitive(Gtk.ResponseType.APPLY, status)
 
 
-class PreferencesEmulator(Dialog):
+class PreferencesEmulator(CommonWindow):
 
     def __init__(self, parent, emulator, modify):
         """ Constructor
@@ -2868,7 +2752,8 @@ class PreferencesEmulator(Dialog):
             Use edit mode instead of append mode
         """
 
-        Dialog.__init__(self, parent.window, _("Emulator"), Icons.Desktop)
+        CommonWindow.__init__(self, parent, _("Emulator"), Icons.Desktop,
+            parent.use_classic_theme)
 
         # ------------------------------------
         #   Initialize variables
@@ -2931,49 +2816,22 @@ class PreferencesEmulator(Dialog):
         """ Initialize interface widgets
         """
 
-        # ------------------------------------
-        #   Main window
-        # ------------------------------------
-
-        # Properties
-        self.set_transient_for(self.interface.window)
-
         self.set_size(640, -1)
+
         self.set_resizable(True)
-
-        self.add_buttons(
-            Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-            Gtk.STOCK_APPLY, Gtk.ResponseType.APPLY)
-
-        self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
-
-        self.set_help(self.interface.window, self.help_data)
-
-        # ------------------------------------
-        #   Main scrolling
-        # ------------------------------------
-
-        self.scroll = Gtk.ScrolledWindow()
-
-        self.viewport = Gtk.Viewport()
-
-        # Properties
-        self.scroll.add(self.viewport)
-
-        self.scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER)
 
         # ------------------------------------
         #   Grids
         # ------------------------------------
 
-        self.grid = Gtk.Grid()
+        self.grid_preferences = Gtk.Grid()
 
         self.grid_binary = Gtk.Box()
 
         # Properties
-        self.grid.set_row_spacing(6)
-        self.grid.set_column_spacing(12)
-        self.grid.set_column_homogeneous(False)
+        self.grid_preferences.set_row_spacing(6)
+        self.grid_preferences.set_column_spacing(12)
+        self.grid_preferences.set_column_homogeneous(False)
 
         Gtk.StyleContext.add_class(
             self.grid_binary.get_style_context(), "linked")
@@ -3164,40 +3022,38 @@ class PreferencesEmulator(Dialog):
         """
 
         # Main widgets
-        self.dialog_box.pack_start(self.scroll, True, True, 0)
-
-        self.viewport.add(self.grid)
+        self.pack_start(self.grid_preferences, True, True)
 
         # Emulator grid
-        self.grid.attach(self.label_name, 0, 0, 1, 1)
-        self.grid.attach(self.entry_name, 1, 0, 1, 1)
+        self.grid_preferences.attach(self.label_name, 0, 0, 1, 1)
+        self.grid_preferences.attach(self.entry_name, 1, 0, 1, 1)
 
-        self.grid.attach(self.label_binary, 0, 1, 1, 1)
-        self.grid.attach(self.grid_binary, 1, 1, 1, 1)
+        self.grid_preferences.attach(self.label_binary, 0, 1, 1, 1)
+        self.grid_preferences.attach(self.grid_binary, 1, 1, 1, 1)
 
-        self.grid.attach(self.button_emulator, 2, 0, 1, 2)
+        self.grid_preferences.attach(self.button_emulator, 2, 0, 1, 2)
 
-        self.grid.attach(self.label_configuration, 0, 2, 1, 1)
-        self.grid.attach(self.file_configuration, 1, 2, 2, 1)
+        self.grid_preferences.attach(self.label_configuration, 0, 2, 1, 1)
+        self.grid_preferences.attach(self.file_configuration, 1, 2, 2, 1)
 
-        self.grid.attach(self.label_arguments, 0, 4, 3, 1)
+        self.grid_preferences.attach(self.label_arguments, 0, 4, 3, 1)
 
-        self.grid.attach(self.label_launch, 0, 5, 1, 1)
-        self.grid.attach(self.entry_launch, 1, 5, 2, 1)
+        self.grid_preferences.attach(self.label_launch, 0, 5, 1, 1)
+        self.grid_preferences.attach(self.entry_launch, 1, 5, 2, 1)
 
-        self.grid.attach(self.label_windowed, 0, 6, 1, 1)
-        self.grid.attach(self.entry_windowed, 1, 6, 2, 1)
-        self.grid.attach(self.label_fullscreen, 0, 7, 1, 1)
-        self.grid.attach(self.entry_fullscreen, 1, 7, 2, 1)
+        self.grid_preferences.attach(self.label_windowed, 0, 6, 1, 1)
+        self.grid_preferences.attach(self.entry_windowed, 1, 6, 2, 1)
+        self.grid_preferences.attach(self.label_fullscreen, 0, 7, 1, 1)
+        self.grid_preferences.attach(self.entry_fullscreen, 1, 7, 2, 1)
 
-        self.grid.attach(self.label_files, 0, 8, 3, 1)
+        self.grid_preferences.attach(self.label_files, 0, 8, 3, 1)
 
-        self.grid.attach(self.label_save, 0, 9, 1, 1)
-        self.grid.attach(self.entry_save, 1, 9, 2, 1)
-        self.grid.attach(self.label_screenshots, 0, 10, 1, 1)
-        self.grid.attach(self.entry_screenshots, 1, 10, 2, 1)
+        self.grid_preferences.attach(self.label_save, 0, 9, 1, 1)
+        self.grid_preferences.attach(self.entry_save, 1, 9, 2, 1)
+        self.grid_preferences.attach(self.label_screenshots, 0, 10, 1, 1)
+        self.grid_preferences.attach(self.entry_screenshots, 1, 10, 2, 1)
 
-        self.grid.attach(self.label_joker, 0, 11, 3, 1)
+        self.grid_preferences.attach(self.label_joker, 0, 11, 3, 1)
 
         # Emulator options
         self.button_binary.set_image(self.image_binary)
@@ -3233,6 +3089,13 @@ class PreferencesEmulator(Dialog):
     def __start_interface(self):
         """ Load data and start interface
         """
+
+        self.add_button(_("Close"), Gtk.ResponseType.CLOSE)
+        self.add_button(_("Apply"), Gtk.ResponseType.APPLY, Gtk.Align.END)
+
+        self.add_help(self.help_data)
+
+        self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
 
         # ------------------------------------
         #   Init data
@@ -3275,12 +3138,6 @@ class PreferencesEmulator(Dialog):
         # ------------------------------------
 
         need_reload = False
-
-        self.show_all()
-
-        # Restore scrollbars when the dialog was resized to optimal size
-        self.scroll.set_policy(
-            Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
 
         response = self.run()
 
@@ -3453,10 +3310,11 @@ class PreferencesEmulator(Dialog):
             Object which receive signal
         """
 
-        dialog = Gtk.FileChooserDialog(_("Select a binary"), self,
-            Gtk.FileChooserAction.OPEN,
+        dialog = Gtk.FileChooserDialog(_("Select a binary"),
+            self.interface.window, Gtk.FileChooserAction.OPEN,
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-             Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
+            Gtk.STOCK_OPEN, Gtk.ResponseType.OK),
+            use_header_bar=not self.use_classic_theme)
 
         if dialog.run() == Gtk.ResponseType.OK:
             self.entry_binary.set_text(dialog.get_filename())
@@ -3479,7 +3337,7 @@ class PreferencesEmulator(Dialog):
         dialog.destroy()
 
 
-class IconViewer(Dialog):
+class IconViewer(CommonWindow):
 
     def __init__(self, parent, title, path, folder):
         """ Constructor
@@ -3496,7 +3354,8 @@ class IconViewer(Dialog):
             Icons folder
         """
 
-        Dialog.__init__(self, parent, title, Icons.Image)
+        CommonWindow.__init__(self, parent, title, Icons.Image,
+            parent.use_classic_theme)
 
         # ------------------------------------
         #   Variables
@@ -3531,59 +3390,23 @@ class IconViewer(Dialog):
         """ Initialize interface widgets
         """
 
-        # ------------------------------------
-        #   Interface
-        # ------------------------------------
-
         self.set_size(800, 600)
 
-        self.add_buttons(
-            Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-            Gtk.STOCK_OK, Gtk.ResponseType.OK)
-
-        self.dialog_box.set_border_width(18)
+        self.set_spacing(6)
+        self.set_border_width(6)
 
         # ------------------------------------
         #   Grid
         # ------------------------------------
 
-        scrollview = Gtk.ScrolledWindow()
-        view = Gtk.Viewport()
-
-        box = Gtk.Grid()
-        box_switch = Gtk.Box()
+        self.stack = Gtk.Stack()
+        self.stack_switcher = Gtk.StackSwitcher()
 
         # Properties
-        scrollview.set_border_width(0)
-        scrollview.set_policy(
-            Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
-        view.set_shadow_type(Gtk.ShadowType.NONE)
+        self.stack.set_transition_type(Gtk.StackTransitionType.NONE)
 
-        box.set_row_spacing(6)
-        box.set_column_spacing(12)
-        box.set_column_homogeneous(False)
-
-        box_switch.set_spacing(0)
-
-        # ------------------------------------
-        #   Option
-        # ------------------------------------
-
-        label_option = Gtk.Label()
-
-        self.model_option = Gtk.ListStore(str)
-        self.combo_option = Gtk.ComboBox()
-
-        cell_option = Gtk.CellRendererText()
-
-        # Properties
-        label_option.set_alignment(1, .5)
-        label_option.set_label(_("Select icon from"))
-
-        self.combo_option.set_model(self.model_option)
-        self.combo_option.set_id_column(0)
-        self.combo_option.pack_start(cell_option, True)
-        self.combo_option.add_attribute(cell_option, "text", 0)
+        self.stack_switcher.set_stack(self.stack)
+        self.stack_switcher.set_halign(Gtk.Align.CENTER)
 
         # ------------------------------------
         #   Custom
@@ -3591,7 +3414,7 @@ class IconViewer(Dialog):
 
         self.frame_icons = Gtk.Frame()
 
-        self.file_icons = Gtk.FileChooserWidget()
+        self.file_icons = Gtk.FileChooserWidget.new(Gtk.FileChooserAction.OPEN)
 
         # Properties
         self.frame_icons.set_shadow_type(Gtk.ShadowType.OUT)
@@ -3628,71 +3451,62 @@ class IconViewer(Dialog):
         #   Add widgets into interface
         # ------------------------------------
 
-        self.dialog_box.pack_start(scrollview, True, True, 0)
+        self.stack.add_titled(self.scroll_icons, "library", _("Library"))
 
-        scrollview.add(view)
-        view.add(box)
+        self.scroll_icons.add(self.view_icons)
 
-        box.attach(label_option, 0, 0, 1, 1)
-        box.attach(self.combo_option, 1, 0, 1, 1)
-        box.attach(box_switch, 0, 1, 2, 1)
-
-        box_switch.pack_start(self.frame_icons, True, True, 0)
-        box_switch.pack_start(self.scroll_icons, True, True, 0)
+        self.stack.add_titled(self.frame_icons, "file", _("File"))
 
         self.frame_icons.add(self.file_icons)
-        self.scroll_icons.add(self.view_icons)
+
+        self.pack_start(self.stack_switcher, False, False)
+        self.pack_start(self.stack, True, True)
 
 
     def __init_signals(self):
         """ Initialize widgets signals
         """
 
-        self.combo_option.connect("changed", self.set_widgets_sensitive)
+        self.file_icons.connect("file-activated", self.__on_selected_icon)
 
-        self.view_icons.connect("item_activated", self.__on_selected_icon)
+        self.view_icons.connect("item-activated", self.__on_selected_icon)
 
 
     def __start_interface(self):
         """ Load data and start interface
         """
 
+        self.add_button(_("Close"), Gtk.ResponseType.CLOSE)
+        self.add_button(_("Apply"), Gtk.ResponseType.APPLY, Gtk.Align.END)
+
         self.load_interface()
-
-        self.show_all()
-
-        self.set_widgets_sensitive()
 
         response = self.run()
 
-        if response == Gtk.ResponseType.OK:
+        if response == Gtk.ResponseType.APPLY:
             self.save_interface()
 
 
-    def __on_selected_icon(self, widget, path):
+    def __on_selected_icon(self, widget, path=None):
         """ Select an icon in treeview
 
         Parameters
         ----------
         widget : Gtk.Widget
             Object which receive signal
+
+        Others Parameters
+        -----------------
         path : Gtk.TreePath
             Path to be activated
         """
 
-        self.response(Gtk.ResponseType.OK)
+        self.emit_response(None, Gtk.ResponseType.APPLY)
 
 
     def load_interface(self):
         """ Insert data into interface's widgets
         """
-
-        # Fill options combobox
-        self.model_option.append([_("All icons")])
-        self.model_option.append([_("Image file")])
-
-        self.frame_icons.set_visible(False)
-        self.scroll_icons.set_visible(True)
 
         self.icons_data = dict()
 
@@ -3715,22 +3529,18 @@ class IconViewer(Dialog):
                 self.view_icons.select_path(
                     self.model_icons.get_path(self.icons_data[self.path]))
 
-                self.combo_option.set_active_id(_("All icons"))
-
             else:
+                self.frame_icons.show()
+                self.stack.set_visible_child(self.frame_icons)
+
                 self.file_icons.set_filename(self.path)
-
-                self.combo_option.set_active_id(_("Image file"))
-
-        else:
-            self.combo_option.set_active_id(_("All icons"))
 
 
     def save_interface(self):
         """ Return all the data from interface
         """
 
-        if self.combo_option.get_active_id() == _("All icons"):
+        if self.stack.get_visible_child_name() == "library":
             selection = self.view_icons.get_selected_items()[0]
 
             path = self.model_icons.get_value(
@@ -3741,24 +3551,3 @@ class IconViewer(Dialog):
 
         if not path == self.path:
             self.new_path = path
-
-
-    def set_widgets_sensitive(self, widget=None):
-        """ Change sensitive state between radio children
-
-        Others Parameters
-        -----------------
-        widget : Gtk.Widget
-            Object which receive signal (Default: None)
-        """
-
-        if self.combo_option.get_active_id() == _("All icons"):
-            self.frame_icons.set_visible(False)
-            self.scroll_icons.set_visible(True)
-
-        else:
-            self.frame_icons.set_visible(True)
-            self.scroll_icons.set_visible(False)
-
-            # Avoid to lost the current icon when switch between the two mode
-            self.file_icons.set_filename(self.path)

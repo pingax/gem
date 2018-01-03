@@ -202,7 +202,7 @@ def main():
                 gem.logger.critical(_("Cannot launch GEM without display"))
 
     except ImportError as error:
-        gem.logger.critical(_("Cannot import modules: %s") % str(error))
+        gem.logger.exception(_("Cannot import modules: %s") % str(error))
         return True
 
     except KeyboardInterrupt as error:
@@ -210,7 +210,7 @@ def main():
         return True
 
     except Exception as error:
-        gem.logger.critical(_("An error occur during exec: %s") % str(error))
+        gem.logger.exception(_("An error occur during exec: %s") % str(error))
         return True
 
     return False

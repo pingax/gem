@@ -146,7 +146,8 @@ class GEM(object):
         # Data list
         self.__data = dict(
             consoles=list(),
-            emulators=list()
+            emulators=list(),
+            environment=list()
         )
 
         # Rename list
@@ -244,15 +245,15 @@ class GEM(object):
                 self.__need_migration = False
 
         except OSError as error:
-            self.logger.critical("Cannot access to database: %s" % str(error))
+            self.logger.exception("Cannot access to database: %s" % str(error))
             sys_exit(error)
 
         except ValueError as error:
-            self.logger.critical("A wrong value occur: %s" % str(error))
+            self.logger.exception("A wrong value occur: %s" % str(error))
             sys_exit(error)
 
         except Exception as error:
-            self.logger.critical("An error occur: %s" % str(error))
+            self.logger.exception("An error occur: %s" % str(error))
             sys_exit(error)
 
 
@@ -386,7 +387,7 @@ class GEM(object):
                     makedirs(roms_path)
 
                 except Exception as error:
-                    self.logger.error("Cannot create %s folder" % roms_path)
+                    self.logger.exception("Cannot create %s folder" % roms_path)
 
             # Check if roms_path exists and is a directory
             if exists(roms_path) and isdir(roms_path):
@@ -520,7 +521,7 @@ class GEM(object):
                 self.__need_migration = False
 
             except Exception as error:
-                self.logger.error(
+                self.logger.exception(
                     "An error occurs during migration: %s" % str(error))
 
                 self.logger.info("Restore database backup")
@@ -584,7 +585,7 @@ class GEM(object):
                 config.update()
 
         except Exception as error:
-            self.logger.critical("Cannot write configuration: %s" % str(error))
+            self.logger.exception("Cannot write configuration: %s" % str(error))
 
             return False
 
@@ -605,7 +606,7 @@ class GEM(object):
                         previous, emulator.id))
 
         except Exception as error:
-            self.logger.critical("Cannot write database: %s" % str(error))
+            self.logger.exception("Cannot write database: %s" % str(error))
 
             return False
 

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.6\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2017-10-24 21:16+0200\n"
+"PO-Revision-Date: 2018-01-03 17:16+0100\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -147,13 +147,6 @@ msgid "Add"
 msgstr "Ajouter"
 
 #
-# File: gem/preferences.py, line: 1660
-# File: gem/preferences.py, line: 1695
-# File: gem/preferences.py, line: 1713
-msgid "All icons"
-msgstr "Toutes les icônes"
-
-#
 # File: gem/interface.py, line: 290
 msgid "Alternate game fullscreen mode"
 msgstr "Alterner le mode plein écran pour le jeu"
@@ -175,6 +168,12 @@ msgid "An error occur during generation, consult log for futher details."
 msgstr ""
 "Une erreur est survenu durant la génération, consultez le journal pour plus "
 "de détails."
+
+#
+# File: gem/interface.py, line: 2044
+#, python-format
+msgid "An exception error occur: %s"
+msgstr "Une exception est survenue: %s"
 
 #
 # File: gem/gtk/windows.py, line: 860
@@ -203,6 +202,12 @@ msgid "Backup Memory Type"
 msgstr "Type de mémoire de secours"
 
 #
+# File: gem/gtk/windows.py, line: 2031
+msgid "Be careful, this option cannot be undo during the process."
+msgstr ""
+"Faites attention, cette option ne peut pas être annulée pendant la procédure."
+
+#
 # File: gem/preferences.py, line: 142
 msgid "Behavior"
 msgstr "Comportement"
@@ -222,6 +227,11 @@ msgstr "Les deux"
 # File: gem/gtk/preferences.py, line: 174
 msgid "Bottom"
 msgstr "En bas"
+
+#
+# File: gem/gtk/preferences.py, line: 180
+msgid "Button"
+msgstr "Comme les boutons"
 
 #
 # File: gem/preferences.py, line: 849
@@ -378,6 +388,21 @@ msgid "Destination %s not exist. Canceling operation."
 msgstr "La destination %s n'existe pas. Annulation de l'opération."
 
 #
+# File: gem/gtk/preferences.py, line: 182
+msgid "Dialog"
+msgstr "Comme les boîtes de dialogue"
+
+#
+# File: gem/gtk/windows.py, line: 1885
+msgid "Drag & Drop"
+msgstr "Glisser-déposer"
+
+#
+# File: gem/gtk/preferences.py, line: 181
+msgid "Drag and Drop"
+msgstr "Comme les icônes de glisser-déposer"
+
+#
 # File: gem/interface.py, line: 2017
 #, python-format
 msgid "Drop %(rom)s to %(path)s"
@@ -432,6 +457,11 @@ msgid "Emulators"
 msgstr "Émulateurs"
 
 #
+# File: gem/gtk/windows.py, line: 1057
+msgid "Environment"
+msgstr "Environnement"
+
+#
 # File: gem/preferences.py, line: 938
 msgid "Extensions"
 msgstr "Extensions"
@@ -457,14 +487,19 @@ msgid "Favorite"
 msgstr "Favoris"
 
 #
+# File: gem/gtk/preferences.py, line: 3458
+msgid "File"
+msgstr "Fichier"
+
+#
 # File: gem/gtk/preferences.py, line: 2588
 msgid "Files patterns"
 msgstr "Motifs des fichiers"
 
 #
 # File: src/window.py, line: 306
-msgid "Filter"
-msgstr "Filtres"
+msgid "Filter..."
+msgstr "Filtres..."
 
 #
 # File: src/window.py, line: 306
@@ -549,6 +584,11 @@ msgid "Generate menu entry for %s"
 msgstr "Générer une entrée de menu pour %s"
 
 #
+# File: gem/gtk/widgets.py, line: 212
+msgid "Get some help about this dialog"
+msgstr "Obtenir de l'aide à propos de cette fenêtre"
+
+#
 # File: gem/windows.py, line: 238
 msgid "Help"
 msgstr "Aide"
@@ -562,11 +602,6 @@ msgstr "Cacher les consoles vides"
 # File: gem/preferences.py, line: 98
 msgid "Horizontal"
 msgstr "Horizontales"
-
-#
-# File: gem/preferences.py, line: 1255
-msgid "Image file"
-msgstr "Fichier image"
 
 #
 # File: gem/interface.py, line: 1411
@@ -592,6 +627,16 @@ msgid ""
 msgstr ""
 "Il est possible de cacher des fichiers spécifiques de la liste de jeux à "
 "l'aide d'expressions régulières."
+
+#
+# File: gem/gtk/windows.py, line: 2023
+msgid "Keep this selection for every games in queue"
+msgstr "Conserver cette sélection pour chaque jeux de la file d'attente"
+
+#
+# File: gem/gtk/preferences.py, line: 179
+msgid "Large Toolbar"
+msgstr "Grandes icônes"
 
 #
 # File: src/window.py, line: 380
@@ -630,9 +675,9 @@ msgid "Launch selected game"
 msgstr "Lancer le jeu sélectionné"
 
 #
-# File: gem/gtk/windows.py, line: 676
-msgid "Load file..."
-msgstr "Chargement du fichier..."
+# File: gem/gtk/preferences.py, line: 3454
+msgid "Library"
+msgstr "Bibliothèque"
 
 #
 # File: gem/interface.py, line: 1505
@@ -646,6 +691,11 @@ msgid "Mark a game as favorite"
 msgstr "Marquer un jeu comme favori"
 
 #
+# File: src/window.py, line: 436
+msgid "Mark a game as finish"
+msgstr "Marquer un jeu comme terminé"
+
+#
 # File: gem/interface.py, line: 251
 # File: gem/interface.py, line: 550
 msgid "Mark a game as multiplayer"
@@ -657,6 +707,11 @@ msgid "Mark as _favorite"
 msgstr "Marquer comme _favori"
 
 #
+# File: src/window.py, line: 436
+msgid "Mark as _finish"
+msgstr "Marquer comme _terminé"
+
+#
 # File: gem/interface.py, line: 251
 # File: gem/interface.py, line: 550
 msgid "Mark as _multiplayer"
@@ -666,6 +721,11 @@ msgstr "Marquer comme _multi-joueurs"
 # File: gem/gtk/mednafen.py, line: 186
 msgid "Mednafen GBA documentation"
 msgstr "Documentation de Mednafen pour la GBA"
+
+#
+# File: gem/gtk/preferences.py, line: 177
+msgid "Menu"
+msgstr "Comme les entrées de menu"
 
 #
 # File: src/window.py, line: 446
@@ -812,6 +872,16 @@ msgid "Randomize game screenshot in sidebar"
 msgstr "Afficher une capture d'écran du jeu de manière aléatoire"
 
 #
+# File: gem/gtk/preferences.py, line: 2294
+msgid "Recursive"
+msgstr "Récursive"
+
+#
+# File: gem/interface.py, line: 220
+msgid "Refresh games list"
+msgstr "Recharger la liste de jeux"
+
+#
 # File: gem/preferences.py, line: 1233
 msgid "Regular expressions for ignored files"
 msgstr "Expressions régulières pour les fichiers ignorés"
@@ -902,11 +972,6 @@ msgstr "Recherche"
 # File: gem/preferences.py, line: 1577
 msgid "Select a binary"
 msgstr "Choisir un binaire"
-
-#
-# File: gem/preferences.py, line: 1577
-msgid "Select icon from"
-msgstr "Choisir l'icône depuis"
 
 #
 # File: gem/interface.py, line: 336
@@ -1009,6 +1074,11 @@ msgid "Singleplayer"
 msgstr "Solo"
 
 #
+# File: gem/gtk/preferences.py, line: 178
+msgid "Small Toolbar"
+msgstr "Petites icônes"
+
+#
 # File: src/window.py, line: 441
 msgid "Snapshots"
 msgstr "Captures d'écran"
@@ -1018,6 +1088,22 @@ msgstr "Captures d'écran"
 # File: gem/gtk/interface.py, line: 1010
 msgid "Specify a _memory type"
 msgstr "Spécifier un type de mémoire"
+
+#
+# File: gem/gtk/windows.py, line: 1052
+msgid "Statistic"
+msgstr "Statistique"
+
+#
+# File: gem/gtk/interface.py, line: 3661
+# File: gem/gtk/interface.py, line: 3663
+msgid "Stop"
+msgstr "Arrêter"
+
+#
+# File: src/window.py, line: 279
+msgid "Stop selected game"
+msgstr "Arrêter le jeu sélectionné"
 
 #
 # File: gem/gtk/preferences.py, line: 477
@@ -1044,6 +1130,15 @@ msgstr "Les étiquettes sont séparées par des espaces."
 # File: gem/interface.py, line: 1501
 msgid "Terminate by keyboard interrupt"
 msgstr "Arrêt par interruption du clavier"
+
+#
+# File: gem/gtk/windows.py, line: 1954
+msgid ""
+"The following game can be installed on multiple consoles. Select the console "
+"where to install this game:"
+msgstr ""
+"Le jeu suivant peut être installé sur plusieurs consoles. Sélectionnez la "
+"console sur laquelle installer ce jeu:"
 
 #
 # File: gem/ui/interface.glade, line: 960
@@ -1084,15 +1179,6 @@ msgid "This emulator already exist, please, choose another name"
 msgstr "Cet émulateur existe déjà, veuillez choisir un autre nom"
 
 #
-# File: gem/windows.py, line: 952
-msgid ""
-"This extension is available in multiple consoles. Which one GEM must use to "
-"move this file ?"
-msgstr ""
-"Cette extension est disponible pour plusieurs consoles. Laquelle GEM doit "
-"utiliser pour ce fichier ?"
-
-#
 # File: gem/interface.py, line: 1882
 msgid "This game was removed successfully"
 msgstr "Ce jeu à été supprimé avec succès"
@@ -1125,6 +1211,21 @@ msgstr ""
 # File: src/window.py, line: 1066
 msgid "Today"
 msgstr "Aujourd'hui"
+
+#
+# File: gem/interface.py, line: 475
+msgid "Toolbar"
+msgstr "Barre d'outils"
+
+#
+# File: gem/gtk/preferences.py, line: 725
+msgid "Toolbar icons size"
+msgstr "Taille des icônes de la barre d'outils"
+
+#
+# File: src/window.py, line: 375
+msgid "Total play time"
+msgstr "Temps de jeu total"
 
 #
 # File: gem/gtk/interface.py, line: 793
@@ -1383,6 +1484,13 @@ msgstr "Lubert Aurélien (PacMiam)"
 #~ msgstr "%s est déjà dans le dossier des roms. Annulation de l'opération."
 
 #
+# File: gem/preferences.py, line: 1660
+# File: gem/preferences.py, line: 1695
+# File: gem/preferences.py, line: 1713
+#~ msgid "All icons"
+#~ msgstr "Toutes les icônes"
+
+#
 # File: gem/preferences.py, line: 292
 #~ msgid "Alternative viewer"
 #~ msgstr "Visualiseur d'images alternatif"
@@ -1408,6 +1516,16 @@ msgstr "Lubert Aurélien (PacMiam)"
 #~ msgstr "Fichiers des jeux à ignorer"
 
 #
+# File: gem/preferences.py, line: 1255
+#~ msgid "Image file"
+#~ msgstr "Fichier image"
+
+#
+# File: gem/gtk/windows.py, line: 676
+#~ msgid "Load file..."
+#~ msgstr "Chargement du fichier..."
+
+#
 # File: gem/preferences.py, line: 263
 #~ msgid "Load the last chosen console when start GEM"
 #~ msgstr "Charger la dernière console choisie lors du démarrage de GEM"
@@ -1426,6 +1544,11 @@ msgstr "Lubert Aurélien (PacMiam)"
 # File: gem/gtk/mednafen.py, line: 301
 #~ msgid "Remove a memory type"
 #~ msgstr "Supprimer un type de mémoire"
+
+#
+# File: gem/preferences.py, line: 1577
+#~ msgid "Select icon from"
+#~ msgstr "Choisir l'icône depuis"
 
 #
 # File: gem/interface.py, line: 1286
@@ -1477,6 +1600,15 @@ msgstr "Lubert Aurélien (PacMiam)"
 # File: gem/gtk/interface.py, line: 1010
 #~ msgid "Specify a memory type"
 #~ msgstr "Spécifier un type de mémoire"
+
+#
+# File: gem/windows.py, line: 952
+#~ msgid ""
+#~ "This extension is available in multiple consoles. Which one GEM must use "
+#~ "to move this file ?"
+#~ msgstr ""
+#~ "Cette extension est disponible pour plusieurs consoles. Laquelle GEM doit "
+#~ "utiliser pour ce fichier ?"
 
 #
 # File: gem/gtk/mednafen.py, line: 389

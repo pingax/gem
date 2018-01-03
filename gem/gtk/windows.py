@@ -63,8 +63,7 @@ try:
 
     from gem.gtk import *
 
-    from gem.gtk.widgets import Dialog
-    from gem.gtk.widgets import TemplateDialog
+    from gem.gtk.widgets import CommonWindow
 
 except ImportError as error:
     sys_exit("Import error with gem module: %s" % str(error))
@@ -84,7 +83,7 @@ textdomain("gem")
 #   Class
 # ------------------------------------------------------------------------------
 
-class Message(TemplateDialog):
+class Message(CommonWindow):
 
     def __init__(self, parent, title, message, icon=Icons.Information,
         center=True):
@@ -107,10 +106,62 @@ class Message(TemplateDialog):
             If False, use justify text insted of center (Default: True)
         """
 
-        TemplateDialog.__init__(self, parent, title, message, icon, center)
+        classic_theme = False
+        if parent is not None:
+            classic_theme = parent.use_classic_theme
+
+        CommonWindow.__init__(self, parent, title, icon, classic_theme)
+
+        # ------------------------------------
+        #   Initialize variables
+        # ------------------------------------
+
+        self.message = message
+
+        self.center = center
+
+        # ------------------------------------
+        #   Prepare interface
+        # ------------------------------------
+
+        # Init widgets
+        self.__init_widgets()
 
 
-class Question(Dialog):
+    def __init_widgets(self):
+        """ Initialize interface widgets
+        """
+
+        self.set_size(500, -1)
+
+        # ------------------------------------
+        #   Message
+        # ------------------------------------
+
+        text = Gtk.Label()
+
+        # Properties
+        text.set_line_wrap(True)
+        text.set_use_markup(True)
+        text.set_max_width_chars(10)
+        text.set_markup(self.message)
+        text.set_line_wrap_mode(Pango.WrapMode.WORD)
+
+        if(self.center):
+            text.set_alignment(.5, .5)
+            text.set_justify(Gtk.Justification.CENTER)
+        else:
+            text.set_alignment(0, .5)
+            text.set_justify(Gtk.Justification.FILL)
+
+        # ------------------------------------
+        #   Integrate widgets
+        # ------------------------------------
+
+        self.pack_start(text, False, False)
+
+
+class Question(CommonWindow):
 
     def __init__(self, parent, title, message, icon=Icons.Question):
         """ Constructor
@@ -130,7 +181,11 @@ class Question(Dialog):
             Default icon name (Default: dialog-question)
         """
 
-        Dialog.__init__(self, parent, title, icon, True)
+        classic_theme = False
+        if parent is not None:
+            classic_theme = parent.use_classic_theme
+
+        CommonWindow.__init__(self, parent, title, icon, classic_theme)
 
         # ------------------------------------
         #   Variables
@@ -145,9 +200,6 @@ class Question(Dialog):
         # Init widgets
         self.__init_widgets()
 
-        # Init signals
-        self.__init_signals()
-
         # Start interface
         self.__start_interface()
 
@@ -157,24 +209,6 @@ class Question(Dialog):
         """
 
         self.set_size(400, -1)
-
-        self.headerbar.set_show_close_button(False)
-
-        self.dialog_box.set_spacing(0)
-
-        # ------------------------------------
-        #   Action buttons
-        # ------------------------------------
-
-        self.button_close = Gtk.Button()
-
-        self.button_accept = Gtk.Button()
-
-        # Properties
-        self.button_close.set_label(_("No"))
-
-        self.button_accept.set_label(_("Yes"))
-        self.button_accept.get_style_context().add_class("destructive-action")
 
         # ------------------------------------
         #   Label
@@ -192,54 +226,20 @@ class Question(Dialog):
         #   Integrate widgets
         # ------------------------------------
 
-        self.headerbar.pack_start(self.button_close)
-        self.headerbar.pack_end(self.button_accept)
-
-        self.dialog_box.pack_start(self.label, False, True, 0)
-
-
-    def __init_signals(self):
-        """ Initialize widgets signals
-        """
-
-        self.button_close.connect("clicked", self.__on_cancel_clicked)
-        self.button_accept.connect("clicked", self.__on_accept_clicked)
+        self.pack_start(self.label, False, True)
 
 
     def __start_interface(self):
         """ Load data and start interface
         """
 
-        self.show_all()
+        self.add_button(_("No"), Gtk.ResponseType.NO)
+        self.add_button(_("Yes"), Gtk.ResponseType.YES, Gtk.Align.END)
 
         self.label.set_markup(self.message)
 
 
-    def __on_cancel_clicked(self, widget):
-        """ Click on close button
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        """
-
-        self.response(Gtk.ResponseType.NO)
-
-
-    def __on_accept_clicked(self, widget):
-        """ Click on accept button
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        """
-
-        self.response(Gtk.ResponseType.YES)
-
-
-class DialogEditor(Dialog):
+class DialogEditor(CommonWindow):
 
     def __init__(self, parent, title, file_path, size, editable=True,
         icon=Icons.Editor):
@@ -265,7 +265,11 @@ class DialogEditor(Dialog):
             Default icon name (Default: gtk-file)
         """
 
-        Dialog.__init__(self, parent, title, icon, editable)
+        classic_theme = False
+        if parent is not None:
+            classic_theme = parent.use_classic_theme
+
+        CommonWindow.__init__(self, parent, title, icon, classic_theme)
 
         # ------------------------------------
         #   Initialize variables
@@ -305,49 +309,26 @@ class DialogEditor(Dialog):
 
         self.set_resizable(True)
 
-        if self.editable:
-            self.headerbar.set_show_close_button(False)
+        self.set_spacing(6)
+        self.set_border_width(6)
 
         # ------------------------------------
         #   Grid
         # ------------------------------------
 
-        grid_header = Gtk.Box()
+        grid_tools = Gtk.Box()
         grid_search = Gtk.Box()
-
-        self.grid_infobar = Gtk.Box()
 
         self.grid_menu_options = Gtk.Grid()
 
         # Properties
-        self.dialog_box.set_spacing(0)
-        self.dialog_box.set_border_width(6)
-
-        grid_header.set_spacing(8)
-        grid_header.set_orientation(Gtk.Orientation.HORIZONTAL)
+        grid_tools.set_spacing(12)
 
         Gtk.StyleContext.add_class(grid_search.get_style_context(), "linked")
-
-        self.grid_infobar.set_margin_bottom(8)
-        self.grid_infobar.set_orientation(Gtk.Orientation.VERTICAL)
 
         self.grid_menu_options.set_border_width(12)
         self.grid_menu_options.set_row_spacing(6)
         self.grid_menu_options.set_column_spacing(12)
-
-        # ------------------------------------
-        #   Action buttons
-        # ------------------------------------
-
-        self.button_close = Gtk.Button()
-
-        self.button_accept = Gtk.Button()
-
-        # Properties
-        self.button_close.set_label(_("Cancel"))
-
-        self.button_accept.set_label(_("Save"))
-        self.button_accept.get_style_context().add_class("suggested-action")
 
         # ------------------------------------
         #   Path
@@ -398,19 +379,6 @@ class DialogEditor(Dialog):
         self.item_menu_switch_line.set_valign(Gtk.Align.CENTER)
 
         # ------------------------------------
-        #   Infobar
-        # ------------------------------------
-
-        self.infobar = Gtk.InfoBar()
-
-        self.label_infobar = Gtk.Label()
-
-        # Properties
-        self.infobar.set_show_close_button(False)
-
-        self.label_infobar.set_use_markup(True)
-
-        # ------------------------------------
         #   Editor
         # ------------------------------------
 
@@ -431,17 +399,19 @@ class DialogEditor(Dialog):
                 # Properties
                 self.text_editor.set_insert_spaces_instead_of_tabs(True)
 
-                self.text_editor.set_tab_width(self.interface.config.getint(
-                    "editor", "tab", fallback=4))
-                self.text_editor.set_show_line_numbers(
-                    self.interface.config.getboolean(
-                    "editor", "lines", fallback=False))
-
                 self.buffer_editor.set_language(
                     self.language_editor.guess_language(self.path))
-                self.buffer_editor.set_style_scheme(
-                    self.style_editor.get_scheme(self.interface.config.item(
-                    "editor", "colorscheme", "classic")))
+
+                if self.parent is not None:
+                    self.text_editor.set_tab_width(self.parent.config.getint(
+                        "editor", "tab", fallback=4))
+                    self.text_editor.set_show_line_numbers(
+                        self.parent.config.getboolean(
+                        "editor", "lines", fallback=False))
+
+                    self.buffer_editor.set_style_scheme(
+                        self.style_editor.get_scheme(self.parent.config.item(
+                        "editor", "colorscheme", "classic")))
 
             except Exception as error:
                 self.text_editor = Gtk.TextView()
@@ -504,39 +474,26 @@ class DialogEditor(Dialog):
         #   Integrate widgets
         # ------------------------------------
 
-        if self.editable:
-            self.headerbar.pack_start(self.button_close)
-            self.headerbar.pack_end(self.button_accept)
+        grid_tools.pack_start(self.entry_path, True, True, 0)
+        grid_tools.pack_start(grid_search, False, False, 0)
+        grid_tools.pack_start(self.button_menu, False, False, 0)
+
+        self.pack_start(grid_tools, False, False)
+        self.pack_start(scroll_editor, True, True)
 
         scroll_editor.add(self.text_editor)
-
-        grid_header.pack_start(self.entry_path, True, True, 0)
-        grid_header.pack_start(Gtk.Separator(), False, True, 0)
-        grid_header.pack_start(grid_search, False, True, 0)
-        grid_header.pack_start(Gtk.Separator(), False, True, 0)
-        grid_header.pack_start(self.button_menu, False, True, 0)
 
         grid_search.pack_start(self.entry_search, False, True, 0)
         grid_search.pack_start(self.button_up, False, True, 0)
         grid_search.pack_start(self.button_bottom, False, True, 0)
 
-        self.dialog_box.pack_start(grid_header, False, True, 0)
-        self.dialog_box.pack_start(self.grid_infobar, False, False, 0)
-        self.dialog_box.pack_start(scroll_editor, True, True, 0)
-
         self.grid_menu_options.attach(self.item_menu_label_line, 0, 0, 1, 1)
         self.grid_menu_options.attach(self.item_menu_switch_line, 1, 0, 1, 1)
-
-        self.infobar.get_content_area().pack_start(
-            self.label_infobar, True, True, 4)
 
 
     def __init_signals(self):
         """ Initialize widgets signals
         """
-
-        self.button_close.connect("clicked", self.__on_cancel_clicked)
-        self.button_accept.connect("clicked", self.__on_accept_clicked)
 
         self.buffer_editor.connect("changed", self.__on_buffer_modified)
 
@@ -551,26 +508,26 @@ class DialogEditor(Dialog):
         if not self.editable:
             self.entry_path.connect("icon-press", self.__on_refresh_buffer)
 
-            self.connect("key-press-event", self.__on_manage_keys)
+            self.window.connect("key-press-event", self.__on_manage_keys)
 
 
     def __start_interface(self):
         """ Load data and start interface
         """
 
+        if self.editable:
+            self.add_button(_("Cancel"), Gtk.ResponseType.CLOSE)
+            self.add_button(_("Save"), Gtk.ResponseType.APPLY, Gtk.Align.END)
+
+        elif not self.use_headerbar:
+            self.add_button(_("Close"), Gtk.ResponseType.CLOSE)
+
         self.entry_path.set_text(self.path)
 
         self.set_size(int(self.__width), int(self.__height))
 
-        self.hide()
-        self.unrealize()
-
         self.show_all()
-
         self.grid_menu_options.show_all()
-
-        self.infobar.show_all()
-        self.infobar.get_content_area().show_all()
 
         self.text_editor.grab_focus()
 
@@ -593,35 +550,13 @@ class DialogEditor(Dialog):
         if self.refresh_buffer:
             self.refresh_buffer = False
 
-            self.set_infobar(_("Load file..."))
             self.text_editor.set_sensitive(False)
+
+            self.buffer_editor.delete(self.buffer_editor.get_start_iter(),
+                self.buffer_editor.get_end_iter())
 
             loader = self.__on_load_file()
             self.buffer_thread = idle_add(loader.__next__)
-
-
-    def __on_cancel_clicked(self, widget):
-        """ Click on close button
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        """
-
-        self.response(Gtk.ResponseType.CLOSE)
-
-
-    def __on_accept_clicked(self, widget):
-        """ Click on accept button
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        """
-
-        self.response(Gtk.ResponseType.APPLY)
 
 
     def __on_load_file(self):
@@ -632,13 +567,23 @@ class DialogEditor(Dialog):
 
         if exists(expanduser(self.path)):
             with open(self.path, 'r', errors="replace") as pipe:
-                self.buffer_editor.set_text(''.join(pipe.readlines()))
+                lines = pipe.readlines()
+
+                for index in range(0, len(lines)):
+                    self.buffer_editor.insert(
+                        self.buffer_editor.get_end_iter(), lines[index])
+
+                    self.entry_path.set_progress_fraction(
+                        float(index / len(lines)))
+
+                    yield True
+
+            self.entry_path.set_progress_fraction(0.0)
 
         # Remove undo stack from GtkSource.Buffer
         if type(self.buffer_editor) is not Gtk.TextBuffer:
             self.buffer_editor.set_undo_manager(None)
 
-        self.set_infobar()
         self.text_editor.set_sensitive(True)
 
         self.refresh_buffer = True
@@ -828,34 +773,7 @@ class DialogEditor(Dialog):
         self.modified_buffer = True
 
 
-    def set_infobar(self, text=str(), message_type=Gtk.MessageType.INFO):
-        """ Set infobar content
-
-        This function set the infobar widget to inform user for specific things
-
-        Others Parameters
-        -----------------
-        text : str
-            Message text (Default: None)
-        message_type : Gtk.MessageType
-            Message type (Default: Gtk.MessageType.INFO)
-        """
-
-        self.infobar.set_message_type(message_type)
-
-        # Set infobar visibility
-        if len(text) > 0:
-            if len(self.grid_infobar.get_children()) == 0:
-                self.infobar.set_margin_top(8)
-                self.grid_infobar.pack_start(self.infobar, True, True, 0)
-
-        elif len(self.grid_infobar.get_children()) > 0:
-            self.grid_infobar.remove(self.infobar)
-
-        self.label_infobar.set_markup(text)
-
-
-class DialogParameters(Dialog):
+class DialogParameters(CommonWindow):
 
     def __init__(self, parent, game, emulator):
         """ Constructor
@@ -870,8 +788,12 @@ class DialogParameters(Dialog):
             Emulator data
         """
 
-        Dialog.__init__(self, parent, _("Game properties"), Icons.Gaming, True)
+        classic_theme = False
+        if parent is not None:
+            classic_theme = parent.use_classic_theme
 
+        CommonWindow.__init__(self, parent, _("Game properties"), Icons.Gaming,
+            classic_theme)
         # ------------------------------------
         #   Initialize variables
         # ------------------------------------
@@ -929,10 +851,6 @@ class DialogParameters(Dialog):
 
         self.set_size(520, -1)
 
-        self.dialog_box.set_spacing(0)
-
-        self.headerbar.set_show_close_button(False)
-
         # ------------------------------------
         #   Grids
         # ------------------------------------
@@ -949,7 +867,7 @@ class DialogParameters(Dialog):
         stack.set_transition_type(Gtk.StackTransitionType.NONE)
 
         stack_switcher.set_stack(stack)
-        stack_switcher.set_margin_bottom(18)
+        stack_switcher.set_margin_bottom(6)
         stack_switcher.set_halign(Gtk.Align.CENTER)
 
         grid_parameters.set_spacing(6)
@@ -963,20 +881,6 @@ class DialogParameters(Dialog):
             grid_environment_buttons.get_style_context(), "linked")
         grid_environment_buttons.set_spacing(-1)
         grid_environment_buttons.set_orientation(Gtk.Orientation.VERTICAL)
-
-        # ------------------------------------
-        #   Action buttons
-        # ------------------------------------
-
-        self.button_close = Gtk.Button()
-
-        self.button_accept = Gtk.Button()
-
-        # Properties
-        self.button_close.set_label(_("Close"))
-
-        self.button_accept.set_label(_("Apply"))
-        self.button_accept.get_style_context().add_class("suggested-action")
 
         # ------------------------------------
         #   Emulators
@@ -1133,9 +1037,6 @@ class DialogParameters(Dialog):
         #   Integrate widgets
         # ------------------------------------
 
-        self.headerbar.pack_start(self.button_close)
-        self.headerbar.pack_end(self.button_accept)
-
         stack.add_titled(grid_parameters, "parameters", _("Parameters"))
 
         grid_parameters.pack_start(label_emulator, False, False, 0)
@@ -1167,16 +1068,13 @@ class DialogParameters(Dialog):
         grid_environment.pack_start(grid_environment_buttons, False, False, 0)
         grid_environment.pack_start(scroll_environment, True, True, 0)
 
-        self.dialog_box.pack_start(stack_switcher, False, False, 0)
-        self.dialog_box.pack_start(stack, False, False, 0)
+        self.pack_start(stack_switcher, False, False)
+        self.pack_start(stack, False, False)
 
 
     def __init_signals(self):
         """ Initialize widgets signals
         """
-
-        self.button_close.connect("clicked", self.__on_cancel_clicked)
-        self.button_accept.connect("clicked", self.__on_accept_clicked)
 
         self.combo.connect("changed", self.__on_selected_emulator)
 
@@ -1189,9 +1087,10 @@ class DialogParameters(Dialog):
         """ Load data and start interface
         """
 
-        self.set_help(self.interface, self.help_data)
+        self.add_button(_("Close"), Gtk.ResponseType.CLOSE)
+        self.add_button(_("Apply"), Gtk.ResponseType.APPLY, Gtk.Align.END)
 
-        self.show_all()
+        self.add_help(self.help_data)
 
         for emulator in self.interface.api.emulators.values():
             icon = icon_from_data(
@@ -1265,39 +1164,15 @@ class DialogParameters(Dialog):
 
         # Allow to validate dialog if selected emulator binary exist
         if emulator is not None and emulator.exists:
-            self.button_accept.set_sensitive(True)
+            self.set_response_sensitive(Gtk.ResponseType.APPLY, True)
 
         else:
-            self.button_accept.set_sensitive(False)
+            self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
 
         self.entry_arguments.set_placeholder_text(default)
 
 
-    def __on_cancel_clicked(self, widget):
-        """ Click on close button
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        """
-
-        self.response(Gtk.ResponseType.CLOSE)
-
-
-    def __on_accept_clicked(self, widget):
-        """ Click on accept button
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        """
-
-        self.response(Gtk.ResponseType.APPLY)
-
-
-class DialogRemove(Dialog):
+class DialogRemove(CommonWindow):
 
     def __init__(self, parent, game):
         """ Constructor
@@ -1310,7 +1185,12 @@ class DialogRemove(Dialog):
             Game object
         """
 
-        Dialog.__init__(self, parent, _("Remove a game"), Icons.Delete, True)
+        classic_theme = False
+        if parent is not None:
+            classic_theme = parent.use_classic_theme
+
+        CommonWindow.__init__(self, parent, _("Remove a game"), Icons.Delete,
+            classic_theme)
 
         # ------------------------------------
         #   Variables
@@ -1325,9 +1205,6 @@ class DialogRemove(Dialog):
         # Init widgets
         self.__init_widgets()
 
-        # Init signals
-        self.__init_signals()
-
         # Start interface
         self.__start_interface()
 
@@ -1338,33 +1215,7 @@ class DialogRemove(Dialog):
 
         self.set_size(520, -1)
 
-        self.headerbar.set_show_close_button(False)
-
-        self.dialog_box.set_spacing(0)
-
-        # ------------------------------------
-        #   Grid
-        # ------------------------------------
-
-        grid = Gtk.Box()
-
-        # Properties
-        grid.set_spacing(6)
-        grid.set_orientation(Gtk.Orientation.VERTICAL)
-
-        # ------------------------------------
-        #   Action buttons
-        # ------------------------------------
-
-        self.button_close = Gtk.Button()
-
-        self.button_accept = Gtk.Button()
-
-        # Properties
-        self.button_close.set_label(_("No"))
-
-        self.button_accept.set_label(_("Yes"))
-        self.button_accept.get_style_context().add_class("destructive-action")
+        self.set_spacing(6)
 
         # ------------------------------------
         #   Description
@@ -1399,10 +1250,10 @@ class DialogRemove(Dialog):
         self.check_screenshots = Gtk.CheckButton()
 
         # Properties
-        self.check_database.set_margin_top(12)
+        self.check_database.set_margin_top(6)
         self.check_database.set_label(_("Remove game's data from database"))
 
-        self.check_save_state.set_margin_top(12)
+        self.check_save_state.set_margin_top(6)
         self.check_save_state.set_label(_("Remove game save files"))
 
         self.check_screenshots.set_label(_("Remove game screenshots"))
@@ -1411,60 +1262,24 @@ class DialogRemove(Dialog):
         #   Integrate widgets
         # ------------------------------------
 
-        self.headerbar.pack_start(self.button_close)
-        self.headerbar.pack_end(self.button_accept)
-
-        grid.pack_start(label, False, True, 0)
-        grid.pack_start(label_game, False, True, 0)
-        grid.pack_start(self.check_database, False, True, 0)
-        grid.pack_start(self.check_save_state, False, True, 0)
-        grid.pack_start(self.check_screenshots, False, True, 0)
-
-        self.dialog_box.pack_start(grid, False, True, 0)
-
-
-    def __init_signals(self):
-        """ Initialize widgets signals
-        """
-
-        self.button_close.connect("clicked", self.__on_cancel_clicked)
-        self.button_accept.connect("clicked", self.__on_accept_clicked)
+        self.pack_start(label, False, True)
+        self.pack_start(label_game, False, True)
+        self.pack_start(self.check_database, False, True)
+        self.pack_start(self.check_save_state, False, True)
+        self.pack_start(self.check_screenshots, False, True)
 
 
     def __start_interface(self):
         """ Load data and start interface
         """
 
-        self.show_all()
+        self.add_button(_("No"), Gtk.ResponseType.NO)
+        self.add_button(_("Yes"), Gtk.ResponseType.YES, Gtk.Align.END)
 
         self.check_database.set_active(True)
 
 
-    def __on_cancel_clicked(self, widget):
-        """ Click on close button
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        """
-
-        self.response(Gtk.ResponseType.NO)
-
-
-    def __on_accept_clicked(self, widget):
-        """ Click on accept button
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        """
-
-        self.response(Gtk.ResponseType.YES)
-
-
-class DialogViewer(Dialog):
+class DialogViewer(CommonWindow):
 
     def __init__(self, parent, title, size, screenshots_path):
         """ Constructor
@@ -1481,7 +1296,11 @@ class DialogViewer(Dialog):
             Screnshots path list
         """
 
-        Dialog.__init__(self, parent, title, Icons.Image, True)
+        classic_theme = False
+        if parent is not None:
+            classic_theme = parent.use_classic_theme
+
+        CommonWindow.__init__(self, parent, title, Icons.Image, classic_theme)
 
         # ------------------------------------
         #   Initialize variables
@@ -1550,10 +1369,10 @@ class DialogViewer(Dialog):
 
         self.set_resizable(True)
 
-        self.headerbar.set_has_subtitle(True)
+        self.set_spacing(0)
+        self.set_border_width(0)
 
-        self.dialog_box.set_spacing(0)
-        self.dialog_box.set_border_width(0)
+        self.grid_tools.set_border_width(6)
 
         # ------------------------------------
         #   Overlay
@@ -1708,6 +1527,7 @@ class DialogViewer(Dialog):
         self.button_overlay_previous.set_image(self.image_previous)
         self.button_overlay_previous.set_valign(Gtk.Align.CENTER)
         self.button_overlay_previous.set_halign(Gtk.Align.START)
+        self.button_overlay_previous.set_no_show_all(True)
         self.button_overlay_previous.set_margin_bottom(6)
         self.button_overlay_previous.set_margin_right(6)
         self.button_overlay_previous.set_margin_left(6)
@@ -1720,6 +1540,7 @@ class DialogViewer(Dialog):
         self.button_overlay_next.set_image(self.image_next)
         self.button_overlay_next.set_valign(Gtk.Align.CENTER)
         self.button_overlay_next.set_halign(Gtk.Align.END)
+        self.button_overlay_next.set_no_show_all(True)
         self.button_overlay_next.set_margin_bottom(6)
         self.button_overlay_next.set_margin_right(6)
         self.button_overlay_next.set_margin_left(6)
@@ -1728,10 +1549,6 @@ class DialogViewer(Dialog):
         # ------------------------------------
         #   Integrate widgets
         # ------------------------------------
-
-        self.headerbar.pack_start(self.grid_move_buttons)
-        self.headerbar.pack_end(self.grid_zoom_buttons)
-        self.headerbar.pack_end(self.scale_zoom)
 
         self.scroll_image.add(self.view_image)
         self.view_image.add(self.image)
@@ -1758,7 +1575,7 @@ class DialogViewer(Dialog):
         self.overlay.add_overlay(self.button_overlay_previous)
         self.overlay.add_overlay(self.button_overlay_next)
 
-        self.dialog_box.pack_start(self.overlay, True, True, 0)
+        self.pack_start(self.overlay, True, True, 0)
 
 
     def __init_signals(self):
@@ -1766,9 +1583,9 @@ class DialogViewer(Dialog):
         """
 
         if self.auto_resize:
-            self.connect("size-allocate", self.update_screenshot)
+            self.window.connect("size-allocate", self.update_screenshot)
 
-        self.connect("key-press-event", self.change_screenshot)
+        self.window.connect("key-press-event", self.change_screenshot)
 
         self.button_first.connect("clicked", self.change_screenshot)
         self.button_previous.connect("clicked", self.change_screenshot)
@@ -1792,9 +1609,13 @@ class DialogViewer(Dialog):
         """ Load data and start interface
         """
 
-        self.set_default_size(int(self.__width), int(self.__height))
+        self.add_widget(self.grid_move_buttons)
+        self.add_widget(self.grid_zoom_buttons, Gtk.Align.END)
+        self.add_widget(self.scale_zoom, Gtk.Align.END)
 
-        self.show_all()
+        self.set_size(int(self.__width), int(self.__height))
+
+        self.window.show_all()
 
         self.set_widgets_sensitive()
         self.update_screenshot()
@@ -1836,7 +1657,7 @@ class DialogViewer(Dialog):
         """
 
         # Keyboard
-        if widget is self:
+        if widget is self.window:
             if event.keyval == Gdk.KEY_Left:
                 self.index -= 1
 
@@ -1965,7 +1786,7 @@ class DialogViewer(Dialog):
             self.current_path = path
 
             # Set headerbar subtitle with current screenshot path
-            self.headerbar.set_subtitle(self.current_path)
+            self.set_subtitle(self.current_path)
 
             # Generate a Pixbuf from current screenshot
             self.current_pixbuf = Pixbuf.new_from_file(self.current_path)
@@ -2035,7 +1856,7 @@ class DialogViewer(Dialog):
                     ratio_width, ratio_height, InterpType.TILES))
 
 
-class DialogConsoles(Dialog):
+class DialogConsoles(CommonWindow):
 
     def __init__(self, parent, filename, consoles, previous=None):
         """ Constructor
@@ -2055,7 +1876,12 @@ class DialogConsoles(Dialog):
             Previous selected console (Default: None)
         """
 
-        Dialog.__init__(self, parent, _("Drag & Drop"), Icons.Gaming, True)
+        classic_theme = False
+        if parent is not None:
+            classic_theme = parent.use_classic_theme
+
+        CommonWindow.__init__(self, parent, _("Drag & Drop"), Icons.Gaming,
+            classic_theme)
 
         # ------------------------------------
         #   Initialize variables
@@ -2088,9 +1914,7 @@ class DialogConsoles(Dialog):
 
         self.set_size(640, 480)
 
-        self.dialog_box.set_spacing(0)
-
-        self.headerbar.set_show_close_button(False)
+        self.set_spacing(0)
 
         # ------------------------------------
         #   Grids
@@ -2109,20 +1933,6 @@ class DialogConsoles(Dialog):
         grid_checkbutton.set_margin_top(12)
         grid_checkbutton.set_homogeneous(False)
         grid_checkbutton.set_orientation(Gtk.Orientation.HORIZONTAL)
-
-        # ------------------------------------
-        #   Action buttons
-        # ------------------------------------
-
-        self.button_close = Gtk.Button()
-
-        self.button_accept = Gtk.Button()
-
-        # Properties
-        self.button_close.set_label(_("Close"))
-
-        self.button_accept.set_label(_("Apply"))
-        self.button_accept.get_style_context().add_class("suggested-action")
 
         # ------------------------------------
         #   Scroll
@@ -2228,9 +2038,6 @@ class DialogConsoles(Dialog):
         #   Integrate widgets
         # ------------------------------------
 
-        self.headerbar.pack_start(self.button_close)
-        self.headerbar.pack_end(self.button_accept)
-
         self.scroll_consoles.add(self.view_consoles)
         self.view_consoles.add(self.treeview_consoles)
 
@@ -2243,15 +2050,12 @@ class DialogConsoles(Dialog):
         grid_checkbutton.pack_start(self.label_checkbutton, True, True, 0)
         grid_checkbutton.pack_start(self.switch, False, False, 0)
 
-        self.dialog_box.pack_start(grid, True, True, 0)
+        self.pack_start(grid, True, True)
 
 
     def __init_signals(self):
         """ Initialize widgets signals
         """
-
-        self.button_close.connect("clicked", self.__on_cancel_clicked)
-        self.button_accept.connect("clicked", self.__on_accept_clicked)
 
         self.cell_consoles_status.connect("toggled", self.on_cell_toggled)
 
@@ -2260,9 +2064,12 @@ class DialogConsoles(Dialog):
         """ Load data and start interface
         """
 
-        self.button_accept.set_sensitive(False)
+        self.add_button(_("Cancel"), Gtk.ResponseType.CLOSE)
+        self.add_button(_("Apply"), Gtk.ResponseType.APPLY, Gtk.Align.END)
 
-        self.show_all()
+        self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
+
+        self.window.show_all()
 
         for console in self.consoles:
             status = False
@@ -2270,37 +2077,13 @@ class DialogConsoles(Dialog):
                 status = True
 
                 self.current = console
-                self.button_accept.set_sensitive(True)
+                self.set_response_sensitive(Gtk.ResponseType.APPLY, True)
 
             # Get console icon
             icon = icon_from_data(
-                console.icon, self.interface.empty, subfolder="consoles")
+                console.icon, self.parent.empty, subfolder="consoles")
 
             self.model_consoles.append([status, icon, console.name])
-
-
-    def __on_cancel_clicked(self, widget):
-        """ Click on close button
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        """
-
-        self.response(Gtk.ResponseType.CLOSE)
-
-
-    def __on_accept_clicked(self, widget):
-        """ Click on accept button
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        """
-
-        self.response(Gtk.ResponseType.APPLY)
 
 
     def on_cell_toggled(self, widget, path):
@@ -2314,7 +2097,7 @@ class DialogConsoles(Dialog):
             Path to be activated
         """
 
-        self.button_accept.set_sensitive(True)
+        self.set_response_sensitive(Gtk.ResponseType.APPLY, True)
 
         selected_path = Gtk.TreePath(path)
 
