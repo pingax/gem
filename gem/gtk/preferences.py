@@ -1011,15 +1011,13 @@ class Preferences(CommonWindow):
 
         self.scroll_consoles_treeview = Gtk.ScrolledWindow()
 
-        self.model_consoles = Gtk.ListStore(Pixbuf, str, str, str, str)
+        self.model_consoles = Gtk.ListStore(Pixbuf, str, str, str)
         self.treeview_consoles = Gtk.TreeView()
 
         self.column_consoles_name = Gtk.TreeViewColumn()
-        self.column_consoles_emulator = Gtk.TreeViewColumn()
 
         self.cell_consoles_icon = Gtk.CellRendererPixbuf()
         self.cell_consoles_name = Gtk.CellRendererText()
-        self.cell_consoles_emulator = Gtk.CellRendererText()
         self.cell_consoles_check = Gtk.CellRendererPixbuf()
 
         self.image_consoles_add = Gtk.Image()
@@ -1040,6 +1038,7 @@ class Preferences(CommonWindow):
 
         self.treeview_consoles.set_model(self.model_consoles)
         self.treeview_consoles.set_headers_clickable(False)
+        self.treeview_consoles.set_headers_visible(False)
         self.treeview_consoles.set_hexpand(True)
         self.treeview_consoles.set_vexpand(True)
 
@@ -1047,30 +1046,25 @@ class Preferences(CommonWindow):
         self.column_consoles_name.set_expand(True)
         self.column_consoles_name.set_spacing(8)
 
-        self.column_consoles_emulator.set_title(_("ROMs path"))
-        self.column_consoles_emulator.set_expand(True)
-        self.column_consoles_emulator.set_spacing(8)
-
         self.column_consoles_name.pack_start(
             self.cell_consoles_icon, False)
         self.column_consoles_name.pack_start(
             self.cell_consoles_name, True)
-        self.column_consoles_emulator.pack_start(
-            self.cell_consoles_emulator, True)
-        self.column_consoles_emulator.pack_start(
+        self.column_consoles_name.pack_start(
             self.cell_consoles_check, False)
 
         self.column_consoles_name.add_attribute(
             self.cell_consoles_icon, "pixbuf", 0)
         self.column_consoles_name.add_attribute(
-            self.cell_consoles_name, "text", 1)
-        self.column_consoles_emulator.add_attribute(
-            self.cell_consoles_emulator, "text", 2)
-        self.column_consoles_emulator.add_attribute(
-            self.cell_consoles_check, "icon-name", 3)
+            self.cell_consoles_name, "markup", 1)
+        self.column_consoles_name.add_attribute(
+            self.cell_consoles_check, "icon-name", 2)
+
+        self.cell_consoles_icon.set_padding(6, 6)
+        self.cell_consoles_name.set_padding(6, 6)
+        self.cell_consoles_check.set_padding(6, 6)
 
         self.treeview_consoles.append_column(self.column_consoles_name)
-        self.treeview_consoles.append_column(self.column_consoles_emulator)
 
         self.image_consoles_add.set_margin_right(4)
         self.image_consoles_add.set_from_icon_name(
@@ -1099,16 +1093,13 @@ class Preferences(CommonWindow):
 
         self.scroll_emulators_treeview = Gtk.ScrolledWindow()
 
-        self.model_emulators = Gtk.ListStore(
-            Pixbuf, str, str, str, str)
+        self.model_emulators = Gtk.ListStore(Pixbuf, str, str, str)
         self.treeview_emulators = Gtk.TreeView()
 
         self.column_emulators_name = Gtk.TreeViewColumn()
-        self.column_emulators_binary = Gtk.TreeViewColumn()
 
         self.cell_emulators_icon = Gtk.CellRendererPixbuf()
         self.cell_emulators_name = Gtk.CellRendererText()
-        self.cell_emulators_binary = Gtk.CellRendererText()
         self.cell_emulators_check = Gtk.CellRendererPixbuf()
 
         self.image_emulators_add = Gtk.Image()
@@ -1129,6 +1120,7 @@ class Preferences(CommonWindow):
 
         self.treeview_emulators.set_model(self.model_emulators)
         self.treeview_emulators.set_headers_clickable(False)
+        self.treeview_emulators.set_headers_visible(False)
         self.treeview_emulators.set_hexpand(True)
         self.treeview_emulators.set_vexpand(True)
 
@@ -1136,30 +1128,25 @@ class Preferences(CommonWindow):
         self.column_emulators_name.set_expand(True)
         self.column_emulators_name.set_spacing(8)
 
-        self.column_emulators_binary.set_title(_("Binary"))
-        self.column_emulators_binary.set_expand(True)
-        self.column_emulators_binary.set_spacing(8)
-
         self.column_emulators_name.pack_start(
             self.cell_emulators_icon, False)
         self.column_emulators_name.pack_start(
             self.cell_emulators_name, True)
-        self.column_emulators_binary.pack_start(
-            self.cell_emulators_binary, True)
-        self.column_emulators_binary.pack_start(
+        self.column_emulators_name.pack_start(
             self.cell_emulators_check, False)
 
         self.column_emulators_name.add_attribute(
             self.cell_emulators_icon, "pixbuf", 0)
         self.column_emulators_name.add_attribute(
-            self.cell_emulators_name, "text", 1)
-        self.column_emulators_binary.add_attribute(
-            self.cell_emulators_binary, "text", 2)
-        self.column_emulators_binary.add_attribute(
-            self.cell_emulators_check, "icon-name", 3)
+            self.cell_emulators_name, "markup", 1)
+        self.column_emulators_name.add_attribute(
+            self.cell_emulators_check, "icon-name", 2)
+
+        self.cell_emulators_icon.set_padding(6, 6)
+        self.cell_emulators_name.set_padding(6, 6)
+        self.cell_emulators_check.set_padding(6, 6)
 
         self.treeview_emulators.append_column(self.column_emulators_name)
-        self.treeview_emulators.append_column(self.column_emulators_binary)
 
         self.image_emulators_add.set_margin_right(4)
         self.image_emulators_add.set_from_icon_name(
@@ -1837,18 +1824,19 @@ class Preferences(CommonWindow):
 
         for console in self.api.consoles.values():
             image = icon_from_data(
-                console.icon, self.empty, subfolder="consoles")
+                console.icon, self.empty, 48, 48, subfolder="consoles")
 
             path = str()
             if console.path is not None:
-                path = console.path.replace(expanduser('~'), '~')
+                path = console.path
 
             check = str()
             if not exists(expanduser(path)):
                 check = Icons.Symbolic.Warning
 
             self.model_consoles.append([
-                image, console.name, path, check, console.id])
+                image, "<b>%s</b>\n<small>%s</small>" % (
+                console.name, path), check, console.id])
 
 
     def on_load_emulators(self):
@@ -1861,16 +1849,15 @@ class Preferences(CommonWindow):
 
         for emulator in self.api.emulators.values():
             image = icon_from_data(
-                emulator.icon, self.empty, subfolder="emulators")
+                emulator.icon, self.empty, 48, 48, subfolder="emulators")
 
             check = str()
-            font = Pango.Style.NORMAL
             if not emulator.exists:
                 check = Icons.Symbolic.Warning
-                font = Pango.Style.OBLIQUE
 
             self.model_emulators.append([
-                image, emulator.name, emulator.binary, check, emulator.id])
+                image, "<b>%s</b>\n<small>%s</small>" % (
+                emulator.name, emulator.binary), check, emulator.id])
 
 
     def __edit_keys(self, widget, path, key, mods, hwcode):
@@ -2052,7 +2039,7 @@ class Preferences(CommonWindow):
 
         identifier = None
         if treeiter is not None:
-            identifier = model.get_value(treeiter, 4)
+            identifier = model.get_value(treeiter, 3)
 
         if modification and identifier is None:
             return False
@@ -2098,7 +2085,7 @@ class Preferences(CommonWindow):
 
         model, treeiter = treeview.get_selection().get_selected()
         if treeiter is not None:
-            identifier = model.get_value(treeiter, 4)
+            identifier = model.get_value(treeiter, 3)
 
         # ----------------------------
         #   Game selected
@@ -2502,7 +2489,7 @@ class PreferencesConsole(CommonWindow):
 
             warning = self.empty
             if not emulator.exists:
-                warning = icon_load(Icons.Symbolic.Warning, 24, self.empty)
+                warning = icon_load(Icons.Warning, 24, self.empty)
 
             emulators_rows[emulator.id] = self.model_emulators.append(
                 [icon, emulator.name, warning])
@@ -2704,7 +2691,10 @@ class PreferencesConsole(CommonWindow):
             if identifier in self.api.consoles and (not self.modify or (
                 self.modify and not name == self.console.name)):
 
-                icon, status, tooltip = Icons.Symbolic.Error, False, _(
+                status = False
+
+                icon = Icons.Error
+                tooltip = _(
                     "This console already exist, please, choose another name")
 
         self.entry_name.set_icon_from_icon_name(
@@ -3258,7 +3248,7 @@ class PreferencesEmulator(CommonWindow):
 
                 status = False
 
-                icon = Icons.Symbolic.Error
+                icon = Icons.Error
                 tooltip = _(
                     "This emulator already exist, please, choose another name")
 
@@ -3282,7 +3272,7 @@ class PreferencesEmulator(CommonWindow):
         elif len(get_binary_path(path)) == 0:
             self.error = True
 
-            icon = Icons.Symbolic.Error
+            icon = Icons.Error
             tooltip = _("This binary not exist, please, check the path")
 
         if widget == self.entry_binary:
