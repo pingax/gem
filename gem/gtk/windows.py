@@ -519,7 +519,7 @@ class DialogEditor(CommonWindow):
             self.add_button(_("Cancel"), Gtk.ResponseType.CLOSE)
             self.add_button(_("Save"), Gtk.ResponseType.APPLY, Gtk.Align.END)
 
-        elif not self.use_headerbar:
+        elif self.use_classic_theme:
             self.add_button(_("Close"), Gtk.ResponseType.CLOSE)
 
         self.entry_path.set_text(self.path)
