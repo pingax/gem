@@ -34,6 +34,8 @@ try:
     from gi.repository import Gdk
     from gi.repository import Pango
 
+    from gi.repository.GObject import SIGNAL_RUN_FIRST
+
     from gi.repository.GdkPixbuf import Pixbuf
 
 except ImportError as error:
@@ -786,6 +788,89 @@ class DialogHelp(CommonWindow):
         self.show_all()
 
 
+class CheckMenuItem(Gtk.MenuItem):
+
+    __gsignals__ = { "toggled": (SIGNAL_RUN_FIRST, None, [object]) }
+
+    def __init__(self):
+        """ Constructor
+        """
+
+        Gtk.MenuItem.__init__(self)
+
+        # ------------------------------------
+        #   Check label
+        # ------------------------------------
+
+        self.__menu_item_check = Gtk.CheckButton()
+
+        # Properties
+        self.__menu_item_check.set_halign(Gtk.Align.START)
+        self.__menu_item_check.set_use_underline(True)
+
+        # ------------------------------------
+        #   Integrate widgets
+        # ------------------------------------
+
+        self.add(self.__menu_item_check)
+
+
+    def get_label(self):
+        """ Get the label from widget
+
+        Returns
+        -------
+        str
+            Label content
+        """
+
+        return self.__menu_item_check.get_label()
+
+
+    def set_label(self, label):
+        """ Set the widget label content
+
+        Parameters
+        ----------
+        label : str
+            New label string
+        """
+
+        if type(label) is not str:
+            raise TypeError(
+                "Cannot use %s as label, expected str" % str(type(label)))
+
+        self.__menu_item_check.set_label(label)
+
+
+    def get_active(self):
+        """ Get the widget status
+
+        Returns
+        -------
+        bool
+            Toggle button status
+        """
+
+        return self.__menu_item_check.get_active()
+
+
+    def set_active(self, status):
+        """ Set the widget status
+
+        Parameters
+        ----------
+        status : bool
+            New widget status
+        """
+
+        if type(status) is not bool:
+            raise TypeError(
+                "Cannot use %s as status, expected str" % str(type(status)))
+
+        self.__menu_item_check.set_active(status)
+
+
 class ImageMenuItem(Gtk.MenuItem):
 
     def __init__(self):
@@ -842,19 +927,19 @@ class ImageMenuItem(Gtk.MenuItem):
 
 
     def get_image(self):
-        """ Return the ImageMenuItem Gtk.Image object
+        """ Get the image from widget
 
         Returns
         -------
         Gtk.Image
-            the current image using in ImageMenuItem
+            Current using image
         """
 
         return self.__menu_item_image
 
 
     def set_image_from_pixbuf(self, pixbuf):
-        """ The new Pixbuf to set in icon image
+        """ Set the image from a specific pixbuf
 
         Parameters
         ----------
@@ -871,7 +956,7 @@ class ImageMenuItem(Gtk.MenuItem):
 
 
     def set_image_from_icon_name(self, icon_name, icon_size=Gtk.IconSize.MENU):
-        """ The new Pixbuf to set in icon image
+        """ Set the image from a specific icon name
 
         Parameters
         ----------
@@ -898,48 +983,47 @@ class ImageMenuItem(Gtk.MenuItem):
 
 
     def get_label(self):
-        """ Return the ImageMenuItem accelerator Gtk.Label object
+        """ Get the label from widget
 
         Returns
         -------
         str
-            Menu label string
+            Label content
         """
 
         return self.__menu_item_label.get_label()
 
 
     def set_label(self, label):
-        """ The new label to set in label
+        """ Set the widget label content
 
         Parameters
         ----------
         label : str
-            the label string
+            New label string
         """
 
         if type(label) is not str:
             raise TypeError(
-                "Cannot use %s as label, expected str" % str(
-                type(label)))
+                "Cannot use %s as label, expected str" % str(type(label)))
 
         self.__menu_item_label.set_label(label)
 
 
     def get_accelerator(self):
-        """ Return the ImageMenuItem accelerator Gtk.Label object
+        """ Get the accelerator from widget
 
         Returns
         -------
         str
-            Accelerator label string
+            Accelerator content
         """
 
         return self.__menu_item_label_accel.get_label()
 
 
     def set_accelerator(self, max_width, key, mod):
-        """ The new accelerator to set
+        """ Set the widget accelerator
 
         Parameters
         ----------

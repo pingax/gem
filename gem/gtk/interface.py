@@ -110,6 +110,7 @@ try:
 
     from gem.gtk import *
     from gem.gtk.game import GameThread
+    from gem.gtk.widgets import CheckMenuItem
     from gem.gtk.widgets import ImageMenuItem
     from gem.gtk.windows import *
     from gem.gtk.mednafen import DialogMednafenMemory
@@ -192,6 +193,9 @@ class Interface(Gtk.ApplicationWindow):
 
         # Avoid to reload interface when switch between default & classic theme
         self.use_classic_theme = False
+
+        # Manage fullscreen from boolean variable
+        self.__fullscreen_status = False
 
         # Avoid to reload game tooltip every time the user move in line
         self.__current_tooltip = None
@@ -517,7 +521,7 @@ class Interface(Gtk.ApplicationWindow):
         self.menubar_main_item_notes = ImageMenuItem()
         self.menubar_main_item_quit = ImageMenuItem()
 
-        self.menubar_main_item_fullscreen = Gtk.CheckMenuItem()
+        self.menubar_main_item_fullscreen = CheckMenuItem()
 
         # Properties
         self.menubar_main_menu.set_reserve_toggle_size(False)
@@ -615,8 +619,8 @@ class Interface(Gtk.ApplicationWindow):
 
         self.menubar_tools_item_preferences = ImageMenuItem()
 
-        self.menubar_tools_item_dark_theme = Gtk.CheckMenuItem()
-        self.menubar_tools_item_sidebar = Gtk.CheckMenuItem()
+        self.menubar_tools_item_dark_theme = CheckMenuItem()
+        self.menubar_tools_item_sidebar = CheckMenuItem()
 
         # Properties
         self.menubar_tools_menu.set_reserve_toggle_size(False)
@@ -1481,6 +1485,8 @@ class Interface(Gtk.ApplicationWindow):
             "activate", self.__on_show_notes)
         self.fullscreen_signal = self.menubar_main_item_fullscreen.connect(
             "toggled", self.__on_activate_fullscreen)
+        self.menubar_main_item_fullscreen.connect(
+            "activate", self.__on_activate_fullscreen)
         self.menubar_main_item_quit.connect(
             "activate", self.__stop_interface)
 
@@ -1505,8 +1511,12 @@ class Interface(Gtk.ApplicationWindow):
             "activate", self.__on_show_preferences)
         self.dark_signal_menubar = self.menubar_tools_item_dark_theme.connect(
             "toggled", self.__on_activate_dark_theme)
+        self.menubar_tools_item_dark_theme.connect(
+            "activate", self.__on_activate_dark_theme)
         self.side_signal_menubar = self.menubar_tools_item_sidebar.connect(
             "toggled", self.__on_activate_sidebar)
+        self.menubar_tools_item_sidebar.connect(
+            "activate", self.__on_activate_sidebar)
 
         self.menubar_help_item_log.connect(
             "activate", self.__on_show_log)
@@ -4578,18 +4588,16 @@ class Interface(Gtk.ApplicationWindow):
         self.headerbar_item_fullscreen.handler_block(
             self.fullscreen_signal_tool)
 
-        if not widget.get_active():
+        # Switch fullscreen status
+        self.__fullscreen_status = not self.__fullscreen_status
+
+        if not self.__fullscreen_status:
             self.logger.debug("Switch game launch to windowed mode")
 
             self.headerbar_image_fullscreen.set_from_icon_name(
                 Icons.Symbolic.Restore, Gtk.IconSize.SMALL_TOOLBAR)
             self.headerbar_item_fullscreen.get_style_context().remove_class(
                 "suggested-action")
-
-            self.menubar_main_item_fullscreen.set_active(False)
-
-            if widget == self.menubar_main_item_fullscreen:
-                self.headerbar_item_fullscreen.set_active(False)
 
         else:
             self.logger.debug("Switch game launch to fullscreen mode")
@@ -4599,10 +4607,8 @@ class Interface(Gtk.ApplicationWindow):
             self.headerbar_item_fullscreen.get_style_context().add_class(
                 "suggested-action")
 
-            self.menubar_main_item_fullscreen.set_active(True)
-
-            if widget == self.menubar_main_item_fullscreen:
-                self.headerbar_item_fullscreen.set_active(True)
+        self.headerbar_item_fullscreen.set_active(self.__fullscreen_status)
+        self.menubar_main_item_fullscreen.set_active(self.__fullscreen_status)
 
         # Unblock signal
         self.menubar_main_item_fullscreen.handler_unblock(
