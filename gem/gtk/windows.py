@@ -1029,13 +1029,15 @@ class DialogParameters(CommonWindow):
         image_environment_remove = Gtk.Image()
         self.button_environment_remove = Gtk.Button()
 
+        self.store_environment_keys = Gtk.ListStore(str)
+
         self.store_environment = Gtk.ListStore(str, str)
         self.treeview_environment = Gtk.TreeView()
 
         treeview_column_environment = Gtk.TreeViewColumn()
 
-        treeview_cell_environment_key = Gtk.CellRendererText()
-        treeview_cell_environment_value = Gtk.CellRendererText()
+        self.treeview_cell_environment_key = Gtk.CellRendererCombo()
+        self.treeview_cell_environment_value = Gtk.CellRendererText()
 
         # Properties
         image_environment_add.set_from_icon_name(
@@ -1048,14 +1050,32 @@ class DialogParameters(CommonWindow):
         self.treeview_environment.set_headers_visible(False)
 
         treeview_column_environment.pack_start(
-            treeview_cell_environment_key, True)
+            self.treeview_cell_environment_key, True)
         treeview_column_environment.pack_start(
-            treeview_cell_environment_value, True)
+            self.treeview_cell_environment_value, True)
 
         treeview_column_environment.add_attribute(
-            treeview_cell_environment_key, "text", 0)
+            self.treeview_cell_environment_key, "text", 0)
         treeview_column_environment.add_attribute(
-            treeview_cell_environment_value, "text", 1)
+            self.treeview_cell_environment_value, "text", 1)
+
+        self.treeview_cell_environment_key.set_padding(12, 6)
+        self.treeview_cell_environment_key.set_property("text-column", 0)
+        self.treeview_cell_environment_key.set_property("editable", True)
+        self.treeview_cell_environment_key.set_property("has-entry", True)
+        self.treeview_cell_environment_key.set_property(
+            "model", self.store_environment_keys)
+        self.treeview_cell_environment_key.set_property(
+            "placeholder_text", _("Environment key..."))
+        self.treeview_cell_environment_key.set_property(
+            "ellipsize", Pango.EllipsizeMode.END)
+
+        self.treeview_cell_environment_value.set_padding(12, 6)
+        self.treeview_cell_environment_value.set_property("editable", True)
+        self.treeview_cell_environment_value.set_property(
+            "placeholder_text", _("Environment value..."))
+        self.treeview_cell_environment_value.set_property(
+            "ellipsize", Pango.EllipsizeMode.END)
 
         self.treeview_environment.append_column(
             treeview_column_environment)
@@ -1116,11 +1136,25 @@ class DialogParameters(CommonWindow):
         """ Initialize widgets signals
         """
 
-        self.combo.connect("changed", self.__on_selected_emulator)
+        self.combo.connect(
+            "changed", self.__on_selected_emulator)
 
-        self.entry_arguments.connect("icon-press", on_entry_clear)
-        self.entry_tags.connect("icon-press", on_entry_clear)
-        self.entry_key.connect("icon-press", on_entry_clear)
+        self.entry_arguments.connect(
+            "icon-press", on_entry_clear)
+        self.entry_tags.connect(
+            "icon-press", on_entry_clear)
+        self.entry_key.connect(
+            "icon-press", on_entry_clear)
+
+        self.treeview_cell_environment_key.connect(
+            "edited", self.__on_edited_cell)
+        self.treeview_cell_environment_value.connect(
+            "edited", self.__on_edited_cell)
+
+        self.button_environment_add.connect(
+            "clicked", self.__on_append_item)
+        self.button_environment_remove.connect(
+            "clicked", self.__on_remove_item)
 
 
     def __start_interface(self):
@@ -1177,6 +1211,9 @@ class DialogParameters(CommonWindow):
         for key in sorted(self.game.environment.keys()):
             self.store_environment.append([key, self.game.environment[key]])
 
+        for key in sorted(environ.copy().keys()):
+            self.store_environment_keys.append([key])
+
         self.combo.grab_focus()
 
 
@@ -1205,6 +1242,54 @@ class DialogParameters(CommonWindow):
             self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
 
         self.entry_arguments.set_placeholder_text(default)
+
+
+    def __on_edited_cell(self, widget, path, text):
+        """ Update treerow when a cell has been edited
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        path : str
+            Path identifying the edited cell
+        text : str
+            New text
+        """
+
+        if widget == self.treeview_cell_environment_key:
+            self.store_environment[path][0] = str(text)
+
+        elif widget == self.treeview_cell_environment_value:
+            self.store_environment[path][1] = str(text)
+
+
+    def __on_append_item(self, widget):
+        """ Append a new row in treeview
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        self.store_environment.append([ str(), str() ])
+
+
+    def __on_remove_item(self, widget):
+        """ Remove a row in treeview
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        model, treeiter = \
+            self.treeview_environment.get_selection().get_selected()
+
+        if treeiter is not None:
+            self.store_environment.remove(treeiter)
 
 
 class DialogRemove(CommonWindow):
