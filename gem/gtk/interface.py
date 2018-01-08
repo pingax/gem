@@ -2018,42 +2018,41 @@ class Interface(Gtk.ApplicationWindow):
         self.menubar_tools_item_sidebar.handler_unblock(
             self.side_signal_menubar)
 
+        # Avoid to reload paned_game if user has not change orientation
+        previous_mode = self.paned_games.get_orientation()
+
+        # Wanted sidebar orientation
+        sidebar_orientation = self.config.get("gem", "sidebar_orientation")
+
+        if sidebar_orientation == "horizontal" and \
+            not previous_mode == Gtk.Orientation.HORIZONTAL:
+            self.paned_games.set_position(-1)
+            self.paned_games.set_orientation(Gtk.Orientation.HORIZONTAL)
+
+            self.grid_paned.set_orientation(Gtk.Orientation.VERTICAL)
+            self.grid_paned.reorder_child(self.image_game_screen, 0)
+
+            self.image_game_screen.set_alignment(0.5, 0)
+            self.label_game_title.set_alignment(0.5, 0)
+
+        elif sidebar_orientation == "vertical" and \
+            not previous_mode == Gtk.Orientation.VERTICAL:
+            self.paned_games.set_position(-1)
+            self.paned_games.set_orientation(Gtk.Orientation.VERTICAL)
+
+            self.grid_paned.set_orientation(Gtk.Orientation.HORIZONTAL)
+            self.grid_paned.reorder_child(self.image_game_screen, -1)
+
+            self.image_game_screen.set_alignment(0, 0)
+            self.label_game_title.set_alignment(0, 0)
+
         if sidebar_status:
             self.grid_paned.show_all()
-
-            # Avoid to reload paned_game if user has not change orientation
-            previous_mode = self.paned_games.get_orientation()
-
-            # Wanted sidebar orientation
-            sidebar_orientation = self.config.get("gem", "sidebar_orientation")
-
-            if sidebar_orientation == "horizontal" and \
-                not previous_mode == Gtk.Orientation.HORIZONTAL:
-                self.paned_games.set_position(-1)
-                self.paned_games.set_orientation(Gtk.Orientation.HORIZONTAL)
-
-                self.grid_paned.set_orientation(Gtk.Orientation.VERTICAL)
-                self.grid_paned.reorder_child(self.image_game_screen, 0)
-
-                self.image_game_screen.set_alignment(0.5, 0)
-                self.label_game_title.set_alignment(0.5, 0)
-
-            elif sidebar_orientation == "vertical" and \
-                not previous_mode == Gtk.Orientation.VERTICAL:
-                self.paned_games.set_position(-1)
-                self.paned_games.set_orientation(Gtk.Orientation.VERTICAL)
-
-                self.grid_paned.set_orientation(Gtk.Orientation.HORIZONTAL)
-                self.grid_paned.reorder_child(self.image_game_screen, -1)
-
-                self.image_game_screen.set_alignment(0, 0)
-                self.label_game_title.set_alignment(0, 0)
-
-            for key, value in self.sidebar_keys:
-                self.widgets_sidebar[key]["box"].hide()
-
         else:
             self.grid_paned.hide()
+
+        for key, value in self.sidebar_keys:
+            self.widgets_sidebar[key]["box"].hide()
 
         # ------------------------------------
         #   Games
