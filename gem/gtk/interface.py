@@ -4134,6 +4134,17 @@ class Interface(Gtk.ApplicationWindow):
 
                 game.tags = dialog.entry_tags.get_text().split()
 
+                game.environment = dict()
+
+                for row in dialog.store_environment:
+                    key = dialog.store_environment.get_value(row.iter, 0)
+
+                    if key is not None and len(key) > 0:
+                        value = dialog.store_environment.get_value(row.iter, 1)
+
+                        if value is not None and len(value) > 0:
+                            game.environment[key] = value
+
                 # Update game from database
                 self.api.update_game(game)
 
