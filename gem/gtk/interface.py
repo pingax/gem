@@ -2099,6 +2099,8 @@ class Interface(Gtk.ApplicationWindow):
         self.toolbar_item_notes.set_sensitive(status)
         self.toolbar_item_parameters.set_sensitive(status)
         self.toolbar_item_screenshots.set_sensitive(status)
+        self.toolbar_item_properties.set_sensitive(status)
+        self.toolbar_item_refresh.set_sensitive(status)
 
         self.menubar_main_item_launch.set_sensitive(status)
         self.menubar_main_item_favorite.set_sensitive(status)
@@ -3154,6 +3156,9 @@ class Interface(Gtk.ApplicationWindow):
                         self.toolbar_item_properties.set_sensitive(True)
                     else:
                         self.toolbar_item_properties.set_sensitive(False)
+
+                # Activate refresh button
+                self.toolbar_item_refresh.set_sensitive(True)
 
                 # ------------------------------------
                 #   Load game list
