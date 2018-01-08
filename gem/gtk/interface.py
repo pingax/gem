@@ -1674,7 +1674,8 @@ class Interface(Gtk.ApplicationWindow):
                     console = generate_identifier(console)
 
                 # Check if current identifier exists
-                if console in self.api.consoles.keys():
+                if console in self.api.consoles.keys() and \
+                    console in self.consoles_iter.keys():
                     self.treeview_games.set_visible(True)
 
                     # Set console combobox active iter
