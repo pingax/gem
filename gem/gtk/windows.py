@@ -863,6 +863,10 @@ class DialogParameters(CommonWindow):
         grid_environment = Gtk.Box()
         grid_environment_buttons = Gtk.Box()
 
+        grid_statistic = Gtk.Box()
+        grid_statistic_total = Gtk.Box()
+        grid_statistic_average = Gtk.Box()
+
         # Properties
         stack.set_transition_type(Gtk.StackTransitionType.NONE)
 
@@ -881,6 +885,16 @@ class DialogParameters(CommonWindow):
             grid_environment_buttons.get_style_context(), "linked")
         grid_environment_buttons.set_spacing(-1)
         grid_environment_buttons.set_orientation(Gtk.Orientation.VERTICAL)
+
+        grid_statistic.set_spacing(6)
+        grid_statistic.set_homogeneous(False)
+        grid_statistic.set_orientation(Gtk.Orientation.VERTICAL)
+
+        grid_statistic_total.set_spacing(12)
+        grid_statistic_total.set_homogeneous(True)
+
+        grid_statistic_average.set_spacing(12)
+        grid_statistic_average.set_homogeneous(True)
 
         # ------------------------------------
         #   Emulators
@@ -975,19 +989,32 @@ class DialogParameters(CommonWindow):
         scroll_statistic = Gtk.ScrolledWindow()
         viewport_statistic = Gtk.Viewport()
 
-        self.label_statistic = Gtk.Label()
+        label_statistic_total = Gtk.Label()
+        self.label_statistic_total_value = Gtk.Label()
+
+        label_statistic_average = Gtk.Label()
+        self.label_statistic_average_value = Gtk.Label()
 
         # Properties
-        self.label_statistic.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
-        self.label_statistic.set_justify(Gtk.Justification.LEFT)
-        self.label_statistic.set_halign(Gtk.Align.START)
-        self.label_statistic.set_valign(Gtk.Align.START)
-        self.label_statistic.set_single_line_mode(False)
-        self.label_statistic.set_use_markup(True)
-        self.label_statistic.set_line_wrap(True)
-        self.label_statistic.set_xalign(0)
-        self.label_statistic.set_yalign(0)
-        self.label_statistic.set_lines(-1)
+        label_statistic_total.set_label(_("Total play time"))
+        label_statistic_total.set_halign(Gtk.Align.END)
+        label_statistic_total.set_valign(Gtk.Align.CENTER)
+        label_statistic_total.get_style_context().add_class("dim-label")
+
+        self.label_statistic_total_value.set_label(_("No data"))
+        self.label_statistic_total_value.set_halign(Gtk.Align.START)
+        self.label_statistic_total_value.set_valign(Gtk.Align.CENTER)
+        self.label_statistic_total_value.set_use_markup(True)
+
+        label_statistic_average.set_label(_("Average play time"))
+        label_statistic_average.set_halign(Gtk.Align.END)
+        label_statistic_average.set_valign(Gtk.Align.CENTER)
+        label_statistic_average.get_style_context().add_class("dim-label")
+
+        self.label_statistic_average_value.set_label(_("No data"))
+        self.label_statistic_average_value.set_halign(Gtk.Align.START)
+        self.label_statistic_average_value.set_valign(Gtk.Align.CENTER)
+        self.label_statistic_average_value.set_use_markup(True)
 
         # ------------------------------------
         #   Environment variables
@@ -1050,7 +1077,20 @@ class DialogParameters(CommonWindow):
         stack.add_titled(scroll_statistic, "statistic", _("Statistic"))
 
         scroll_statistic.add(viewport_statistic)
-        viewport_statistic.add(self.label_statistic)
+        viewport_statistic.add(grid_statistic)
+
+        grid_statistic.pack_start(grid_statistic_total, False, False, 0)
+        grid_statistic.pack_start(grid_statistic_average, False, False, 0)
+
+        grid_statistic_total.pack_start(
+            label_statistic_total, True, True, 0)
+        grid_statistic_total.pack_start(
+            self.label_statistic_total_value, True, True, 0)
+
+        grid_statistic_average.pack_start(
+            label_statistic_average, True, True, 0)
+        grid_statistic_average.pack_start(
+            self.label_statistic_average_value, True, True, 0)
 
         stack.add_titled(grid_environment, "environment", _("Environment"))
 
@@ -1125,18 +1165,13 @@ class DialogParameters(CommonWindow):
             self.entry_tags.set_text(' '.join(self.game.tags))
 
         # Game statistics
-        statistics = OrderedDict({
-            # _("Average play time"):
-                # parse_timedelta(self.game.play_time / self.game.played),
-            _("Total play time"):
-                parse_timedelta(self.game.play_time),
-        })
+        if not parse_timedelta(self.game.play_time) == "00:00:00":
+            self.label_statistic_total_value.set_label(
+                parse_timedelta(self.game.play_time))
 
-        text = list()
-        for key in statistics.keys():
-            text.append("<b>%s</b>: %s" % (key, statistics[key]))
-
-        self.label_statistic.set_markup('\n'.join(text))
+            if self.game.played > 0:
+                self.label_statistic_average_value.set_label(
+                    parse_timedelta(self.game.play_time / self.game.played))
 
         # Environment variables
         for key in sorted(self.game.environment.keys()):
