@@ -1696,7 +1696,7 @@ class Interface(Gtk.ApplicationWindow):
                 "droping some roms into interface.\n\nEnjoy and have fun :D"),
                 Icons.SmileBig, False)
 
-            dialog.set_size_request(500, -1)
+            dialog.set_size(500, -1)
 
             dialog.run()
             dialog.destroy()
