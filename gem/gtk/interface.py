@@ -317,6 +317,10 @@ class Interface(Gtk.ApplicationWindow):
 
         self.add_accel_group(self.shortcuts_group)
 
+        self.drag_dest_set(
+            Gtk.DestDefaults.MOTION | Gtk.DestDefaults.DROP, self.targets,
+            Gdk.DragAction.COPY)
+
         # ------------------------------------
         #   Clipboard
         # ------------------------------------
@@ -329,6 +333,8 @@ class Interface(Gtk.ApplicationWindow):
 
         self.grid = Gtk.Box()
 
+        self.grid_games = Gtk.Box()
+        self.grid_games_placeholder = Gtk.Box()
         self.grid_options = Gtk.Box()
         self.grid_infobar = Gtk.Box()
 
@@ -347,6 +353,12 @@ class Interface(Gtk.ApplicationWindow):
 
         # Properties
         self.grid.set_orientation(Gtk.Orientation.VERTICAL)
+
+        self.grid_games.set_orientation(Gtk.Orientation.VERTICAL)
+
+        self.grid_games_placeholder.set_spacing(12)
+        self.grid_games_placeholder.set_border_width(18)
+        self.grid_games_placeholder.set_orientation(Gtk.Orientation.VERTICAL)
 
         self.grid_paned.set_border_width(6)
         self.grid_paned.set_size_request(432, 216)
@@ -919,6 +931,26 @@ class Interface(Gtk.ApplicationWindow):
                 self.widgets_sidebar[key]["value"], True, True, 0)
 
         # ------------------------------------
+        #   Games - Placeholder
+        # ------------------------------------
+
+        self.image_game_placeholder = Gtk.Image()
+        self.label_game_placeholder = Gtk.Label()
+
+        # Properties
+        self.image_game_placeholder.set_from_icon_name(
+            Icons.Symbolic.Gaming, Gtk.IconSize.DIALOG)
+        self.image_game_placeholder.set_pixel_size(256)
+        self.image_game_placeholder.set_halign(Gtk.Align.CENTER)
+        self.image_game_placeholder.set_valign(Gtk.Align.END)
+
+        self.label_game_placeholder.set_label(
+            _("Start to play by drag & drop some ROM files into interface"))
+        self.label_game_placeholder.set_halign(Gtk.Align.CENTER)
+        self.label_game_placeholder.set_valign(Gtk.Align.START)
+        self.label_game_placeholder.get_style_context().add_class("dim-label")
+
+        # ------------------------------------
         #   Games - Treeview
         # ------------------------------------
 
@@ -977,10 +1009,6 @@ class Interface(Gtk.ApplicationWindow):
 
         self.treeview_games.drag_source_set(
             Gdk.ModifierType.BUTTON1_MASK, self.targets, Gdk.DragAction.COPY)
-
-        self.treeview_games.drag_dest_set(
-            Gtk.DestDefaults.MOTION | Gtk.DestDefaults.DROP, self.targets,
-            Gdk.DragAction.COPY)
 
         self.column_game_name.set_title(_("Name"))
         self.column_game_play.set_title(_("Launch"))
@@ -1382,7 +1410,7 @@ class Interface(Gtk.ApplicationWindow):
             self.label_infobar, True, True, 4)
 
         # Games paned
-        self.paned_games.pack1(self.scroll_games, True, False)
+        self.paned_games.pack1(self.grid_games, True, False)
         self.paned_games.pack2(self.grid_paned, False, False)
 
         self.grid_paned.pack_start(self.grid_paned_widgets, True, True, 0)
@@ -1404,6 +1432,16 @@ class Interface(Gtk.ApplicationWindow):
             self.image_paned_savestates, False, False, 0)
         self.grid_paned_footer.pack_end(
             self.image_paned_parameters, False, False, 4)
+
+        # Games
+        self.grid_games.pack_start(self.grid_games_placeholder, True, True, 0)
+        self.grid_games.pack_start(self.scroll_games, True, True, 0)
+
+        # Games placeholder
+        self.grid_games_placeholder.pack_start(
+            self.image_game_placeholder, True, True, 0)
+        self.grid_games_placeholder.pack_start(
+            self.label_game_placeholder, True, True, 0)
 
         # Games treeview
         self.scroll_games.add(self.treeview_games)
@@ -1464,6 +1502,9 @@ class Interface(Gtk.ApplicationWindow):
             "delete-event", self.__stop_interface)
         self.connect(
             "key-press-event", self.__on_manage_keys)
+
+        self.connect(
+            "drag-data-received", self.__on_dnd_received_data)
 
         # ------------------------------------
         #   Menubar
@@ -1644,8 +1685,6 @@ class Interface(Gtk.ApplicationWindow):
 
         self.treeview_games.connect(
             "drag-data-get", self.__on_dnd_send_data)
-        self.treeview_games.connect(
-            "drag-data-received", self.__on_dnd_received_data)
 
         self.treeview_games.connect(
             "query-tooltip", self.__on_selected_game_tooltip)
@@ -2051,6 +2090,9 @@ class Interface(Gtk.ApplicationWindow):
         # ------------------------------------
         #   Console
         # ------------------------------------
+
+        self.scroll_games.set_visible(False)
+        self.grid_games_placeholder.set_visible(False)
 
         current_console = self.append_consoles()
 
@@ -3225,6 +3267,9 @@ class Interface(Gtk.ApplicationWindow):
         #   Load data
         # ------------------------------------
 
+        self.scroll_games.set_visible(False)
+        self.grid_games_placeholder.set_visible(True)
+
         self.model_games.clear()
 
         if console.emulator is not None:
@@ -3245,7 +3290,13 @@ class Interface(Gtk.ApplicationWindow):
 
             emulator = self.api.get_emulator(console.emulator.id)
 
-            for game in console.get_games():
+            games = console.get_games()
+
+            if len(games) > 0:
+                self.scroll_games.set_visible(True)
+                self.grid_games_placeholder.set_visible(False)
+
+            for game in games:
 
                 # Another thread has been called by user, close this one
                 if not current_thread_id == self.list_thread:
