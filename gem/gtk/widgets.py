@@ -197,6 +197,12 @@ class CommonWindow(object):
             else:
                 self.headerbar = self.window.get_header_bar()
 
+            self.headerbar_image = Gtk.Image()
+
+            # Properties
+            self.headerbar_image.set_from_icon_name(
+                self.icon, Gtk.IconSize.LARGE_TOOLBAR)
+
         # ------------------------------------
         #   Help button
         # ------------------------------------
@@ -224,6 +230,9 @@ class CommonWindow(object):
 
             self.grid_actions.pack_end(
                 self.grid_actions_buttons, False, False, 0)
+
+        else:
+            self.headerbar.pack_start(self.headerbar_image)
 
         # Gtk.Window
         if self.parent is None:
@@ -266,6 +275,9 @@ class CommonWindow(object):
 
         if len(self.grid_actions_buttons.get_children()) == 0:
             self.grid.remove(self.grid_actions)
+
+        if not self.use_classic_theme and len(self.sensitive_data.keys()) > 0:
+            self.headerbar.remove(self.headerbar_image)
 
         self.window.hide()
         self.window.unrealize()
