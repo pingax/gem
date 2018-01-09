@@ -2487,6 +2487,9 @@ class Interface(Gtk.ApplicationWindow):
             key, mod = Gtk.accelerator_parse(data["keys"])
 
             if Gtk.accelerator_valid(key, mod):
+                # Disconnect previous shortcut to avoid multiple allocation
+                self.shortcuts_group.disconnect_key(key, mod)
+
                 self.shortcuts_group.connect(
                     key, mod, Gtk.AccelFlags.VISIBLE, data["function"])
 
@@ -2914,7 +2917,15 @@ class Interface(Gtk.ApplicationWindow):
 
         self.set_sensitive(False)
 
-        Preferences(self.api, self).start()
+        dialog = Preferences(self.api, self)
+
+        if dialog.run() == Gtk.ResponseType.APPLY:
+            dialog.save_configuration()
+
+            self.logger.debug("Main interface need to be reload")
+            self.load_interface()
+
+        dialog.destroy()
 
         self.set_sensitive(True)
 

@@ -1511,18 +1511,11 @@ class Preferences(CommonWindow):
         self.button_save = self.add_button(
             _("Apply"), Gtk.ResponseType.APPLY, Gtk.Align.END)
 
-        self.button_cancel.connect("clicked", self.__stop_interface)
-        self.button_save.connect("clicked", self.__stop_interface)
+        if self.parent is None:
+            self.button_cancel.connect("clicked", self.__stop_interface)
+            self.button_save.connect("clicked", self.__stop_interface)
 
         self.load_configuration()
-
-        self.window.hide()
-        self.window.unrealize()
-
-
-    def start(self):
-        """ Start interface
-        """
 
         try:
             width, height = self.config.get(
@@ -1536,6 +1529,9 @@ class Preferences(CommonWindow):
                 _("Cannot resize preferences window: %s") % str(error))
 
             self.window.set_default_size(800, 600)
+
+        self.window.hide()
+        self.window.unrealize()
 
         # Update widget sensitive status
         self.__on_check_sidebar()
@@ -1554,8 +1550,6 @@ class Preferences(CommonWindow):
             self.button_consoles_remove.set_sensitive(False)
             self.button_emulators_remove.set_sensitive(False)
 
-        self.run()
-
 
     def __stop_interface(self, widget=None, event=None):
         """ Save data and stop interface
@@ -1568,96 +1562,97 @@ class Preferences(CommonWindow):
             Event which triggered this signal (Default: None)
         """
 
-        if widget == self.button_save:
-            # Write emulators and consoles data
-            self.api.write_data()
-
-            self.config.modify("gem", "load_console_startup",
-                int(self.check_last_console.get_active()))
-            self.config.modify("gem", "hide_empty_console",
-                int(self.check_hide_console.get_active()))
-
-            self.config.modify("gem", "toolbar_icons_size",
-                self.toolbar[self.combo_toolbar.get_active_id()])
-
-            self.config.modify("gem", "use_classic_theme",
-                int(self.check_classic_theme.get_active()))
-            self.config.modify("gem", "show_header",
-                int(self.check_header.get_active()))
-            self.config.modify("gem", "show_sidebar",
-                int(self.check_sidebar_show.get_active()))
-            self.config.modify("gem", "show_random_screenshot",
-                int(self.check_sidebar_screenshot.get_active()))
-            self.config.modify("gem", "sidebar_orientation",
-                self.sidebar[self.combo_sidebar.get_active_id()])
-
-            self.config.modify("gem", "use_translucent_icons",
-                int(self.check_icons.get_active()))
-            self.config.modify("columns", "play",
-                int(self.check_play.get_active()))
-            self.config.modify("columns", "last_play",
-                int(self.check_last_play.get_active()))
-            self.config.modify("columns", "play_time",
-                int(self.check_play_time.get_active()))
-            self.config.modify("columns", "installed",
-                int(self.check_installed.get_active()))
-            self.config.modify("columns", "flags",
-                int(self.check_flags.get_active()))
-
-            self.config.modify("gem", "games_treeview_lines",
-                self.lines[self.combo_lines.get_active_id()])
-
-            self.config.modify("viewer", "native",
-                int(not self.check_native_viewer.get_active()))
-            self.config.modify("viewer", "binary",
-                self.file_viewer_binary.get_filename())
-            self.config.modify("viewer", "options",
-                self.entry_viewer_options.get_text())
-
-            # ------------------------------------
-            #   Editor
-            # ------------------------------------
-
-            if self.gtksource:
-                self.config.modify("editor", "lines",
-                    int(self.check_lines.get_active()))
-                self.config.modify("editor", "colorscheme",
-                    self.combo_colorsheme.get_active_id())
-                self.config.modify("editor", "font",
-                    self.font_editor.get_font_name())
-
-            # ------------------------------------
-            #   Shortcuts
-            # ------------------------------------
-
-            root = self.model_shortcuts.get_iter_first()
-
-            for line in self.__on_list_shortcuts(root):
-                key = self.model_shortcuts.get_value(line, 2)
-                value = self.model_shortcuts.get_value(line, 1)
-
-                if key is not None and value is not None:
-                    self.config.modify("keys", key, value)
-
-            # ------------------------------------
-            #   Save data
-            # ------------------------------------
-
-            self.config.update()
-
-            if self.parent is not None:
-                self.logger.debug("Main interface need to be reload")
-                self.parent.load_interface()
+        if self.parent is None and widget == self.button_save:
+            self.save_configuration()
 
         self.window.hide()
 
         self.config.modify("windows", "preferences", "%dx%d" % self.get_size())
         self.config.update()
 
-        if self.parent is not None:
-            self.window.response(Gtk.ResponseType.CANCEL)
+        if self.parent is None:
+            self.destroy()
 
-        self.destroy()
+
+    def save_configuration(self):
+        """ Load configuration files and fill widgets
+        """
+
+        # Write emulators and consoles data
+        self.api.write_data()
+
+        self.config.modify("gem", "load_console_startup",
+            int(self.check_last_console.get_active()))
+        self.config.modify("gem", "hide_empty_console",
+            int(self.check_hide_console.get_active()))
+
+        self.config.modify("gem", "toolbar_icons_size",
+            self.toolbar[self.combo_toolbar.get_active_id()])
+
+        self.config.modify("gem", "use_classic_theme",
+            int(self.check_classic_theme.get_active()))
+        self.config.modify("gem", "show_header",
+            int(self.check_header.get_active()))
+        self.config.modify("gem", "show_sidebar",
+            int(self.check_sidebar_show.get_active()))
+        self.config.modify("gem", "show_random_screenshot",
+            int(self.check_sidebar_screenshot.get_active()))
+        self.config.modify("gem", "sidebar_orientation",
+            self.sidebar[self.combo_sidebar.get_active_id()])
+
+        self.config.modify("gem", "use_translucent_icons",
+            int(self.check_icons.get_active()))
+        self.config.modify("columns", "play",
+            int(self.check_play.get_active()))
+        self.config.modify("columns", "last_play",
+            int(self.check_last_play.get_active()))
+        self.config.modify("columns", "play_time",
+            int(self.check_play_time.get_active()))
+        self.config.modify("columns", "installed",
+            int(self.check_installed.get_active()))
+        self.config.modify("columns", "flags",
+            int(self.check_flags.get_active()))
+
+        self.config.modify("gem", "games_treeview_lines",
+            self.lines[self.combo_lines.get_active_id()])
+
+        self.config.modify("viewer", "native",
+            int(not self.check_native_viewer.get_active()))
+        self.config.modify("viewer", "binary",
+            self.file_viewer_binary.get_filename())
+        self.config.modify("viewer", "options",
+            self.entry_viewer_options.get_text())
+
+        # ------------------------------------
+        #   Editor
+        # ------------------------------------
+
+        if self.gtksource:
+            self.config.modify("editor", "lines",
+                int(self.check_lines.get_active()))
+            self.config.modify("editor", "colorscheme",
+                self.combo_colorsheme.get_active_id())
+            self.config.modify("editor", "font",
+                self.font_editor.get_font_name())
+
+        # ------------------------------------
+        #   Shortcuts
+        # ------------------------------------
+
+        root = self.model_shortcuts.get_iter_first()
+
+        for line in self.__on_list_shortcuts(root):
+            key = self.model_shortcuts.get_value(line, 2)
+            value = self.model_shortcuts.get_value(line, 1)
+
+            if key is not None and value is not None:
+                self.config.modify("keys", key, value)
+
+        # ------------------------------------
+        #   Save data
+        # ------------------------------------
+
+        self.config.update()
 
 
     def load_configuration(self):

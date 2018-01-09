@@ -184,7 +184,7 @@ def main():
                 # Start preferences
                 if args.gtk_config:
                     from gem.gtk.preferences import Preferences
-                    Preferences(gem).start()
+                    Preferences(gem).run()
 
                 # Start interface
                 elif args.gtk_ui:
