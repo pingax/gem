@@ -2095,20 +2095,22 @@ class Interface(Gtk.ApplicationWindow):
 
         current_console = self.append_consoles()
 
+        # Show games placeholder when no console available or selected
+        if current_console is None or len(self.model_consoles) == 0:
+            self.grid_games_placeholder.set_visible(True)
+
         self.selection = dict(
             console=None,
             game=None)
 
-        if not init_interface:
-            if current_console is None:
-                self.model_games.clear()
+        if current_console is None:
+            self.model_games.clear()
 
-                if self.config.getboolean(
-                    "gem", "hide_empty_console", fallback=False):
-                    self.combo_consoles.set_active(0)
+            if len(self.model_consoles) > 0:
+                self.combo_consoles.set_active(0)
 
-            else:
-                self.combo_consoles.set_active_iter(current_console)
+        else:
+            self.combo_consoles.set_active_iter(current_console)
 
 
     def sensitive_interface(self, status=False):
