@@ -10,7 +10,7 @@ if [ $EUID -ne 0 ] ; then
 
 else
     echo "==> Install GEM"
-    python3 setup.py install
+    python3 setup.py install --prefix=/usr
 
     echo "==> Remove build folders"
     rm -Rf build dist gem.egg-info
