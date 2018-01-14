@@ -4,6 +4,7 @@
 
 * Add current screenshot path in screenshots viewer
 * Add screenshots viewer dialog size storage to gem.conf
+* Add drag system to screenshots viewer dialog to share image with applications
 * Add an infobar to inform user for incorrect values without open a dialog
 * Add GEM.get_games function to API
 * Add GEM.get_consoles function to API
@@ -17,10 +18,15 @@
 * Add a tooltip for games treeview
 * Add a console reminder option when use D&D
 * Add a refresh buffer option for log dialogs
+* Add a games placeholder when no game available
+* Add classic theme appearance to dialog
+* Add a statistic field to game properties dialog
+* Add a environment variables field to game properties dialog
 * Fix wrong parameter for dolphin-emu
 * Fix wrong exception in icon_from_data
 * Fix wrong type for play_time and last_launch_time in api
 * Fix reset a game not remove it from database
+* Fix cannot check game with [ and ] in name
 
 ## Version 0.8 - Shadow Blade (26 July, 2017)
 

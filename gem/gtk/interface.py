@@ -943,12 +943,12 @@ class Interface(Gtk.ApplicationWindow):
         self.image_game_placeholder.set_pixel_size(256)
         self.image_game_placeholder.set_halign(Gtk.Align.CENTER)
         self.image_game_placeholder.set_valign(Gtk.Align.END)
+        self.image_game_placeholder.get_style_context().add_class("dim-label")
 
         self.label_game_placeholder.set_label(
             _("Start to play by drag & drop some ROM files into interface"))
         self.label_game_placeholder.set_halign(Gtk.Align.CENTER)
         self.label_game_placeholder.set_valign(Gtk.Align.START)
-        self.label_game_placeholder.get_style_context().add_class("dim-label")
 
         # ------------------------------------
         #   Games - Treeview
