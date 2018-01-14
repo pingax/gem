@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.6\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2018-01-03 17:16+0100\n"
+"PO-Revision-Date: 2018-01-14 10:27+0100\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -195,6 +195,11 @@ msgstr "Argument utilisé pour activer le mode fenêtré"
 # File: gem/windows.py, line: 319
 msgid "Auto line break"
 msgstr "Retour à la ligne automatique"
+
+#
+# File: src/window.py, line: 375
+msgid "Average play time"
+msgstr "Temps de jeu moyen"
 
 #
 # File: gem/gtk/mednafen.py, line: 84
@@ -634,6 +639,11 @@ msgid "Keep this selection for every games in queue"
 msgstr "Conserver cette sélection pour chaque jeux de la file d'attente"
 
 #
+# File: gem/gtk/windows.py, line: 1069
+msgid "Key"
+msgstr "Clé"
+
+#
 # File: gem/gtk/preferences.py, line: 179
 msgid "Large Toolbar"
 msgstr "Grandes icônes"
@@ -778,6 +788,11 @@ msgstr "Non"
 
 #
 # File: gem/interface.py, line: 1286
+msgid "No data"
+msgstr "Pas de donnée"
+
+#
+# File: gem/interface.py, line: 1286
 msgid "No default value"
 msgstr "Pas de valeurs par défaut"
 
@@ -860,11 +875,6 @@ msgstr "Quitter"
 # File: gem/preferences.py, line: 91
 msgid "Quit application"
 msgstr "Quitter l'application"
-
-#
-# File: gem/preferences.py, line: 372
-msgid "ROMs path"
-msgstr "Chemin des ROMs"
 
 #
 # File: gem/preferences.py, line: 335
@@ -1090,6 +1100,11 @@ msgid "Specify a _memory type"
 msgstr "Spécifier un type de mémoire"
 
 #
+# File: gem/gtk/interface.py, line: 949
+msgid "Start to play by drag & drop some ROM files into interface"
+msgstr "Commencez à jouer en déplacant des ROM dans l'interface"
+
+#
 # File: gem/gtk/windows.py, line: 1052
 msgid "Statistic"
 msgstr "Statistique"
@@ -1310,6 +1325,11 @@ msgstr "Utilisez l'espace pour séparer les étiquettes"
 # File: gem/preferences.py, line: 283
 msgid "Use translucent icons"
 msgstr "Utiliser des icônes translucides"
+
+#
+# File: gem/gtk/mednafen.py, line: 400
+msgid "Value"
+msgstr "Valeur"
 
 #
 # File: gem/preferences.py, line: 99
@@ -1536,6 +1556,11 @@ msgstr "Lubert Aurélien (PacMiam)"
 #~ msgstr "Options"
 
 #
+# File: gem/preferences.py, line: 372
+#~ msgid "ROMs path"
+#~ msgstr "Chemin des ROMs"
+
+#
 # File: src/window.py, line: 939
 #~ msgid "Remove %s"
 #~ msgstr "Supprimer %s"
@@ -1619,11 +1644,6 @@ msgstr "Lubert Aurélien (PacMiam)"
 # File: gem/preferences.py, line: 495
 #~ msgid "Use classic theme (Need to reboot GEM)"
 #~ msgstr "Utiliser le thème classique (Nécessite de redémarrer GEM)"
-
-#
-# File: gem/gtk/mednafen.py, line: 400
-#~ msgid "Value"
-#~ msgstr "Valeur"
 
 #
 # File: gem/ui/interface.glade, line: 1199

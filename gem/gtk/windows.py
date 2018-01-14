@@ -1066,14 +1066,14 @@ class DialogParameters(CommonWindow):
         self.treeview_cell_environment_key.set_property(
             "model", self.store_environment_keys)
         self.treeview_cell_environment_key.set_property(
-            "placeholder_text", _("Environment key..."))
+            "placeholder_text", _("Key"))
         self.treeview_cell_environment_key.set_property(
             "ellipsize", Pango.EllipsizeMode.END)
 
         self.treeview_cell_environment_value.set_padding(12, 6)
         self.treeview_cell_environment_value.set_property("editable", True)
         self.treeview_cell_environment_value.set_property(
-            "placeholder_text", _("Environment value..."))
+            "placeholder_text", _("Value"))
         self.treeview_cell_environment_value.set_property(
             "ellipsize", Pango.EllipsizeMode.END)
 

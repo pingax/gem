@@ -198,6 +198,12 @@ msgid "Auto line break"
 msgstr "Salto de línea automàtico"
 
 #
+# File: gem/interface.py, line: 642
+#, fuzzy
+msgid "Average play time"
+msgstr "Tiempo jugado"
+
+#
 # File: gem/gtk/mednafen.py, line: 84
 msgid "Backup Memory Type"
 msgstr ""
@@ -648,6 +654,11 @@ msgid "Keep this selection for every games in queue"
 msgstr ""
 
 #
+# File: gem/gtk/windows.py, line: 1069
+msgid "Key"
+msgstr ""
+
+#
 # File: gem/gtk/preferences.py, line: 179
 msgid "Large Toolbar"
 msgstr ""
@@ -796,6 +807,12 @@ msgstr "Ninguno"
 #
 # File: gem/preferences.py, line: 1662
 #, fuzzy
+msgid "No data"
+msgstr "Establecer las opciones por defecto"
+
+#
+# File: gem/preferences.py, line: 1662
+#, fuzzy
 msgid "No default value"
 msgstr "Establecer las opciones por defecto"
 
@@ -887,11 +904,6 @@ msgstr "_Salir"
 # File: gem/preferences.py, line: 94
 msgid "Quit application"
 msgstr "Salir de la aplicación"
-
-#
-# File: gem/preferences.py, line: 372
-msgid "ROMs path"
-msgstr "Ruta de las ROMs"
 
 #
 # File: gem/interface.py, line: 2006
@@ -1132,6 +1144,11 @@ msgid "Specify a _memory type"
 msgstr "Escoge un tipo de _memoria"
 
 #
+# File: gem/gtk/interface.py, line: 949
+msgid "Start to play by drag & drop some ROM files into interface"
+msgstr ""
+
+#
 # File: gem/gtk/windows.py, line: 1052
 msgid "Statistic"
 msgstr ""
@@ -1357,6 +1374,11 @@ msgstr "Usar el punto y coma para separar las extensiones"
 #, fuzzy
 msgid "Use translucent icons"
 msgstr "Usar iconos translúcidos en la lista de los juegos"
+
+#
+# File: gem/gtk/mednafen.py, line: 400
+msgid "Value"
+msgstr "Valor"
 
 #
 # File: gem/preferences.py, line: 99
@@ -1689,6 +1711,11 @@ msgstr "agradecimientos a los traductores"
 #~ msgstr "Acción"
 
 #
+# File: gem/preferences.py, line: 372
+#~ msgid "ROMs path"
+#~ msgstr "Ruta de las ROMs"
+
+#
 # File: gem/interface.py, line: 1736
 # File: gem/preferences.py, line: 1195
 #~ msgid "Remove %s"
@@ -1792,11 +1819,6 @@ msgstr "agradecimientos a los traductores"
 # File: gem/gtk/preferences.py, line: 511
 #~ msgid "Use classic theme (Need to reboot GEM)"
 #~ msgstr "Usar tema clásico (Necesita reiniciar GEM)"
-
-#
-# File: gem/gtk/mednafen.py, line: 400
-#~ msgid "Value"
-#~ msgstr "Valor"
 
 #
 # File: gem/preferences.py, line: 156

@@ -276,9 +276,6 @@ class CommonWindow(object):
         if len(self.grid_actions_buttons.get_children()) == 0:
             self.grid.remove(self.grid_actions)
 
-        if not self.use_classic_theme and len(self.sensitive_data.keys()) > 0:
-            self.headerbar.remove(self.headerbar_image)
-
         self.window.hide()
         self.window.unrealize()
 
@@ -354,8 +351,12 @@ class CommonWindow(object):
 
             if align == Gtk.Align.END:
                 self.headerbar.pack_end(widget)
+
             else:
                 self.headerbar.pack_start(widget)
+
+                if self.headerbar_image in self.headerbar.get_children():
+                    self.headerbar.remove(self.headerbar_image)
 
         # Using classic theme
         else:
@@ -433,8 +434,12 @@ class CommonWindow(object):
 
             if align == Gtk.Align.END:
                 self.headerbar.pack_end(button)
+
             else:
                 self.headerbar.pack_start(button)
+
+                if self.headerbar_image in self.headerbar.get_children():
+                    self.headerbar.remove(self.headerbar_image)
 
             if self.headerbar.get_show_close_button():
                 self.headerbar.set_show_close_button(False)

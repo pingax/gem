@@ -3308,6 +3308,8 @@ class Interface(Gtk.ApplicationWindow):
                 self.scroll_games.set_visible(True)
                 self.grid_games_placeholder.set_visible(False)
 
+            yield True
+
             for game in games:
 
                 # Another thread has been called by user, close this one
