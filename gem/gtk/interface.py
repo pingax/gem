@@ -759,7 +759,6 @@ class Interface(Gtk.ApplicationWindow):
         self.popover_menu_filters = Gtk.Popover()
 
         # Properties
-        self.entry_filter.set_size_request(300, -1)
         self.entry_filter.set_placeholder_text(_("Filter..."))
         self.entry_filter.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
