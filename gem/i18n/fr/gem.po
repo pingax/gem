@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.6\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2018-01-14 10:27+0100\n"
+"PO-Revision-Date: 2018-01-21 10:31+0100\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -117,7 +117,7 @@ msgid ""
 msgstr ""
 "Une console représente une bibliothèque de jeux. Vous pouvez spécifier un "
 "émulateur par défaut qui est utilisé par cette console et les extensions qui "
-"seront lues par cette émulateur."
+"seront lues par cet émulateur."
 
 #
 # File: gem/interface.py, line: 2044
@@ -166,7 +166,7 @@ msgstr "Une erreur est survenue durant l'exécution du programme: %s"
 # File: gem/interface.py, line: 2112
 msgid "An error occur during generation, consult log for futher details."
 msgstr ""
-"Une erreur est survenu durant la génération, consultez le journal pour plus "
+"Une erreur est survenue durant la génération, consultez le journal pour plus "
 "de détails."
 
 #
@@ -636,7 +636,7 @@ msgstr ""
 #
 # File: gem/gtk/windows.py, line: 2023
 msgid "Keep this selection for every games in queue"
-msgstr "Conserver cette sélection pour chaque jeux de la file d'attente"
+msgstr "Conserver cette sélection pour chaque jeu de la file d'attente"
 
 #
 # File: gem/gtk/windows.py, line: 1069
@@ -755,7 +755,7 @@ msgid ""
 "represent the console acronym name (example: Nintendo NES -> nes)."
 msgstr ""
 "La plupart du temps, les extensions sont communes entre les différents "
-"émulateurs et représente l'acronym du nom de la console (exemple: Nintendo "
+"émulateurs et représente l'acronyme du nom de la console (exemple: Nintendo "
 "NES -> nes)."
 
 #
@@ -777,9 +777,9 @@ msgid ""
 "more informations, consult emulators documentation."
 msgstr ""
 "Les titres sur console Nintendo sont identifiés par un identifieur de 6 "
-"caractères connu comme le GameID. Ce GameID est seulement utilisé avec "
+"caractères connus comme le GameID. Ce GameID est seulement utilisé avec "
 "certains émulateurs comme Dolphin-emu. Pour plus d'informations, consultez "
-"ladocumentation des émulateurs."
+"la documentation des émulateurs."
 
 #
 # File: gem/preferences.py, line: 97
@@ -1102,7 +1102,7 @@ msgstr "Spécifier un type de mémoire"
 #
 # File: gem/gtk/interface.py, line: 949
 msgid "Start to play by drag & drop some ROM files into interface"
-msgstr "Commencez à jouer en déplacant des ROM dans l'interface"
+msgstr "Commencez à jouer en déplaçant des ROM dans l'interface"
 
 #
 # File: gem/gtk/windows.py, line: 1052
@@ -1497,173 +1497,3 @@ msgstr "_Outils"
 # File: gem/interface.py, line: 926
 msgid "translator-credits"
 msgstr "Lubert Aurélien (PacMiam)"
-
-#
-# File: gem/interface.py, line: 2026
-#~ msgid "%s is already in the roms folder. Canceling operation."
-#~ msgstr "%s est déjà dans le dossier des roms. Annulation de l'opération."
-
-#
-# File: gem/preferences.py, line: 1660
-# File: gem/preferences.py, line: 1695
-# File: gem/preferences.py, line: 1713
-#~ msgid "All icons"
-#~ msgstr "Toutes les icônes"
-
-#
-# File: gem/preferences.py, line: 292
-#~ msgid "Alternative viewer"
-#~ msgstr "Visualiseur d'images alternatif"
-
-#
-# File: src/window.py, line: 940
-#~ msgid "Do you want to remove this memory type ?"
-#~ msgstr "Voulez-vous vraiment supprimer ce type de mémoire ?"
-
-#
-# File: gem/gtk/preferences.py, line: 1796
-#~ msgid "Expressions are split by carriage return."
-#~ msgstr "Les expressions sont séparées par un retour à la ligne."
-
-#
-# File: gem/preferences.py, line: 433
-#~ msgid "Hide consoles without any game"
-#~ msgstr "Cacher les consoles sans aucun jeu"
-
-#
-# File: src/window.py, line: 446
-#~ msgid "Ignored games files"
-#~ msgstr "Fichiers des jeux à ignorer"
-
-#
-# File: gem/preferences.py, line: 1255
-#~ msgid "Image file"
-#~ msgstr "Fichier image"
-
-#
-# File: gem/gtk/windows.py, line: 676
-#~ msgid "Load file..."
-#~ msgstr "Chargement du fichier..."
-
-#
-# File: gem/preferences.py, line: 263
-#~ msgid "Load the last chosen console when start GEM"
-#~ msgstr "Charger la dernière console choisie lors du démarrage de GEM"
-
-#
-# File: gem/preferences.py, line: 329
-#~ msgid "Options"
-#~ msgstr "Options"
-
-#
-# File: gem/preferences.py, line: 372
-#~ msgid "ROMs path"
-#~ msgstr "Chemin des ROMs"
-
-#
-# File: src/window.py, line: 939
-#~ msgid "Remove %s"
-#~ msgstr "Supprimer %s"
-
-#
-# File: gem/gtk/mednafen.py, line: 301
-#~ msgid "Remove a memory type"
-#~ msgstr "Supprimer un type de mémoire"
-
-#
-# File: gem/preferences.py, line: 1577
-#~ msgid "Select icon from"
-#~ msgstr "Choisir l'icône depuis"
-
-#
-# File: gem/interface.py, line: 1286
-#~ msgid "Set a custom name for %s"
-#~ msgstr "Définir un nom personnalisé pour %s"
-
-#
-# File: gem/preferences.py, line: 267
-#~ msgid "Show \"Flags\" column"
-#~ msgstr "Afficher la colonne « Drapeau »"
-
-#
-# File: gem/preferences.py, line: 265
-#~ msgid "Show \"Installed\" column"
-#~ msgstr "Afficher la colonne « Installé »"
-
-#
-# File: gem/preferences.py, line: 265
-#~ msgid "Show \"Last launch\" column"
-#~ msgstr "Afficher la colonne « Dernier lancement »"
-
-#
-# File: gem/preferences.py, line: 264
-#~ msgid "Show \"Launch\" column"
-#~ msgstr "Afficher la colonne « Parties »"
-
-#
-# File: gem/preferences.py, line: 266
-#~ msgid "Show \"Play time\" column"
-#~ msgstr "Afficher la colonne « Temps de jeu »"
-
-#
-# File: src/window.py, line: 309
-#~ msgid "Show favorite games"
-#~ msgstr "Afficher les favoris"
-
-#
-# File: gem/preferences.py, line: 338
-#~ msgid "Show lines in games list"
-#~ msgstr "Afficher les lignes dans la liste de jeux"
-
-#
-# File: src/window.py, line: 309
-#~ msgid "Show multiplayer games"
-#~ msgstr "Afficher les jeux multi-joueurs"
-
-#
-# File: gem/gtk/interface.py, line: 583
-# File: gem/gtk/interface.py, line: 1010
-#~ msgid "Specify a memory type"
-#~ msgstr "Spécifier un type de mémoire"
-
-#
-# File: gem/windows.py, line: 952
-#~ msgid ""
-#~ "This extension is available in multiple consoles. Which one GEM must use "
-#~ "to move this file ?"
-#~ msgstr ""
-#~ "Cette extension est disponible pour plusieurs consoles. Laquelle GEM doit "
-#~ "utiliser pour ce fichier ?"
-
-#
-# File: gem/gtk/mednafen.py, line: 389
-#~ msgid "Type"
-#~ msgstr "Type"
-
-#
-# File: gem/preferences.py, line: 495
-#~ msgid "Use classic theme (Need to reboot GEM)"
-#~ msgstr "Utiliser le thème classique (Nécessite de redémarrer GEM)"
-
-#
-# File: gem/ui/interface.glade, line: 1199
-#~ msgid "Viewer"
-#~ msgstr "Visualiseur"
-
-#
-# File: src/window.py, line: 940
-#~ msgid "Would you really want to remove database entry for this game ?"
-#~ msgstr ""
-#~ "Voulez-vous vraiment supprimer l'entrée de la base de données pour ce "
-#~ "jeu ?"
-
-#
-# File: gem/gtk/mednafen.py, line: 135
-#~ msgid "You can set multiple memory types for this game."
-#~ msgstr "Vous pouvez spécifier plusieurs types de mémoire pour ce jeu."
-
-#
-# File: gem/preferences.py, line: 338
-#, fuzzy
-#~ msgid "_Sidebar"
-#~ msgstr "Barre latérale"
