@@ -1,5 +1,7 @@
 # GEM Changelog
 
+## Version 1.0 - Space Fox
+
 ## Version 0.9 - Frog Knight (21 Jan, 2018)
 
 ### Engine
