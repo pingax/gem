@@ -2000,6 +2000,10 @@ class Interface(Gtk.ApplicationWindow):
         if self.config.getboolean("gem", "show_statusbar", fallback=True):
             self.statusbar.show()
 
+            self.image_statusbar_properties.show()
+            self.image_statusbar_screenshots.show()
+            self.image_statusbar_savestates.show()
+
         self.set_infobar()
         self.sensitive_interface()
 
