@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.6\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2018-01-21 10:31+0100\n"
+"PO-Revision-Date: 2018-02-11 11:46+0100\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -134,11 +134,6 @@ msgstr "À propos"
 # File: gem/preferences.py, line: 329
 msgid "Action"
 msgstr "Actions"
-
-#
-# File: gem/interface.py, line: 290
-msgid "Activate game fullscreen mode"
-msgstr "Activer le mode plein écran pour le jeu"
 
 #
 # File: gem/preferences.py, line: 731
@@ -356,11 +351,6 @@ msgid "Copy selected game path"
 msgstr "Copier le chemin du jeu sélectionné"
 
 #
-# File: gem/interface.py, line: 336
-msgid "Custom _parameters"
-msgstr "Définir des _paramètres personnalisés"
-
-#
 # File: gem/interface.py, line: 391
 msgid "Dark theme"
 msgstr "Thème sombre"
@@ -503,8 +493,8 @@ msgstr "Motifs des fichiers"
 
 #
 # File: src/window.py, line: 306
-msgid "Filter..."
-msgstr "Filtres..."
+msgid "Filter"
+msgstr "Filtre"
 
 #
 # File: src/window.py, line: 306
@@ -529,6 +519,11 @@ msgstr "Police"
 #
 # File: gem/preferences.py, line: 1279
 msgid "Fullscreen"
+msgstr "Plein écran"
+
+#
+# File: gem/preferences.py, line: 1279
+msgid "Fullscreen mode"
 msgstr "Plein écran"
 
 #
@@ -710,22 +705,6 @@ msgstr "Marquer un jeu comme terminé"
 # File: gem/interface.py, line: 550
 msgid "Mark a game as multiplayer"
 msgstr "Marquer un jeu comme multi-joueurs"
-
-#
-# File: src/window.py, line: 436
-msgid "Mark as _favorite"
-msgstr "Marquer comme _favori"
-
-#
-# File: src/window.py, line: 436
-msgid "Mark as _finish"
-msgstr "Marquer comme _terminé"
-
-#
-# File: gem/interface.py, line: 251
-# File: gem/interface.py, line: 550
-msgid "Mark as _multiplayer"
-msgstr "Marquer comme _multi-joueurs"
 
 #
 # File: gem/gtk/mednafen.py, line: 186
@@ -1004,16 +983,6 @@ msgid "Shortcuts"
 msgstr "Raccourcis"
 
 #
-# File: src/window.py, line: 309
-msgid "Show _notes"
-msgstr "Afficher les _notes"
-
-#
-# File: gem/preferences.py, line: 335
-msgid "Show _screenshots"
-msgstr "Afficher les _captures d'écran"
-
-#
 # File: gem/preferences.py, line: 338
 msgid "Show _sidebar"
 msgstr "Montrer la _barre latérale"
@@ -1032,16 +1001,6 @@ msgstr "Afficher les lignes de grille"
 # File: gem/preferences.py, line: 338
 msgid "Show line numbers"
 msgstr "Afficher les numéros de ligne"
-
-#
-# File: gem/interface.py, line: 868
-msgid "Show main _log"
-msgstr "Montrer le _journal principal"
-
-#
-# File: gem/interface.py, line: 405
-msgid "Show output _log"
-msgstr "Afficher le _journal de sortie"
 
 #
 # File: src/window.py, line: 441
@@ -1405,11 +1364,6 @@ msgstr "À _propos"
 
 #
 # File: gem/interface.py, line: 660
-msgid "_Copy file path"
-msgstr "_Copier le chemin du fichier"
-
-#
-# File: gem/interface.py, line: 660
 msgid "_Copy path"
 msgstr "_Copier le chemin"
 
@@ -1417,6 +1371,21 @@ msgstr "_Copier le chemin"
 # File: gem/preferences.py, line: 336
 msgid "_Edit"
 msgstr "_Éditer"
+
+#
+# File: gem/gtk/interface.py, line: 792
+msgid "_Favorite"
+msgstr "_Favoris"
+
+#
+# File: gem/gtk/interface.py, line: 796
+msgid "_Finish"
+msgstr "_Terminé"
+
+#
+# File: gem/gtk/interface.py, line: 513
+msgid "_GEM"
+msgstr "_GEM"
 
 #
 # File: gem/preferences.py, line: 113
@@ -1439,14 +1408,20 @@ msgid "_Launch"
 msgstr "_Lancer"
 
 #
+# File: gem/gtk/interface.py, line: 550
+msgid "_Log"
+msgstr "_Journal"
+
+#
+# File: gem/interface.py, line: 251
+# File: gem/interface.py, line: 550
+msgid "_Multiplayer"
+msgstr "_Multi-joueurs"
+
+#
 # File: gem/gtk/interface.py, line: 1182
 msgid "_Notes"
 msgstr "_Notes"
-
-#
-# File: gem/interface.py, line: 665
-msgid "_Open file path"
-msgstr "_Ouvrir la destination du fichier"
 
 #
 # File: gem/interface.py, line: 665
@@ -1470,8 +1445,8 @@ msgstr "_Quitter"
 
 #
 # File: src/window.py, line: 446
-msgid "_Remove game from disk"
-msgstr "_Supprimer le jeu du disque"
+msgid "_Remove from disk"
+msgstr "_Supprimer du disque"
 
 #
 # File: src/window.py, line: 451
@@ -1479,9 +1454,9 @@ msgid "_Rename"
 msgstr "_Renommer"
 
 #
-# File: src/window.py, line: 446
-msgid "_Reset game informations"
-msgstr "_Nettoyer les informations du jeu"
+# File: src/window.py, line: 451
+msgid "_Reset data"
+msgstr "_Remise à zéro des données"
 
 #
 # File: gem/preferences.py, line: 335
