@@ -146,9 +146,16 @@ class Configuration(ConfigParser):
             Section name
         option : str
             Option name
-        value : str
+        value : object
             Value to set
         """
+
+        # Set a specific value for bool variables
+        if type(value) is bool:
+            if value:
+                value = "yes"
+            else:
+                value = "no"
 
         if self.has_section(section):
             self.set(section, option, str(value))

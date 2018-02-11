@@ -1583,42 +1583,42 @@ class Preferences(CommonWindow):
         self.api.write_data()
 
         self.config.modify("gem", "load_console_startup",
-            int(self.check_last_console.get_active()))
+            self.check_last_console.get_active())
         self.config.modify("gem", "hide_empty_console",
-            int(self.check_hide_console.get_active()))
+            self.check_hide_console.get_active())
 
         self.config.modify("gem", "toolbar_icons_size",
             self.toolbar[self.combo_toolbar.get_active_id()])
 
         self.config.modify("gem", "use_classic_theme",
-            int(self.check_classic_theme.get_active()))
+            self.check_classic_theme.get_active())
         self.config.modify("gem", "show_header",
-            int(self.check_header.get_active()))
+            self.check_header.get_active())
         self.config.modify("gem", "show_sidebar",
-            int(self.check_sidebar_show.get_active()))
+            self.check_sidebar_show.get_active())
         self.config.modify("gem", "show_random_screenshot",
-            int(self.check_sidebar_screenshot.get_active()))
+            self.check_sidebar_screenshot.get_active())
         self.config.modify("gem", "sidebar_orientation",
             self.sidebar[self.combo_sidebar.get_active_id()])
 
         self.config.modify("gem", "use_translucent_icons",
-            int(self.check_icons.get_active()))
+            self.check_icons.get_active())
         self.config.modify("columns", "play",
-            int(self.check_play.get_active()))
+            self.check_play.get_active())
         self.config.modify("columns", "last_play",
-            int(self.check_last_play.get_active()))
+            self.check_last_play.get_active())
         self.config.modify("columns", "play_time",
-            int(self.check_play_time.get_active()))
+            self.check_play_time.get_active())
         self.config.modify("columns", "installed",
-            int(self.check_installed.get_active()))
+            self.check_installed.get_active())
         self.config.modify("columns", "flags",
-            int(self.check_flags.get_active()))
+            self.check_flags.get_active())
 
         self.config.modify("gem", "games_treeview_lines",
             self.lines[self.combo_lines.get_active_id()])
 
         self.config.modify("viewer", "native",
-            int(not self.check_native_viewer.get_active()))
+            not self.check_native_viewer.get_active())
         self.config.modify("viewer", "binary",
             self.file_viewer_binary.get_filename())
         self.config.modify("viewer", "options",
@@ -1630,7 +1630,7 @@ class Preferences(CommonWindow):
 
         if self.gtksource:
             self.config.modify("editor", "lines",
-                int(self.check_lines.get_active()))
+                self.check_lines.get_active())
             self.config.modify("editor", "colorscheme",
                 self.combo_colorsheme.get_active_id())
             self.config.modify("editor", "font",

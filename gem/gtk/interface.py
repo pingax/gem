@@ -675,6 +675,7 @@ class Interface(Gtk.ApplicationWindow):
         self.toolbar_item_refresh = Gtk.Button()
 
         self.toolbar_item_game_launch = Gtk.ToolItem()
+        self.toolbar_item_game_properties = Gtk.ToolItem()
         self.toolbar_item_game_option = Gtk.ToolItem()
         self.toolbar_item_consoles = Gtk.ToolItem()
         self.toolbar_item_search = Gtk.ToolItem()
@@ -700,8 +701,10 @@ class Interface(Gtk.ApplicationWindow):
         self.toolbar_item_notes.set_tooltip_text(
             _("Show selected game notes"))
 
-        self.toolbar_item_properties.set_tooltip_text(_("Edit emulator"))
-        self.toolbar_item_refresh.set_tooltip_text(_("Refresh games list"))
+        self.toolbar_item_properties.set_tooltip_text(
+            _("Edit emulator"))
+        self.toolbar_item_refresh.set_tooltip_text(
+            _("Refresh games list"))
 
         self.toolbar_item_separator.set_draw(False)
         self.toolbar_item_separator.set_expand(True)
@@ -854,15 +857,10 @@ class Interface(Gtk.ApplicationWindow):
 
         self.label_game_title = Gtk.Label()
         self.label_game_description = Gtk.Label()
-        self.label_game_footer = Gtk.Label()
 
         self.image_game_screen = Gtk.Image()
 
         self.separator_game = Gtk.Separator()
-        self.separator_footer = Gtk.Separator()
-
-        self.image_paned_savestates = Gtk.Image()
-        self.image_paned_parameters = Gtk.Image()
 
         # Properties
         self.paned_games.set_orientation(Gtk.Orientation.VERTICAL)
@@ -877,17 +875,9 @@ class Interface(Gtk.ApplicationWindow):
         self.label_game_description.set_alignment(0, 0)
         self.label_game_description.set_ellipsize(Pango.EllipsizeMode.END)
 
-        self.label_game_footer.set_use_markup(True)
-        self.label_game_footer.set_alignment(0, 0.5)
-        self.label_game_footer.set_ellipsize(Pango.EllipsizeMode.END)
-
         self.image_game_screen.set_alignment(0, 0)
 
         self.separator_game.set_no_show_all(True)
-        self.separator_footer.set_no_show_all(True)
-
-        self.image_paned_savestates.set_from_pixbuf(self.empty)
-        self.image_paned_parameters.set_from_pixbuf(self.empty)
 
         # ------------------------------------
         #   Games - Sidebar description
@@ -1210,13 +1200,35 @@ class Interface(Gtk.ApplicationWindow):
 
         self.statusbar = Gtk.Statusbar()
 
+        self.grid_statusbar = self.statusbar.get_message_area()
+
+        self.label_statusbar_console = self.grid_statusbar.get_children()[0]
+        self.label_statusbar_emulator = Gtk.Label()
+        self.label_statusbar_game = Gtk.Label()
+
+        self.image_statusbar_properties = Gtk.Image()
+        self.image_statusbar_screenshots = Gtk.Image()
+        self.image_statusbar_savestates = Gtk.Image()
+
         # Properties
         self.statusbar.set_no_show_all(True)
 
-        self.statusbar.get_message_area().set_margin_top(0)
-        self.statusbar.get_message_area().set_margin_left(0)
-        self.statusbar.get_message_area().set_margin_right(0)
-        self.statusbar.get_message_area().set_margin_bottom(0)
+        self.grid_statusbar.set_spacing(12)
+        self.grid_statusbar.set_margin_top(0)
+        self.grid_statusbar.set_margin_left(0)
+        self.grid_statusbar.set_margin_right(0)
+        self.grid_statusbar.set_margin_bottom(0)
+
+        self.label_statusbar_console.set_use_markup(True)
+        self.label_statusbar_console.set_alignment(0, .5)
+        self.label_statusbar_emulator.set_use_markup(True)
+        self.label_statusbar_emulator.set_alignment(0, .5)
+        self.label_statusbar_game.set_ellipsize(Pango.EllipsizeMode.END)
+        self.label_statusbar_game.set_alignment(0, .5)
+
+        self.image_statusbar_properties.set_from_pixbuf(self.empty)
+        self.image_statusbar_screenshots.set_from_pixbuf(self.empty)
+        self.image_statusbar_savestates.set_from_pixbuf(self.empty)
 
 
     def __init_packing(self):
@@ -1237,7 +1249,6 @@ class Interface(Gtk.ApplicationWindow):
         ])
 
         # Headerbar
-        self.headerbar.pack_start(self.headerbar_item_launch)
         self.headerbar.pack_end(self.headerbar_item_menu)
         self.headerbar.pack_end(self.headerbar_item_fullscreen)
 
@@ -1324,7 +1335,7 @@ class Interface(Gtk.ApplicationWindow):
         self.menubar_help_menu.insert(self.menubar_help_item_about, -1)
 
         # Toolbar
-        self.toolbar.insert(self.toolbar_item_game_launch, -1)
+        self.toolbar.insert(self.toolbar_item_game_properties, -1)
         self.toolbar.insert(Gtk.SeparatorToolItem(), -1)
         self.toolbar.insert(self.toolbar_item_game_option, -1)
         self.toolbar.insert(self.toolbar_item_separator, -1)
@@ -1332,7 +1343,7 @@ class Interface(Gtk.ApplicationWindow):
         self.toolbar.insert(Gtk.SeparatorToolItem(), -1)
         self.toolbar.insert(self.toolbar_item_search, -1)
 
-        self.toolbar_item_game_launch.add(self.toolbar_item_parameters)
+        self.toolbar_item_game_properties.add(self.toolbar_item_parameters)
         self.toolbar_item_game_option.add(self.grid_options)
         self.toolbar_item_consoles.add(self.grid_toolbar_console)
         self.toolbar_item_search.add(self.grid_toolbar_filters)
@@ -1414,16 +1425,6 @@ class Interface(Gtk.ApplicationWindow):
             self.grid_paned_widgets.pack_start(
                 self.widgets_sidebar[key]["box"], False, False, 0)
 
-        self.grid_paned_widgets.pack_end(
-            self.grid_paned_footer, False, False, 0)
-
-        self.grid_paned_footer.pack_start(
-            self.label_game_footer, True, True, 0)
-        self.grid_paned_footer.pack_end(
-            self.image_paned_savestates, False, False, 0)
-        self.grid_paned_footer.pack_end(
-            self.image_paned_parameters, False, False, 4)
-
         # Games
         self.grid_games.pack_start(self.grid_games_placeholder, True, True, 0)
         self.grid_games.pack_start(self.scroll_games, True, True, 0)
@@ -1476,6 +1477,19 @@ class Interface(Gtk.ApplicationWindow):
         self.menu_games_tools.append(self.menu_item_desktop)
         self.menu_games_tools.append(Gtk.SeparatorMenuItem())
         self.menu_games_tools.append(self.menu_item_mednafen)
+
+        # Statusbar
+        self.grid_statusbar.pack_start(
+            self.label_statusbar_emulator, False, False, 0)
+        self.grid_statusbar.pack_start(
+            self.label_statusbar_game, True, True, 0)
+
+        self.grid_statusbar.pack_end(
+            self.image_statusbar_savestates, False, False, 0)
+        self.grid_statusbar.pack_end(
+            self.image_statusbar_screenshots, False, False, 0)
+        self.grid_statusbar.pack_end(
+            self.image_statusbar_properties, False, False, 0)
 
         self.add(self.grid)
 
@@ -1930,6 +1944,15 @@ class Interface(Gtk.ApplicationWindow):
             if not self.use_classic_theme:
                 self.set_titlebar(self.headerbar)
 
+                self.headerbar.pack_start(self.headerbar_item_launch)
+
+            else:
+                self.toolbar.insert(self.toolbar_item_game_launch, 0)
+                self.toolbar.insert(Gtk.SeparatorToolItem(), 1)
+
+                self.toolbar_item_game_launch.add(
+                    self.headerbar_item_launch)
+
             # ------------------------------------
             #   Window size
             # ------------------------------------
@@ -1969,12 +1992,13 @@ class Interface(Gtk.ApplicationWindow):
         if self.use_classic_theme:
             self.logger.debug("Use classic theme for GTK+ interface")
             self.menubar.show_all()
-            self.statusbar.show()
 
         else:
             self.logger.debug("Use default theme for GTK+ interface")
             self.menubar.hide()
-            self.statusbar.hide()
+
+        if self.config.getboolean("gem", "show_statusbar", fallback=True):
+            self.statusbar.show()
 
         self.set_infobar()
         self.sensitive_interface()
@@ -2170,7 +2194,8 @@ class Interface(Gtk.ApplicationWindow):
 
         self.check_selection()
 
-        self.set_informations_headerbar(self.selection["game"])
+        self.set_informations_headerbar(
+            self.selection["game"], self.selection["console"])
 
 
     def filters_reset(self, widget=None, events=None):
@@ -2537,7 +2562,7 @@ class Interface(Gtk.ApplicationWindow):
         game = self.selection["game"]
         console = self.selection["console"]
 
-        self.set_informations_headerbar(game)
+        self.set_informations_headerbar(game, console)
 
         # ----------------------------
         #   Game informations
@@ -2586,8 +2611,14 @@ class Interface(Gtk.ApplicationWindow):
                     if pixbuf is not None:
                         self.image_game_screen.set_from_pixbuf(pixbuf)
 
+                        self.image_statusbar_screenshots.set_from_pixbuf(
+                            self.icons["snap"])
+
                 else:
                     self.image_game_screen.set_from_pixbuf(None)
+
+                    self.image_statusbar_screenshots.set_from_pixbuf(
+                        self.alternative["snap"])
 
                 # ----------------------------
                 #   Show informations
@@ -2623,80 +2654,119 @@ class Interface(Gtk.ApplicationWindow):
 
                 # Game emulator
                 if emulator is not None:
-                    self.separator_footer.show()
-
-                    self.label_game_footer.set_markup("<b>%s</b> : %s" % (
-                        _("Emulator"), emulator.name))
 
                     # Game savestates
                     if len(emulator.get_savestates(game)) > 0:
-                        self.image_paned_savestates.set_from_pixbuf(
+                        self.image_statusbar_savestates.set_from_pixbuf(
                             self.icons["save"])
                     else:
-                        self.image_paned_savestates.set_from_pixbuf(
+                        self.image_statusbar_savestates.set_from_pixbuf(
                             self.alternative["save"])
 
                     # Game custom parameters
                     if (game.emulator is not None and \
                         not game.emulator.name == console.emulator.name) or \
                         game.default is not None:
-                        self.image_paned_parameters.set_from_pixbuf(
+                        self.image_statusbar_properties.set_from_pixbuf(
                             self.icons["except"])
                     else:
-                        self.image_paned_parameters.set_from_pixbuf(
+                        self.image_statusbar_properties.set_from_pixbuf(
                             self.alternative["except"])
 
                 else:
-                    self.separator_footer.hide()
-
-                    self.image_paned_savestates.set_from_pixbuf(self.empty)
-                    self.image_paned_parameters.set_from_pixbuf(self.empty)
+                    self.image_statusbar_savestates.set_from_pixbuf(self.empty)
+                    self.image_statusbar_properties.set_from_pixbuf(self.empty)
+                    self.image_statusbar_screenshots.set_from_pixbuf(self.empty)
 
         else:
             for key, value in self.sidebar_keys:
                 self.widgets_sidebar[key]["box"].hide()
 
             self.separator_game.hide()
-            self.separator_footer.hide()
 
             self.label_game_title.set_text(str())
-            self.label_game_footer.set_text(str())
             self.label_game_description.set_text(str())
 
             self.image_game_screen.set_from_pixbuf(None)
 
-            self.image_paned_savestates.set_from_pixbuf(self.empty)
-            self.image_paned_parameters.set_from_pixbuf(self.empty)
+            self.image_statusbar_properties.set_from_pixbuf(self.empty)
+            self.image_statusbar_savestates.set_from_pixbuf(self.empty)
+            self.image_statusbar_screenshots.set_from_pixbuf(self.empty)
 
 
-    def set_informations_headerbar(self, game):
+    def set_informations_headerbar(self, game, console):
         """ Update headerbar and statusbar informations from games list
 
         Parameters
         ----------
         game : gem.api.Game
             Game object
+        console : gem.api.Console
+            Console object
         """
 
-        texts = list()
+        self.label_statusbar_console.set_visible(False)
+        self.label_statusbar_emulator.set_visible(False)
 
-        if(len(self.filter_games) == 1):
-            texts = [_("1 game available")]
-        elif(len(self.filter_games) > 1):
-            texts = [_("%s games availables") % len(self.filter_games)]
+        texts = list()
+        emulator = None
+
+        # ----------------------------
+        #   Console
+        # ----------------------------
+
+        if console is not None:
+            emulator = console.emulator
+
+            if len(self.filter_games) == 1:
+                text = _("1 game available")
+
+                texts.append(text)
+
+            elif len(self.filter_games) > 1:
+                text = _("%d games available") % len(self.filter_games)
+
+                texts.append(text)
+
+            else:
+                text = _("N/A")
+
+            self.label_statusbar_console.set_visible(True)
+            self.label_statusbar_console.set_markup(
+                "<b>%s</b> : %s" % (console.name, text))
+
+        else:
+            self.label_statusbar_console.set_visible(False)
+
+        # ----------------------------
+        #   Game
+        # ----------------------------
 
         if game is not None:
+            self.label_statusbar_game.set_visible(True)
+            self.label_statusbar_game.set_text(game.name)
+
+            if game.emulator is not None:
+                emulator = game.emulator
+
             texts.append(game.name)
 
+        else:
+            self.label_statusbar_game.set_visible(False)
+
         # ----------------------------
-        #   Interface theme specific
+        #   Emulator
         # ----------------------------
 
-        # Default theme
+        if emulator is not None:
+            self.label_statusbar_emulator.set_visible(True)
+            self.label_statusbar_emulator.set_markup(
+                "<b>%s</b> : %s" % (_("Emulator"), emulator.name))
+
+        else:
+            self.label_statusbar_emulator.set_visible(False)
+
         self.headerbar.set_subtitle(" - ".join(texts))
-
-        # Classic theme
-        self.statusbar.push(0, " - ".join(texts))
 
 
     def set_message(self, title, message, icon="dialog-error", popup=True):
@@ -4757,7 +4827,7 @@ class Interface(Gtk.ApplicationWindow):
 
         on_change_theme(dark_theme_status)
 
-        self.config.modify("gem", "dark_theme", int(dark_theme_status))
+        self.config.modify("gem", "dark_theme", dark_theme_status)
         self.config.update()
 
         self.menu_item_dark_theme.set_active(dark_theme_status)
@@ -4790,7 +4860,7 @@ class Interface(Gtk.ApplicationWindow):
         else:
             self.grid_paned.hide()
 
-        self.config.modify("gem", "show_sidebar", int(sidebar_status))
+        self.config.modify("gem", "show_sidebar", sidebar_status)
         self.config.update()
 
         self.menu_item_sidebar.set_active(sidebar_status)
