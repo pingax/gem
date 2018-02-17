@@ -1,5 +1,11 @@
 # GEM Changelog
 
+## Version 0.9.1 - Lavos (17 Feb, 2018)
+
+### GTK+ interface
+
+* Fix crash when launching mednafen memory file dialog
+
 ## Version 0.9 - Frog Knight (21 Jan, 2018)
 
 ### Engine

@@ -85,8 +85,8 @@ class DialogMednafenMemory(CommonWindow):
         if parent is not None:
             classic_theme = parent.use_classic_theme
 
-        CommonWindow.__init__(self, parent, _("Backup Memory Type"), Icons.Save,
-            classic_theme, True)
+        CommonWindow.__init__(
+            self, parent, _("Backup Memory Type"), Icons.Save, classic_theme)
 
         # ------------------------------------
         #   Initialize variables

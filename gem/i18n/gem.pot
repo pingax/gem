@@ -154,7 +154,7 @@ msgstr  ""
 msgid   "Average play time"
 msgstr  ""
 #
-# File: gem/gtk/mednafen.py, line: 88
+# File: gem/gtk/mednafen.py, line: 89
 msgid   "Backup Memory Type"
 msgstr  ""
 #
