@@ -184,8 +184,10 @@ class Interface(Gtk.ApplicationWindow):
         self.keys = list()
         # Store sidebar description ordre
         self.sidebar_keys = [
+            ("played", _("Launch")),
             ("play_time", _("Play time")),
             ("last_play", _("Last launch")),
+            ("last_time", _("Last play time")),
             ("tags", _("Tags"))
         ]
 
@@ -395,6 +397,7 @@ class Interface(Gtk.ApplicationWindow):
 
         Gtk.StyleContext.add_class(
             self.grid_menu_actions.get_style_context(), "linked")
+        self.grid_menu_actions.set_homogeneous(True)
         self.grid_menu_actions.set_spacing(-1)
         self.grid_menu_actions.set_orientation(Gtk.Orientation.HORIZONTAL)
 
@@ -457,6 +460,9 @@ class Interface(Gtk.ApplicationWindow):
         self.menu_label_sidebar = Gtk.Label()
         self.menu_item_sidebar = Gtk.Switch()
 
+        self.menu_label_statusbar = Gtk.Label()
+        self.menu_item_statusbar = Gtk.Switch()
+
         # Properties
         self.menu_item_preferences.set_tooltip_text(_("Preferences"))
         self.menu_item_preferences.set_image(self.menu_image_preferences)
@@ -495,6 +501,14 @@ class Interface(Gtk.ApplicationWindow):
 
         self.menu_item_sidebar.set_margin_top(12)
 
+        self.menu_label_statusbar.set_margin_top(12)
+        self.menu_label_statusbar.set_label(_("Statusbar"))
+        self.menu_label_statusbar.set_halign(Gtk.Align.END)
+        self.menu_label_statusbar.set_valign(Gtk.Align.CENTER)
+        self.menu_label_statusbar.get_style_context().add_class("dim-label")
+
+        self.menu_item_statusbar.set_margin_top(12)
+
         # ------------------------------------
         #   Menubar
         # ------------------------------------
@@ -525,6 +539,7 @@ class Interface(Gtk.ApplicationWindow):
 
         self.menubar_main_item_dark_theme = Gtk.CheckMenuItem()
         self.menubar_main_item_sidebar = Gtk.CheckMenuItem()
+        self.menubar_main_item_statusbar = Gtk.CheckMenuItem()
 
         self.menubar_main_item_preferences = Gtk.MenuItem()
         self.menubar_main_item_log = Gtk.MenuItem()
@@ -539,6 +554,10 @@ class Interface(Gtk.ApplicationWindow):
         self.menubar_main_item_sidebar.set_label(
             _("Show _sidebar"))
         self.menubar_main_item_sidebar.set_use_underline(True)
+
+        self.menubar_main_item_statusbar.set_label(
+            _("Show _statusbar"))
+        self.menubar_main_item_statusbar.set_use_underline(True)
 
         self.menubar_main_item_preferences.set_label(
             "%s…" % _("_Preferences"))
@@ -1267,6 +1286,8 @@ class Interface(Gtk.ApplicationWindow):
         self.grid_menu.attach(self.menu_item_dark_theme, 1, 3, 1, 1)
         self.grid_menu.attach(self.menu_label_sidebar, 0, 4, 1, 1)
         self.grid_menu.attach(self.menu_item_sidebar, 1, 4, 1, 1)
+        self.grid_menu.attach(self.menu_label_statusbar, 0, 5, 1, 1)
+        self.grid_menu.attach(self.menu_item_statusbar, 1, 5, 1, 1)
 
         self.grid_menu_actions.pack_start(
             self.menu_item_preferences, True, True, 0)
@@ -1292,6 +1313,7 @@ class Interface(Gtk.ApplicationWindow):
         self.menubar_main_menu.insert(Gtk.SeparatorMenuItem(), -1)
         self.menubar_main_menu.insert(self.menubar_main_item_dark_theme, -1)
         self.menubar_main_menu.insert(self.menubar_main_item_sidebar, -1)
+        self.menubar_main_menu.insert(self.menubar_main_item_statusbar, -1)
         self.menubar_main_menu.insert(Gtk.SeparatorMenuItem(), -1)
         self.menubar_main_menu.insert(self.menubar_main_item_preferences, -1)
         self.menubar_main_menu.insert(self.menubar_main_item_log, -1)
@@ -1558,6 +1580,8 @@ class Interface(Gtk.ApplicationWindow):
             "toggled", self.__on_activate_dark_theme)
         self.side_signal_menubar = self.menubar_main_item_sidebar.connect(
             "toggled", self.__on_activate_sidebar)
+        self.status_signal_menubar = self.menubar_main_item_statusbar.connect(
+            "toggled", self.__on_activate_statusbar)
 
         self.menubar_main_item_log.connect(
             "activate", self.__on_show_log)
@@ -1650,6 +1674,8 @@ class Interface(Gtk.ApplicationWindow):
             "state-set", self.__on_activate_dark_theme)
         self.side_signal_menu = self.menu_item_sidebar.connect(
             "state-set", self.__on_activate_sidebar)
+        self.status_signal_menu = self.menu_item_statusbar.connect(
+            "state-set", self.__on_activate_statusbar)
         self.menu_item_about.connect(
             "clicked", self.__on_show_about)
         self.menu_item_quit.connect(
@@ -1704,12 +1730,14 @@ class Interface(Gtk.ApplicationWindow):
             self.menu_item_finish: self.finish_signal_menu,
             self.menu_item_multiplayer: self.multi_signal_menu,
             self.menu_item_sidebar: self.side_signal_menu,
+            self.menu_item_statusbar: self.status_signal_menu,
             self.menubar_game_item_favorite: self.favorite_signal_menubar,
             self.menubar_game_item_finish: self.finish_signal_menubar,
             self.menubar_game_item_fullscreen: self.fullscreen_signal,
             self.menubar_game_item_multiplayer: self.multi_signal_menubar,
             self.menubar_main_item_dark_theme: self.dark_signal_menubar,
             self.menubar_main_item_sidebar: self.side_signal_menubar,
+            self.menubar_main_item_statusbar: self.status_signal_menubar,
         }
 
         self.load_interface(True)
@@ -1997,13 +2025,6 @@ class Interface(Gtk.ApplicationWindow):
             self.logger.debug("Use default theme for GTK+ interface")
             self.menubar.hide()
 
-        if self.config.getboolean("gem", "show_statusbar", fallback=True):
-            self.statusbar.show()
-
-            self.image_statusbar_properties.show()
-            self.image_statusbar_screenshots.show()
-            self.image_statusbar_savestates.show()
-
         self.set_infobar()
         self.sensitive_interface()
 
@@ -2061,6 +2082,26 @@ class Interface(Gtk.ApplicationWindow):
 
         for key, value in self.sidebar_keys:
             self.widgets_sidebar[key]["box"].hide()
+
+        # ------------------------------------
+        #   Statusbar
+        # ------------------------------------
+
+        statusbar_status = self.config.getboolean(
+            "gem", "show_statusbar", fallback=True)
+
+        self.menu_item_statusbar.set_active(statusbar_status)
+        self.menubar_main_item_statusbar.set_active(statusbar_status)
+
+        if statusbar_status:
+            self.statusbar.show()
+
+            self.image_statusbar_properties.show()
+            self.image_statusbar_screenshots.show()
+            self.image_statusbar_savestates.show()
+
+        else:
+            self.statusbar.hide()
 
         # ------------------------------------
         #   Games
@@ -2493,15 +2534,6 @@ class Interface(Gtk.ApplicationWindow):
             }
         ]
 
-        # HACK: Get the maximum characters width of every shortcuts
-        max_width = int()
-        for data in shortcuts:
-            key, mod = Gtk.accelerator_parse(data["keys"])
-            accel = len(Gtk.accelerator_get_label(key, mod))
-
-            if accel > max_width:
-                max_width = accel
-
         for data in shortcuts:
             key, mod = Gtk.accelerator_parse(data["keys"])
 
@@ -2628,33 +2660,48 @@ class Interface(Gtk.ApplicationWindow):
                 #   Show informations
                 # ----------------------------
 
-                # Play time
-                if not game.play_time == timedelta():
-                    self.widgets_sidebar["play_time"]["box"].show_all()
-                    self.widgets_sidebar["play_time"]["value"].set_markup(
-                        string_from_time(game.play_time))
+                widgets = {
+                    "played": {
+                        "condition": game.played > 0,
+                        "markup": str(game.played),
+                        "tooltip": None
+                    },
+                    "play_time": {
+                        "condition": not game.play_time == timedelta(),
+                        "markup": string_from_time(game.play_time),
+                        "tooltip": parse_timedelta(game.play_time)
+                    },
+                    "last_play": {
+                        "condition": game.last_launch_date is not None,
+                        "markup": string_from_date(game.last_launch_date),
+                        "tooltip": str(game.last_launch_date)
+                    },
+                    "last_time": {
+                        "condition": not game.last_launch_time == timedelta(),
+                        "markup": string_from_time(game.last_launch_time),
+                        "tooltip": parse_timedelta(game.last_launch_time)
+                    },
+                    "tags": {
+                        "condition": len(game.tags) > 0,
+                        "markup": replace_for_markup(', '.join(game.tags)),
+                        "tooltip": None
+                    },
+                }
 
-                else:
-                    self.widgets_sidebar["play_time"]["box"].hide()
-                    self.widgets_sidebar["play_time"]["value"].set_text(str())
+                for key, data in widgets.items():
+                    widget = self.widgets_sidebar[key]
 
-                # Last launch
-                if game.last_launch_date is not None:
-                    self.widgets_sidebar["last_play"]["box"].show_all()
-                    self.widgets_sidebar["last_play"]["value"].set_markup(
-                        string_from_date(game.last_launch_date))
-                else:
-                    self.widgets_sidebar["last_play"]["box"].hide()
-                    self.widgets_sidebar["last_play"]["value"].set_text(str())
+                    if data["condition"]:
+                        widget["box"].show_all()
+                        widget["value"].set_markup(data["markup"])
 
-                # Tags
-                if len(game.tags) > 0:
-                    self.widgets_sidebar["tags"]["box"].show_all()
-                    self.widgets_sidebar["tags"]["value"].set_markup(
-                        replace_for_markup(', '.join(game.tags)))
-                else:
-                    self.widgets_sidebar["tags"]["box"].hide()
-                    self.widgets_sidebar["tags"]["value"].set_text(str())
+                        if data["tooltip"] is not None:
+                            widget["value"].set_tooltip_text(data["tooltip"])
+
+                    else:
+                        widget["box"].hide()
+                        widget["value"].set_markup(str())
+                        widget["value"].set_tooltip_text(str())
 
                 # Game emulator
                 if emulator is not None:
@@ -4869,6 +4916,39 @@ class Interface(Gtk.ApplicationWindow):
 
         self.menu_item_sidebar.set_active(sidebar_status)
         self.menubar_main_item_sidebar.set_active(sidebar_status)
+
+        self.__unblock_signals()
+
+
+    def __on_activate_statusbar(self, widget, status=False, *args):
+        """ Update statusbar status
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+
+        Others parameters
+        -----------------
+        status : bool
+            New switch status (Default: False)
+        """
+
+        self.__block_signals()
+
+        statusbar_status = not self.config.getboolean(
+            "gem", "show_statusbar", fallback=True)
+
+        if statusbar_status:
+            self.statusbar.show()
+        else:
+            self.statusbar.hide()
+
+        self.config.modify("gem", "show_statusbar", statusbar_status)
+        self.config.update()
+
+        self.menu_item_statusbar.set_active(statusbar_status)
+        self.menubar_main_item_statusbar.set_active(statusbar_status)
 
         self.__unblock_signals()
 

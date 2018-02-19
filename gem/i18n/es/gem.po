@@ -18,6 +18,12 @@ msgid "%d days ago"
 msgstr "hace %d días"
 
 #
+# File: gem/interface.py, line: 532
+#, fuzzy, python-format
+msgid "%d games available"
+msgstr "%s juegos disponibles"
+
+#
 # File: gem/utils.py, line: 332
 #, python-format
 msgid "%d hours"
@@ -58,12 +64,6 @@ msgstr ""
 #, fuzzy, python-format
 msgid "%s emulator not exist"
 msgstr "¡El emulador %s no existe!"
-
-#
-# File: gem/interface.py, line: 532
-#, python-format
-msgid "%s games availables"
-msgstr "%s juegos disponibles"
 
 #
 # File: gem/interface.py, line: 1584
@@ -668,6 +668,12 @@ msgid "Last month"
 msgstr "Último mes"
 
 #
+# File: gem/interface.py, line: 642
+#, fuzzy
+msgid "Last play time"
+msgstr "Tiempo jugado"
+
+#
 # File: gem/interface.py, line: 2135
 msgid "Last year"
 msgstr "Último año"
@@ -755,6 +761,11 @@ msgstr ""
 #, fuzzy
 msgid "Multiplayer"
 msgstr "Marcar como _mutijugador"
+
+#
+# File: gem/gtk/interface.py, line: 2783
+msgid "N/A"
+msgstr ""
 
 #
 # File: gem/interface.py, line: 635
@@ -1023,6 +1034,12 @@ msgid "Show _sidebar"
 msgstr "Mostrar los números de línea"
 
 #
+# File: gem/preferences.py, line: 431
+#, fuzzy
+msgid "Show _statusbar"
+msgstr "Mostrar los números de línea"
+
+#
 # File: gem/preferences.py, line: 89
 msgid "Show game screenshots"
 msgstr "Mostrar las capturas de pantalla del juego"
@@ -1106,6 +1123,11 @@ msgstr ""
 #
 # File: gem/gtk/windows.py, line: 1052
 msgid "Statistic"
+msgstr ""
+
+#
+# File: gem/gtk/interface.py, line: 505
+msgid "Statusbar"
 msgstr ""
 
 #

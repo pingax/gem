@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.6\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2018-02-11 11:46+0100\n"
+"PO-Revision-Date: 2018-02-19 21:41+0100\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -16,6 +16,12 @@ msgstr ""
 #, python-format
 msgid "%d days ago"
 msgstr "Il y a %d jours"
+
+#
+# File: gem/interface.py, line: 532
+#, fuzzy, python-format
+msgid "%d games available"
+msgstr "%s jeux disponibles"
 
 #
 # File: gem/utils.py, line: 332
@@ -58,12 +64,6 @@ msgstr "Le binaire %s n'a pas été trouvé"
 #, python-format
 msgid "%s emulator not exist"
 msgstr "L'émulateur %s n'existe pas"
-
-#
-# File: gem/interface.py, line: 532
-#, python-format
-msgid "%s games availables"
-msgstr "%s jeux disponibles"
 
 #
 # File: gem/interface.py, line: 1584
@@ -654,6 +654,11 @@ msgid "Last month"
 msgstr "Le mois dernier"
 
 #
+# File: src/window.py, line: 375
+msgid "Last play time"
+msgstr "Dernier temps de jeu"
+
+#
 # File: src/window.py, line: 380
 msgid "Last year"
 msgstr "L'an dernier"
@@ -742,6 +747,11 @@ msgstr ""
 # File: gem/interface.py, line: 550
 msgid "Multiplayer"
 msgstr "Multi-joueurs"
+
+#
+# File: gem/gtk/interface.py, line: 2783
+msgid "N/A"
+msgstr "N/A"
 
 #
 # File: src/window.py, line: 368
@@ -988,6 +998,11 @@ msgid "Show _sidebar"
 msgstr "Montrer la _barre latérale"
 
 #
+# File: gem/preferences.py, line: 338
+msgid "Show _statusbar"
+msgstr "Montrer la _barre de status"
+
+#
 # File: src/window.py, line: 441
 msgid "Show game screenshots"
 msgstr "Afficher les captures d'écran d'un jeu"
@@ -1067,6 +1082,11 @@ msgstr "Commencez à jouer en déplaçant des ROM dans l'interface"
 # File: gem/gtk/windows.py, line: 1052
 msgid "Statistic"
 msgstr "Statistique"
+
+#
+# File: gem/gtk/interface.py, line: 505
+msgid "Statusbar"
+msgstr "Barre de status"
 
 #
 # File: gem/gtk/interface.py, line: 3661
