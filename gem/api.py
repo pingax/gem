@@ -1550,14 +1550,16 @@ class Console(GEMObject):
                         "favorite": bool(data["favorite"]),
                         "multiplayer": bool(data["multiplayer"]),
                         "finish": bool(data["finish"]),
+                        "rating": int(),
                         "played": int(data["play"]),
                         "play_time": play_time,
                         "last_launch_date": last_launch_date,
                         "last_launch_time": last_launch_time,
                         "emulator": emulator,
                         "default": arguments,
+                        "tags": tags,
                         "key": key,
-                        "tags": tags
+                        "cover": str()
                     })
 
                 for key, value in game_data.items():
@@ -1617,6 +1619,7 @@ class Game(GEMObject):
         "favorite": bool(),
         "multiplayer": bool(),
         "finish": bool(),
+        "rating": int(),
         "played": int(),
         "play_time": timedelta(),
         "last_launch_time": timedelta(),
@@ -1625,7 +1628,8 @@ class Game(GEMObject):
         "default": None,
         "key": None,
         "tags": list(),
-        "environment": dict()
+        "environment": dict(),
+        "cover": str()
     }
 
     def __init__(self):
@@ -1650,14 +1654,16 @@ class Game(GEMObject):
             "favorite": self.favorite,
             "multiplayer": self.multiplayer,
             "finish": self.finish,
+            "rating": self.rating,
             "play": self.played,
             "play_time": parse_timedelta(self.play_time),
             "last_play_time": parse_timedelta(self.last_launch_time),
             "last_play": self.last_launch_date,
             "emulator": self.emulator,
             "arguments": self.default,
+            "tags": ';'.join(self.tags),
             "key": self.key,
-            "tags": ';'.join(self.tags)
+            "cover": self.cover
         })
 
     @staticmethod
