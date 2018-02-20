@@ -976,6 +976,27 @@ class GEM(object):
         return self.__data["consoles"][console].get_game(game)
 
 
+    def get_game_tags(self):
+        """ Retrieve avaialable game tags from database
+
+        Returns
+        -------
+        list
+            Tags list
+        """
+
+        tags = list()
+
+        for tag in self.database.select("games", "tags"):
+
+            for element in tag.split(';'):
+
+                if len(element) > 0 and not element in tags:
+                    tags.append(element)
+
+        return sorted(tags)
+
+
     def update_game(self, game):
         """ Update a game in database
 

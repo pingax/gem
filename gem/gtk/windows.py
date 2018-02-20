@@ -859,6 +859,8 @@ class DialogParameters(CommonWindow):
         stack_switcher = Gtk.StackSwitcher()
 
         grid_parameters = Gtk.Box()
+        grid_tags = Gtk.Box()
+        self.grid_tags_popover = Gtk.Box()
 
         grid_environment = Gtk.Box()
         grid_environment_buttons = Gtk.Box()
@@ -877,6 +879,16 @@ class DialogParameters(CommonWindow):
         grid_parameters.set_spacing(6)
         grid_parameters.set_homogeneous(False)
         grid_parameters.set_orientation(Gtk.Orientation.VERTICAL)
+
+        Gtk.StyleContext.add_class(
+            grid_tags.get_style_context(), "linked")
+        grid_tags.set_spacing(-1)
+        grid_tags.set_orientation(Gtk.Orientation.HORIZONTAL)
+
+        self.grid_tags_popover.set_spacing(6)
+        self.grid_tags_popover.set_border_width(6)
+        self.grid_tags_popover.set_homogeneous(False)
+        self.grid_tags_popover.set_orientation(Gtk.Orientation.VERTICAL)
 
         grid_environment.set_spacing(12)
         grid_environment.set_homogeneous(False)
@@ -967,6 +979,15 @@ class DialogParameters(CommonWindow):
 
         self.entry_tags = Gtk.Entry()
 
+        self.image_tags = Gtk.Image()
+        self.button_tags = Gtk.MenuButton()
+
+        self.popover_tags = Gtk.Popover()
+        self.popover_tags_scroll = Gtk.ScrolledWindow()
+        self.popover_tags_filter = Gtk.SearchEntry()
+        self.popover_tags_listbox = Gtk.ListBox()
+        self.popover_tags_placeholder = Gtk.Label()
+
         # Properties
         label_tags.set_margin_top(12)
         label_tags.set_halign(Gtk.Align.CENTER)
@@ -981,6 +1002,27 @@ class DialogParameters(CommonWindow):
             Gtk.EntryIconPosition.PRIMARY, Icons.Symbolic.AddText)
         self.entry_tags.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
+
+        self.image_tags.set_from_icon_name(
+            Icons.Symbolic.Add, Gtk.IconSize.SMALL_TOOLBAR)
+
+        self.button_tags.set_popover(self.popover_tags)
+        self.button_tags.set_image(self.image_tags)
+        self.button_tags.set_use_popover(True)
+
+        self.popover_tags_scroll.set_size_request(-1, 180)
+
+        self.popover_tags_listbox.set_placeholder(self.popover_tags_placeholder)
+        self.popover_tags_listbox.set_selection_mode(Gtk.SelectionMode.SINGLE)
+        self.popover_tags_listbox.set_filter_func(self.__on_filter_tag)
+        self.popover_tags_listbox.set_activate_on_single_click(False)
+
+        self.popover_tags_placeholder.get_style_context().add_class("dim-label")
+        self.popover_tags_placeholder.set_label(_("Empty"))
+        self.popover_tags_placeholder.set_margin_bottom(6)
+        self.popover_tags_placeholder.set_margin_right(6)
+        self.popover_tags_placeholder.set_margin_left(6)
+        self.popover_tags_placeholder.set_margin_top(6)
 
         # ------------------------------------
         #   Statistics
@@ -1092,7 +1134,19 @@ class DialogParameters(CommonWindow):
         grid_parameters.pack_start(label_key, False, False, 0)
         grid_parameters.pack_start(self.entry_key, False, False, 0)
         grid_parameters.pack_start(label_tags, False, False, 0)
-        grid_parameters.pack_start(self.entry_tags, False, False, 0)
+        grid_parameters.pack_start(grid_tags, False, False, 0)
+
+        grid_tags.pack_start(self.entry_tags, True, True, 0)
+        grid_tags.pack_start(self.button_tags, False, False, 0)
+
+        self.popover_tags.add(self.grid_tags_popover)
+
+        self.grid_tags_popover.pack_start(
+            self.popover_tags_filter, False, False, 0)
+        self.grid_tags_popover.pack_start(
+            self.popover_tags_scroll, True, True, 0)
+
+        self.popover_tags_scroll.add(self.popover_tags_listbox)
 
         stack.add_titled(scroll_statistic, "statistic", _("Statistic"))
 
@@ -1146,6 +1200,12 @@ class DialogParameters(CommonWindow):
         self.entry_key.connect(
             "icon-press", on_entry_clear)
 
+        self.popover_tags_filter.connect(
+            "changed", self.__on_filters_update)
+
+        self.popover_tags_listbox.connect(
+            "row-activated", self.__on_filter_activate)
+
         self.treeview_cell_environment_key.connect(
             "edited", self.__on_edited_cell)
         self.treeview_cell_environment_value.connect(
@@ -1198,6 +1258,19 @@ class DialogParameters(CommonWindow):
         if len(self.game.tags) > 0:
             self.entry_tags.set_text(' '.join(self.game.tags))
 
+        for tag in self.interface.api.get_game_tags():
+            label = Gtk.Label()
+            label.set_label(tag)
+            label.set_margin_top(6)
+            label.set_margin_left(6)
+            label.set_margin_right(6)
+            label.set_margin_bottom(6)
+
+            row = Gtk.ListBoxRow()
+            row.add(label)
+
+            self.popover_tags_listbox.add(row)
+
         # Game statistics
         if not parse_timedelta(self.game.play_time) == "00:00:00":
             self.label_statistic_total_value.set_label(
@@ -1213,6 +1286,9 @@ class DialogParameters(CommonWindow):
 
         for key in sorted(environ.copy().keys()):
             self.store_environment_keys.append([key])
+
+        self.grid_tags_popover.show_all()
+        self.popover_tags_placeholder.show()
 
         self.combo.grab_focus()
 
@@ -1290,6 +1366,76 @@ class DialogParameters(CommonWindow):
 
         if treeiter is not None:
             self.store_environment.remove(treeiter)
+
+
+    def __on_filters_update(self, widget, status=None):
+        """ Reload packages filter when user change filters from menu
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+
+        Other Parameters
+        ----------------
+        status : bool or None
+            New status for current widget
+
+        Notes
+        -----
+        Check widget utility in this function
+        """
+
+        self.popover_tags_listbox.invalidate_filter()
+
+
+    def __on_filter_tag(self, widget, *args):
+        """ Update treeview rows
+
+        This function update tag listbox with filter entry content. A row is
+        visible if the content match the filter.
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        # Retrieve row label text
+        text = widget.get_children()[0].get_label()
+
+        try:
+            filter_text = self.popover_tags_filter.get_text().strip()
+
+            if len(filter_text) == 0:
+                return True
+
+            return filter_text in text
+
+        except:
+            return False
+
+
+    def __on_filter_activate(self, widget, row):
+        """ Add a new filter to list
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        row : Gtk.ListBoxRow
+            Activated row
+        """
+
+        # Retrieve row label text
+        text = row.get_children()[0].get_label()
+
+        filter_text = self.entry_tags.get_text().strip()
+
+        if len(filter_text) > 0:
+            text = "%s %s" % (self.entry_tags.get_text(), text)
+
+        self.entry_tags.set_text(text)
 
 
 class DialogRemove(CommonWindow):
