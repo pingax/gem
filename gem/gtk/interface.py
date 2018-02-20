@@ -187,8 +187,7 @@ class Interface(Gtk.ApplicationWindow):
             ("played", _("Launch")),
             ("play_time", _("Play time")),
             ("last_play", _("Last launch")),
-            ("last_time", _("Last play time")),
-            ("tags", _("Tags"))
+            ("last_time", _("Last play time"))
         ]
 
         # Avoid to reload interface when switch between default & classic theme
@@ -338,9 +337,11 @@ class Interface(Gtk.ApplicationWindow):
         self.grid_options = Gtk.Box()
         self.grid_infobar = Gtk.Box()
 
-        self.grid_paned = Gtk.Box()
-        self.grid_paned_widgets = Gtk.Box()
-        self.grid_paned_footer = Gtk.Box()
+        self.grid_sidebar = Gtk.Box()
+        self.grid_sidebar_content = Gtk.Box()
+        self.grid_sidebar_informations = Gtk.Box()
+        self.grid_sidebar_game = Gtk.Grid()
+        self.grid_sidebar_tags = Gtk.FlowBox()
 
         self.grid_toolbar_console = Gtk.Box()
         self.grid_toolbar_filters = Gtk.Box()
@@ -360,17 +361,23 @@ class Interface(Gtk.ApplicationWindow):
         self.grid_games_placeholder.set_border_width(18)
         self.grid_games_placeholder.set_orientation(Gtk.Orientation.VERTICAL)
 
-        self.grid_paned.set_border_width(6)
-        self.grid_paned.set_size_request(432, 216)
-        self.grid_paned.set_orientation(Gtk.Orientation.HORIZONTAL)
+        self.grid_sidebar.set_border_width(6)
 
-        self.grid_paned_widgets.set_spacing(6)
-        self.grid_paned_widgets.set_border_width(6)
-        self.grid_paned_widgets.set_orientation(Gtk.Orientation.VERTICAL)
+        self.grid_sidebar_content.set_orientation(Gtk.Orientation.VERTICAL)
+        self.grid_sidebar_content.set_border_width(12)
+        self.grid_sidebar_content.set_spacing(6)
 
-        self.grid_paned_footer.set_spacing(12)
-        self.grid_paned_footer.set_margin_top(12)
-        self.grid_paned_footer.set_orientation(Gtk.Orientation.HORIZONTAL)
+        self.grid_sidebar_informations.set_orientation(Gtk.Orientation.VERTICAL)
+
+        self.grid_sidebar_game.set_column_homogeneous(True)
+        self.grid_sidebar_game.set_column_spacing(12)
+        self.grid_sidebar_game.set_row_spacing(6)
+
+        self.grid_sidebar_tags.set_selection_mode(Gtk.SelectionMode.NONE)
+        self.grid_sidebar_tags.set_max_children_per_line(16)
+        self.grid_sidebar_tags.set_homogeneous(False)
+        self.grid_sidebar_tags.set_column_spacing(6)
+        self.grid_sidebar_tags.set_row_spacing(6)
 
         Gtk.StyleContext.add_class(
             self.grid_options.get_style_context(), "linked")
@@ -872,29 +879,24 @@ class Interface(Gtk.ApplicationWindow):
         #   Games - Sidebar
         # ------------------------------------
 
+        self.scroll_sidebar = Gtk.ScrolledWindow()
+
         self.paned_games = Gtk.Paned()
 
-        self.label_game_title = Gtk.Label()
-        self.label_game_description = Gtk.Label()
+        self.label_sidebar_title = Gtk.Label()
 
-        self.image_game_screen = Gtk.Image()
+        self.image_sidebar_game = Gtk.Image()
 
         self.separator_game = Gtk.Separator()
 
         # Properties
+        self.scroll_sidebar.set_size_request(432, 256)
+
         self.paned_games.set_orientation(Gtk.Orientation.VERTICAL)
 
-        self.label_game_title.set_hexpand(True)
-        self.label_game_title.set_alignment(0, 0.5)
-        self.label_game_title.set_use_markup(True)
-        self.label_game_title.set_margin_bottom(12)
-        self.label_game_title.set_ellipsize(Pango.EllipsizeMode.END)
-
-        self.label_game_description.set_use_markup(True)
-        self.label_game_description.set_alignment(0, 0)
-        self.label_game_description.set_ellipsize(Pango.EllipsizeMode.END)
-
-        self.image_game_screen.set_alignment(0, 0)
+        self.label_sidebar_title.set_use_markup(True)
+        self.label_sidebar_title.set_margin_bottom(12)
+        self.label_sidebar_title.set_ellipsize(Pango.EllipsizeMode.END)
 
         self.separator_game.set_no_show_all(True)
 
@@ -902,35 +904,24 @@ class Interface(Gtk.ApplicationWindow):
         #   Games - Sidebar description
         # ------------------------------------
 
-        self.widgets_sidebar = dict()
+        self.widgets_sidebar = list()
 
         for key, value in self.sidebar_keys:
-            self.widgets_sidebar[key] = {
-                "box": Gtk.Box(),
-                "key": Gtk.Label(),
-                "value": Gtk.Label()
-            }
+            data = ( key, Gtk.Label(), Gtk.Label() )
 
             # Properties
-            self.widgets_sidebar[key]["box"].set_spacing(8)
-            self.widgets_sidebar[key]["box"].set_orientation(
-                Gtk.Orientation.HORIZONTAL)
+            data[1].set_text(value)
+            data[1].set_halign(Gtk.Align.END)
+            data[1].set_valign(Gtk.Align.CENTER)
+            data[1].set_ellipsize(Pango.EllipsizeMode.END)
+            data[1].get_style_context().add_class("dim-label")
 
-            self.widgets_sidebar[key]["key"].set_use_markup(True)
-            self.widgets_sidebar[key]["key"].set_alignment(0, 0)
-            self.widgets_sidebar[key]["key"].set_ellipsize(
-                Pango.EllipsizeMode.END)
-            self.widgets_sidebar[key]["key"].set_markup("<b>%s</b> :" % value)
+            data[2].set_use_markup(True)
+            data[2].set_halign(Gtk.Align.START)
+            data[2].set_valign(Gtk.Align.CENTER)
+            data[2].set_ellipsize(Pango.EllipsizeMode.END)
 
-            self.widgets_sidebar[key]["value"].set_use_markup(True)
-            self.widgets_sidebar[key]["value"].set_alignment(0, 0)
-            self.widgets_sidebar[key]["value"].set_ellipsize(
-                Pango.EllipsizeMode.END)
-
-            self.widgets_sidebar[key]["box"].pack_start(
-                self.widgets_sidebar[key]["key"], False, False, 0)
-            self.widgets_sidebar[key]["box"].pack_start(
-                self.widgets_sidebar[key]["value"], True, True, 0)
+            self.widgets_sidebar.append(data)
 
         # ------------------------------------
         #   Games - Placeholder
@@ -1435,17 +1426,30 @@ class Interface(Gtk.ApplicationWindow):
 
         # Games paned
         self.paned_games.pack1(self.grid_games, True, False)
-        self.paned_games.pack2(self.grid_paned, False, False)
+        self.paned_games.pack2(self.scroll_sidebar, False, False)
 
-        self.grid_paned.pack_start(self.grid_paned_widgets, True, True, 0)
-        self.grid_paned.pack_start(self.image_game_screen, False, False, 0)
+        self.scroll_sidebar.add(self.grid_sidebar)
 
-        self.grid_paned_widgets.pack_start(
-            self.label_game_title, False, False, 0)
+        self.grid_sidebar.pack_start(
+            self.grid_sidebar_content, True, True, 0)
+        self.grid_sidebar.pack_start(
+            self.image_sidebar_game, False, False, 0)
 
-        for key, value in self.sidebar_keys:
-            self.grid_paned_widgets.pack_start(
-                self.widgets_sidebar[key]["box"], False, False, 0)
+        self.grid_sidebar_content.pack_start(
+            self.label_sidebar_title, False, False, 0)
+        self.grid_sidebar_content.pack_start(
+            self.grid_sidebar_informations, True, True, 0)
+
+        self.grid_sidebar_informations.pack_start(
+            self.grid_sidebar_game, True, True, 0)
+        self.grid_sidebar_informations.pack_start(
+            self.grid_sidebar_tags, False, False, 0)
+
+        for key, label_key, label_value in self.widgets_sidebar:
+            index = self.widgets_sidebar.index((key, label_key, label_value))
+
+            self.grid_sidebar_game.attach(label_key, 0, index, 1, 1)
+            self.grid_sidebar_game.attach(label_value, 1, index, 1, 1)
 
         # Games
         self.grid_games.pack_start(self.grid_games_placeholder, True, True, 0)
@@ -2049,39 +2053,53 @@ class Interface(Gtk.ApplicationWindow):
 
         # Avoid to reload paned_game if user has not change orientation
         previous_mode = self.paned_games.get_orientation()
+        if init_interface:
+            previous_mode = None
 
         # Wanted sidebar orientation
-        sidebar_orientation = self.config.get("gem", "sidebar_orientation")
+        sidebar_orientation = self.config.get(
+            "gem", "sidebar_orientation", fallback="vertical")
 
         if sidebar_orientation == "horizontal" and \
             not previous_mode == Gtk.Orientation.HORIZONTAL:
+
             self.paned_games.set_position(-1)
             self.paned_games.set_orientation(Gtk.Orientation.HORIZONTAL)
 
-            self.grid_paned.set_orientation(Gtk.Orientation.VERTICAL)
-            self.grid_paned.reorder_child(self.image_game_screen, 0)
+            self.grid_sidebar.set_orientation(Gtk.Orientation.VERTICAL)
+            self.grid_sidebar.reorder_child(self.image_sidebar_game, 0)
 
-            self.image_game_screen.set_alignment(0.5, 0)
-            self.label_game_title.set_alignment(0.5, 0)
+            self.grid_sidebar_informations.set_spacing(6)
+            self.grid_sidebar_game.set_halign(Gtk.Align.CENTER)
+
+            self.label_sidebar_title.set_halign(Gtk.Align.CENTER)
+            self.image_sidebar_game.set_halign(Gtk.Align.CENTER)
 
         elif sidebar_orientation == "vertical" and \
             not previous_mode == Gtk.Orientation.VERTICAL:
+
             self.paned_games.set_position(-1)
             self.paned_games.set_orientation(Gtk.Orientation.VERTICAL)
 
-            self.grid_paned.set_orientation(Gtk.Orientation.HORIZONTAL)
-            self.grid_paned.reorder_child(self.image_game_screen, -1)
+            self.grid_sidebar.set_orientation(Gtk.Orientation.HORIZONTAL)
+            self.grid_sidebar.reorder_child(self.image_sidebar_game, -1)
 
-            self.image_game_screen.set_alignment(0, 0)
-            self.label_game_title.set_alignment(0, 0)
+            self.grid_sidebar_informations.set_spacing(12)
+            self.grid_sidebar_game.set_halign(Gtk.Align.START)
+            self.grid_sidebar_tags.set_halign(Gtk.Align.CENTER)
+            self.grid_sidebar_tags.set_orientation(Gtk.Orientation.HORIZONTAL)
+
+            self.label_sidebar_title.set_halign(Gtk.Align.START)
+            self.image_sidebar_game.set_halign(Gtk.Align.END)
 
         if sidebar_status:
-            self.grid_paned.show_all()
+            self.grid_sidebar.show_all()
         else:
-            self.grid_paned.hide()
+            self.grid_sidebar.hide()
 
-        for key, value in self.sidebar_keys:
-            self.widgets_sidebar[key]["box"].hide()
+        for key, label_key, label_value in self.widgets_sidebar:
+            label_key.hide()
+            label_value.hide()
 
         # ------------------------------------
         #   Statusbar
@@ -2347,6 +2365,20 @@ class Interface(Gtk.ApplicationWindow):
         return found
 
 
+    def __on_filter_tag(self, widget, tag):
+        """ Refilter games list with a new tag
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        tag : str
+            Tag to add to filter entry
+        """
+
+        self.entry_filter.set_text(str(tag))
+
+
     def __init_shortcuts(self):
         """ Generate shortcuts signals from user configuration
         """
@@ -2604,12 +2636,20 @@ class Interface(Gtk.ApplicationWindow):
         #   Game informations
         # ----------------------------
 
+        children = self.grid_sidebar_tags.get_children()
+
+        # Remove previous tags
+        for widget in children:
+            self.grid_sidebar_tags.remove(widget)
+            # Delete widget instance
+            del widget
+
         if game is not None:
 
             if console is not None:
                 self.separator_game.show()
 
-                self.label_game_title.set_markup(
+                self.label_sidebar_title.set_markup(
                     "<span weight='bold' size='x-large'>%s</span>" % \
                     replace_for_markup(game.name))
 
@@ -2642,16 +2682,16 @@ class Interface(Gtk.ApplicationWindow):
 
                     else:
                         pixbuf = Pixbuf.new_from_file_at_scale(
-                            results[index], -1, 200, True)
+                            results[index], -1, 236, True)
 
                     if pixbuf is not None:
-                        self.image_game_screen.set_from_pixbuf(pixbuf)
+                        self.image_sidebar_game.set_from_pixbuf(pixbuf)
 
                         self.image_statusbar_screenshots.set_from_pixbuf(
                             self.icons["snap"])
 
                 else:
-                    self.image_game_screen.set_from_pixbuf(None)
+                    self.image_sidebar_game.set_from_pixbuf(None)
 
                     self.image_statusbar_screenshots.set_from_pixbuf(
                         self.alternative["snap"])
@@ -2680,28 +2720,35 @@ class Interface(Gtk.ApplicationWindow):
                         "condition": not game.last_launch_time == timedelta(),
                         "markup": string_from_time(game.last_launch_time),
                         "tooltip": parse_timedelta(game.last_launch_time)
-                    },
-                    "tags": {
-                        "condition": len(game.tags) > 0,
-                        "markup": replace_for_markup(', '.join(game.tags)),
-                        "tooltip": None
-                    },
+                    }
                 }
 
-                for key, data in widgets.items():
-                    widget = self.widgets_sidebar[key]
+                for key, label_key, label_value in self.widgets_sidebar:
+                    data = widgets[key]
 
                     if data["condition"]:
-                        widget["box"].show_all()
-                        widget["value"].set_markup(data["markup"])
+                        label_key.show()
+                        label_value.show()
+
+                        label_value.set_markup(data["markup"])
 
                         if data["tooltip"] is not None:
-                            widget["value"].set_tooltip_text(data["tooltip"])
+                            label_value.set_tooltip_text(data["tooltip"])
 
                     else:
-                        widget["box"].hide()
-                        widget["value"].set_markup(str())
-                        widget["value"].set_tooltip_text(str())
+                        label_key.hide()
+                        label_value.hide()
+
+                        label_value.set_markup(str())
+                        label_value.set_tooltip_text(str())
+
+                # Add tag as linkbutton
+                for tag in sorted(game.tags):
+                    button = Gtk.Button.new_with_label(tag)
+                    button.connect("clicked", self.__on_filter_tag, tag)
+                    button.show()
+
+                    self.grid_sidebar_tags.add(button)
 
                 # Game emulator
                 if emulator is not None:
@@ -2730,15 +2777,15 @@ class Interface(Gtk.ApplicationWindow):
                     self.image_statusbar_screenshots.set_from_pixbuf(self.empty)
 
         else:
-            for key, value in self.sidebar_keys:
-                self.widgets_sidebar[key]["box"].hide()
+            for key, label_key, label_value in self.widgets_sidebar:
+                label_key.hide()
+                label_value.hide()
 
             self.separator_game.hide()
 
-            self.label_game_title.set_text(str())
-            self.label_game_description.set_text(str())
+            self.label_sidebar_title.set_text(str())
 
-            self.image_game_screen.set_from_pixbuf(None)
+            self.image_sidebar_game.set_from_pixbuf(None)
 
             self.image_statusbar_properties.set_from_pixbuf(self.empty)
             self.image_statusbar_savestates.set_from_pixbuf(self.empty)
@@ -4546,6 +4593,8 @@ class Interface(Gtk.ApplicationWindow):
             self.menubar_game_item_favorite.set_active(False)
             self.menu_item_favorite.set_active(False)
 
+        self.filters_update(None)
+
         self.__unblock_signals()
 
 
@@ -4594,6 +4643,8 @@ class Interface(Gtk.ApplicationWindow):
             self.menubar_game_item_multiplayer.set_active(False)
             self.menu_item_multiplayer.set_active(False)
 
+        self.filters_update(None)
+
         self.__unblock_signals()
 
 
@@ -4641,6 +4692,8 @@ class Interface(Gtk.ApplicationWindow):
         else:
             self.menubar_game_item_finish.set_active(False)
             self.menu_item_finish.set_active(False)
+
+        self.filters_update(None)
 
         self.__unblock_signals()
 
@@ -4907,9 +4960,9 @@ class Interface(Gtk.ApplicationWindow):
             "gem", "show_sidebar", fallback=True)
 
         if sidebar_status:
-            self.grid_paned.show()
+            self.grid_sidebar.show()
         else:
-            self.grid_paned.hide()
+            self.grid_sidebar.hide()
 
         self.config.modify("gem", "show_sidebar", sidebar_status)
         self.config.update()
