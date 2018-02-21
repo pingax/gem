@@ -420,8 +420,10 @@ class GEM(object):
                         section, "ignores", fallback=str()).split(';'),
                     "extensions": data.get(
                         section, "exts", fallback=str()).split(';'),
-                    "recursive": bool(data.getboolean(
-                        section, "recursive", fallback=False)),
+                    "recursive": data.getboolean(
+                        section, "recursive", fallback=False),
+                    "favorite": data.getboolean(
+                        section, "favorite", fallback=False),
                     "emulator": emulator
                 })
 
@@ -593,6 +595,12 @@ class GEM(object):
                     for key, value in sorted(structure.items()):
                         if value is None:
                             value = str()
+
+                        if type(value) is bool:
+                            if value:
+                                value = "yes"
+                            else:
+                                value = "no"
 
                         if type(value) is Emulator:
                             value = value.id
@@ -1429,6 +1437,7 @@ class Console(GEMObject):
         "extensions": list(),
         "games": list(),
         "recursive": False,
+        "favorite": False,
         "emulator": None
     }
 
@@ -1454,7 +1463,8 @@ class Console(GEMObject):
             "exts": ';'.join(self.extensions),
             "ignores": ';'.join(self.ignores),
             "emulator": self.emulator,
-            "recursive": int(self.recursive)
+            "favorite": self.favorite,
+            "recursive": self.recursive
         })
 
 
