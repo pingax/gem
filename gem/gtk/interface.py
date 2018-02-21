@@ -2093,9 +2093,9 @@ class Interface(Gtk.ApplicationWindow):
             self.image_sidebar_game.set_halign(Gtk.Align.END)
 
         if sidebar_status:
-            self.grid_sidebar.show_all()
+            self.scroll_sidebar.show_all()
         else:
-            self.grid_sidebar.hide()
+            self.scroll_sidebar.hide()
 
         for key, label_key, label_value in self.widgets_sidebar:
             label_key.hide()
@@ -4960,9 +4960,9 @@ class Interface(Gtk.ApplicationWindow):
             "gem", "show_sidebar", fallback=True)
 
         if sidebar_status:
-            self.grid_sidebar.show()
+            self.scroll_sidebar.show()
         else:
-            self.grid_sidebar.hide()
+            self.scroll_sidebar.hide()
 
         self.config.modify("gem", "show_sidebar", sidebar_status)
         self.config.update()
