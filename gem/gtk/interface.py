@@ -2270,6 +2270,19 @@ class Interface(Gtk.ApplicationWindow):
         if status is not None and type(status) is bool:
             widget.set_active(status)
 
+        active_filter = False
+        for child in self.grid_menu_filters.get_children():
+
+            if type(child) is Gtk.Switch:
+                active_filter = active_filter or not child.get_active()
+
+        if active_filter:
+            self.tool_menu_filters.get_style_context().add_class(
+                "suggested-action")
+        else:
+            self.tool_menu_filters.get_style_context().remove_class(
+                "suggested-action")
+
         self.filter_games.refilter()
 
         self.check_selection()
@@ -2286,6 +2299,9 @@ class Interface(Gtk.ApplicationWindow):
 
             if type(child) is Gtk.Switch:
                 child.set_active(True)
+
+        self.tool_menu_filters.get_style_context().remove_class(
+            "suggested-action")
 
 
     def filters_match(self, model, row, data=None):
