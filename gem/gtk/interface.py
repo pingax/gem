@@ -2663,38 +2663,48 @@ class Interface(Gtk.ApplicationWindow):
                 #   Show screenshot
                 # ----------------------------
 
-                results = sorted(emulator.get_screenshots(game))
+                image = None
+
+                screenshots = sorted(emulator.get_screenshots(game))
 
                 # Check if rom has some screenshots
-                if len(results) > 0:
+                if len(screenshots) > 0:
+                    self.image_statusbar_screenshots.set_from_pixbuf(
+                        self.icons["snap"])
+
+                    # Get the latest screenshot from list
                     index = -1
 
                     # Get a random file from rom screenshots
                     if self.config.getboolean(
                         "gem", "show_random_screenshot", fallback=True):
-                        index = randint(0, len(results) - 1)
+                        index = randint(0, len(screenshots) - 1)
+
+                    image = screenshots[index]
+
+                # No screenshots available
+                else:
+                    self.image_statusbar_screenshots.set_from_pixbuf(
+                        self.alternative["snap"])
+
+                # A special cover image has been set by user
+                if game.cover is not None and exists(game.cover):
+                    image = game.cover
+
+                # An image has been set
+                if image is not None and exists(image):
 
                     orientation = self.paned_games.get_orientation()
 
                     if orientation == Gtk.Orientation.HORIZONTAL:
-                        pixbuf = Pixbuf.new_from_file_at_scale(
-                            results[index], 400, -1, True)
+                        image = Pixbuf.new_from_file_at_scale(
+                            image, 400, -1, True)
 
                     else:
-                        pixbuf = Pixbuf.new_from_file_at_scale(
-                            results[index], -1, 236, True)
+                        image = Pixbuf.new_from_file_at_scale(
+                            image, -1, 236, True)
 
-                    if pixbuf is not None:
-                        self.image_sidebar_game.set_from_pixbuf(pixbuf)
-
-                        self.image_statusbar_screenshots.set_from_pixbuf(
-                            self.icons["snap"])
-
-                else:
-                    self.image_sidebar_game.set_from_pixbuf(None)
-
-                    self.image_statusbar_screenshots.set_from_pixbuf(
-                        self.alternative["snap"])
+                self.image_sidebar_game.set_from_pixbuf(image)
 
                 # ----------------------------
                 #   Show informations
@@ -3830,6 +3840,8 @@ class Interface(Gtk.ApplicationWindow):
                 if console is not None and \
                     self.__current_tooltip_pixbuf is None:
 
+                    image = None
+
                     # Get Game emulator
                     emulator = console.emulator
                     if game.emulator is not None:
@@ -3837,7 +3849,13 @@ class Interface(Gtk.ApplicationWindow):
 
                     screenshots = sorted(emulator.get_screenshots(game))
                     if len(screenshots) > 0:
-                        pixbuf = Pixbuf.new_from_file(screenshots[-1])
+                        image = screenshots[-1]
+
+                    if game.cover is not None and exists(game.cover):
+                        image = game.cover
+
+                    if image is not None and exists(image):
+                        pixbuf = Pixbuf.new_from_file(image)
 
                         # Resize pixbuf to have a 96 pixels height
                         pixbuf = pixbuf.scale_simple(pixbuf.get_width() * float(

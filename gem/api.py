@@ -1566,6 +1566,11 @@ class Console(GEMObject):
                     if "tags" in data and len(data["tags"]) > 0:
                         tags = data["tags"].split(';')
 
+                    # Set game cover image
+                    cover = None
+                    if "cover" in data and len(data["cover"]) > 0:
+                        cover = expanduser(data["cover"])
+
                     game_data.update({
                         "name": name,
                         "favorite": bool(data["favorite"]),
@@ -1580,7 +1585,7 @@ class Console(GEMObject):
                         "default": arguments,
                         "tags": tags,
                         "key": key,
-                        "cover": str()
+                        "cover": cover
                     })
 
                 for key, value in game_data.items():
@@ -1650,7 +1655,7 @@ class Game(GEMObject):
         "key": None,
         "tags": list(),
         "environment": dict(),
-        "cover": str()
+        "cover": None
     }
 
     def __init__(self):

@@ -2,6 +2,19 @@
 
 ## Version 1.0 - Space Fox
 
+### Engine
+
+* Add cover field to game database
+* Add rating field to game database
+* Add GEM.get_game_tags function to API
+
+### GTK+ interface
+
+* Add the statusbar for default theme and rewrite his contents
+* Add a tags selector to game properties dialog
+* Add more informations into game sidebar
+* Restore GTK+ menuitem behavior to main and game menus
+
 ## Version 0.9.1 - Lavos (17 Feb, 2018)
 
 ### GTK+ interface
