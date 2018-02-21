@@ -788,3 +788,96 @@ class DialogHelp(CommonWindow):
         """
 
         self.show_all()
+
+
+class ListBoxRowConsole(Gtk.ListBoxRow):
+
+    def __init__(self, console, icon, status):
+        """ Constructor
+
+        Parameters
+        ----------
+        console : gem.api.Console
+            Console instance
+        icon : GdkPixbuf.Pixbuf
+            Console icon
+        status : GdkPixbuf.Pixbuf
+            Console status icon
+        """
+
+        Gtk.ListBoxRow.__init__(self)
+
+        # ------------------------------------
+        #   Initialize variables
+        # ------------------------------------
+
+        self.console = console
+        self.pixbuf_icon = icon
+        self.pixbuf_status = status
+
+        # ------------------------------------
+        #   Prepare interface
+        # ------------------------------------
+
+        # Init widgets
+        self.__init_widgets()
+
+        # Init packing
+        self.__init_packing()
+
+        # Start interface
+        self.__start_interface()
+
+
+    def __init_widgets(self):
+        """ Initialize interface widgets
+        """
+
+        # ------------------------------------
+        #   Grid
+        # ------------------------------------
+
+        self.grid = Gtk.Box()
+
+        # Properties
+        self.grid.set_border_width(6)
+        self.grid.set_spacing(12)
+
+        # ------------------------------------
+        #   Row
+        # ------------------------------------
+
+        self.image = Gtk.Image()
+        self.status = Gtk.Image()
+
+        self.label = Gtk.Label()
+
+        # Properties
+        self.image.set_from_pixbuf(self.pixbuf_icon)
+        self.image.set_halign(Gtk.Align.CENTER)
+        self.image.set_valign(Gtk.Align.CENTER)
+
+        self.status.set_from_pixbuf(self.pixbuf_status)
+        self.status.set_halign(Gtk.Align.CENTER)
+        self.status.set_valign(Gtk.Align.CENTER)
+
+        self.label.set_halign(Gtk.Align.START)
+        self.label.set_text(self.console.name)
+
+
+    def __init_packing(self):
+        """ Initialize widgets packing in main window
+        """
+
+        self.add(self.grid)
+
+        self.grid.pack_start(self.image, False, False, 0)
+        self.grid.pack_start(self.label, True, True, 0)
+        self.grid.pack_start(self.status, False, False, 0)
+
+
+    def __start_interface(self):
+        """ Load data and start interface
+        """
+
+        self.show_all()

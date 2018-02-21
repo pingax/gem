@@ -875,8 +875,8 @@ class DialogParameters(CommonWindow):
         grid_tags.set_spacing(-1)
         grid_tags.set_orientation(Gtk.Orientation.HORIZONTAL)
 
-        self.grid_tags_popover.set_spacing(6)
-        self.grid_tags_popover.set_border_width(6)
+        self.grid_tags_popover.set_spacing(12)
+        self.grid_tags_popover.set_border_width(12)
         self.grid_tags_popover.set_homogeneous(False)
         self.grid_tags_popover.set_orientation(Gtk.Orientation.VERTICAL)
 
@@ -973,6 +973,7 @@ class DialogParameters(CommonWindow):
         self.button_tags = Gtk.MenuButton()
 
         self.popover_tags = Gtk.Popover()
+        self.popover_tags_frame = Gtk.Frame()
         self.popover_tags_scroll = Gtk.ScrolledWindow()
         self.popover_tags_filter = Gtk.SearchEntry()
         self.popover_tags_listbox = Gtk.ListBox()
@@ -1134,8 +1135,9 @@ class DialogParameters(CommonWindow):
         self.grid_tags_popover.pack_start(
             self.popover_tags_filter, False, False, 0)
         self.grid_tags_popover.pack_start(
-            self.popover_tags_scroll, True, True, 0)
+            self.popover_tags_frame, True, True, 0)
 
+        self.popover_tags_frame.add(self.popover_tags_scroll)
         self.popover_tags_scroll.add(self.popover_tags_listbox)
 
         stack.add_titled(scroll_statistic, "statistic", _("Statistic"))
