@@ -190,8 +190,7 @@ class Preferences(CommonWindow):
         #   Initialize configuration files
         # ------------------------------------
 
-        self.config = Configuration(
-            expanduser(path_join(GEM.Config, "gem.conf")))
+        self.config = Configuration(expanduser(self.api.get_config("gem.conf")))
 
         if parent is not None:
             # Get user icon theme
@@ -1819,8 +1818,13 @@ class Preferences(CommonWindow):
         self.selection["console"] = None
 
         for console in self.api.consoles.values():
-            image = icon_from_data(
-                console.icon, self.empty, 48, 48, subfolder="consoles")
+            icon = console.icon
+
+            if not exists(expanduser(icon)):
+                icon = self.api.get_local(
+                    "icons", "consoles", "%s.%s" % (icon, Icons.Ext))
+
+            image = icon_from_data(icon, self.empty, 48, 48)
 
             path = str()
             if console.path is not None:
@@ -1844,8 +1848,13 @@ class Preferences(CommonWindow):
         self.selection["emulator"] = None
 
         for emulator in self.api.emulators.values():
-            image = icon_from_data(
-                emulator.icon, self.empty, 48, 48, subfolder="emulators")
+            icon = emulator.icon
+
+            if not exists(expanduser(icon)):
+                icon = self.api.get_local(
+                    "icons", "emulators", "%s.%s" % (icon, Icons.Ext))
+
+            image = icon_from_data(icon, self.empty, 48, 48)
 
             check = str()
             if not emulator.exists:
@@ -2480,8 +2489,13 @@ class PreferencesConsole(CommonWindow):
         emulators_rows = dict()
 
         for emulator in self.api.emulators.values():
-            icon = icon_from_data(
-                emulator.icon, self.empty, 24, 24, "emulators")
+            icon = emulator.icon
+
+            if not exists(expanduser(icon)):
+                icon = self.api.get_local(
+                    "icons", "emulators", "%s.%s" % (icon, Icons.Ext))
+
+            icon = icon_from_data(icon, self.empty, 24, 24)
 
             warning = self.empty
             if not emulator.exists:
@@ -2512,8 +2526,14 @@ class PreferencesConsole(CommonWindow):
 
             # Icon
             self.path = self.console.icon
+
+            icon = self.path
+            if not exists(expanduser(icon)):
+                icon = self.api.get_local(
+                    "icons", "consoles", "%s.%s" % (icon, Icons.Ext))
+
             self.image_console.set_from_pixbuf(
-                icon_from_data(self.path, self.empty, 64, 64, "consoles"))
+                icon_from_data(icon, self.empty, 64, 64))
 
             # Ignores
             for ignore in self.console.ignores:
@@ -2609,8 +2629,14 @@ class PreferencesConsole(CommonWindow):
         dialog = IconViewer(self, _("Choose an icon"), self.path, "consoles")
 
         if dialog.new_path is not None:
+            icon = dialog.new_path
+
+            if not exists(expanduser(icon)):
+                icon = self.api.get_local(
+                    "icons", "consoles", "%s.%s" % (icon, Icons.Ext))
+
             self.image_console.set_from_pixbuf(
-                icon_from_data(dialog.new_path, self.empty, 64, 64, "consoles"))
+                icon_from_data(icon, self.empty, 64, 64))
 
             self.path = dialog.new_path
 
@@ -3100,8 +3126,14 @@ class PreferencesEmulator(CommonWindow):
 
             # Icon
             self.path = self.emulator.icon
+
+            icon = self.path
+            if not exists(expanduser(icon)):
+                icon = self.api.get_local(
+                    "icons", "emulators", "%s.%s" % (icon, Icons.Ext))
+
             self.image_emulator.set_from_pixbuf(
-                icon_from_data(self.path, self.empty, 64, 64, "emulators"))
+                icon_from_data(icon, self.empty, 64, 64))
 
             # Regex
             if self.emulator.savestates is not None:
@@ -3315,8 +3347,14 @@ class PreferencesEmulator(CommonWindow):
         dialog = IconViewer(self, _("Choose an icon"), self.path, "emulators")
 
         if dialog.new_path is not None:
-            self.image_emulator.set_from_pixbuf(icon_from_data(
-                dialog.new_path, self.empty, 64, 64, "emulators"))
+            icon = dialog.new_path
+
+            if not exists(expanduser(icon)):
+                icon = self.api.get_local(
+                    "icons", "emulators", "%s.%s" % (icon, Icons.Ext))
+
+            self.image_emulator.set_from_pixbuf(
+                icon_from_data(icon, self.empty, 64, 64))
 
             self.path = dialog.new_path
 
@@ -3353,9 +3391,14 @@ class IconViewer(CommonWindow):
         self.folder = folder
 
         if parent is None:
+            self.api = None
+
             self.empty = Pixbuf(Colorspace.RGB, True, 8, 24, 24)
             self.empty.fill(0x00000000)
+
         else:
+            self.api = parent.api
+
             self.empty = parent.empty
 
         # ------------------------------------
@@ -3497,29 +3540,34 @@ class IconViewer(CommonWindow):
         self.icons_data = dict()
 
         # Fill icons view
-        for icon in \
-            glob(path_join(GEM.Local, "icons", self.folder, "*.png")):
-            name = splitext(basename(icon))[0]
+        if self.api is not None:
 
-            self.icons_data[name] = self.model_icons.append([
-                icon_from_data(icon, self.empty, 72, 72, self.folder), name])
+            for icon in glob(self.api.get_local("icons", self.folder, "*.png")):
+                name = splitext(basename(icon))[0]
 
-        # Set filechooser or icons view selected item
-        if self.path is not None:
+                if not exists(expanduser(icon)):
+                    icon = self.api.get_local(
+                        "icons", self.folder, "%s.%s" % (icon, Icons.Ext))
 
-            # Check if current path is a gem icons
-            data = path_join(
-                GEM.Local, "icons", self.folder, self.path + ".png")
+                self.icons_data[name] = self.model_icons.append([
+                    icon_from_data(icon, self.empty, 72, 72), name ])
 
-            if data is not None and exists(data):
-                self.view_icons.select_path(
-                    self.model_icons.get_path(self.icons_data[self.path]))
+            # Set filechooser or icons view selected item
+            if self.path is not None:
 
-            else:
-                self.frame_icons.show()
-                self.stack.set_visible_child(self.frame_icons)
+                # Check if current path is a gem icons
+                data = self.api.get_local(
+                    "icons", self.folder, self.path + ".png")
 
-                self.file_icons.set_filename(self.path)
+                if data is not None and exists(data):
+                    self.view_icons.select_path(
+                        self.model_icons.get_path(self.icons_data[self.path]))
+
+                else:
+                    self.frame_icons.show()
+                    self.stack.set_visible_child(self.frame_icons)
+
+                    self.file_icons.set_filename(self.path)
 
 
     def save_interface(self):

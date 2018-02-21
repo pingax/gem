@@ -23,6 +23,7 @@ from os import mkdir
 from os import getpid
 from os import remove
 from os import environ
+from os import makedirs
 
 from os.path import isfile
 from os.path import exists
@@ -78,6 +79,14 @@ def main():
     parser.add_argument("-d", "--debug",
         action="store_true", help="launch gem with debug flag")
 
+    parser_api = parser.add_argument_group("api arguments")
+    parser_api.add_argument("--config", metavar="FOLDER", default=None,
+        action="store", help="set configuration folder (default: ~/.config)")
+    parser_api.add_argument("--local", metavar="FOLDER", default=None,
+        action="store", help="set data folder (default: ~/.local/share)")
+    parser_api.add_argument("--create-folders",
+        action="store_true", help="create folders if not exists")
+
     parser_interface = parser.add_argument_group("interface arguments")
     parser_interface.add_argument("-i", "--gtk-ui", default=True,
         action="store_true", help="launch gem with GTK+ interface (default)")
@@ -87,14 +96,28 @@ def main():
     args = parser.parse_args()
 
     # ------------------------------------
+    #   Initialize GEM API
+    # ------------------------------------
+
+    if args.create_folders:
+
+        if args.config is not None and not exists(args.config):
+            makedirs(args.config)
+
+        if args.local is not None and not exists(args.local):
+            makedirs(args.local)
+
+    gem = GEM(config=args.config, local=args.local, debug=args.debug)
+
+    # ------------------------------------
     #   Initialize lock
     # ------------------------------------
 
-    if exists(path_join(GEM.Local, ".lock")):
+    if exists(gem.get_local(".lock")):
         gem_pid = int()
 
         # Read lock content
-        with open(path_join(GEM.Local, ".lock"), 'r') as pipe:
+        with open(gem.get_local(".lock"), 'r') as pipe:
             gem_pid = pipe.read()
 
         # Lock PID still exists
@@ -111,12 +134,6 @@ def main():
                     sys_exit(_("GEM is already running with PID %s") % gem_pid)
 
     # ------------------------------------
-    #   Initialize GEM API
-    # ------------------------------------
-
-    gem = GEM(debug=args.debug)
-
-    # ------------------------------------
     #   Launch interface
     # ------------------------------------
 
@@ -124,12 +141,11 @@ def main():
         # Default configuration files
         for path in [ "gem.conf", "consoles.conf", "emulators.conf" ]:
 
-            if not exists(path_join(GEM.Config, path)):
+            if not exists(gem.get_config(path)):
                 gem.logger.debug("Copy default %s" % path)
 
                 # Copy default configuration
-                copy(get_data(path_join("config", path)),
-                    path_join(GEM.Config, path))
+                copy(get_data(path_join("config", path)), gem.get_config(path))
 
         # ------------------------------------
         #   GTK interface
@@ -142,25 +158,25 @@ def main():
 
                 # Default folders
                 for folder in [ "icons", "logs", "notes" ]:
-                    if not exists(path_join(GEM.Local, folder)):
+                    if not exists(gem.get_local(folder)):
                         gem.logger.debug("Generate %s folder" % folder)
 
-                        mkdir(path_join(GEM.Local, folder))
+                        mkdir(gem.get_local(folder))
 
                 # Icons folders
                 for path in [ "consoles", "emulators" ]:
 
-                    if not exists(path_join(GEM.Local, "icons", path)):
+                    if not exists(gem.get_local("icons", path)):
                         gem.logger.debug("Copy default %s icons" % path)
 
-                        mkdir(path_join(GEM.Local, "icons", path))
+                        mkdir(gem.get_local("icons", path))
 
                         # Copy default icons
                         for filename in glob(
                             path_join(get_data("icons"), path, "*")):
 
                             if isfile(filename):
-                                copy(filename, path_join(GEM.Local,
+                                copy(filename, gem.get_local(
                                     "icons", path, basename(filename)))
 
                 # ------------------------------------
@@ -168,7 +184,7 @@ def main():
                 # ------------------------------------
 
                 # Save current PID into lock file
-                with open(path_join(GEM.Local, ".lock"), 'w') as pipe:
+                with open(gem.get_local(".lock"), 'w') as pipe:
                     pipe.write(str(getpid()))
 
                 gem.logger.debug("Start GEM with PID %s" % getpid())
@@ -195,8 +211,8 @@ def main():
                 #   Remove lock
                 # ------------------------------------
 
-                if exists(path_join(GEM.Local, ".lock")):
-                    remove(path_join(GEM.Local, ".lock"))
+                if exists(gem.get_local(".lock")):
+                    remove(gem.get_local(".lock"))
 
             else:
                 gem.logger.critical(_("Cannot launch GEM without display"))

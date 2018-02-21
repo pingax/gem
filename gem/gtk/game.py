@@ -119,7 +119,7 @@ class GameThread(Thread, GObject):
         #   Generate data
         # ----------------------------
 
-        self.path = path_join(GEM.Local, game.log)
+        self.path = parent.api.get_local(game.log)
 
 
     def run(self):

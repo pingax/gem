@@ -13,6 +13,7 @@
 * Add the statusbar for default theme and rewrite his contents
 * Add a tags selector to game properties dialog
 * Add more informations into game sidebar
+* Allow to drag the sidebar image to another application
 * Restore GTK+ menuitem behavior to main and game menus
 
 ## Version 0.9.1 - Lavos (17 Feb, 2018)

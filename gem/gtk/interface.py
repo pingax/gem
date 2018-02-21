@@ -1886,7 +1886,7 @@ class Interface(Gtk.ApplicationWindow):
         #   Configuration
         # ------------------------------------
 
-        self.config = Configuration(path_join(GEM.Config, "gem.conf"))
+        self.config = Configuration(self.api.get_config("gem.conf"))
 
         # Get missing keys from config/gem.conf
         self.config.add_missing_data(get_data(path_join("config", "gem.conf")))
@@ -3124,7 +3124,7 @@ class Interface(Gtk.ApplicationWindow):
         This function show the gem log content in a non-editable dialog
         """
 
-        path = path_join(GEM.Local, "gem.log")
+        path = self.api.get_local("gem.log")
 
         game = self.selection["game"]
 
@@ -3162,7 +3162,7 @@ class Interface(Gtk.ApplicationWindow):
         game = self.selection["game"]
 
         if game is not None:
-            path = path_join(GEM.Local, "notes", game.filename + ".txt")
+            path = self.api.get_local("notes", game.filename + ".txt")
 
             if path is not None and not expanduser(path) in self.notes.keys():
                 try:
@@ -3329,9 +3329,14 @@ class Interface(Gtk.ApplicationWindow):
                                 "binary": console.emulator.binary,
                                 "console": console.name })
 
+                    icon = console.icon
+
+                    if not exists(expanduser(icon)):
+                        icon = self.api.get_local(
+                            "icons", "consoles", "%s.%s" % (icon, Icons.Ext))
+
                     # Get console icon
-                    icon = icon_from_data(
-                        console.icon, self.empty, size, size, "consoles")
+                    icon = icon_from_data(icon, self.empty, size, size)
 
                     # Append a new console in combobox model
                     row = self.model_consoles.append(
@@ -4804,8 +4809,8 @@ class Interface(Gtk.ApplicationWindow):
 
                 icon = console.icon
                 if not exists(icon):
-                    icon = path_join(GEM.Local, "icons", "consoles",
-                        '.'.join([icon, Icons.Ext]))
+                    icon = self.api.get_local(
+                        "icons", "consoles", '.'.join([icon, Icons.Ext]))
 
                 values = {
                     "%name%": game.name,
@@ -5307,7 +5312,7 @@ class Interface(Gtk.ApplicationWindow):
         game = self.selection["game"]
 
         if game is not None:
-            log_path = path_join(GEM.Local, game.log)
+            log_path = self.api.get_local(game.log)
 
             if exists(expanduser(log_path)):
                 return log_path

@@ -800,6 +800,8 @@ class DialogParameters(CommonWindow):
 
         self.interface = parent
 
+        self.api = parent.api
+
         self.game = game
         self.emulator = emulator
 
@@ -1227,8 +1229,13 @@ class DialogParameters(CommonWindow):
         self.add_help(self.help_data)
 
         for emulator in self.interface.api.emulators.values():
-            icon = icon_from_data(
-                emulator.icon, self.empty, 24, 24, "emulators")
+            icon = emulator.icon
+
+            if not exists(expanduser(icon)):
+                icon = self.api.get_local(
+                    "icons", "emulators", "%s.%s" % (icon, Icons.Ext))
+
+            icon = icon_from_data(icon, self.empty, 24, 24)
 
             warning = self.empty
             if not emulator.exists:
@@ -2155,6 +2162,8 @@ class DialogConsoles(CommonWindow):
 
         self.current = None
 
+        self.api = parent.api
+
         self.filename = filename
 
         self.consoles = consoles
@@ -2345,9 +2354,14 @@ class DialogConsoles(CommonWindow):
                 self.current = console
                 self.set_response_sensitive(Gtk.ResponseType.APPLY, True)
 
+            icon = console.icon
+
+            if not exists(expanduser(icon)):
+                icon = self.api.get_local(
+                    "icons", "consoles", "%s.%s" % (icon, Icons.Ext))
+
             # Get console icon
-            icon = icon_from_data(
-                console.icon, self.parent.empty, subfolder="consoles")
+            icon = icon_from_data(icon, self.parent.empty)
 
             self.model_consoles.append([status, icon, console.name])
 
@@ -2378,7 +2392,7 @@ class DialogConsoles(CommonWindow):
 #   Misc functions
 # ------------------------------------------------------------------------------
 
-def icon_from_data(icon, fallback=None, width=24, height=24, subfolder=None):
+def icon_from_data(path, fallback=None, width=24, height=24):
     """ Load an icon from path
 
     This function search if an icon is available in GEM icons folder and return
@@ -2387,7 +2401,7 @@ def icon_from_data(icon, fallback=None, width=24, height=24, subfolder=None):
 
     Parameters
     ----------
-    icon : str
+    path : str
         Absolute or relative icon path
 
     Other Parameters
@@ -2398,8 +2412,6 @@ def icon_from_data(icon, fallback=None, width=24, height=24, subfolder=None):
         Icon width in pixels (Default: 24)
     height : int
         Icon height in pixels (Default: 24)
-    subfolder : str
-        Subfolder in GEM icons path (Default: None)
 
     Returns
     -------
@@ -2407,22 +2419,12 @@ def icon_from_data(icon, fallback=None, width=24, height=24, subfolder=None):
         Pixbuf icon object
     """
 
-    if icon is not None:
-        path = icon
+    if path is not None and exists(expanduser(path)):
 
-        if not exists(expanduser(icon)):
-            path = path_join(GEM.Local, "icons", "%s.%s" % (icon, Icons.Ext))
-
-            if subfolder is not None:
-                path = path_join(
-                    GEM.Local, "icons", subfolder, "%s.%s" % (icon, Icons.Ext))
-
-        if path is not None and exists(expanduser(path)):
-            try:
-                return Pixbuf.new_from_file_at_size(
-                    expanduser(path), width, height)
-            except:
-                pass
+        try:
+            return Pixbuf.new_from_file_at_size(expanduser(path), width, height)
+        except:
+            pass
 
     # Return an empty icon
     if fallback is None:

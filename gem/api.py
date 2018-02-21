@@ -116,12 +116,21 @@ class GEM(object):
     Local       = path_join(expanduser(xdg_data_home), "gem")
     Config      = path_join(expanduser(xdg_config_home), "gem")
 
-    def __init__(self, debug=False):
+    def __init__(self, config=None, local=None, debug=False):
         """ Constructor
 
-        Other parameters
-        ----------------
-        debug : bool
+        By default, GEM use paths defined with xdg:
+
+        Config → ~/.config
+        Local  → ~/.local/share
+
+        Parameters
+        ----------
+        config : str, optional
+            Default config folder (default: None)
+        local : str, optional
+            Default data folder (default: None)
+        debug : bool, optional
             Debug mode status (default: False)
 
         Raises
@@ -160,11 +169,27 @@ class GEM(object):
             environment=None
         )
 
+        # API configuration path
+        if config is not None:
+            config = expanduser(config)
+        else:
+            config = GEM.Config
+
+        self.__config = config
+
+        # API local path
+        if local is not None:
+            local = expanduser(local)
+        else:
+            local = GEM.Local
+
+        self.__local = local
+
         # ----------------------------
         #   Initialize folders
         # ----------------------------
 
-        for folder in [ GEM.Config, GEM.Local, path_join(GEM.Local, "roms") ]:
+        for folder in [ self.__config, self.__local, self.get_local("roms") ]:
             if not exists(folder):
                 makedirs(folder, 0o755)
 
@@ -174,12 +199,6 @@ class GEM(object):
 
         self.__init_logger()
 
-        # ----------------------------
-        #   Initialize database
-        # ----------------------------
-
-        self.__init_database()
-
 
     def __init_logger(self):
         """ Initialize logger
@@ -188,11 +207,11 @@ class GEM(object):
         """
 
         # Define log path with a global variable
-        logging.log_path = path_join(GEM.Local, GEM.Log)
+        logging.log_path = self.get_local(GEM.Log)
 
         # Save older log file to ~/.local/share/gem/gem.log.old
         if(exists(logging.log_path)):
-            copy(logging.log_path, path_join(GEM.Local, GEM.Log + ".old"))
+            copy(logging.log_path, self.get_local(GEM.Log + ".old"))
 
         # Generate logger from log.conf
         fileConfig(get_data(path_join("config", GEM.Logger)))
@@ -212,7 +231,7 @@ class GEM(object):
 
         try:
             # Check GEM database file
-            self.database = Database(path_join(GEM.Local, "gem.db"),
+            self.database = Database(self.get_local("gem.db"),
                 get_data(path_join("config", GEM.Databases)), self.logger)
 
             # Check current GEM version
@@ -264,9 +283,9 @@ class GEM(object):
         default one if not exists
         """
 
-        if not exists(GEM.Config):
-            self.logger.debug("Generate %s folder" % GEM.Config)
-            mkdir(GEM.Config)
+        if not exists(self.__config):
+            self.logger.debug("Generate %s folder" % self.__config)
+            mkdir(self.__config)
 
         # Check GEM configuration files
         for path in [ GEM.Consoles, GEM.Emulators, GEM.Environment ]:
@@ -274,20 +293,19 @@ class GEM(object):
             name, ext = splitext(path)
 
             # Configuration file not exists
-            if not exists(path_join(GEM.Config, path)):
+            if not exists(self.get_config(path)):
 
                 # Check if a default configuration file exists
                 if exists(get_data(path_join("config", path))):
-                    self.logger.debug("Copy %s to %s" % (path, GEM.Config))
+                    self.logger.debug("Copy %s to %s" % (path, self.__config))
 
                     copy(get_data(path_join("config", path)),
-                        path_join(GEM.Config, path))
+                        self.get_config(path))
 
             self.logger.debug("Read %s configuration file" % path)
 
             # Store Configuration object
-            self.__configurations[name] = Configuration(
-                path_join(GEM.Config, path))
+            self.__configurations[name] = Configuration(self.get_config(path))
 
 
     def __init_emulators(self):
@@ -379,6 +397,7 @@ class GEM(object):
                     emulator = None
 
             roms_path = expanduser(data.get(section, "roms", fallback=str()))
+            roms_path = roms_path.replace("<local>", self.get_local())
 
             # Check consoles roms path folder
             if not exists(roms_path):
@@ -417,6 +436,9 @@ class GEM(object):
         files
         """
 
+        # Initialize sqlite database
+        self.__init_database()
+
         if self.__need_migration:
             raise RuntimeError("GEM database need a migration")
 
@@ -441,8 +463,7 @@ class GEM(object):
         if self.__need_migration:
             self.logger.info("Backup database")
 
-            copy(path_join(GEM.Local, "gem.db"),
-                path_join(GEM.Local, "save.gem.db"))
+            copy(self.get_local("gem.db"), self.get_local("save.gem.db"))
 
             try:
                 self.logger.info("Start database migration")
@@ -526,8 +547,7 @@ class GEM(object):
 
                 self.logger.info("Restore database backup")
 
-                copy(path_join(GEM.Local, "save.gem.db"),
-                    path_join(GEM.Local, "gem.db"))
+                copy(self.get_local("save.gem.db"), self.get_local("gem.db"))
 
         if updater is not None:
             updater.close()
@@ -559,13 +579,12 @@ class GEM(object):
                 name, ext = splitext(path)
 
                 # Backup configuration file
-                if exists(path_join(GEM.Config, path)):
+                if exists(self.get_config(path)):
                     self.logger.debug("Backup %s file" % path)
-                    move(path_join(GEM.Config, path),
-                        path_join(GEM.Config, '~' + path))
+                    move(self.get_config(path), self.get_config('~' + path))
 
                 # Create a new configuration object
-                config = Configuration(path_join(GEM.Config, path))
+                config = Configuration(self.get_config(path))
 
                 # Feed configuration with new data
                 for element in sorted(self.__data[name]):
@@ -611,6 +630,30 @@ class GEM(object):
             return False
 
         return True
+
+
+    def get_config(self, *args):
+        """ Retrieve configuration data
+
+        Parameters
+        ----------
+        args : str, optional
+            Optional path
+        """
+
+        return path_join(self.__config, *args)
+
+
+    def get_local(self, *args):
+        """ Retrieve local data
+
+        Parameters
+        ----------
+        args : str, optional
+            Optional path
+        """
+
+        return path_join(self.__local, *args)
 
 
     @property
