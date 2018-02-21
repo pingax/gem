@@ -189,6 +189,8 @@ class Interface(Gtk.ApplicationWindow):
             ("last_play", _("Last launch")),
             ("last_time", _("Last play time"))
         ]
+        # Store sidebar latest image path
+        self.sidebar_image = None
 
         # Avoid to reload interface when switch between default & classic theme
         self.use_classic_theme = False
@@ -885,6 +887,7 @@ class Interface(Gtk.ApplicationWindow):
 
         self.label_sidebar_title = Gtk.Label()
 
+        self.view_image_sidebar_game = Gtk.Viewport()
         self.image_sidebar_game = Gtk.Image()
 
         self.separator_game = Gtk.Separator()
@@ -897,6 +900,9 @@ class Interface(Gtk.ApplicationWindow):
         self.label_sidebar_title.set_use_markup(True)
         self.label_sidebar_title.set_margin_bottom(12)
         self.label_sidebar_title.set_ellipsize(Pango.EllipsizeMode.END)
+
+        self.view_image_sidebar_game.drag_source_set(
+            Gdk.ModifierType.BUTTON1_MASK, self.targets, Gdk.DragAction.COPY)
 
         self.separator_game.set_no_show_all(True)
 
@@ -1430,10 +1436,12 @@ class Interface(Gtk.ApplicationWindow):
 
         self.scroll_sidebar.add(self.grid_sidebar)
 
+        self.view_image_sidebar_game.add(self.image_sidebar_game)
+
         self.grid_sidebar.pack_start(
             self.grid_sidebar_content, True, True, 0)
         self.grid_sidebar.pack_start(
-            self.image_sidebar_game, False, False, 0)
+            self.view_image_sidebar_game, False, False, 0)
 
         self.grid_sidebar_content.pack_start(
             self.label_sidebar_title, False, False, 0)
@@ -1691,6 +1699,13 @@ class Interface(Gtk.ApplicationWindow):
 
         self.combo_consoles.connect(
             "changed", self.__on_selected_console)
+
+        # ------------------------------------
+        #   Sidebar
+        # ------------------------------------
+
+        self.view_image_sidebar_game.connect(
+            "drag-data-get", self.__on_dnd_send_data)
 
         # ------------------------------------
         #   Games
@@ -2045,6 +2060,8 @@ class Interface(Gtk.ApplicationWindow):
         #   Sidebar
         # ------------------------------------
 
+        self.sidebar_image = None
+
         sidebar_status = self.config.getboolean(
             "gem", "show_sidebar", fallback=True)
 
@@ -2067,7 +2084,7 @@ class Interface(Gtk.ApplicationWindow):
             self.paned_games.set_orientation(Gtk.Orientation.HORIZONTAL)
 
             self.grid_sidebar.set_orientation(Gtk.Orientation.VERTICAL)
-            self.grid_sidebar.reorder_child(self.image_sidebar_game, 0)
+            self.grid_sidebar.reorder_child(self.view_image_sidebar_game, 0)
 
             self.grid_sidebar_informations.set_spacing(6)
             self.grid_sidebar_game.set_halign(Gtk.Align.CENTER)
@@ -2082,7 +2099,7 @@ class Interface(Gtk.ApplicationWindow):
             self.paned_games.set_orientation(Gtk.Orientation.VERTICAL)
 
             self.grid_sidebar.set_orientation(Gtk.Orientation.HORIZONTAL)
-            self.grid_sidebar.reorder_child(self.image_sidebar_game, -1)
+            self.grid_sidebar.reorder_child(self.view_image_sidebar_game, -1)
 
             self.grid_sidebar_informations.set_spacing(12)
             self.grid_sidebar_game.set_halign(Gtk.Align.START)
@@ -2627,6 +2644,8 @@ class Interface(Gtk.ApplicationWindow):
         """ Update headerbar title and subtitle
         """
 
+        self.sidebar_image = None
+
         game = self.selection["game"]
         console = self.selection["console"]
 
@@ -2693,6 +2712,7 @@ class Interface(Gtk.ApplicationWindow):
 
                 # An image has been set
                 if image is not None and exists(image):
+                    self.sidebar_image = image
 
                     orientation = self.paned_games.get_orientation()
 
@@ -5044,8 +5064,15 @@ class Interface(Gtk.ApplicationWindow):
             timestamp at which the data was received
         """
 
-        if self.selection["game"] is not None:
-            data.set_uris(["file://%s" % self.selection["game"].filepath])
+        if type(widget) is Gtk.TreeView:
+
+            if self.selection["game"] is not None:
+                data.set_uris(["file://%s" % self.selection["game"].filepath])
+
+        elif type(widget) is Gtk.Viewport:
+
+            if self.sidebar_image is not None:
+                data.set_uris(["file://%s" % self.sidebar_image])
 
 
     def __on_dnd_received_data(self, widget, context, x, y, data, info, time):
