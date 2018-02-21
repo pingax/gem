@@ -391,7 +391,7 @@ class Database(object):
             Table name
         columns : list
             Columns name list
-        where : dict
+        where : dict, optional
             Request conditions (default: None)
 
         Returns
@@ -486,7 +486,7 @@ class Database(object):
             Table name
         data : dict
             Columns keys and values
-        where : dict
+        where : dict, optional
             Request conditions (Default: None)
         """
 

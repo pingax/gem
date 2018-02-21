@@ -99,10 +99,7 @@ class Preferences(CommonWindow):
         ----------
         api : gem.api.GEM
             GEM API instance
-
-        Other Parameters
-        ----------------
-        parent : Gtk.Window or None
+        parent : Gtk.Window or None, optional
             Parent window for transient mode (default: None)
 
         Raises
@@ -1551,15 +1548,13 @@ class Preferences(CommonWindow):
             self.button_emulators_remove.set_sensitive(False)
 
 
-    def __stop_interface(self, widget=None, event=None):
+    def __stop_interface(self, widget=None, *args):
         """ Save data and stop interface
 
         Other Parameters
         ----------------
-        widget : Gtk.Widget
+        widget : Gtk.Widget, optional
             Object which receive signal (Default: None)
-        event : Gdk.EventButton or Gdk.EventKey
-            Event which triggered this signal (Default: None)
         """
 
         if self.parent is None and widget == self.button_save:
@@ -1987,8 +1982,10 @@ class Preferences(CommonWindow):
 
         Parameters
         ----------
-        widget : Gtk.Widget
-            Object which receive signal
+        widget : Gtk.Widget, optional
+            Object which receive signal (Default: None)
+        state : bool or None, optional
+            New status for current widget (Default: None)
         """
 
         status = self.check_native_viewer.get_active()
@@ -2005,8 +2002,10 @@ class Preferences(CommonWindow):
 
         Parameters
         ----------
-        widget : Gtk.Widget
-            Object which receive signal
+        widget : Gtk.Widget, optional
+            Object which receive signal (Default: None)
+        state : bool or None, optional
+            New status for current widget (Default: None)
         """
 
         status = self.check_sidebar_show.get_active()
@@ -2757,7 +2756,7 @@ class PreferencesEmulator(CommonWindow):
         Parameters
         ----------
         parent : Gtk.Window
-            Parent object (Default: None)
+            Parent object
         emulator : gem.api.Emulator
             Emulator object
         modify : bool
@@ -3523,11 +3522,8 @@ class IconViewer(CommonWindow):
         ----------
         widget : Gtk.Widget
             Object which receive signal
-
-        Others Parameters
-        -----------------
-        path : Gtk.TreePath
-            Path to be activated
+        path : Gtk.TreePath, optional
+            Path to be activated (Default: None)
         """
 
         self.emit_response(None, Gtk.ResponseType.APPLY)

@@ -71,10 +71,7 @@ def get_data(path, egg="gem"):
     ----------
     path : str
         File path
-
-    Other Parameters
-    ----------------
-    egg : str
+    egg : str, optional
         Python egg name (Default: gem)
 
     Returns

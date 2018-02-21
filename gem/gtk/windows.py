@@ -97,12 +97,9 @@ class Message(CommonWindow):
             Dialog title
         message : str
             Dialog message
-
-        Other Parameters
-        ----------------
-        icon : str
+        icon : str, optional
             Default icon name (Default: dialog-information)
-        center : bool
+        center : bool, optional
             If False, use justify text insted of center (Default: True)
         """
 
@@ -174,10 +171,7 @@ class Question(CommonWindow):
             Dialog title
         message : str
             Dialog message
-
-        Other Parameters
-        ----------------
-        icon : str
+        icon : str, optional
             Default icon name (Default: dialog-question)
         """
 
@@ -255,13 +249,10 @@ class DialogEditor(CommonWindow):
             File path
         size : (int, int)
             Dialog size
-
-        Other Parameters
-        ----------------
-        editable : bool
+        editable : bool, optional
             If True, allow to modify and save text buffer to file_path
             (Default: True)
-        icon : str
+        icon : str, optional
             Default icon name (Default: gtk-file)
         """
 
@@ -537,14 +528,14 @@ class DialogEditor(CommonWindow):
     def __on_refresh_buffer(self, widget=None, pos=None, event=None):
         """ Load buffer text into editor area
 
-        Others Parameters
-        -----------------
-        widget : Gtk.Entry
-            Entry widget
-        pos : Gtk.EntryIconPosition
-            Position of the clicked icon
-        event : Gdk.EventButton or Gdk.EventKey
-            Event which triggered this signal
+        Parameters
+        ----------
+        widget : Gtk.Entry, optional
+            Entry widget (Default: None)
+        pos : Gtk.EntryIconPosition, optional
+            Position of the clicked icon (Default: None)
+        event : Gdk.EventButton or Gdk.EventKey, optional
+            Event which triggered this signal (Default: None)
         """
 
         if self.refresh_buffer:
@@ -614,11 +605,8 @@ class DialogEditor(CommonWindow):
         ----------
         widget : Gtk.Widget
             Object which receive signal
-
-        Other Parameters
-        ----------------
-        status : bool or None
-            New status for current widget
+        status : bool or None, optional
+            New status for current widget (Default: None)
 
         Notes
         -----
@@ -670,11 +658,11 @@ class DialogEditor(CommonWindow):
     def __on_move_search(self, widget=None, backward=False):
         """ Move between search results
 
-        Other Parameters
-        ----------------
-        widget : Gtk.Widget
+        Parameters
+        ----------
+        widget : Gtk.Widget, optional
             Object which receive signal (Default: None)
-        backward : bool
+        backward : bool, optional
             If True, use backward search instead of forward (Default: False)
         """
 
@@ -1382,11 +1370,8 @@ class DialogParameters(CommonWindow):
         ----------
         widget : Gtk.Widget
             Object which receive signal
-
-        Other Parameters
-        ----------------
-        status : bool or None
-            New status for current widget
+        status : bool or None, optional
+            New status for current widget (Default: None)
 
         Notes
         -----
@@ -1909,9 +1894,9 @@ class DialogViewer(CommonWindow):
         data : Gtk.SelectionData
             Received data
         info : int
-            info that has been registered with the target in the Gtk.TargetList
+            Info that has been registered with the target in the Gtk.TargetList
         time : int
-            timestamp at which the data was received
+            Timestamp at which the data was received
         """
 
         if exists(self.current_path):
@@ -1921,11 +1906,11 @@ class DialogViewer(CommonWindow):
     def change_screenshot(self, widget=None, event=None):
         """ Change current screenshot
 
-        Other Parameters
-        ----------------
-        widget : Gtk.Widget
+        Parameters
+        ----------
+        widget : Gtk.Widget, optional
             Object which receive signal (Default: None)
-        event : Gdk.EventButton or Gdk.EventKey
+        event : Gdk.EventButton or Gdk.EventKey, optional
             Event which triggered this signal (Default: None)
         """
 
@@ -2043,11 +2028,11 @@ class DialogViewer(CommonWindow):
     def update_screenshot(self, widget=None, event=None):
         """ Change current screenshot size
 
-        Other Parameters
-        ----------------
-        widget : Gtk.Widget
+        Parameters
+        ----------
+        widget : Gtk.Widget, optional
             Object which receive signal (Default: None)
-        event : Gdk.EventButton or Gdk.EventKey
+        event : Gdk.EventButton or Gdk.EventKey, optional
             Event which triggered this signal (Default: None)
         """
 
@@ -2142,10 +2127,7 @@ class DialogConsoles(CommonWindow):
             File name
         consoles : list
             Consoles list
-
-        Other Parameters
-        ----------------
-        previous : str or None
+        previous : str or None, optional
             Previous selected console (Default: None)
         """
 
@@ -2403,14 +2385,11 @@ def icon_from_data(path, fallback=None, width=24, height=24):
     ----------
     path : str
         Absolute or relative icon path
-
-    Other Parameters
-    ----------------
-    fallback : GdkPixbuf.Pixbuf
+    fallback : GdkPixbuf.Pixbuf, optional
         Fallback icon to return instead of empty (Default: None)
-    width : int
+    width : int, optional
         Icon width in pixels (Default: 24)
-    height : int
+    height : int, optional
         Icon height in pixels (Default: 24)
 
     Returns
@@ -2433,6 +2412,7 @@ def icon_from_data(path, fallback=None, width=24, height=24):
 
     return fallback
 
+
 def icon_load(name, size=16, fallback=Icons.Missing):
     """ Load an icon from IconTheme
 
@@ -2444,12 +2424,9 @@ def icon_load(name, size=16, fallback=Icons.Missing):
     ----------
     icon : str
         Icon name
-
-    Other Parameters
-    ----------------
-    width : int
+    width : int, optional
         Icon width in pixels (Default: 16)
-    fallback : str or GdkPixbuf.Pixbuf
+    fallback : str or GdkPixbuf.Pixbuf, optional
         Fallback icon to return instead of empty (Default: image-missing)
 
     Returns
@@ -2486,6 +2463,7 @@ def icon_load(name, size=16, fallback=Icons.Missing):
     return icons_theme.load_icon(
         Icons.Missing, size, Gtk.IconLookupFlags.FORCE_SVG)
 
+
 def set_pixbuf_opacity(pixbuf, opacity):
     """ Changes the opacity of pixbuf
 
@@ -2521,17 +2499,19 @@ def set_pixbuf_opacity(pixbuf, opacity):
 
     return new_pixbuf
 
+
 def on_change_theme(status=False):
     """ Change dark status of interface theme
 
-    Other Parameters
-    ----------------
-    status : bool
+    Parameters
+    ----------
+    status : bool, optional
         Use dark theme (Default: False)
     """
 
     Gtk.Settings.get_default().set_property(
         "gtk-application-prefer-dark-theme", status)
+
 
 def on_entry_clear(widget, pos, event):
     """ Reset an entry widget when secondary icon is clicked

@@ -35,13 +35,6 @@ else:
 # ------------------------------------------------------------------------------
 
 class Configuration(ConfigParser):
-    """ Manage a configuration file easily with SafeConfigParser
-
-    Attributes
-    ----------
-    path : str
-        Configuration file path
-    """
 
     def __init__(self, filepath, **kwargs):
         """ Constructor
@@ -50,11 +43,6 @@ class Configuration(ConfigParser):
         ----------
         filepath : str
             Configuration file path
-
-        Other parameters
-        ----------------
-        kwargs : dict
-            ConfigParser parameters
         """
 
         ConfigParser.__init__(self, kwargs)
@@ -95,7 +83,7 @@ class Configuration(ConfigParser):
             Section name
         option : str
             Option name
-        default : str
+        default : str, optional
             Fallback value to return if nothing has been founded (default: None)
 
         Returns

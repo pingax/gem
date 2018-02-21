@@ -77,7 +77,9 @@ textdomain("gem")
 
 class GameThread(Thread, GObject):
 
-    __gsignals__ = { "game-terminate": (SIGNAL_RUN_LAST, None, [object]) }
+    __gsignals__ = {
+        "game-terminate": (SIGNAL_RUN_LAST, None, [object]),
+    }
 
     def __init__(self, parent, console, emulator, game, command):
         """ Constructor

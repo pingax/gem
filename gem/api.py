@@ -454,9 +454,9 @@ class GEM(object):
     def check_database(self, updater=None):
         """ Check database and migrate to lastest GEM version if needed
 
-        Other Parameters
-        ----------------
-        updater : class
+        Parameters
+        ----------
+        updater : class, optionnal
             Class to call when database is modified
         """
 
@@ -1227,6 +1227,8 @@ class Emulator(GEMObject):
 
         Parameters
         ----------
+        key : str
+            Game content path
         game : gem.api.Game
             Game object
 
@@ -1302,11 +1304,8 @@ class Emulator(GEMObject):
         ----------
         game : gem.api.Game
             Game object
-
-        Other parameters
-        ----------------
-        fullscreen : bool
-            use fullscreen parameters
+        fullscreen : bool, optional
+            Use fullscreen parameters (Default: False)
 
         Returns
         -------

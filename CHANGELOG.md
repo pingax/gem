@@ -14,6 +14,7 @@
 * Add the statusbar for default theme and rewrite his contents
 * Add a tags selector to game properties dialog
 * Add more informations into game sidebar
+* Add a color to filter button when some filters are active
 * Allow to drag the sidebar image to another application
 * Restore GTK+ menuitem behavior to main and game menus
 

@@ -81,10 +81,7 @@ class CommonWindow(object):
             Dialog title
         icon : str
             Default icon name
-
-        Others Parameters
-        -----------------
-        classic : bool
+        classic : bool, optional
             Using classic theme (Default: False)
         """
 
@@ -315,24 +312,21 @@ class CommonWindow(object):
 
 
     def add_widget(self, widget, align=Gtk.Align.START,
-        expand=False, fill=False, padding=0):
+        expand=False, fill=False, padding=int()):
         """ Add a widget to dialog headerbar
 
         Parameters
         ----------
         widget : Gtk.Widget
             Widget to add
-
-        Others Parameters
-        -----------------
-        align : Gtk.Align
+        align : Gtk.Align, optional
             Widget alignment (Default: Gtk.Align.START)
-        expand : bool
+        expand : bool, optional
             Extra space will be divided evenly between all children that use
             this option (Default: False)
-        fill : bool
+        fill : bool, optional
             Always allocated the full size of a Gtk.Box (Default: False)
-        padding : int
+        padding : int, optional
             Extra space in pixels to put between this child and its neighbors
             (Default: 0)
 
@@ -376,10 +370,7 @@ class CommonWindow(object):
             Button label
         response : Gtk.ResponseType
             Button response type
-
-        Others Parameters
-        -----------------
-        align : Gtk.Align
+        align : Gtk.Align, optional
             Button alignment (Default: Gtk.Align.START)
 
         Returns
@@ -509,22 +500,19 @@ class CommonWindow(object):
                 self.grid_actions.pack_start(self.button_help, False, False, 0)
 
 
-    def pack_end(self, child, expand=True, fill=True, padding=0):
+    def pack_end(self, child, expand=True, fill=True, padding=int()):
         """ Packing child widget into dialog grid
 
         Parameters
         ----------
         child : Gtk.Widget
             Child widget to pack
-
-        Others Parameters
-        -----------------
-        expand : bool
+        expand : bool, optional
             Extra space will be divided evenly between all children that use
             this option (Default: True)
-        fill : bool
+        fill : bool, optional
             Always allocated the full size of a Gtk.Box (Default: True)
-        padding : int
+        padding : int, optional
             Extra space in pixels to put between this child and its neighbors
             (Default: 0)
         """
@@ -532,22 +520,19 @@ class CommonWindow(object):
         self.grid.pack_end(child, expand, fill, padding)
 
 
-    def pack_start(self, child, expand=True, fill=True, padding=0):
+    def pack_start(self, child, expand=True, fill=True, padding=int()):
         """ Packing child widget into dialog grid
 
         Parameters
         ----------
         child : Gtk.Widget
             Child widget to pack
-
-        Others Parameters
-        -----------------
-        expand : bool
+        expand : bool, optional
             Extra space will be divided evenly between all children that use
             this option (Default: True)
-        fill : bool
+        fill : bool, optional
             Always allocated the full size of a Gtk.Box (Default: True)
-        padding : int
+        padding : int, optional
             Extra space in pixels to put between this child and its neighbors
             (Default: 0)
         """

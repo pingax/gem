@@ -134,7 +134,9 @@ textdomain("gem")
 
 class Interface(Gtk.ApplicationWindow):
 
-    __gsignals__ = { "game-terminate": (SIGNAL_RUN_LAST, None, [object]) }
+    __gsignals__ = {
+        "game-terminate": (SIGNAL_RUN_LAST, None, [object]),
+    }
 
     def __init__(self, api):
         """ Constructor
@@ -1872,9 +1874,9 @@ class Interface(Gtk.ApplicationWindow):
     def load_interface(self, init_interface=False):
         """ Load main interface
 
-        Others Parameters
-        -----------------
-        init_interface : bool
+        Parameters
+        ----------
+        init_interface : bool, optional
             Interface first initialization (Default: False)
         """
 
@@ -2204,8 +2206,8 @@ class Interface(Gtk.ApplicationWindow):
 
         Parameters
         ----------
-        status : bool
-            Sensitive status
+        status : bool, optional
+            Sensitive status (Default: False)
         """
 
         self.__on_game_launch_button_update(True)
@@ -2256,11 +2258,8 @@ class Interface(Gtk.ApplicationWindow):
         ----------
         widget : Gtk.Widget
             Object which receive signal
-
-        Other Parameters
-        ----------------
-        status : bool or None
-            New status for current widget
+        status : bool or None, optional
+            New status for current widget (Default: None)
 
         Notes
         -----
@@ -2293,6 +2292,13 @@ class Interface(Gtk.ApplicationWindow):
 
     def filters_reset(self, widget=None, events=None):
         """ Reset game filters
+
+        Parameters
+        ----------
+        widget : Gtk.Widget, optional
+            Object which receive signal (Default: None)
+        event : Gdk.EventButton or Gdk.EventKey, optional
+            Event which triggered this signal (Default: None)
         """
 
         for child in self.grid_menu_filters.get_children():
@@ -2304,7 +2310,7 @@ class Interface(Gtk.ApplicationWindow):
             "suggested-action")
 
 
-    def filters_match(self, model, row, data=None):
+    def filters_match(self, model, row, *args):
         """ Update treeview rows
 
         This function update games treeview with filter entry content. A row is
@@ -2316,11 +2322,6 @@ class Interface(Gtk.ApplicationWindow):
             Treeview model which receive signal
         row : Gtk.TreeModelRow
             Treeview current row
-
-        Other Parameters
-        ----------------
-        data : object
-            User data to pass to the visible function (Default: None)
         """
 
         found = False
@@ -2925,8 +2926,10 @@ class Interface(Gtk.ApplicationWindow):
             Dialog title
         message : str
             Dialog message
-        icon : str
-            Dialog icon, set also the logging mode
+        icon : str, optional
+            Dialog icon, set also the logging mode (Default: dialog-error)
+        popup : bool, optional
+            Show a popup dialog with specified message (Default: True)
         """
 
         if icon == Icons.Error:
@@ -2949,13 +2952,13 @@ class Interface(Gtk.ApplicationWindow):
 
         This function set the infobar widget to inform user for specific things
 
-        Others Parameters
-        -----------------
-        text : str
+        Parameters
+        ----------
+        text : str, optional
             Message text (Default: None)
-        text : str
+        text : str, optional
             Logger text (Default: None)
-        message_type : Gtk.MessageType
+        message_type : Gtk.MessageType, optional
             Message type (Default: Gtk.MessageType.INFO)
         """
 
@@ -3381,9 +3384,9 @@ class Interface(Gtk.ApplicationWindow):
         This function occurs when the user select a console in the consoles
         combobox
 
-        Other Parameters
-        ----------------
-        widget : Gtk.Widget
+        Parameters
+        ----------
+        widget : Gtk.Widget, optional
             Object which receive signal (Default: None)
         """
 
@@ -3991,6 +3994,11 @@ class Interface(Gtk.ApplicationWindow):
 
         This function prepare the game launch and start a thread when everything
         are done
+
+        Parameters
+        ----------
+        widget : Gtk.Widget, optional
+            Object which receive signal (Default: None)
         """
 
         binary = str()
@@ -4976,10 +4984,7 @@ class Interface(Gtk.ApplicationWindow):
         ----------
         widget : Gtk.Widget
             Object which receive signal
-
-        Others parameters
-        -----------------
-        status : bool
+        status : bool, optional
             New switch status (Default: False)
         """
 
@@ -5006,10 +5011,7 @@ class Interface(Gtk.ApplicationWindow):
         ----------
         widget : Gtk.Widget
             Object which receive signal
-
-        Others parameters
-        -----------------
-        status : bool
+        status : bool, optional
             New switch status (Default: False)
         """
 
@@ -5039,10 +5041,7 @@ class Interface(Gtk.ApplicationWindow):
         ----------
         widget : Gtk.Widget
             Object which receive signal
-
-        Others parameters
-        -----------------
-        status : bool
+        status : bool, optional
             New switch status (Default: False)
         """
 
@@ -5080,9 +5079,9 @@ class Interface(Gtk.ApplicationWindow):
         data : Gtk.SelectionData
             Received data
         info : int
-            info that has been registered with the target in the Gtk.TargetList
+            Info that has been registered with the target in the Gtk.TargetList
         time : int
-            timestamp at which the data was received
+            Timestamp at which the data was received
         """
 
         if type(widget) is Gtk.TreeView:
@@ -5116,9 +5115,9 @@ class Interface(Gtk.ApplicationWindow):
         data : Gtk.SelectionData
             Received data
         info : int
-            info that has been registered with the target in the Gtk.TargetList
+            Info that has been registered with the target in the Gtk.TargetList
         time : int
-            timestamp at which the data was received
+            Timestamp at which the data was received
         """
 
         self.logger.debug("Received data from drag & drop")
@@ -5584,6 +5583,11 @@ class Splash(Gtk.Window):
 
     def init(self, length):
         """ Initialize progressbar
+
+        Parameters
+        ----------
+        length : int
+            Progression max iterations number
         """
 
         self.length = length
@@ -5594,6 +5598,11 @@ class Splash(Gtk.Window):
 
     def update(self, index):
         """ Update progress in progressbar widgets
+
+        Parameters
+        ----------
+        index : int
+            Current progession index step
         """
 
         self.refresh()
