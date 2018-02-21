@@ -1,72 +1,87 @@
 # Graphical Emulators Manager
 
-## Présentation
+GEM (Graphical Emulators Manager) is a GTK+ Graphical User Interface (GUI) for
+GNU/Linux which allows you to easily manage your emulators. This software aims
+to stay the simplest.
 
-GEM (Graphical Emulators Manager) est une interface qui à pour but de vous aider à gérer vos roms de jeux et vos émulateurs simplement et efficacement.
+![GEM main interface](https://gem.tuxfamily.org/data/medias/preview.tb.png)
 
-![Interface principale de GEM](https://gem.tuxfamily.org/data/medias/preview.tb.png)
+GEM is available under [GPLv3 license](http://www.gnu.org/licenses/gpl-3.0.html).
 
-GEM est disponible sous [licence GPLv3](http://www.gnu.org/licenses/gpl-3.0.html).
+More informations on [GEM website](https://gem.tuxfamily.org/).
 
-## Auteurs
+## Authors
 
-### Développeurs
+### Developpers
 
 * PacMiam (Lubert Aurélien)
 
-### Traducteurs
+### Translators
 
-* Espagnol : DarkNekros (José Luis)
+* French: PacMiam (Lubert Aurélien)
+* Spanish: DarkNekros (José Luis)
 
-### Paquets
+### Packages
 
-* Frugalware : Pingax
-* Solus : Devil505
+* [Frugalware](https://frugalware.org/packages/219539): Pingax
+* [Solus](https://dev.solus-project.com/source/gem/): Devil505
 
-### Icônes
+### Icons
 
 * Interface: [Tango](http://tango.freedesktop.org/Tango_Desktop_Project)
-* Émulateurs: [Gelide](http://gelide.sourceforge.net/index.php?lang=en) (en partie)
+* Emulators: [Gelide](http://gelide.sourceforge.net/index.php?lang=en) (for most of them)
 * Consoles: [Evan-Amos](https://commons.wikimedia.org/wiki/User:Evan-Amos)
 
-## Dépendances
+## Dependencies
 
 * python3
 * python3-gobject
 * python3-setuptools
 * python3-xdg
 
-## Récupération des sources
+## Retrieve source code
 
-Pour récupérer les sources, il est possible de passer par git via:
+To retrieve source code, you just need to use git with:
 
 ```
 git clone https://framagit.org/PacMiam/gem.git
 ```
 
-Ou directement depuis la zone de [téléchargements de GEM](https://download.tuxfamily.org/gem/releases/).
+Or directly from [GEM download repository](https://download.tuxfamily.org/gem/releases/).
 
-## Lancement
+## Running GEM
 
-Une fois à la racine des sources de GEM, exécuter la commande suivante:
+Go to the GEM source code root folder and launch the following command:
 
 ```
 $ python3 -m gem
 ```
 
+It's possible to set the configuration folders with --config and --local
+arguments:
+
+```
+$ python3 -m gem --config ~/.config/gem --local ~/.local/gem
+```
+
 ## Installation
 
-Un script d'installation est disponible pour vous aider à installer GEM. Il suffit de lancer la commande suivante en mode root:
+An installation script is available to help you to install GEM. You just need to
+launch the following command with root privilege:
 
 ```
 # ./install.sh
 ```
 
-Un script sera placé sous le nom **gem-ui** dans le dossier /usr/bin. Une entrée de menu sera aussi créée, vous permettant de lancer GEM facilement.
+This script install GEM with setuptools and setup a **gem-ui** script under
+/usr/bin.
 
-## Émulateurs
+GEM is also available in your desktop environment menu under **Games** category.
 
-La configuration de base vous permet d'utiliser les émulateurs suivants:
+## Emulators
+
+Default configuration files allow you to use the following emulators out of the
+box:
 
 * Mame
 * Mednafen
