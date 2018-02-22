@@ -351,6 +351,7 @@ class Interface(Gtk.ApplicationWindow):
         self.grid_consoles = Gtk.Box()
         self.grid_consoles_item = Gtk.Box()
         self.grid_consoles_options = Gtk.Grid()
+        self.grid_consoles_options_actions = Gtk.Box()
 
         self.grid_toolbar_console = Gtk.Box()
         self.grid_toolbar_filters = Gtk.Box()
@@ -361,8 +362,6 @@ class Interface(Gtk.ApplicationWindow):
         self.grid_menu_actions = Gtk.Box()
 
         self.grid_gem_log = Gtk.Box()
-        self.grid_gem_emulator = Gtk.Box()
-        self.grid_gem_reload_game = Gtk.Box()
 
         # Properties
         self.grid.set_orientation(Gtk.Orientation.VERTICAL)
@@ -407,6 +406,13 @@ class Interface(Gtk.ApplicationWindow):
         self.grid_consoles_options.set_column_spacing(12)
 
         Gtk.StyleContext.add_class(
+            self.grid_consoles_options_actions.get_style_context(), "linked")
+        self.grid_consoles_options_actions.set_homogeneous(True)
+        self.grid_consoles_options_actions.set_spacing(-1)
+        self.grid_consoles_options_actions.set_orientation(
+            Gtk.Orientation.HORIZONTAL)
+
+        Gtk.StyleContext.add_class(
             self.grid_toolbar_console.get_style_context(), "linked")
         self.grid_toolbar_console.set_spacing(-1)
         self.grid_toolbar_console.set_orientation(Gtk.Orientation.HORIZONTAL)
@@ -432,12 +438,6 @@ class Interface(Gtk.ApplicationWindow):
 
         self.grid_gem_log.set_spacing(12)
         self.grid_gem_log.set_orientation(Gtk.Orientation.HORIZONTAL)
-
-        self.grid_gem_emulator.set_spacing(12)
-        self.grid_gem_emulator.set_orientation(Gtk.Orientation.HORIZONTAL)
-
-        self.grid_gem_reload_game.set_spacing(12)
-        self.grid_gem_reload_game.set_orientation(Gtk.Orientation.HORIZONTAL)
 
         # ------------------------------------
         #   Headerbar
@@ -799,37 +799,61 @@ class Interface(Gtk.ApplicationWindow):
 
         self.button_consoles_option = Gtk.MenuButton()
 
+        self.toolbar_item_statistic = Gtk.Button()
+        self.toolbar_image_statistic = Gtk.Image()
+
         self.toolbar_item_properties = Gtk.Button()
-        self.toolbar_label_properties = Gtk.Label()
         self.toolbar_image_properties = Gtk.Image()
 
         self.toolbar_item_refresh = Gtk.Button()
-        self.toolbar_label_refresh = Gtk.Label()
         self.toolbar_image_refresh = Gtk.Image()
+
+        self.label_consoles_options_favorite = Gtk.Label()
+        self.switch_consoles_favorite = Gtk.Switch()
+
+        self.label_consoles_options_recursive = Gtk.Label()
+        self.switch_consoles_recursive = Gtk.Switch()
 
         # Properties
         self.button_consoles_option.set_popover(self.popover_consoles_options)
         self.button_consoles_option.set_use_popover(True)
 
-        self.toolbar_item_properties.set_relief(
-            Gtk.ReliefStyle.NONE)
+        self.toolbar_item_statistic.set_tooltip_text(
+            _("Show statistics"))
+        self.toolbar_image_statistic.set_halign(Gtk.Align.CENTER)
+        self.toolbar_image_statistic.set_valign(Gtk.Align.CENTER)
+
         self.toolbar_item_properties.set_tooltip_text(
             _("Edit emulator"))
-        self.toolbar_label_properties.set_label(
-            _("Edit emulator"))
-        self.toolbar_label_properties.set_halign(Gtk.Align.START)
         self.toolbar_image_properties.set_halign(Gtk.Align.CENTER)
         self.toolbar_image_properties.set_valign(Gtk.Align.CENTER)
 
-        self.toolbar_item_refresh.set_relief(
-            Gtk.ReliefStyle.NONE)
         self.toolbar_item_refresh.set_tooltip_text(
             _("Refresh games list"))
-        self.toolbar_label_refresh.set_label(
-            _("Refresh games list"))
-        self.toolbar_label_refresh.set_halign(Gtk.Align.START)
         self.toolbar_image_refresh.set_halign(Gtk.Align.CENTER)
         self.toolbar_image_refresh.set_valign(Gtk.Align.CENTER)
+
+        self.label_consoles_options_favorite.set_margin_top(12)
+        self.label_consoles_options_favorite.set_label(_("Favorite"))
+        self.label_consoles_options_favorite.set_halign(Gtk.Align.END)
+        self.label_consoles_options_favorite.set_valign(Gtk.Align.CENTER)
+        self.label_consoles_options_favorite.get_style_context().add_class(
+            "dim-label")
+        self.switch_consoles_favorite.set_margin_top(12)
+        self.switch_consoles_favorite.set_active(True)
+        self.switch_consoles_favorite.set_halign(Gtk.Align.START)
+
+        self.label_consoles_options_recursive.set_margin_top(12)
+        self.label_consoles_options_recursive.set_label(_("Recursive"))
+        self.label_consoles_options_recursive.set_halign(Gtk.Align.END)
+        self.label_consoles_options_recursive.set_valign(Gtk.Align.CENTER)
+        self.label_consoles_options_recursive.get_style_context().add_class(
+            "dim-label")
+        self.switch_consoles_recursive.set_margin_top(12)
+        self.switch_consoles_recursive.set_active(True)
+        self.switch_consoles_recursive.set_halign(Gtk.Align.START)
+        self.switch_consoles_recursive.set_tooltip_text(
+            _("You need to reload games list to apply changes"))
 
         # ------------------------------------
         #   Toolbar - Filter
@@ -838,7 +862,6 @@ class Interface(Gtk.ApplicationWindow):
         self.entry_filter = Gtk.SearchEntry()
 
         self.tool_menu_filters = Gtk.MenuButton()
-        self.tool_image_filters = Gtk.Image()
 
         self.popover_menu_filters = Gtk.Popover()
 
@@ -1462,26 +1485,29 @@ class Interface(Gtk.ApplicationWindow):
         # Toolbar - Consoles options
         self.popover_consoles_options.add(self.grid_consoles_options)
 
+        self.grid_consoles_options_actions.pack_start(
+            self.toolbar_item_statistic, True, True, 0)
+        self.grid_consoles_options_actions.pack_start(
+            self.toolbar_item_properties, True, True, 0)
+        self.grid_consoles_options_actions.pack_start(
+            self.toolbar_item_refresh, True, True, 0)
+
         self.grid_consoles_options.attach(
-            self.toolbar_item_properties, 0, 1, 2, 1)
+            self.grid_consoles_options_actions, 0, 0, 2, 1)
         self.grid_consoles_options.attach(
-            self.toolbar_item_refresh, 0, 2, 2, 1)
+            self.label_consoles_options_favorite, 0, 2, 1, 1)
+        self.grid_consoles_options.attach(
+            self.switch_consoles_favorite, 1, 2, 1, 1)
+        self.grid_consoles_options.attach(
+            self.label_consoles_options_recursive, 0, 3, 1, 1)
+        self.grid_consoles_options.attach(
+            self.switch_consoles_recursive, 1, 3, 1, 1)
 
-        self.toolbar_item_properties.add(self.grid_gem_emulator)
-        self.toolbar_item_refresh.add(self.grid_gem_reload_game)
-
-        self.grid_gem_emulator.pack_start(
-            self.toolbar_image_properties, False, False, 0)
-        self.grid_gem_emulator.pack_start(
-            self.toolbar_label_properties, False, False, 0)
-
-        self.grid_gem_reload_game.pack_start(
-            self.toolbar_image_refresh, False, False, 0)
-        self.grid_gem_reload_game.pack_start(
-            self.toolbar_label_refresh, False, False, 0)
+        self.toolbar_item_statistic.add(self.toolbar_image_statistic)
+        self.toolbar_item_properties.add(self.toolbar_image_properties)
+        self.toolbar_item_refresh.add(self.toolbar_image_refresh)
 
         # Toolbar - Filters menu
-        self.tool_menu_filters.add(self.tool_image_filters)
         self.tool_menu_filters.set_popover(self.popover_menu_filters)
 
         self.grid_toolbar_filters.pack_start(
@@ -1719,6 +1745,11 @@ class Interface(Gtk.ApplicationWindow):
         self.toolbar_item_refresh.connect(
             "clicked", self.__on_reload_games)
 
+        self.favorite_signal_options = self.switch_consoles_favorite.connect(
+            "state-set", self.__on_change_console_option)
+        self.recursive_signal_options = self.switch_consoles_recursive.connect(
+            "state-set", self.__on_change_console_option)
+
         self.entry_filter.connect(
             "icon-press", on_entry_clear)
         self.entry_filter.connect(
@@ -1847,6 +1878,8 @@ class Interface(Gtk.ApplicationWindow):
             self.menubar_main_item_dark_theme: self.dark_signal_menubar,
             self.menubar_main_item_sidebar: self.side_signal_menubar,
             self.menubar_main_item_statusbar: self.status_signal_menubar,
+            self.switch_consoles_favorite: self.favorite_signal_options,
+            self.switch_consoles_recursive: self.recursive_signal_options,
         }
 
         self.load_interface(True)
@@ -2039,13 +2072,13 @@ class Interface(Gtk.ApplicationWindow):
                 Icons.Symbolic.Terminal, self.toolbar.get_icon_size())
             self.toolbar_image_notes.set_from_icon_name(
                 Icons.Symbolic.Editor, self.toolbar.get_icon_size())
+
+            self.toolbar_image_statistic.set_from_icon_name(
+                Icons.Symbolic.Monitor, self.toolbar.get_icon_size())
             self.toolbar_image_properties.set_from_icon_name(
                 Icons.Symbolic.Properties, self.toolbar.get_icon_size())
             self.toolbar_image_refresh.set_from_icon_name(
                 Icons.Symbolic.Refresh, self.toolbar.get_icon_size())
-
-            self.tool_image_filters.set_from_icon_name(
-                Icons.Symbolic.Sync, self.toolbar.get_icon_size())
 
         # ------------------------------------
         #   Icons
@@ -2331,8 +2364,12 @@ class Interface(Gtk.ApplicationWindow):
         self.toolbar_item_notes.set_sensitive(status)
         self.toolbar_item_parameters.set_sensitive(status)
         self.toolbar_item_screenshots.set_sensitive(status)
+
+        self.toolbar_item_statistic.set_sensitive(status)
         self.toolbar_item_properties.set_sensitive(status)
         self.toolbar_item_refresh.set_sensitive(status)
+        self.switch_consoles_favorite.set_sensitive(status)
+        self.switch_consoles_recursive.set_sensitive(status)
 
         self.menubar_game_item_launch.set_sensitive(status)
         self.menubar_game_item_favorite.set_sensitive(status)
@@ -3416,6 +3453,7 @@ class Interface(Gtk.ApplicationWindow):
         # Reset consoles caches
         self.consoles_iter.clear()
 
+        # Remove previous consoles objects
         children = self.listbox_consoles.get_children()
         for child in children:
             self.listbox_consoles.remove(child)
@@ -3427,31 +3465,10 @@ class Interface(Gtk.ApplicationWindow):
             size = max(size, data[1], data[2])
 
         for console in self.api.consoles:
-            console = self.api.get_console(console)
+            console_data = self.__on_generate_console_row(console, size)
 
-            # Reload games list
-            console.set_games(self.api)
-
-            # Check if console ROM path exist
-            if console.emulator is not None and exists(console.path):
-                status = self.empty
-
-                # Check if current emulator can be launched
-                if not console.emulator.exists:
-                    status = self.icons["warning"]
-
-                    self.logger.warning(
-                        _("Cannot find %(binary)s for %(console)s") % {
-                            "binary": console.emulator.binary,
-                            "console": console.name })
-
-                icon = console.icon
-                if not exists(expanduser(icon)):
-                    icon = self.api.get_local(
-                        "icons", "consoles", "%s.%s" % (icon, Icons.Ext))
-
-                # Get console icon
-                icon = icon_from_data(icon, self.empty, size, size)
+            if console_data is not None:
+                console, icon, status = console_data
 
                 # Append a new console in consoles listbox
                 row = ListBoxRowConsole(console, icon, status)
@@ -3475,6 +3492,53 @@ class Interface(Gtk.ApplicationWindow):
         return item
 
 
+    def __on_generate_console_row(self, identifier, size):
+        """ Generate console row data from a specific console
+
+        Parameters
+        ----------
+        identifier : str
+            Console identifier
+        size : int
+            Console icon size in pixels
+
+        Returns
+        -------
+        tuple or None
+            Generation results
+        """
+
+        console = self.api.get_console(identifier)
+
+        # Reload games list
+        console.set_games(self.api)
+
+        # Check if console ROM path exist
+        if console.emulator is not None and exists(console.path):
+            status = self.empty
+
+            # Check if current emulator can be launched
+            if not console.emulator.exists:
+                status = self.icons["warning"]
+
+                self.logger.warning(
+                    _("Cannot find %(binary)s for %(console)s") % {
+                        "binary": console.emulator.binary,
+                        "console": console.name })
+
+            icon = console.icon
+            if not exists(expanduser(icon)):
+                icon = self.api.get_local(
+                    "icons", "consoles", "%s.%s" % (icon, Icons.Ext))
+
+            # Get console icon
+            icon = icon_from_data(icon, self.empty, size, size)
+
+            return(console, icon, status)
+
+        return None
+
+
     def __on_selected_console(self, widget, row):
         """ Select a console
 
@@ -3488,6 +3552,8 @@ class Interface(Gtk.ApplicationWindow):
         row : gem.gtk.widgets.ListBoxRowConsole
             Activated row
         """
+
+        self.__block_signals()
 
         self.selection["name"] = None
         self.selection["game"] = None
@@ -3512,12 +3578,21 @@ class Interface(Gtk.ApplicationWindow):
             else:
                 self.toolbar_item_properties.set_sensitive(False)
 
-        # Activate refresh button
-        self.toolbar_item_refresh.set_sensitive(True)
+        # Check console options
+        self.switch_consoles_favorite.set_active(row.console.favorite)
+        self.switch_consoles_recursive.set_active(row.console.recursive)
 
-        self.image_consoles_icon.set_from_pixbuf(row.pixbuf_icon)
+        # Activate console options buttons
+        self.toolbar_item_refresh.set_sensitive(True)
+        self.switch_consoles_favorite.set_sensitive(True)
+        self.switch_consoles_recursive.set_sensitive(True)
+
+        # Set console informations into button grid widgets
         self.label_consoles_name.set_text(row.console.name)
+        self.image_consoles_icon.set_from_pixbuf(row.pixbuf_icon)
         self.image_consoles_status.set_from_pixbuf(row.pixbuf_status)
+
+        self.__unblock_signals()
 
         # ------------------------------------
         #   Load game list
@@ -3531,7 +3606,7 @@ class Interface(Gtk.ApplicationWindow):
 
 
     def __on_sort_consoles(self, first_row, second_row, *args):
-        """ Sort console to reorganize them
+        """ Sort consoles to reorganize them
 
         Parameters
         ----------
@@ -3540,6 +3615,11 @@ class Interface(Gtk.ApplicationWindow):
         second_row : gem.gtk.widgets.ListBoxRowConsole
             Second row to compare
         """
+
+        # Sort by name when favorite status are identical
+        if first_row.console.favorite == second_row.console.favorite:
+            return first_row.console.name.lower() > \
+                second_row.console.name.lower()
 
         return first_row.console.favorite < second_row.console.favorite
 
@@ -3580,6 +3660,36 @@ class Interface(Gtk.ApplicationWindow):
 
         self.listbox_consoles.invalidate_sort()
         self.listbox_consoles.invalidate_filter()
+
+
+    def __on_change_console_option(self, widget, status):
+        """ Change a console option switch
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        status : bool
+            New status for current widget
+        """
+
+        widget.set_active(status)
+
+        row = self.listbox_consoles.get_selected_row()
+
+        if row is not None:
+
+            if widget == self.switch_consoles_recursive:
+                row.console.recursive = status
+
+                self.api.write_object(row.console)
+
+            elif widget == self.switch_consoles_favorite:
+                row.console.favorite = status
+
+                self.api.write_object(row.console)
+
+                self.__on_update_consoles()
 
 
     def append_games(self, console):

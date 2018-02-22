@@ -555,13 +555,56 @@ class GEM(object):
             updater.close()
 
 
+    def write_object(self, data):
+        """ Write data into a specific configuration file
+
+        Parameters
+        ----------
+        data : object
+            Data structure to save
+
+        Returns
+        -------
+        bool
+            return True if object was successfully writed, False otherwise
+        """
+
+        config = None
+
+        if type(data) is Console:
+            config = self.__configurations["consoles"]
+
+        elif type(data) is Emulator:
+            config = self.__configurations["emulators"]
+
+        if config is not None:
+            section, structure = data.as_dict()
+
+            for key, value in structure.items():
+                if value is None:
+                    value = str()
+
+                if type(value) is bool:
+                    if value:
+                        value = "yes"
+                    else:
+                        value = "no"
+
+                if type(value) is Emulator:
+                    value = value.id
+
+                config.modify(section, key, value)
+
+            config.update()
+
+
     def write_data(self):
         """ Write data into configuration files and database
 
         Returns
         -------
         bool
-            return True if files are successfully writed, False otherwise
+            return True if files were successfully writed, False otherwise
 
         Notes
         -----

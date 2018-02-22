@@ -881,3 +881,23 @@ class ListBoxRowConsole(Gtk.ListBoxRow):
         """
 
         self.show_all()
+
+
+    def update(self, console, icon, status):
+        """ Update row data with a specific console
+
+        Parameters
+        ----------
+        console : gem.api.Console
+            Console instance
+        """
+
+        if not self.console == console:
+            self.console = console
+            self.pixbuf_icon = icon
+            self.pixbuf_status = status
+
+            self.label.set_text(console.name)
+
+            self.image.set_from_pixbuf(icon)
+            self.status.set_from_pixbuf(status)

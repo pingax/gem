@@ -2255,6 +2255,9 @@ class PreferencesConsole(CommonWindow):
         self.button_console = Gtk.Button()
         self.image_console = Gtk.Image()
 
+        self.label_favorite = Gtk.Label()
+        self.switch_favorite = Gtk.Switch()
+
         self.label_recursive = Gtk.Label()
         self.switch_recursive = Gtk.Switch()
 
@@ -2280,6 +2283,15 @@ class PreferencesConsole(CommonWindow):
 
         self.button_console.set_size_request(64, 64)
         self.image_console.set_size_request(64, 64)
+
+        self.label_favorite.set_margin_top(12)
+        self.label_favorite.set_label(_("Favorite"))
+        self.label_favorite.set_halign(Gtk.Align.END)
+        self.label_favorite.set_valign(Gtk.Align.CENTER)
+        self.label_favorite.get_style_context().add_class("dim-label")
+
+        self.switch_favorite.set_margin_top(12)
+        self.switch_favorite.set_halign(Gtk.Align.START)
 
         self.label_recursive.set_margin_top(12)
         self.label_recursive.set_label(_("Recursive"))
@@ -2417,19 +2429,22 @@ class PreferencesConsole(CommonWindow):
 
         self.grid_preferences.attach(self.button_console, 2, 0, 1, 2)
 
-        self.grid_preferences.attach(self.label_recursive, 0, 2, 1, 1)
-        self.grid_preferences.attach(self.switch_recursive, 1, 2, 2, 1)
+        self.grid_preferences.attach(self.label_favorite, 0, 2, 1, 1)
+        self.grid_preferences.attach(self.switch_favorite, 1, 2, 2, 1)
 
-        self.grid_preferences.attach(self.label_emulator, 0, 3, 3, 1)
+        self.grid_preferences.attach(self.label_recursive, 0, 3, 1, 1)
+        self.grid_preferences.attach(self.switch_recursive, 1, 3, 2, 1)
 
-        self.grid_preferences.attach(self.label_default, 0, 4, 1, 1)
-        self.grid_preferences.attach(self.combo_emulators, 1, 4, 2, 1)
+        self.grid_preferences.attach(self.label_emulator, 0, 4, 3, 1)
 
-        self.grid_preferences.attach(self.label_extensions, 0, 5, 1, 1)
-        self.grid_preferences.attach(self.entry_extensions, 1, 5, 2, 1)
+        self.grid_preferences.attach(self.label_default, 0, 5, 1, 1)
+        self.grid_preferences.attach(self.combo_emulators, 1, 5, 2, 1)
 
-        self.grid_preferences.attach(self.label_ignores, 0, 6, 3, 1)
-        self.grid_preferences.attach(self.grid_ignores, 0, 7, 3, 1)
+        self.grid_preferences.attach(self.label_extensions, 0, 6, 1, 1)
+        self.grid_preferences.attach(self.entry_extensions, 1, 6, 2, 1)
+
+        self.grid_preferences.attach(self.label_ignores, 0, 7, 3, 1)
+        self.grid_preferences.attach(self.grid_ignores, 0, 8, 3, 1)
 
         # Console options
         self.button_console.set_image(self.image_console)
@@ -2516,6 +2531,9 @@ class PreferencesConsole(CommonWindow):
             folder = self.console.path
             if folder is not None and exists(folder):
                 self.file_folder.set_current_folder(folder)
+
+            # Favorite status
+            self.switch_favorite.set_active(self.console.favorite)
 
             # Recursive status
             self.switch_recursive.set_active(self.console.recursive)
@@ -2610,6 +2628,7 @@ class PreferencesConsole(CommonWindow):
             "icon": icon,
             "ignores": ignores,
             "extensions": extensions,
+            "favorite": self.switch_favorite.get_active(),
             "recursive": self.switch_recursive.get_active(),
             "emulator": self.api.get_emulator(
                 self.combo_emulators.get_active_id())

@@ -98,6 +98,7 @@ class Icons:
     Editor      = "accessories-text-editor"
     Keyboard    = "preferences-desktop-keyboard"
     Terminal    = "utilities-terminal"
+    Monitor     = "utilities-system-monitor"
     Help        = "system-help"
     # Categories
     Desktop     = "preferences-desktop"
