@@ -228,6 +228,11 @@ class Interface(Gtk.ApplicationWindow):
 
         self.icons_theme.append_search_path(get_data(path_join("icons", "ui")))
 
+        # Generate symbolic icons class
+        for key, value in Icons.__dict__.items():
+            if not key.startswith("__") and not key.endswith("__"):
+                setattr(Icons.Symbolic, key, "%s-symbolic" % value)
+
         self.icons_data = {
             "save": Icons.Floppy,
             "snap": Icons.Photos,
@@ -247,11 +252,6 @@ class Interface(Gtk.ApplicationWindow):
         # HACK: Create an empty image to avoid g_object_set_qdata warning
         self.empty = Pixbuf.new(Colorspace.RGB, True, 8, 22, 22)
         self.empty.fill(0x00000000)
-
-        # Generate symbolic icons class
-        for key, value in Icons.__dict__.items():
-            if not key.startswith("__") and not key.endswith("__"):
-                setattr(Icons.Symbolic, key, "%s-symbolic" % value)
 
         # ------------------------------------
         #   Shortcuts
@@ -3545,6 +3545,9 @@ class Interface(Gtk.ApplicationWindow):
                     _("Cannot find %(binary)s for %(console)s") % {
                         "binary": console.emulator.binary,
                         "console": console.name })
+
+            elif console.favorite:
+                status = self.icons["favorite"]
 
             icon = console.icon
             if not exists(expanduser(icon)):
