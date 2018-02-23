@@ -418,9 +418,9 @@ class CommonWindow(object):
         if not self.use_classic_theme:
 
             # Add a style to button for specific responses
-            if response == Gtk.ResponseType.APPLY:
+            if response in [ Gtk.ResponseType.APPLY, Gtk.ResponseType.ACCEPT ]:
                 button.get_style_context().add_class("suggested-action")
-            elif response == Gtk.ResponseType.YES:
+            elif response in [ Gtk.ResponseType.YES, Gtk.ResponseType.REJECT ]:
                 button.get_style_context().add_class("destructive-action")
 
             if align == Gtk.Align.END:

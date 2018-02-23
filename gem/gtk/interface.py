@@ -668,6 +668,7 @@ class Interface(Gtk.ApplicationWindow):
         self.menubar_edit_item_rename = Gtk.MenuItem()
         self.menubar_edit_item_copy = Gtk.MenuItem()
         self.menubar_edit_item_open = Gtk.MenuItem()
+        self.menubar_edit_item_cover = Gtk.MenuItem()
         self.menubar_edit_item_desktop = Gtk.MenuItem()
         self.menubar_edit_item_database = Gtk.MenuItem()
         self.menubar_edit_item_delete = Gtk.MenuItem()
@@ -685,6 +686,10 @@ class Interface(Gtk.ApplicationWindow):
         self.menubar_edit_item_open.set_label(
             _("_Open path"))
         self.menubar_edit_item_open.set_use_underline(True)
+
+        self.menubar_edit_item_cover.set_label(
+            "%s…" % _("Set game _cover"))
+        self.menubar_edit_item_cover.set_use_underline(True)
 
         self.menubar_edit_item_desktop.set_label(
             _("_Generate a menu entry"))
@@ -1230,6 +1235,7 @@ class Interface(Gtk.ApplicationWindow):
         self.menu_item_rename = Gtk.MenuItem()
         self.menu_item_copy = Gtk.MenuItem()
         self.menu_item_open = Gtk.MenuItem()
+        self.menu_item_cover = Gtk.MenuItem()
         self.menu_item_remove = Gtk.MenuItem()
         self.menu_item_database = Gtk.MenuItem()
 
@@ -1249,6 +1255,10 @@ class Interface(Gtk.ApplicationWindow):
         self.menu_item_open.set_label(
             _("_Open path"))
         self.menu_item_open.set_use_underline(True)
+
+        self.menu_item_cover.set_label(
+            "%s…" % _("Set game _cover"))
+        self.menu_item_cover.set_use_underline(True)
 
         self.menu_item_database.set_label(
             "%s…" % _("_Reset data"))
@@ -1423,6 +1433,8 @@ class Interface(Gtk.ApplicationWindow):
         self.menubar_edit_menu.insert(self.menubar_edit_item_copy, -1)
         self.menubar_edit_menu.insert(self.menubar_edit_item_open, -1)
         self.menubar_edit_menu.insert(self.menubar_edit_item_desktop, -1)
+        self.menubar_edit_menu.insert(Gtk.SeparatorMenuItem(), -1)
+        self.menubar_edit_menu.insert(self.menubar_edit_item_cover, -1)
         self.menubar_edit_menu.insert(Gtk.SeparatorMenuItem(), -1)
         self.menubar_edit_menu.insert(self.menubar_edit_item_database, -1)
         self.menubar_edit_menu.insert(Gtk.SeparatorMenuItem(), -1)
@@ -1618,6 +1630,8 @@ class Interface(Gtk.ApplicationWindow):
         self.menu_games_edit.append(self.menu_item_copy)
         self.menu_games_edit.append(self.menu_item_open)
         self.menu_games_edit.append(Gtk.SeparatorMenuItem())
+        self.menu_games_edit.append(self.menu_item_cover)
+        self.menu_games_edit.append(Gtk.SeparatorMenuItem())
         self.menu_games_edit.append(self.menu_item_database)
         self.menu_games_edit.append(Gtk.SeparatorMenuItem())
         self.menu_games_edit.append(self.menu_item_remove)
@@ -1676,6 +1690,8 @@ class Interface(Gtk.ApplicationWindow):
             "activate", self.__on_game_marked_as_multiplayer)
         self.finish_signal_menubar = self.menubar_game_item_finish.connect(
             "activate", self.__on_game_marked_as_finish)
+        self.menubar_game_item_properties.connect(
+            "activate", self.__on_game_parameters)
         self.menubar_game_item_screenshots.connect(
             "activate", self.__on_show_viewer)
         self.menubar_game_item_output.connect(
@@ -1689,14 +1705,14 @@ class Interface(Gtk.ApplicationWindow):
 
         self.menubar_edit_item_rename.connect(
             "activate", self.__on_activate_renamed)
-        self.menubar_game_item_properties.connect(
-            "activate", self.__on_game_parameters)
         self.menubar_edit_item_copy.connect(
             "activate", self.__on_game_copy)
         self.menubar_edit_item_open.connect(
             "activate", self.__on_game_open)
         self.menubar_edit_item_desktop.connect(
             "activate", self.__on_game_generate_desktop)
+        self.menubar_edit_item_cover.connect(
+            "activate", self.__on_game_cover)
         self.menubar_edit_item_database.connect(
             "activate", self.__on_game_clean)
         self.menubar_edit_item_delete.connect(
@@ -1797,6 +1813,8 @@ class Interface(Gtk.ApplicationWindow):
             "activate", self.__on_game_copy)
         self.menu_item_open.connect(
             "activate", self.__on_game_open)
+        self.menu_item_cover.connect(
+            "activate", self.__on_game_cover)
         self.menu_item_desktop.connect(
             "activate", self.__on_game_generate_desktop)
         self.menu_item_database.connect(
@@ -2355,6 +2373,7 @@ class Interface(Gtk.ApplicationWindow):
         self.menu_item_notes.set_sensitive(status)
         self.menu_item_copy.set_sensitive(status)
         self.menu_item_open.set_sensitive(status)
+        self.menu_item_cover.set_sensitive(status)
         self.menu_item_desktop.set_sensitive(status)
         self.menu_item_remove.set_sensitive(status)
         self.menu_item_database.set_sensitive(status)
@@ -2382,6 +2401,7 @@ class Interface(Gtk.ApplicationWindow):
         self.menubar_game_item_properties.set_sensitive(status)
         self.menubar_edit_item_copy.set_sensitive(status)
         self.menubar_edit_item_open.set_sensitive(status)
+        self.menubar_edit_item_cover.set_sensitive(status)
         self.menubar_edit_item_desktop.set_sensitive(status)
         self.menubar_edit_item_database.set_sensitive(status)
         self.menubar_edit_item_delete.set_sensitive(status)
@@ -5064,6 +5084,45 @@ class Interface(Gtk.ApplicationWindow):
             else:
                 Popen(["xdg-open", path], stdout=PIPE, stdin=PIPE,
                     stderr=STDOUT, universal_newlines=True)
+
+
+    def __on_game_cover(self, *args):
+        """ Set a new cover for selected game
+        """
+
+        game = self.selection["game"]
+
+        if game is not None:
+            self.set_sensitive(False)
+
+            dialog = DialogCover(self, game)
+
+            response = dialog.run()
+
+            if response == Gtk.ResponseType.APPLY:
+                path = dialog.file_image_selector.get_filename()
+
+                if path is not None and exists(path) and not path == game.cover:
+                    game.cover = path
+
+                    # Update game from database
+                    self.api.update_game(game)
+
+                    self.set_informations()
+
+            elif response == Gtk.ResponseType.REJECT:
+
+                if game.cover is not None:
+                    game.cover = None
+
+                    # Update game from database
+                    self.api.update_game(game)
+
+                    self.set_informations()
+
+            self.set_sensitive(True)
+
+            dialog.destroy()
 
 
     def __on_game_generate_desktop(self, *args):

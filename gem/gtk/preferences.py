@@ -1506,7 +1506,7 @@ class Preferences(CommonWindow):
             _("Close"), Gtk.ResponseType.CLOSE)
 
         self.button_save = self.add_button(
-            _("Apply"), Gtk.ResponseType.APPLY, Gtk.Align.END)
+            _("Accept"), Gtk.ResponseType.APPLY, Gtk.Align.END)
 
         if self.parent is None:
             self.button_cancel.connect("clicked", self.__stop_interface)
@@ -2494,7 +2494,7 @@ class PreferencesConsole(CommonWindow):
         """
 
         self.add_button(_("Close"), Gtk.ResponseType.CLOSE)
-        self.add_button(_("Apply"), Gtk.ResponseType.APPLY, Gtk.Align.END)
+        self.add_button(_("Accept"), Gtk.ResponseType.APPLY, Gtk.Align.END)
 
         self.add_help(self.help_data)
 
@@ -2920,7 +2920,6 @@ class PreferencesEmulator(CommonWindow):
         self.file_configuration = Gtk.FileChooserButton()
 
         # Properties
-        self.label_configuration.set_alignment(1, 0.5)
         self.label_configuration.set_halign(Gtk.Align.END)
         self.label_configuration.set_justify(Gtk.Justification.RIGHT)
         self.label_configuration.get_style_context().add_class("dim-label")
@@ -3121,7 +3120,7 @@ class PreferencesEmulator(CommonWindow):
         """
 
         self.add_button(_("Close"), Gtk.ResponseType.CLOSE)
-        self.add_button(_("Apply"), Gtk.ResponseType.APPLY, Gtk.Align.END)
+        self.add_button(_("Accept"), Gtk.ResponseType.APPLY, Gtk.Align.END)
 
         self.add_help(self.help_data)
 
@@ -3524,7 +3523,7 @@ class IconViewer(CommonWindow):
         """
 
         self.add_button(_("Close"), Gtk.ResponseType.CLOSE)
-        self.add_button(_("Apply"), Gtk.ResponseType.APPLY, Gtk.Align.END)
+        self.add_button(_("Accept"), Gtk.ResponseType.APPLY, Gtk.Align.END)
 
         self.load_interface()
 

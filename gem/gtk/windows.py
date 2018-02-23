@@ -1214,7 +1214,7 @@ class DialogParameters(CommonWindow):
         """
 
         self.add_button(_("Close"), Gtk.ResponseType.CLOSE)
-        self.add_button(_("Apply"), Gtk.ResponseType.APPLY, Gtk.Align.END)
+        self.add_button(_("Accept"), Gtk.ResponseType.APPLY, Gtk.Align.END)
 
         self.add_help(self.help_data)
 
@@ -2324,7 +2324,7 @@ class DialogConsoles(CommonWindow):
         """
 
         self.add_button(_("Cancel"), Gtk.ResponseType.CLOSE)
-        self.add_button(_("Apply"), Gtk.ResponseType.APPLY, Gtk.Align.END)
+        self.add_button(_("Accept"), Gtk.ResponseType.APPLY, Gtk.Align.END)
 
         self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
 
@@ -2542,3 +2542,172 @@ def on_entry_clear(widget, pos, event):
         return True
 
     return False
+
+
+class DialogCover(CommonWindow):
+
+    def __init__(self, parent, game):
+        """ Constructor
+
+        Parameters
+        ----------
+        parent : Gtk.Window
+            Parent object
+        game : gem.api.Game
+            Game object instance
+        """
+
+        classic_theme = False
+        if parent is not None:
+            classic_theme = parent.use_classic_theme
+
+        CommonWindow.__init__(
+            self, parent, _("Game cover"), Icons.Image, classic_theme)
+
+        # ------------------------------------
+        #   Initialize variables
+        # ------------------------------------
+
+        self.game = game
+
+        # ------------------------------------
+        #   Prepare interface
+        # ------------------------------------
+
+        # Init widgets
+        self.__init_widgets()
+
+        # Init signals
+        self.__init_signals()
+
+        # Start interface
+        self.__start_interface()
+
+
+    def __init_widgets(self):
+        """ Initialize interface widgets
+        """
+
+        self.set_size(640, 480)
+
+        self.set_spacing(0)
+
+        # ------------------------------------
+        #   Grid
+        # ------------------------------------
+
+        self.grid_content = Gtk.Grid()
+
+        # Properties
+        self.grid_content.set_column_spacing(12)
+        self.grid_content.set_row_spacing(12)
+
+        # ------------------------------------
+        #   Image selector
+        # ------------------------------------
+
+        self.label_image_selector = Gtk.Label()
+
+        self.filter_image_selector = Gtk.FileFilter.new()
+
+        self.dialog_image_selector = Gtk.FileChooserDialog(
+            use_header_bar=not self.use_classic_theme)
+
+        self.file_image_selector = Gtk.FileChooserButton.new_with_dialog(
+            self.dialog_image_selector)
+
+        # Properties
+        self.label_image_selector.set_halign(Gtk.Align.END)
+        self.label_image_selector.set_justify(Gtk.Justification.RIGHT)
+        self.label_image_selector.get_style_context().add_class("dim-label")
+        self.label_image_selector.set_text(_("Cover image"))
+
+        for pattern in [ "png", "jpg", "jpeg", "svg" ]:
+            self.filter_image_selector.add_pattern("*.%s" % pattern)
+
+        self.dialog_image_selector.add_button(
+            _("Cancel"), Gtk.ResponseType.CANCEL)
+        self.dialog_image_selector.add_button(
+            _("Accept"), Gtk.ResponseType.ACCEPT)
+        self.dialog_image_selector.set_filter(self.filter_image_selector)
+        self.dialog_image_selector.set_action(Gtk.FileChooserAction.OPEN)
+        self.dialog_image_selector.set_create_folders(False)
+        self.dialog_image_selector.set_local_only(True)
+
+        self.file_image_selector.set_hexpand(True)
+
+        # ------------------------------------
+        #   Image preview
+        # ------------------------------------
+
+        self.image_preview = Gtk.Image()
+
+        # Properties
+        self.image_preview.set_halign(Gtk.Align.CENTER)
+        self.image_preview.set_valign(Gtk.Align.CENTER)
+        self.image_preview.set_hexpand(True)
+        self.image_preview.set_vexpand(True)
+
+        # ------------------------------------
+        #   Integrate widgets
+        # ------------------------------------
+
+        self.grid_content.attach(self.label_image_selector, 0, 0, 1, 1)
+        self.grid_content.attach(self.file_image_selector, 1, 0, 1, 1)
+        self.grid_content.attach(self.image_preview, 0, 1, 2, 1)
+
+        self.pack_start(self.grid_content)
+
+
+    def __init_signals(self):
+        """ Initialize widgets signals
+        """
+
+        self.file_image_selector.connect("file-set", self.__update_preview)
+
+
+    def __start_interface(self):
+        """ Load data and start interface
+        """
+
+        self.add_button(_("Reset"), Gtk.ResponseType.REJECT)
+        self.add_button(_("Accept"), Gtk.ResponseType.APPLY, Gtk.Align.END)
+
+        if self.game.cover is not None and exists(self.game.cover):
+            self.file_image_selector.set_filename(self.game.cover)
+
+        self.__update_preview()
+
+
+    def __update_preview(self, *args):
+        """ Update image preview
+        """
+
+        self.__on_set_preview(self.file_image_selector.get_filename())
+
+
+    def __on_set_preview(self, path):
+        """ Set a new preview from selector filepath
+
+        Parameters
+        ----------
+        path : str
+            Image file path
+        """
+
+        try:
+            pixbuf = Pixbuf.new_from_file(path)
+
+            if pixbuf.get_width() >= pixbuf.get_height():
+                self.image_preview.set_from_pixbuf(
+                    Pixbuf.new_from_file_at_scale(path, 400, -1, True))
+
+            else:
+                self.image_preview.set_from_pixbuf(
+                    Pixbuf.new_from_file_at_scale(path, -1, 236, True))
+
+        except:
+            self.file_image_selector.unselect_all()
+
+            self.image_preview.set_from_icon_name(
+                Icons.Missing, Gtk.IconSize.DND)
