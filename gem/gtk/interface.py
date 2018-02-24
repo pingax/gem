@@ -110,7 +110,7 @@ try:
 
     from gem.gtk import *
     from gem.gtk.game import GameThread
-    from gem.gtk.widgets import ListBoxRowConsole
+    from gem.gtk.widgets import ListBoxSelector
     from gem.gtk.windows import *
     from gem.gtk.mednafen import DialogMednafenMemory
     from gem.gtk.preferences import Preferences
@@ -399,7 +399,7 @@ class Interface(Gtk.ApplicationWindow):
         self.grid_consoles.set_border_width(12)
         self.grid_consoles.set_spacing(12)
 
-        self.grid_consoles_item.set_spacing(6)
+        self.grid_consoles_item.set_spacing(12)
 
         self.grid_consoles_options.set_border_width(12)
         self.grid_consoles_options.set_row_spacing(6)
@@ -763,38 +763,14 @@ class Interface(Gtk.ApplicationWindow):
         #   Toolbar - Consoles
         # ------------------------------------
 
-        self.image_consoles_icon = Gtk.Image()
-        self.label_consoles_name = Gtk.Label()
-        self.image_consoles_status = Gtk.Image()
+        self.button_consoles = ListBoxSelector()
 
-        self.button_consoles = Gtk.MenuButton()
-        self.entry_consoles = Gtk.SearchEntry()
-
-        self.popover_consoles = Gtk.Popover()
-        self.popover_consoles_frame = Gtk.Frame()
-
-        self.scroll_consoles = Gtk.ScrolledWindow()
-        self.listbox_consoles = Gtk.ListBox()
+        self.entry_consoles = self.button_consoles.get_entry()
+        self.listbox_consoles = self.button_consoles.get_listbox()
 
         # Properties
-        self.label_consoles_name.set_halign(Gtk.Align.START)
-        self.image_consoles_icon.set_halign(Gtk.Align.CENTER)
-        self.image_consoles_icon.set_valign(Gtk.Align.CENTER)
-        self.image_consoles_status.set_halign(Gtk.Align.CENTER)
-        self.image_consoles_status.set_valign(Gtk.Align.CENTER)
-
-        self.button_consoles.set_popover(self.popover_consoles)
-        self.button_consoles.set_size_request(256, -1)
-        self.button_consoles.set_use_popover(True)
-
-        self.entry_consoles.set_placeholder_text("%s…" % _("Filter"))
-
-        self.scroll_consoles.set_size_request(-1, 256)
-        self.scroll_consoles.set_policy(
-            Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-
-        self.listbox_consoles.set_filter_func(self.__on_filter_consoles)
-        self.listbox_consoles.set_sort_func(self.__on_sort_consoles)
+        self.button_consoles.set_filter_func(self.__on_filter_consoles)
+        self.button_consoles.set_sort_func(self.__on_sort_consoles)
 
         # ------------------------------------
         #   Toolbar - Consoles options
@@ -1476,24 +1452,6 @@ class Interface(Gtk.ApplicationWindow):
         self.grid_toolbar_console.pack_start(
             self.button_consoles_option, False, False, 0)
 
-        self.grid_consoles.pack_start(
-            self.popover_consoles_frame, True, True, 0)
-        self.grid_consoles.pack_start(
-            self.entry_consoles, False, False, 0)
-
-        self.grid_consoles_item.pack_start(
-            self.image_consoles_icon, False, False, 0)
-        self.grid_consoles_item.pack_start(
-            self.label_consoles_name, True, True, 0)
-        self.grid_consoles_item.pack_start(
-            self.image_consoles_status, False, False, 0)
-
-        self.popover_consoles_frame.add(self.scroll_consoles)
-
-        self.popover_consoles.add(self.grid_consoles)
-        self.scroll_consoles.add(self.listbox_consoles)
-        self.button_consoles.add(self.grid_consoles_item)
-
         # Toolbar - Consoles options
         self.popover_consoles_options.add(self.grid_consoles_options)
 
@@ -1767,8 +1725,6 @@ class Interface(Gtk.ApplicationWindow):
             "state-set", self.__on_change_console_option)
 
         self.entry_filter.connect(
-            "icon-press", on_entry_clear)
-        self.entry_filter.connect(
             "changed", self.filters_update)
 
         self.check_filter_favorite.connect(
@@ -1924,19 +1880,19 @@ class Interface(Gtk.ApplicationWindow):
                     row = self.consoles_iter[console]
 
                     # Set console combobox active iter
-                    self.listbox_consoles.select_row(row)
+                    self.button_consoles.select_row(row)
 
-                    self.__on_selected_console(self.listbox_consoles, row)
+                    self.__on_selected_console(self.button_consoles, row)
 
                     # Set Console object as selected
-                    self.selection["console"] = row.console
+                    self.selection["console"] = row.data
 
         # Check welcome message status in gem.conf
         if self.config.getboolean("gem", "welcome", fallback=True):
 
             # Load the first console to avoid mini combobox
             if load_console_startup and self.selection["console"] is None:
-                self.listbox_consoles.select_row(
+                self.button_consoles.select_row(
                     list(self.consoles_iter.values())[0])
 
             dialog = Message(self, _("Welcome !"), _("Welcome and thanks for "
@@ -1988,17 +1944,17 @@ class Interface(Gtk.ApplicationWindow):
         # ------------------------------------
 
         # Save current console as last_console in gem.conf
-        row = self.listbox_consoles.get_selected_row()
+        row = self.button_consoles.get_selected_row()
         if row is not None:
             last_console = self.config.item("gem", "last_console", None)
 
             # Avoid to modify gem.conf if console is already in conf
-            if last_console is None or not last_console == row.console.id:
-                self.config.modify("gem", "last_console", row.console.id)
+            if last_console is None or not last_console == row.data.id:
+                self.config.modify("gem", "last_console", row.data.id)
                 self.config.update()
 
                 self.logger.info(
-                    _("Save %s console for next startup") % row.console.id)
+                    _("Save %s console for next startup") % row.data.id)
 
         # ------------------------------------
         #   Windows size
@@ -2340,14 +2296,14 @@ class Interface(Gtk.ApplicationWindow):
             if len(self.consoles_iter.keys()) > 0:
                 row = list(self.consoles_iter.values())[0]
 
-                self.listbox_consoles.select_row(row)
+                self.button_consoles.select_row(row)
 
-                self.__on_selected_console(self.listbox_consoles, row)
+                self.__on_selected_console(self.button_consoles, row)
 
         else:
-            self.listbox_consoles.select_row(current_console)
+            self.button_consoles.select_row(current_console)
 
-            self.__on_selected_console(self.listbox_consoles, current_console)
+            self.__on_selected_console(self.button_consoles, current_console)
 
         self.__unblock_signals()
 
@@ -3474,9 +3430,7 @@ class Interface(Gtk.ApplicationWindow):
         self.consoles_iter.clear()
 
         # Remove previous consoles objects
-        children = self.listbox_consoles.get_children()
-        for child in children:
-            self.listbox_consoles.remove(child)
+        self.button_consoles.clear()
 
         # Get toolbar icons size
         data = Gtk.IconSize.lookup(self.toolbar.get_icon_size())
@@ -3488,19 +3442,14 @@ class Interface(Gtk.ApplicationWindow):
             console_data = self.__on_generate_console_row(console, size)
 
             if console_data is not None:
-                console, icon, status = console_data
-
-                # Append a new console in consoles listbox
-                row = ListBoxRowConsole(console, icon, status)
-
-                self.listbox_consoles.add(row)
+                row = self.button_consoles.append_row(*console_data)
 
                 # Store console iter
-                self.consoles_iter[console.id] = row
+                self.consoles_iter[row.data.id] = row
 
                 # Check if previous selected console was this one
                 selection = self.selection.get("console")
-                if selection is not None and selection.name == console.name:
+                if selection is not None and selection.name == row.data.name:
                     item = row
 
         self.__on_update_consoles()
@@ -3572,7 +3521,7 @@ class Interface(Gtk.ApplicationWindow):
         ----------
         widget : Gtk.Widget
             Object which receive signal
-        row : gem.gtk.widgets.ListBoxRowConsole
+        row : gem.gtk.widgets.ListBoxSelectorItem
             Activated row
         """
 
@@ -3580,7 +3529,7 @@ class Interface(Gtk.ApplicationWindow):
 
         self.selection["name"] = None
         self.selection["game"] = None
-        self.selection["console"] = row.console
+        self.selection["console"] = row.data
 
         self.set_infobar()
         self.set_informations()
@@ -3592,8 +3541,8 @@ class Interface(Gtk.ApplicationWindow):
         self.sensitive_interface()
 
         # Check console emulator
-        if row.console.emulator is not None:
-            configuration = row.console.emulator.configuration
+        if row.data.emulator is not None:
+            configuration = row.data.emulator.configuration
 
             # Check emulator configurator
             if configuration is not None and exists(configuration):
@@ -3602,8 +3551,8 @@ class Interface(Gtk.ApplicationWindow):
                 self.toolbar_item_properties.set_sensitive(False)
 
         # Check console options
-        self.switch_consoles_favorite.set_active(row.console.favorite)
-        self.switch_consoles_recursive.set_active(row.console.recursive)
+        self.switch_consoles_favorite.set_active(row.data.favorite)
+        self.switch_consoles_recursive.set_active(row.data.recursive)
 
         # Activate console options buttons
         self.toolbar_item_refresh.set_sensitive(True)
@@ -3611,9 +3560,7 @@ class Interface(Gtk.ApplicationWindow):
         self.switch_consoles_recursive.set_sensitive(True)
 
         # Set console informations into button grid widgets
-        self.label_consoles_name.set_text(row.console.name)
-        self.image_consoles_icon.set_from_pixbuf(row.pixbuf_icon)
-        self.image_consoles_status.set_from_pixbuf(row.pixbuf_status)
+        self.button_consoles.select_row(row)
 
         self.__unblock_signals()
 
@@ -3624,7 +3571,7 @@ class Interface(Gtk.ApplicationWindow):
         if not self.list_thread == 0:
             source_remove(self.list_thread)
 
-        loader = self.append_games(row.console)
+        loader = self.append_games(row.data)
         self.list_thread = idle_add(loader.__next__)
 
 
@@ -3633,18 +3580,18 @@ class Interface(Gtk.ApplicationWindow):
 
         Parameters
         ----------
-        first_row : gem.gtk.widgets.ListBoxRowConsole
+        first_row : gem.gtk.widgets.ListBoxSelectorItem
             First row to compare
-        second_row : gem.gtk.widgets.ListBoxRowConsole
+        second_row : gem.gtk.widgets.ListBoxSelectorItem
             Second row to compare
         """
 
         # Sort by name when favorite status are identical
-        if first_row.console.favorite == second_row.console.favorite:
-            return first_row.console.name.lower() > \
-                second_row.console.name.lower()
+        if first_row.data.favorite == second_row.data.favorite:
+            return first_row.data.name.lower() > \
+                second_row.data.name.lower()
 
-        return first_row.console.favorite < second_row.console.favorite
+        return first_row.data.favorite < second_row.data.favorite
 
 
     def __on_filter_consoles(self, row, *args):
@@ -3652,18 +3599,18 @@ class Interface(Gtk.ApplicationWindow):
 
         Parameters
         ----------
-        row : gem.gtk.widgets.ListBoxRowConsole
+        row : gem.gtk.widgets.ListBoxSelectorItem
             Activated row
         """
 
         hide = self.config.getboolean(
             "gem", "hide_empty_console", fallback=False)
 
-        if hide and len(row.console.games) == 0:
+        if hide and len(row.data.games) == 0:
             return False
 
         # Retrieve row label text
-        text = row.label.get_text().lower()
+        text = row.get_label().get_text().lower()
 
         try:
             filter_text = self.entry_consoles.get_text().strip().lower()
@@ -3681,8 +3628,8 @@ class Interface(Gtk.ApplicationWindow):
         """ Reload consoles list when user set a filter
         """
 
-        self.listbox_consoles.invalidate_sort()
-        self.listbox_consoles.invalidate_filter()
+        self.button_consoles.invalidate_sort()
+        self.button_consoles.invalidate_filter()
 
 
     def __on_change_console_option(self, widget, status):
@@ -3698,19 +3645,25 @@ class Interface(Gtk.ApplicationWindow):
 
         widget.set_active(status)
 
-        row = self.listbox_consoles.get_selected_row()
+        row = self.button_consoles.get_selected_row()
 
         if row is not None:
 
             if widget == self.switch_consoles_recursive:
-                row.console.recursive = status
+                row.data.recursive = status
 
-                self.api.write_object(row.console)
+                self.api.write_object(row.data)
 
             elif widget == self.switch_consoles_favorite:
-                row.console.favorite = status
+                row.data.favorite = status
 
-                self.api.write_object(row.console)
+                pixbuf = self.empty
+                if status:
+                    pixbuf = self.icons["favorite"]
+
+                self.button_consoles.set_row_status(row, pixbuf)
+
+                self.api.write_object(row.data)
 
                 self.__on_update_consoles()
 
@@ -4200,7 +4153,7 @@ class Interface(Gtk.ApplicationWindow):
         """ Reload games list from selected console
         """
 
-        row = self.listbox_consoles.get_selected_row()
+        row = self.button_consoles.get_selected_row()
 
         if row is not None:
             self.__on_selected_console(None, row)

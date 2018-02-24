@@ -48,6 +48,8 @@ except ImportError as error:
 try:
     from gem.gtk import *
 
+    from gem.api import Console
+    from gem.api import Emulator
     from gem.utils import *
 
 except ImportError as error:
@@ -106,6 +108,9 @@ class CommonWindow(object):
 
         # Init widgets
         self.__init_widgets()
+
+        # Init signals
+        self.__init_signals()
 
 
     def __init_widgets(self):
@@ -790,15 +795,290 @@ class DialogHelp(CommonWindow):
         self.show_all()
 
 
-class ListBoxRowConsole(Gtk.ListBoxRow):
+class ListBoxSelector(Gtk.MenuButton):
 
-    def __init__(self, console, icon, status):
+    def __init__(self):
+        """ Constructor
+        """
+
+        Gtk.MenuButton.__init__(self)
+
+        # ------------------------------------
+        #   Prepare interface
+        # ------------------------------------
+
+        # Init widgets
+        self.__init_widgets()
+
+        # Init packing
+        self.__init_packing()
+
+        # Start interface
+        self.__start_interface()
+
+
+    def __init_widgets(self):
+        """ Initialize interface widgets
+        """
+
+        self.set_size_request(256, -1)
+        self.set_use_popover(True)
+
+        # ------------------------------------
+        #   Grid
+        # ------------------------------------
+
+        self.grid_selector = Gtk.Box()
+
+        self.grid_popover = Gtk.Box()
+
+        # Properties
+        self.grid_selector.set_orientation(Gtk.Orientation.HORIZONTAL)
+        self.grid_selector.set_spacing(12)
+
+        self.grid_popover.set_orientation(Gtk.Orientation.VERTICAL)
+        self.grid_popover.set_border_width(12)
+        self.grid_popover.set_spacing(12)
+
+        # ------------------------------------
+        #   Selector
+        # ------------------------------------
+
+        self.label_selector_name = Gtk.Label()
+
+        self.image_selector_icon = Gtk.Image()
+        self.image_selector_status = Gtk.Image()
+
+        # Properties
+        self.label_selector_name.set_halign(Gtk.Align.START)
+        self.image_selector_icon.set_halign(Gtk.Align.CENTER)
+        self.image_selector_icon.set_valign(Gtk.Align.CENTER)
+        self.image_selector_status.set_halign(Gtk.Align.CENTER)
+        self.image_selector_status.set_valign(Gtk.Align.CENTER)
+
+        # ------------------------------------
+        #   Popover
+        # ------------------------------------
+
+        self.popover_selector = Gtk.Popover()
+
+        self.entry_selector = Gtk.SearchEntry()
+
+        self.frame_selector = Gtk.Frame()
+        self.scroll_selector = Gtk.ScrolledWindow()
+        self.listbox_selector = Gtk.ListBox()
+
+        # Properties
+        self.entry_selector.set_placeholder_text("%s…" % _("Filter"))
+
+        self.scroll_selector.set_size_request(-1, 256)
+        self.scroll_selector.set_policy(
+            Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+
+
+    def __init_packing(self):
+        """ Initialize widgets packing in main window
+        """
+
+        self.add(self.grid_selector)
+
+        self.set_popover(self.popover_selector)
+
+        self.grid_selector.pack_start(
+            self.image_selector_icon, False, False, 0)
+        self.grid_selector.pack_start(
+            self.label_selector_name, True, True, 0)
+        self.grid_selector.pack_start(
+            self.image_selector_status, False, False, 0)
+
+        self.popover_selector.add(self.grid_popover)
+
+        self.frame_selector.add(self.scroll_selector)
+        self.scroll_selector.add(self.listbox_selector)
+
+        self.grid_popover.pack_start(
+            self.frame_selector, True, True, 0)
+        self.grid_popover.pack_start(
+            self.entry_selector, False, False, 0)
+
+
+    def __start_interface(self):
+        """ Load data and start interface
+        """
+
+        self.show_all()
+
+        self.grid_popover.show_all()
+        self.grid_selector.show_all()
+
+
+    def __on_update_data(self, *args):
+        """ Reload consoles list when user set a filter
+        """
+
+        self.listbox_selector.invalidate_sort()
+        self.listbox_selector.invalidate_filter()
+
+
+    def append_row(self, data, icon, status):
+        """ Append a new row into selector
+
+        Parameters
+        ----------
+        data : gem.api.Console or gem.api.Emulator
+            GEM data instance
+        icon : GdkPixbuf.Pixbuf
+            Console icon
+        status : GdkPixbuf.Pixbuf
+            Console status icon
+
+        Returns
+        -------
+        gem.gtk.widgets.ListBoxSelectorItem
+            Generated row
+        """
+
+        row = ListBoxSelectorItem(data, icon, status)
+
+        self.listbox_selector.add(row)
+
+        return row
+
+
+    def clear(self):
+        """ Clear listbox items
+        """
+
+        children = self.listbox_selector.get_children()
+
+        for child in children:
+            self.listbox_selector.remove(child)
+
+
+    def get_entry(self):
+        """ Retrieve entry instance
+
+        Returns
+        -------
+        Gtk.SearchEntry
+            Search entry widget instance
+        """
+
+        return self.entry_selector
+
+
+    def get_listbox(self):
+        """ Retrieve listbox instance
+
+        Returns
+        -------
+        Gtk.ListBox
+            Listbox widget instance
+        """
+
+        return self.listbox_selector
+
+
+    def get_selected_row(self):
+        """ Retrieve selected row in listbox
+
+        Returns
+        -------
+        gem.gtk.widgets.ListBoxSelectorItem
+            Selected row
+        """
+
+        return self.listbox_selector.get_selected_row()
+
+
+    def invalidate_filter(self):
+        """ Filter again listbox content
+        """
+
+        self.listbox_selector.invalidate_filter()
+
+
+    def invalidate_sort(self):
+        """ Sort again listbox content
+        """
+
+        self.listbox_selector.invalidate_sort()
+
+
+    def select_row(self, row):
+        """ Select a specific row into listbox
+
+        Parameters
+        ----------
+        row : gem.gtk.widgets.ListBoxSelectorItem
+            Row to select
+        """
+
+        self.listbox_selector.select_row(row)
+
+        self.label_selector_name.set_label(row.get_label_text())
+
+        self.image_selector_icon.set_from_pixbuf(row.get_icon_pixbuf())
+        self.image_selector_status.set_from_pixbuf(row.get_status_pixbuf())
+
+
+    def set_row_icon(self, row, pixbuf):
+        """ Set the icon pixbuf for a specific row
+
+        Parameters
+        ----------
+        row : gem.gtk.widgets.ListBoxSelectorItem
+            Row to modify
+        pixbuf : GdkPixbuf.Pixbuf
+            Pixbuf instance
+        """
+
+        if self.listbox_selector.get_selected_row() == row:
+            self.image_selector_icon.set_from_pixbuf(pixbuf)
+
+        row.set_icon_from_pixbuf(pixbuf)
+
+
+    def set_row_status(self, row, pixbuf):
+        """ Set the status pixbuf for a specific row
+
+        Parameters
+        ----------
+        row : gem.gtk.widgets.ListBoxSelectorItem
+            Row to modify
+        pixbuf : GdkPixbuf.Pixbuf
+            Pixbuf instance
+        """
+
+        if self.listbox_selector.get_selected_row() == row:
+            self.image_selector_status.set_from_pixbuf(pixbuf)
+
+        row.set_status_from_pixbuf(pixbuf)
+
+
+    def set_filter_func(self, *args):
+        """ Set a filter function to listbox
+        """
+
+        self.listbox_selector.set_filter_func(*args)
+
+
+    def set_sort_func(self, *args):
+        """ Set a sort function to listbox
+        """
+
+        self.listbox_selector.set_sort_func(*args)
+
+
+class ListBoxSelectorItem(Gtk.ListBoxRow):
+
+    def __init__(self, data, icon, status):
         """ Constructor
 
         Parameters
         ----------
-        console : gem.api.Console
-            Console instance
+        data : gem.api.Console or gem.api.Emulator
+            GEM data instance
         icon : GdkPixbuf.Pixbuf
             Console icon
         status : GdkPixbuf.Pixbuf
@@ -811,7 +1091,8 @@ class ListBoxRowConsole(Gtk.ListBoxRow):
         #   Initialize variables
         # ------------------------------------
 
-        self.console = console
+        self.data = data
+
         self.pixbuf_icon = icon
         self.pixbuf_status = status
 
@@ -862,7 +1143,7 @@ class ListBoxRowConsole(Gtk.ListBoxRow):
         self.status.set_valign(Gtk.Align.CENTER)
 
         self.label.set_halign(Gtk.Align.START)
-        self.label.set_text(self.console.name)
+        self.label.set_text(self.data.name)
 
 
     def __init_packing(self):
@@ -883,7 +1164,87 @@ class ListBoxRowConsole(Gtk.ListBoxRow):
         self.show_all()
 
 
-    def update(self, console, icon, status):
+    def get_label(self):
+        """ Retrieve label instance
+
+        Returns
+        -------
+        Gtk.Label
+            Label widget instance
+        """
+
+        return self.label
+
+
+    def get_label_text(self):
+        """ Retrieve label content
+
+        Returns
+        -------
+        str
+            Label content
+        """
+
+        return self.label.get_text()
+
+
+    def get_icon_pixbuf(self):
+        """ Retrieve icon pixbuf instance
+
+        Returns
+        -------
+        GdkPixbuf.Pixbuf
+            Icon pixbuf widget instance
+        """
+
+        return self.image.get_pixbuf()
+
+
+    def get_status_pixbuf(self):
+        """ Retrieve status pixbuf instance
+
+        Returns
+        -------
+        GdkPixbuf.Pixbuf
+            Status pixbuf widget instance
+        """
+
+        return self.status.get_pixbuf()
+
+
+    def set_icon_from_pixbuf(self, pixbuf):
+        """ Set the icon pixbuf
+
+        Parameters
+        ----------
+        row : gem.gtk.widgets.ListBoxSelectorItem
+            Row to modify
+        pixbuf : GdkPixbuf.Pixbuf
+            Pixbuf instance
+        """
+
+        self.pixbuf_icon = pixbuf
+
+        self.image.set_from_pixbuf(pixbuf)
+
+
+    def set_status_from_pixbuf(self, pixbuf):
+        """ Set the status pixbuf
+
+        Parameters
+        ----------
+        row : gem.gtk.widgets.ListBoxSelectorItem
+            Row to modify
+        pixbuf : GdkPixbuf.Pixbuf
+            Pixbuf instance
+        """
+
+        self.pixbuf_status = pixbuf
+
+        self.status.set_from_pixbuf(pixbuf)
+
+
+    def update(self, data, icon, status):
         """ Update row data with a specific console
 
         Parameters
@@ -892,12 +1253,13 @@ class ListBoxRowConsole(Gtk.ListBoxRow):
             Console instance
         """
 
-        if not self.console == console:
-            self.console = console
+        if not self.data == data:
+            self.data = data
+
             self.pixbuf_icon = icon
             self.pixbuf_status = status
 
-            self.label.set_text(console.name)
+            self.label.set_text(data.name)
 
             self.image.set_from_pixbuf(icon)
             self.status.set_from_pixbuf(status)

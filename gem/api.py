@@ -438,6 +438,9 @@ class GEM(object):
         files
         """
 
+        self.logger.debug("Set local folder as %s" % self.__local)
+        self.logger.debug("Set config folder as %s" % self.__config)
+
         # Initialize sqlite database
         self.__init_database()
 
