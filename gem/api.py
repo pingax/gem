@@ -194,10 +194,17 @@ class GEM(object):
                 makedirs(folder, 0o755)
 
         # ----------------------------
-        #   Initialize logger
+        #   Initialize objects
         # ----------------------------
 
+        # Initialize logging module
         self.__init_logger()
+
+        # Initialize sqlite database
+        self.__init_database()
+
+        self.logger.debug("Set local folder as %s" % self.__local)
+        self.logger.debug("Set config folder as %s" % self.__config)
 
 
     def __init_logger(self):
@@ -437,12 +444,6 @@ class GEM(object):
         This function allow to reset API by reloading default configuration
         files
         """
-
-        self.logger.debug("Set local folder as %s" % self.__local)
-        self.logger.debug("Set config folder as %s" % self.__config)
-
-        # Initialize sqlite database
-        self.__init_database()
 
         if self.__need_migration:
             raise RuntimeError("GEM database need a migration")
