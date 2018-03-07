@@ -3455,6 +3455,12 @@ class IconViewer(CommonWindow):
         self.stack_switcher.set_halign(Gtk.Align.CENTER)
 
         # ------------------------------------
+        #   File patterns
+        # ------------------------------------
+
+        self.__file_patterns = Gtk.FileFilter.new()
+
+        # ------------------------------------
         #   Custom
         # ------------------------------------
 
@@ -3467,6 +3473,7 @@ class IconViewer(CommonWindow):
 
         self.file_icons.set_hexpand(True)
         self.file_icons.set_vexpand(True)
+        self.file_icons.set_filter(self.__file_patterns)
         self.file_icons.set_current_folder(expanduser('~'))
 
         # ------------------------------------
@@ -3552,6 +3559,10 @@ class IconViewer(CommonWindow):
         """
 
         self.icons_data = dict()
+
+        # Set authorized pattern for file selector
+        for pattern in [ "png", "jpg", "jpeg" ]:
+            self.__file_patterns.add_pattern("*.%s" % pattern)
 
         # Fill icons view
         if self.api is not None:
