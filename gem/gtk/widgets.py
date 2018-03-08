@@ -303,7 +303,7 @@ class CommonWindow(object):
         Gtk.main()
 
 
-    def destroy(self):
+    def destroy(self, *args):
         """ Destroy dialog
         """
 
