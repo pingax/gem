@@ -2523,7 +2523,12 @@ class Interface(Gtk.ApplicationWindow):
             Tag to add to filter entry
         """
 
-        self.entry_filter.set_text(str(tag))
+        text = str()
+
+        if not self.entry_filter.get_text() == str(tag):
+            text = str(tag)
+
+        self.entry_filter.set_text(text)
 
 
     def __init_shortcuts(self):
