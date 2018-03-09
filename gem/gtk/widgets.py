@@ -592,7 +592,7 @@ class CommonWindow(object):
             Dialog height
         """
 
-        self.window.set_size_request(width, height)
+        # self.window.set_size_request(width, height)
         self.window.set_default_size(width, height)
 
 

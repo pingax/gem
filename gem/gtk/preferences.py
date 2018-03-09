@@ -2154,6 +2154,9 @@ class PreferencesConsole(CommonWindow):
         # Console object
         self.console = console
 
+        # GEM config
+        self.config = parent.config
+
         self.path = None
 
         self.error = False
@@ -2294,12 +2297,14 @@ class PreferencesConsole(CommonWindow):
         self.switch_favorite.set_halign(Gtk.Align.START)
 
         self.label_recursive.set_margin_top(12)
+        self.label_recursive.set_no_show_all(True)
         self.label_recursive.set_label(_("Recursive"))
         self.label_recursive.set_halign(Gtk.Align.END)
         self.label_recursive.set_valign(Gtk.Align.CENTER)
         self.label_recursive.get_style_context().add_class("dim-label")
 
         self.switch_recursive.set_margin_top(12)
+        self.switch_recursive.set_no_show_all(True)
         self.switch_recursive.set_halign(Gtk.Align.START)
 
         # ------------------------------------
@@ -2385,10 +2390,12 @@ class PreferencesConsole(CommonWindow):
         # Properties
         self.scroll_ignores.add(self.viewport_ignores)
         self.scroll_ignores.set_size_request(-1, 200)
+        self.scroll_ignores.set_no_show_all(True)
 
         self.label_ignores.set_margin_top(18)
         self.label_ignores.set_hexpand(True)
         self.label_ignores.set_use_markup(True)
+        self.label_ignores.set_no_show_all(True)
         self.label_ignores.set_halign(Gtk.Align.CENTER)
         self.label_ignores.set_markup(
             "<b>%s</b>" % _("Regular expressions for ignored files"))
@@ -2397,6 +2404,9 @@ class PreferencesConsole(CommonWindow):
             Icons.Symbolic.Add, Gtk.IconSize.BUTTON)
         self.image_ignores_remove.set_from_icon_name(
             Icons.Symbolic.Remove, Gtk.IconSize.BUTTON)
+
+        self.button_ignores_add.set_no_show_all(True)
+        self.button_ignores_remove.set_no_show_all(True)
 
         self.treeview_ignores.set_vexpand(True)
         self.treeview_ignores.set_model(self.model_ignores)
@@ -2412,6 +2422,15 @@ class PreferencesConsole(CommonWindow):
             _("Write your regex here..."))
         self.cell_ignores.set_property("ellipsize", Pango.EllipsizeMode.END)
 
+        # ------------------------------------
+        #   Advanced mode
+        # ------------------------------------
+
+        self.check_advanced = Gtk.CheckButton()
+
+        # Properties
+        self.check_advanced.set_label(_("Advanced mode"))
+
 
     def __init_packing(self):
         """ Initialize widgets packing in main window
@@ -2419,6 +2438,7 @@ class PreferencesConsole(CommonWindow):
 
         # Main widgets
         self.pack_start(self.grid_preferences, True, True)
+        self.pack_start(self.check_advanced, False, False)
 
         # Console grid
         self.grid_preferences.attach(self.label_name, 0, 0, 1, 1)
@@ -2487,6 +2507,8 @@ class PreferencesConsole(CommonWindow):
 
         self.button_ignores_add.connect("clicked", self.__on_append_item)
         self.button_ignores_remove.connect("clicked", self.__on_remove_item)
+
+        self.check_advanced.connect("toggled", self.__on_check_advanced_mode)
 
 
     def __start_interface(self):
@@ -2564,6 +2586,15 @@ class PreferencesConsole(CommonWindow):
             self.set_response_sensitive(Gtk.ResponseType.APPLY, True)
 
         # ------------------------------------
+        #   Advanded mode
+        # ------------------------------------
+
+        self.check_advanced.set_active(
+            self.config.getboolean("advanced", "console", fallback=False))
+
+        self.__on_check_advanced_mode()
+
+        # ------------------------------------
         #   Start dialog
         # ------------------------------------
 
@@ -2585,6 +2616,13 @@ class PreferencesConsole(CommonWindow):
             need_reload = True
 
         self.destroy()
+
+        status = self.config.getboolean("advanced", "console", fallback=False)
+
+        if not self.check_advanced.get_active() == status:
+            self.config.modify(
+                "advanced", "console", self.check_advanced.get_active())
+            self.config.update()
 
         if need_reload:
             self.interface.on_load_consoles()
@@ -2767,6 +2805,26 @@ class PreferencesConsole(CommonWindow):
         self.set_response_sensitive(Gtk.ResponseType.APPLY, status)
 
 
+    def __on_check_advanced_mode(self, *args):
+        """ Check advanced checkbutton status and update widgets sensitivity
+        """
+
+        status = self.check_advanced.get_active()
+
+        self.label_recursive.set_visible(status)
+        self.switch_recursive.set_visible(status)
+
+        self.label_ignores.set_visible(status)
+        self.grid_ignores.set_visible(status)
+        self.scroll_ignores.set_visible(status)
+        self.viewport_ignores.set_visible(status)
+        self.treeview_ignores.set_visible(status)
+        self.image_ignores_add.set_visible(status)
+        self.button_ignores_add.set_visible(status)
+        self.image_ignores_remove.set_visible(status)
+        self.button_ignores_remove.set_visible(status)
+
+
 class PreferencesEmulator(CommonWindow):
 
     def __init__(self, parent, emulator, modify):
@@ -2793,6 +2851,9 @@ class PreferencesEmulator(CommonWindow):
         self.api = parent.api
         # Emulator object
         self.emulator = emulator
+
+        # GEM config
+        self.config = parent.config
 
         self.path = None
 
@@ -2947,36 +3008,42 @@ class PreferencesEmulator(CommonWindow):
         self.label_arguments.set_margin_top(18)
         self.label_arguments.set_hexpand(True)
         self.label_arguments.set_use_markup(True)
+        self.label_arguments.set_no_show_all(True)
         self.label_arguments.set_halign(Gtk.Align.CENTER)
         self.label_arguments.set_markup(
             "<b>%s</b>" % _("Emulator arguments"))
 
         self.label_launch.set_alignment(1, 0.5)
         self.label_launch.set_halign(Gtk.Align.END)
+        self.label_launch.set_no_show_all(True)
         self.label_launch.set_justify(Gtk.Justification.RIGHT)
         self.label_launch.get_style_context().add_class("dim-label")
         self.label_launch.set_label(
             _("Default options"))
 
         self.entry_launch.set_hexpand(True)
+        self.entry_launch.set_no_show_all(True)
         self.entry_launch.set_placeholder_text(
             _("Default arguments to add when launch emulator"))
         self.entry_launch.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
 
         self.label_windowed.set_alignment(1, 0.5)
+        self.label_windowed.set_no_show_all(True)
         self.label_windowed.set_halign(Gtk.Align.END)
         self.label_windowed.set_justify(Gtk.Justification.RIGHT)
         self.label_windowed.get_style_context().add_class("dim-label")
         self.label_windowed.set_label(
             _("Windowed"))
 
+        self.entry_windowed.set_no_show_all(True)
         self.entry_windowed.set_placeholder_text(
             _("Argument which activate windowded mode"))
         self.entry_windowed.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
 
         self.label_fullscreen.set_alignment(1, 0.5)
+        self.label_fullscreen.set_no_show_all(True)
         self.label_fullscreen.set_halign(Gtk.Align.END)
         self.label_fullscreen.set_justify(Gtk.Justification.RIGHT)
         self.label_fullscreen.get_style_context().add_class("dim-label")
@@ -2984,6 +3051,7 @@ class PreferencesEmulator(CommonWindow):
             _("Fullscreen"))
 
         self.entry_fullscreen.set_hexpand(True)
+        self.entry_fullscreen.set_no_show_all(True)
         self.entry_fullscreen.set_placeholder_text(
             _("Argument which activate fullscreen mode"))
         self.entry_fullscreen.set_icon_from_icon_name(
@@ -3007,11 +3075,13 @@ class PreferencesEmulator(CommonWindow):
         self.label_files.set_margin_top(18)
         self.label_files.set_hexpand(True)
         self.label_files.set_use_markup(True)
+        self.label_files.set_no_show_all(True)
         self.label_files.set_halign(Gtk.Align.CENTER)
         self.label_files.set_markup(
             "<b>%s</b>" % _("Files patterns"))
 
         self.label_save.set_alignment(1, 0.5)
+        self.label_save.set_no_show_all(True)
         self.label_save.set_halign(Gtk.Align.END)
         self.label_save.set_justify(Gtk.Justification.RIGHT)
         self.label_save.get_style_context().add_class("dim-label")
@@ -3019,12 +3089,14 @@ class PreferencesEmulator(CommonWindow):
             _("Save"))
 
         self.entry_save.set_hexpand(True)
+        self.entry_save.set_no_show_all(True)
         self.entry_save.set_placeholder_text(
             _("Pattern to detect savestates files"))
         self.entry_save.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
 
         self.label_screenshots.set_alignment(1, 0.5)
+        self.label_screenshots.set_no_show_all(True)
         self.label_screenshots.set_halign(Gtk.Align.END)
         self.label_screenshots.set_justify(Gtk.Justification.RIGHT)
         self.label_screenshots.get_style_context().add_class("dim-label")
@@ -3032,6 +3104,7 @@ class PreferencesEmulator(CommonWindow):
             _("Snapshots"))
 
         self.entry_screenshots.set_hexpand(True)
+        self.entry_screenshots.set_no_show_all(True)
         self.entry_screenshots.set_placeholder_text(
             _("Pattern to detect screenshots files"))
         self.entry_screenshots.set_icon_from_icon_name(
@@ -3039,11 +3112,21 @@ class PreferencesEmulator(CommonWindow):
 
         self.label_joker.set_use_markup(True)
         self.label_joker.set_alignment(1, 0.5)
+        self.label_joker.set_no_show_all(True)
         self.label_joker.set_halign(Gtk.Align.END)
         self.label_joker.set_justify(Gtk.Justification.RIGHT)
         self.label_joker.get_style_context().add_class("dim-label")
         self.label_joker.set_markup(
             "<i>%s</i>" % _("* can be used as joker"))
+
+        # ------------------------------------
+        #   Advanced mode
+        # ------------------------------------
+
+        self.check_advanced = Gtk.CheckButton()
+
+        # Properties
+        self.check_advanced.set_label(_("Advanced mode"))
 
 
     def __init_packing(self):
@@ -3052,6 +3135,7 @@ class PreferencesEmulator(CommonWindow):
 
         # Main widgets
         self.pack_start(self.grid_preferences, True, True)
+        self.pack_start(self.check_advanced, False, False)
 
         # Emulator grid
         self.grid_preferences.attach(self.label_name, 0, 0, 1, 1)
@@ -3114,6 +3198,8 @@ class PreferencesEmulator(CommonWindow):
         self.button_emulator.connect("clicked", self.__on_select_icon)
         self.button_binary.connect("clicked", self.__on_file_set)
 
+        self.check_advanced.connect("toggled", self.__on_check_advanced_mode)
+
 
     def __start_interface(self):
         """ Load data and start interface
@@ -3169,6 +3255,15 @@ class PreferencesEmulator(CommonWindow):
             self.set_response_sensitive(Gtk.ResponseType.APPLY, True)
 
         # ------------------------------------
+        #   Advanded mode
+        # ------------------------------------
+
+        self.check_advanced.set_active(
+            self.config.getboolean("advanced", "emulator", fallback=False))
+
+        self.__on_check_advanced_mode()
+
+        # ------------------------------------
         #   Start dialog
         # ------------------------------------
 
@@ -3198,6 +3293,13 @@ class PreferencesEmulator(CommonWindow):
             need_reload = True
 
         self.destroy()
+
+        status = self.config.getboolean("advanced", "emulator", fallback=False)
+
+        if not self.check_advanced.get_active() == status:
+            self.config.modify(
+                "advanced", "emulator", self.check_advanced.get_active())
+            self.config.update()
 
         if need_reload:
             self.interface.on_load_emulators()
@@ -3378,6 +3480,27 @@ class PreferencesEmulator(CommonWindow):
         dialog.destroy()
 
 
+    def __on_check_advanced_mode(self, *args):
+        """ Check advanced checkbutton status and update widgets sensitivity
+        """
+
+        status = self.check_advanced.get_active()
+
+        self.label_arguments.set_visible(status)
+        self.label_launch.set_visible(status)
+        self.entry_launch.set_visible(status)
+        self.label_windowed.set_visible(status)
+        self.entry_windowed.set_visible(status)
+        self.label_fullscreen.set_visible(status)
+        self.entry_fullscreen.set_visible(status)
+        self.label_files.set_visible(status)
+        self.label_save.set_visible(status)
+        self.entry_save.set_visible(status)
+        self.label_screenshots.set_visible(status)
+        self.entry_screenshots.set_visible(status)
+        self.label_joker.set_visible(status)
+
+
 class IconViewer(CommonWindow):
 
     def __init__(self, parent, title, path, folder):
@@ -3437,6 +3560,8 @@ class IconViewer(CommonWindow):
         """
 
         self.set_size(800, 600)
+
+        self.set_resizable(True)
 
         self.set_spacing(6)
         self.set_border_width(6)
@@ -3498,7 +3623,7 @@ class IconViewer(CommonWindow):
         self.scroll_icons.set_vexpand(True)
         self.scroll_icons.set_shadow_type(Gtk.ShadowType.OUT)
         self.scroll_icons.set_policy(
-            Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+            Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
 
         # ------------------------------------
         #   Add widgets into interface
