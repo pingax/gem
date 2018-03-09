@@ -2616,6 +2616,9 @@ class DialogCover(CommonWindow):
         self.file_image_selector = Gtk.FileChooserButton.new_with_dialog(
             self.dialog_image_selector)
 
+        self.image_reset = Gtk.Image()
+        self.button_reset = Gtk.Button()
+
         # Properties
         self.label_image_selector.set_halign(Gtk.Align.END)
         self.label_image_selector.set_justify(Gtk.Justification.RIGHT)
@@ -2636,6 +2639,9 @@ class DialogCover(CommonWindow):
 
         self.file_image_selector.set_hexpand(True)
 
+        self.image_reset.set_from_icon_name(
+            Icons.Symbolic.Clear, Gtk.IconSize.BUTTON)
+
         # ------------------------------------
         #   Image preview
         # ------------------------------------
@@ -2652,9 +2658,12 @@ class DialogCover(CommonWindow):
         #   Integrate widgets
         # ------------------------------------
 
+        self.button_reset.add(self.image_reset)
+
         self.grid_content.attach(self.label_image_selector, 0, 0, 1, 1)
         self.grid_content.attach(self.file_image_selector, 1, 0, 1, 1)
-        self.grid_content.attach(self.image_preview, 0, 1, 2, 1)
+        self.grid_content.attach(self.button_reset, 2, 0, 1, 1)
+        self.grid_content.attach(self.image_preview, 0, 2, 2, 1)
 
         self.pack_start(self.grid_content)
 
@@ -2665,12 +2674,14 @@ class DialogCover(CommonWindow):
 
         self.file_image_selector.connect("file-set", self.__update_preview)
 
+        self.button_reset.connect("clicked", self.__on_reset_cover)
+
 
     def __start_interface(self):
         """ Load data and start interface
         """
 
-        self.add_button(_("Reset"), Gtk.ResponseType.REJECT)
+        self.add_button(_("Cancel"), Gtk.ResponseType.CANCEL)
         self.add_button(_("Accept"), Gtk.ResponseType.APPLY, Gtk.Align.END)
 
         if self.game.cover is not None and exists(self.game.cover):
@@ -2707,7 +2718,14 @@ class DialogCover(CommonWindow):
                     Pixbuf.new_from_file_at_scale(path, -1, 236, True))
 
         except:
-            self.file_image_selector.unselect_all()
+            self.__on_reset_cover()
 
-            self.image_preview.set_from_icon_name(
-                Icons.Missing, Gtk.IconSize.DND)
+
+    def __on_reset_cover(self, *args):
+        """ Reset cover filechooser
+        """
+
+        self.file_image_selector.unselect_all()
+
+        self.image_preview.set_from_icon_name(
+            Icons.Missing, Gtk.IconSize.DND)

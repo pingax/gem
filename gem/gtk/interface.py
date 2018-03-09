@@ -5063,18 +5063,14 @@ class Interface(Gtk.ApplicationWindow):
             if response == Gtk.ResponseType.APPLY:
                 path = dialog.file_image_selector.get_filename()
 
-                if path is not None and exists(path) and not path == game.cover:
+                # Avoid to update the database with same contents
+                if not path == game.cover:
+
+                    # Reset cover for current game
+                    if path is None:
+                        path = str()
+
                     game.cover = path
-
-                    # Update game from database
-                    self.api.update_game(game)
-
-                    self.set_informations()
-
-            elif response == Gtk.ResponseType.REJECT:
-
-                if game.cover is not None:
-                    game.cover = None
 
                     # Update game from database
                     self.api.update_game(game)
