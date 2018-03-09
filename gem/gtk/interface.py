@@ -763,7 +763,7 @@ class Interface(Gtk.ApplicationWindow):
         #   Toolbar - Consoles
         # ------------------------------------
 
-        self.button_consoles = ListBoxSelector()
+        self.button_consoles = ListBoxSelector(use_static_size=True)
 
         self.entry_consoles = self.button_consoles.get_entry()
         self.listbox_consoles = self.button_consoles.get_listbox()

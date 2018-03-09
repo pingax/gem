@@ -797,11 +797,26 @@ class DialogHelp(CommonWindow):
 
 class ListBoxSelector(Gtk.MenuButton):
 
-    def __init__(self):
+    def __init__(self, size=256, use_static_size=False):
         """ Constructor
+
+        Parameters
+        ----------
+        size : int, optional
+            Widget size request in pixels (Default: 256)
+        use_static_size : bool, optional
+            Set widget static size mode (Default: False)
         """
 
         Gtk.MenuButton.__init__(self)
+
+        # ------------------------------------
+        #   Initialize variables
+        # ------------------------------------
+
+        self.size = size
+
+        self.use_static_size = use_static_size
 
         # ------------------------------------
         #   Prepare interface
@@ -821,7 +836,9 @@ class ListBoxSelector(Gtk.MenuButton):
         """ Initialize interface widgets
         """
 
-        self.set_size_request(256, -1)
+        if self.use_static_size:
+            self.set_size_request(self.size, -1)
+
         self.set_use_popover(True)
 
         # ------------------------------------
@@ -855,6 +872,9 @@ class ListBoxSelector(Gtk.MenuButton):
         self.image_selector_icon.set_valign(Gtk.Align.CENTER)
         self.image_selector_status.set_halign(Gtk.Align.CENTER)
         self.image_selector_status.set_valign(Gtk.Align.CENTER)
+
+        if self.use_static_size:
+            self.label_selector_name.set_ellipsize(Pango.EllipsizeMode.END)
 
         # ------------------------------------
         #   Popover
