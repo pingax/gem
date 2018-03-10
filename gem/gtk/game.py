@@ -44,6 +44,7 @@ from threading import Thread
 try:
     from gi.repository.GObject import GObject
     from gi.repository.GObject import SIGNAL_RUN_LAST
+    from gi.repository.GObject import SIGNAL_RUN_FIRST
 
 except ImportError as error:
     sys_exit("Import error with python3-gobject module: %s" % str(error))
@@ -78,6 +79,7 @@ textdomain("gem")
 class GameThread(Thread, GObject):
 
     __gsignals__ = {
+        "game-started": (SIGNAL_RUN_FIRST, None, [object]),
         "game-terminate": (SIGNAL_RUN_LAST, None, [object]),
     }
 
@@ -101,9 +103,9 @@ class GameThread(Thread, GObject):
         Thread.__init__(self)
         GObject.__init__(self)
 
-        # ----------------------------
-        #   Variables
-        # ----------------------------
+        # ------------------------------------
+        #   Initialize variables
+        # ------------------------------------
 
         self.parent = parent
         self.logger = parent.logger
@@ -117,9 +119,9 @@ class GameThread(Thread, GObject):
         self.delta = None
         self.error = False
 
-        # ----------------------------
+        # ------------------------------------
         #   Generate data
-        # ----------------------------
+        # ------------------------------------
 
         self.path = parent.api.get_local(game.log)
 
@@ -131,6 +133,9 @@ class GameThread(Thread, GObject):
         When it finish, GameThread emit a signal to main interface.
         """
 
+        # Call game-started signal on main window
+        self.parent.emit("game-started", self.game)
+
         started = datetime.now()
 
         self.logger.info(_("Launch %s") % self.game.name)
@@ -138,9 +143,9 @@ class GameThread(Thread, GObject):
         try:
             self.logger.debug("Command: %s" % ' '.join(self.command))
 
-            # ----------------------------
+            # ------------------------------------
             #   Check environment
-            # ----------------------------
+            # ------------------------------------
 
             # Get a copy of current environment
             environment = environ.copy()
@@ -149,9 +154,9 @@ class GameThread(Thread, GObject):
             for key, value in self.game.environment.items():
                 environment[key] = value
 
-            # ----------------------------
+            # ------------------------------------
             #   Start process
-            # ----------------------------
+            # ------------------------------------
 
             self.logger.info(_("Log to %s") % self.path)
 
@@ -171,9 +176,9 @@ class GameThread(Thread, GObject):
 
             self.proc.terminate()
 
-            # ----------------------------
+            # ------------------------------------
             #   Play time
-            # ----------------------------
+            # ------------------------------------
 
             self.delta = (datetime.now() - started)
 

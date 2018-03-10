@@ -87,6 +87,7 @@ try:
     from gi.repository.GObject import GObject
     from gi.repository.GObject import MainLoop
     from gi.repository.GObject import SIGNAL_RUN_LAST
+    from gi.repository.GObject import SIGNAL_RUN_FIRST
 
     from gi.repository.GdkPixbuf import Pixbuf
     from gi.repository.GdkPixbuf import InterpType
@@ -136,6 +137,7 @@ textdomain("gem")
 class Interface(Gtk.ApplicationWindow):
 
     __gsignals__ = {
+        "game-started": (SIGNAL_RUN_FIRST, None, [object]),
         "game-terminate": (SIGNAL_RUN_LAST, None, [object]),
     }
 
@@ -362,6 +364,7 @@ class Interface(Gtk.ApplicationWindow):
         self.grid_menu_actions = Gtk.Box()
 
         self.grid_gem_log = Gtk.Box()
+        self.grid_gem_addon = Gtk.Box()
 
         # Properties
         self.grid.set_orientation(Gtk.Orientation.VERTICAL)
@@ -439,6 +442,9 @@ class Interface(Gtk.ApplicationWindow):
         self.grid_gem_log.set_spacing(12)
         self.grid_gem_log.set_orientation(Gtk.Orientation.HORIZONTAL)
 
+        self.grid_gem_addon.set_spacing(12)
+        self.grid_gem_addon.set_orientation(Gtk.Orientation.HORIZONTAL)
+
         # ------------------------------------
         #   Headerbar
         # ------------------------------------
@@ -489,6 +495,10 @@ class Interface(Gtk.ApplicationWindow):
         self.menu_label_gem_log = Gtk.Label()
         self.menu_item_gem_log = Gtk.Button()
 
+        self.menu_image_gem_addon = Gtk.Image()
+        self.menu_label_gem_addon = Gtk.Label()
+        self.menu_item_gem_addon = Gtk.Button()
+
         self.menu_label_dark_theme = Gtk.Label()
         self.menu_item_dark_theme = Gtk.Switch()
 
@@ -517,8 +527,17 @@ class Interface(Gtk.ApplicationWindow):
         self.menu_label_gem_log.set_label(_("Output log"))
         self.menu_label_gem_log.set_halign(Gtk.Align.START)
 
-        self.menu_item_gem_log.set_margin_top(12)
+        self.menu_item_gem_log.set_margin_top(6)
         self.menu_item_gem_log.set_relief(Gtk.ReliefStyle.NONE)
+
+        self.menu_image_gem_addon.set_halign(Gtk.Align.CENTER)
+        self.menu_image_gem_addon.set_valign(Gtk.Align.CENTER)
+
+        self.menu_label_gem_addon.set_label(_("Addons"))
+        self.menu_label_gem_addon.set_halign(Gtk.Align.START)
+
+        self.menu_item_gem_addon.set_margin_top(12)
+        self.menu_item_gem_addon.set_relief(Gtk.ReliefStyle.NONE)
 
         self.menu_label_dark_theme.set_margin_top(12)
         self.menu_label_dark_theme.set_label(_("Dark theme"))
@@ -1344,13 +1363,14 @@ class Interface(Gtk.ApplicationWindow):
         self.popover_menu.add(self.grid_menu)
 
         self.grid_menu.attach(self.grid_menu_actions, 0, 1, 2, 1)
-        self.grid_menu.attach(self.menu_item_gem_log, 0, 2, 2, 1)
-        self.grid_menu.attach(self.menu_label_dark_theme, 0, 3, 1, 1)
-        self.grid_menu.attach(self.menu_item_dark_theme, 1, 3, 1, 1)
-        self.grid_menu.attach(self.menu_label_sidebar, 0, 4, 1, 1)
-        self.grid_menu.attach(self.menu_item_sidebar, 1, 4, 1, 1)
-        self.grid_menu.attach(self.menu_label_statusbar, 0, 5, 1, 1)
-        self.grid_menu.attach(self.menu_item_statusbar, 1, 5, 1, 1)
+        self.grid_menu.attach(self.menu_item_gem_addon, 0, 2, 2, 1)
+        self.grid_menu.attach(self.menu_item_gem_log, 0, 3, 2, 1)
+        self.grid_menu.attach(self.menu_label_dark_theme, 0, 4, 1, 1)
+        self.grid_menu.attach(self.menu_item_dark_theme, 1, 4, 1, 1)
+        self.grid_menu.attach(self.menu_label_sidebar, 0, 5, 1, 1)
+        self.grid_menu.attach(self.menu_item_sidebar, 1, 5, 1, 1)
+        self.grid_menu.attach(self.menu_label_statusbar, 0, 6, 1, 1)
+        self.grid_menu.attach(self.menu_item_statusbar, 1, 6, 1, 1)
 
         self.grid_menu_actions.pack_start(
             self.menu_item_preferences, True, True, 0)
@@ -1363,6 +1383,13 @@ class Interface(Gtk.ApplicationWindow):
         self.grid_gem_log.pack_start(self.menu_label_gem_log, True, True, 0)
 
         self.menu_item_gem_log.add(self.grid_gem_log)
+
+        self.grid_gem_addon.pack_start(
+            self.menu_image_gem_addon, False, False, 0)
+        self.grid_gem_addon.pack_start(
+            self.menu_label_gem_addon, True, True, 0)
+
+        self.menu_item_gem_addon.add(self.grid_gem_addon)
 
         # Menu
         self.menubar.insert(self.menubar_item_main, -1)
@@ -1622,6 +1649,7 @@ class Interface(Gtk.ApplicationWindow):
         """ Initialize widgets signals
         """
 
+        self.connect("game-started", self.__on_game_started)
         self.connect("game-terminate", self.__on_game_terminate)
 
         # ------------------------------------
@@ -1906,7 +1934,7 @@ class Interface(Gtk.ApplicationWindow):
             dialog.destroy()
 
             # Disable welcome message for next launch
-            self.config.modify("gem", "welcome", 0)
+            self.config.modify("gem", "welcome", False)
             self.config.update()
 
         # Set default filters flag
@@ -2035,6 +2063,8 @@ class Interface(Gtk.ApplicationWindow):
                 Icons.Symbolic.Quit, self.toolbar_sizes[icon_size])
             self.menu_image_gem_log.set_from_icon_name(
                 Icons.Symbolic.Terminal, self.toolbar_sizes[icon_size])
+            self.menu_image_gem_addon.set_from_icon_name(
+                Icons.Symbolic.Addon, self.toolbar_sizes[icon_size])
 
             self.toolbar.set_icon_size(self.toolbar_sizes[icon_size])
 
@@ -4319,6 +4349,20 @@ class Interface(Gtk.ApplicationWindow):
                     return True
 
         return False
+
+
+    def __on_game_started(self, widget, game):
+        """ Started the game processus
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        game : gem.api.Game
+            Game object
+        """
+
+        pass
 
 
     def __on_game_terminate(self, widget, thread):

@@ -96,6 +96,7 @@ class Icons:
     ZoomOut     = "zoom-out"
     # Applications
     Editor      = "accessories-text-editor"
+    Addon       = "application-x-addon" # Not standard
     Keyboard    = "preferences-desktop-keyboard"
     Terminal    = "utilities-terminal"
     Monitor     = "utilities-system-monitor"
