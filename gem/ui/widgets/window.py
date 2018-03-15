@@ -214,7 +214,7 @@ class CommonWindow(object):
             Object which receive signal
         """
 
-        dialog = DialogHelp(
+        dialog = HelpDialog(
             self.parent, _("Help"), '\n\n'.join(self.help_data), Icons.Help)
 
         dialog.set_size(640, 480)
@@ -663,7 +663,7 @@ class CommonWindow(object):
         self.window.response(response)
 
 
-class DialogHelp(CommonWindow):
+class HelpDialog(CommonWindow):
 
     def __init__(self, parent, title, message, icon):
         """ Constructor

@@ -20,6 +20,9 @@ from gem.ui.data import *
 
 from gem.ui.widgets.window import CommonWindow
 
+# Translation
+from gettext import gettext as _
+
 # ------------------------------------------------------------------------------
 #   Class
 # ------------------------------------------------------------------------------
@@ -65,6 +68,9 @@ class MessageDialog(CommonWindow):
         # Init widgets
         self.__init_widgets()
 
+        # Start interface
+        self.__start_interface()
+
 
     def __init_widgets(self):
         """ Initialize interface widgets
@@ -97,3 +103,10 @@ class MessageDialog(CommonWindow):
         # ------------------------------------
 
         self.pack_start(text, False, False)
+
+
+    def __start_interface(self):
+        """ Load data and start interface
+        """
+
+        self.add_button(_("Close"), Gtk.ResponseType.CLOSE, Gtk.Align.END)

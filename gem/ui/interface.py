@@ -5106,8 +5106,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     with open(path_join(Folders.Apps, name), 'w') as pipe:
                         pipe.write(content)
 
-                    self.set_message(
-                        _("Generate menu entry for %s") % game.name,
+                    self.set_message(_("Generate menu entry"),
                         _("%s was generated successfully")  % name,
                         Icons.Information)
 
