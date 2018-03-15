@@ -14,37 +14,23 @@
 #  MA 02110-1301, USA.
 # ------------------------------------------------------------------------------
 
-# ------------------------------------------------------------------------------
-#   Modules
-# ------------------------------------------------------------------------------
+# GEM
+from gem.engine.api import *
+from gem.engine.utils import *
+from gem.engine.lib.configuration import Configuration
 
-# Date
-from datetime import date
-from datetime import time
-from datetime import datetime
-from datetime import timedelta
+from gem.ui import *
+from gem.ui.data import *
+from gem.ui.utils import *
 
-# Filesystem
-from os import W_OK
-from os import mkdir
-from os import access
-from os import remove
+from gem.ui.widgets.game import GameThread
+from gem.ui.widgets.widgets import ListBoxPopover
+from gem.ui.widgets.widgets import ListBoxSelector
+from gem.ui.widgets.widgets import ListBoxSelectorCheck
 
-from os.path import exists
-from os.path import dirname
-from os.path import getctime
-from os.path import splitext
-from os.path import basename
-from os.path import expanduser
-from os.path import join as path_join
+from gem.ui.dialog import *
 
-from glob import glob
-from shutil import copy2 as copy
-
-# Processus
-from subprocess import PIPE
-from subprocess import Popen
-from subprocess import STDOUT
+from gem.ui.preferences.interface import PreferencesWindow
 
 # Random
 from random import randint
@@ -54,87 +40,22 @@ from re import match
 from re import IGNORECASE
 
 # System
-from sys import exit as sys_exit
-from time import sleep
 from shlex import split as shlex_split
 from shutil import move as rename
 from platform import system
 
-# Threading
-from threading import Thread
+# Translation
+from gettext import gettext as _
 
 # URL
 from urllib.parse import urlparse
 from urllib.request import url2pathname
 
 # ------------------------------------------------------------------------------
-#   Modules - Interface
-# ------------------------------------------------------------------------------
-
-try:
-    from gi import require_version
-
-    require_version("Gtk", "3.0")
-
-    from gi.repository import Gtk
-    from gi.repository import Gdk
-
-    from gi.repository.Gdk import EventType
-
-    from gi.repository.GLib import idle_add
-    from gi.repository.GLib import source_remove
-
-    from gi.repository.GObject import GObject
-    from gi.repository.GObject import MainLoop
-    from gi.repository.GObject import SIGNAL_RUN_LAST
-    from gi.repository.GObject import SIGNAL_RUN_FIRST
-
-    from gi.repository.GdkPixbuf import Pixbuf
-    from gi.repository.GdkPixbuf import InterpType
-    from gi.repository.GdkPixbuf import Colorspace
-
-except ImportError as error:
-    sys_exit("Import error with python3-gobject module: %s" % str(error))
-
-# ------------------------------------------------------------------------------
-#   Modules - GEM
-# ------------------------------------------------------------------------------
-
-try:
-    from gem.utils import *
-    from gem.configuration import Configuration
-
-    from gem.api import GEM
-    from gem.api import Game
-    from gem.api import Console
-    from gem.api import Emulator
-
-    from gem.gtk import *
-    from gem.gtk.game import GameThread
-    from gem.gtk.widgets import ListBoxSelector
-    from gem.gtk.windows import *
-    from gem.gtk.mednafen import DialogMednafenMemory
-    from gem.gtk.preferences import Preferences
-
-except ImportError as error:
-    sys_exit("Import error with gem module: %s" % str(error))
-
-# ------------------------------------------------------------------------------
-#   Modules - Translation
-# ------------------------------------------------------------------------------
-
-from gettext import gettext as _
-from gettext import textdomain
-from gettext import bindtextdomain
-
-bindtextdomain("gem", get_data("i18n"))
-textdomain("gem")
-
-# ------------------------------------------------------------------------------
 #   Class
 # ------------------------------------------------------------------------------
 
-class Interface(Gtk.ApplicationWindow):
+class MainWindow(Gtk.ApplicationWindow):
 
     __gsignals__ = {
         "game-started": (SIGNAL_RUN_FIRST, None, [object]),
@@ -146,17 +67,17 @@ class Interface(Gtk.ApplicationWindow):
 
         Parameters
         ----------
-        api : gem.api.GEM
+        api : gem.engine.api.GEM
             GEM API instance
 
         Raises
         ------
         TypeError
-            if api type is not gem.api.GEM
+            if api type is not gem.engine.api.GEM
         """
 
         if not type(api) is GEM:
-            raise TypeError("Wrong type for api, expected gem.api.GEM")
+            raise TypeError("Wrong type for api, expected gem.engine.api.GEM")
 
         Gtk.ApplicationWindow.__init__(self)
 
@@ -364,7 +285,6 @@ class Interface(Gtk.ApplicationWindow):
         self.grid_menu_actions = Gtk.Box()
 
         self.grid_gem_log = Gtk.Box()
-        self.grid_gem_addon = Gtk.Box()
 
         # Properties
         self.grid.set_orientation(Gtk.Orientation.VERTICAL)
@@ -442,9 +362,6 @@ class Interface(Gtk.ApplicationWindow):
         self.grid_gem_log.set_spacing(12)
         self.grid_gem_log.set_orientation(Gtk.Orientation.HORIZONTAL)
 
-        self.grid_gem_addon.set_spacing(12)
-        self.grid_gem_addon.set_orientation(Gtk.Orientation.HORIZONTAL)
-
         # ------------------------------------
         #   Headerbar
         # ------------------------------------
@@ -455,6 +372,9 @@ class Interface(Gtk.ApplicationWindow):
 
         self.headerbar_image_menu = Gtk.Image()
         self.headerbar_item_menu = Gtk.MenuButton()
+
+        self.headerbar_image_addon = Gtk.Image()
+        self.headerbar_item_addon = Gtk.MenuButton()
 
         self.headerbar_image_fullscreen = Gtk.Image()
         self.headerbar_item_fullscreen = Gtk.ToggleButton()
@@ -472,6 +392,7 @@ class Interface(Gtk.ApplicationWindow):
             "suggested-action")
 
         self.headerbar_item_menu.set_use_popover(True)
+        self.headerbar_item_addon.set_use_popover(True)
 
         self.headerbar_item_fullscreen.set_tooltip_text(
             _("Alternate game fullscreen mode"))
@@ -494,10 +415,6 @@ class Interface(Gtk.ApplicationWindow):
         self.menu_image_gem_log = Gtk.Image()
         self.menu_label_gem_log = Gtk.Label()
         self.menu_item_gem_log = Gtk.Button()
-
-        self.menu_image_gem_addon = Gtk.Image()
-        self.menu_label_gem_addon = Gtk.Label()
-        self.menu_item_gem_addon = Gtk.Button()
 
         self.menu_label_dark_theme = Gtk.Label()
         self.menu_item_dark_theme = Gtk.Switch()
@@ -530,15 +447,6 @@ class Interface(Gtk.ApplicationWindow):
         self.menu_item_gem_log.set_margin_top(6)
         self.menu_item_gem_log.set_relief(Gtk.ReliefStyle.NONE)
 
-        self.menu_image_gem_addon.set_halign(Gtk.Align.CENTER)
-        self.menu_image_gem_addon.set_valign(Gtk.Align.CENTER)
-
-        self.menu_label_gem_addon.set_label(_("Addons"))
-        self.menu_label_gem_addon.set_halign(Gtk.Align.START)
-
-        self.menu_item_gem_addon.set_margin_top(12)
-        self.menu_item_gem_addon.set_relief(Gtk.ReliefStyle.NONE)
-
         self.menu_label_dark_theme.set_margin_top(12)
         self.menu_label_dark_theme.set_label(_("Dark theme"))
         self.menu_label_dark_theme.set_halign(Gtk.Align.END)
@@ -562,6 +470,12 @@ class Interface(Gtk.ApplicationWindow):
         self.menu_label_statusbar.get_style_context().add_class("dim-label")
 
         self.menu_item_statusbar.set_margin_top(12)
+
+        # ------------------------------------
+        #   Headerbar - Addon
+        # ------------------------------------
+
+        self.popover_addon = ListBoxPopover()
 
         # ------------------------------------
         #   Menubar
@@ -1351,19 +1265,22 @@ class Interface(Gtk.ApplicationWindow):
 
         # Headerbar
         self.headerbar.pack_end(self.headerbar_item_menu)
+        self.headerbar.pack_end(self.headerbar_item_addon)
+        self.headerbar.pack_end(Gtk.Separator())
         self.headerbar.pack_end(self.headerbar_item_fullscreen)
 
         self.toolbar_item_parameters.add(self.toolbar_image_parameters)
         self.headerbar_item_fullscreen.add(self.headerbar_image_fullscreen)
         self.headerbar_item_menu.add(self.headerbar_image_menu)
+        self.headerbar_item_addon.add(self.headerbar_image_addon)
 
         # Headerbar menu
         self.headerbar_item_menu.set_popover(self.popover_menu)
+        self.headerbar_item_addon.set_popover(self.popover_addon)
 
         self.popover_menu.add(self.grid_menu)
 
         self.grid_menu.attach(self.grid_menu_actions, 0, 1, 2, 1)
-        self.grid_menu.attach(self.menu_item_gem_addon, 0, 2, 2, 1)
         self.grid_menu.attach(self.menu_item_gem_log, 0, 3, 2, 1)
         self.grid_menu.attach(self.menu_label_dark_theme, 0, 4, 1, 1)
         self.grid_menu.attach(self.menu_item_dark_theme, 1, 4, 1, 1)
@@ -1383,13 +1300,6 @@ class Interface(Gtk.ApplicationWindow):
         self.grid_gem_log.pack_start(self.menu_label_gem_log, True, True, 0)
 
         self.menu_item_gem_log.add(self.grid_gem_log)
-
-        self.grid_gem_addon.pack_start(
-            self.menu_image_gem_addon, False, False, 0)
-        self.grid_gem_addon.pack_start(
-            self.menu_label_gem_addon, True, True, 0)
-
-        self.menu_item_gem_addon.add(self.grid_gem_addon)
 
         # Menu
         self.menubar.insert(self.menubar_item_main, -1)
@@ -1923,10 +1833,10 @@ class Interface(Gtk.ApplicationWindow):
                 self.button_consoles.select_row(
                     list(self.consoles_iter.values())[0])
 
-            dialog = Message(self, _("Welcome !"), _("Welcome and thanks for "
-                "choosing GEM as emulators manager. Start using GEM by "
-                "droping some roms into interface.\n\nEnjoy and have fun :D"),
-                Icons.SmileBig, False)
+            dialog = MessageDialog(self, _("Welcome !"),
+                _("Welcome and thanks for choosing GEM as emulators manager. "
+                "Start using GEM by droping some roms into interface.\n\n"
+                "Enjoy and have fun :D"), Icons.SmileBig, False)
 
             dialog.set_size(500, -1)
 
@@ -2052,6 +1962,8 @@ class Interface(Gtk.ApplicationWindow):
             not self.toolbar_sizes[icon_size] == self.toolbar.get_icon_size():
             self.headerbar_image_menu.set_from_icon_name(
                 Icons.Symbolic.Menu, self.toolbar_sizes[icon_size])
+            self.headerbar_image_addon.set_from_icon_name(
+                Icons.Symbolic.Addon, self.toolbar_sizes[icon_size])
             self.headerbar_image_fullscreen.set_from_icon_name(
                 Icons.Symbolic.Restore, self.toolbar_sizes[icon_size])
 
@@ -2063,8 +1975,6 @@ class Interface(Gtk.ApplicationWindow):
                 Icons.Symbolic.Quit, self.toolbar_sizes[icon_size])
             self.menu_image_gem_log.set_from_icon_name(
                 Icons.Symbolic.Terminal, self.toolbar_sizes[icon_size])
-            self.menu_image_gem_addon.set_from_icon_name(
-                Icons.Symbolic.Addon, self.toolbar_sizes[icon_size])
 
             self.toolbar.set_icon_size(self.toolbar_sizes[icon_size])
 
@@ -2789,7 +2699,7 @@ class Interface(Gtk.ApplicationWindow):
             self.keys.append(event.keyval)
 
             if self.keys == konami_code:
-                dialog = Message(self, "Someone wrote the KONAMI CODE !",
+                dialog = MessageDialog(self, "Someone wrote the KONAMI CODE !",
                     "Nice catch ! You have discover an easter-egg ! But, this "
                     "kind of code is usefull in a game, not in an emulators "
                     "manager !", Icons.Monkey)
@@ -2992,7 +2902,7 @@ class Interface(Gtk.ApplicationWindow):
 
         Parameters
         ----------
-        game : gem.api.Game
+        game : gem.engine.api.Game
             Game object
         console : gem.api.Console
             Console object
@@ -3088,7 +2998,7 @@ class Interface(Gtk.ApplicationWindow):
             self.logger.info(message)
 
         if popup:
-            dialog = Message(self, title, message, icon)
+            dialog = MessageDialog(self, title, message, icon)
 
             dialog.run()
             dialog.destroy()
@@ -3222,7 +3132,7 @@ class Interface(Gtk.ApplicationWindow):
                     except ValueError as error:
                         size = (800, 600)
 
-                    dialog = DialogViewer(self, title, size, sorted(results))
+                    dialog = ViewerDialog(self, title, size, sorted(results))
                     dialog.run()
 
                     self.config.modify(
@@ -3272,7 +3182,7 @@ class Interface(Gtk.ApplicationWindow):
 
         self.set_sensitive(False)
 
-        dialog = Preferences(self.api, self)
+        dialog = PreferencesWindow(self.api, self)
 
         if dialog.run() == Gtk.ResponseType.APPLY:
             dialog.save_configuration()
@@ -3305,7 +3215,7 @@ class Interface(Gtk.ApplicationWindow):
 
             self.set_sensitive(False)
 
-            dialog = DialogEditor(
+            dialog = EditorDialog(
                 self, _("GEM"), expanduser(path), size, False, Icons.Terminal)
 
             dialog.run()
@@ -3339,7 +3249,7 @@ class Interface(Gtk.ApplicationWindow):
                 except ValueError as error:
                     size = (800, 600)
 
-                dialog = DialogEditor(self,
+                dialog = EditorDialog(self,
                     game.name, expanduser(path), size, icon=Icons.Document)
 
                 # Allow to launch games with open notes
@@ -3370,7 +3280,7 @@ class Interface(Gtk.ApplicationWindow):
             Dialog object
         response : Gtk.ResponseType
             Dialog object user response
-        dialog : gem.windows.DialogEditor
+        dialog : gem.windows.EditorDialog
             Dialog editor object
         title : str
             Dialog title, it's game name by default
@@ -3424,7 +3334,7 @@ class Interface(Gtk.ApplicationWindow):
 
                     self.set_sensitive(False)
 
-                    dialog = DialogEditor(self, _("Edit %s configuration") % (
+                    dialog = EditorDialog(self, _("Edit %s configuration") % (
                         emulator.name), expanduser(path), size)
 
                     if dialog.run() == Gtk.ResponseType.APPLY:
@@ -3711,13 +3621,13 @@ class Interface(Gtk.ApplicationWindow):
 
         Parameters
         ----------
-        console : gem.api.Console
+        console : gem.engine.api.Console
             Console object
 
         Raises
         ------
         TypeError
-            if console type is not gem.api.Console
+            if console type is not gem.engine.api.Console
 
         Notes
         -----
@@ -3725,7 +3635,8 @@ class Interface(Gtk.ApplicationWindow):
         """
 
         if type(console) is not Console:
-            raise TypeError("Wrong type for console, expected gem.api.Console")
+            raise TypeError(
+                "Wrong type for console, expected gem.engine.api.Console")
 
         iteration = int()
 
@@ -4358,7 +4269,7 @@ class Interface(Gtk.ApplicationWindow):
         ----------
         widget : Gtk.Widget
             Object which receive signal
-        game : gem.api.Game
+        game : gem.engine.api.Game
             Game object
         """
 
@@ -4561,7 +4472,7 @@ class Interface(Gtk.ApplicationWindow):
 
             self.set_sensitive(False)
 
-            dialog = Question(self, _("Reset game"),
+            dialog = QuestionDialog(self, _("Reset game"),
                 _("Would you really want to reset this game informations ?"))
 
             if dialog.run() == Gtk.ResponseType.YES:
@@ -4620,7 +4531,7 @@ class Interface(Gtk.ApplicationWindow):
 
                 self.set_sensitive(False)
 
-                dialog = DialogRemove(self, game)
+                dialog = DeleteDialog(self, game)
 
                 if dialog.run() == Gtk.ResponseType.YES:
                     file_to_remove.append(game.filepath)
@@ -4717,7 +4628,7 @@ class Interface(Gtk.ApplicationWindow):
 
             self.set_sensitive(False)
 
-            dialog = DialogParameters(self, game, emulator)
+            dialog = ParametersDialog(self, game, emulator)
 
             if dialog.run() == Gtk.ResponseType.APPLY:
                 self.logger.info(
@@ -4829,7 +4740,7 @@ class Interface(Gtk.ApplicationWindow):
 
             self.set_sensitive(False)
 
-            dialog = DialogEditor(
+            dialog = EditorDialog(
                 self, game.name, expanduser(path), size, False, Icons.Terminal)
 
             dialog.run()
@@ -4879,7 +4790,7 @@ class Interface(Gtk.ApplicationWindow):
 
                 self.set_sensitive(False)
 
-                dialog = DialogMednafenMemory(self, game.name, content)
+                dialog = MednafenDialog(self, game.name, content)
 
                 if dialog.run() == Gtk.ResponseType.APPLY:
                     data = list()
@@ -5100,7 +5011,7 @@ class Interface(Gtk.ApplicationWindow):
         if game is not None:
             self.set_sensitive(False)
 
-            dialog = DialogCover(self, game)
+            dialog = CoverDialog(self, game)
 
             response = dialog.run()
 
@@ -5479,15 +5390,11 @@ class Interface(Gtk.ApplicationWindow):
                     if not keep_console:
 
                         consoles_list = list()
-                        for console in self.api.consoles:
-                            console = self.api.get_console(console)
+                        for console in self.api.get_consoles():
+                            extensions = console.extensions
 
-                            if console is not None:
-                                extensions = console.extensions
-
-                                if extensions is not None and \
-                                    ext[1:] in extensions:
-                                    consoles_list.append(console)
+                            if extensions is not None and ext[1:] in extensions:
+                                consoles_list.append(console)
 
                         console = None
 
@@ -5497,7 +5404,7 @@ class Interface(Gtk.ApplicationWindow):
                             if len(consoles_list) > 1:
                                 self.set_sensitive(False)
 
-                                dialog = DialogConsoles(self, basename(path),
+                                dialog = DnDConsoleDialog(self, basename(path),
                                     consoles_list, previous_console)
 
                                 if dialog.run() == Gtk.ResponseType.APPLY:
@@ -5532,7 +5439,7 @@ class Interface(Gtk.ApplicationWindow):
 
                     # Check if this game already exists in roms folder
                     if exists(path_join(rom_path, basename(path))):
-                        dialog = Question(self, basename(path),
+                        dialog = QuestionDialog(self, basename(path),
                             _("This rom already exists in %s. Do you want to "
                             "replace it ?") % rom_path)
 
@@ -5722,223 +5629,3 @@ class Interface(Gtk.ApplicationWindow):
         """
 
         idle_add(GObject.emit, self, *args)
-
-
-class Splash(Gtk.Window):
-
-    def __init__(self, api):
-        """ Constructor
-
-        Parameters
-        ----------
-        api : gem.api.GEM
-            GEM API instance
-
-        Raises
-        ------
-        TypeError
-            if api type is not gem.api.GEM
-        """
-
-        if not type(api) is GEM:
-            raise TypeError("Wrong type for api, expected gem.api.GEM")
-
-        Gtk.Window.__init__(self)
-
-        # ------------------------------------
-        #   Initialize variables
-        # ------------------------------------
-
-        # Set rows number for progressbar
-        self.length = int()
-
-        self.main_loop = None
-
-        # ------------------------------------
-        #   Initialize API
-        # ------------------------------------
-
-        # GEM API
-        self.api = api
-
-        # Quick access to API logger
-        self.logger = api.logger
-
-        # ------------------------------------
-        #   Initialize icons
-        # ------------------------------------
-
-        # Get user icon theme
-        self.icons_theme = Gtk.IconTheme.get_default()
-
-        self.icons_theme.append_search_path(get_data(path_join("icons", "ui")))
-
-        # ------------------------------------
-        #   Prepare interface
-        # ------------------------------------
-
-        # Init widgets
-        self.__init_widgets()
-
-        # Init packing
-        self.__init_packing()
-
-        # Start interface
-        self.__start_interface()
-
-
-    def __init_widgets (self):
-        """ Load widgets into main interface
-        """
-
-        # ------------------------------------
-        #   Main window
-        # ------------------------------------
-
-        self.set_title("Graphical Emulators Manager")
-
-        self.set_modal(True)
-        self.set_can_focus(True)
-        self.set_resizable(False)
-        self.set_keep_above(True)
-        self.set_skip_taskbar_hint(True)
-        self.set_type_hint(Gdk.WindowTypeHint.SPLASHSCREEN)
-
-        self.set_position(Gtk.WindowPosition.CENTER)
-
-        # ------------------------------------
-        #   Grid
-        # ------------------------------------
-
-        self.grid = Gtk.Box()
-
-        # Properties
-        self.grid.set_spacing(4)
-        self.grid.set_border_width(16)
-        self.grid.set_homogeneous(False)
-        self.grid.set_orientation(Gtk.Orientation.VERTICAL)
-
-        # ------------------------------------
-        #   Logo
-        # ------------------------------------
-
-        self.label_splash = Gtk.Label()
-        self.image_splash = Gtk.Image()
-
-        # Properties
-        self.label_splash.set_line_wrap(True)
-        self.label_splash.set_use_markup(True)
-        self.label_splash.set_line_wrap_mode(Pango.WrapMode.WORD)
-        self.label_splash.set_markup(
-            "<span weight='bold' size='x-large'>%s - %s</span>\n<i>%s</i>" % (
-            GEM.Name, GEM.Version, GEM.CodeName))
-
-        self.image_splash.set_from_icon_name(GEM.Icon, Gtk.IconSize.DND)
-        self.image_splash.set_pixel_size(256)
-
-        # ------------------------------------
-        #   Progressbar
-        # ------------------------------------
-
-        self.label_progress = Gtk.Label()
-
-        self.progressbar = Gtk.ProgressBar()
-
-        # Properties
-        self.label_progress.set_text(_("Migrating entries from old database"))
-        self.label_progress.set_line_wrap_mode(Pango.WrapMode.WORD)
-        self.label_progress.set_line_wrap(True)
-
-        self.progressbar.set_show_text(True)
-
-
-    def __init_packing(self):
-        """ Initialize widgets packing in main window
-        """
-
-        self.grid.pack_start(self.image_splash, True, True, 0)
-        self.grid.pack_start(self.label_splash, False, False, 8)
-        self.grid.pack_start(self.label_progress, False, False, 8)
-        self.grid.pack_start(self.progressbar, False, False, 0)
-
-        self.add(self.grid)
-
-
-    def __start_interface(self):
-        """ Load data and start interface
-        """
-
-        self.show_all()
-
-        self.label_progress.hide()
-        self.progressbar.hide()
-
-        self.refresh()
-
-        # ------------------------------------
-        #   Check migration
-        # ------------------------------------
-
-        idle_add(self.api.check_database, self)
-
-        # ------------------------------------
-        #   Main loop
-        # ------------------------------------
-
-        self.main_loop = MainLoop()
-        self.main_loop.run()
-
-
-    def close(self):
-        """ Stop interface
-        """
-
-        # Sleep to avoid ultra quick splash
-        sleep(0.42)
-
-        # Rare case where the mainloop is not init when close() is running
-        if self.main_loop is not None:
-            self.main_loop.quit()
-
-        self.destroy()
-
-
-    def init(self, length):
-        """ Initialize progressbar
-
-        Parameters
-        ----------
-        length : int
-            Progression max iterations number
-        """
-
-        self.length = length
-
-        self.label_progress.show()
-        self.progressbar.show()
-
-
-    def update(self, index):
-        """ Update progress in progressbar widgets
-
-        Parameters
-        ----------
-        index : int
-            Current progession index step
-        """
-
-        self.refresh()
-
-        if index <= self.length:
-            self.progressbar.set_text("%d / %d" % (index, self.length))
-            self.progressbar.set_fraction(float(index) / (self.length))
-
-            self.refresh()
-
-
-    def refresh(self):
-        """ Refresh all pendings event in main interface
-        """
-
-        while Gtk.events_pending():
-            Gtk.main_iteration()

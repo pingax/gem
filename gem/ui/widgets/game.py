@@ -14,63 +14,14 @@
 #  MA 02110-1301, USA.
 # ------------------------------------------------------------------------------
 
-# ------------------------------------------------------------------------------
-#   Modules
-# ------------------------------------------------------------------------------
+# GEM
+from gem.ui import *
+from gem.engine import *
+from gem.engine.api import GEM
+from gem.engine.utils import *
 
-# Datetime
-from datetime import datetime
-
-# Filesystem
-from os import environ
-from os.path import expanduser
-from os.path import join as path_join
-
-# Processus
-from subprocess import PIPE
-from subprocess import Popen
-from subprocess import STDOUT
-
-# System
-from sys import exit as sys_exit
-
-# Threading
-from threading import Thread
-
-# ------------------------------------------------------------------------------
-#   Modules - Interface
-# ------------------------------------------------------------------------------
-
-try:
-    from gi.repository.GObject import GObject
-    from gi.repository.GObject import SIGNAL_RUN_LAST
-    from gi.repository.GObject import SIGNAL_RUN_FIRST
-
-except ImportError as error:
-    sys_exit("Import error with python3-gobject module: %s" % str(error))
-
-# ------------------------------------------------------------------------------
-#   Modules - GEM
-# ------------------------------------------------------------------------------
-
-try:
-    from gem.api import GEM
-
-    from gem.utils import *
-
-except ImportError as error:
-    sys_exit("Import error with gem module: %s" % str(error))
-
-# ------------------------------------------------------------------------------
-#   Modules - Translation
-# ------------------------------------------------------------------------------
-
+# Translation
 from gettext import gettext as _
-from gettext import textdomain
-from gettext import bindtextdomain
-
-bindtextdomain("gem", get_data("i18n"))
-textdomain("gem")
 
 # ------------------------------------------------------------------------------
 #   Class

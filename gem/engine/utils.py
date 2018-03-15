@@ -18,23 +18,14 @@
 #   Modules
 # ------------------------------------------------------------------------------
 
-# Datetime
-from datetime import date
-from datetime import datetime
-from datetime import timedelta
-
-# Filesystem
-from os.path import exists
-from os.path import basename
-from os.path import expanduser
-from os.path import join as path_join
+# GEM
+from gem.engine import *
 
 # Regex
 from re import sub
 
-# System
-from os import environ
-from sys import exit as sys_exit
+# Translation
+from gettext import gettext as _
 
 # ------------------------------------------------------------------------------
 #   Modules - Packages
@@ -46,14 +37,6 @@ try:
 
 except ImportError as error:
     sys_exit("Import error with python3-setuptools module: %s" % str(error))
-
-# ------------------------------------------------------------------------------
-#   Modules - Translation
-# ------------------------------------------------------------------------------
-
-from gettext import gettext as _
-from gettext import textdomain
-from gettext import bindtextdomain
 
 # ------------------------------------------------------------------------------
 #   Methods

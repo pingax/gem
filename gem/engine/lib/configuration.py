@@ -18,10 +18,10 @@
 #   Modules
 # ------------------------------------------------------------------------------
 
-# System
-from os.path import exists
-from os.path import expanduser
+# GEM
+from gem.engine.lib import *
 
+# System
 from sys import version_info
 
 # Configuration

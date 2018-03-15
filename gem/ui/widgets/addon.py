@@ -14,31 +14,12 @@
 #  MA 02110-1301, USA.
 # ------------------------------------------------------------------------------
 
-# ------------------------------------------------------------------------------
-#   Modules
-# ------------------------------------------------------------------------------
-
-# Filesystem
-from os.path import exists
-from os.path import dirname
-from os.path import join as path_join
-
-# Logging
-import logging
+# GEM
+from gem.engine import *
+from gem.engine.lib.configuration import Configuration
 
 # System
 from sys import modules
-from sys import exit as sys_exit
-
-# ------------------------------------------------------------------------------
-#   Modules - GEM
-# ------------------------------------------------------------------------------
-
-try:
-    from gem.configuration import Configuration
-
-except ImportError as error:
-    sys_exit("Import error with gem module: %s" % str(error))
 
 # ------------------------------------------------------------------------------
 #   Class

@@ -14,59 +14,21 @@
 #  MA 02110-1301, USA.
 # ------------------------------------------------------------------------------
 
-# ------------------------------------------------------------------------------
-#   Modules
-# ------------------------------------------------------------------------------
+# GEM
+from gem.ui import *
+from gem.ui.data import *
+from gem.ui.utils import *
 
-# System
-from sys import exit as sys_exit
+from gem.ui.widgets.window import CommonWindow
 
-# ------------------------------------------------------------------------------
-#   Modules - Interface
-# ------------------------------------------------------------------------------
-
-try:
-    from gi import require_version
-
-    require_version("Gtk", "3.0")
-
-    from gi.repository import Gtk
-    from gi.repository import Gdk
-    from gi.repository import Pango
-
-except ImportError as error:
-    sys_exit("Import error with python3-gobject module: %s" % str(error))
-
-# ------------------------------------------------------------------------------
-#   Modules - GEM
-# ------------------------------------------------------------------------------
-
-try:
-    from gem.utils import *
-
-    from gem.gtk import *
-    from gem.gtk.windows import CommonWindow
-    from gem.gtk.windows import Question
-
-except ImportError as error:
-    sys_exit("Import error with gem module: %s" % str(error))
-
-# ------------------------------------------------------------------------------
-#   Modules - Translation
-# ------------------------------------------------------------------------------
-
+# Translation
 from gettext import gettext as _
-from gettext import textdomain
-from gettext import bindtextdomain
-
-bindtextdomain("gem", get_data("i18n"))
-textdomain("gem")
 
 # ------------------------------------------------------------------------------
 #   Class
 # ------------------------------------------------------------------------------
 
-class DialogMednafenMemory(CommonWindow):
+class MednafenDialog(CommonWindow):
 
     def __init__(self, parent, name, data):
         """ Constructor

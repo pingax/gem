@@ -14,41 +14,25 @@
 #  MA 02110-1301, USA.
 # ------------------------------------------------------------------------------
 
-# ------------------------------------------------------------------------------
-#   Modules
-# ------------------------------------------------------------------------------
-
 # Collections
 from collections import OrderedDict
 
-# Datetime
-from datetime import time
-from datetime import date
-from datetime import timedelta
+# GEM
+from gem.engine import *
 
-# Filesystem
-from os import mkdir
-from os import makedirs
+from gem.engine.utils import get_data
+from gem.engine.utils import parse_timedelta
+from gem.engine.utils import get_binary_path
+from gem.engine.utils import generate_extension
+from gem.engine.utils import generate_identifier
 
-from os.path import isdir
-from os.path import exists
-from os.path import dirname
-from os.path import basename
-from os.path import splitext
-from os.path import expanduser
-from os.path import join as path_join
-
-from glob import glob
-from copy import deepcopy
-from shutil import move
-from shutil import copy2 as copy
+from gem.engine.lib.database import Database
+from gem.engine.lib.configuration import Configuration
 
 # Logging
-import logging
 from logging.config import fileConfig
 
 # System
-from sys import exit as sys_exit
 from shlex import split as shlex_split
 
 # ------------------------------------------------------------------------------
@@ -71,22 +55,6 @@ except ImportError as error:
         xdg_config_home = environ["XDG_CONFIG_HOME"]
     else:
         xdg_config_home = expanduser("~/.config")
-
-# ------------------------------------------------------------------------------
-#   Modules - GEM
-# ------------------------------------------------------------------------------
-
-try:
-    from gem.utils import get_data
-    from gem.utils import parse_timedelta
-    from gem.utils import get_binary_path
-    from gem.utils import generate_extension
-    from gem.utils import generate_identifier
-    from gem.database import Database
-    from gem.configuration import Configuration
-
-except ImportError as error:
-    sys_exit("Cannot find gem module: %s" % str(error))
 
 # ------------------------------------------------------------------------------
 #   Class
@@ -905,7 +873,7 @@ class GEM(object):
 
         Returns
         -------
-        gem.api.Console or None
+        gem.engine.api.Console or None
             Found console
 
         Examples
@@ -913,7 +881,7 @@ class GEM(object):
         >>> g = GEM()
         >>> g.init()
         >>> g.get_console("nintendo-nes")
-        <gem.api.Console object at 0x7f174a986b00>
+        <gem.engine.api.Console object at 0x7f174a986b00>
         """
 
         if console is not None and len(console) > 0:
@@ -1051,7 +1019,7 @@ class GEM(object):
 
         Returns
         -------
-        gem.api.Game or None
+        gem.engine.api.Game or None
             Game object
 
         Raises
@@ -1064,7 +1032,7 @@ class GEM(object):
         >>> g = GEM()
         >>> g.init()
         >>> g.get_game("nintendo-nes", "gremlins-2-the-new-batch-usa")
-        <gem.api.Game object at 0x7f174a986f60>
+        <gem.engine.api.Game object at 0x7f174a986f60>
         """
 
         if not console in self.__data["consoles"]:
@@ -1100,7 +1068,7 @@ class GEM(object):
 
         Parameters
         ----------
-        game : gem.api.Game
+        game : gem.engine.api.Game
             Game object
 
         Returns
@@ -1111,11 +1079,11 @@ class GEM(object):
         Raises
         ------
         TypeError
-            if game type is not gem.api.Game
+            if game type is not gem.engine.api.Game
         """
 
         if type(game) is not Game:
-            raise TypeError("Wrong type for game, expected gem.api.Game")
+            raise TypeError("Wrong type for game, expected gem.engine.api.Game")
 
         # Store game data
         name, data = game.as_dict()
@@ -1160,7 +1128,7 @@ class GEM(object):
 
         Parameters
         ----------
-        game : gem.api.Game
+        game : gem.engine.api.Game
             Game object
 
         Raises
@@ -1170,7 +1138,7 @@ class GEM(object):
         """
 
         if type(game) is not Game:
-            raise TypeError("Wrong type for game, expected gem.api.Game")
+            raise TypeError("Wrong type for game, expected gem.engine.api.Game")
 
         results = self.database.get("games", { "filename": game.path[1] })
 
@@ -1284,7 +1252,7 @@ class Emulator(GEMObject):
         ----------
         key : str
             Game content path
-        game : gem.api.Game
+        game : gem.engine.api.Game
             Game object
 
         Returns
@@ -1295,11 +1263,11 @@ class Emulator(GEMObject):
         Raises
         ------
         TypeError
-            if game type is not gem.api.Game
+            if game type is not gem.engine.api.Game
         """
 
         if type(game) is not Game:
-            raise TypeError("Wrong type for game, expected gem.api.Game")
+            raise TypeError("Wrong type for game, expected gem.engine.api.Game")
 
         if key is not None:
             if "<rom_path>" in key:
@@ -1325,12 +1293,12 @@ class Emulator(GEMObject):
 
         Parameters
         ----------
-        game : gem.api.Game
+        game : gem.engine.api.Game
             Game object
 
         See Also
         --------
-        gem.api.Emulator.__get_content()
+        gem.engine.api.Emulator.__get_content()
         """
 
         return self.__get_content(self.screenshots, game)
@@ -1341,12 +1309,12 @@ class Emulator(GEMObject):
 
         Parameters
         ----------
-        game : gem.api.Game
+        game : gem.engine.api.Game
             Game object
 
         See Also
         --------
-        gem.api.Emulator.__get_content()
+        gem.engine.api.Emulator.__get_content()
         """
 
         return self.__get_content(self.savestates, game)
@@ -1357,7 +1325,7 @@ class Emulator(GEMObject):
 
         Parameters
         ----------
-        game : gem.api.Game
+        game : gem.engine.api.Game
             Game object
         fullscreen : bool, optional
             Use fullscreen parameters (Default: False)
@@ -1370,11 +1338,11 @@ class Emulator(GEMObject):
         Raises
         ------
         TypeError
-            if game type is not gem.api.Game
+            if game type is not gem.engine.api.Game
         """
 
         if type(game) is not Game:
-            raise TypeError("Wrong type for game, expected gem.api.Game")
+            raise TypeError("Wrong type for game, expected gem.engine.api.Game")
 
         # ----------------------------
         #   Check emulator binary
@@ -1520,7 +1488,7 @@ class Console(GEMObject):
 
         Parameters
         ----------
-        parent : gem.api.GEM
+        parent : gem.engine.api.GEM
             GEM API object
 
         Raises
@@ -1706,7 +1674,7 @@ class Console(GEMObject):
 
         Returns
         -------
-        gem.api.Game or None
+        gem.engine.api.Game or None
             Game object
 
         Examples
@@ -1714,7 +1682,7 @@ class Console(GEMObject):
         >>> g = GEM()
         >>> g.init()
         >>> g.get_console("nintendo-nes").get_game("metroid-usa")
-        <gem.api.Game object at 0x7f174a98e828>
+        <gem.engine.api.Game object at 0x7f174a98e828>
         """
 
         if identifier in self.games.keys():

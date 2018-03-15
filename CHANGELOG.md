@@ -17,6 +17,7 @@
 * Add a color to filter button when some filters are active
 * Allow to drag the sidebar image to another application
 * Restore GTK+ menuitem behavior to main and game menus
+* Fix wrong object set during drag and drop process
 
 ## Version 0.9.1 - Lavos (17 Feb, 2018)
 

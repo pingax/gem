@@ -21,22 +21,13 @@
 # Database
 import sqlite3
 
-# Filesystem
-from os.path import exists
-from os.path import expanduser
+# GEM
+from gem.engine.lib import *
+
+from gem.engine.lib.configuration import Configuration
 
 # Logging
 from logging import Logger
-
-# ------------------------------------------------------------------------------
-#   Modules - GEM
-# ------------------------------------------------------------------------------
-
-try:
-    from gem.configuration import Configuration
-
-except ImportError as error:
-    sys_exit("Import error with gem module: %s" % str(error))
 
 # ------------------------------------------------------------------------------
 #   Class

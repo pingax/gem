@@ -14,51 +14,14 @@
 #  MA 02110-1301, USA.
 # ------------------------------------------------------------------------------
 
-# ------------------------------------------------------------------------------
-#   Modules - System
-# ------------------------------------------------------------------------------
+# GEM
+from gem.engine import *
 
-# Filesystem
-from os import mkdir
-from os import getpid
-from os import remove
-from os import environ
-from os import makedirs
-
-from os.path import isfile
-from os.path import exists
-from os.path import basename
-from os.path import join as path_join
-
-from glob import glob
-from shutil import copy2 as copy
+from gem.engine.api import GEM
+from gem.engine.utils import get_data
 
 # System
-from sys import exit as sys_exit
 from argparse import ArgumentParser
-
-# ------------------------------------------------------------------------------
-#   Modules - GEM
-# ------------------------------------------------------------------------------
-
-try:
-    from gem.utils import get_data
-
-    from gem.api import GEM
-
-except ImportError as error:
-    sys_exit("Import error with gem module: %s" % str(error))
-
-# ------------------------------------------------------------------------------
-#   Modules - Translation
-# ------------------------------------------------------------------------------
-
-from gettext import gettext as _
-from gettext import textdomain
-from gettext import bindtextdomain
-
-bindtextdomain("gem", get_data("i18n"))
-textdomain("gem")
 
 # ------------------------------------------------------------------------------
 #   Launcher
@@ -131,7 +94,7 @@ def main():
 
                 # Check if lock process is gem
                 if "gem.main" in content or "gem-ui" in content:
-                    sys_exit(_("GEM is already running with PID %s") % gem_pid)
+                    sys_exit("GEM is already running with PID %s" % gem_pid)
 
     # ------------------------------------
     #   Launch interface
@@ -152,6 +115,8 @@ def main():
         # ------------------------------------
 
         if args.gtk_ui or args.gtk_config:
+            bindtextdomain("gem", get_data("i18n"))
+            textdomain("gem")
 
             # Check display settings
             if "DISPLAY" in environ and len(environ["DISPLAY"]) > 0:
@@ -194,18 +159,18 @@ def main():
                 # ------------------------------------
 
                 # Start splash
-                from gem.gtk.interface import Splash
+                from gem.ui.splash import Splash
                 Splash(gem)
 
                 # Start preferences
                 if args.gtk_config:
-                    from gem.gtk.preferences import Preferences
-                    Preferences(gem).run()
+                    from gem.ui.preferences.interface import PreferencesWindow
+                    PreferencesWindow(gem).run()
 
                 # Start interface
                 elif args.gtk_ui:
-                    from gem.gtk.interface import Interface
-                    Interface(gem)
+                    from gem.ui.interface import MainWindow
+                    MainWindow(gem)
 
                 # ------------------------------------
                 #   Remove lock
@@ -218,15 +183,15 @@ def main():
                 gem.logger.critical(_("Cannot launch GEM without display"))
 
     except ImportError as error:
-        gem.logger.exception(_("Cannot import modules: %s") % str(error))
+        gem.logger.exception("Cannot import modules: %s" % str(error))
         return True
 
     except KeyboardInterrupt as error:
-        gem.logger.warning(_("Terminate by keyboard interrupt"))
+        gem.logger.warning("Terminate by keyboard interrupt")
         return True
 
     except Exception as error:
-        gem.logger.exception(_("An error occur during exec: %s") % str(error))
+        gem.logger.exception("An error occur during exec: %s") % str(error)
         return True
 
     return False

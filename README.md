@@ -64,6 +64,9 @@ arguments:
 $ python3 -m gem --config ~/.config/gem --local ~/.local/gem
 ```
 
+Note: GEM not create the specified folders by default. This behavior is
+available with the --create-folders argument.
+
 ## Installation
 
 An installation script is available to help you to install GEM. You just need to
