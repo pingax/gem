@@ -102,7 +102,7 @@ class MessageDialog(CommonWindow):
         #   Integrate widgets
         # ------------------------------------
 
-        self.pack_start(text, False, False)
+        self.pack_start(text, True, True)
 
 
     def __start_interface(self):

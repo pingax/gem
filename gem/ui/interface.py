@@ -4537,6 +4537,16 @@ class MainWindow(Gtk.ApplicationWindow):
                     file_to_remove.append(game.filepath)
 
                     # ----------------------------
+                    #   Desktop file
+                    # ----------------------------
+
+                    if dialog.check_desktop.get_active():
+
+                        if self.check_desktop(game.filename):
+                            file_to_remove.append(path_join(
+                                Folders.Apps, "%s.desktop" % game.filename))
+
+                    # ----------------------------
                     #   Database
                     # ----------------------------
 
@@ -4565,10 +4575,12 @@ class MainWindow(Gtk.ApplicationWindow):
                     # ----------------------------
 
                     for element in file_to_remove:
-                        self.logger.info(
-                            _("%s has been deleted from disk") % element)
 
-                        remove(element)
+                        if exists(element):
+                            self.logger.info(
+                                _("%s has been deleted from disk") % element)
+
+                            remove(element)
 
                     need_to_reload = True
 

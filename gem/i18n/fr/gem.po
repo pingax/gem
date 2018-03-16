@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.6\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2018-02-23 09:33+0100\n"
+"PO-Revision-Date: 2018-03-16 18:01+0100\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -154,6 +154,12 @@ msgid "Add"
 msgstr "Ajouter"
 
 #
+# File: gem/ui/preferences/console.py, line: 338
+# File: gem/ui/preferences/emulator.py, line: 337
+msgid "Advanced mode"
+msgstr "Mode avancé"
+
+#
 # File: gem/interface.py, line: 290
 msgid "Alternate game fullscreen mode"
 msgstr "Alterner le mode plein écran pour le jeu"
@@ -162,12 +168,6 @@ msgstr "Alterner le mode plein écran pour le jeu"
 # File: gem/interface.py, line: 300
 msgid "Alternative emulator"
 msgstr "Émulateur alternatif"
-
-#
-# File: gem/main.py, line: 139
-#, python-format
-msgid "An error occur during exec: %s"
-msgstr "Une erreur est survenue durant l'exécution du programme: %s"
 
 #
 # File: gem/interface.py, line: 2112
@@ -273,12 +273,6 @@ msgstr "Impossible de trouver <b>%s</b>"
 #, python-format
 msgid "Cannot find emulator for %s"
 msgstr "Impossible de trouver l'émulateur pour %s"
-
-#
-# File: gem/interface.py, line: 1097
-#, python-format
-msgid "Cannot import modules: %s"
-msgstr "Impossible d'importer les modules: %s"
 
 #
 # File: gem/main.py, line: 240
@@ -554,12 +548,6 @@ msgid "GEM"
 msgstr "GEM"
 
 #
-# File: gem/main.py, line: 148
-#, python-format
-msgid "GEM is already running with PID %s"
-msgstr "GEM est déjà en cours de fonctionnement avec le PID %s"
-
-#
 # File: gem/preferences.py, line: 113
 msgid "Game"
 msgstr "Jeu"
@@ -603,6 +591,11 @@ msgstr "Générer un fichier de sauvegarde"
 # File: gem/preferences.py, line: 633
 msgid "Generate desktop entry for a game"
 msgstr "Générer une entrée de menu pour un jeu"
+
+#
+# File: gem/interface.py, line: 400
+msgid "Generate menu entry"
+msgstr "Générer une entrée de menu"
 
 #
 # File: gem/interface.py, line: 477
@@ -934,6 +927,11 @@ msgstr "Supprimer un jeu du disque"
 
 #
 # File: src/window.py, line: 446
+msgid "Remove desktop file"
+msgstr "Supprimer le fichier de menu"
+
+#
+# File: src/window.py, line: 446
 msgid "Remove game save files"
 msgstr "Supprimer les fichiers de sauvegarde"
 
@@ -957,11 +955,6 @@ msgstr "Renomme %(old)s en %(new)s"
 # File: src/window.py, line: 451
 msgid "Rename a game"
 msgstr "Renommer un jeu"
-
-#
-# File: src/window.py, line: 451
-msgid "Reset"
-msgstr "Effacer"
 
 #
 # File: gem/gtk/interface.py, line: 802

@@ -153,6 +153,12 @@ msgid "Add"
 msgstr "Añadir"
 
 #
+# File: gem/ui/preferences/console.py, line: 338
+# File: gem/ui/preferences/emulator.py, line: 337
+msgid "Advanced mode"
+msgstr ""
+
+#
 # File: gem/interface.py, line: 451
 msgid "Alternate game fullscreen mode"
 msgstr "Alternar el modo pantalla completa del juego"
@@ -162,12 +168,6 @@ msgstr "Alternar el modo pantalla completa del juego"
 #, fuzzy
 msgid "Alternative emulator"
 msgstr "Establecer el emulador por defecto"
-
-#
-# File: gem/main.py, line: 132
-#, fuzzy, python-format
-msgid "An error occur during exec: %s"
-msgstr "Un error ha ocurrido durante la ejecución del programa: %s"
 
 #
 # File: gem/interface.py, line: 2112
@@ -274,12 +274,6 @@ msgstr "¡No puedo encontrar el visor <b>%s</b>!"
 # File: gem/interface.py, line: 1347
 #, python-format
 msgid "Cannot find emulator for %s"
-msgstr "No puedo encontrar el emulador para %s"
-
-#
-# File: gem/interface.py, line: 1347
-#, fuzzy, python-format
-msgid "Cannot import modules: %s"
 msgstr "No puedo encontrar el emulador para %s"
 
 #
@@ -568,12 +562,6 @@ msgid "GEM"
 msgstr "GEM"
 
 #
-# File: gem/main.py, line: 148
-#, python-format
-msgid "GEM is already running with PID %s"
-msgstr "GEM ya está ejecutandose con el PID %s"
-
-#
 # File: gem/preferences.py, line: 113
 msgid "Game"
 msgstr "Juego"
@@ -620,6 +608,12 @@ msgstr "Generar una copia de seguridad del archivo de memoria"
 # File: gem/preferences.py, line: 90
 msgid "Generate desktop entry for a game"
 msgstr "Crear un acceso directo en el escritorio para un juego"
+
+#
+# File: gem/interface.py, line: 460
+#, fuzzy
+msgid "Generate menu entry"
+msgstr "_Generar una entrada de menú"
 
 #
 # File: gem/interface.py, line: 460
@@ -966,6 +960,12 @@ msgstr "Borrar un juego del disco"
 
 #
 # File: gem/interface.py, line: 776
+#, fuzzy
+msgid "Remove desktop file"
+msgstr "Borrar partidas guardadas del juego"
+
+#
+# File: gem/interface.py, line: 776
 msgid "Remove game save files"
 msgstr "Borrar partidas guardadas del juego"
 
@@ -988,12 +988,6 @@ msgstr "Renombrar %(old)s en %(new)s"
 #
 # File: gem/preferences.py, line: 86
 msgid "Rename a game"
-msgstr "Renombrar un juego"
-
-#
-# File: gem/preferences.py, line: 86
-#, fuzzy
-msgid "Reset"
 msgstr "Renombrar un juego"
 
 #
@@ -1609,6 +1603,18 @@ msgstr "agradecimientos a los traductores"
 #~ msgstr "Activar el modo pantalla completa del juego"
 
 #
+# File: gem/main.py, line: 132
+#, fuzzy
+#~ msgid "An error occur during exec: %s"
+#~ msgstr "Un error ha ocurrido durante la ejecución del programa: %s"
+
+#
+# File: gem/interface.py, line: 1347
+#, fuzzy
+#~ msgid "Cannot import modules: %s"
+#~ msgstr "No puedo encontrar el emulador para %s"
+
+#
 # File: gem/interface.py, line: 396
 # File: gem/interface.py, line: 756
 # File: gem/interface.py, line: 1667
@@ -1620,6 +1626,11 @@ msgstr "agradecimientos a los traductores"
 #, fuzzy
 #~ msgid "Filter..."
 #~ msgstr "Filtro"
+
+#
+# File: gem/main.py, line: 148
+#~ msgid "GEM is already running with PID %s"
+#~ msgstr "GEM ya está ejecutandose con el PID %s"
 
 #
 # File: gem/interface.py, line: 381
@@ -1639,6 +1650,12 @@ msgstr "agradecimientos a los traductores"
 # File: gem/interface.py, line: 746
 #~ msgid "Mark as _multiplayer"
 #~ msgstr "Marcar como _mutijugador"
+
+#
+# File: gem/preferences.py, line: 86
+#, fuzzy
+#~ msgid "Reset"
+#~ msgstr "Renombrar un juego"
 
 #
 # File: gem/interface.py, line: 527

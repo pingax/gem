@@ -73,6 +73,16 @@ class DeleteDialog(CommonWindow):
         self.set_spacing(6)
 
         # ------------------------------------
+        #   Grid
+        # ------------------------------------
+
+        self.grid_switch = Gtk.Grid()
+
+        # Properties
+        self.grid_switch.set_column_spacing(12)
+        self.grid_switch.set_row_spacing(6)
+
+        # ------------------------------------
         #   Description
         # ------------------------------------
 
@@ -98,30 +108,53 @@ class DeleteDialog(CommonWindow):
         #   Options
         # ------------------------------------
 
-        self.check_database = Gtk.CheckButton()
+        self.label_database = Gtk.Label()
+        self.check_database = Gtk.Switch()
 
-        self.check_save_state = Gtk.CheckButton()
+        self.label_desktop = Gtk.Label()
+        self.check_desktop = Gtk.Switch()
 
-        self.check_screenshots = Gtk.CheckButton()
+        self.label_save_state = Gtk.Label()
+        self.check_save_state = Gtk.Switch()
+
+        self.label_screenshots = Gtk.Label()
+        self.check_screenshots = Gtk.Switch()
 
         # Properties
-        self.check_database.set_margin_top(6)
-        self.check_database.set_label(_("Remove game's data from database"))
+        self.label_database.set_margin_top(12)
+        self.label_database.set_halign(Gtk.Align.START)
+        self.label_database.set_label(_("Remove game's data from database"))
+        self.check_database.set_margin_top(12)
 
-        self.check_save_state.set_margin_top(6)
-        self.check_save_state.set_label(_("Remove game save files"))
+        self.label_desktop.set_margin_top(12)
+        self.label_desktop.set_halign(Gtk.Align.START)
+        self.label_desktop.set_label(_("Remove desktop file"))
+        self.check_desktop.set_margin_top(12)
 
-        self.check_screenshots.set_label(_("Remove game screenshots"))
+        self.label_save_state.set_margin_top(12)
+        self.label_save_state.set_halign(Gtk.Align.START)
+        self.label_save_state.set_label(_("Remove game save files"))
+        self.check_save_state.set_margin_top(12)
+
+        self.label_screenshots.set_halign(Gtk.Align.START)
+        self.label_screenshots.set_label(_("Remove game screenshots"))
 
         # ------------------------------------
         #   Integrate widgets
         # ------------------------------------
 
+        self.grid_switch.attach(self.check_database, 0, 1, 1, 1)
+        self.grid_switch.attach(self.label_database, 1, 1, 1, 1)
+        self.grid_switch.attach(self.check_desktop, 0, 2, 1, 1)
+        self.grid_switch.attach(self.label_desktop, 1, 2, 1, 1)
+        self.grid_switch.attach(self.check_save_state, 0, 3, 1, 1)
+        self.grid_switch.attach(self.label_save_state, 1, 3, 1, 1)
+        self.grid_switch.attach(self.check_screenshots, 0, 4, 1, 1)
+        self.grid_switch.attach(self.label_screenshots, 1, 4, 1, 1)
+
         self.pack_start(label, False, True)
         self.pack_start(label_game, False, True)
-        self.pack_start(self.check_database, False, True)
-        self.pack_start(self.check_save_state, False, True)
-        self.pack_start(self.check_screenshots, False, True)
+        self.pack_start(self.grid_switch, True, True)
 
 
     def __start_interface(self):
@@ -132,3 +165,4 @@ class DeleteDialog(CommonWindow):
         self.add_button(_("Yes"), Gtk.ResponseType.YES, Gtk.Align.END)
 
         self.check_database.set_active(True)
+        self.check_desktop.set_active(True)
