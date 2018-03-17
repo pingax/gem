@@ -376,6 +376,9 @@ class MainWindow(Gtk.ApplicationWindow):
         self.headerbar_image_addon = Gtk.Image()
         self.headerbar_item_addon = Gtk.MenuButton()
 
+        self.headerbar_image_preferences = Gtk.Image()
+        self.headerbar_item_preferences = Gtk.Button()
+
         self.headerbar_image_fullscreen = Gtk.Image()
         self.headerbar_item_fullscreen = Gtk.ToggleButton()
 
@@ -391,8 +394,16 @@ class MainWindow(Gtk.ApplicationWindow):
         self.headerbar_item_launch.get_style_context().add_class(
             "suggested-action")
 
+        self.headerbar_item_menu.set_tooltip_text(_("Main menu"))
         self.headerbar_item_menu.set_use_popover(True)
+
+        self.headerbar_item_addon.set_tooltip_text(_("Addons"))
         self.headerbar_item_addon.set_use_popover(True)
+
+        self.headerbar_item_preferences.set_tooltip_text(_("Preferences"))
+        self.headerbar_item_preferences.set_image(
+            self.headerbar_image_preferences)
+        self.headerbar_item_preferences.set_use_underline(True)
 
         self.headerbar_item_fullscreen.set_tooltip_text(
             _("Alternate game fullscreen mode"))
@@ -403,9 +414,6 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Headerbar - Main menu
         # ------------------------------------
 
-        self.menu_image_preferences = Gtk.Image()
-        self.menu_item_preferences = Gtk.Button()
-
         self.menu_image_about = Gtk.Image()
         self.menu_item_about = Gtk.Button()
 
@@ -413,7 +421,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menu_item_quit = Gtk.Button()
 
         self.menu_image_gem_log = Gtk.Image()
-        self.menu_label_gem_log = Gtk.Label()
         self.menu_item_gem_log = Gtk.Button()
 
         self.menu_label_dark_theme = Gtk.Label()
@@ -426,9 +433,9 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menu_item_statusbar = Gtk.Switch()
 
         # Properties
-        self.menu_item_preferences.set_tooltip_text(_("Preferences"))
-        self.menu_item_preferences.set_image(self.menu_image_preferences)
-        self.menu_item_preferences.set_use_underline(True)
+        self.menu_item_gem_log.set_tooltip_text(_("Output log"))
+        self.menu_item_gem_log.set_image(self.menu_image_gem_log)
+        self.menu_item_gem_log.set_use_underline(True)
 
         self.menu_item_about.set_tooltip_text(_("About"))
         self.menu_item_about.set_image(self.menu_image_about)
@@ -437,15 +444,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menu_item_quit.set_tooltip_text(_("Quit"))
         self.menu_item_quit.set_image(self.menu_image_quit)
         self.menu_item_quit.set_use_underline(True)
-
-        self.menu_image_gem_log.set_halign(Gtk.Align.CENTER)
-        self.menu_image_gem_log.set_valign(Gtk.Align.CENTER)
-
-        self.menu_label_gem_log.set_label(_("Output log"))
-        self.menu_label_gem_log.set_halign(Gtk.Align.START)
-
-        self.menu_item_gem_log.set_margin_top(6)
-        self.menu_item_gem_log.set_relief(Gtk.ReliefStyle.NONE)
 
         self.menu_label_dark_theme.set_margin_top(12)
         self.menu_label_dark_theme.set_label(_("Dark theme"))
@@ -1265,6 +1263,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Headerbar
         self.headerbar.pack_end(self.headerbar_item_menu)
+        self.headerbar.pack_end(self.headerbar_item_preferences)
         self.headerbar.pack_end(self.headerbar_item_addon)
         self.headerbar.pack_end(Gtk.Separator())
         self.headerbar.pack_end(self.headerbar_item_fullscreen)
@@ -1281,7 +1280,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.popover_menu.add(self.grid_menu)
 
         self.grid_menu.attach(self.grid_menu_actions, 0, 1, 2, 1)
-        self.grid_menu.attach(self.menu_item_gem_log, 0, 3, 2, 1)
         self.grid_menu.attach(self.menu_label_dark_theme, 0, 4, 1, 1)
         self.grid_menu.attach(self.menu_item_dark_theme, 1, 4, 1, 1)
         self.grid_menu.attach(self.menu_label_sidebar, 0, 5, 1, 1)
@@ -1290,16 +1288,11 @@ class MainWindow(Gtk.ApplicationWindow):
         self.grid_menu.attach(self.menu_item_statusbar, 1, 6, 1, 1)
 
         self.grid_menu_actions.pack_start(
-            self.menu_item_preferences, True, True, 0)
+            self.menu_item_gem_log, True, True, 0)
         self.grid_menu_actions.pack_start(
             self.menu_item_about, True, True, 0)
         self.grid_menu_actions.pack_start(
             self.menu_item_quit, True, True, 0)
-
-        self.grid_gem_log.pack_start(self.menu_image_gem_log, False, False, 0)
-        self.grid_gem_log.pack_start(self.menu_label_gem_log, True, True, 0)
-
-        self.menu_item_gem_log.add(self.grid_gem_log)
 
         # Menu
         self.menubar.insert(self.menubar_item_main, -1)
@@ -1718,7 +1711,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menu_item_mednafen.connect(
             "activate", self.__on_game_backup_memory)
 
-        self.menu_item_preferences.connect(
+        self.headerbar_item_preferences.connect(
             "clicked", self.__on_show_preferences)
         self.menu_item_gem_log.connect(
             "clicked", self.__on_show_log)
@@ -1966,9 +1959,9 @@ class MainWindow(Gtk.ApplicationWindow):
                 Icons.Symbolic.Addon, self.toolbar_sizes[icon_size])
             self.headerbar_image_fullscreen.set_from_icon_name(
                 Icons.Symbolic.Restore, self.toolbar_sizes[icon_size])
-
-            self.menu_image_preferences.set_from_icon_name(
+            self.headerbar_image_preferences.set_from_icon_name(
                 Icons.Symbolic.System, self.toolbar_sizes[icon_size])
+
             self.menu_image_about.set_from_icon_name(
                 Icons.Symbolic.About, self.toolbar_sizes[icon_size])
             self.menu_image_quit.set_from_icon_name(
@@ -2632,7 +2625,7 @@ class MainWindow(Gtk.ApplicationWindow):
             {
                 "path": "<GEM>/preferences",
                 "widgets": [
-                    self.menu_item_preferences,
+                    self.headerbar_item_preferences,
                     self.menubar_main_item_preferences
                 ],
                 "keys": self.config.item("keys", "preferences", "<Control>P"),
@@ -4387,7 +4380,7 @@ class MainWindow(Gtk.ApplicationWindow):
             del self.threads[game.filename]
 
         if len(self.threads) == 0:
-            self.menu_item_preferences.set_sensitive(True)
+            self.headerbar_item_preferences.set_sensitive(True)
             self.menubar_main_item_preferences.set_sensitive(True)
 
 

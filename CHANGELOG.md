@@ -6,6 +6,7 @@
 
 * Add cover field to game database
 * Add rating field to game database
+* Add favorite field to console object
 * Add GEM.get_game_tags function to API
 * Allow to set specific configuration paths in constructor parameters
 
@@ -14,7 +15,9 @@
 * Add the statusbar for default theme and rewrite his contents
 * Add a tags selector to game properties dialog
 * Add more informations into game sidebar
+* Add some tooltips for date labels in game sidebar
 * Add a color to filter button when some filters are active
+* Add to remove the desktop file when removing a game
 * Allow to drag the sidebar image to another application
 * Restore GTK+ menuitem behavior to main and game menus
 * Fix wrong object set during drag and drop process

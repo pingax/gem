@@ -153,6 +153,11 @@ msgid "Add"
 msgstr "Añadir"
 
 #
+# File: gem/ui/interface.py, line: 400
+msgid "Addons"
+msgstr ""
+
+#
 # File: gem/ui/preferences/console.py, line: 338
 # File: gem/ui/preferences/emulator.py, line: 337
 msgid "Advanced mode"
@@ -485,6 +490,11 @@ msgid "Environment"
 msgstr ""
 
 #
+# File: gem/ui/preferences/interface.py, line: 581
+msgid "Executable"
+msgstr ""
+
+#
 # File: gem/preferences.py, line: 1342
 #, fuzzy
 msgid "Extensions"
@@ -632,14 +642,19 @@ msgid "Help"
 msgstr "Ayuda"
 
 #
-# File: gem/gtk/preferences.py, line: 489
-msgid "Hide empty consoles"
+# File: gem/ui/preferences/interface.py, line: 462
+msgid "Hide consoles without games"
 msgstr ""
 
 #
 # File: gem/preferences.py, line: 98
 msgid "Horizontal"
 msgstr "Horizontal"
+
+#
+# File: gem/ui/preferences/interface.py, line: 679
+msgid "Icons size"
+msgstr ""
 
 #
 # File: gem/interface.py, line: 1411
@@ -731,6 +746,11 @@ msgstr ""
 #, python-format
 msgid "Log to %s"
 msgstr "Guardar historial en %s"
+
+#
+# File: gem/ui/interface.py, line: 397
+msgid "Main menu"
+msgstr ""
 
 #
 # File: gem/preferences.py, line: 87
@@ -916,7 +936,7 @@ msgstr "Salir de la aplicación"
 #
 # File: gem/interface.py, line: 2006
 #, fuzzy
-msgid "Randomize game screenshot in sidebar"
+msgid "Randomize screenshot"
 msgstr "Borrar capturas de pantalla del juego"
 
 #
@@ -935,6 +955,11 @@ msgstr "Lista de juegos"
 #, fuzzy
 msgid "Regular expressions for ignored files"
 msgstr "Expresiones regulares para los archivos"
+
+#
+# File: gem/ui/preferences/interface.py, line: 449
+msgid "Remember the last selected console"
+msgstr ""
 
 #
 # File: gem/interface.py, line: 1736
@@ -1183,11 +1208,6 @@ msgid "Stop selected game"
 msgstr "Copiar la ruta del juego seleccionado"
 
 #
-# File: gem/gtk/preferences.py, line: 477
-msgid "Store the last selected console"
-msgstr ""
-
-#
 # File: gem/gtk/preferences.py, line: 648
 msgid "Switch to classic theme"
 msgstr ""
@@ -1291,11 +1311,6 @@ msgid "Toolbar"
 msgstr "_Herramientas"
 
 #
-# File: gem/gtk/preferences.py, line: 725
-msgid "Toolbar icons size"
-msgstr ""
-
-#
 # File: gem/interface.py, line: 642
 #, fuzzy
 msgid "Total play time"
@@ -1360,7 +1375,7 @@ msgstr "Usar el tema _oscuro"
 #
 # File: gem/preferences.py, line: 393
 #, fuzzy
-msgid "Use alternative viewer"
+msgid "Use an alternative application"
 msgstr "Usar el visor nativo"
 
 #
@@ -1401,12 +1416,6 @@ msgstr "Valor"
 # File: gem/preferences.py, line: 99
 msgid "Vertical"
 msgstr "Vertical"
-
-#
-# File: gem/windows.py, line: 915
-#, fuzzy
-msgid "Viewer binary"
-msgstr "Seleccionar un binario"
 
 #
 # File: gem/interface.py, line: 1098
@@ -1469,6 +1478,11 @@ msgstr ""
 #
 # File: gem/gtk/interface.py, line: 861
 msgid "You need to reload games list to apply changes"
+msgstr ""
+
+#
+# File: gem/ui/preferences/interface.py, line: 637
+msgid "You need to reload the application to apply this theme"
 msgstr ""
 
 #
@@ -1676,6 +1690,12 @@ msgstr "agradecimientos a los traductores"
 # File: gem/interface.py, line: 572
 #~ msgid "Show output _log"
 #~ msgstr "Mostrar el _registro de salida"
+
+#
+# File: gem/windows.py, line: 915
+#, fuzzy
+#~ msgid "Viewer binary"
+#~ msgstr "Seleccionar un binario"
 
 #
 # File: gem/interface.py, line: 401

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.6\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2018-03-16 18:01+0100\n"
+"PO-Revision-Date: 2018-03-17 12:44+0100\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -152,6 +152,11 @@ msgstr "Actions"
 # File: gem/preferences.py, line: 820
 msgid "Add"
 msgstr "Ajouter"
+
+#
+# File: gem/ui/interface.py, line: 400
+msgid "Addons"
+msgstr "Modules"
 
 #
 # File: gem/ui/preferences/console.py, line: 338
@@ -473,6 +478,11 @@ msgid "Environment"
 msgstr "Environnement"
 
 #
+# File: gem/ui/preferences/interface.py, line: 581
+msgid "Executable"
+msgstr "Exécutable"
+
+#
 # File: gem/preferences.py, line: 938
 msgid "Extensions"
 msgstr "Extensions"
@@ -614,14 +624,19 @@ msgid "Help"
 msgstr "Aide"
 
 #
-# File: gem/gtk/preferences.py, line: 489
-msgid "Hide empty consoles"
-msgstr "Cacher les consoles vides"
+# File: gem/ui/preferences/interface.py, line: 462
+msgid "Hide consoles without games"
+msgstr "Cacher les consoles sans jeux"
 
 #
 # File: gem/preferences.py, line: 98
 msgid "Horizontal"
 msgstr "Horizontales"
+
+#
+# File: gem/gtk/preferences.py, line: 725
+msgid "Icons size"
+msgstr "Taille des icônes"
 
 #
 # File: gem/interface.py, line: 1411
@@ -714,6 +729,11 @@ msgstr "Bibliothèque"
 #, python-format
 msgid "Log to %s"
 msgstr "Journalisation dans %s"
+
+#
+# File: gem/ui/interface.py, line: 397
+msgid "Main menu"
+msgstr "Menu principal"
 
 #
 # File: src/window.py, line: 436
@@ -887,8 +907,8 @@ msgstr "Quitter l'application"
 
 #
 # File: gem/preferences.py, line: 335
-msgid "Randomize game screenshot in sidebar"
-msgstr "Afficher une capture d'écran du jeu de manière aléatoire"
+msgid "Randomize screenshot"
+msgstr "Afficher une capture d'écran de manière aléatoire"
 
 #
 # File: gem/gtk/preferences.py, line: 2294
@@ -904,6 +924,11 @@ msgstr "Recharger la liste de jeux"
 # File: gem/preferences.py, line: 1233
 msgid "Regular expressions for ignored files"
 msgstr "Expressions régulières pour les fichiers ignorés"
+
+#
+# File: gem/gtk/preferences.py, line: 477
+msgid "Remember the last selected console"
+msgstr "Se souvenir de la dernière console sélectionnée"
 
 #
 # File: src/window.py, line: 939
@@ -1135,11 +1160,6 @@ msgid "Stop selected game"
 msgstr "Arrêter le jeu sélectionné"
 
 #
-# File: gem/gtk/preferences.py, line: 477
-msgid "Store the last selected console"
-msgstr "Stocker la dernière console sélectionnée"
-
-#
 # File: gem/gtk/preferences.py, line: 648
 msgid "Switch to classic theme"
 msgstr "Utiliser le thème classique"
@@ -1247,11 +1267,6 @@ msgid "Toolbar"
 msgstr "Barre d'outils"
 
 #
-# File: gem/gtk/preferences.py, line: 725
-msgid "Toolbar icons size"
-msgstr "Taille des icônes de la barre d'outils"
-
-#
 # File: src/window.py, line: 375
 msgid "Total play time"
 msgstr "Temps de jeu total"
@@ -1311,8 +1326,8 @@ msgstr "Utiliser le thème _sombre"
 
 #
 # File: gem/preferences.py, line: 292
-msgid "Use alternative viewer"
-msgstr "Utiliser un visualiseur alternatif"
+msgid "Use an alternative application"
+msgstr "Utiliser une application alternative"
 
 #
 # File: gem/interface.py, line: 300
@@ -1349,11 +1364,6 @@ msgstr "Valeur"
 # File: gem/preferences.py, line: 99
 msgid "Vertical"
 msgstr "Verticales"
-
-#
-# File: gem/preferences.py, line: 1577
-msgid "Viewer binary"
-msgstr "Binaire du visualiseur"
 
 #
 # File: gem/interface.py, line: 829
@@ -1417,6 +1427,12 @@ msgstr ""
 msgid "You need to reload games list to apply changes"
 msgstr ""
 "Vous avez besoin de recharger la liste de jeux pour appliquer les changements"
+
+#
+# File: gem/gtk/interface.py, line: 861
+msgid "You need to reload the application to apply this theme"
+msgstr ""
+"Vous avez besoin de recharger l'application pour appliquer les changements"
 
 #
 # File: src/window.py, line: 247

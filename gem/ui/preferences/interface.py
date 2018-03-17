@@ -315,6 +315,7 @@ class PreferencesWindow(CommonWindow):
         self.grid_theme_classic.set_spacing(12)
         self.grid_theme_classic.set_homogeneous(True)
         self.grid_theme_header.set_spacing(12)
+        self.grid_theme_header.set_margin_top(6)
         self.grid_theme_header.set_homogeneous(True)
 
         self.grid_toolbar_icons.set_spacing(12)
@@ -323,6 +324,7 @@ class PreferencesWindow(CommonWindow):
         self.grid_sidebar_show.set_spacing(12)
         self.grid_sidebar_show.set_homogeneous(True)
         self.grid_sidebar_screenshot.set_spacing(12)
+        self.grid_sidebar_screenshot.set_margin_top(6)
         self.grid_sidebar_screenshot.set_homogeneous(True)
         self.grid_sidebar_position.set_spacing(12)
         self.grid_sidebar_position.set_homogeneous(True)
@@ -330,6 +332,7 @@ class PreferencesWindow(CommonWindow):
         self.grid_games_lines.set_spacing(12)
         self.grid_games_lines.set_homogeneous(True)
         self.grid_games_icons.set_spacing(12)
+        self.grid_games_icons.set_margin_top(6)
         self.grid_games_icons.set_homogeneous(True)
 
         self.grid_columns_play.set_spacing(12)
@@ -443,7 +446,7 @@ class PreferencesWindow(CommonWindow):
         self.label_last_console.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
         self.label_last_console.get_style_context().add_class("dim-label")
         self.label_last_console.set_text(
-            _("Store the last selected console"))
+            _("Remember the last selected console"))
 
         self.check_last_console.set_halign(Gtk.Align.START)
         self.check_last_console.set_valign(Gtk.Align.CENTER)
@@ -456,7 +459,7 @@ class PreferencesWindow(CommonWindow):
         self.label_hide_console.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
         self.label_hide_console.get_style_context().add_class("dim-label")
         self.label_hide_console.set_text(
-            _("Hide empty consoles"))
+            _("Hide consoles without games"))
 
         self.check_hide_console.set_halign(Gtk.Align.START)
         self.check_hide_console.set_valign(Gtk.Align.CENTER)
@@ -562,7 +565,7 @@ class PreferencesWindow(CommonWindow):
         self.label_native_viewer.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
         self.label_native_viewer.get_style_context().add_class("dim-label")
         self.label_native_viewer.set_text(
-            _("Use alternative viewer"))
+            _("Use an alternative application"))
 
         self.check_native_viewer.set_halign(Gtk.Align.START)
         self.check_native_viewer.set_valign(Gtk.Align.CENTER)
@@ -575,7 +578,7 @@ class PreferencesWindow(CommonWindow):
         self.label_viewer_binary.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
         self.label_viewer_binary.get_style_context().add_class("dim-label")
         self.label_viewer_binary.set_text(
-            _("Viewer binary"))
+            _("Executable"))
 
         self.file_viewer_binary.set_hexpand(True)
         self.file_viewer_binary.set_size_request(300, -1)
@@ -629,7 +632,9 @@ class PreferencesWindow(CommonWindow):
         self.label_classic_theme.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
         self.label_classic_theme.get_style_context().add_class("dim-label")
         self.label_classic_theme.set_text(
-            _("Switch to classic theme"))
+            "%s*" % _("Switch to classic theme"))
+        self.label_classic_theme.set_tooltip_text(
+            _("You need to reload the application to apply this theme"))
 
         self.check_classic_theme.set_halign(Gtk.Align.START)
         self.check_classic_theme.set_valign(Gtk.Align.CENTER)
@@ -671,7 +676,7 @@ class PreferencesWindow(CommonWindow):
         self.label_toolbar_icons.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
         self.label_toolbar_icons.get_style_context().add_class("dim-label")
         self.label_toolbar_icons.set_label(
-            _("Toolbar icons size"))
+            _("Icons size"))
 
         self.model_toolbar.set_sort_column_id(0, Gtk.SortType.ASCENDING)
 
@@ -727,7 +732,7 @@ class PreferencesWindow(CommonWindow):
             Pango.WrapMode.WORD_CHAR)
         self.label_sidebar_screenshot.get_style_context().add_class("dim-label")
         self.label_sidebar_screenshot.set_text(
-            _("Randomize game screenshot in sidebar"))
+            _("Randomize screenshot"))
 
         self.check_sidebar_screenshot.set_halign(Gtk.Align.START)
         self.check_sidebar_screenshot.set_valign(Gtk.Align.CENTER)
@@ -1244,9 +1249,9 @@ class PreferencesWindow(CommonWindow):
         self.grid_interface.pack_start(
             self.grid_sidebar_show, False, False, 0)
         self.grid_interface.pack_start(
-            self.grid_sidebar_screenshot, False, False, 0)
-        self.grid_interface.pack_start(
             self.grid_sidebar_position, False, False, 0)
+        self.grid_interface.pack_start(
+            self.grid_sidebar_screenshot, False, False, 0)
         self.grid_interface.pack_start(
             self.label_treeview, False, False, 0)
         self.grid_interface.pack_start(

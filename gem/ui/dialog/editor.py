@@ -246,13 +246,11 @@ class EditorDialog(CommonWindow):
         self.image_up.set_from_icon_name(
             Icons.Symbolic.Previous, Gtk.IconSize.BUTTON)
 
-        self.button_up.set_label(str())
         self.button_up.set_image(self.image_up)
 
         self.image_bottom.set_from_icon_name(
             Icons.Symbolic.Next, Gtk.IconSize.BUTTON)
 
-        self.button_bottom.set_label(str())
         self.button_bottom.set_image(self.image_bottom)
 
         # ------------------------------------

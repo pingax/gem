@@ -93,7 +93,7 @@ def main():
                     content = pipe.read()
 
                 # Check if lock process is gem
-                if "gem.main" in content or "gem-ui" in content:
+                if "gem" in content or "gem-ui" in content:
                     sys_exit("GEM is already running with PID %s" % gem_pid)
 
     # ------------------------------------
