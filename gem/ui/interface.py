@@ -32,6 +32,10 @@ from gem.ui.dialog import *
 
 from gem.ui.preferences.interface import PreferencesWindow
 
+# Modules
+from importlib.util import spec_from_file_location
+from importlib.util import module_from_spec
+
 # Random
 from random import randint
 
@@ -99,6 +103,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.notes = dict()
         # Store started threads with basename game file without extension as key
         self.threads = dict()
+        # Store modules functions
+        self.modules = dict()
         # Store selected game informations with console, game and name as keys
         self.selection = dict()
         # Store shortcut with Gtk.Widget as key
@@ -1263,8 +1269,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Headerbar
         self.headerbar.pack_end(self.headerbar_item_menu)
-        self.headerbar.pack_end(self.headerbar_item_preferences)
         self.headerbar.pack_end(self.headerbar_item_addon)
+        self.headerbar.pack_end(self.headerbar_item_preferences)
         self.headerbar.pack_end(Gtk.Separator())
         self.headerbar.pack_end(self.headerbar_item_fullscreen)
 
@@ -1928,21 +1934,10 @@ class MainWindow(Gtk.ApplicationWindow):
         self.__init_shortcuts()
 
         # ------------------------------------
-        #   Theme
+        #   Modules
         # ------------------------------------
 
-        dark_theme_status = self.config.getboolean(
-            "gem", "dark_theme", fallback=False)
-
-        on_change_theme(dark_theme_status)
-
-        self.menu_item_dark_theme.set_active(dark_theme_status)
-        self.menubar_main_item_dark_theme.set_active(dark_theme_status)
-
-        if dark_theme_status:
-            self.logger.debug("Use dark variant for GTK+ theme")
-        else:
-            self.logger.debug("Use light variant for GTK+ theme")
+        self.__init_modules()
 
         # ------------------------------------
         #   Toolbar
@@ -2012,6 +2007,23 @@ class MainWindow(Gtk.ApplicationWindow):
         # ------------------------------------
 
         if init_interface:
+
+            # ------------------------------------
+            #   Color theme
+            # ------------------------------------
+
+            dark_theme_status = self.config.getboolean(
+                "gem", "dark_theme", fallback=False)
+
+            on_change_theme(dark_theme_status)
+
+            self.menu_item_dark_theme.set_active(dark_theme_status)
+            self.menubar_main_item_dark_theme.set_active(dark_theme_status)
+
+            if dark_theme_status:
+                self.logger.debug("Use dark variant for GTK+ theme")
+            else:
+                self.logger.debug("Use light variant for GTK+ theme")
 
             self.use_classic_theme = self.config.getboolean(
                 "gem", "use_classic_theme", fallback=False)
@@ -2239,6 +2251,43 @@ class MainWindow(Gtk.ApplicationWindow):
             self.__on_selected_console(self.button_consoles, current_console)
 
         self.__unblock_signals()
+
+
+    def __init_modules(self):
+        """ Initialize available modules
+
+        Notes
+        -----
+        The modules are available in two folders
+
+          - GEM source folder as gem/plugins/
+          - User local folder as ~/.local/share/plugins
+
+        The modules in user local folder are taken hover GEM source folder
+        """
+
+        self.modules = dict()
+
+        for path in [ get_data("plugins"), self.api.get_local("plugins") ]:
+
+            if exists(path):
+
+                # List available modules
+                for plugin in glob(path_join(path, '*', "manifest.conf")):
+                    config = Configuration(plugin)
+
+                    # Check if module manifest is okay
+                    if config.has_section("plugin"):
+                        name = config.get("plugin", "name", fallback=str())
+
+                        if len(name) > 0:
+                            spec = spec_from_file_location("%s.plugin" % name,
+                                path_join(dirname(plugin), "plugin.py"))
+
+                            if spec is not None:
+                                self.modules[name] = module_from_spec(spec)
+
+                                spec.loader.exec_module(self.modules[name])
 
 
     def sensitive_interface(self, status=False):

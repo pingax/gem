@@ -122,7 +122,7 @@ def main():
             if "DISPLAY" in environ and len(environ["DISPLAY"]) > 0:
 
                 # Default folders
-                for folder in [ "icons", "logs", "notes" ]:
+                for folder in [ "icons", "logs", "notes", "plugins" ]:
                     if not exists(gem.get_local(folder)):
                         gem.logger.debug("Generate %s folder" % folder)
 

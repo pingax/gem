@@ -31,15 +31,28 @@ class Addon(object):
     STARTED = "on_game_started"
     TERMINATE = "on_game_terminate"
 
-    def __init__(self):
+    def __init__(self, filepath=None):
         """ Constructor
+
+        Raises
+        ------
+        ValueError
+            When the plugin filepath is missing
+        OSError
+            When the filepath not exists
         """
+
+        if filepath is None:
+            raise ValueError("Module cannot be loaded: Missing filepath")
+
+        if not exists(filepath):
+            raise OSError(2, "Cannot found plugin file path on filesystem")
 
         # ------------------------------------
         #   Initialize variables
         # ------------------------------------
 
-        self.__root = dirname(modules[self.__class__.__module__].__file__)
+        self.__root = dirname(filepath)
 
         self.__manifest = path_join(self.__root, "manifest.conf")
 

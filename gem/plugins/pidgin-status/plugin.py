@@ -22,7 +22,7 @@
 from dbus import SessionBus
 
 # GEM
-from gem.gtk.addon import Addon
+from gem.ui.widgets.addon import Addon
 
 # ------------------------------------------------------------------------------
 #   Class
@@ -39,20 +39,20 @@ class Plugin(Addon):
     STATUS_MOBILE           = 7
     STATUS_TUNE             = 8
 
-    PURPLE_OBJECT          = "/im/pidgin/purple/PurpleObject"
+    PURPLE_OBJECT           = "/im/pidgin/purple/PurpleObject"
     PURPLE_SERVICE          = "im.pidgin.purple.PurpleService"
 
     def __init__(self):
         """ Constructor
         """
 
-        Addon.__init__(self)
+        Addon.__init__(self, __file__)
 
         # ----------------------------------------
         #   Initialize title
         # ----------------------------------------
 
-        self.__title = self.translate("In Game")
+        self.__title = "In Game"
 
         # ----------------------------------------
         #   Initialize DBus session
