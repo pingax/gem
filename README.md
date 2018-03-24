@@ -23,8 +23,25 @@ More informations on [GEM website](https://gem.tuxfamily.org/).
 
 ### Packages
 
-* [Frugalware](https://frugalware.org/packages/219539): Pingax
-* [Solus](https://dev.solus-project.com/source/gem/): Devil505
+#### Frugalware
+
+Thanks to Pingax !
+
+```
+$ pacman-g2 -S gem
+```
+
+[Informations](https://frugalware.org/packages/219539)
+
+#### Solus
+
+Thanks to Devil505
+
+```
+$ eopkg install gem
+```
+
+[Informations](https://dev.solus-project.com/source/gem/)
 
 ### Icons
 
