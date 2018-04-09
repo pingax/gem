@@ -24,6 +24,7 @@ from gem.ui.data import *
 from gem.ui.utils import *
 
 from gem.ui.widgets.game import GameThread
+from gem.ui.widgets.addon import AddonThread
 from gem.ui.widgets.widgets import ListBoxPopover
 from gem.ui.widgets.widgets import ListBoxSelector
 from gem.ui.widgets.widgets import ListBoxSelectorCheck
@@ -31,10 +32,6 @@ from gem.ui.widgets.widgets import ListBoxSelectorCheck
 from gem.ui.dialog import *
 
 from gem.ui.preferences.interface import PreferencesWindow
-
-# Modules
-from importlib.util import spec_from_file_location
-from importlib.util import module_from_spec
 
 # Random
 from random import randint
@@ -2281,13 +2278,7 @@ class MainWindow(Gtk.ApplicationWindow):
                         name = config.get("plugin", "name", fallback=str())
 
                         if len(name) > 0:
-                            spec = spec_from_file_location("%s.plugin" % name,
-                                path_join(dirname(plugin), "plugin.py"))
-
-                            if spec is not None:
-                                self.modules[name] = module_from_spec(spec)
-
-                                spec.loader.exec_module(self.modules[name])
+                            self.modules[name] = AddonThread(name, plugin)
 
 
     def sensitive_interface(self, status=False):

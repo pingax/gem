@@ -16,14 +16,57 @@
 
 # GEM
 from gem.engine import *
+from gem.engine.utils import generate_identifier
 from gem.engine.lib.configuration import Configuration
+
+# Modules
+from importlib.util import spec_from_file_location
+from importlib.util import module_from_spec
 
 # System
 from sys import modules
 
+# Threading
+from threading import Thread
+
 # ------------------------------------------------------------------------------
 #   Class
 # ------------------------------------------------------------------------------
+
+class AddonThread(Thread):
+
+    def __init__(self, name, manifest):
+        """ Constructor
+
+        Parameters
+        ----------
+        name : str
+            Addon name
+        manifest : str
+            Addon manifest file path
+        """
+
+        Thread.__init__(self)
+
+        # ------------------------------------
+        #   Initialize variables
+        # ------------------------------------
+
+        # Thread identifier
+        self.name = generate_identifier(name)
+
+        # Addon name
+        self.__name = name
+        # Addon path
+        self.__path = path_join(dirname(manifest), "plugin.py")
+
+        spec = spec_from_file_location("%s.plugin" % self.__name, self.__path)
+
+        if spec is not None:
+            module = module_from_spec(spec)
+
+            spec.loader.exec_module(module)
+
 
 class Addon(object):
 
