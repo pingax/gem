@@ -27,7 +27,6 @@ from gem.ui.widgets.game import GameThread
 from gem.ui.widgets.addon import AddonThread
 from gem.ui.widgets.widgets import ListBoxPopover
 from gem.ui.widgets.widgets import ListBoxSelector
-from gem.ui.widgets.widgets import ListBoxSelectorCheck
 
 from gem.ui.dialog import *
 
@@ -377,7 +376,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.headerbar_item_menu = Gtk.MenuButton()
 
         self.headerbar_image_addon = Gtk.Image()
-        self.headerbar_item_addon = Gtk.MenuButton()
+        self.headerbar_item_addon = Gtk.Button()
 
         self.headerbar_image_preferences = Gtk.Image()
         self.headerbar_item_preferences = Gtk.Button()
@@ -401,7 +400,9 @@ class MainWindow(Gtk.ApplicationWindow):
         self.headerbar_item_menu.set_use_popover(True)
 
         self.headerbar_item_addon.set_tooltip_text(_("Addons"))
-        self.headerbar_item_addon.set_use_popover(True)
+        self.headerbar_item_addon.set_image(
+            self.headerbar_image_addon)
+        self.headerbar_item_addon.set_use_underline(True)
 
         self.headerbar_item_preferences.set_tooltip_text(_("Preferences"))
         self.headerbar_item_preferences.set_image(
@@ -1274,11 +1275,9 @@ class MainWindow(Gtk.ApplicationWindow):
         self.toolbar_item_parameters.add(self.toolbar_image_parameters)
         self.headerbar_item_fullscreen.add(self.headerbar_image_fullscreen)
         self.headerbar_item_menu.add(self.headerbar_image_menu)
-        self.headerbar_item_addon.add(self.headerbar_image_addon)
 
         # Headerbar menu
         self.headerbar_item_menu.set_popover(self.popover_menu)
-        self.headerbar_item_addon.set_popover(self.popover_addon)
 
         self.popover_menu.add(self.grid_menu)
 
@@ -1716,6 +1715,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.headerbar_item_preferences.connect(
             "clicked", self.__on_show_preferences)
+        self.headerbar_item_addon.connect(
+            "clicked", self.__on_show_modules)
+
         self.menu_item_gem_log.connect(
             "clicked", self.__on_show_log)
         self.dark_signal_menu = self.menu_item_dark_theme.connect(
@@ -2258,7 +2260,7 @@ class MainWindow(Gtk.ApplicationWindow):
         The modules are available in two folders
 
           - GEM source folder as gem/plugins/
-          - User local folder as ~/.local/share/plugins
+          - User local folder as ~/.local/share/gem/plugins
 
         The modules in user local folder are taken hover GEM source folder
         """
@@ -3223,6 +3225,20 @@ class MainWindow(Gtk.ApplicationWindow):
             self.logger.debug("Main interface need to be reload")
             self.load_interface()
 
+        dialog.destroy()
+
+        self.set_sensitive(True)
+
+
+    def __on_show_modules(self, *args):
+        """ Show modules window
+        """
+
+        self.set_sensitive(False)
+
+        dialog = ModulesDialog(self)
+
+        dialog.run()
         dialog.destroy()
 
         self.set_sensitive(True)

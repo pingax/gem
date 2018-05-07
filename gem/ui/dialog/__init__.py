@@ -20,6 +20,7 @@ from gem.ui.dialog.editor import EditorDialog
 from gem.ui.dialog.delete import DeleteDialog
 from gem.ui.dialog.viewer import ViewerDialog
 from gem.ui.dialog.message import MessageDialog
+from gem.ui.dialog.modules import ModulesDialog
 from gem.ui.dialog.question import QuestionDialog
 from gem.ui.dialog.mednafen import MednafenDialog
 from gem.ui.dialog.parameter import ParametersDialog

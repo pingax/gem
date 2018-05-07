@@ -128,10 +128,6 @@ class CommonWindow(object):
         self.grid.set_spacing(18)
         self.grid.set_border_width(18)
 
-        self.grid_tools.set_spacing(6)
-
-        self.grid_actions.set_spacing(12)
-
         self.grid_actions_buttons.set_spacing(12)
         self.grid_actions_buttons.set_layout(Gtk.ButtonBoxStyle.END)
 
@@ -180,15 +176,14 @@ class CommonWindow(object):
         #   Integrate widgets
         # ------------------------------------
 
-        if self.use_classic_theme:
-            self.grid.pack_start(self.grid_tools, False, False, 0)
+        self.grid.pack_start(self.grid_tools, False, False, 0)
 
-            self.grid.pack_end(self.grid_actions, False, False, 0)
+        self.grid.pack_end(self.grid_actions, False, False, 0)
 
-            self.grid_actions.pack_end(
-                self.grid_actions_buttons, False, False, 0)
+        self.grid_actions.pack_end(
+            self.grid_actions_buttons, False, False, 0)
 
-        else:
+        if not self.use_classic_theme:
             self.headerbar.pack_start(self.headerbar_image)
 
         # Gtk.Window
@@ -214,8 +209,8 @@ class CommonWindow(object):
             Object which receive signal
         """
 
-        dialog = HelpDialog(
-            self.parent, _("Help"), '\n\n'.join(self.help_data), Icons.Help)
+        dialog = HelpDialog(self.parent,
+            _("Help"), '\n\n'.join(self.help_data), Icons.Symbolic.Help)
 
         dialog.set_size(640, 480)
 
@@ -229,9 +224,13 @@ class CommonWindow(object):
 
         if len(self.grid_tools.get_children()) == 0:
             self.grid.remove(self.grid_tools)
+        else:
+            self.grid_tools.set_spacing(6)
 
         if len(self.grid_actions_buttons.get_children()) == 0:
             self.grid.remove(self.grid_actions)
+        else:
+            self.grid_actions.set_spacing(12)
 
         self.window.hide()
         self.window.unrealize()
@@ -374,34 +373,16 @@ class CommonWindow(object):
         #   Manage themes
         # ------------------------------------
 
-        # Using default theme
-        if not self.use_classic_theme:
+        # Add a style to button for specific responses
+        if response in [ Gtk.ResponseType.APPLY, Gtk.ResponseType.ACCEPT ]:
+            button.get_style_context().add_class("suggested-action")
+        elif response in [ Gtk.ResponseType.YES, Gtk.ResponseType.REJECT ]:
+            button.get_style_context().add_class("destructive-action")
 
-            # Add a style to button for specific responses
-            if response in [ Gtk.ResponseType.APPLY, Gtk.ResponseType.ACCEPT ]:
-                button.get_style_context().add_class("suggested-action")
-            elif response in [ Gtk.ResponseType.YES, Gtk.ResponseType.REJECT ]:
-                button.get_style_context().add_class("destructive-action")
-
-            if align == Gtk.Align.END:
-                self.headerbar.pack_end(button)
-
-            else:
-                self.headerbar.pack_start(button)
-
-                if self.headerbar_image in self.headerbar.get_children():
-                    self.headerbar.remove(self.headerbar_image)
-
-            if self.headerbar.get_show_close_button():
-                self.headerbar.set_show_close_button(False)
-
-        # Using classic theme
+        if align == Gtk.Align.END:
+            self.grid_actions_buttons.pack_end(button, False, False, 0)
         else:
-
-            if align == Gtk.Align.END:
-                self.grid_actions_buttons.pack_end(button, False, False, 0)
-            else:
-                self.grid_actions_buttons.pack_start(button, False, False, 0)
+            self.grid_actions_buttons.pack_start(button, False, False, 0)
 
         # Gtk.Dialog
         if self.parent is not None:
@@ -451,13 +432,7 @@ class CommonWindow(object):
 
             self.button_help.connect("clicked", self.__on_show_help)
 
-            # Using default theme
-            if not self.use_classic_theme:
-                self.headerbar.pack_end(self.button_help)
-
-            # Using classic theme
-            else:
-                self.grid_actions.pack_start(self.button_help, False, False, 0)
+            self.grid_actions.pack_start(self.button_help, False, False, 0)
 
 
     def pack_end(self, child, expand=True, fill=True, padding=int()):
@@ -508,6 +483,11 @@ class CommonWindow(object):
         border_width : int
             Container border with in pixels
         """
+
+        # Avoid to have buttons stick to main grid with a null border_width
+        if border_width == 0:
+            self.grid.set_spacing(0)
+            self.grid_actions.set_border_width(12)
 
         self.grid.set_border_width(border_width)
 

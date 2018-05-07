@@ -363,10 +363,10 @@ class ViewerDialog(CommonWindow):
 
         self.set_size(int(self.__width), int(self.__height))
 
-        self.window.show_all()
+        self.show_all()
 
-        self.set_widgets_sensitive()
         self.update_screenshot()
+        self.set_widgets_sensitive()
 
 
     def __on_dnd_send_data(self, widget, context, data, info, time):

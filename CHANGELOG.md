@@ -20,6 +20,7 @@
 * Add to remove the desktop file when removing a game
 * Allow to drag the sidebar image to another application
 * Restore GTK+ menuitem behavior to main and game menus
+* Restore old dialog buttons behavior to both themes
 * Fix wrong object set during drag and drop process
 
 ## Version 0.9.1 - Lavos (17 Feb, 2018)

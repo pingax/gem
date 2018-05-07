@@ -49,8 +49,9 @@ class ParametersDialog(CommonWindow):
         if parent is not None:
             classic_theme = parent.use_classic_theme
 
-        CommonWindow.__init__(
-            self, parent, _("Game properties"), Icons.Gaming, classic_theme)
+        CommonWindow.__init__(self, parent,
+            _("Game properties"), Icons.Symbolic.Gaming, classic_theme)
+
         # ------------------------------------
         #   Initialize variables
         # ------------------------------------

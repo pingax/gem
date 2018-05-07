@@ -33,44 +33,12 @@ from threading import Thread
 #   Class
 # ------------------------------------------------------------------------------
 
-class AddonThread(Thread):
-
-    def __init__(self, name, manifest):
-        """ Constructor
-
-        Parameters
-        ----------
-        name : str
-            Addon name
-        manifest : str
-            Addon manifest file path
-        """
-
-        Thread.__init__(self)
-
-        # ------------------------------------
-        #   Initialize variables
-        # ------------------------------------
-
-        # Thread identifier
-        self.name = generate_identifier(name)
-
-        # Addon name
-        self.__name = name
-        # Addon path
-        self.__path = path_join(dirname(manifest), "plugin.py")
-
-        spec = spec_from_file_location("%s.plugin" % self.__name, self.__path)
-
-        if spec is not None:
-            module = module_from_spec(spec)
-
-            spec.loader.exec_module(module)
-
-
 class Addon(object):
 
     # Manage game launch process
+    START = "on_start"
+    CLOSE = "on_close"
+    RELOAD = "on_reload"
     STARTED = "on_game_started"
     TERMINATE = "on_game_terminate"
 
@@ -234,3 +202,106 @@ class Addon(object):
         """
 
         return self.__description
+
+
+class AddonThread(Thread, Addon):
+
+    def __init__(self, name, manifest):
+        """ Constructor
+
+        Parameters
+        ----------
+        name : str
+            Addon name
+        manifest : str
+            Addon manifest file path
+        """
+
+        Thread.__init__(self)
+
+        Addon.__init__(self, manifest)
+
+        # ------------------------------------
+        #   Initialize variables
+        # ------------------------------------
+
+        # Thread identifier
+        self.name = generate_identifier(name)
+
+        # Addon name
+        self.__name = name
+        # Addon path
+        self.__path = path_join(dirname(manifest), "plugin.py")
+
+        self.module = None
+
+        # ------------------------------------
+        #   Prepare interface
+        # ------------------------------------
+
+        # Initialize module
+        self.__init_module()
+
+
+    def __init_module(self):
+        """ Initialize module from his name
+        """
+
+        spec = spec_from_file_location("%s.plugin" % self.__name, self.__path)
+
+        if spec is not None:
+            self.module = module_from_spec(spec)
+
+            spec.loader.exec_module(self.module)
+
+
+    def __on_call_function(self, function):
+        """ Call a specific module function
+
+        Parameters
+        ----------
+        function : str
+            Function name
+        """
+
+        try:
+            if self.has_function(function):
+                self.call_function(function)
+
+        except Exception:
+            pass
+
+
+    def on_start(self):
+        """ Call on_start function
+        """
+
+        self.__on_call_function(self.START)
+
+
+    def on_close(self):
+        """ Call on_close function
+        """
+
+        self.__on_call_function(self.CLOSE)
+
+
+    def on_reload(self):
+        """ Call on_reload function
+        """
+
+        self.__on_call_function(self.RELOAD)
+
+
+    def on_game_started(self):
+        """ Call on_game_started function
+        """
+
+        self.__on_call_function(self.STARTED)
+
+
+    def on_game_terminate(self):
+        """ Call on_game_terminate function
+        """
+
+        self.__on_call_function(self.TERMINATE)
