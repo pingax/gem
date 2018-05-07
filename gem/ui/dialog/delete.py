@@ -44,8 +44,8 @@ class DeleteDialog(CommonWindow):
         if parent is not None:
             classic_theme = parent.use_classic_theme
 
-        CommonWindow.__init__(self, parent, _("Remove a game"), Icons.Delete,
-            classic_theme)
+        CommonWindow.__init__(self,
+            parent, _("Remove a game"), Icons.Symbolic.Delete, classic_theme)
 
         # ------------------------------------
         #   Variables

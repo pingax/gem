@@ -49,8 +49,8 @@ class DnDConsoleDialog(CommonWindow):
         if parent is not None:
             classic_theme = parent.use_classic_theme
 
-        CommonWindow.__init__(
-            self, parent, _("Drag & Drop"), Icons.Gaming, classic_theme)
+        CommonWindow.__init__(self,
+            parent, _("Drag & Drop"), Icons.Symbolic.Gaming, classic_theme)
 
         # ------------------------------------
         #   Initialize variables

@@ -45,7 +45,7 @@ class CoverDialog(CommonWindow):
             classic_theme = parent.use_classic_theme
 
         CommonWindow.__init__(
-            self, parent, _("Game cover"), Icons.Image, classic_theme)
+            self, parent, _("Game cover"), Icons.Symbolic.Image, classic_theme)
 
         # ------------------------------------
         #   Initialize variables

@@ -51,8 +51,6 @@ class ModulesDialog(CommonWindow):
         #   Initialize variables
         # ------------------------------------
 
-        self.interface = parent
-
         self.modules = parent.modules
 
         # ------------------------------------

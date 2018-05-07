@@ -45,7 +45,7 @@ class IconsDialog(CommonWindow):
             Icons folder
         """
 
-        CommonWindow.__init__(self, parent, title, Icons.Image,
+        CommonWindow.__init__(self, parent, title, Icons.Symbolic.Image,
             parent.use_classic_theme)
 
         # ------------------------------------

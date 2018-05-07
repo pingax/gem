@@ -2752,7 +2752,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 dialog = MessageDialog(self, "Someone wrote the KONAMI CODE !",
                     "Nice catch ! You have discover an easter-egg ! But, this "
                     "kind of code is usefull in a game, not in an emulators "
-                    "manager !", Icons.Monkey)
+                    "manager !", Icons.Symbolic.Monkey)
 
                 dialog.set_size(500, -1)
 

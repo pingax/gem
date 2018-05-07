@@ -175,8 +175,8 @@ class PreferencesWindow(CommonWindow):
             self.use_classic_theme = self.config.getboolean(
                 "gem", "use_classic_theme", fallback=False)
 
-        CommonWindow.__init__(self, parent, _("Preferences"), Icons.Desktop,
-            self.use_classic_theme)
+        CommonWindow.__init__(self, parent, _("Preferences"),
+            Icons.Symbolic.Preferences, self.use_classic_theme)
 
         # ------------------------------------
         #   Initialize logger
@@ -214,8 +214,9 @@ class PreferencesWindow(CommonWindow):
         else:
             self.set_border_width(0)
 
-        self.set_subtitle(
-            "%s - %s (%s)" % (GEM.Name, GEM.Version, GEM.CodeName))
+        if self.parent is None:
+            self.set_subtitle(
+                "%s - %s (%s)" % (GEM.Name, GEM.Version, GEM.CodeName))
 
         # ------------------------------------
         #   Grids

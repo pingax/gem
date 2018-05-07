@@ -99,6 +99,7 @@ class Icons:
     Help        = "system-help"
     # Categories
     Desktop     = "preferences-desktop"
+    Preferences = "preferences-other"
     Other       = "applications-other"
     System      = "preferences-system"
     # Devices
