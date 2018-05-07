@@ -4447,11 +4447,14 @@ class MainWindow(Gtk.ApplicationWindow):
         game = self.selection["game"]
 
         if game is not None:
-            treeiter = self.game_path[game.filename][1]
+            status, treeiter = self.filter_games.convert_child_iter_to_iter(
+                self.game_path[game.filename][1])
 
-            # Set edit mode for selected treeiter
-            self.treeview_games.set_cursor(self.model_games.get_path(treeiter),
-                self.column_game_name, True)
+            if status and treeiter is not None:
+                # Set edit mode for selected treeiter
+                self.treeview_games.set_cursor(
+                    self.filter_games.get_path(treeiter),
+                    self.column_game_name, True)
 
 
     def __on_game_renamed_started(self, *args):
@@ -4481,7 +4484,7 @@ class MainWindow(Gtk.ApplicationWindow):
             new name
         """
 
-        game = self.model_games[path][Columns.Object]
+        game = self.filter_games[path][Columns.Object]
 
         if game is not None:
             selected_game = self.selection["game"]
@@ -4495,7 +4498,7 @@ class MainWindow(Gtk.ApplicationWindow):
                         "old": game.name, "new": new_name })
 
                     # Update game name
-                    self.model_games[path][Columns.Name] = str(new_name)
+                    self.filter_games[path][Columns.Name] = str(new_name)
 
                     game.name = new_name
 
