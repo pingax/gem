@@ -375,8 +375,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.headerbar_image_menu = Gtk.Image()
         self.headerbar_item_menu = Gtk.MenuButton()
 
-        self.headerbar_image_addon = Gtk.Image()
-        self.headerbar_item_addon = Gtk.Button()
+        self.headerbar_image_addons = Gtk.Image()
+        self.headerbar_item_addons = Gtk.Button()
 
         self.headerbar_image_preferences = Gtk.Image()
         self.headerbar_item_preferences = Gtk.Button()
@@ -399,10 +399,10 @@ class MainWindow(Gtk.ApplicationWindow):
         self.headerbar_item_menu.set_tooltip_text(_("Main menu"))
         self.headerbar_item_menu.set_use_popover(True)
 
-        self.headerbar_item_addon.set_tooltip_text(_("Addons"))
-        self.headerbar_item_addon.set_image(
-            self.headerbar_image_addon)
-        self.headerbar_item_addon.set_use_underline(True)
+        self.headerbar_item_addons.set_tooltip_text(_("Addons"))
+        self.headerbar_item_addons.set_image(
+            self.headerbar_image_addons)
+        self.headerbar_item_addons.set_use_underline(True)
 
         self.headerbar_item_preferences.set_tooltip_text(_("Preferences"))
         self.headerbar_item_preferences.set_image(
@@ -512,6 +512,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menubar_main_item_statusbar = Gtk.CheckMenuItem()
 
         self.menubar_main_item_preferences = Gtk.MenuItem()
+        self.menubar_main_item_addons = Gtk.MenuItem()
         self.menubar_main_item_log = Gtk.MenuItem()
 
         self.menubar_main_item_quit = Gtk.MenuItem()
@@ -532,6 +533,10 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menubar_main_item_preferences.set_label(
             "%s…" % _("_Preferences"))
         self.menubar_main_item_preferences.set_use_underline(True)
+
+        self.menubar_main_item_addons.set_label(
+            "%s…" % _("_Addons"))
+        self.menubar_main_item_addons.set_use_underline(True)
 
         self.menubar_main_item_log.set_label(
             "%s…" % _("_Log"))
@@ -1267,7 +1272,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Headerbar
         self.headerbar.pack_end(self.headerbar_item_menu)
-        self.headerbar.pack_end(self.headerbar_item_addon)
+        self.headerbar.pack_end(self.headerbar_item_addons)
         self.headerbar.pack_end(self.headerbar_item_preferences)
         self.headerbar.pack_end(Gtk.Separator())
         self.headerbar.pack_end(self.headerbar_item_fullscreen)
@@ -1311,6 +1316,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menubar_main_menu.insert(self.menubar_main_item_statusbar, -1)
         self.menubar_main_menu.insert(Gtk.SeparatorMenuItem(), -1)
         self.menubar_main_menu.insert(self.menubar_main_item_preferences, -1)
+        self.menubar_main_menu.insert(self.menubar_main_item_addons, -1)
         self.menubar_main_menu.insert(self.menubar_main_item_log, -1)
         self.menubar_main_menu.insert(Gtk.SeparatorMenuItem(), -1)
         self.menubar_main_menu.insert(self.menubar_main_item_quit, -1)
@@ -1613,6 +1619,11 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.menubar_main_item_preferences.connect(
             "activate", self.__on_show_preferences)
+        self.menubar_main_item_addons.connect(
+            "activate", self.__on_show_modules)
+        self.menubar_main_item_log.connect(
+            "activate", self.__on_show_log)
+
         self.dark_signal_menubar = self.menubar_main_item_dark_theme.connect(
             "toggled", self.__on_activate_dark_theme)
         self.side_signal_menubar = self.menubar_main_item_sidebar.connect(
@@ -1620,8 +1631,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.status_signal_menubar = self.menubar_main_item_statusbar.connect(
             "toggled", self.__on_activate_statusbar)
 
-        self.menubar_main_item_log.connect(
-            "activate", self.__on_show_log)
         self.menubar_help_item_about.connect(
             "activate", self.__on_show_about)
 
@@ -1715,7 +1724,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.headerbar_item_preferences.connect(
             "clicked", self.__on_show_preferences)
-        self.headerbar_item_addon.connect(
+        self.headerbar_item_addons.connect(
             "clicked", self.__on_show_modules)
 
         self.menu_item_gem_log.connect(
@@ -1949,7 +1958,7 @@ class MainWindow(Gtk.ApplicationWindow):
             not self.toolbar_sizes[icon_size] == self.toolbar.get_icon_size():
             self.headerbar_image_menu.set_from_icon_name(
                 Icons.Symbolic.Menu, self.toolbar_sizes[icon_size])
-            self.headerbar_image_addon.set_from_icon_name(
+            self.headerbar_image_addons.set_from_icon_name(
                 Icons.Symbolic.Addon, self.toolbar_sizes[icon_size])
             self.headerbar_image_fullscreen.set_from_icon_name(
                 Icons.Symbolic.Restore, self.toolbar_sizes[icon_size])
@@ -2674,6 +2683,15 @@ class MainWindow(Gtk.ApplicationWindow):
                 "function": self.__on_show_preferences
             },
             {
+                "path": "<GEM>/addons",
+                "widgets": [
+                    self.headerbar_item_addons,
+                    self.menubar_main_item_addons
+                ],
+                "keys": self.config.item("keys", "addons", "<Control>M"),
+                "function": self.__on_show_modules
+            },
+            {
                 "path": "<GEM>/log",
                 "widgets": [
                     self.menu_item_gem_log,
@@ -2699,9 +2717,6 @@ class MainWindow(Gtk.ApplicationWindow):
             if Gtk.accelerator_valid(key, mod):
                 # Disconnect previous shortcut to avoid multiple allocation
                 self.shortcuts_group.disconnect_key(key, mod)
-
-                self.shortcuts_group.connect(
-                    key, mod, Gtk.AccelFlags.VISIBLE, data["function"])
 
                 self.shortcuts_map.change_entry(data["path"], key, mod, True)
 
