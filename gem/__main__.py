@@ -23,6 +23,9 @@ from gem.engine.utils import get_data
 # System
 from argparse import ArgumentParser
 
+# Translation
+from gettext import gettext as _
+
 # ------------------------------------------------------------------------------
 #   Launcher
 # ------------------------------------------------------------------------------
@@ -62,6 +65,10 @@ def main():
     #   Initialize GEM API
     # ------------------------------------
 
+    # Initialize localization
+    bindtextdomain("gem", get_data("i18n"))
+    textdomain("gem")
+
     if args.create_folders:
 
         if args.config is not None and not exists(args.config):
@@ -73,28 +80,33 @@ def main():
     gem = GEM(config=args.config, local=args.local, debug=args.debug)
 
     # ------------------------------------
-    #   Initialize lock
+    #   Check lock
     # ------------------------------------
 
-    if exists(gem.get_local(".lock")):
-        gem_pid = int()
+    if gem.is_locked():
 
-        # Read lock content
-        with open(gem.get_local(".lock"), 'r') as pipe:
-            gem_pid = pipe.read()
+        try:
+            # Show a GTK+ dialog to alert user
+            if args.gtk_ui or args.gtk_config:
+                from gi import require_version
 
-        # Lock PID still exists
-        if len(gem_pid) > 0 and exists(path_join("/proc", gem_pid)):
-            path = path_join("/proc", gem_pid, "cmdline")
+                require_version("Gtk", "3.0")
 
-            # Check process command line
-            if exists(path):
-                with open(path, 'r') as pipe:
-                    content = pipe.read()
+                from gi.repository import Gtk
 
-                # Check if lock process is gem
-                if "gem" in content or "gem-ui" in content:
-                    sys_exit("GEM is already running with PID %s" % gem_pid)
+                dialog = Gtk.MessageDialog(None, 0, Gtk.MessageType.INFO,
+                    Gtk.ButtonsType.OK, _("A GEM instance already exists"))
+                dialog.format_secondary_text(
+                    _("GEM is already running with PID %d") % gem.pid)
+
+                dialog.run()
+                dialog.destroy()
+
+        except Exception:
+            pass
+
+        finally:
+            sys_exit("GEM is already running with PID %d" % gem.pid)
 
     # ------------------------------------
     #   Launch interface
@@ -115,8 +127,6 @@ def main():
         # ------------------------------------
 
         if args.gtk_ui or args.gtk_config:
-            bindtextdomain("gem", get_data("i18n"))
-            textdomain("gem")
 
             # Check display settings
             if "DISPLAY" in environ and len(environ["DISPLAY"]) > 0:
@@ -145,18 +155,10 @@ def main():
                                     "icons", path, basename(filename)))
 
                 # ------------------------------------
-                #   Manage lock
-                # ------------------------------------
-
-                # Save current PID into lock file
-                with open(gem.get_local(".lock"), 'w') as pipe:
-                    pipe.write(str(getpid()))
-
-                gem.logger.debug("Start GEM with PID %s" % getpid())
-
-                # ------------------------------------
                 #   Launch interface
                 # ------------------------------------
+
+                gem.logger.debug("Start GEM with PID %s" % gem.pid)
 
                 # Start splash
                 from gem.ui.splash import Splash
@@ -172,12 +174,8 @@ def main():
                     from gem.ui.interface import MainWindow
                     MainWindow(gem)
 
-                # ------------------------------------
-                #   Remove lock
-                # ------------------------------------
-
-                if exists(gem.get_local(".lock")):
-                    remove(gem.get_local(".lock"))
+                # Remove lock
+                gem.free_lock()
 
             else:
                 gem.logger.critical(_("Cannot launch GEM without display"))

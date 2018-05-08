@@ -109,6 +109,12 @@ msgid "<b>%s</b> cannot been found on your system"
 msgstr ""
 
 #
+# File: gem/main.py, line: 148
+#, fuzzy
+msgid "A GEM instance already exists"
+msgstr "GEM ya está ejecutandose con el PID %s"
+
+#
 # File: gem/gtk/preferences.py, line: 1784
 msgid ""
 "A console represent a games library. You can specify a default emulator "
@@ -572,6 +578,12 @@ msgid "GEM"
 msgstr "GEM"
 
 #
+# File: gem/main.py, line: 148
+#, fuzzy, python-format
+msgid "GEM is already running with PID %d"
+msgstr "GEM ya está ejecutandose con el PID %s"
+
+#
 # File: gem/preferences.py, line: 113
 msgid "Game"
 msgstr "Juego"
@@ -789,6 +801,11 @@ msgstr "Migrando datos desde la antigua dase de datos"
 # File: gem/gtk/preferences.py, line: 856
 msgid "Modify"
 msgstr "Modificar"
+
+#
+# File: gem/ui/dialog/modules.py, line: 48
+msgid "Modules"
+msgstr ""
 
 #
 # File: gem/gtk/preferences.py, line: 1879
@@ -1491,6 +1508,11 @@ msgid "_About"
 msgstr "_A cerca de"
 
 #
+# File: gem/ui/interface.py, line: 532
+msgid "_Addons"
+msgstr ""
+
+#
 # File: gem/interface.py, line: 401
 # File: gem/interface.py, line: 761
 #, fuzzy
@@ -1640,11 +1662,6 @@ msgstr "agradecimientos a los traductores"
 #, fuzzy
 #~ msgid "Filter..."
 #~ msgstr "Filtro"
-
-#
-# File: gem/main.py, line: 148
-#~ msgid "GEM is already running with PID %s"
-#~ msgstr "GEM ya está ejecutandose con el PID %s"
 
 #
 # File: gem/interface.py, line: 381

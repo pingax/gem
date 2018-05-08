@@ -117,6 +117,9 @@ class GEM(object):
         # Debug mode
         self.debug = debug
 
+        # Lock mode
+        self.__lock = False
+
         # Migration mode
         self.__need_migration = False
 
@@ -153,6 +156,9 @@ class GEM(object):
 
         self.__local = local
 
+        # Process identifier
+        self.__pid = int()
+
         # ----------------------------
         #   Initialize folders
         # ----------------------------
@@ -165,14 +171,56 @@ class GEM(object):
         #   Initialize objects
         # ----------------------------
 
-        # Initialize logging module
-        self.__init_logger()
+        # Initialize lock file
+        self.__lock = self.__init_lock()
 
-        # Initialize sqlite database
-        self.__init_database()
+        # Avoid to initialize a new instance if an existing one is present
+        if not self.__lock:
 
-        self.logger.debug("Set local folder as %s" % self.__local)
-        self.logger.debug("Set config folder as %s" % self.__config)
+            # Initialize logging module
+            self.__init_logger()
+
+            # Initialize sqlite database
+            self.__init_database()
+
+            self.logger.debug("Set local folder as %s" % self.__local)
+            self.logger.debug("Set config folder as %s" % self.__config)
+
+
+    def __init_lock(self):
+        """ Initialize lock file
+
+        Create a lock file which avoid to access to the database with multiple
+        instance simultaneous
+        """
+
+        if exists(self.get_local(".lock")):
+            self.__pid = int()
+
+            # Read lock content
+            with open(self.get_local(".lock"), 'r') as pipe:
+                self.__pid = int(pipe.read())
+
+            # Lock PID still exists
+            if exists(path_join("/proc", str(self.__pid))):
+                path = path_join("/proc", str(self.__pid), "cmdline")
+
+                # Check process command line
+                if exists(path):
+                    with open(path, 'r') as pipe:
+                        content = pipe.read()
+
+                    # Check if lock process is gem
+                    if "gem" in content or "gem-ui" in content:
+                        return True
+
+        self.__pid = getpid()
+
+        # Save current PID into lock file
+        with open(self.get_local(".lock"), 'w') as pipe:
+            pipe.write(str(self.__pid))
+
+        return False
 
 
     def __init_logger(self):
@@ -677,6 +725,39 @@ class GEM(object):
         """
 
         return path_join(self.__local, *args)
+
+
+    def is_locked(self):
+        """ Check if database is locked
+
+        Returns
+        -------
+        bool
+            Lock status
+        """
+
+        return self.__lock
+
+
+    def free_lock(self):
+        """ Remove lock file if present
+        """
+
+        if exists(self.get_local(".lock")):
+            remove(self.get_local(".lock"))
+
+
+    @property
+    def pid(self):
+        """ Return application process identifier
+
+        Returns
+        -------
+        int
+            Process identifier
+        """
+
+        return self.__pid
 
 
     @property
