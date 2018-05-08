@@ -474,12 +474,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menu_item_statusbar.set_margin_top(12)
 
         # ------------------------------------
-        #   Headerbar - Addon
-        # ------------------------------------
-
-        self.popover_addon = ListBoxPopover()
-
-        # ------------------------------------
         #   Menubar
         # ------------------------------------
 
@@ -1936,18 +1930,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.config.add_missing_data(get_data(path_join("config", "gem.conf")))
 
         # ------------------------------------
-        #   Shortcuts
-        # ------------------------------------
-
-        self.__init_shortcuts()
-
-        # ------------------------------------
-        #   Modules
-        # ------------------------------------
-
-        self.__init_modules()
-
-        # ------------------------------------
         #   Toolbar
         # ------------------------------------
 
@@ -2073,6 +2055,18 @@ class MainWindow(Gtk.ApplicationWindow):
 
             self.hide()
             self.unrealize()
+
+        # ------------------------------------
+        #   Shortcuts
+        # ------------------------------------
+
+        self.__init_shortcuts()
+
+        # ------------------------------------
+        #   Modules
+        # ------------------------------------
+
+        self.__init_modules()
 
         # ------------------------------------
         #   Widgets
@@ -2526,8 +2520,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.menu_item_open,
                     self.menubar_edit_item_open
                 ],
-                "keys": self.config.item("keys", "open", "<Control>O"),
-                "function": self.__on_game_open
+                "keys": self.config.item("keys", "open", "<Control>O")
             },
             {
                 "path": "<GEM>/game/copy",
@@ -2535,8 +2528,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.menu_item_copy,
                     self.menubar_edit_item_copy
                 ],
-                "keys": self.config.item("keys", "copy", "<Control>C"),
-                "function": self.__on_game_copy
+                "keys": self.config.item("keys", "copy", "<Control>C")
             },
             {
                 "path": "<GEM>/game/desktop",
@@ -2544,8 +2536,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.menu_item_desktop,
                     self.menubar_edit_item_desktop
                 ],
-                "keys": self.config.item("keys", "desktop", "<Control>G"),
-                "function": self.__on_game_generate_desktop
+                "keys": self.config.item("keys", "desktop", "<Control>G")
             },
             {
                 "path": "<GEM>/game/start",
@@ -2553,8 +2544,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.menu_item_launch,
                     self.menubar_game_item_launch
                 ],
-                "keys": self.config.item("keys", "start", "Return"),
-                "function": self.__on_game_launch
+                "keys": self.config.item("keys", "start", "Return")
             },
             {
                 "path": "<GEM>/game/rename",
@@ -2562,8 +2552,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.menu_item_rename,
                     self.menubar_edit_item_rename
                 ],
-                "keys": self.config.item("keys", "rename", "F2"),
-                "function": self.__on_activate_renamed
+                "keys": self.config.item("keys", "rename", "F2")
             },
             {
                 "path": "<GEM>/game/favorite",
@@ -2571,8 +2560,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.menu_item_favorite,
                     self.menubar_game_item_favorite
                 ],
-                "keys": self.config.item("keys", "favorite", "F3"),
-                "function": self.__on_game_marked_as_favorite
+                "keys": self.config.item("keys", "favorite", "F3")
             },
             {
                 "path": "<GEM>/game/multiplayer",
@@ -2580,8 +2568,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.menu_item_multiplayer,
                     self.menubar_game_item_multiplayer
                 ],
-                "keys": self.config.item("keys", "multiplayer", "F4"),
-                "function": self.__on_game_marked_as_multiplayer
+                "keys": self.config.item("keys", "multiplayer", "F4")
             },
             {
                 "path": "<GEM>/game/finish",
@@ -2589,8 +2576,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.menu_item_finish,
                     self.menubar_game_item_finish
                 ],
-                "keys": self.config.item("keys", "finish", "<Control>F3"),
-                "function": self.__on_game_marked_as_finish
+                "keys": self.config.item("keys", "finish", "<Control>F3")
             },
             {
                 "path": "<GEM>/game/screenshots",
@@ -2599,8 +2585,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.menubar_game_item_screenshots,
                     self.toolbar_item_screenshots
                 ],
-                "keys": self.config.item("keys", "snapshots", "F5"),
-                "function": self.__on_show_viewer
+                "keys": self.config.item("keys", "snapshots", "F5")
             },
             {
                 "path": "<GEM>/game/log",
@@ -2608,8 +2593,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.menu_item_output,
                     self.menubar_game_item_output
                 ],
-                "keys": self.config.item("keys", "log", "F6"),
-                "function": self.__on_game_log
+                "keys": self.config.item("keys", "log", "F6")
             },
             {
                 "path": "<GEM>/game/notes",
@@ -2617,8 +2601,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.menu_item_notes,
                     self.menubar_game_item_notes
                 ],
-                "keys": self.config.item("keys", "notes", "F7"),
-                "function": self.__on_show_notes
+                "keys": self.config.item("keys", "notes", "F7")
             },
             {
                 "path": "<GEM>/game/memory",
@@ -2626,21 +2609,19 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.menu_item_mednafen,
                     self.menubar_edit_item_mednafen
                 ],
-                "keys": self.config.item("keys", "memory", "F8"),
-                "function": self.__on_game_backup_memory
+                "keys": self.config.item("keys", "memory", "F8")
             },
             {
                 "path": "<GEM>/fullscreen",
                 "widgets": [
                     self.menubar_game_item_fullscreen
                 ],
-                "keys": self.config.item("keys", "fullscreen", "F11"),
-                "function": self.__on_activate_fullscreen
+                "keys": self.config.item("keys", "fullscreen", "F11")
             },
             {
                 "path": "<GEM>/sidebar",
                 "widgets": [
-                    self.menu_item_sidebar,
+                    self,
                     self.menubar_main_item_sidebar
                 ],
                 "keys": self.config.item("keys", "sidebar", "F9"),
@@ -2652,8 +2633,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.menu_item_properties,
                     self.menubar_game_item_properties
                 ],
-                "keys": self.config.item("keys", "exceptions", "F12"),
-                "function": self.__on_game_parameters
+                "keys": self.config.item("keys", "exceptions", "F12")
             },
             {
                 "path": "<GEM>/game/delete",
@@ -2661,8 +2641,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.menu_item_remove,
                     self.menubar_edit_item_delete
                 ],
-                "keys": self.config.item("keys", "delete", "<Control>Delete"),
-                "function": self.__on_game_removed
+                "keys": self.config.item("keys", "delete", "<Control>Delete")
             },
             {
                 "path": "<GEM>/game/remove",
@@ -2670,13 +2649,12 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.menu_item_database,
                     self.menubar_edit_item_database
                 ],
-                "keys": self.config.item("keys", "remove", "Delete"),
-                "function": self.__on_game_clean
+                "keys": self.config.item("keys", "remove", "Delete")
             },
             {
                 "path": "<GEM>/preferences",
                 "widgets": [
-                    self.headerbar_item_preferences,
+                    self,
                     self.menubar_main_item_preferences
                 ],
                 "keys": self.config.item("keys", "preferences", "<Control>P"),
@@ -2685,7 +2663,7 @@ class MainWindow(Gtk.ApplicationWindow):
             {
                 "path": "<GEM>/addons",
                 "widgets": [
-                    self.headerbar_item_addons,
+                    self,
                     self.menubar_main_item_addons
                 ],
                 "keys": self.config.item("keys", "addons", "<Control>M"),
@@ -2694,7 +2672,7 @@ class MainWindow(Gtk.ApplicationWindow):
             {
                 "path": "<GEM>/log",
                 "widgets": [
-                    self.menu_item_gem_log,
+                    self,
                     self.menubar_main_item_log
                 ],
                 "keys": self.config.item("keys", "gem", "<Control>L"),
@@ -2703,7 +2681,7 @@ class MainWindow(Gtk.ApplicationWindow):
             {
                 "path": "<GEM>/quit",
                 "widgets": [
-                    self.menu_item_quit,
+                    self,
                     self.menubar_main_item_quit
                 ],
                 "keys": self.config.item("keys", "quit", "<Control>Q"),
@@ -2721,8 +2699,19 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.shortcuts_map.change_entry(data["path"], key, mod, True)
 
                 for widget in data["widgets"]:
-                    widget.add_accelerator("activate", self.shortcuts_group,
-                        key, mod, Gtk.AccelFlags.VISIBLE)
+
+                    # Global signals
+                    if type(widget) is MainWindow:
+
+                        # Avoid to have multiple shortcuts with classic theme
+                        if not self.use_classic_theme:
+                            self.shortcuts_group.connect(key, mod,
+                                Gtk.AccelFlags.VISIBLE, data["function"])
+
+                    # Local signals
+                    else:
+                        widget.add_accelerator("activate", self.shortcuts_group,
+                            key, mod, Gtk.AccelFlags.VISIBLE)
 
 
     def __on_manage_keys(self, widget, event):
