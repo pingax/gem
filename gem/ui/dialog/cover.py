@@ -146,7 +146,7 @@ class CoverDialog(CommonWindow):
         self.grid_content.attach(self.label_image_selector, 0, 0, 1, 1)
         self.grid_content.attach(self.file_image_selector, 1, 0, 1, 1)
         self.grid_content.attach(self.button_reset, 2, 0, 1, 1)
-        self.grid_content.attach(self.image_preview, 0, 2, 2, 1)
+        self.grid_content.attach(self.image_preview, 0, 1, 3, 1)
 
         self.pack_start(self.grid_content)
 
