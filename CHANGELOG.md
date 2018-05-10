@@ -18,10 +18,12 @@
 * Add some tooltips for date labels in game sidebar
 * Add a color to filter button when some filters are active
 * Add to remove the desktop file when removing a game
+* Add a dialog to alert the user when a GEM instance already exists
 * Allow to drag the sidebar image to another application
 * Restore GTK+ menuitem behavior to main and game menus
 * Restore old dialog buttons behavior to both themes
 * Fix wrong object set during drag and drop process
+* Fix missing global shortcuts in default theme
 
 ## Version 0.9.1 - Lavos (17 Feb, 2018)
 

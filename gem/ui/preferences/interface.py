@@ -207,12 +207,8 @@ class PreferencesWindow(CommonWindow):
 
         self.set_resizable(True)
 
+        self.set_border_width(6)
         self.set_spacing(6)
-
-        if self.use_classic_theme:
-            self.set_border_width(6)
-        else:
-            self.set_border_width(0)
 
         if self.parent is None:
             self.set_subtitle(
@@ -222,11 +218,7 @@ class PreferencesWindow(CommonWindow):
         #   Grids
         # ------------------------------------
 
-        self.box_notebook_general = Gtk.Box()
-        self.box_notebook_interface = Gtk.Box()
-        self.box_notebook_shortcuts = Gtk.Box()
-        self.box_notebook_consoles = Gtk.Box()
-        self.box_notebook_emulators = Gtk.Box()
+        self.box_stack = Gtk.Box()
 
         self.grid_general = Gtk.Box()
         self.grid_interface = Gtk.Box()
@@ -261,11 +253,7 @@ class PreferencesWindow(CommonWindow):
         self.grid_emulators_buttons = Gtk.ButtonBox()
 
         # Properties
-        self.box_notebook_general.set_spacing(8)
-        self.box_notebook_interface.set_spacing(8)
-        self.box_notebook_shortcuts.set_spacing(8)
-        self.box_notebook_consoles.set_spacing(8)
-        self.box_notebook_emulators.set_spacing(8)
+        self.box_stack.set_orientation(Gtk.Orientation.HORIZONTAL)
 
         self.grid_general.set_spacing(6)
         self.grid_general.set_border_width(18)
@@ -360,59 +348,19 @@ class PreferencesWindow(CommonWindow):
         self.grid_emulators_buttons.set_orientation(Gtk.Orientation.HORIZONTAL)
 
         # ------------------------------------
-        #   Notebook
+        #   Stack
         # ------------------------------------
 
-        self.notebook = Gtk.Notebook()
+        self.stack = Gtk.Stack()
 
-        self.label_notebook_general = Gtk.Label()
-        self.image_notebook_general = Gtk.Image()
+        self.sidebar_stack = Gtk.StackSidebar()
 
-        self.label_notebook_interface = Gtk.Label()
-        self.image_notebook_interface = Gtk.Image()
-
-        self.label_notebook_shortcuts = Gtk.Label()
-        self.image_notebook_shortcuts = Gtk.Image()
-
-        self.label_notebook_consoles = Gtk.Label()
-        self.image_notebook_consoles = Gtk.Image()
-
-        self.label_notebook_emulators = Gtk.Label()
-        self.image_notebook_emulators = Gtk.Image()
+        self.frame_stack = Gtk.Frame()
 
         # Properties
-        self.notebook.set_tab_pos(Gtk.PositionType.LEFT)
-        self.notebook.set_show_border(False)
+        self.stack.set_transition_type(Gtk.StackTransitionType.NONE)
 
-        self.label_notebook_general.set_markup("<b>%s</b>" % _("General"))
-        self.label_notebook_general.set_use_markup(True)
-        self.label_notebook_general.set_alignment(0, .5)
-        self.image_notebook_general.set_from_icon_name(
-            Icons.Other, Gtk.IconSize.MENU)
-
-        self.label_notebook_interface.set_markup("<b>%s</b>" % _("Interface"))
-        self.label_notebook_interface.set_use_markup(True)
-        self.label_notebook_interface.set_alignment(0, .5)
-        self.image_notebook_interface.set_from_icon_name(
-            Icons.Video, Gtk.IconSize.MENU)
-
-        self.label_notebook_shortcuts.set_markup("<b>%s</b>" % _("Shortcuts"))
-        self.label_notebook_shortcuts.set_use_markup(True)
-        self.label_notebook_shortcuts.set_alignment(0, .5)
-        self.image_notebook_shortcuts.set_from_icon_name(
-            Icons.Keyboard, Gtk.IconSize.MENU)
-
-        self.label_notebook_consoles.set_markup("<b>%s</b>" % _("Consoles"))
-        self.label_notebook_consoles.set_use_markup(True)
-        self.label_notebook_consoles.set_alignment(0, .5)
-        self.image_notebook_consoles.set_from_icon_name(
-            Icons.Gaming, Gtk.IconSize.MENU)
-
-        self.label_notebook_emulators.set_markup("<b>%s</b>" % _("Emulators"))
-        self.label_notebook_emulators.set_use_markup(True)
-        self.label_notebook_emulators.set_alignment(0, .5)
-        self.image_notebook_emulators.set_from_icon_name(
-            Icons.Desktop, Gtk.IconSize.MENU)
+        self.sidebar_stack.set_stack(self.stack)
 
         # ------------------------------------
         #   General
@@ -1127,44 +1075,23 @@ class PreferencesWindow(CommonWindow):
         """
 
         # Main widgets
-        self.pack_start(self.notebook, True, True)
+        self.pack_start(self.frame_stack, True, True)
 
-        # Notebook
-        self.box_notebook_general.pack_start(
-            self.image_notebook_general, False, False, 0)
-        self.box_notebook_general.pack_start(
-            self.label_notebook_general, True, True, 0)
+        self.frame_stack.add(self.box_stack)
 
-        self.box_notebook_interface.pack_start(
-            self.image_notebook_interface, False, False, 0)
-        self.box_notebook_interface.pack_start(
-            self.label_notebook_interface, True, True, 0)
+        self.box_stack.pack_start(self.sidebar_stack, False, False, 0)
+        self.box_stack.pack_start(self.stack, True, True, 0)
 
-        self.box_notebook_shortcuts.pack_start(
-            self.image_notebook_shortcuts, False, False, 0)
-        self.box_notebook_shortcuts.pack_start(
-            self.label_notebook_shortcuts, True, True, 0)
-
-        self.box_notebook_consoles.pack_start(
-            self.image_notebook_consoles, False, False, 0)
-        self.box_notebook_consoles.pack_start(
-            self.label_notebook_consoles, True, True, 0)
-
-        self.box_notebook_emulators.pack_start(
-            self.image_notebook_emulators, False, False, 0)
-        self.box_notebook_emulators.pack_start(
-            self.label_notebook_emulators, True, True, 0)
-
-        self.notebook.append_page(
-            self.scroll_general, self.box_notebook_general)
-        self.notebook.append_page(
-            self.scroll_interface, self.box_notebook_interface)
-        self.notebook.append_page(
-            self.scroll_shortcuts, self.box_notebook_shortcuts)
-        self.notebook.append_page(
-            self.scroll_consoles, self.box_notebook_consoles)
-        self.notebook.append_page(
-            self.scroll_emulators, self.box_notebook_emulators)
+        self.stack.add_titled(
+            self.scroll_general, "general", _("General"))
+        self.stack.add_titled(
+            self.scroll_interface, "interface", _("Interface"))
+        self.stack.add_titled(
+            self.scroll_shortcuts, "shortcuts", _("Shortcuts"))
+        self.stack.add_titled(
+            self.scroll_consoles, "consoles", _("Consoles"))
+        self.stack.add_titled(
+            self.scroll_emulators, "emulators", _("Emulators"))
 
         # General tab
         self.grid_general.pack_start(
@@ -1493,12 +1420,6 @@ class PreferencesWindow(CommonWindow):
         self.__on_check_native_viewer()
 
         self.show_all()
-
-        self.box_notebook_general.show_all()
-        self.box_notebook_interface.show_all()
-        self.box_notebook_shortcuts.show_all()
-        self.box_notebook_consoles.show_all()
-        self.box_notebook_emulators.show_all()
 
         # Avoid to remove console or emulator when games are launched
         if self.parent is not None and len(self.parent.threads) > 0:

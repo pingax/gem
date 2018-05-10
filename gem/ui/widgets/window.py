@@ -153,6 +153,8 @@ class CommonWindow(object):
             self.headerbar_image = Gtk.Image()
 
             # Properties
+            self.headerbar.set_show_close_button(True)
+
             self.headerbar_image.set_from_icon_name(
                 self.icon, Gtk.IconSize.LARGE_TOOLBAR)
 

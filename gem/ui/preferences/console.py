@@ -48,8 +48,8 @@ class ConsolePreferences(CommonWindow):
             Use edit mode instead of append mode
         """
 
-        CommonWindow.__init__(self, parent, _("Console"), Icons.Gaming,
-            parent.use_classic_theme)
+        CommonWindow.__init__(self, parent, _("Console"),
+            Icons.Symbolic.Gaming, parent.use_classic_theme)
 
         # ------------------------------------
         #   Initialize variables

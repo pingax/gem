@@ -73,7 +73,8 @@ class ModulesDialog(CommonWindow):
 
         self.set_size(520, 520)
 
-        self.set_spacing(12)
+        self.set_border_width(6)
+        self.set_spacing(6)
 
         # ------------------------------------
         #   Filter

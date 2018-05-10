@@ -48,8 +48,8 @@ class EmulatorPreferences(CommonWindow):
             Use edit mode instead of append mode
         """
 
-        CommonWindow.__init__(self, parent, _("Emulator"), Icons.Desktop,
-            parent.use_classic_theme)
+        CommonWindow.__init__(self, parent, _("Emulator"),
+            Icons.Symbolic.Properties, parent.use_classic_theme)
 
         # ------------------------------------
         #   Initialize variables
