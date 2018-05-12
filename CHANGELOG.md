@@ -5,7 +5,7 @@
 ### Engine
 
 * Add cover field to game database
-* Add rating field to game database
+* Add score field to game database
 * Add favorite field to console object
 * Add GEM.get_game_tags function to API
 * Allow to set specific configuration paths in constructor parameters

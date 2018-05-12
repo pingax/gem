@@ -74,12 +74,15 @@ class PreferencesWindow(CommonWindow):
             _("Interface"): {
                 "sidebar": [
                     _("Show sidebar"), "F9"],
+                "statusbar": [
+                    _("Show statusbar"), "<Control>F9"],
                 "gem": [
                     _("Open main log"), "<Control>L"],
                 "preferences": [
                     _("Open preferences"), "<Control>P"],
                 "quit": [
-                    _("Quit application"), "<Control>Q"] },
+                    _("Quit application"), "<Control>Q"]
+            },
             _("Game"): {
                 "start": [
                     _("Launch a game"), "Return"],
@@ -90,13 +93,32 @@ class PreferencesWindow(CommonWindow):
                 "finish": [
                     _("Mark a game as finish"), "<Control>F3"],
                 "snapshots": [
-                    _("Show game screenshots"), "F5"],
+                    _("Show a game screenshots"), "F5"],
                 "log": [
-                    _("Open game log"), "F6"],
+                    _("Open a game log"), "F6"],
                 "notes": [
-                    _("Open game notes"), "F7"],
+                    _("Open a game notes"), "F7"],
                 "memory": [
-                    _("Generate a backup memory file"), "F8"] },
+                    _("Generate a backup memory file"), "F8"]
+            },
+            _("Score"): {
+                "score-up": [
+                    _("Increase selected game score"), "<Control>Page_Up"],
+                "score-down": [
+                    _("Decrease selected game score"), "<Control>Page_Down"],
+                "score-0": [
+                    _("Set selected game score as 0"), "<Primary>0"],
+                "score-1": [
+                    _("Set selected game score as 1"), "<Primary>1"],
+                "score-2": [
+                    _("Set selected game score as 2"), "<Primary>2"],
+                "score-3": [
+                    _("Set selected game score as 3"), "<Primary>3"],
+                "score-4": [
+                    _("Set selected game score as 4"), "<Primary>4"],
+                "score-5": [
+                    _("Set selected game score as 5"), "<Primary>5"]
+            },
             _("Edit"): {
                 "remove": [
                     _("Remove a game from database"), "Delete"],
@@ -104,6 +126,8 @@ class PreferencesWindow(CommonWindow):
                     _("Remove a game from disk"), "<Control>Delete"],
                 "rename": [
                     _("Rename a game"), "F2"],
+                "cover": [
+                    _("Set a game cover"), "<Control>I"],
                 "exceptions": [
                     _("Set specific arguments for a game"), "F12"],
                 "open": [
@@ -111,17 +135,21 @@ class PreferencesWindow(CommonWindow):
                 "copy": [
                     _("Copy selected game path"), "<Control>C"],
                 "desktop": [
-                    _("Generate desktop entry for a game"), "<Control>G"] }}
+                    _("Generate desktop entry for a game"), "<Control>G"]
+            }
+        }
 
         self.lines = {
             _("None"): "none",
             _("Horizontal"): "horizontal",
             _("Vertical"): "vertical",
-            _("Both"): "both" }
+            _("Both"): "both"
+        }
 
         self.sidebar = {
             _("Right"): "horizontal",
-            _("Bottom"): "vertical" }
+            _("Bottom"): "vertical"
+        }
 
         self.toolbar = {
             _("Menu"): "menu",
@@ -129,11 +157,13 @@ class PreferencesWindow(CommonWindow):
             _("Large Toolbar"): "large-toolbar",
             _("Button"): "button",
             _("Drag and Drop"): "dnd",
-            _("Dialog"): "dialog" }
+            _("Dialog"): "dialog"
+        }
 
         self.selection = {
             "console": None,
-            "emulator": None }
+            "emulator": None
+        }
 
         # ------------------------------------
         #   Initialize configuration files
@@ -246,6 +276,7 @@ class PreferencesWindow(CommonWindow):
         self.grid_columns_play = Gtk.Box()
         self.grid_columns_last_play = Gtk.Box()
         self.grid_columns_play_time = Gtk.Box()
+        self.grid_columns_score = Gtk.Box()
         self.grid_columns_installed = Gtk.Box()
         self.grid_columns_flags = Gtk.Box()
 
@@ -326,6 +357,8 @@ class PreferencesWindow(CommonWindow):
         self.grid_columns_last_play.set_homogeneous(True)
         self.grid_columns_play_time.set_spacing(12)
         self.grid_columns_play_time.set_homogeneous(True)
+        self.grid_columns_score.set_spacing(12)
+        self.grid_columns_score.set_homogeneous(True)
         self.grid_columns_installed.set_spacing(12)
         self.grid_columns_installed.set_homogeneous(True)
         self.grid_columns_flags.set_spacing(12)
@@ -766,6 +799,8 @@ class PreferencesWindow(CommonWindow):
         self.check_last_play = Gtk.Switch()
         self.label_play_time = Gtk.Label()
         self.check_play_time = Gtk.Switch()
+        self.label_score = Gtk.Label()
+        self.check_score = Gtk.Switch()
         self.label_installed = Gtk.Label()
         self.check_installed = Gtk.Switch()
         self.label_flags = Gtk.Label()
@@ -813,6 +848,18 @@ class PreferencesWindow(CommonWindow):
 
         self.check_play_time.set_halign(Gtk.Align.START)
         self.check_play_time.set_valign(Gtk.Align.CENTER)
+
+        self.label_score.set_line_wrap(True)
+        self.label_score.set_alignment(1, 0.5)
+        self.label_score.set_halign(Gtk.Align.END)
+        self.label_score.set_justify(Gtk.Justification.RIGHT)
+        self.label_score.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
+        self.label_score.get_style_context().add_class("dim-label")
+        self.label_score.set_label(
+            _("Score"))
+
+        self.check_score.set_halign(Gtk.Align.START)
+        self.check_score.set_valign(Gtk.Align.CENTER)
 
         self.label_installed.set_line_wrap(True)
         self.label_installed.set_alignment(1, 0.5)
@@ -1185,6 +1232,8 @@ class PreferencesWindow(CommonWindow):
         self.grid_interface.pack_start(
             self.grid_columns_play_time, False, False, 0)
         self.grid_interface.pack_start(
+            self.grid_columns_score, False, False, 0)
+        self.grid_interface.pack_start(
             self.grid_columns_installed, False, False, 0)
         self.grid_interface.pack_start(
             self.grid_columns_flags, False, False, 0)
@@ -1243,6 +1292,11 @@ class PreferencesWindow(CommonWindow):
             self.label_play_time, True, True, 0)
         self.grid_columns_play_time.pack_start(
             self.check_play_time, True, True, 0)
+
+        self.grid_columns_score.pack_start(
+            self.label_score, True, True, 0)
+        self.grid_columns_score.pack_start(
+            self.check_score, True, True, 0)
 
         self.grid_columns_installed.pack_start(
             self.label_installed, True, True, 0)
@@ -1476,6 +1530,8 @@ class PreferencesWindow(CommonWindow):
             self.check_last_play.get_active())
         self.config.modify("columns", "play_time",
             self.check_play_time.get_active())
+        self.config.modify("columns", "score",
+            self.check_score.get_active())
         self.config.modify("columns", "installed",
             self.check_installed.get_active())
         self.config.modify("columns", "flags",
@@ -1607,6 +1663,9 @@ class PreferencesWindow(CommonWindow):
 
         self.check_play_time.set_active(self.config.getboolean(
             "columns", "play_time", fallback=True))
+
+        self.check_score.set_active(self.config.getboolean(
+            "columns", "score", fallback=True))
 
         self.check_installed.set_active(self.config.getboolean(
             "columns", "installed", fallback=True))

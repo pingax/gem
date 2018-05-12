@@ -166,7 +166,9 @@ class MainWindow(Gtk.ApplicationWindow):
             "favorite": Icons.Favorite,
             "multiplayer": Icons.Users,
             "finish": Icons.Smile,
-            "unfinish": Icons.Uncertain
+            "unfinish": Icons.Uncertain,
+            "no-starred": Icons.NoStarred,
+            "starred": Icons.Starred
         }
 
         for icon in self.icons_data.keys():
@@ -202,7 +204,8 @@ class MainWindow(Gtk.ApplicationWindow):
             "large-toolbar": Gtk.IconSize.LARGE_TOOLBAR,
             "button": Gtk.IconSize.BUTTON,
             "dnd": Gtk.IconSize.DND,
-            "dialog": Gtk.IconSize.DIALOG }
+            "dialog": Gtk.IconSize.DIALOG
+        }
 
         # ------------------------------------
         #   Prepare interface
@@ -642,6 +645,59 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menubar_edit_item_mednafen.set_use_underline(True)
 
         # ------------------------------------
+        #   Menubar - Edit - Score items
+        # ------------------------------------
+
+        self.menubar_edit_score = Gtk.Menu()
+        self.menubar_edit_item_score = Gtk.MenuItem()
+
+        self.menubar_edit_item_score_up = Gtk.MenuItem()
+        self.menubar_edit_item_score_down = Gtk.MenuItem()
+        self.menubar_edit_item_score_0 = Gtk.MenuItem()
+        self.menubar_edit_item_score_1 = Gtk.MenuItem()
+        self.menubar_edit_item_score_2 = Gtk.MenuItem()
+        self.menubar_edit_item_score_3 = Gtk.MenuItem()
+        self.menubar_edit_item_score_4 = Gtk.MenuItem()
+        self.menubar_edit_item_score_5 = Gtk.MenuItem()
+
+        # Properties
+        self.menubar_edit_item_score.set_label(
+            _("Score"))
+        self.menubar_edit_item_score.set_use_underline(True)
+
+        self.menubar_edit_item_score_up.set_label(
+            _("Increase score"))
+        self.menubar_edit_item_score_up.set_use_underline(True)
+
+        self.menubar_edit_item_score_down.set_label(
+            _("Decrease score"))
+        self.menubar_edit_item_score_down.set_use_underline(True)
+
+        self.menubar_edit_item_score_0.set_label(
+            _("Set score as 0"))
+        self.menubar_edit_item_score_0.set_use_underline(True)
+
+        self.menubar_edit_item_score_1.set_label(
+            _("Set score as 1"))
+        self.menubar_edit_item_score_1.set_use_underline(True)
+
+        self.menubar_edit_item_score_2.set_label(
+            _("Set score as 2"))
+        self.menubar_edit_item_score_2.set_use_underline(True)
+
+        self.menubar_edit_item_score_3.set_label(
+            _("Set score as 3"))
+        self.menubar_edit_item_score_3.set_use_underline(True)
+
+        self.menubar_edit_item_score_4.set_label(
+            _("Set score as 4"))
+        self.menubar_edit_item_score_4.set_use_underline(True)
+
+        self.menubar_edit_item_score_5.set_label(
+            _("Set score as 5"))
+        self.menubar_edit_item_score_5.set_use_underline(True)
+
+        # ------------------------------------
         #   Menubar - Help items
         # ------------------------------------
 
@@ -960,6 +1016,7 @@ class MainWindow(Gtk.ApplicationWindow):
             str,    # Last play
             str,    # Last time play
             str,    # Time play
+            int,    # Score
             str,    # Installed
             Pixbuf, # Custom parameters
             Pixbuf, # Screenshots
@@ -975,6 +1032,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.column_game_play = Gtk.TreeViewColumn()
         self.column_game_last_play = Gtk.TreeViewColumn()
         self.column_game_play_time = Gtk.TreeViewColumn()
+        self.column_game_score = Gtk.TreeViewColumn()
         self.column_game_installed = Gtk.TreeViewColumn()
         self.column_game_flags = Gtk.TreeViewColumn()
 
@@ -986,6 +1044,11 @@ class MainWindow(Gtk.ApplicationWindow):
         self.cell_game_last_play = Gtk.CellRendererText()
         self.cell_game_last_play_time = Gtk.CellRendererText()
         self.cell_game_play_time = Gtk.CellRendererText()
+        self.cell_game_score_first = Gtk.CellRendererPixbuf()
+        self.cell_game_score_second = Gtk.CellRendererPixbuf()
+        self.cell_game_score_third = Gtk.CellRendererPixbuf()
+        self.cell_game_score_fourth = Gtk.CellRendererPixbuf()
+        self.cell_game_score_fifth = Gtk.CellRendererPixbuf()
         self.cell_game_installed = Gtk.CellRendererText()
         self.cell_game_except = Gtk.CellRendererPixbuf()
         self.cell_game_snapshots = Gtk.CellRendererPixbuf()
@@ -1008,6 +1071,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.column_game_play.set_title(_("Launch"))
         self.column_game_last_play.set_title(_("Last launch"))
         self.column_game_play_time.set_title(_("Play time"))
+        self.column_game_score.set_title(_("Score"))
         self.column_game_installed.set_title(_("Installed"))
         self.column_game_flags.set_title(_("Flags"))
 
@@ -1038,6 +1102,18 @@ class MainWindow(Gtk.ApplicationWindow):
         self.column_game_play_time.set_alignment(.5)
         self.column_game_play_time.pack_start(
             self.cell_game_play_time, False)
+
+        self.column_game_score.set_alignment(.5)
+        self.column_game_score.pack_start(
+            self.cell_game_score_first, False)
+        self.column_game_score.pack_start(
+            self.cell_game_score_second, False)
+        self.column_game_score.pack_start(
+            self.cell_game_score_third, False)
+        self.column_game_score.pack_start(
+            self.cell_game_score_fourth, False)
+        self.column_game_score.pack_start(
+            self.cell_game_score_fifth, False)
 
         self.column_game_installed.set_alignment(.5)
         self.column_game_installed.pack_start(
@@ -1076,6 +1152,9 @@ class MainWindow(Gtk.ApplicationWindow):
         self.column_game_flags.add_attribute(
             self.cell_game_save, "pixbuf", Columns.Save)
 
+        self.column_game_score.set_cell_data_func(
+            self.cell_game_score_first, self.__on_append_game)
+
         self.cell_game_favorite.set_alignment(.5, .5)
         self.cell_game_multiplayer.set_alignment(.5, .5)
         self.cell_game_finish.set_alignment(.5, .5)
@@ -1084,6 +1163,11 @@ class MainWindow(Gtk.ApplicationWindow):
         self.cell_game_last_play.set_alignment(0, .5)
         self.cell_game_last_play_time.set_alignment(1, .5)
         self.cell_game_play_time.set_alignment(.5, .5)
+        self.cell_game_score_first.set_alignment(.5, .5)
+        self.cell_game_score_second.set_alignment(.5, .5)
+        self.cell_game_score_third.set_alignment(.5, .5)
+        self.cell_game_score_fourth.set_alignment(.5, .5)
+        self.cell_game_score_fifth.set_alignment(.5, .5)
         self.cell_game_installed.set_alignment(.5, .5)
 
         self.cell_game_name.set_property("editable", True)
@@ -1096,6 +1180,11 @@ class MainWindow(Gtk.ApplicationWindow):
         self.cell_game_play.set_padding(6, 4)
         self.cell_game_last_play.set_padding(6, 4)
         self.cell_game_last_play_time.set_padding(6, 4)
+        self.cell_game_score_first.set_padding(4, 4)
+        self.cell_game_score_second.set_padding(2, 4)
+        self.cell_game_score_third.set_padding(2, 4)
+        self.cell_game_score_fourth.set_padding(2, 4)
+        self.cell_game_score_fifth.set_padding(4, 4)
         self.cell_game_installed.set_padding(6, 4)
         self.cell_game_except.set_padding(4, 4)
         self.cell_game_snapshots.set_padding(2, 4)
@@ -1177,6 +1266,59 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menu_item_remove.set_label(
             "%s…" % _("_Remove from disk"))
         self.menu_item_remove.set_use_underline(True)
+
+        # ------------------------------------
+        #   Games - Menu score
+        # ------------------------------------
+
+        self.menu_games_score = Gtk.Menu()
+        self.menu_item_score = Gtk.MenuItem()
+
+        self.menu_item_score_up = Gtk.MenuItem()
+        self.menu_item_score_down = Gtk.MenuItem()
+        self.menu_item_score_0 = Gtk.MenuItem()
+        self.menu_item_score_1 = Gtk.MenuItem()
+        self.menu_item_score_2 = Gtk.MenuItem()
+        self.menu_item_score_3 = Gtk.MenuItem()
+        self.menu_item_score_4 = Gtk.MenuItem()
+        self.menu_item_score_5 = Gtk.MenuItem()
+
+        # Properties
+        self.menu_item_score.set_label(
+            _("_Score"))
+        self.menu_item_score.set_use_underline(True)
+
+        self.menu_item_score_up.set_label(
+            _("_Increase score"))
+        self.menu_item_score_up.set_use_underline(True)
+
+        self.menu_item_score_down.set_label(
+            _("_Decrease score"))
+        self.menu_item_score_down.set_use_underline(True)
+
+        self.menu_item_score_0.set_label(
+            _("Set score as 0"))
+        self.menu_item_score_0.set_use_underline(True)
+
+        self.menu_item_score_1.set_label(
+            _("Set score as 1"))
+        self.menu_item_score_1.set_use_underline(True)
+
+        self.menu_item_score_2.set_label(
+            _("Set score as 2"))
+        self.menu_item_score_2.set_use_underline(True)
+
+        self.menu_item_score_3.set_label(
+            _("Set score as 3"))
+        self.menu_item_score_3.set_use_underline(True)
+
+        self.menu_item_score_4.set_label(
+            _("Set score as 4"))
+        self.menu_item_score_4.set_use_underline(True)
+
+        self.menu_item_score_5.set_label(
+            _("Set score as 5"))
+        self.menu_item_score_5.set_use_underline(True)
 
         # ------------------------------------
         #   Games - Menu tools
@@ -1335,6 +1477,10 @@ class MainWindow(Gtk.ApplicationWindow):
         # Menu - Edit items
         self.menubar_item_edit.set_submenu(self.menubar_edit_menu)
 
+        self.menubar_edit_item_score.set_submenu(self.menubar_edit_score)
+
+        self.menubar_edit_menu.insert(self.menubar_edit_item_score, -1)
+        self.menubar_edit_menu.insert(Gtk.SeparatorMenuItem(), -1)
         self.menubar_edit_menu.insert(self.menubar_edit_item_rename, -1)
         self.menubar_edit_menu.insert(self.menubar_edit_item_mednafen, -1)
         self.menubar_edit_menu.insert(Gtk.SeparatorMenuItem(), -1)
@@ -1347,6 +1493,16 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menubar_edit_menu.insert(self.menubar_edit_item_database, -1)
         self.menubar_edit_menu.insert(Gtk.SeparatorMenuItem(), -1)
         self.menubar_edit_menu.insert(self.menubar_edit_item_delete, -1)
+
+        self.menubar_edit_score.insert(self.menubar_edit_item_score_up, -1)
+        self.menubar_edit_score.insert(self.menubar_edit_item_score_down, -1)
+        self.menubar_edit_score.insert(Gtk.SeparatorMenuItem(), -1)
+        self.menubar_edit_score.insert(self.menubar_edit_item_score_0, -1)
+        self.menubar_edit_score.insert(self.menubar_edit_item_score_1, -1)
+        self.menubar_edit_score.insert(self.menubar_edit_item_score_2, -1)
+        self.menubar_edit_score.insert(self.menubar_edit_item_score_3, -1)
+        self.menubar_edit_score.insert(self.menubar_edit_item_score_4, -1)
+        self.menubar_edit_score.insert(self.menubar_edit_item_score_5, -1)
 
         # Menu - Help items
         self.menubar_item_help.set_submenu(self.menubar_help_menu)
@@ -1497,6 +1653,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.treeview_games.append_column(self.column_game_play)
         self.treeview_games.append_column(self.column_game_last_play)
         self.treeview_games.append_column(self.column_game_play_time)
+        self.treeview_games.append_column(self.column_game_score)
         self.treeview_games.append_column(self.column_game_installed)
         self.treeview_games.append_column(self.column_game_flags)
 
@@ -1510,9 +1667,11 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menu_games.append(self.menu_item_properties)
         self.menu_games.append(Gtk.SeparatorMenuItem())
         self.menu_games.append(self.menu_item_edit)
+        self.menu_games.append(self.menu_item_score)
         self.menu_games.append(self.menu_item_tools)
 
         self.menu_item_edit.set_submenu(self.menu_games_edit)
+        self.menu_item_score.set_submenu(self.menu_games_score)
         self.menu_item_tools.set_submenu(self.menu_games_tools)
 
         self.menu_games_edit.append(self.menu_item_rename)
@@ -1525,6 +1684,16 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menu_games_edit.append(self.menu_item_database)
         self.menu_games_edit.append(Gtk.SeparatorMenuItem())
         self.menu_games_edit.append(self.menu_item_remove)
+
+        self.menu_games_score.append(self.menu_item_score_up)
+        self.menu_games_score.append(self.menu_item_score_down)
+        self.menu_games_score.append(Gtk.SeparatorMenuItem())
+        self.menu_games_score.append(self.menu_item_score_0)
+        self.menu_games_score.append(self.menu_item_score_1)
+        self.menu_games_score.append(self.menu_item_score_2)
+        self.menu_games_score.append(self.menu_item_score_3)
+        self.menu_games_score.append(self.menu_item_score_4)
+        self.menu_games_score.append(self.menu_item_score_5)
 
         self.menu_games_tools.append(self.menu_item_screenshots)
         self.menu_games_tools.append(self.menu_item_output)
@@ -1610,6 +1779,22 @@ class MainWindow(Gtk.ApplicationWindow):
             "activate", self.__on_game_removed)
         self.menubar_edit_item_mednafen.connect(
             "activate", self.__on_game_backup_memory)
+        self.menubar_edit_item_score_up.connect(
+            "activate", self.__on_game_score)
+        self.menubar_edit_item_score_down.connect(
+            "activate", self.__on_game_score)
+        self.menubar_edit_item_score_0.connect(
+            "activate", self.__on_game_score, 0)
+        self.menubar_edit_item_score_1.connect(
+            "activate", self.__on_game_score, 1)
+        self.menubar_edit_item_score_2.connect(
+            "activate", self.__on_game_score, 2)
+        self.menubar_edit_item_score_3.connect(
+            "activate", self.__on_game_score, 3)
+        self.menubar_edit_item_score_4.connect(
+            "activate", self.__on_game_score, 4)
+        self.menubar_edit_item_score_5.connect(
+            "activate", self.__on_game_score, 5)
 
         self.menubar_main_item_preferences.connect(
             "activate", self.__on_show_preferences)
@@ -1715,6 +1900,22 @@ class MainWindow(Gtk.ApplicationWindow):
             "activate", self.__on_game_removed)
         self.menu_item_mednafen.connect(
             "activate", self.__on_game_backup_memory)
+        self.menu_item_score_up.connect(
+            "activate", self.__on_game_score)
+        self.menu_item_score_down.connect(
+            "activate", self.__on_game_score)
+        self.menu_item_score_0.connect(
+            "activate", self.__on_game_score, 0)
+        self.menu_item_score_1.connect(
+            "activate", self.__on_game_score, 1)
+        self.menu_item_score_2.connect(
+            "activate", self.__on_game_score, 2)
+        self.menu_item_score_3.connect(
+            "activate", self.__on_game_score, 3)
+        self.menu_item_score_4.connect(
+            "activate", self.__on_game_score, 4)
+        self.menu_item_score_5.connect(
+            "activate", self.__on_game_score, 5)
 
         self.headerbar_item_preferences.connect(
             "clicked", self.__on_show_preferences)
@@ -2211,6 +2412,7 @@ class MainWindow(Gtk.ApplicationWindow):
             "play": self.column_game_play,
             "last_play": self.column_game_last_play,
             "play_time": self.column_game_play_time,
+            "score": self.column_game_score,
             "installed": self.column_game_installed,
             "flags": self.column_game_flags }
 
@@ -2219,6 +2421,15 @@ class MainWindow(Gtk.ApplicationWindow):
                 widget.set_visible(False)
             else:
                 widget.set_visible(True)
+
+        if self.column_game_score.get_visible():
+            self.__rating_score = [
+                self.cell_game_score_first,
+                self.cell_game_score_second,
+                self.cell_game_score_third,
+                self.cell_game_score_fourth,
+                self.cell_game_score_fifth
+            ]
 
         # ------------------------------------
         #   Console
@@ -2331,8 +2542,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menubar_game_item_screenshots.set_sensitive(status)
         self.menubar_game_item_output.set_sensitive(status)
         self.menubar_game_item_notes.set_sensitive(status)
-        self.menubar_edit_item_rename.set_sensitive(status)
         self.menubar_game_item_properties.set_sensitive(status)
+        self.menubar_edit_item_rename.set_sensitive(status)
         self.menubar_edit_item_copy.set_sensitive(status)
         self.menubar_edit_item_open.set_sensitive(status)
         self.menubar_edit_item_cover.set_sensitive(status)
@@ -2340,6 +2551,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menubar_edit_item_database.set_sensitive(status)
         self.menubar_edit_item_delete.set_sensitive(status)
         self.menubar_edit_item_mednafen.set_sensitive(status)
+        self.menubar_edit_item_score.set_sensitive(status)
 
 
     def filters_update(self, widget, status=None):
@@ -2579,6 +2791,86 @@ class MainWindow(Gtk.ApplicationWindow):
                 "keys": self.config.item("keys", "finish", "<Control>F3")
             },
             {
+                "path": "<GEM>/game/score/up",
+                "widgets": [
+                    self.menu_item_score_up,
+                    self.menubar_edit_item_score_up
+                ],
+                "keys": self.config.item(
+                    "keys", "score-up", "<Control>Page_Up")
+            },
+            {
+                "path": "<GEM>/game/score/down",
+                "widgets": [
+                    self.menu_item_score_down,
+                    self.menubar_edit_item_score_down
+                ],
+                "keys": self.config.item(
+                    "keys", "score-down", "<Control>Page_Down")
+            },
+            {
+                "path": "<GEM>/game/score/0",
+                "widgets": [
+                    self.menu_item_score_0,
+                    self.menubar_edit_item_score_0
+                ],
+                "keys": self.config.item(
+                    "keys", "score-0", "<Primary>0")
+            },
+            {
+                "path": "<GEM>/game/score/1",
+                "widgets": [
+                    self.menu_item_score_1,
+                    self.menubar_edit_item_score_1
+                ],
+                "keys": self.config.item(
+                    "keys", "score-1", "<Primary>1")
+            },
+            {
+                "path": "<GEM>/game/score/2",
+                "widgets": [
+                    self.menu_item_score_2,
+                    self.menubar_edit_item_score_2
+                ],
+                "keys": self.config.item(
+                    "keys", "score-2", "<Primary>2")
+            },
+            {
+                "path": "<GEM>/game/score/3",
+                "widgets": [
+                    self.menu_item_score_3,
+                    self.menubar_edit_item_score_3
+                ],
+                "keys": self.config.item(
+                    "keys", "score-3", "<Primary>3")
+            },
+            {
+                "path": "<GEM>/game/score/4",
+                "widgets": [
+                    self.menu_item_score_4,
+                    self.menubar_edit_item_score_4
+                ],
+                "keys": self.config.item(
+                    "keys", "score-4", "<Primary>4")
+            },
+            {
+                "path": "<GEM>/game/score/5",
+                "widgets": [
+                    self.menu_item_score_5,
+                    self.menubar_edit_item_score_5
+                ],
+                "keys": self.config.item(
+                    "keys", "score-5", "<Primary>5")
+            },
+            {
+                "path": "<GEM>/game/cover",
+                "widgets": [
+                    self.menu_item_cover,
+                    self.menubar_edit_item_cover
+                ],
+                "keys": self.config.item("keys", "cover", "<Control>I")
+            },
+            {
                 "path": "<GEM>/game/screenshots",
                 "widgets": [
                     self.menu_item_screenshots,
@@ -2626,6 +2918,15 @@ class MainWindow(Gtk.ApplicationWindow):
                 ],
                 "keys": self.config.item("keys", "sidebar", "F9"),
                 "function": self.__on_activate_sidebar
+            },
+            {
+                "path": "<GEM>/statusbar",
+                "widgets": [
+                    self,
+                    self.menubar_main_item_statusbar
+                ],
+                "keys": self.config.item("keys", "statusbar", "<Control>F9"),
+                "function": self.__on_activate_statusbar
             },
             {
                 "path": "<GEM>/game/exceptions",
@@ -3778,6 +4079,7 @@ class MainWindow(Gtk.ApplicationWindow):
                         str(),          # Last launch date
                         str(),          # Last launch time
                         str(),          # Total play time
+                        game.score,
                         str(),          # Installed date
                         self.alternative["except"],
                         self.alternative["snap"],
@@ -3876,6 +4178,34 @@ class MainWindow(Gtk.ApplicationWindow):
         self.list_thread = int()
 
         yield False
+
+
+    def __on_append_game(self, column, cell, model, treeiter, *args):
+        """ Manage specific columns behavior during games adding
+
+        Parameters
+        ----------
+        column : Gtk.TreeViewColumn
+            Treeview column which contains cell
+        cell : Gtk.CellRenderer
+            Cell that is being rendered by column
+        model : Gtk.TreeModel
+            Rendered model
+        treeiter : Gtk.TreeIter
+            Rendered row
+        """
+
+        if column.get_visible():
+            score = model.get_value(treeiter, Columns.Score)
+
+            for widget in self.__rating_score:
+
+                if score >= self.__rating_score.index(widget) + 1:
+                    widget.set_property(
+                        "pixbuf", self.icons["starred"])
+                else:
+                    widget.set_property(
+                        "pixbuf", self.alternative["no-starred"])
 
 
     def __on_selected_game(self, treeview, event):
@@ -5029,6 +5359,49 @@ class MainWindow(Gtk.ApplicationWindow):
         self.filters_update(None)
 
         self.__unblock_signals()
+
+
+    def __on_game_score(self, widget, score=None):
+        """ Manage selected game score
+
+        Parameters
+        ----------
+        widget : Gtk.MenuItem
+            object which received the signal
+        """
+
+        modification = False
+
+        game = self.selection["game"]
+
+        if game is not None:
+
+            if widget in [
+                self.menubar_edit_item_score_up, self.menu_item_score_up]:
+
+                if game.score < 5:
+                    game.score += 1
+
+                    modification = True
+
+            elif widget in [
+                self.menubar_edit_item_score_down, self.menu_item_score_down]:
+
+                if game.score > 0:
+                    game.score -= 1
+
+                    modification = True
+
+            elif score is not None:
+                game.score = score
+
+                modification = True
+
+        if modification:
+            self.model_games.set_value(
+                self.game_path[game.filename][1], Columns.Score, game.score)
+
+            self.api.update_game(game)
 
 
     def __on_game_copy(self, *args):

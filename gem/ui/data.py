@@ -135,6 +135,8 @@ class Icons:
     Password    = "dialog-password"
     Loading     = "image-loading"
     Missing     = "image-missing"
+    NoStarred   = "non-starred" # Not standard
+    Starred     = "starred" # Not standard
 
     # This class is filled with Icons values in interface initialization
     class Symbolic:
@@ -150,8 +152,9 @@ class Columns:
     LastPlay        = 6
     LastTimePlay    = 7
     TimePlay        = 8
-    Installed       = 9
-    Except          = 10
-    Snapshots       = 11
-    Save            = 12
-    Object          = 13
+    Score           = 9
+    Installed       = 10
+    Except          = 11
+    Snapshots       = 12
+    Save            = 13
+    Object          = 14

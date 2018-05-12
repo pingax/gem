@@ -104,9 +104,16 @@ class ModulesDialog(CommonWindow):
 
         self.textview = Gtk.TextView.new_with_buffer(self.textbuffer)
 
+        self.frame_textview = Gtk.Frame()
+
         # Properties
+        self.frame_textview.set_no_show_all(True)
+
         self.textview.set_size_request(-1, 150)
-        self.textview.set_no_show_all(True)
+        self.textview.set_top_margin(4)
+        self.textview.set_left_margin(4)
+        self.textview.set_right_margin(4)
+        self.textview.set_bottom_margin(4)
 
         # ------------------------------------
         #   Integrate widgets
@@ -115,9 +122,11 @@ class ModulesDialog(CommonWindow):
         self.frame_listbox.add(self.scroll_listbox)
         self.scroll_listbox.add(self.listbox)
 
+        self.frame_textview.add(self.textview)
+
         self.pack_start(self.entry_filter, False, False)
         self.pack_start(self.frame_listbox, True, True)
-        self.pack_start(self.textview, False, False)
+        self.pack_start(self.frame_textview, False, False)
 
 
     def __init_signals(self):
@@ -158,11 +167,13 @@ class ModulesDialog(CommonWindow):
         """
 
         if row is not None:
+            self.frame_textview.show()
             self.textview.show()
 
             self.textbuffer.set_text(row.module.get_description())
 
         else:
+            self.frame_textview.hide()
             self.textview.hide()
 
 
