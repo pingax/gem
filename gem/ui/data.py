@@ -54,6 +54,7 @@ class Icons:
     # Actions
     Quit        = "application-exit"
     Properties  = "document-properties"
+    Edit        = "document-edit"
     Open        = "document-open"
     Save        = "document-save"
     Clear       = "edit-clear"

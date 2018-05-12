@@ -223,8 +223,8 @@ class PreferencesWindow(CommonWindow):
         self.grid_general = Gtk.Box()
         self.grid_interface = Gtk.Box()
         self.grid_shortcuts = Gtk.Grid()
-        self.grid_consoles = Gtk.Grid()
-        self.grid_emulators = Gtk.Grid()
+        self.grid_consoles = Gtk.Box()
+        self.grid_emulators = Gtk.Box()
 
         self.grid_last_console = Gtk.Box()
         self.grid_hide_console = Gtk.Box()
@@ -249,8 +249,8 @@ class PreferencesWindow(CommonWindow):
         self.grid_columns_installed = Gtk.Box()
         self.grid_columns_flags = Gtk.Box()
 
-        self.grid_consoles_buttons = Gtk.ButtonBox()
-        self.grid_emulators_buttons = Gtk.ButtonBox()
+        self.grid_consoles_buttons = Gtk.Box()
+        self.grid_emulators_buttons = Gtk.Box()
 
         # Properties
         self.box_stack.set_orientation(Gtk.Orientation.HORIZONTAL)
@@ -270,15 +270,11 @@ class PreferencesWindow(CommonWindow):
         self.grid_shortcuts.set_border_width(18)
         self.grid_shortcuts.set_column_homogeneous(False)
 
-        self.grid_consoles.set_row_spacing(6)
-        self.grid_consoles.set_column_spacing(12)
+        self.grid_consoles.set_spacing(6)
         self.grid_consoles.set_border_width(18)
-        self.grid_consoles.set_column_homogeneous(False)
 
-        self.grid_emulators.set_row_spacing(6)
-        self.grid_emulators.set_column_spacing(12)
+        self.grid_emulators.set_spacing(6)
         self.grid_emulators.set_border_width(18)
-        self.grid_emulators.set_column_homogeneous(False)
 
         self.grid_last_console.set_spacing(12)
         self.grid_last_console.set_homogeneous(True)
@@ -338,14 +334,14 @@ class PreferencesWindow(CommonWindow):
         Gtk.StyleContext.add_class(
             self.grid_consoles_buttons.get_style_context(), "linked")
         self.grid_consoles_buttons.set_spacing(-1)
-        self.grid_consoles_buttons.set_halign(Gtk.Align.CENTER)
-        self.grid_consoles_buttons.set_orientation(Gtk.Orientation.HORIZONTAL)
+        self.grid_consoles_buttons.set_valign(Gtk.Align.START)
+        self.grid_consoles_buttons.set_orientation(Gtk.Orientation.VERTICAL)
 
         Gtk.StyleContext.add_class(
             self.grid_emulators_buttons.get_style_context(), "linked")
         self.grid_emulators_buttons.set_spacing(-1)
-        self.grid_emulators_buttons.set_halign(Gtk.Align.CENTER)
-        self.grid_emulators_buttons.set_orientation(Gtk.Orientation.HORIZONTAL)
+        self.grid_emulators_buttons.set_valign(Gtk.Align.START)
+        self.grid_emulators_buttons.set_orientation(Gtk.Orientation.VERTICAL)
 
         # ------------------------------------
         #   Stack
@@ -969,23 +965,20 @@ class PreferencesWindow(CommonWindow):
 
         self.treeview_consoles.append_column(self.column_consoles_name)
 
-        self.image_consoles_add.set_margin_right(4)
         self.image_consoles_add.set_from_icon_name(
-            Icons.Add, Gtk.IconSize.MENU)
+            Icons.Symbolic.Add, Gtk.IconSize.BUTTON)
         self.button_consoles_add.set_image(self.image_consoles_add)
-        self.button_consoles_add.set_label(_("Add"))
+        self.button_consoles_add.set_tooltip_text(_("Add"))
 
-        self.image_consoles_modify.set_margin_right(4)
         self.image_consoles_modify.set_from_icon_name(
-            Icons.Properties, Gtk.IconSize.MENU)
+            Icons.Symbolic.Edit, Gtk.IconSize.BUTTON)
         self.button_consoles_modify.set_image(self.image_consoles_modify)
-        self.button_consoles_modify.set_label(_("Modify"))
+        self.button_consoles_modify.set_tooltip_text(_("Modify"))
 
-        self.image_consoles_remove.set_margin_right(4)
         self.image_consoles_remove.set_from_icon_name(
-            Icons.Remove, Gtk.IconSize.MENU)
+            Icons.Symbolic.Remove, Gtk.IconSize.BUTTON)
         self.button_consoles_remove.set_image(self.image_consoles_remove)
-        self.button_consoles_remove.set_label(_("Remove"))
+        self.button_consoles_remove.set_tooltip_text(_("Remove"))
 
         # ------------------------------------
         #   Emulators
@@ -1051,23 +1044,20 @@ class PreferencesWindow(CommonWindow):
 
         self.treeview_emulators.append_column(self.column_emulators_name)
 
-        self.image_emulators_add.set_margin_right(4)
         self.image_emulators_add.set_from_icon_name(
-            Icons.Add, Gtk.IconSize.MENU)
+            Icons.Symbolic.Add, Gtk.IconSize.BUTTON)
         self.button_emulators_add.set_image(self.image_emulators_add)
-        self.button_emulators_add.set_label(_("Add"))
+        self.button_emulators_add.set_tooltip_text(_("Add"))
 
-        self.image_emulators_modify.set_margin_right(4)
         self.image_emulators_modify.set_from_icon_name(
-            Icons.Properties, Gtk.IconSize.MENU)
+            Icons.Symbolic.Edit, Gtk.IconSize.BUTTON)
         self.button_emulators_modify.set_image(self.image_emulators_modify)
-        self.button_emulators_modify.set_label(_("Modify"))
+        self.button_emulators_modify.set_tooltip_text(_("Modify"))
 
-        self.image_emulators_remove.set_margin_right(4)
         self.image_emulators_remove.set_from_icon_name(
-            Icons.Remove, Gtk.IconSize.MENU)
+            Icons.Symbolic.Remove, Gtk.IconSize.BUTTON)
         self.button_emulators_remove.set_image(self.image_emulators_remove)
-        self.button_emulators_remove.set_label(_("Remove"))
+        self.button_emulators_remove.set_tooltip_text(_("Remove"))
 
 
     def __init_packing(self):
@@ -1279,8 +1269,10 @@ class PreferencesWindow(CommonWindow):
         self.scroll_shortcuts.add(self.view_shortcuts)
 
         # Consoles tab
-        self.grid_consoles.attach(self.scroll_consoles_treeview, 0, 0, 1, 1)
-        self.grid_consoles.attach(self.grid_consoles_buttons, 0, 1, 1, 1)
+        self.grid_consoles.pack_start(
+            self.grid_consoles_buttons, False, False, 0)
+        self.grid_consoles.pack_start(
+            self.scroll_consoles_treeview, True, True, 0)
 
         self.grid_consoles_buttons.pack_start(
             self.button_consoles_add, False, False, 0)
@@ -1296,8 +1288,10 @@ class PreferencesWindow(CommonWindow):
         self.scroll_consoles.add(self.view_consoles)
 
         # Emulators tab
-        self.grid_emulators.attach(self.scroll_emulators_treeview, 0, 0, 1, 1)
-        self.grid_emulators.attach(self.grid_emulators_buttons, 0, 1, 1, 1)
+        self.grid_emulators.pack_start(
+            self.grid_emulators_buttons, False, False, 0)
+        self.grid_emulators.pack_start(
+            self.scroll_emulators_treeview, True, True, 0)
 
         self.grid_emulators_buttons.pack_start(
             self.button_emulators_add, False, False, 0)

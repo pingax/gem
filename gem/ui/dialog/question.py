@@ -29,7 +29,7 @@ from gettext import gettext as _
 
 class QuestionDialog(CommonWindow):
 
-    def __init__(self, parent, title, message, icon=Icons.Question):
+    def __init__(self, parent, title, message):
         """ Constructor
 
         Parameters
@@ -40,15 +40,14 @@ class QuestionDialog(CommonWindow):
             Dialog title
         message : str
             Dialog message
-        icon : str, optional
-            Default icon name (Default: dialog-question)
         """
 
         classic_theme = False
         if parent is not None:
             classic_theme = parent.use_classic_theme
 
-        CommonWindow.__init__(self, parent, title, icon, classic_theme)
+        CommonWindow.__init__(
+            self, parent, title, Icons.Symbolic.Question, classic_theme)
 
         # ------------------------------------
         #   Variables
