@@ -1059,6 +1059,7 @@ class MainWindow(Gtk.ApplicationWindow):
             Columns.Name, Gtk.SortType.ASCENDING)
 
         self.treeview_games.set_model(self.filter_games)
+        self.treeview_games.set_search_column(Columns.Name)
         self.treeview_games.set_headers_clickable(False)
         self.treeview_games.set_headers_visible(True)
         self.treeview_games.set_show_expanders(False)

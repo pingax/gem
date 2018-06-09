@@ -386,6 +386,17 @@ msgid "Dark theme"
 msgstr "Usar el tema _oscuro"
 
 #
+# File: gem/ui/interface.py, line: 673
+msgid "Decrease score"
+msgstr ""
+
+#
+# File: gem/preferences.py, line: 91
+#, fuzzy
+msgid "Decrease selected game score"
+msgstr "Abrir carpeta del juego seleccionado"
+
+#
 # File: gem/gtk/preferences.py, line: 2563
 msgid "Default arguments to add when launch emulator"
 msgstr ""
@@ -669,6 +680,17 @@ msgid "Icons size"
 msgstr ""
 
 #
+# File: gem/ui/interface.py, line: 669
+msgid "Increase score"
+msgstr ""
+
+#
+# File: gem/preferences.py, line: 91
+#, fuzzy
+msgid "Increase selected game score"
+msgstr "Abrir carpeta del juego seleccionado"
+
+#
 # File: gem/interface.py, line: 1411
 #, python-format
 msgid "Initialize %s"
@@ -868,12 +890,14 @@ msgstr "Ninguno"
 
 #
 # File: gem/preferences.py, line: 86
-msgid "Open game log"
+#, fuzzy
+msgid "Open a game log"
 msgstr "Abrir el historial del juego"
 
 #
 # File: gem/preferences.py, line: 86
-msgid "Open game notes"
+#, fuzzy
+msgid "Open a game notes"
 msgstr "Abrir las notas del juego"
 
 #
@@ -1060,6 +1084,14 @@ msgid "Save %s console for next startup"
 msgstr "Guardar %s para el próximo arranque"
 
 #
+# File: gem/ui/interface.py, line: 665
+# File: gem/ui/interface.py, line: 1074
+# File: gem/ui/preferences/interface.py, line: 104
+# File: gem/ui/preferences/interface.py, line: 859
+msgid "Score"
+msgstr ""
+
+#
 # File: gem/interface.py, line: 2006
 #, fuzzy
 msgid "Screenshots viewer"
@@ -1076,6 +1108,12 @@ msgid "Select a binary"
 msgstr "Seleccionar un binario"
 
 #
+# File: gem/preferences.py, line: 86
+#, fuzzy
+msgid "Set a game cover"
+msgstr "Abrir las notas del juego"
+
+#
 # File: gem/interface.py, line: 396
 # File: gem/interface.py, line: 756
 # File: gem/interface.py, line: 1667
@@ -1087,6 +1125,78 @@ msgstr "Crear parametros personalizados"
 #, fuzzy
 msgid "Set game _cover"
 msgstr "Abrir las notas del juego"
+
+#
+# File: gem/ui/interface.py, line: 677
+# File: gem/ui/interface.py, line: 1300
+msgid "Set score as 0"
+msgstr ""
+
+#
+# File: gem/ui/interface.py, line: 681
+# File: gem/ui/interface.py, line: 1304
+msgid "Set score as 1"
+msgstr ""
+
+#
+# File: gem/ui/interface.py, line: 685
+# File: gem/ui/interface.py, line: 1308
+msgid "Set score as 2"
+msgstr ""
+
+#
+# File: gem/ui/interface.py, line: 689
+# File: gem/ui/interface.py, line: 1312
+msgid "Set score as 3"
+msgstr ""
+
+#
+# File: gem/ui/interface.py, line: 693
+# File: gem/ui/interface.py, line: 1316
+msgid "Set score as 4"
+msgstr ""
+
+#
+# File: gem/ui/interface.py, line: 697
+# File: gem/ui/interface.py, line: 1320
+msgid "Set score as 5"
+msgstr ""
+
+#
+# File: gem/interface.py, line: 455
+#, fuzzy
+msgid "Set selected game score as 0"
+msgstr "Mostrar las notas del juego seleccionado"
+
+#
+# File: gem/interface.py, line: 455
+#, fuzzy
+msgid "Set selected game score as 1"
+msgstr "Mostrar las notas del juego seleccionado"
+
+#
+# File: gem/interface.py, line: 455
+#, fuzzy
+msgid "Set selected game score as 2"
+msgstr "Mostrar las notas del juego seleccionado"
+
+#
+# File: gem/interface.py, line: 455
+#, fuzzy
+msgid "Set selected game score as 3"
+msgstr "Mostrar las notas del juego seleccionado"
+
+#
+# File: gem/interface.py, line: 455
+#, fuzzy
+msgid "Set selected game score as 4"
+msgstr "Mostrar las notas del juego seleccionado"
+
+#
+# File: gem/interface.py, line: 455
+#, fuzzy
+msgid "Set selected game score as 5"
+msgstr "Mostrar las notas del juego seleccionado"
 
 #
 # File: gem/preferences.py, line: 90
@@ -1117,7 +1227,8 @@ msgstr "Mostrar los números de línea"
 
 #
 # File: gem/preferences.py, line: 89
-msgid "Show game screenshots"
+#, fuzzy
+msgid "Show a game screenshots"
 msgstr "Mostrar las capturas de pantalla del juego"
 
 #
@@ -1156,6 +1267,12 @@ msgstr "Mostrar los números de línea"
 # File: gem/preferences.py, line: 431
 #, fuzzy
 msgid "Show statistics"
+msgstr "Mostrar los números de línea"
+
+#
+# File: gem/preferences.py, line: 431
+#, fuzzy
+msgid "Show statusbar"
 msgstr "Mostrar los números de línea"
 
 #
@@ -1520,6 +1637,11 @@ msgid "_Copy path"
 msgstr "_Copiar la ruta del juego"
 
 #
+# File: gem/ui/interface.py, line: 1296
+msgid "_Decrease score"
+msgstr ""
+
+#
 # File: gem/preferences.py, line: 429
 msgid "_Edit"
 msgstr "_Editar"
@@ -1555,6 +1677,11 @@ msgstr "_Generar una entrada de menú"
 # File: gem/gtk/interface.py, line: 424
 msgid "_Help"
 msgstr "_Ayuda"
+
+#
+# File: gem/ui/interface.py, line: 1292
+msgid "_Increase score"
+msgstr ""
 
 #
 # File: gem/preferences.py, line: 84
@@ -1616,6 +1743,11 @@ msgstr "_Renombrar"
 #, fuzzy
 msgid "_Reset data"
 msgstr "Renombrar un juego"
+
+#
+# File: gem/ui/interface.py, line: 1288
+msgid "_Score"
+msgstr ""
 
 #
 # File: gem/interface.py, line: 2006

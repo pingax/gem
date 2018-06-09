@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.6\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2018-05-08 09:11+0200\n"
+"PO-Revision-Date: 2018-05-12 19:44+0200\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -377,6 +377,16 @@ msgid "Dark theme"
 msgstr "Thème sombre"
 
 #
+# File: gem/ui/interface.py, line: 673
+msgid "Decrease score"
+msgstr "Diminuer le score"
+
+#
+# File: src/window.py, line: 272
+msgid "Decrease selected game score"
+msgstr "Diminuer le score du jeu sélectionné"
+
+#
 # File: gem/gtk/preferences.py, line: 2563
 msgid "Default arguments to add when launch emulator"
 msgstr "Arguments par défaut à ajouter lors du lancement de l'émulateur"
@@ -650,6 +660,16 @@ msgid "Icons size"
 msgstr "Taille des icônes"
 
 #
+# File: gem/ui/interface.py, line: 669
+msgid "Increase score"
+msgstr "Augmenter le score"
+
+#
+# File: src/window.py, line: 272
+msgid "Increase selected game score"
+msgstr "Augmenter le score du jeu sélectionné"
+
+#
 # File: gem/interface.py, line: 1411
 #, python-format
 msgid "Initialize %s"
@@ -848,12 +868,12 @@ msgstr "Aucune"
 
 #
 # File: src/window.py, line: 451
-msgid "Open game log"
+msgid "Open a game log"
 msgstr "Ouvrir le journal du jeu"
 
 #
 # File: src/window.py, line: 451
-msgid "Open game notes"
+msgid "Open a game notes"
 msgstr "Ouvrir les notes du jeu"
 
 #
@@ -1024,6 +1044,14 @@ msgid "Save %s console for next startup"
 msgstr "Sauvegarde de la console %s pour le prochain lancement"
 
 #
+# File: gem/ui/interface.py, line: 665
+# File: gem/ui/interface.py, line: 1074
+# File: gem/ui/preferences/interface.py, line: 104
+# File: gem/ui/preferences/interface.py, line: 859
+msgid "Score"
+msgstr "Score"
+
+#
 # File: gem/preferences.py, line: 335
 msgid "Screenshots viewer"
 msgstr "Visualiseur de captures d'écran"
@@ -1039,6 +1067,11 @@ msgid "Select a binary"
 msgstr "Choisir un binaire"
 
 #
+# File: src/window.py, line: 451
+msgid "Set a game cover"
+msgstr "Définir la couverture du jeu"
+
+#
 # File: gem/interface.py, line: 336
 msgid "Set custom parameters"
 msgstr "Définir des paramètres personnalisés"
@@ -1047,6 +1080,72 @@ msgstr "Définir des paramètres personnalisés"
 # File: src/window.py, line: 451
 msgid "Set game _cover"
 msgstr "Définir la _couverture"
+
+#
+# File: gem/ui/interface.py, line: 677
+# File: gem/ui/interface.py, line: 1300
+msgid "Set score as 0"
+msgstr "Mettre le score à 0"
+
+#
+# File: gem/ui/interface.py, line: 681
+# File: gem/ui/interface.py, line: 1304
+msgid "Set score as 1"
+msgstr "Mettre le score à 1"
+
+#
+# File: gem/ui/interface.py, line: 685
+# File: gem/ui/interface.py, line: 1308
+msgid "Set score as 2"
+msgstr "Mettre le score à 2"
+
+#
+# File: gem/ui/interface.py, line: 689
+# File: gem/ui/interface.py, line: 1312
+msgid "Set score as 3"
+msgstr "Mettre le score à 3"
+
+#
+# File: gem/ui/interface.py, line: 693
+# File: gem/ui/interface.py, line: 1316
+msgid "Set score as 4"
+msgstr "Mettre le score à 4"
+
+#
+# File: gem/ui/interface.py, line: 697
+# File: gem/ui/interface.py, line: 1320
+msgid "Set score as 5"
+msgstr "Mettre le score à 5"
+
+#
+# File: src/window.py, line: 441
+msgid "Set selected game score as 0"
+msgstr "Mettre le score à 0 du jeu sélectionné"
+
+#
+# File: src/window.py, line: 441
+msgid "Set selected game score as 1"
+msgstr "Mettre le score à 1 du jeu sélectionné"
+
+#
+# File: src/window.py, line: 441
+msgid "Set selected game score as 2"
+msgstr "Mettre le score à 2 du jeu sélectionné"
+
+#
+# File: src/window.py, line: 441
+msgid "Set selected game score as 3"
+msgstr "Mettre le score à 3 du jeu sélectionné"
+
+#
+# File: src/window.py, line: 441
+msgid "Set selected game score as 4"
+msgstr "Mettre le score à 4 du jeu sélectionné"
+
+#
+# File: src/window.py, line: 441
+msgid "Set selected game score as 5"
+msgstr "Mettre le score à 5 du jeu sélectionné"
 
 #
 # File: gem/preferences.py, line: 633
@@ -1075,7 +1174,7 @@ msgstr "Montrer la _barre de status"
 
 #
 # File: src/window.py, line: 441
-msgid "Show game screenshots"
+msgid "Show a game screenshots"
 msgstr "Afficher les captures d'écran d'un jeu"
 
 #
@@ -1112,6 +1211,11 @@ msgstr "Montrer la barre latérale"
 # File: gem/gtk/windows.py, line: 1052
 msgid "Show statistics"
 msgstr "Montrer les statistiques"
+
+#
+# File: gem/preferences.py, line: 338
+msgid "Show statusbar"
+msgstr "Montrer la barre de status"
 
 #
 # File: gem/preferences.py, line: 257
@@ -1466,6 +1570,11 @@ msgid "_Copy path"
 msgstr "_Copier le chemin"
 
 #
+# File: gem/ui/interface.py, line: 1296
+msgid "_Decrease score"
+msgstr "_Diminuer le score"
+
+#
 # File: gem/preferences.py, line: 336
 msgid "_Edit"
 msgstr "_Éditer"
@@ -1499,6 +1608,11 @@ msgstr "_Générer une entrée de menu"
 # File: gem/windows.py, line: 238
 msgid "_Help"
 msgstr "_Aide"
+
+#
+# File: gem/ui/interface.py, line: 1292
+msgid "_Increase score"
+msgstr "_Augmenter le score"
 
 #
 # File: src/window.py, line: 431
@@ -1555,6 +1669,11 @@ msgstr "_Renommer"
 # File: src/window.py, line: 451
 msgid "_Reset data"
 msgstr "_Remise à zéro des données"
+
+#
+# File: gem/ui/interface.py, line: 1288
+msgid "_Score"
+msgstr "_Score"
 
 #
 # File: gem/preferences.py, line: 335
