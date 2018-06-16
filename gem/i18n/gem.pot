@@ -100,7 +100,7 @@ msgstr  ""
 # File: gem/ui/dialog/cover.py, line: 117
 # File: gem/ui/dialog/cover.py, line: 168
 # File: gem/ui/dialog/dndconsole.py, line: 239
-# File: gem/ui/dialog/duplicate.py, line: 220
+# File: gem/ui/dialog/duplicate.py, line: 222
 # File: gem/ui/dialog/icons.py, line: 185
 # File: gem/ui/dialog/parameter.py, line: 487
 # File: gem/ui/preferences/console.py, line: 425
@@ -195,7 +195,7 @@ msgstr  ""
 # File: gem/ui/dialog/cover.py, line: 115
 # File: gem/ui/dialog/cover.py, line: 167
 # File: gem/ui/dialog/dndconsole.py, line: 238
-# File: gem/ui/dialog/duplicate.py, line: 219
+# File: gem/ui/dialog/duplicate.py, line: 221
 # File: gem/ui/dialog/editor.py, line: 302
 # File: gem/ui/dialog/mednafen.py, line: 240
 msgid   "Cancel"
@@ -306,10 +306,6 @@ msgstr  ""
 msgid   "Dark theme"
 msgstr  ""
 #
-# File: gem/ui/dialog/duplicate.py, line: 170
-msgid   "Database"
-msgstr  ""
-#
 # File: gem/ui/interface.py, line: 678
 msgid   "Decrease score"
 msgstr  ""
@@ -335,6 +331,10 @@ msgstr  ""
 # File: gem/ui/preferences/emulator.py, line: 78
 # File: gem/ui/preferences/emulator.py, line: 81
 msgid   "Description"
+msgstr  ""
+#
+# File: gem/ui/dialog/delete.py, line: 154
+msgid   "Desktop file"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 5994
@@ -495,6 +495,16 @@ msgstr  ""
 #
 # File: gem/ui/dialog/parameter.py, line: 53
 msgid   "Game properties"
+msgstr  ""
+#
+# File: gem/ui/dialog/delete.py, line: 165
+# File: gem/ui/dialog/duplicate.py, line: 166
+msgid   "Game screenshots"
+msgstr  ""
+#
+# File: gem/ui/dialog/delete.py, line: 148
+# File: gem/ui/dialog/duplicate.py, line: 170
+msgid   "Game's data from database"
 msgstr  ""
 #
 # File: gem/ui/dialog/parameter.py, line: 226
@@ -710,7 +720,7 @@ msgid   "Nintendo console titles are identified by a 6 character identifier "
         "Dolphin-emu. For more informations, consult emulators documentation."
 msgstr  ""
 #
-# File: gem/ui/dialog/delete.py, line: 164
+# File: gem/ui/dialog/delete.py, line: 191
 # File: gem/ui/dialog/question.py, line: 98
 msgid   "No"
 msgstr  ""
@@ -755,6 +765,10 @@ msgstr  ""
 #
 # File: gem/ui/dialog/duplicate.py, line: 154
 msgid   "Optional data to duplicate"
+msgstr  ""
+#
+# File: gem/ui/dialog/delete.py, line: 138
+msgid   "Optional data to remove"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 585
@@ -836,7 +850,7 @@ msgid   "Remove"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 5017
-# File: gem/ui/dialog/delete.py, line: 48
+# File: gem/ui/dialog/delete.py, line: 50
 msgid   "Remove a game"
 msgstr  ""
 #
@@ -846,22 +860,6 @@ msgstr  ""
 #
 # File: gem/ui/preferences/interface.py, line: 126
 msgid   "Remove a game from disk"
-msgstr  ""
-#
-# File: gem/ui/dialog/delete.py, line: 131
-msgid   "Remove desktop file"
-msgstr  ""
-#
-# File: gem/ui/dialog/delete.py, line: 136
-msgid   "Remove game save files"
-msgstr  ""
-#
-# File: gem/ui/dialog/delete.py, line: 140
-msgid   "Remove game screenshots"
-msgstr  ""
-#
-# File: gem/ui/dialog/delete.py, line: 126
-msgid   "Remove game's data from database"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 4868
@@ -895,8 +893,9 @@ msgstr  ""
 msgid   "Save %s console for next startup"
 msgstr  ""
 #
+# File: gem/ui/dialog/delete.py, line: 160
 # File: gem/ui/dialog/duplicate.py, line: 162
-msgid   "Savestates"
+msgid   "Save files"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 670
@@ -904,10 +903,6 @@ msgstr  ""
 # File: gem/ui/preferences/interface.py, line: 104
 # File: gem/ui/preferences/interface.py, line: 861
 msgid   "Score"
-msgstr  ""
-#
-# File: gem/ui/dialog/duplicate.py, line: 166
-msgid   "Screenshots"
 msgstr  ""
 #
 # File: gem/ui/preferences/interface.py, line: 538
@@ -1118,7 +1113,7 @@ msgid   "The following game can be installed on multiple consoles. Select the "
         "console where to install this game:"
 msgstr  ""
 #
-# File: gem/ui/dialog/delete.py, line: 93
+# File: gem/ui/dialog/delete.py, line: 110
 msgid   "The following game going to be removed from your harddrive. This "
         "action is irreversible !"
 msgstr  ""
@@ -1285,7 +1280,7 @@ msgstr  ""
 msgid   "Write your regex here..."
 msgstr  ""
 #
-# File: gem/ui/dialog/delete.py, line: 165
+# File: gem/ui/dialog/delete.py, line: 192
 # File: gem/ui/dialog/question.py, line: 99
 msgid   "Yes"
 msgstr  ""

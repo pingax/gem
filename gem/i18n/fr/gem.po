@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.6\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2018-06-16 15:26+0200\n"
+"PO-Revision-Date: 2018-06-16 15:42+0200\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -377,11 +377,6 @@ msgid "Dark theme"
 msgstr "Thème sombre"
 
 #
-# File: gem/ui/dialog/duplicate.py, line: 143
-msgid "Database"
-msgstr "Base de données"
-
-#
 # File: gem/ui/interface.py, line: 673
 msgid "Decrease score"
 msgstr "Diminuer le score"
@@ -411,6 +406,11 @@ msgstr "Options par défaut"
 # File: gem/preferences.py, line: 2007
 msgid "Description"
 msgstr "Description"
+
+#
+# File: src/window.py, line: 446
+msgid "Desktop file"
+msgstr "Fichier de menu"
 
 #
 # File: gem/interface.py, line: 2054
@@ -608,6 +608,16 @@ msgstr "Couverture de jeu"
 # File: gem/gtk/windows.py, line: 943
 msgid "Game properties"
 msgstr "Propriétés du jeu"
+
+#
+# File: gem/preferences.py, line: 335
+msgid "Game screenshots"
+msgstr "Captures d'écran du jeu"
+
+#
+# File: src/window.py, line: 446
+msgid "Game's data from database"
+msgstr "Données du jeu dans la base de données"
 
 #
 # File: gem/preferences.py, line: 113
@@ -928,6 +938,11 @@ msgid "Optional data to duplicate"
 msgstr "Données optionnelles à dupliquer"
 
 #
+# File: gem/interface.py, line: 1286
+msgid "Optional data to remove"
+msgstr "Données optionnelles à supprimer"
+
+#
 # File: gem/interface.py, line: 405
 msgid "Output _log"
 msgstr "_Journal de sortie"
@@ -1023,26 +1038,6 @@ msgid "Remove a game from disk"
 msgstr "Supprimer un jeu du disque"
 
 #
-# File: src/window.py, line: 446
-msgid "Remove desktop file"
-msgstr "Supprimer le fichier de menu"
-
-#
-# File: src/window.py, line: 446
-msgid "Remove game save files"
-msgstr "Supprimer les fichiers de sauvegarde"
-
-#
-# File: gem/preferences.py, line: 335
-msgid "Remove game screenshots"
-msgstr "Supprimer les captures d'écran"
-
-#
-# File: src/window.py, line: 446
-msgid "Remove game's data from database"
-msgstr "Retirer les données du jeu de la base de données"
-
-#
 # File: src/window.py, line: 939
 #, python-format
 msgid "Rename %(old)s to %(new)s"
@@ -1080,8 +1075,8 @@ msgid "Save %s console for next startup"
 msgstr "Sauvegarde de la console %s pour le prochain lancement"
 
 #
-# File: gem/ui/dialog/duplicate.py, line: 134
-msgid "Savestates"
+# File: gem/gtk/interface.py, line: 802
+msgid "Save files"
 msgstr "Fichiers de sauvegarde"
 
 #
@@ -1091,11 +1086,6 @@ msgstr "Fichiers de sauvegarde"
 # File: gem/ui/preferences/interface.py, line: 859
 msgid "Score"
 msgstr "Score"
-
-#
-# File: gem/preferences.py, line: 335
-msgid "Screenshots"
-msgstr "Captures d'écran"
 
 #
 # File: gem/preferences.py, line: 335
@@ -1741,8 +1731,3 @@ msgstr "_Outils"
 # File: gem/interface.py, line: 926
 msgid "translator-credits"
 msgstr "Lubert Aurélien (PacMiam)"
-
-#
-# File: gem/ui/dialog/duplicate.py, line: 97
-#~ msgid "New filename for the duplicate game"
-#~ msgstr "Nouveau nom de fichier pour le jeu dupliqué"

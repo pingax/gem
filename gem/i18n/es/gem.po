@@ -386,11 +386,6 @@ msgid "Dark theme"
 msgstr "Usar el tema _oscuro"
 
 #
-# File: gem/ui/dialog/duplicate.py, line: 143
-msgid "Database"
-msgstr ""
-
-#
 # File: gem/ui/interface.py, line: 673
 msgid "Decrease score"
 msgstr ""
@@ -425,6 +420,12 @@ msgstr "Opciones por defecto"
 # File: gem/gtk/windows.py, line: 780
 msgid "Description"
 msgstr "Descripción"
+
+#
+# File: gem/interface.py, line: 776
+#, fuzzy
+msgid "Desktop file"
+msgstr "Borrar partidas guardadas del juego"
 
 #
 # File: gem/interface.py, line: 2054
@@ -626,6 +627,18 @@ msgstr "Lista de juegos"
 # File: gem/gtk/windows.py, line: 943
 msgid "Game properties"
 msgstr ""
+
+#
+# File: gem/interface.py, line: 2006
+#, fuzzy
+msgid "Game screenshots"
+msgstr "Borrar capturas de pantalla del juego"
+
+#
+# File: gem/preferences.py, line: 85
+#, fuzzy
+msgid "Game's data from database"
+msgstr "Borrar los datos del juego de la base de datos"
 
 #
 # File: gem/preferences.py, line: 113
@@ -959,6 +972,12 @@ msgid "Optional data to duplicate"
 msgstr "Establecer las opciones por defecto"
 
 #
+# File: gem/preferences.py, line: 1662
+#, fuzzy
+msgid "Optional data to remove"
+msgstr "Establecer las opciones por defecto"
+
+#
 # File: gem/interface.py, line: 572
 #, fuzzy
 msgid "Output _log"
@@ -1068,27 +1087,6 @@ msgid "Remove a game from disk"
 msgstr "Borrar un juego del disco"
 
 #
-# File: gem/interface.py, line: 776
-#, fuzzy
-msgid "Remove desktop file"
-msgstr "Borrar partidas guardadas del juego"
-
-#
-# File: gem/interface.py, line: 776
-msgid "Remove game save files"
-msgstr "Borrar partidas guardadas del juego"
-
-#
-# File: gem/interface.py, line: 2006
-msgid "Remove game screenshots"
-msgstr "Borrar capturas de pantalla del juego"
-
-#
-# File: gem/preferences.py, line: 85
-msgid "Remove game's data from database"
-msgstr "Borrar los datos del juego de la base de datos"
-
-#
 # File: gem/preferences.py, line: 1159
 #, python-format
 msgid "Rename %(old)s to %(new)s"
@@ -1127,8 +1125,9 @@ msgid "Save %s console for next startup"
 msgstr "Guardar %s para el próximo arranque"
 
 #
-# File: gem/ui/dialog/duplicate.py, line: 134
-msgid "Savestates"
+# File: gem/ui/dialog/delete.py, line: 165
+# File: gem/ui/dialog/duplicate.py, line: 162
+msgid "Save files"
 msgstr ""
 
 #
@@ -1138,12 +1137,6 @@ msgstr ""
 # File: gem/ui/preferences/interface.py, line: 859
 msgid "Score"
 msgstr ""
-
-#
-# File: gem/interface.py, line: 2006
-#, fuzzy
-msgid "Screenshots"
-msgstr "Mostrar las _capturas de pantalla"
 
 #
 # File: gem/interface.py, line: 2006
@@ -1875,10 +1868,26 @@ msgstr "agradecimientos a los traductores"
 #~ msgstr "Marcar como _mutijugador"
 
 #
+# File: gem/interface.py, line: 776
+#~ msgid "Remove game save files"
+#~ msgstr "Borrar partidas guardadas del juego"
+
+#
+# File: gem/interface.py, line: 2006
+#~ msgid "Remove game screenshots"
+#~ msgstr "Borrar capturas de pantalla del juego"
+
+#
 # File: gem/preferences.py, line: 86
 #, fuzzy
 #~ msgid "Reset"
 #~ msgstr "Renombrar un juego"
+
+#
+# File: gem/interface.py, line: 2006
+#, fuzzy
+#~ msgid "Screenshots"
+#~ msgstr "Mostrar las _capturas de pantalla"
 
 #
 # File: gem/interface.py, line: 527

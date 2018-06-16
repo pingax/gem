@@ -159,15 +159,15 @@ class DuplicateDialog(CommonWindow):
         self.label_data.set_halign(Gtk.Align.CENTER)
         self.label_data.set_ellipsize(Pango.EllipsizeMode.END)
 
-        self.label_savestate.set_text(_("Savestates"))
+        self.label_savestate.set_text(_("Save files"))
         self.label_savestate.set_halign(Gtk.Align.START)
         self.label_savestate.get_style_context().add_class("dim-label")
 
-        self.label_screenshot.set_text(_("Screenshots"))
+        self.label_screenshot.set_text(_("Game screenshots"))
         self.label_screenshot.set_halign(Gtk.Align.START)
         self.label_screenshot.get_style_context().add_class("dim-label")
 
-        self.label_database.set_text(_("Database"))
+        self.label_database.set_text(_("Game's data from database"))
         self.label_database.set_halign(Gtk.Align.START)
         self.label_database.get_style_context().add_class("dim-label")
 

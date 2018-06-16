@@ -15,6 +15,8 @@
 # ------------------------------------------------------------------------------
 
 # GEM
+from gem.engine.utils import *
+
 from gem.ui import *
 from gem.ui.data import *
 
@@ -72,6 +74,8 @@ class DeleteDialog(CommonWindow):
 
         self.set_spacing(6)
 
+        self.set_resizable(True)
+
         # ------------------------------------
         #   Grid
         # ------------------------------------
@@ -83,30 +87,39 @@ class DeleteDialog(CommonWindow):
         self.grid_switch.set_row_spacing(6)
 
         # ------------------------------------
+        #   Title
+        # ------------------------------------
+
+        self.label_title = Gtk.Label()
+
+        # Properties
+        self.label_title.set_markup(
+            "<span weight='bold' size='large'>%s</span>" % \
+            replace_for_markup(self.game.name))
+        self.label_title.set_use_markup(True)
+        self.label_title.set_halign(Gtk.Align.CENTER)
+        self.label_title.set_ellipsize(Pango.EllipsizeMode.END)
+
+        # ------------------------------------
         #   Description
         # ------------------------------------
 
-        label = Gtk.Label()
-        label_game = Gtk.Label()
+        self.label_description = Gtk.Label()
 
         # Properties
-        label.set_text(_("The following game going to be removed from your "
-            "harddrive. This action is irreversible !"))
-        label.set_line_wrap(True)
-        label.set_max_width_chars(8)
-        label.set_single_line_mode(False)
-        label.set_justify(Gtk.Justification.FILL)
-        label.set_line_wrap_mode(Pango.WrapMode.WORD)
-
-        label_game.set_text(self.game.name)
-        label_game.set_margin_top(12)
-        label_game.set_single_line_mode(True)
-        label_game.set_ellipsize(Pango.EllipsizeMode.END)
-        label_game.get_style_context().add_class("dim-label")
+        self.label_description.set_text(_("The following game going to be "
+            "removed from your harddrive. This action is irreversible !"))
+        self.label_description.set_line_wrap(True)
+        self.label_description.set_max_width_chars(8)
+        self.label_description.set_single_line_mode(False)
+        self.label_description.set_justify(Gtk.Justification.FILL)
+        self.label_description.set_line_wrap_mode(Pango.WrapMode.WORD)
 
         # ------------------------------------
         #   Options
         # ------------------------------------
+
+        self.label_data = Gtk.Label()
 
         self.label_database = Gtk.Label()
         self.check_database = Gtk.Switch()
@@ -121,23 +134,36 @@ class DeleteDialog(CommonWindow):
         self.check_screenshots = Gtk.Switch()
 
         # Properties
+        self.label_data.set_markup(
+            "<b>%s</b>" % _("Optional data to remove"))
+        self.label_data.set_margin_top(12)
+        self.label_data.set_hexpand(True)
+        self.label_data.set_use_markup(True)
+        self.label_data.set_single_line_mode(True)
+        self.label_data.set_halign(Gtk.Align.CENTER)
+        self.label_data.set_ellipsize(Pango.EllipsizeMode.END)
+
         self.label_database.set_margin_top(12)
         self.label_database.set_halign(Gtk.Align.START)
-        self.label_database.set_label(_("Remove game's data from database"))
+        self.label_database.set_label(_("Game's data from database"))
+        self.label_database.get_style_context().add_class("dim-label")
         self.check_database.set_margin_top(12)
 
         self.label_desktop.set_margin_top(12)
         self.label_desktop.set_halign(Gtk.Align.START)
-        self.label_desktop.set_label(_("Remove desktop file"))
+        self.label_desktop.set_label(_("Desktop file"))
+        self.label_desktop.get_style_context().add_class("dim-label")
         self.check_desktop.set_margin_top(12)
 
         self.label_save_state.set_margin_top(12)
         self.label_save_state.set_halign(Gtk.Align.START)
-        self.label_save_state.set_label(_("Remove game save files"))
+        self.label_save_state.set_label(_("Save files"))
+        self.label_save_state.get_style_context().add_class("dim-label")
         self.check_save_state.set_margin_top(12)
 
         self.label_screenshots.set_halign(Gtk.Align.START)
-        self.label_screenshots.set_label(_("Remove game screenshots"))
+        self.label_screenshots.set_label(_("Game screenshots"))
+        self.label_screenshots.get_style_context().add_class("dim-label")
 
         # ------------------------------------
         #   Integrate widgets
@@ -152,9 +178,10 @@ class DeleteDialog(CommonWindow):
         self.grid_switch.attach(self.check_screenshots, 0, 4, 1, 1)
         self.grid_switch.attach(self.label_screenshots, 1, 4, 1, 1)
 
-        self.pack_start(label, False, True)
-        self.pack_start(label_game, False, True)
-        self.pack_start(self.grid_switch, True, True)
+        self.pack_start(self.label_title, False, False)
+        self.pack_start(self.label_description, False, False)
+        self.pack_start(self.label_data, False, False)
+        self.pack_start(self.grid_switch)
 
 
     def __start_interface(self):
