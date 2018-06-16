@@ -122,7 +122,6 @@ class DuplicateDialog(CommonWindow):
         self.label_name.set_ellipsize(Pango.EllipsizeMode.END)
 
         self.entry_name.set_hexpand(True)
-        self.entry_name.set_text(self.game.filename)
         self.entry_name.set_icon_from_icon_name(
             Gtk.EntryIconPosition.PRIMARY, Icons.Symbolic.Save)
         self.entry_name.set_icon_from_icon_name(
@@ -221,7 +220,9 @@ class DuplicateDialog(CommonWindow):
         self.add_button(_("Cancel"), Gtk.ResponseType.CANCEL)
         self.add_button(_("Accept"), Gtk.ResponseType.APPLY, Gtk.Align.END)
 
-        self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
+        self.entry_name.set_text(self.game.filename)
+
+        self.check_filename()
 
         # Check extension and emulator for GBA game on mednafen
         if self.game.extension.lower() == ".gba" and \
@@ -231,22 +232,103 @@ class DuplicateDialog(CommonWindow):
             self.label_memory.show()
 
 
+    def get_data(self):
+        """ Retrieve data to duplicate from user choices
+
+        Returns
+        -------
+        dict
+            Data to duplicate
+        """
+
+        # Retrieve the new file name
+        filename = self.entry_name.get_text()
+
+        # Retrieve the new file path
+        filepath = path_join(self.game.path[0], filename + self.game.extension)
+
+        data = {
+            "paths": list(),
+            "filepath": filepath,
+            "database": False
+        }
+
+        # ------------------------------------
+        #   Game file
+        # ------------------------------------
+
+        data["paths"].append((self.game.filepath, filepath))
+
+        # ------------------------------------
+        #   Savestates
+        # ------------------------------------
+
+        if self.switch_savestate.get_active():
+            for path in self.emulator.get_savestates(self.game):
+                data["paths"].append(
+                    (path, path.replace(self.game.filename, filename)))
+
+        # ------------------------------------
+        #   Screenshots
+        # ------------------------------------
+
+        if self.switch_screenshot.get_active():
+            for path in self.emulator.get_screenshots(self.game):
+                data["paths"].append(
+                    (path, path.replace(self.game.filename, filename)))
+
+        # ------------------------------------
+        #   Notes
+        # ------------------------------------
+
+        if self.switch_notes.get_active():
+            path = self.parent.api.get_local("notes")
+
+            if exists(path_join(path, self.game.id + ".txt")):
+                data["paths"].append((
+                    path_join(path, self.game.id + ".txt"),
+                    path_join(path, generate_identifier(filename) + ".txt")))
+
+        # ------------------------------------
+        #   Memory type
+        # ------------------------------------
+
+        if self.switch_memory.get_active():
+            path = self.parent.get_mednafen_memory_type(self.game)
+
+            if exists(path):
+                data["paths"].append(
+                    (path, path.replace(self.game.filename, filename)))
+
+        # ------------------------------------
+        #   Database
+        # ------------------------------------
+
+        if self.switch_database.get_active():
+            data["database"] = True
+
+        return data
+
+
     def check_filename(self, *args):
         """ Check filename in game folder to detect if a file already exists
         """
 
-        # Retrieve game folder path
-        filename = self.entry_name.get_text() + self.game.extension
+        # Retrieve the new file name
+        filename = self.entry_name.get_text()
+
+        # Retrieve the new file path
+        filepath = path_join(self.game.path[0], filename + self.game.extension)
 
         # Check if the new filename path not exists
-        if not exists(path_join(self.game.path[0], filename)):
-            self.entry_name.set_icon_from_icon_name(
-                Gtk.EntryIconPosition.SECONDARY, None)
-
-            self.set_response_sensitive(Gtk.ResponseType.APPLY, True)
-
-        else:
+        if exists(filepath) or len(filename) == 0:
             self.entry_name.set_icon_from_icon_name(
                 Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Error)
 
             self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
+
+        else:
+            self.entry_name.set_icon_from_icon_name(
+                Gtk.EntryIconPosition.SECONDARY, None)
+
+            self.set_response_sensitive(Gtk.ResponseType.APPLY, True)

@@ -1861,6 +1861,32 @@ class Game(GEMObject):
         return game
 
 
+    def copy(self, path):
+        """ Copy game data into a new instance
+
+        Parameters
+        ----------
+        path : str
+            Game file path
+
+        Returns
+        -------
+        gem.engine.api.Game
+            Game object
+        """
+
+        game = deepcopy(self)
+
+        name = splitext(basename(path))[0]
+
+        # Set default game values
+        game.id = generate_identifier(name)
+        game.name = name
+        game.filepath = path
+
+        return game
+
+
     def reset(self):
         """ Reset game data
         """

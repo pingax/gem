@@ -5045,7 +5045,31 @@ class MainWindow(Gtk.ApplicationWindow):
             dialog = DuplicateDialog(self, game, emulator)
 
             if dialog.run() == Gtk.ResponseType.APPLY:
-                self.logger.info(_("Duplicate %s") % game.name)
+                try:
+                    self.logger.info(_("Duplicate %s") % game.name)
+
+                    data = dialog.get_data()
+
+                    # Duplicate game files
+                    for original, path in data["paths"]:
+                        self.logger.debug("Copy %s" % original)
+
+                        copy(original, path)
+
+                    # Duplicate game entry in database
+                    if data["database"]:
+                        self.logger.debug(
+                            "Copy %s entry in database" % game.name)
+
+                        # Update game from database
+                        self.api.update_game(game.copy(data["filepath"]))
+
+                    # Reload the games list
+                    if len(data["paths"]) > 0 or data["database"]:
+                        self.__on_reload_games()
+
+                except Exception as error:
+                    self.logger.exception("An error occur during duplication")
 
             self.set_sensitive(True)
 
@@ -5238,9 +5262,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 if game.emulator is not None:
                     emulator = game.emulator
 
-                # FIXME: Maybe a better way to determine type file
-                filepath = expanduser(
-                    path_join('~', ".mednafen", "sav", game.filename + ".type"))
+                filepath = get_mednafen_memory_type(game)
 
                 # Check if a type file already exist in mednafen sav folder
                 if exists(filepath):
@@ -6140,6 +6162,25 @@ class MainWindow(Gtk.ApplicationWindow):
         """
 
         return self.__mednafen_status
+
+
+    def get_mednafen_memory_type(self, game):
+        """ Retrieve a memory type file for a specific game
+
+        Parameters
+        ----------
+        game : gem.engine.api.Game
+            Game object
+
+        Returns
+        -------
+        str
+            Memory type file path
+        """
+
+        # FIXME: Maybe a better way to determine type file
+        return expanduser(
+            path_join('~', ".mednafen", "sav", game.filename + ".type"))
 
 
     def emit(self, *args):

@@ -10,6 +10,7 @@
 * Add GEM.get_game_tags function to API
 * Allow to set specific configuration paths in constructor parameters
 * Allow to sort games list treeview
+* Allow to duplicate a game and his data
 
 ### GTK+ interface
 

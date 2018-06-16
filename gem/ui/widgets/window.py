@@ -594,19 +594,11 @@ class CommonWindow(object):
             if button response type has not been set previously
         """
 
-        # Gtk.Window
-        if self.parent is None or not self.use_classic_theme:
+        if not response in self.sensitive_data.keys():
+            raise NameError(
+                "%s type did not exists in data dictionary" % str(response))
 
-            if not response in self.sensitive_data.keys():
-                raise NameError(
-                    "%s type did not exists in data dictionary" % str(response))
-
-            self.sensitive_data[response].set_sensitive(sensitive)
-
-        # Gtk.Dialog
-        else:
-            self.window.set_response_sensitive(response, sensitive)
-
+        self.sensitive_data[response].set_sensitive(sensitive)
 
 
     def set_subtitle(self, subtitle):
