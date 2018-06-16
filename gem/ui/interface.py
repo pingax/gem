@@ -4907,6 +4907,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     Columns.LastPlay: None,
                     Columns.TimePlay: None,
                     Columns.LastTimePlay: None,
+                    Columns.Score: 0,
                     Columns.Except: self.alternative["except"],
                     Columns.Multiplayer: self.alternative["multiplayer"],
                 }
