@@ -1026,6 +1026,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.treeview_games = Gtk.TreeView()
 
         self.filter_games = self.model_games.filter_new()
+        self.sorted_games = Gtk.TreeModelSort(self.filter_games)
 
         self.column_game_icons = Gtk.TreeViewColumn()
         self.column_game_name = Gtk.TreeViewColumn()
@@ -1055,12 +1056,12 @@ class MainWindow(Gtk.ApplicationWindow):
         self.cell_game_save = Gtk.CellRendererPixbuf()
 
         # Properties
-        self.model_games.set_sort_column_id(
+        self.sorted_games.set_sort_column_id(
             Columns.Name, Gtk.SortType.ASCENDING)
 
-        self.treeview_games.set_model(self.filter_games)
+        self.treeview_games.set_model(self.sorted_games)
         self.treeview_games.set_search_column(Columns.Name)
-        self.treeview_games.set_headers_clickable(False)
+        self.treeview_games.set_headers_clickable(True)
         self.treeview_games.set_headers_visible(True)
         self.treeview_games.set_show_expanders(False)
         self.treeview_games.set_has_tooltip(True)
@@ -1087,23 +1088,28 @@ class MainWindow(Gtk.ApplicationWindow):
         self.column_game_name.set_resizable(True)
         self.column_game_name.set_min_width(100)
         self.column_game_name.set_fixed_width(300)
+        self.column_game_name.set_sort_column_id(Columns.Name)
         self.column_game_name.pack_start(
             self.cell_game_name, True)
 
+        self.column_game_play.set_sort_column_id(Columns.Played)
         self.column_game_play.set_alignment(.5)
         self.column_game_play.pack_start(
             self.cell_game_play, False)
 
+        self.column_game_last_play.set_sort_column_id(Columns.LastPlay)
         self.column_game_last_play.set_alignment(.5)
         self.column_game_last_play.pack_start(
             self.cell_game_last_play, False)
         self.column_game_last_play.pack_start(
             self.cell_game_last_play_time, False)
 
+        self.column_game_play_time.set_sort_column_id(Columns.LastTimePlay)
         self.column_game_play_time.set_alignment(.5)
         self.column_game_play_time.pack_start(
             self.cell_game_play_time, False)
 
+        self.column_game_score.set_sort_column_id(Columns.Score)
         self.column_game_score.set_alignment(.5)
         self.column_game_score.pack_start(
             self.cell_game_score_first, False)
@@ -1116,6 +1122,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.column_game_score.pack_start(
             self.cell_game_score_fifth, False)
 
+        self.column_game_installed.set_sort_column_id(Columns.Installed)
         self.column_game_installed.set_alignment(.5)
         self.column_game_installed.pack_start(
             self.cell_game_installed, False)
