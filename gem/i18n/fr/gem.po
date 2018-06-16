@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.6\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2018-05-12 19:44+0200\n"
+"PO-Revision-Date: 2018-06-16 15:26+0200\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -377,6 +377,11 @@ msgid "Dark theme"
 msgstr "Thème sombre"
 
 #
+# File: gem/ui/dialog/duplicate.py, line: 143
+msgid "Database"
+msgstr "Base de données"
+
+#
 # File: gem/ui/interface.py, line: 673
 msgid "Decrease score"
 msgstr "Diminuer le score"
@@ -433,6 +438,17 @@ msgstr "Comme les icônes de glisser-déposer"
 #, python-format
 msgid "Drop %(rom)s to %(path)s"
 msgstr "Déplace %(rom)s vers %(path)s"
+
+#
+# File: gem/ui/interface.py, line: 5042
+#, python-format
+msgid "Duplicate %s"
+msgstr "Dupliquer %s"
+
+#
+# File: src/window.py, line: 451
+msgid "Duplicate a game"
+msgstr "Dupliquer un jeu"
 
 #
 # File: gem/preferences.py, line: 336
@@ -788,6 +804,11 @@ msgid "Mednafen GBA documentation"
 msgstr "Documentation de Mednafen pour la GBA"
 
 #
+# File: gem/gtk/mednafen.py, line: 84
+msgid "Memory file"
+msgstr "Fichiers de mémoire"
+
+#
 # File: gem/gtk/preferences.py, line: 177
 msgid "Menu"
 msgstr "Comme les entrées de menu"
@@ -835,6 +856,11 @@ msgid "Name"
 msgstr "Nom"
 
 #
+# File: gem/preferences.py, line: 2003
+msgid "New filename"
+msgstr "Nouveau nom de fichier"
+
+#
 # File: gem/gtk/windows.py, line: 791
 msgid ""
 "Nintendo console titles are identified by a 6 character identifier known as "
@@ -867,6 +893,11 @@ msgid "None"
 msgstr "Aucune"
 
 #
+# File: gem/gtk/interface.py, line: 1182
+msgid "Notes"
+msgstr "Notes"
+
+#
 # File: src/window.py, line: 451
 msgid "Open a game log"
 msgstr "Ouvrir le journal du jeu"
@@ -890,6 +921,11 @@ msgstr "Ouvrir les préférences"
 # File: src/window.py, line: 272
 msgid "Open selected game directory"
 msgstr "Ouvrir le dossier du jeu sélectionné"
+
+#
+# File: gem/interface.py, line: 1286
+msgid "Optional data to duplicate"
+msgstr "Données optionnelles à dupliquer"
 
 #
 # File: gem/interface.py, line: 405
@@ -1044,12 +1080,22 @@ msgid "Save %s console for next startup"
 msgstr "Sauvegarde de la console %s pour le prochain lancement"
 
 #
+# File: gem/ui/dialog/duplicate.py, line: 134
+msgid "Savestates"
+msgstr "Fichiers de sauvegarde"
+
+#
 # File: gem/ui/interface.py, line: 665
 # File: gem/ui/interface.py, line: 1074
 # File: gem/ui/preferences/interface.py, line: 104
 # File: gem/ui/preferences/interface.py, line: 859
 msgid "Score"
 msgstr "Score"
+
+#
+# File: gem/preferences.py, line: 335
+msgid "Screenshots"
+msgstr "Captures d'écran"
 
 #
 # File: gem/preferences.py, line: 335
@@ -1575,6 +1621,12 @@ msgid "_Decrease score"
 msgstr "_Diminuer le score"
 
 #
+# File: gem/ui/interface.py, line: 621
+# File: gem/ui/interface.py, line: 1265
+msgid "_Duplicate"
+msgstr "_Dupliquer"
+
+#
 # File: gem/preferences.py, line: 336
 msgid "_Edit"
 msgstr "_Éditer"
@@ -1689,3 +1741,8 @@ msgstr "_Outils"
 # File: gem/interface.py, line: 926
 msgid "translator-credits"
 msgstr "Lubert Aurélien (PacMiam)"
+
+#
+# File: gem/ui/dialog/duplicate.py, line: 97
+#~ msgid "New filename for the duplicate game"
+#~ msgstr "Nouveau nom de fichier pour le jeu dupliqué"

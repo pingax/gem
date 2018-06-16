@@ -126,6 +126,8 @@ class PreferencesWindow(CommonWindow):
                     _("Remove a game from disk"), "<Control>Delete"],
                 "rename": [
                     _("Rename a game"), "F2"],
+                "duplicate": [
+                    _("Duplicate a game"), "<Control>U"],
                 "cover": [
                     _("Set a game cover"), "<Control>I"],
                 "exceptions": [

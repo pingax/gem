@@ -23,5 +23,6 @@ from gem.ui.dialog.message import MessageDialog
 from gem.ui.dialog.modules import ModulesDialog
 from gem.ui.dialog.question import QuestionDialog
 from gem.ui.dialog.mednafen import MednafenDialog
+from gem.ui.dialog.duplicate import DuplicateDialog
 from gem.ui.dialog.parameter import ParametersDialog
 from gem.ui.dialog.dndconsole import DnDConsoleDialog

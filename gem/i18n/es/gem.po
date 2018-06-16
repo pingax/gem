@@ -386,6 +386,11 @@ msgid "Dark theme"
 msgstr "Usar el tema _oscuro"
 
 #
+# File: gem/ui/dialog/duplicate.py, line: 143
+msgid "Database"
+msgstr ""
+
+#
 # File: gem/ui/interface.py, line: 673
 msgid "Decrease score"
 msgstr ""
@@ -447,6 +452,18 @@ msgstr ""
 #, python-format
 msgid "Drop %(rom)s to %(path)s"
 msgstr "Dejar %(rom)s en %(path)s"
+
+#
+# File: gem/ui/interface.py, line: 5042
+#, python-format
+msgid "Duplicate %s"
+msgstr ""
+
+#
+# File: gem/preferences.py, line: 86
+#, fuzzy
+msgid "Duplicate a game"
+msgstr "Renombrar un juego"
 
 #
 # File: gem/preferences.py, line: 429
@@ -808,6 +825,13 @@ msgid "Mednafen GBA documentation"
 msgstr "Documentación Mednafen GBA"
 
 #
+# File: gem/gtk/interface.py, line: 583
+# File: gem/gtk/interface.py, line: 1010
+#, fuzzy
+msgid "Memory file"
+msgstr "Escoge un tipo de _memoria"
+
+#
 # File: gem/gtk/preferences.py, line: 177
 msgid "Menu"
 msgstr ""
@@ -858,6 +882,13 @@ msgid "Name"
 msgstr "Nombre"
 
 #
+# File: gem/interface.py, line: 406
+# File: gem/interface.py, line: 766
+#, fuzzy
+msgid "New filename"
+msgstr "Usar el nombre del archivo de la ROM"
+
+#
 # File: gem/gtk/windows.py, line: 791
 msgid ""
 "Nintendo console titles are identified by a 6 character identifier known as "
@@ -889,6 +920,12 @@ msgid "None"
 msgstr "Ninguno"
 
 #
+# File: gem/interface.py, line: 384
+#, fuzzy
+msgid "Notes"
+msgstr "_Notas"
+
+#
 # File: gem/preferences.py, line: 86
 #, fuzzy
 msgid "Open a game log"
@@ -914,6 +951,12 @@ msgstr "Abrir preferencias"
 # File: gem/preferences.py, line: 91
 msgid "Open selected game directory"
 msgstr "Abrir carpeta del juego seleccionado"
+
+#
+# File: gem/preferences.py, line: 1662
+#, fuzzy
+msgid "Optional data to duplicate"
+msgstr "Establecer las opciones por defecto"
 
 #
 # File: gem/interface.py, line: 572
@@ -1084,12 +1127,23 @@ msgid "Save %s console for next startup"
 msgstr "Guardar %s para el próximo arranque"
 
 #
+# File: gem/ui/dialog/duplicate.py, line: 134
+msgid "Savestates"
+msgstr ""
+
+#
 # File: gem/ui/interface.py, line: 665
 # File: gem/ui/interface.py, line: 1074
 # File: gem/ui/preferences/interface.py, line: 104
 # File: gem/ui/preferences/interface.py, line: 859
 msgid "Score"
 msgstr ""
+
+#
+# File: gem/interface.py, line: 2006
+#, fuzzy
+msgid "Screenshots"
+msgstr "Mostrar las _capturas de pantalla"
 
 #
 # File: gem/interface.py, line: 2006
@@ -1639,6 +1693,12 @@ msgstr "_Copiar la ruta del juego"
 #
 # File: gem/ui/interface.py, line: 1296
 msgid "_Decrease score"
+msgstr ""
+
+#
+# File: gem/ui/interface.py, line: 621
+# File: gem/ui/interface.py, line: 1265
+msgid "_Duplicate"
 msgstr ""
 
 #

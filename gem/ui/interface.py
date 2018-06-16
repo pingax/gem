@@ -603,6 +603,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menubar_edit_menu = Gtk.Menu()
 
         self.menubar_edit_item_rename = Gtk.MenuItem()
+        self.menubar_edit_item_duplicate = Gtk.MenuItem()
         self.menubar_edit_item_copy = Gtk.MenuItem()
         self.menubar_edit_item_open = Gtk.MenuItem()
         self.menubar_edit_item_cover = Gtk.MenuItem()
@@ -615,6 +616,10 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menubar_edit_item_rename.set_label(
             "%s…" % _("_Rename"))
         self.menubar_edit_item_rename.set_use_underline(True)
+
+        self.menubar_edit_item_duplicate.set_label(
+            "%s…" % _("_Duplicate"))
+        self.menubar_edit_item_duplicate.set_use_underline(True)
 
         self.menubar_edit_item_copy.set_label(
             _("_Copy path"))
@@ -1104,7 +1109,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.column_game_last_play.pack_start(
             self.cell_game_last_play_time, False)
 
-        self.column_game_play_time.set_sort_column_id(Columns.LastTimePlay)
+        self.column_game_play_time.set_sort_column_id(Columns.TimePlay)
         self.column_game_play_time.set_alignment(.5)
         self.column_game_play_time.pack_start(
             self.cell_game_play_time, False)
@@ -1240,6 +1245,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menu_item_edit = Gtk.MenuItem()
 
         self.menu_item_rename = Gtk.MenuItem()
+        self.menu_item_duplicate = Gtk.MenuItem()
         self.menu_item_copy = Gtk.MenuItem()
         self.menu_item_open = Gtk.MenuItem()
         self.menu_item_cover = Gtk.MenuItem()
@@ -1254,6 +1260,10 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menu_item_rename.set_label(
             "%s…" % _("_Rename"))
         self.menu_item_rename.set_use_underline(True)
+
+        self.menu_item_duplicate.set_label(
+            "%s…" % _("_Duplicate"))
+        self.menu_item_duplicate.set_use_underline(True)
 
         self.menu_item_copy.set_label(
             _("_Copy path"))
@@ -1490,6 +1500,9 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menubar_edit_menu.insert(self.menubar_edit_item_score, -1)
         self.menubar_edit_menu.insert(Gtk.SeparatorMenuItem(), -1)
         self.menubar_edit_menu.insert(self.menubar_edit_item_rename, -1)
+        self.menubar_edit_menu.insert(Gtk.SeparatorMenuItem(), -1)
+        self.menubar_edit_menu.insert(self.menubar_edit_item_duplicate, -1)
+        self.menubar_edit_menu.insert(Gtk.SeparatorMenuItem(), -1)
         self.menubar_edit_menu.insert(self.menubar_edit_item_mednafen, -1)
         self.menubar_edit_menu.insert(Gtk.SeparatorMenuItem(), -1)
         self.menubar_edit_menu.insert(self.menubar_edit_item_copy, -1)
@@ -1684,6 +1697,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.menu_games_edit.append(self.menu_item_rename)
         self.menu_games_edit.append(Gtk.SeparatorMenuItem())
+        self.menu_games_edit.append(self.menu_item_duplicate)
+        self.menu_games_edit.append(Gtk.SeparatorMenuItem())
         self.menu_games_edit.append(self.menu_item_copy)
         self.menu_games_edit.append(self.menu_item_open)
         self.menu_games_edit.append(Gtk.SeparatorMenuItem())
@@ -1773,6 +1788,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.menubar_edit_item_rename.connect(
             "activate", self.__on_activate_renamed)
+        self.menubar_edit_item_duplicate.connect(
+            "activate", self.__on_game_duplicate)
         self.menubar_edit_item_copy.connect(
             "activate", self.__on_game_copy)
         self.menubar_edit_item_open.connect(
@@ -1892,6 +1909,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.menu_item_rename.connect(
             "activate", self.__on_activate_renamed)
+        self.menu_item_duplicate.connect(
+            "activate", self.__on_game_duplicate)
         self.menu_item_properties.connect(
             "activate", self.__on_game_parameters)
         self.menu_item_copy.connect(
@@ -2531,6 +2550,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menu_item_remove.set_sensitive(status)
         self.menu_item_database.set_sensitive(status)
         self.menu_item_mednafen.set_sensitive(status)
+        self.menu_item_duplicate.set_sensitive(status)
 
         self.toolbar_item_output.set_sensitive(status)
         self.toolbar_item_notes.set_sensitive(status)
@@ -2560,6 +2580,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menubar_edit_item_delete.set_sensitive(status)
         self.menubar_edit_item_mednafen.set_sensitive(status)
         self.menubar_edit_item_score.set_sensitive(status)
+        self.menubar_edit_item_duplicate.set_sensitive(status)
 
 
     def filters_update(self, widget, status=None):
@@ -2773,6 +2794,14 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.menubar_edit_item_rename
                 ],
                 "keys": self.config.item("keys", "rename", "F2")
+            },
+            {
+                "path": "<GEM>/game/duplicate",
+                "widgets": [
+                    self.menu_item_duplicate,
+                    self.menubar_edit_item_duplicate
+                ],
+                "keys": self.config.item("keys", "duplicate", "<Control>U")
             },
             {
                 "path": "<GEM>/game/favorite",
@@ -3577,8 +3606,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
             self.set_sensitive(False)
 
-            dialog = EditorDialog(
-                self, _("GEM"), expanduser(path), size, False, Icons.Terminal)
+            dialog = EditorDialog(self, _("GEM"),
+                expanduser(path), size, False, Icons.Symbolic.Terminal)
 
             dialog.run()
 
@@ -3611,8 +3640,8 @@ class MainWindow(Gtk.ApplicationWindow):
                 except ValueError as error:
                     size = (800, 600)
 
-                dialog = EditorDialog(self,
-                    game.name, expanduser(path), size, icon=Icons.Document)
+                dialog = EditorDialog(self, game.name,
+                    expanduser(path), size, icon=Icons.Symbolic.Document)
 
                 # Allow to launch games with open notes
                 dialog.set_modal(False)
@@ -4990,6 +5019,39 @@ class MainWindow(Gtk.ApplicationWindow):
                         Icons.Information)
 
 
+    def __on_game_duplicate(self, *args):
+        """ Duplicate a game
+
+        This function allow the user to duplicate a game and his associate
+        data
+        """
+
+        game = self.selection["game"]
+
+        if game is not None:
+            console = self.selection["console"]
+
+            # Get Game emulator
+            emulator = console.emulator
+            if game.emulator is not None:
+                emulator = game.emulator
+
+            # ----------------------------
+            #   Dialog
+            # ----------------------------
+
+            self.set_sensitive(False)
+
+            dialog = DuplicateDialog(self, game, emulator)
+
+            if dialog.run() == Gtk.ResponseType.APPLY:
+                self.logger.info(_("Duplicate %s") % game.name)
+
+            self.set_sensitive(True)
+
+            dialog.destroy()
+
+
     def __on_game_parameters(self, *args):
         """ Manage game default parameters
 
@@ -5037,8 +5099,7 @@ class MainWindow(Gtk.ApplicationWindow):
             dialog = ParametersDialog(self, game, emulator)
 
             if dialog.run() == Gtk.ResponseType.APPLY:
-                self.logger.info(
-                    _("Update %s parameters") % game.name)
+                self.logger.info(_("Update %s parameters") % game.name)
 
                 game.emulator = self.api.get_emulator(
                     dialog.combo.get_active_id())
@@ -5146,8 +5207,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
             self.set_sensitive(False)
 
-            dialog = EditorDialog(
-                self, game.name, expanduser(path), size, False, Icons.Terminal)
+            dialog = EditorDialog(self, game.name,
+                expanduser(path), size, False, Icons.Symbolic.Terminal)
 
             dialog.run()
 
@@ -6067,6 +6128,18 @@ class MainWindow(Gtk.ApplicationWindow):
 
         if treeiter is not None:
             self.model_games[treeiter[1]][index] = data
+
+
+    def get_mednafen_status(self):
+        """ Retrieve mednafen status
+
+        Returns
+        -------
+        bool
+            Mednafen status
+        """
+
+        return self.__mednafen_status
 
 
     def emit(self, *args):
