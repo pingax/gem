@@ -4944,8 +4944,8 @@ class MainWindow(Gtk.ApplicationWindow):
                 treeiter = self.game_path[game.filename][1]
 
                 emulator = console.emulator
-
-                file_to_remove = list()
+                if game.emulator is not None:
+                    emulator = game.emulator
 
                 need_to_reload = False
 
@@ -4955,69 +4955,41 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 self.set_sensitive(False)
 
-                dialog = DeleteDialog(self, game)
+                dialog = DeleteDialog(self, game, emulator)
 
                 if dialog.run() == Gtk.ResponseType.YES:
-                    file_to_remove.append(game.filepath)
+                    try:
+                        self.logger.info(_("Remove %s") % game.name)
 
-                    # ----------------------------
-                    #   Desktop file
-                    # ----------------------------
+                        data = dialog.get_data()
 
-                    if dialog.check_desktop.get_active():
-
-                        if self.check_desktop(game.filename):
-                            file_to_remove.append(path_join(
-                                Folders.Apps, "%s.desktop" % game.filename))
-
-                    # ----------------------------
-                    #   Database
-                    # ----------------------------
-
-                    if dialog.check_database.get_active():
-                        # Remove game from database
-                        self.api.delete_game(game)
-
-                    # ----------------------------
-                    #   Emulator specific files
-                    # ----------------------------
-
-                    if emulator is not None:
-
-                        # Savestates files
-                        if dialog.check_save_state.get_active():
-                            file_to_remove.extend(
-                                emulator.get_savestates(game))
-
-                        # Screenshots files
-                        if dialog.check_screenshots.get_active():
-                            file_to_remove.extend(
-                                emulator.get_screenshots(game))
-
-                    # ----------------------------
-                    #   Remove files from disk
-                    # ----------------------------
-
-                    for element in file_to_remove:
-
-                        if exists(element):
-                            self.logger.info(
-                                _("%s has been deleted from disk") % element)
+                        # Duplicate game files
+                        for element in data["paths"]:
+                            self.logger.debug("Remove %s" % element)
 
                             remove(element)
 
-                    need_to_reload = True
+                        # Remove game from database
+                        if data["database"]:
+                            self.api.delete_game(game)
 
-                self.set_sensitive(True)
+                        # Reload the games list
+                        if len(data["paths"]) > 0 or data["database"]:
+                            need_to_reload = True
+
+                    except Exception as error:
+                        self.logger.exception("An error occur during removing")
 
                 dialog.destroy()
 
                 if need_to_reload:
-                    self.load_interface()
+                    self.__on_reload_games()
 
                     self.set_message(_("Remove a game"),
                         _("This game was removed successfully"),
                         Icons.Information)
+
+                self.set_sensitive(True)
 
 
     def __on_game_duplicate(self, *args):
@@ -5036,6 +5008,8 @@ class MainWindow(Gtk.ApplicationWindow):
             emulator = console.emulator
             if game.emulator is not None:
                 emulator = game.emulator
+
+            need_to_reload = False
 
             # ----------------------------
             #   Dialog
@@ -5057,24 +5031,27 @@ class MainWindow(Gtk.ApplicationWindow):
 
                         copy(original, path)
 
-                    # Duplicate game entry in database
+                    # Update game from database
                     if data["database"]:
-                        self.logger.debug(
-                            "Copy %s entry in database" % game.name)
-
-                        # Update game from database
                         self.api.update_game(game.copy(data["filepath"]))
 
                     # Reload the games list
                     if len(data["paths"]) > 0 or data["database"]:
-                        self.__on_reload_games()
+                        need_to_reload = True
 
                 except Exception as error:
                     self.logger.exception("An error occur during duplication")
 
-            self.set_sensitive(True)
-
             dialog.destroy()
+
+            if need_to_reload:
+                self.__on_reload_games()
+
+                self.set_message(_("Duplicate a game"),
+                    _("This game was duplicated successfully"),
+                    Icons.Information)
+
+            self.set_sensitive(True)
 
 
     def __on_game_parameters(self, *args):

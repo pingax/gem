@@ -31,7 +31,7 @@ from gettext import gettext as _
 
 class DeleteDialog(CommonWindow):
 
-    def __init__(self, parent, game):
+    def __init__(self, parent, game, emulator):
         """ Constructor
 
         Parameters
@@ -54,6 +54,7 @@ class DeleteDialog(CommonWindow):
         # ------------------------------------
 
         self.game = game
+        self.emulator = emulator
 
         # ------------------------------------
         #   Prepare interface
@@ -122,16 +123,19 @@ class DeleteDialog(CommonWindow):
         self.label_data = Gtk.Label()
 
         self.label_database = Gtk.Label()
-        self.check_database = Gtk.Switch()
+        self.switch_database = Gtk.Switch()
 
         self.label_desktop = Gtk.Label()
-        self.check_desktop = Gtk.Switch()
+        self.switch_desktop = Gtk.Switch()
 
-        self.label_save_state = Gtk.Label()
-        self.check_save_state = Gtk.Switch()
+        self.label_savestate = Gtk.Label()
+        self.switch_savestate = Gtk.Switch()
 
         self.label_screenshots = Gtk.Label()
-        self.check_screenshots = Gtk.Switch()
+        self.switch_screenshots = Gtk.Switch()
+
+        self.label_memory = Gtk.Label()
+        self.switch_memory = Gtk.Switch()
 
         # Properties
         self.label_data.set_markup(
@@ -147,36 +151,46 @@ class DeleteDialog(CommonWindow):
         self.label_database.set_halign(Gtk.Align.START)
         self.label_database.set_label(_("Game's data from database"))
         self.label_database.get_style_context().add_class("dim-label")
-        self.check_database.set_margin_top(12)
+        self.switch_database.set_margin_top(12)
 
         self.label_desktop.set_margin_top(12)
         self.label_desktop.set_halign(Gtk.Align.START)
         self.label_desktop.set_label(_("Desktop file"))
         self.label_desktop.get_style_context().add_class("dim-label")
-        self.check_desktop.set_margin_top(12)
+        self.switch_desktop.set_margin_top(12)
 
-        self.label_save_state.set_margin_top(12)
-        self.label_save_state.set_halign(Gtk.Align.START)
-        self.label_save_state.set_label(_("Save files"))
-        self.label_save_state.get_style_context().add_class("dim-label")
-        self.check_save_state.set_margin_top(12)
+        self.label_savestate.set_margin_top(12)
+        self.label_savestate.set_halign(Gtk.Align.START)
+        self.label_savestate.set_label(_("Save files"))
+        self.label_savestate.get_style_context().add_class("dim-label")
+        self.switch_savestate.set_margin_top(12)
 
         self.label_screenshots.set_halign(Gtk.Align.START)
         self.label_screenshots.set_label(_("Game screenshots"))
         self.label_screenshots.get_style_context().add_class("dim-label")
 
+        self.label_memory.set_margin_top(12)
+        self.label_memory.set_halign(Gtk.Align.START)
+        self.label_memory.set_label(_("Memory file"))
+        self.label_memory.get_style_context().add_class("dim-label")
+        self.label_memory.set_no_show_all(True)
+        self.switch_memory.set_margin_top(12)
+        self.switch_memory.set_no_show_all(True)
+
         # ------------------------------------
         #   Integrate widgets
         # ------------------------------------
 
-        self.grid_switch.attach(self.check_database, 0, 1, 1, 1)
+        self.grid_switch.attach(self.switch_database, 0, 1, 1, 1)
         self.grid_switch.attach(self.label_database, 1, 1, 1, 1)
-        self.grid_switch.attach(self.check_desktop, 0, 2, 1, 1)
+        self.grid_switch.attach(self.switch_desktop, 0, 2, 1, 1)
         self.grid_switch.attach(self.label_desktop, 1, 2, 1, 1)
-        self.grid_switch.attach(self.check_save_state, 0, 3, 1, 1)
-        self.grid_switch.attach(self.label_save_state, 1, 3, 1, 1)
-        self.grid_switch.attach(self.check_screenshots, 0, 4, 1, 1)
+        self.grid_switch.attach(self.switch_savestate, 0, 3, 1, 1)
+        self.grid_switch.attach(self.label_savestate, 1, 3, 1, 1)
+        self.grid_switch.attach(self.switch_screenshots, 0, 4, 1, 1)
         self.grid_switch.attach(self.label_screenshots, 1, 4, 1, 1)
+        self.grid_switch.attach(self.switch_memory, 0, 5, 1, 1)
+        self.grid_switch.attach(self.label_memory, 1, 5, 1, 1)
 
         self.pack_start(self.label_title, False, False)
         self.pack_start(self.label_description, False, False)
@@ -191,5 +205,75 @@ class DeleteDialog(CommonWindow):
         self.add_button(_("No"), Gtk.ResponseType.NO)
         self.add_button(_("Yes"), Gtk.ResponseType.YES, Gtk.Align.END)
 
-        self.check_database.set_active(True)
-        self.check_desktop.set_active(True)
+        self.switch_database.set_active(True)
+        self.switch_desktop.set_active(True)
+
+        # Check extension and emulator for GBA game on mednafen
+        if self.game.extension.lower() == ".gba" and \
+            "mednafen" in self.emulator.binary and \
+            self.parent.get_mednafen_status():
+            self.switch_memory.show()
+            self.label_memory.show()
+
+
+    def get_data(self):
+        """ Retrieve data to remove from user choices
+
+        Returns
+        -------
+        dict
+            Data to remove
+        """
+
+        data = {
+            "paths": list(),
+            "database": False
+        }
+
+        # ------------------------------------
+        #   Game file
+        # ------------------------------------
+
+        data["paths"].append(self.game.filepath)
+
+        # ------------------------------------
+        #   Savestates
+        # ------------------------------------
+
+        if self.switch_savestate.get_active():
+            data["paths"].extend(self.emulator.get_savestates(self.game))
+
+        # ------------------------------------
+        #   Screenshots
+        # ------------------------------------
+
+        if self.switch_screenshots.get_active():
+            data["paths"].extend(self.emulator.get_screenshots(self.game))
+
+        # ------------------------------------
+        #   Desktop
+        # ------------------------------------
+
+        if self.switch_desktop.get_active():
+            if self.parent.check_desktop(self.game.filename):
+                data["paths"].append(
+                    path_join(Folders.Apps, "%s.desktop" % self.game.filename))
+
+        # ------------------------------------
+        #   Memory type
+        # ------------------------------------
+
+        if self.switch_memory.get_active():
+            path = self.parent.get_mednafen_memory_type(self.game)
+
+            if exists(path):
+                data["paths"].append(path)
+
+        # ------------------------------------
+        #   Database
+        # ------------------------------------
+
+        if self.switch_database.get_active():
+            data["database"] = True
+
+        return data

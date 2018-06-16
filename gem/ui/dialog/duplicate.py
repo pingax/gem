@@ -158,25 +158,25 @@ class DuplicateDialog(CommonWindow):
         self.label_data.set_halign(Gtk.Align.CENTER)
         self.label_data.set_ellipsize(Pango.EllipsizeMode.END)
 
-        self.label_savestate.set_text(_("Save files"))
+        self.label_savestate.set_label(_("Save files"))
         self.label_savestate.set_halign(Gtk.Align.START)
         self.label_savestate.get_style_context().add_class("dim-label")
 
-        self.label_screenshot.set_text(_("Game screenshots"))
+        self.label_screenshot.set_label(_("Game screenshots"))
         self.label_screenshot.set_halign(Gtk.Align.START)
         self.label_screenshot.get_style_context().add_class("dim-label")
 
-        self.label_database.set_text(_("Game's data from database"))
+        self.label_database.set_label(_("Game's data from database"))
         self.label_database.set_halign(Gtk.Align.START)
         self.label_database.get_style_context().add_class("dim-label")
 
-        self.label_notes.set_text(_("Notes"))
+        self.label_notes.set_label(_("Notes"))
         self.label_notes.set_margin_top(12)
         self.label_notes.set_halign(Gtk.Align.START)
         self.label_notes.get_style_context().add_class("dim-label")
         self.switch_notes.set_margin_top(12)
 
-        self.label_memory.set_text(_("Memory file"))
+        self.label_memory.set_label(_("Memory file"))
         self.label_memory.set_margin_top(12)
         self.label_memory.set_halign(Gtk.Align.START)
         self.label_memory.get_style_context().add_class("dim-label")
