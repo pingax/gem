@@ -6,11 +6,10 @@
 
 * Add cover field to game database
 * Add score field to game database
+* Add installed date field to game object
 * Add favorite field to console object
 * Add GEM.get_game_tags function to API
 * Allow to set specific configuration paths in constructor parameters
-* Allow to sort games list treeview
-* Allow to duplicate a game and his data
 
 ### GTK+ interface
 
@@ -22,6 +21,8 @@
 * Add to remove the desktop file when removing a game
 * Add a dialog to alert the user when a GEM instance already exists
 * Allow to drag the sidebar image to another application
+* Allow to duplicate a game and his data
+* Allow to sort games list treeview
 * Restore GTK+ menuitem behavior to main and game menus
 * Restore old dialog buttons behavior to both themes
 * Fix wrong object set during drag and drop process

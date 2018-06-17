@@ -1064,6 +1064,13 @@ class MainWindow(Gtk.ApplicationWindow):
         self.sorted_games.set_sort_column_id(
             Columns.Name, Gtk.SortType.ASCENDING)
 
+        self.sorted_games.set_sort_func(
+            Columns.LastPlay, self.__on_sort_games, Columns.LastPlay)
+        self.sorted_games.set_sort_func(
+            Columns.TimePlay, self.__on_sort_games, Columns.TimePlay)
+        self.sorted_games.set_sort_func(
+            Columns.Installed, self.__on_sort_games, Columns.Installed)
+
         self.treeview_games.set_model(self.sorted_games)
         self.treeview_games.set_search_column(Columns.Name)
         self.treeview_games.set_headers_clickable(True)
@@ -4166,8 +4173,9 @@ class MainWindow(Gtk.ApplicationWindow):
                             row_data[Columns.Except] = self.icons["except"]
 
                     # Installed time
-                    row_data[Columns.Installed] = string_from_date(
-                        datetime.fromtimestamp(getctime(game.filepath)).date())
+                    if game.installed is not None:
+                        row_data[Columns.Installed] = \
+                            string_from_date(game.installed)
 
                     # Get global emulator
                     rom_emulator = emulator
@@ -4524,6 +4532,74 @@ class MainWindow(Gtk.ApplicationWindow):
 
         if row is not None:
             self.__on_selected_console(None, row)
+
+
+    def __on_sort_games(self, model, row1, row2, column):
+        """ Sort games list for specific columns
+
+        Parameters
+        ----------
+        model : Gtk.TreeModel
+            Treeview model which receive signal
+        row1 : Gtk.TreeIter
+            First treeiter to compare with second one
+        row2 : Gtk.TreeIter
+            Second treeiter to compare with first one
+        column : int
+            Sorting column index
+
+        Returns
+        -------
+        int
+            Sorting comparaison result
+        """
+
+        data1 = model.get_value(row1, Columns.Object)
+        data2 = model.get_value(row2, Columns.Object)
+
+        # Last play
+        if column == Columns.LastPlay:
+            first = data1.last_launch_date
+            second = data2.last_launch_date
+
+        # Play time
+        elif column == Columns.TimePlay:
+            first = data1.play_time
+            second = data2.play_time
+
+        # Installed
+        elif column == Columns.Installed:
+            first = data1.installed
+            second = data2.installed
+
+        # ----------------------------
+        #   Compare
+        # ----------------------------
+
+        # Sort by name in the case where this games are never been launched
+        if first is None and second is None:
+
+            if data1.name < data2.name:
+                return -1
+
+            elif data1.name == data2.name:
+                return 0
+
+        # The second has been launched instead of first one
+        elif first is None:
+            return -1
+
+        # The first has been launched instead of second one
+        elif second is None:
+            return 1
+
+        elif first < second:
+            return -1
+
+        elif first == second:
+            return 0
+
+        return 1
 
 
     def check_selection(self):

@@ -1619,7 +1619,8 @@ class Console(GEMObject):
                     "id": game.id,
                     "name": game.name,
                     "filepath": game.filepath,
-                    "environment": dict()
+                    "environment": dict(),
+                    "installed": datetime.fromtimestamp(getctime(game.filepath)).date()
                 }
 
                 # Set game environment variables
@@ -1803,7 +1804,8 @@ class Game(GEMObject):
         "key": None,
         "tags": list(),
         "environment": dict(),
-        "cover": None
+        "cover": None,
+        "installed": None
     }
 
     def __init__(self):
