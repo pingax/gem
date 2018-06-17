@@ -1017,7 +1017,7 @@ class MainWindow(Gtk.ApplicationWindow):
             Pixbuf, # Multiplayer icon
             Pixbuf, # Finish icon
             str,    # Name
-            str,    # Played
+            int,    # Played
             str,    # Last play
             str,    # Last time play
             str,    # Time play
@@ -4113,7 +4113,7 @@ class MainWindow(Gtk.ApplicationWindow):
                         self.alternative["multiplayer"],
                         self.alternative["unfinish"],
                         game.name,
-                        str(),          # Played
+                        int(),          # Played
                         str(),          # Last launch date
                         str(),          # Last launch time
                         str(),          # Total play time
@@ -4140,7 +4140,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     # Played
                     if game.played > 0:
-                        row_data[Columns.Played] = str(game.played)
+                        row_data[Columns.Played] = game.played
 
                     # Last launch date
                     if game.last_launch_date is not None:
@@ -4733,7 +4733,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.api.update_game(game)
 
             # Played
-            self.set_game_data(Columns.Played, str(game.played), game.filename)
+            self.set_game_data(Columns.Played, game.played, game.filename)
 
             # Last played
             self.set_game_data(Columns.LastPlay,
