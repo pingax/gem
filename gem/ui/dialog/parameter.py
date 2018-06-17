@@ -109,14 +109,33 @@ class ParametersDialog(CommonWindow):
         """ Initialize interface widgets
         """
 
-        self.set_size(520, -1)
+        self.set_size(640, -1)
+
+        self.set_spacing(6)
+
+        self.set_resizable(True)
+
+        # ------------------------------------
+        #   Stack
+        # ------------------------------------
+
+        self.stack = Gtk.Stack()
+
+        self.sidebar_stack = Gtk.StackSwitcher()
+
+        # Properties
+        self.stack.set_margin_top(12)
+        self.stack.set_transition_type(Gtk.StackTransitionType.NONE)
+
+        self.sidebar_stack.set_margin_top(12)
+        self.sidebar_stack.set_stack(self.stack)
+        self.sidebar_stack.set_halign(Gtk.Align.CENTER)
 
         # ------------------------------------
         #   Grids
         # ------------------------------------
 
-        stack = Gtk.Stack()
-        stack_switcher = Gtk.StackSwitcher()
+        self.grid_content = Gtk.Box()
 
         grid_parameters = Gtk.Box()
         grid_tags = Gtk.Box()
@@ -130,11 +149,8 @@ class ParametersDialog(CommonWindow):
         grid_statistic_average = Gtk.Box()
 
         # Properties
-        stack.set_transition_type(Gtk.StackTransitionType.NONE)
-
-        stack_switcher.set_stack(stack)
-        stack_switcher.set_margin_bottom(6)
-        stack_switcher.set_halign(Gtk.Align.CENTER)
+        self.grid_content.set_spacing(6)
+        self.grid_content.set_orientation(Gtk.Orientation.VERTICAL)
 
         grid_parameters.set_spacing(6)
         grid_parameters.set_homogeneous(False)
@@ -167,6 +183,20 @@ class ParametersDialog(CommonWindow):
 
         grid_statistic_average.set_spacing(12)
         grid_statistic_average.set_homogeneous(True)
+
+        # ------------------------------------
+        #   Title
+        # ------------------------------------
+
+        self.label_title = Gtk.Label()
+
+        # Properties
+        self.label_title.set_markup(
+            "<span weight='bold' size='large'>%s</span>" % \
+            replace_for_markup(self.game.name))
+        self.label_title.set_use_markup(True)
+        self.label_title.set_halign(Gtk.Align.CENTER)
+        self.label_title.set_ellipsize(Pango.EllipsizeMode.END)
 
         # ------------------------------------
         #   Emulators
@@ -343,6 +373,8 @@ class ParametersDialog(CommonWindow):
         self.treeview_cell_environment_value = Gtk.CellRendererText()
 
         # Properties
+        scroll_environment.set_shadow_type(Gtk.ShadowType.OUT)
+
         image_environment_add.set_from_icon_name(
             Icons.Symbolic.Add, Gtk.IconSize.BUTTON)
         image_environment_remove.set_from_icon_name(
@@ -387,7 +419,7 @@ class ParametersDialog(CommonWindow):
         #   Integrate widgets
         # ------------------------------------
 
-        stack.add_titled(grid_parameters, "parameters", _("Parameters"))
+        self.stack.add_titled(grid_parameters, "parameters", _("Parameters"))
 
         grid_parameters.pack_start(label_emulator, False, False, 0)
         grid_parameters.pack_start(self.combo, False, False, 0)
@@ -410,7 +442,7 @@ class ParametersDialog(CommonWindow):
         self.popover_tags_frame.add(self.popover_tags_scroll)
         self.popover_tags_scroll.add(self.popover_tags_listbox)
 
-        stack.add_titled(scroll_statistic, "statistic", _("Statistic"))
+        self.stack.add_titled(scroll_statistic, "statistic", _("Statistic"))
 
         scroll_statistic.add(viewport_statistic)
         viewport_statistic.add(grid_statistic)
@@ -428,7 +460,7 @@ class ParametersDialog(CommonWindow):
         grid_statistic_average.pack_start(
             self.label_statistic_average_value, True, True, 0)
 
-        stack.add_titled(grid_environment, "environment", _("Environment"))
+        self.stack.add_titled(grid_environment, "environment", _("Environment"))
 
         scroll_environment.add(viewport_environment)
         viewport_environment.add(self.treeview_environment)
@@ -444,8 +476,11 @@ class ParametersDialog(CommonWindow):
         grid_environment.pack_start(grid_environment_buttons, False, False, 0)
         grid_environment.pack_start(scroll_environment, True, True, 0)
 
-        self.pack_start(stack_switcher, False, False)
-        self.pack_start(stack, False, False)
+        self.grid_content.pack_start(self.sidebar_stack, False, False, 0)
+        self.grid_content.pack_start(self.stack, True, True, 0)
+
+        self.pack_start(self.label_title, False, False)
+        self.pack_start(self.grid_content)
 
 
     def __init_signals(self):

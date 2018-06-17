@@ -294,6 +294,7 @@ class ConsolePreferences(CommonWindow):
         self.cell_ignores = Gtk.CellRendererText()
 
         # Properties
+        self.scroll_ignores.set_shadow_type(Gtk.ShadowType.OUT)
         self.scroll_ignores.add(self.viewport_ignores)
         self.scroll_ignores.set_size_request(-1, 200)
         self.scroll_ignores.set_no_show_all(True)

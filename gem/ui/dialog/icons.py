@@ -213,7 +213,7 @@ class IconsDialog(CommonWindow):
         self.icons_data = dict()
 
         # Set authorized pattern for file selector
-        for pattern in [ "png", "jpg", "jpeg" ]:
+        for pattern in [ "png", "jpg", "jpeg", "svg" ]:
             self.__file_patterns.add_pattern("*.%s" % pattern)
 
         # Fill icons view
