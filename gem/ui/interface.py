@@ -1061,9 +1061,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.cell_game_save = Gtk.CellRendererPixbuf()
 
         # Properties
-        self.sorted_games.set_sort_column_id(
-            Columns.Name, Gtk.SortType.ASCENDING)
-
         self.sorted_games.set_sort_func(
             Columns.LastPlay, self.__on_sort_games, Columns.LastPlay)
         self.sorted_games.set_sort_func(
@@ -2125,10 +2122,29 @@ class MainWindow(Gtk.ApplicationWindow):
             # Avoid to modify gem.conf if console is already in conf
             if last_console is None or not last_console == row.data.id:
                 self.config.modify("gem", "last_console", row.data.id)
-                self.config.update()
 
                 self.logger.info(
                     _("Save %s console for next startup") % row.data.id)
+
+        # ------------------------------------
+        #   Last sorted column
+        # ------------------------------------
+
+        column, order = self.sorted_games.get_sort_column_id()
+
+        if column is not None and order is not None:
+
+            for key, value in Columns.__dict__.items():
+                if not key.startswith("__") and not key.endswith("__"):
+
+                    if column == value:
+                        self.config.modify("gem", "last_sort_column", key)
+
+            if order == Gtk.SortType.ASCENDING:
+                self.config.modify("gem", "last_sort_column_order", "asc")
+
+            elif order == Gtk.SortType.DESCENDING:
+                self.config.modify("gem", "last_sort_column_order", "desc")
 
         # ------------------------------------
         #   Windows size
@@ -2232,6 +2248,34 @@ class MainWindow(Gtk.ApplicationWindow):
         # ------------------------------------
 
         if init_interface:
+
+            # ------------------------------------
+            #   Column sorting
+            # ------------------------------------
+
+            if self.config.getboolean(
+                "gem", "load_sort_column_startup", fallback=True):
+
+                column = getattr(Columns, self.config.get(
+                    "gem", "last_sort_column", fallback="Name"), None)
+                order = self.config.get(
+                    "gem", "last_sort_column_order", fallback="asc")
+
+                if column is None:
+                    column = Columns.Name
+                    order = "asc"
+
+                if order == "desc":
+                    self.sorted_games.set_sort_column_id(
+                        column, Gtk.SortType.DESCENDING)
+
+                else:
+                    self.sorted_games.set_sort_column_id(
+                        column, Gtk.SortType.ASCENDING)
+
+            else:
+                self.sorted_games.set_sort_column_id(
+                    Columns.Name, Gtk.SortType.ASCENDING)
 
             # ------------------------------------
             #   Color theme

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.6\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2018-06-16 15:42+0200\n"
+"PO-Revision-Date: 2018-06-17 21:15+0200\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -64,12 +64,6 @@ msgstr "Le binaire %s n'a pas été trouvé"
 #, python-format
 msgid "%s emulator not exist"
 msgstr "L'émulateur %s n'existe pas"
-
-#
-# File: gem/interface.py, line: 1584
-#, python-format
-msgid "%s has been deleted from disk"
-msgstr "%s à été supprimé du disque"
 
 #
 # File: gem/interface.py, line: 1882
@@ -983,6 +977,11 @@ msgid "Preferences"
 msgstr "Préférences"
 
 #
+# File: gem/ui/dialog/cover.py, line: 160
+msgid "Preview"
+msgstr "Prévisualisation"
+
+#
 # File: src/window.py, line: 239
 msgid "Quit"
 msgstr "Quitter"
@@ -1018,9 +1017,20 @@ msgid "Remember the last selected console"
 msgstr "Se souvenir de la dernière console sélectionnée"
 
 #
+# File: gem/gtk/preferences.py, line: 477
+msgid "Remember the last sorted column"
+msgstr "Se souvenir de la dernière colonne triée"
+
+#
 # File: src/window.py, line: 939
 msgid "Remove"
 msgstr "Supprimer"
+
+#
+# File: src/window.py, line: 939
+#, python-format
+msgid "Remove %s"
+msgstr "Supprime %s"
 
 #
 # File: src/window.py, line: 451
@@ -1385,6 +1395,11 @@ msgstr "Cet émulateur existe déjà, veuillez choisir un autre nom"
 
 #
 # File: gem/interface.py, line: 1882
+msgid "This game was duplicated successfully"
+msgstr "Ce jeu à été dupliqué avec succès"
+
+#
+# File: gem/interface.py, line: 1882
 msgid "This game was removed successfully"
 msgstr "Ce jeu à été supprimé avec succès"
 
@@ -1731,3 +1746,8 @@ msgstr "_Outils"
 # File: gem/interface.py, line: 926
 msgid "translator-credits"
 msgstr "Lubert Aurélien (PacMiam)"
+
+#
+# File: gem/interface.py, line: 1584
+#~ msgid "%s has been deleted from disk"
+#~ msgstr "%s à été supprimé du disque"

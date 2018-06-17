@@ -259,6 +259,7 @@ class PreferencesWindow(CommonWindow):
         self.grid_emulators = Gtk.Box()
 
         self.grid_last_console = Gtk.Box()
+        self.grid_last_column = Gtk.Box()
         self.grid_hide_console = Gtk.Box()
         self.grid_lines = Gtk.Box()
         self.grid_colorsheme = Gtk.Box()
@@ -311,7 +312,10 @@ class PreferencesWindow(CommonWindow):
 
         self.grid_last_console.set_spacing(12)
         self.grid_last_console.set_homogeneous(True)
+        self.grid_last_column.set_spacing(12)
+        self.grid_last_column.set_homogeneous(True)
         self.grid_hide_console.set_spacing(12)
+        self.grid_hide_console.set_margin_top(12)
         self.grid_hide_console.set_homogeneous(True)
 
         self.grid_lines.set_spacing(12)
@@ -409,6 +413,9 @@ class PreferencesWindow(CommonWindow):
         self.label_last_console = Gtk.Label()
         self.check_last_console = Gtk.Switch()
 
+        self.label_last_column = Gtk.Label()
+        self.check_last_column = Gtk.Switch()
+
         self.label_hide_console = Gtk.Label()
         self.check_hide_console = Gtk.Switch()
 
@@ -427,6 +434,19 @@ class PreferencesWindow(CommonWindow):
         self.label_last_console.get_style_context().add_class("dim-label")
         self.label_last_console.set_text(
             _("Remember the last selected console"))
+
+        self.check_last_column.set_halign(Gtk.Align.START)
+        self.check_last_column.set_valign(Gtk.Align.CENTER)
+
+        self.label_last_column.set_line_wrap(True)
+        self.label_last_column.set_alignment(1, 0.5)
+        self.label_last_column.set_halign(Gtk.Align.END)
+        self.label_last_column.set_valign(Gtk.Align.CENTER)
+        self.label_last_column.set_justify(Gtk.Justification.RIGHT)
+        self.label_last_column.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
+        self.label_last_column.get_style_context().add_class("dim-label")
+        self.label_last_column.set_text(
+            _("Remember the last sorted column"))
 
         self.check_last_console.set_halign(Gtk.Align.START)
         self.check_last_console.set_valign(Gtk.Align.CENTER)
@@ -1138,6 +1158,8 @@ class PreferencesWindow(CommonWindow):
         self.grid_general.pack_start(
             self.grid_last_console, False, False, 0)
         self.grid_general.pack_start(
+            self.grid_last_column, False, False, 0)
+        self.grid_general.pack_start(
             self.grid_hide_console, False, False, 0)
         self.grid_general.pack_start(
             self.label_editor, False, False, 0)
@@ -1160,6 +1182,11 @@ class PreferencesWindow(CommonWindow):
             self.label_last_console, True, True, 0)
         self.grid_last_console.pack_start(
             self.check_last_console, True, True, 0)
+
+        self.grid_last_column.pack_start(
+            self.label_last_column, True, True, 0)
+        self.grid_last_column.pack_start(
+            self.check_last_column, True, True, 0)
 
         self.grid_hide_console.pack_start(
             self.label_hide_console, True, True, 0)
@@ -1507,6 +1534,8 @@ class PreferencesWindow(CommonWindow):
 
         self.config.modify("gem", "load_console_startup",
             self.check_last_console.get_active())
+        self.config.modify("gem", "load_sort_column_startup",
+            self.check_last_column.get_active())
         self.config.modify("gem", "hide_empty_console",
             self.check_hide_console.get_active())
 
@@ -1591,6 +1620,8 @@ class PreferencesWindow(CommonWindow):
 
         self.check_last_console.set_active(self.config.getboolean(
             "gem", "load_console_startup", fallback=True))
+        self.check_last_column.set_active(self.config.getboolean(
+            "gem", "load_sort_column_startup", fallback=True))
         self.check_hide_console.set_active(self.config.getboolean(
             "gem", "hide_empty_console", fallback=True))
 

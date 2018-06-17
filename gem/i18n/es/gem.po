@@ -66,12 +66,6 @@ msgid "%s emulator not exist"
 msgstr "¡El emulador %s no existe!"
 
 #
-# File: gem/interface.py, line: 1584
-#, python-format
-msgid "%s has been deleted from disk"
-msgstr "%s ha sido borrado del disco"
-
-#
 # File: gem/interface.py, line: 2106
 #, python-format
 msgid "%s was generated successfully"
@@ -1026,6 +1020,11 @@ msgid "Preferences"
 msgstr "Preferencias"
 
 #
+# File: gem/ui/dialog/cover.py, line: 160
+msgid "Preview"
+msgstr ""
+
+#
 # File: gem/interface.py, line: 363
 #, fuzzy
 msgid "Quit"
@@ -1065,9 +1064,21 @@ msgid "Remember the last selected console"
 msgstr ""
 
 #
+# File: gem/ui/preferences/interface.py, line: 449
+msgid "Remember the last sorted column"
+msgstr ""
+
+#
 # File: gem/interface.py, line: 1736
 # File: gem/preferences.py, line: 1195
 msgid "Remove"
+msgstr "Borrar"
+
+#
+# File: gem/interface.py, line: 1736
+# File: gem/preferences.py, line: 1195
+#, fuzzy, python-format
+msgid "Remove %s"
 msgstr "Borrar"
 
 #
@@ -1453,6 +1464,12 @@ msgstr "Este emulador ya existe, por favor escoja otro nombre"
 
 #
 # File: gem/interface.py, line: 1218
+#, fuzzy
+msgid "This game was duplicated successfully"
+msgstr "El juego fue borrado con éxito"
+
+#
+# File: gem/interface.py, line: 1218
 msgid "This game was removed successfully"
 msgstr "El juego fue borrado con éxito"
 
@@ -1817,6 +1834,11 @@ msgstr "_Herramientas"
 # File: gem/preferences.py, line: 280
 msgid "translator-credits"
 msgstr "agradecimientos a los traductores"
+
+#
+# File: gem/interface.py, line: 1584
+#~ msgid "%s has been deleted from disk"
+#~ msgstr "%s ha sido borrado del disco"
 
 #
 # File: gem/interface.py, line: 451
