@@ -15,6 +15,8 @@
 # ------------------------------------------------------------------------------
 
 # GEM
+from gem.engine.utils import *
+
 from gem.ui import *
 from gem.ui.data import *
 
@@ -73,17 +75,32 @@ class CoverDialog(CommonWindow):
 
         self.set_size(640, 480)
 
-        self.set_spacing(0)
+        self.set_spacing(6)
+
+        self.set_resizable(True)
 
         # ------------------------------------
         #   Grid
         # ------------------------------------
 
-        self.grid_content = Gtk.Grid()
+        self.grid_content = Gtk.Box()
 
         # Properties
-        self.grid_content.set_column_spacing(12)
-        self.grid_content.set_row_spacing(12)
+        self.grid_content.set_spacing(6)
+
+        # ------------------------------------
+        #   Title
+        # ------------------------------------
+
+        self.label_title = Gtk.Label()
+
+        # Properties
+        self.label_title.set_markup(
+            "<span weight='bold' size='large'>%s</span>" % \
+            replace_for_markup(self.game.name))
+        self.label_title.set_use_markup(True)
+        self.label_title.set_halign(Gtk.Align.CENTER)
+        self.label_title.set_ellipsize(Pango.EllipsizeMode.END)
 
         # ------------------------------------
         #   Image selector
@@ -103,10 +120,13 @@ class CoverDialog(CommonWindow):
         self.button_reset = Gtk.Button()
 
         # Properties
-        self.label_image_selector.set_halign(Gtk.Align.END)
-        self.label_image_selector.set_justify(Gtk.Justification.RIGHT)
-        self.label_image_selector.get_style_context().add_class("dim-label")
-        self.label_image_selector.set_text(_("Cover image"))
+        self.label_image_selector.set_markup("<b>%s</b>" % _("Cover image"))
+        self.label_image_selector.set_margin_top(12)
+        self.label_image_selector.set_hexpand(True)
+        self.label_image_selector.set_use_markup(True)
+        self.label_image_selector.set_single_line_mode(True)
+        self.label_image_selector.set_halign(Gtk.Align.CENTER)
+        self.label_image_selector.set_ellipsize(Pango.EllipsizeMode.END)
 
         for pattern in [ "png", "jpg", "jpeg", "svg" ]:
             self.filter_image_selector.add_pattern("*.%s" % pattern)
@@ -129,9 +149,24 @@ class CoverDialog(CommonWindow):
         #   Image preview
         # ------------------------------------
 
+        self.label_preview = Gtk.Label()
+
+        self.scroll_preview = Gtk.ScrolledWindow()
+        self.view_preview = Gtk.Viewport()
+
         self.image_preview = Gtk.Image()
 
         # Properties
+        self.label_preview.set_markup("<b>%s</b>" % _("Preview"))
+        self.label_preview.set_margin_top(12)
+        self.label_preview.set_hexpand(True)
+        self.label_preview.set_use_markup(True)
+        self.label_preview.set_single_line_mode(True)
+        self.label_preview.set_halign(Gtk.Align.CENTER)
+        self.label_preview.set_ellipsize(Pango.EllipsizeMode.END)
+
+        self.scroll_preview.set_shadow_type(Gtk.ShadowType.OUT)
+
         self.image_preview.set_halign(Gtk.Align.CENTER)
         self.image_preview.set_valign(Gtk.Align.CENTER)
         self.image_preview.set_hexpand(True)
@@ -143,12 +178,17 @@ class CoverDialog(CommonWindow):
 
         self.button_reset.add(self.image_reset)
 
-        self.grid_content.attach(self.label_image_selector, 0, 0, 1, 1)
-        self.grid_content.attach(self.file_image_selector, 1, 0, 1, 1)
-        self.grid_content.attach(self.button_reset, 2, 0, 1, 1)
-        self.grid_content.attach(self.image_preview, 0, 1, 3, 1)
+        self.grid_content.pack_start(self.file_image_selector, True, True, 0)
+        self.grid_content.pack_start(self.button_reset, False, False, 0)
 
-        self.pack_start(self.grid_content)
+        self.view_preview.add(self.image_preview)
+        self.scroll_preview.add(self.view_preview)
+
+        self.pack_start(self.label_title, False, False)
+        self.pack_start(self.label_image_selector, False, False)
+        self.pack_start(self.grid_content, False, False)
+        self.pack_start(self.label_preview, False, False)
+        self.pack_start(self.scroll_preview)
 
 
     def __init_signals(self):

@@ -129,6 +129,7 @@ class CommonWindow(object):
         self.grid.set_border_width(18)
 
         self.grid_actions_buttons.set_spacing(12)
+        self.grid_actions_buttons.set_margin_top(6)
         self.grid_actions_buttons.set_layout(Gtk.ButtonBoxStyle.END)
 
         # ------------------------------------
@@ -182,8 +183,7 @@ class CommonWindow(object):
 
         self.grid.pack_end(self.grid_actions, False, False, 0)
 
-        self.grid_actions.pack_end(
-            self.grid_actions_buttons, False, False, 0)
+        self.grid_actions.pack_end(self.grid_actions_buttons, False, False, 0)
 
         if not self.use_classic_theme:
             self.headerbar.pack_start(self.headerbar_image)

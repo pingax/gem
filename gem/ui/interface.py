@@ -3725,8 +3725,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     self.set_sensitive(False)
 
-                    dialog = EditorDialog(self, _("Edit %s configuration") % (
-                        emulator.name), expanduser(path), size)
+                    dialog = EditorDialog(self,
+                        _("Edit %s configuration") % (emulator.name),
+                        expanduser(path), size, icon=Icons.Symbolic.Document)
 
                     if dialog.run() == Gtk.ResponseType.APPLY:
                         with open(path, 'w') as pipe:
