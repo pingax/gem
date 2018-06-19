@@ -4989,16 +4989,19 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.logger.info(_("Rename %(old)s to %(new)s") % {
                         "old": game.name, "new": new_name })
 
+                    game.name = new_name
+
                     # Update game name
                     self.filter_games[path][Columns.Name] = str(new_name)
-
-                    game.name = new_name
+                    self.filter_games[path][Columns.Object] = game
 
                     # Update game from database
                     self.api.update_game(game)
 
                     # Store modified game
                     self.selection["game"] = game
+
+                    self.__current_tooltip = None
 
                     self.set_informations()
 
@@ -5414,28 +5417,28 @@ class MainWindow(Gtk.ApplicationWindow):
             treeiter = self.game_path[game.filename][1]
 
             if not game.favorite:
-                self.model_games[treeiter][Columns.Favorite] = True
-                self.model_games[treeiter][Columns.Icon] = \
-                    self.icons["favorite"]
+                self.logger.debug("Mark %s as favorite" % game.name)
+
+                icon = self.icons["favorite"]
 
                 game.favorite = True
 
-                # Update game from database
-                self.api.update_game(game)
-
-                self.logger.debug("Mark %s as favorite" % game.name)
-
             else:
-                self.model_games[treeiter][Columns.Favorite] = False
-                self.model_games[treeiter][Columns.Icon] = \
-                    self.alternative["favorite"]
+                self.logger.debug("Unmark %s as favorite" % game.name)
+
+                icon = self.alternative["favorite"]
 
                 game.favorite = False
 
-                # Update game from database
-                self.api.update_game(game)
+            self.model_games.set_value(
+                treeiter, Columns.Favorite, game.favorite)
+            self.model_games.set_value(
+                treeiter, Columns.Icon, icon)
+            self.model_games.set_value(
+                treeiter, Columns.Object, game)
 
-                self.logger.debug("Unmark %s as favorite" % game.name)
+            # Update game from database
+            self.api.update_game(game)
 
             self.menubar_game_item_favorite.set_active(game.favorite)
             self.menu_item_favorite.set_active(game.favorite)
@@ -5466,26 +5469,26 @@ class MainWindow(Gtk.ApplicationWindow):
             treeiter = self.game_path[game.filename][1]
 
             if not game.multiplayer:
-                self.model_games[treeiter][Columns.Multiplayer] = \
-                    self.icons["multiplayer"]
+                self.logger.debug("Mark %s as multiplayers" % game.name)
+
+                icon = self.icons["multiplayer"]
 
                 game.multiplayer = True
 
-                # Update game from database
-                self.api.update_game(game)
-
-                self.logger.debug("Mark %s as multiplayers" % game.name)
-
             else:
-                self.model_games[treeiter][Columns.Multiplayer] = \
-                    self.alternative["multiplayer"]
+                self.logger.debug("Unmark %s as multiplayers" % game.name)
+
+                icon = self.alternative["multiplayer"]
 
                 game.multiplayer = False
 
-                # Update game from database
-                self.api.update_game(game)
+            self.model_games.set_value(
+                treeiter, Columns.Multiplayer, icon)
+            self.model_games.set_value(
+                treeiter, Columns.Object, game)
 
-                self.logger.debug("Unmark %s as multiplayers" % game.name)
+            # Update game from database
+            self.api.update_game(game)
 
             self.menubar_game_item_multiplayer.set_active(game.multiplayer)
             self.menu_item_multiplayer.set_active(game.multiplayer)
@@ -5516,26 +5519,26 @@ class MainWindow(Gtk.ApplicationWindow):
             treeiter = self.game_path[game.filename][1]
 
             if not game.finish:
-                self.model_games[treeiter][Columns.Finish] = \
-                    self.icons["finish"]
+                self.logger.debug("Mark %s as finish" % game.name)
+
+                icon = self.icons["finish"]
 
                 game.finish = True
 
-                # Update game from database
-                self.api.update_game(game)
-
-                self.logger.debug("Mark %s as finish" % game.name)
-
             else:
-                self.model_games[treeiter][Columns.Finish] = \
-                    self.alternative["finish"]
+                self.logger.debug("Unmark %s as finish" % game.name)
+
+                icon = self.alternative["finish"]
 
                 game.finish = False
 
-                # Update game from database
-                self.api.update_game(game)
+            self.model_games.set_value(
+                treeiter, Columns.Finish, icon)
+            self.model_games.set_value(
+                treeiter, Columns.Object, game)
 
-                self.logger.debug("Unmark %s as finish" % game.name)
+            # Update game from database
+            self.api.update_game(game)
 
             self.menubar_game_item_finish.set_active(game.finish)
             self.menu_item_finish.set_active(game.finish)
@@ -5590,6 +5593,8 @@ class MainWindow(Gtk.ApplicationWindow):
         if modification:
             self.model_games.set_value(
                 self.game_path[game.filename][1], Columns.Score, game.score)
+            self.model_games.set_value(
+                self.game_path[game.filename][1], Columns.Object, game)
 
             self.api.update_game(game)
 
