@@ -265,10 +265,22 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.grid = Gtk.Box()
 
+        self.grid_main_popover = Gtk.Grid()
+
+        self.grid_consoles = Gtk.Box()
+        self.grid_consoles_item = Gtk.Box()
+        self.grid_consoles_popover = Gtk.Grid()
+
+        self.grid_filters = Gtk.Box()
+        self.grid_filters_popover = Gtk.Grid()
+
+        self.grid_game_launch = Gtk.Box()
+        self.grid_game_options = Gtk.Box()
+
+        self.grid_infobar = Gtk.Box()
+
         self.grid_games = Gtk.Box()
         self.grid_games_placeholder = Gtk.Box()
-        self.grid_options = Gtk.Box()
-        self.grid_infobar = Gtk.Box()
 
         self.grid_sidebar = Gtk.Box()
         self.grid_sidebar_content = Gtk.Box()
@@ -276,23 +288,44 @@ class MainWindow(Gtk.ApplicationWindow):
         self.grid_sidebar_game = Gtk.Grid()
         self.grid_sidebar_tags = Gtk.FlowBox()
 
-        self.grid_consoles = Gtk.Box()
-        self.grid_consoles_item = Gtk.Box()
-        self.grid_consoles_options = Gtk.Grid()
-        self.grid_consoles_options_actions = Gtk.Box()
-
-        self.grid_toolbar_console = Gtk.Box()
-        self.grid_toolbar_filters = Gtk.Box()
-
-        self.grid_menu = Gtk.Grid()
-        self.grid_menu_filters = Gtk.Grid()
-
-        self.grid_menu_actions = Gtk.Box()
-
-        self.grid_gem_log = Gtk.Box()
-
         # Properties
         self.grid.set_orientation(Gtk.Orientation.VERTICAL)
+
+        self.grid_main_popover.set_border_width(12)
+        self.grid_main_popover.set_row_spacing(6)
+        self.grid_main_popover.set_column_spacing(12)
+        self.grid_main_popover.set_column_homogeneous(False)
+
+        Gtk.StyleContext.add_class(
+            self.grid_consoles.get_style_context(), "linked")
+        self.grid_consoles.set_spacing(-1)
+        self.grid_consoles.set_orientation(Gtk.Orientation.HORIZONTAL)
+
+        self.grid_consoles_item.set_spacing(12)
+
+        self.grid_consoles_popover.set_border_width(12)
+        self.grid_consoles_popover.set_row_spacing(6)
+        self.grid_consoles_popover.set_column_spacing(12)
+        self.grid_consoles_popover.set_column_homogeneous(False)
+
+        Gtk.StyleContext.add_class(
+            self.grid_filters.get_style_context(), "linked")
+        self.grid_filters.set_spacing(-1)
+        self.grid_filters.set_orientation(Gtk.Orientation.HORIZONTAL)
+
+        self.grid_filters_popover.set_border_width(12)
+        self.grid_filters_popover.set_row_spacing(6)
+        self.grid_filters_popover.set_column_spacing(12)
+
+        Gtk.StyleContext.add_class(
+            self.grid_game_launch.get_style_context(), "linked")
+        self.grid_game_launch.set_spacing(-1)
+        self.grid_game_launch.set_orientation(Gtk.Orientation.HORIZONTAL)
+
+        Gtk.StyleContext.add_class(
+            self.grid_game_options.get_style_context(), "linked")
+        self.grid_game_options.set_spacing(-1)
+        self.grid_game_options.set_orientation(Gtk.Orientation.HORIZONTAL)
 
         self.grid_games.set_orientation(Gtk.Orientation.VERTICAL)
 
@@ -318,55 +351,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.grid_sidebar_tags.set_column_spacing(6)
         self.grid_sidebar_tags.set_row_spacing(6)
 
-        Gtk.StyleContext.add_class(
-            self.grid_options.get_style_context(), "linked")
-        self.grid_options.set_spacing(-1)
-        self.grid_options.set_orientation(Gtk.Orientation.HORIZONTAL)
-
-        self.grid_consoles.set_orientation(Gtk.Orientation.VERTICAL)
-        self.grid_consoles.set_border_width(12)
-        self.grid_consoles.set_spacing(12)
-
-        self.grid_consoles_item.set_spacing(12)
-
-        self.grid_consoles_options.set_border_width(12)
-        self.grid_consoles_options.set_row_spacing(6)
-        self.grid_consoles_options.set_column_spacing(12)
-
-        Gtk.StyleContext.add_class(
-            self.grid_consoles_options_actions.get_style_context(), "linked")
-        self.grid_consoles_options_actions.set_homogeneous(True)
-        self.grid_consoles_options_actions.set_spacing(-1)
-        self.grid_consoles_options_actions.set_orientation(
-            Gtk.Orientation.HORIZONTAL)
-
-        Gtk.StyleContext.add_class(
-            self.grid_toolbar_console.get_style_context(), "linked")
-        self.grid_toolbar_console.set_spacing(-1)
-        self.grid_toolbar_console.set_orientation(Gtk.Orientation.HORIZONTAL)
-
-        Gtk.StyleContext.add_class(
-            self.grid_toolbar_filters.get_style_context(), "linked")
-        self.grid_toolbar_filters.set_spacing(-1)
-        self.grid_toolbar_filters.set_orientation(Gtk.Orientation.HORIZONTAL)
-
-        self.grid_menu.set_border_width(12)
-        self.grid_menu.set_row_spacing(6)
-        self.grid_menu.set_column_spacing(12)
-
-        self.grid_menu_filters.set_border_width(12)
-        self.grid_menu_filters.set_row_spacing(6)
-        self.grid_menu_filters.set_column_spacing(12)
-
-        Gtk.StyleContext.add_class(
-            self.grid_menu_actions.get_style_context(), "linked")
-        self.grid_menu_actions.set_homogeneous(True)
-        self.grid_menu_actions.set_spacing(-1)
-        self.grid_menu_actions.set_orientation(Gtk.Orientation.HORIZONTAL)
-
-        self.grid_gem_log.set_spacing(12)
-        self.grid_gem_log.set_orientation(Gtk.Orientation.HORIZONTAL)
-
         # ------------------------------------
         #   Headerbar
         # ------------------------------------
@@ -377,12 +361,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.headerbar_image_menu = Gtk.Image()
         self.headerbar_item_menu = Gtk.MenuButton()
-
-        self.headerbar_image_addons = Gtk.Image()
-        self.headerbar_item_addons = Gtk.Button()
-
-        self.headerbar_image_preferences = Gtk.Image()
-        self.headerbar_item_preferences = Gtk.Button()
 
         self.headerbar_image_fullscreen = Gtk.Image()
         self.headerbar_item_fullscreen = Gtk.ToggleButton()
@@ -402,16 +380,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.headerbar_item_menu.set_tooltip_text(_("Main menu"))
         self.headerbar_item_menu.set_use_popover(True)
 
-        self.headerbar_item_addons.set_tooltip_text(_("Addons"))
-        self.headerbar_item_addons.set_image(
-            self.headerbar_image_addons)
-        self.headerbar_item_addons.set_use_underline(True)
-
-        self.headerbar_item_preferences.set_tooltip_text(_("Preferences"))
-        self.headerbar_item_preferences.set_image(
-            self.headerbar_image_preferences)
-        self.headerbar_item_preferences.set_use_underline(True)
-
         self.headerbar_item_fullscreen.set_tooltip_text(
             _("Alternate game fullscreen mode"))
 
@@ -421,6 +389,12 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Headerbar - Main menu
         # ------------------------------------
 
+        self.menu_image_addons = Gtk.Image()
+        self.menu_item_addons = Gtk.Button()
+
+        self.menu_image_preferences = Gtk.Image()
+        self.menu_item_preferences = Gtk.Button()
+
         self.menu_image_about = Gtk.Image()
         self.menu_item_about = Gtk.Button()
 
@@ -429,6 +403,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.menu_image_gem_log = Gtk.Image()
         self.menu_item_gem_log = Gtk.Button()
+
+        self.menu_item_main_display = Gtk.Label()
 
         self.menu_label_dark_theme = Gtk.Label()
         self.menu_item_dark_theme = Gtk.Switch()
@@ -440,41 +416,78 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menu_item_statusbar = Gtk.Switch()
 
         # Properties
-        self.menu_item_gem_log.set_tooltip_text(_("Output log"))
+        self.menu_item_addons.set_label(_("Addons"))
+        self.menu_item_addons.set_relief(Gtk.ReliefStyle.NONE)
+        self.menu_item_addons.set_image(self.menu_image_addons)
+        self.menu_item_addons.set_use_underline(True)
+        self.menu_item_addons.set_alignment(0, 0.5)
+
+        self.menu_image_addons.set_valign(Gtk.Align.CENTER)
+        self.menu_image_addons.set_margin_right(6)
+
+        self.menu_item_preferences.set_label(_("Preferences"))
+        self.menu_item_preferences.set_relief(Gtk.ReliefStyle.NONE)
+        self.menu_item_preferences.set_image(self.menu_image_preferences)
+        self.menu_item_preferences.set_use_underline(True)
+        self.menu_item_preferences.set_alignment(0, 0.5)
+
+        self.menu_image_preferences.set_valign(Gtk.Align.CENTER)
+        self.menu_image_preferences.set_margin_right(6)
+
+        self.menu_item_gem_log.set_label(_("Output log"))
+        self.menu_item_gem_log.set_relief(Gtk.ReliefStyle.NONE)
         self.menu_item_gem_log.set_image(self.menu_image_gem_log)
         self.menu_item_gem_log.set_use_underline(True)
+        self.menu_item_gem_log.set_alignment(0, 0.5)
 
-        self.menu_item_about.set_tooltip_text(_("About"))
+        self.menu_image_gem_log.set_valign(Gtk.Align.CENTER)
+        self.menu_image_gem_log.set_margin_right(6)
+
+        self.menu_item_about.set_label(_("About"))
+        self.menu_item_about.set_relief(Gtk.ReliefStyle.NONE)
         self.menu_item_about.set_image(self.menu_image_about)
         self.menu_item_about.set_use_underline(True)
+        self.menu_item_about.set_alignment(0, 0.5)
 
-        self.menu_item_quit.set_tooltip_text(_("Quit"))
+        self.menu_image_about.set_valign(Gtk.Align.CENTER)
+        self.menu_image_about.set_margin_right(6)
+
+        self.menu_item_quit.set_label(_("Quit"))
+        self.menu_item_quit.set_relief(Gtk.ReliefStyle.NONE)
         self.menu_item_quit.set_image(self.menu_image_quit)
         self.menu_item_quit.set_use_underline(True)
+        self.menu_item_quit.set_alignment(0, 0.5)
 
-        self.menu_label_dark_theme.set_margin_top(12)
+        self.menu_image_quit.set_valign(Gtk.Align.CENTER)
+        self.menu_image_quit.set_margin_right(6)
+
+        self.menu_item_main_display.set_label(_("Display"))
+        self.menu_item_main_display.set_halign(Gtk.Align.START)
+        self.menu_item_main_display.set_valign(Gtk.Align.CENTER)
+        self.menu_item_main_display.get_style_context().add_class("dim-label")
+
         self.menu_label_dark_theme.set_label(_("Dark theme"))
-        self.menu_label_dark_theme.set_halign(Gtk.Align.END)
+        self.menu_label_dark_theme.set_halign(Gtk.Align.START)
         self.menu_label_dark_theme.set_valign(Gtk.Align.CENTER)
-        self.menu_label_dark_theme.get_style_context().add_class("dim-label")
+        self.menu_label_dark_theme.set_hexpand(True)
 
-        self.menu_item_dark_theme.set_margin_top(12)
+        self.menu_item_dark_theme.set_valign(Gtk.Align.END)
 
         self.menu_label_sidebar.set_margin_top(12)
         self.menu_label_sidebar.set_label(_("Sidebar"))
-        self.menu_label_sidebar.set_halign(Gtk.Align.END)
+        self.menu_label_sidebar.set_halign(Gtk.Align.START)
         self.menu_label_sidebar.set_valign(Gtk.Align.CENTER)
-        self.menu_label_sidebar.get_style_context().add_class("dim-label")
+        self.menu_label_sidebar.set_hexpand(True)
 
+        self.menu_item_sidebar.set_valign(Gtk.Align.END)
         self.menu_item_sidebar.set_margin_top(12)
 
-        self.menu_label_statusbar.set_margin_top(12)
         self.menu_label_statusbar.set_label(_("Statusbar"))
-        self.menu_label_statusbar.set_halign(Gtk.Align.END)
+        self.menu_label_statusbar.set_halign(Gtk.Align.START)
         self.menu_label_statusbar.set_valign(Gtk.Align.CENTER)
-        self.menu_label_statusbar.get_style_context().add_class("dim-label")
+        self.menu_label_statusbar.set_hexpand(True)
 
-        self.menu_item_statusbar.set_margin_top(12)
+        self.menu_item_statusbar.set_valign(Gtk.Align.END)
 
         # ------------------------------------
         #   Menubar
@@ -784,6 +797,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.toolbar_item_refresh = Gtk.Button()
         self.toolbar_image_refresh = Gtk.Image()
 
+        self.menu_item_filters_options = Gtk.Label()
+
         self.label_consoles_options_favorite = Gtk.Label()
         self.switch_consoles_favorite = Gtk.Switch()
 
@@ -794,40 +809,52 @@ class MainWindow(Gtk.ApplicationWindow):
         self.button_consoles_option.set_popover(self.popover_consoles_options)
         self.button_consoles_option.set_use_popover(True)
 
-        self.toolbar_item_statistic.set_tooltip_text(
-            _("Show statistics"))
-        self.toolbar_image_statistic.set_halign(Gtk.Align.CENTER)
+        self.toolbar_item_statistic.set_label(_("Show statistics"))
+        self.toolbar_item_statistic.set_relief(Gtk.ReliefStyle.NONE)
+        self.toolbar_item_statistic.set_image(self.toolbar_image_statistic)
+        self.toolbar_item_statistic.set_use_underline(True)
+        self.toolbar_item_statistic.set_alignment(0, 0.5)
+
         self.toolbar_image_statistic.set_valign(Gtk.Align.CENTER)
+        self.toolbar_image_statistic.set_margin_right(6)
 
-        self.toolbar_item_properties.set_tooltip_text(
-            _("Edit emulator"))
-        self.toolbar_image_properties.set_halign(Gtk.Align.CENTER)
+        self.toolbar_item_properties.set_label(_("Edit emulator"))
+        self.toolbar_item_properties.set_relief(Gtk.ReliefStyle.NONE)
+        self.toolbar_item_properties.set_image(self.toolbar_image_properties)
+        self.toolbar_item_properties.set_use_underline(True)
+        self.toolbar_item_properties.set_alignment(0, 0.5)
+
         self.toolbar_image_properties.set_valign(Gtk.Align.CENTER)
+        self.toolbar_image_properties.set_margin_right(6)
 
-        self.toolbar_item_refresh.set_tooltip_text(
-            _("Refresh games list"))
-        self.toolbar_image_refresh.set_halign(Gtk.Align.CENTER)
+        self.toolbar_item_refresh.set_label(_("Refresh games list"))
+        self.toolbar_item_refresh.set_relief(Gtk.ReliefStyle.NONE)
+        self.toolbar_item_refresh.set_image(self.toolbar_image_refresh)
+        self.toolbar_item_refresh.set_use_underline(True)
+        self.toolbar_item_refresh.set_alignment(0, 0.5)
+
         self.toolbar_image_refresh.set_valign(Gtk.Align.CENTER)
+        self.toolbar_image_refresh.set_margin_right(6)
 
-        self.label_consoles_options_favorite.set_margin_top(12)
+        self.menu_item_filters_options.set_label(_("Options"))
+        self.menu_item_filters_options.set_halign(Gtk.Align.START)
+        self.menu_item_filters_options.set_valign(Gtk.Align.CENTER)
+        self.menu_item_filters_options.get_style_context().add_class(
+            "dim-label")
+
         self.label_consoles_options_favorite.set_label(_("Favorite"))
-        self.label_consoles_options_favorite.set_halign(Gtk.Align.END)
+        self.label_consoles_options_favorite.set_halign(Gtk.Align.START)
         self.label_consoles_options_favorite.set_valign(Gtk.Align.CENTER)
-        self.label_consoles_options_favorite.get_style_context().add_class(
-            "dim-label")
-        self.switch_consoles_favorite.set_margin_top(12)
-        self.switch_consoles_favorite.set_active(True)
-        self.switch_consoles_favorite.set_halign(Gtk.Align.START)
+        self.label_consoles_options_favorite.set_hexpand(True)
 
-        self.label_consoles_options_recursive.set_margin_top(12)
+        self.switch_consoles_favorite.set_valign(Gtk.Align.END)
+
         self.label_consoles_options_recursive.set_label(_("Recursive"))
-        self.label_consoles_options_recursive.set_halign(Gtk.Align.END)
+        self.label_consoles_options_recursive.set_halign(Gtk.Align.START)
         self.label_consoles_options_recursive.set_valign(Gtk.Align.CENTER)
-        self.label_consoles_options_recursive.get_style_context().add_class(
-            "dim-label")
-        self.switch_consoles_recursive.set_margin_top(12)
-        self.switch_consoles_recursive.set_active(True)
-        self.switch_consoles_recursive.set_halign(Gtk.Align.START)
+        self.label_consoles_options_recursive.set_hexpand(True)
+
+        self.switch_consoles_recursive.set_valign(Gtk.Align.END)
         self.switch_consoles_recursive.set_tooltip_text(
             _("You need to reload games list to apply changes"))
 
@@ -1428,38 +1455,61 @@ class MainWindow(Gtk.ApplicationWindow):
             self.scroll_games
         ])
 
-        # Headerbar
+        # ------------------------------------
+        #   Headerbar
+        # ------------------------------------
+
         self.headerbar.pack_end(self.headerbar_item_menu)
-        self.headerbar.pack_end(self.headerbar_item_addons)
-        self.headerbar.pack_end(self.headerbar_item_preferences)
-        self.headerbar.pack_end(Gtk.Separator())
-        self.headerbar.pack_end(self.headerbar_item_fullscreen)
 
-        self.toolbar_item_parameters.add(self.toolbar_image_parameters)
+        # Headerbar game launch
+        self.grid_game_launch.pack_start(
+            self.headerbar_item_launch, True, True, 0)
+        self.grid_game_launch.pack_start(
+            self.headerbar_item_fullscreen, True, True, 0)
+
         self.headerbar_item_fullscreen.add(self.headerbar_image_fullscreen)
-        self.headerbar_item_menu.add(self.headerbar_image_menu)
 
-        # Headerbar menu
+        # Headerbar main menu
+        self.headerbar_item_menu.add(self.headerbar_image_menu)
         self.headerbar_item_menu.set_popover(self.popover_menu)
 
-        self.popover_menu.add(self.grid_menu)
+        self.popover_menu.add(self.grid_main_popover)
 
-        self.grid_menu.attach(self.grid_menu_actions, 0, 1, 2, 1)
-        self.grid_menu.attach(self.menu_label_dark_theme, 0, 4, 1, 1)
-        self.grid_menu.attach(self.menu_item_dark_theme, 1, 4, 1, 1)
-        self.grid_menu.attach(self.menu_label_sidebar, 0, 5, 1, 1)
-        self.grid_menu.attach(self.menu_item_sidebar, 1, 5, 1, 1)
-        self.grid_menu.attach(self.menu_label_statusbar, 0, 6, 1, 1)
-        self.grid_menu.attach(self.menu_item_statusbar, 1, 6, 1, 1)
+        self.grid_main_popover.attach(
+            self.menu_item_main_display, 0, 0, 2, 1)
+        self.grid_main_popover.attach(
+            self.menu_label_dark_theme, 0, 1, 1, 1)
+        self.grid_main_popover.attach(
+            self.menu_item_dark_theme, 1, 1, 1, 1)
+        self.grid_main_popover.attach(
+            self.menu_label_sidebar, 0, 2, 1, 1)
+        self.grid_main_popover.attach(
+            self.menu_item_sidebar, 1, 2, 1, 1)
+        self.grid_main_popover.attach(
+            self.menu_label_statusbar, 0, 3, 1, 1)
+        self.grid_main_popover.attach(
+            self.menu_item_statusbar, 1, 3, 1, 1)
+        self.grid_main_popover.attach(
+            Gtk.Separator(), 0, 4, 2, 1)
+        self.grid_main_popover.attach(
+            self.menu_item_preferences, 0, 5, 2, 1)
+        self.grid_main_popover.attach(
+            self.menu_item_addons, 0, 6, 2, 1)
+        self.grid_main_popover.attach(
+            Gtk.Separator(), 0, 7, 2, 1)
+        self.grid_main_popover.attach(
+            self.menu_item_gem_log, 0, 8, 2, 1)
+        self.grid_main_popover.attach(
+            Gtk.Separator(), 0, 9, 2, 1)
+        self.grid_main_popover.attach(
+            self.menu_item_about, 0, 11, 2, 1)
+        self.grid_main_popover.attach(
+            self.menu_item_quit, 0, 12, 2, 1)
 
-        self.grid_menu_actions.pack_start(
-            self.menu_item_gem_log, True, True, 0)
-        self.grid_menu_actions.pack_start(
-            self.menu_item_about, True, True, 0)
-        self.grid_menu_actions.pack_start(
-            self.menu_item_quit, True, True, 0)
+        # ------------------------------------
+        #   Menubar
+        # ------------------------------------
 
-        # Menu
         self.menubar.insert(self.menubar_item_main, -1)
         self.menubar.insert(self.menubar_item_game, -1)
         self.menubar.insert(self.menubar_item_edit, -1)
@@ -1534,7 +1584,10 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.menubar_help_menu.insert(self.menubar_help_item_about, -1)
 
-        # Toolbar
+        # ------------------------------------
+        #   Toolbar
+        # ------------------------------------
+
         self.toolbar.insert(self.toolbar_item_game_properties, -1)
         self.toolbar.insert(Gtk.SeparatorToolItem(), -1)
         self.toolbar.insert(self.toolbar_item_game_option, -1)
@@ -1544,94 +1597,97 @@ class MainWindow(Gtk.ApplicationWindow):
         self.toolbar.insert(self.toolbar_item_search, -1)
 
         self.toolbar_item_game_properties.add(self.toolbar_item_parameters)
-        self.toolbar_item_game_option.add(self.grid_options)
-        self.toolbar_item_consoles.add(self.grid_toolbar_console)
-        self.toolbar_item_search.add(self.grid_toolbar_filters)
+        self.toolbar_item_game_option.add(self.grid_game_options)
+        self.toolbar_item_consoles.add(self.grid_consoles)
+        self.toolbar_item_search.add(self.grid_filters)
 
+        self.toolbar_item_parameters.add(self.toolbar_image_parameters)
         self.toolbar_item_screenshots.add(self.toolbar_image_screenshots)
         self.toolbar_item_output.add(self.toolbar_image_output)
         self.toolbar_item_notes.add(self.toolbar_image_notes)
 
-        self.grid_options.pack_start(
+        self.grid_game_options.pack_start(
             self.toolbar_item_screenshots, False, False, 0)
-        self.grid_options.pack_start(
+        self.grid_game_options.pack_start(
             self.toolbar_item_output, False, False, 0)
-        self.grid_options.pack_start(
+        self.grid_game_options.pack_start(
             self.toolbar_item_notes, False, False, 0)
 
         # Toolbar - Consoles
-        self.grid_toolbar_console.pack_start(
+        self.grid_consoles.pack_start(
             self.button_consoles, False, False, 0)
-        self.grid_toolbar_console.pack_start(
+        self.grid_consoles.pack_start(
             self.button_consoles_option, False, False, 0)
 
         # Toolbar - Consoles options
-        self.popover_consoles_options.add(self.grid_consoles_options)
+        self.popover_consoles_options.add(self.grid_consoles_popover)
 
-        self.grid_consoles_options_actions.pack_start(
-            self.toolbar_item_statistic, True, True, 0)
-        self.grid_consoles_options_actions.pack_start(
-            self.toolbar_item_properties, True, True, 0)
-        self.grid_consoles_options_actions.pack_start(
-            self.toolbar_item_refresh, True, True, 0)
-
-        self.grid_consoles_options.attach(
-            self.grid_consoles_options_actions, 0, 0, 2, 1)
-        self.grid_consoles_options.attach(
-            self.label_consoles_options_favorite, 0, 2, 1, 1)
-        self.grid_consoles_options.attach(
-            self.switch_consoles_favorite, 1, 2, 1, 1)
-        self.grid_consoles_options.attach(
-            self.label_consoles_options_recursive, 0, 3, 1, 1)
-        self.grid_consoles_options.attach(
-            self.switch_consoles_recursive, 1, 3, 1, 1)
-
-        self.toolbar_item_statistic.add(self.toolbar_image_statistic)
-        self.toolbar_item_properties.add(self.toolbar_image_properties)
-        self.toolbar_item_refresh.add(self.toolbar_image_refresh)
+        self.grid_consoles_popover.attach(
+            self.menu_item_filters_options, 0, 0, 2, 1)
+        self.grid_consoles_popover.attach(
+            self.label_consoles_options_favorite, 0, 1, 1, 1)
+        self.grid_consoles_popover.attach(
+            self.switch_consoles_favorite, 1, 1, 1, 1)
+        self.grid_consoles_popover.attach(
+            self.label_consoles_options_recursive, 0, 2, 1, 1)
+        self.grid_consoles_popover.attach(
+            self.switch_consoles_recursive, 1, 2, 1, 1)
+        self.grid_consoles_popover.attach(
+            Gtk.Separator(), 0, 3, 2, 1)
+        self.grid_consoles_popover.attach(
+            self.toolbar_item_properties, 0, 4, 2, 1)
+        self.grid_consoles_popover.attach(
+            self.toolbar_item_statistic, 0, 5, 2, 1)
+        self.grid_consoles_popover.attach(
+            Gtk.Separator(), 0, 6, 2, 1)
+        self.grid_consoles_popover.attach(
+            self.toolbar_item_refresh, 0, 7, 2, 1)
 
         # Toolbar - Filters menu
         self.tool_menu_filters.set_popover(self.popover_menu_filters)
 
-        self.grid_toolbar_filters.pack_start(
+        self.grid_filters.pack_start(
             self.entry_filter, False, False, 0)
-        self.grid_toolbar_filters.pack_start(
+        self.grid_filters.pack_start(
             self.tool_menu_filters, False, False, 0)
 
-        self.grid_menu_filters.attach(
+        self.grid_filters_popover.attach(
             self.label_filter_favorite, 0, 0, 1, 1)
-        self.grid_menu_filters.attach(
+        self.grid_filters_popover.attach(
             self.check_filter_favorite, 1, 0, 1, 1)
-        self.grid_menu_filters.attach(
+        self.grid_filters_popover.attach(
             self.label_filter_unfavorite, 0, 1, 1, 1)
-        self.grid_menu_filters.attach(
+        self.grid_filters_popover.attach(
             self.check_filter_unfavorite, 1, 1, 1, 1)
-        self.grid_menu_filters.attach(
+        self.grid_filters_popover.attach(
             self.label_filter_multiplayer, 0, 2, 1, 1)
-        self.grid_menu_filters.attach(
+        self.grid_filters_popover.attach(
             self.check_filter_multiplayer, 1, 2, 1, 1)
-        self.grid_menu_filters.attach(
+        self.grid_filters_popover.attach(
             self.label_filter_singleplayer, 0, 3, 1, 1)
-        self.grid_menu_filters.attach(
+        self.grid_filters_popover.attach(
             self.check_filter_singleplayer, 1, 3, 1, 1)
-        self.grid_menu_filters.attach(
+        self.grid_filters_popover.attach(
             self.label_filter_finish, 0, 4, 1, 1)
-        self.grid_menu_filters.attach(
+        self.grid_filters_popover.attach(
             self.check_filter_finish, 1, 4, 1, 1)
-        self.grid_menu_filters.attach(
+        self.grid_filters_popover.attach(
             self.label_filter_unfinish, 0, 5, 1, 1)
-        self.grid_menu_filters.attach(
+        self.grid_filters_popover.attach(
             self.check_filter_unfinish, 1, 5, 1, 1)
-        self.grid_menu_filters.attach(
+        self.grid_filters_popover.attach(
             self.item_filter_reset, 0, 6, 2, 1)
 
-        self.popover_menu_filters.add(self.grid_menu_filters)
+        self.popover_menu_filters.add(self.grid_filters_popover)
 
         # Infobar
         self.infobar.get_content_area().pack_start(
             self.label_infobar, True, True, 4)
 
-        # Games paned
+        # ------------------------------------
+        #   Games
+        # ------------------------------------
+
         self.paned_games.pack1(self.grid_games, True, False)
         self.paned_games.pack2(self.scroll_sidebar, False, False)
 
@@ -1730,7 +1786,10 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menu_games_tools.append(Gtk.SeparatorMenuItem())
         self.menu_games_tools.append(self.menu_item_mednafen)
 
-        # Statusbar
+        # ------------------------------------
+        #   Statusbar
+        # ------------------------------------
+
         self.grid_statusbar.pack_start(
             self.label_statusbar_emulator, False, False, 0)
         self.grid_statusbar.pack_start(
@@ -1948,9 +2007,9 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menu_item_score_5.connect(
             "activate", self.__on_game_score, 5)
 
-        self.headerbar_item_preferences.connect(
+        self.menu_item_preferences.connect(
             "clicked", self.__on_show_preferences)
-        self.headerbar_item_addons.connect(
+        self.menu_item_addons.connect(
             "clicked", self.__on_show_modules)
 
         self.menu_item_gem_log.connect(
@@ -2191,11 +2250,11 @@ class MainWindow(Gtk.ApplicationWindow):
             not self.toolbar_sizes[icon_size] == self.toolbar.get_icon_size():
             self.headerbar_image_menu.set_from_icon_name(
                 Icons.Symbolic.Menu, self.toolbar_sizes[icon_size])
-            self.headerbar_image_addons.set_from_icon_name(
+            self.menu_image_addons.set_from_icon_name(
                 Icons.Symbolic.Addon, self.toolbar_sizes[icon_size])
             self.headerbar_image_fullscreen.set_from_icon_name(
                 Icons.Symbolic.Restore, self.toolbar_sizes[icon_size])
-            self.headerbar_image_preferences.set_from_icon_name(
+            self.menu_image_preferences.set_from_icon_name(
                 Icons.Symbolic.System, self.toolbar_sizes[icon_size])
 
             self.menu_image_about.set_from_icon_name(
@@ -2304,14 +2363,13 @@ class MainWindow(Gtk.ApplicationWindow):
             if not self.use_classic_theme:
                 self.set_titlebar(self.headerbar)
 
-                self.headerbar.pack_start(self.headerbar_item_launch)
+                self.headerbar.pack_start(self.grid_game_launch)
 
             else:
                 self.toolbar.insert(self.toolbar_item_game_launch, 0)
                 self.toolbar.insert(Gtk.SeparatorToolItem(), 1)
 
-                self.toolbar_item_game_launch.add(
-                    self.headerbar_item_launch)
+                self.toolbar_item_game_launch.add(self.grid_game_launch)
 
             # ------------------------------------
             #   Window size
@@ -2355,12 +2413,11 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.menu_games.show_all()
 
-        self.grid_menu.show_all()
-        self.grid_menu_filters.show_all()
+        self.grid_main_popover.show_all()
+        self.grid_filters_popover.show_all()
 
-        self.grid_consoles.show_all()
         self.grid_consoles_item.show_all()
-        self.grid_consoles_options.show_all()
+        self.grid_consoles_popover.show_all()
 
         self.infobar.show_all()
         self.infobar.get_content_area().show_all()
@@ -2653,7 +2710,7 @@ class MainWindow(Gtk.ApplicationWindow):
             widget.set_active(status)
 
         active_filter = False
-        for child in self.grid_menu_filters.get_children():
+        for child in self.grid_filters_popover.get_children():
 
             if type(child) is Gtk.Switch:
                 active_filter = active_filter or not child.get_active()
@@ -2684,7 +2741,7 @@ class MainWindow(Gtk.ApplicationWindow):
             Event which triggered this signal (Default: None)
         """
 
-        for child in self.grid_menu_filters.get_children():
+        for child in self.grid_filters_popover.get_children():
 
             if type(child) is Gtk.Switch:
                 child.set_active(True)
@@ -4928,7 +4985,7 @@ class MainWindow(Gtk.ApplicationWindow):
             del self.threads[game.filename]
 
         if len(self.threads) == 0:
-            self.headerbar_item_preferences.set_sensitive(True)
+            self.menu_item_preferences.set_sensitive(True)
             self.menubar_main_item_preferences.set_sensitive(True)
 
 
