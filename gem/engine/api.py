@@ -68,7 +68,7 @@ class GEM(object):
     Version     = "1.0"
     CodeName    = "Space Fox"
     Website     = "https://gem.tuxfamily.org/"
-    Copyleft    = "Copyleft 2017 - Kawa Team"
+    Copyleft    = "Copyleft 2018 - Kawa Team"
     Acronym     = "GEM"
     Icon        = "gem"
 
