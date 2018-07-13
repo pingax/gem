@@ -25,9 +25,11 @@
 * Allow to sort games list treeview
 * Restore GTK+ menuitem behavior to main and game menus
 * Restore old dialog buttons behavior to both themes
+* Restore old renaming system based on dialog window
 * Fix wrong object set during drag and drop process
 * Fix missing global shortcuts in default theme
 * Fix game tooltip not update after game renaming
+* Fix shortcuts not updated after preferences modifications
 
 ## Version 0.9.1 - Lavos (17 Feb, 2018)
 

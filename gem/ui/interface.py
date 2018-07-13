@@ -4677,10 +4677,10 @@ class MainWindow(Gtk.ApplicationWindow):
         # Sort by name in the case where this games are never been launched
         if first is None and second is None:
 
-            if data1.name < data2.name:
+            if data1.name.lower() < data2.name.lower():
                 return -1
 
-            elif data1.name == data2.name:
+            elif data1.name.lower() == data2.name.lower():
                 return 0
 
         # The second has been launched instead of first one
