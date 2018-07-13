@@ -110,6 +110,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Store user keys input
         self.keys = list()
+        # Store available shortcuts
+        self.shortcuts = list()
         # Store sidebar description ordre
         self.sidebar_keys = [
             ("played", _("Launch")),
@@ -3137,12 +3139,14 @@ class MainWindow(Gtk.ApplicationWindow):
             }
         ]
 
+        # Disconnect previous shortcut to avoid multiple allocation
+        for key, mod in self.shortcuts:
+            self.shortcuts_group.disconnect_key(key, mod)
+
         for data in shortcuts:
             key, mod = Gtk.accelerator_parse(data["keys"])
 
             if Gtk.accelerator_valid(key, mod):
-                # Disconnect previous shortcut to avoid multiple allocation
-                self.shortcuts_group.disconnect_key(key, mod)
 
                 self.shortcuts_map.change_entry(data["path"], key, mod, True)
 
@@ -3160,6 +3164,9 @@ class MainWindow(Gtk.ApplicationWindow):
                     else:
                         widget.add_accelerator("activate", self.shortcuts_group,
                             key, mod, Gtk.AccelFlags.VISIBLE)
+
+                    # Store current shortcut to remove it properly later
+                    self.shortcuts.append((key, mod))
 
 
     def __on_manage_keys(self, widget, event):
