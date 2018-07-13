@@ -72,6 +72,8 @@ class PreferencesWindow(CommonWindow):
 
         self.shortcuts = {
             _("Interface"): {
+                "fullscreen": [
+                    _("Switch between fullscreen modes"), "F11"],
                 "sidebar": [
                     _("Show sidebar"), "F9"],
                 "statusbar": [

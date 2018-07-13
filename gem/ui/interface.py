@@ -3051,9 +3051,11 @@ class MainWindow(Gtk.ApplicationWindow):
             {
                 "path": "<GEM>/fullscreen",
                 "widgets": [
+                    self,
                     self.menubar_game_item_fullscreen
                 ],
-                "keys": self.config.item("keys", "fullscreen", "F11")
+                "keys": self.config.item("keys", "fullscreen", "F11"),
+                "function": self.__on_activate_fullscreen
             },
             {
                 "path": "<GEM>/sidebar",
@@ -3170,11 +3172,6 @@ class MainWindow(Gtk.ApplicationWindow):
         event : Gdk.EventButton or Gdk.EventKey
             Event which triggered this signal
         """
-
-        # Fullscreen switch
-        if event.keyval == Gdk.KEY_F11:
-            self.headerbar_item_fullscreen.set_active(
-                not self.headerbar_item_fullscreen.get_active())
 
         # Give me more lifes, powerups or cookies konami code, I need more
         konami_code = [Gdk.KEY_Up, Gdk.KEY_Up, Gdk.KEY_Down, Gdk.KEY_Down,
