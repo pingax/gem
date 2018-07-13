@@ -18,6 +18,7 @@
 from gem.ui.dialog.cover import CoverDialog
 from gem.ui.dialog.editor import EditorDialog
 from gem.ui.dialog.delete import DeleteDialog
+from gem.ui.dialog.rename import RenameDialog
 from gem.ui.dialog.viewer import ViewerDialog
 from gem.ui.dialog.message import MessageDialog
 from gem.ui.dialog.modules import ModulesDialog

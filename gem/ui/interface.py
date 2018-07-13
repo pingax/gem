@@ -1216,7 +1216,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.cell_game_score_fifth.set_alignment(.5, .5)
         self.cell_game_installed.set_alignment(.5, .5)
 
-        self.cell_game_name.set_property("editable", True)
+        # self.cell_game_name.set_property("editable", True)
         self.cell_game_name.set_property("ellipsize", Pango.EllipsizeMode.END)
 
         self.cell_game_favorite.set_padding(4, 4)
@@ -1852,7 +1852,7 @@ class MainWindow(Gtk.ApplicationWindow):
             "activate", self.__stop_interface)
 
         self.menubar_edit_item_rename.connect(
-            "activate", self.__on_activate_renamed)
+            "activate", self.__on_game_renamed)
         self.menubar_edit_item_duplicate.connect(
             "activate", self.__on_game_duplicate)
         self.menubar_edit_item_copy.connect(
@@ -1973,7 +1973,7 @@ class MainWindow(Gtk.ApplicationWindow):
             "activate", self.__on_show_notes)
 
         self.menu_item_rename.connect(
-            "activate", self.__on_activate_renamed)
+            "activate", self.__on_game_renamed)
         self.menu_item_duplicate.connect(
             "activate", self.__on_game_duplicate)
         self.menu_item_properties.connect(
@@ -2037,13 +2037,6 @@ class MainWindow(Gtk.ApplicationWindow):
         # ------------------------------------
         #   Games
         # ------------------------------------
-
-        self.cell_game_name.connect(
-            "edited", self.__on_game_renamed)
-        self.cell_game_name.connect(
-            "editing-started", self.__on_game_renamed_started)
-        self.cell_game_name.connect(
-            "editing-canceled", self.__on_game_renamed_cancel)
 
         self.treeview_games.connect(
             "button-press-event", self.__on_selected_game)
@@ -4993,40 +4986,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.menubar_main_item_preferences.set_sensitive(True)
 
 
-    def __on_activate_renamed(self, *args):
-        """ Activate name edit mode in games treeview
-        """
-
-        game = self.selection["game"]
-
-        if game is not None:
-
-            status, treeiter = self.sorted_games.convert_child_iter_to_iter(
-                self.filter_games.convert_child_iter_to_iter(
-                    self.game_path[game.filename][1])[1])
-
-            if status and treeiter is not None:
-                # Set edit mode for selected treeiter
-                self.treeview_games.set_cursor(
-                    self.sorted_games.get_path(treeiter),
-                    self.column_game_name, True)
-
-
-    def __on_game_renamed_started(self, *args):
-        """ Update is_rename status when started game renaming
-        """
-
-        self.is_rename = True
-
-
-    def __on_game_renamed_cancel(self, *args):
-        """ Update is_rename status when canceled game renaming
-        """
-
-        self.is_rename = False
-
-
-    def __on_game_renamed(self, widget, path, new_name):
+    def __on_game_renamed(self, *args):
         """ Set a custom name for a specific game
 
         Parameters
@@ -5039,18 +4999,23 @@ class MainWindow(Gtk.ApplicationWindow):
             new name
         """
 
-        game = self.sorted_games[path][Columns.Object]
+        game = self.selection["game"]
 
         if game is not None:
-            selected_game = self.selection["game"]
+            treeiter = self.game_path[game.filename][1]
 
-            # Avoid to validate rename when the user click outside
-            if selected_game is not None and game.id == selected_game.id:
+            self.set_sensitive(False)
+
+            dialog = RenameDialog(self, game)
+
+            if dialog.run() == Gtk.ResponseType.APPLY:
+
+                new_name = dialog.get_name()
 
                 # Check if game name has been changed
                 if not new_name == game.name:
                     self.logger.info(_("Rename %(old)s to %(new)s") % {
-                        "old": game.name, "new": new_name })
+                        "old": game.name, "new": dialog.get_name() })
 
                     game.name = new_name
 
@@ -5071,7 +5036,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     self.set_informations()
 
-        self.__on_game_renamed_cancel()
+            self.set_sensitive(True)
+
+            dialog.destroy()
 
 
     def __on_game_clean(self, *args):

@@ -578,6 +578,22 @@ class CommonWindow(object):
         self.window.set_resizable(resizable)
 
 
+    def set_default_response(self, response):
+        """ Set default button response
+
+        Parameters
+        ----------
+        response : Gtk.ResponseType
+            Button response type
+        """
+
+        if not response in self.sensitive_data.keys():
+            raise NameError(
+                "%s type did not exists in data dictionary" % str(response))
+
+        self.window.set_default_response(response)
+
+
     def set_response_sensitive(self, response, sensitive):
         """ Set button sensitive status
 
