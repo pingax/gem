@@ -56,10 +56,12 @@ $ eopkg install gem
 * python3-gobject
 * python3-setuptools
 
-* gnome-icon-theme (optional)
-* gnome-icon-theme-symbolic (optional)
-* gtksourceview (optional)
-* python3-xdg (optional)
+### Optional
+
+* gnome-icon-theme
+* gnome-icon-theme-symbolic
+* gtksourceview
+* python3-xdg
 
 ## Retrieve source code
 

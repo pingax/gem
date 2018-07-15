@@ -30,6 +30,7 @@
 * Fix missing global shortcuts in default theme
 * Fix game tooltip not update after game renaming
 * Fix shortcuts not updated after preferences modifications
+* Fix notes are not correctly close when closing application
 
 ## Version 0.9.1 - Lavos (17 Feb, 2018)
 

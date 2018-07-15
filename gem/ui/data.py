@@ -57,6 +57,8 @@ class Icons:
     Edit        = "document-edit"
     Open        = "document-open"
     Save        = "document-save"
+    SaveAs      = "document-save-as"
+    Send        = "document-send"
     Clear       = "edit-clear"
     Copy        = "edit-copy"
     Delete      = "edit-delete"
@@ -137,6 +139,9 @@ class Icons:
     Missing     = "image-missing"
     NoStarred   = "non-starred" # Not standard
     Starred     = "starred" # Not standard
+    # View
+    List        = "view-list" # Not standard
+    Grid        = "view-grid" # Not standard
 
     # This class is filled with Icons values in interface initialization
     class Symbolic:

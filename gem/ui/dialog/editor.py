@@ -141,8 +141,16 @@ class EditorDialog(CommonWindow):
 
         self.popover_menu = Gtk.Popover()
 
-        self.item_menu_label_line = Gtk.Label()
-        self.item_menu_switch_line = Gtk.Switch()
+        self.label_options = Gtk.Label()
+
+        self.label_line = Gtk.Label()
+        self.switch_line = Gtk.Switch()
+
+        self.button_import = Gtk.Button()
+        self.image_import = Gtk.Image()
+
+        self.button_export = Gtk.Button()
+        self.image_export = Gtk.Image()
 
         # Properties
         self.image_menu.set_from_icon_name(
@@ -155,13 +163,39 @@ class EditorDialog(CommonWindow):
         self.popover_menu.add(self.grid_menu_options)
         self.popover_menu.set_modal(True)
 
-        self.item_menu_label_line.set_label(_("Auto line break"))
-        self.item_menu_label_line.set_halign(Gtk.Align.END)
-        self.item_menu_label_line.set_valign(Gtk.Align.CENTER)
-        self.item_menu_label_line.get_style_context().add_class("dim-label")
+        self.label_options.set_label(_("Options"))
+        self.label_options.set_halign(Gtk.Align.START)
+        self.label_options.set_valign(Gtk.Align.CENTER)
+        self.label_options.get_style_context().add_class("dim-label")
 
-        self.item_menu_switch_line.set_halign(Gtk.Align.START)
-        self.item_menu_switch_line.set_valign(Gtk.Align.CENTER)
+        self.label_line.set_label(_("Line break"))
+        self.label_line.set_halign(Gtk.Align.START)
+        self.label_line.set_valign(Gtk.Align.CENTER)
+
+        self.switch_line.set_halign(Gtk.Align.END)
+        self.switch_line.set_valign(Gtk.Align.CENTER)
+
+        self.button_import.set_label("%s…" % _("Import"))
+        self.button_import.set_relief(Gtk.ReliefStyle.NONE)
+        self.button_import.set_image(self.image_import)
+        self.button_import.set_use_underline(True)
+        self.button_import.set_alignment(0, 0.5)
+
+        self.image_import.set_valign(Gtk.Align.CENTER)
+        self.image_import.set_margin_right(6)
+        self.image_import.set_from_icon_name(
+            Icons.Symbolic.SaveAs, Gtk.IconSize.BUTTON)
+
+        self.button_export.set_label("%s…" % _("Export"))
+        self.button_export.set_relief(Gtk.ReliefStyle.NONE)
+        self.button_export.set_image(self.image_export)
+        self.button_export.set_use_underline(True)
+        self.button_export.set_alignment(0, 0.5)
+
+        self.image_export.set_valign(Gtk.Align.CENTER)
+        self.image_export.set_margin_right(6)
+        self.image_export.set_from_icon_name(
+            Icons.Symbolic.Send, Gtk.IconSize.BUTTON)
 
         # ------------------------------------
         #   Editor
@@ -270,8 +304,14 @@ class EditorDialog(CommonWindow):
         grid_search.pack_start(self.button_up, False, True, 0)
         grid_search.pack_start(self.button_bottom, False, True, 0)
 
-        self.grid_menu_options.attach(self.item_menu_label_line, 0, 0, 1, 1)
-        self.grid_menu_options.attach(self.item_menu_switch_line, 1, 0, 1, 1)
+        self.grid_menu_options.attach(self.label_options, 0, 0, 2, 1)
+        self.grid_menu_options.attach(self.label_line, 0, 1, 1, 1)
+        self.grid_menu_options.attach(self.switch_line, 1, 1, 1, 1)
+
+        if self.editable:
+            self.grid_menu_options.attach(Gtk.Separator(), 0, 2, 2, 1)
+            self.grid_menu_options.attach(self.button_import, 0, 3, 2, 1)
+            self.grid_menu_options.attach(self.button_export, 0, 4, 2, 1)
 
 
     def __init_signals(self):
@@ -280,7 +320,7 @@ class EditorDialog(CommonWindow):
 
         self.buffer_editor.connect("changed", self.__on_buffer_modified)
 
-        self.item_menu_switch_line.connect("state-set", self.__on_break_line)
+        self.switch_line.connect("state-set", self.__on_break_line)
 
         self.entry_search.connect("activate", self.__on_entry_update)
         self.entry_search.connect("icon-press", self.__on_entry_clear)

@@ -2162,7 +2162,7 @@ class MainWindow(Gtk.ApplicationWindow):
         # Close open notes dialog
         if len(self.notes.keys()) > 0:
             for dialog in self.notes.copy().keys():
-                self.notes[dialog].response(Gtk.ResponseType.APPLY)
+                self.notes[dialog].emit_response(None, Gtk.ResponseType.APPLY)
 
         # ------------------------------------
         #   Last console
@@ -3735,7 +3735,7 @@ class MainWindow(Gtk.ApplicationWindow):
         game = self.selection["game"]
 
         if game is not None:
-            path = self.api.get_local("notes", game.filename + ".txt")
+            path = self.api.get_local("notes", game.id + ".txt")
 
             if path is not None and not expanduser(path) in self.notes.keys():
                 try:
