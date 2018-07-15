@@ -35,7 +35,7 @@ $ pacman-g2 -S gem
 
 #### Solus
 
-Thanks to Devil505
+Thanks to Devil505 !
 
 ```
 $ eopkg install gem
@@ -51,10 +51,15 @@ $ eopkg install gem
 
 ## Dependencies
 
+* gtk+3
 * python3
 * python3-gobject
 * python3-setuptools
-* python3-xdg
+
+* gnome-icon-theme (optional)
+* gnome-icon-theme-symbolic (optional)
+* gtksourceview (optional)
+* python3-xdg (optional)
 
 ## Retrieve source code
 
