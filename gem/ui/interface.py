@@ -1061,7 +1061,9 @@ class MainWindow(Gtk.ApplicationWindow):
         self.filter_games = self.model_games.filter_new()
         self.sorted_games = Gtk.TreeModelSort(self.filter_games)
 
-        self.column_game_icons = Gtk.TreeViewColumn()
+        self.column_game_favorite = Gtk.TreeViewColumn()
+        self.column_game_multiplayer = Gtk.TreeViewColumn()
+        self.column_game_finish = Gtk.TreeViewColumn()
         self.column_game_name = Gtk.TreeViewColumn()
         self.column_game_play = Gtk.TreeViewColumn()
         self.column_game_last_play = Gtk.TreeViewColumn()
@@ -1090,6 +1092,12 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Properties
         self.sorted_games.set_sort_func(
+            Columns.Favorite, self.__on_sort_games, Columns.Favorite)
+        self.sorted_games.set_sort_func(
+            Columns.Multiplayer, self.__on_sort_games, Columns.Multiplayer)
+        self.sorted_games.set_sort_func(
+            Columns.Finish, self.__on_sort_games, Columns.Finish)
+        self.sorted_games.set_sort_func(
             Columns.LastPlay, self.__on_sort_games, Columns.LastPlay)
         self.sorted_games.set_sort_func(
             Columns.TimePlay, self.__on_sort_games, Columns.TimePlay)
@@ -1114,12 +1122,17 @@ class MainWindow(Gtk.ApplicationWindow):
         self.column_game_installed.set_title(_("Installed"))
         self.column_game_flags.set_title(_("Flags"))
 
-        self.column_game_icons.pack_start(
+        self.column_game_favorite.pack_start(
             self.cell_game_favorite, False)
-        self.column_game_icons.pack_start(
+        self.column_game_favorite.set_sort_column_id(Columns.Favorite)
+
+        self.column_game_multiplayer.pack_start(
             self.cell_game_multiplayer, False)
-        self.column_game_icons.pack_start(
+        self.column_game_multiplayer.set_sort_column_id(Columns.Multiplayer)
+
+        self.column_game_finish.pack_start(
             self.cell_game_finish, False)
+        self.column_game_finish.set_sort_column_id(Columns.Finish)
 
         self.column_game_name.set_expand(True)
         self.column_game_name.set_resizable(True)
@@ -1172,11 +1185,11 @@ class MainWindow(Gtk.ApplicationWindow):
         self.column_game_flags.pack_start(
             self.cell_game_save, False)
 
-        self.column_game_icons.add_attribute(
+        self.column_game_favorite.add_attribute(
             self.cell_game_favorite, "pixbuf", Columns.Favorite)
-        self.column_game_icons.add_attribute(
+        self.column_game_multiplayer.add_attribute(
             self.cell_game_multiplayer, "pixbuf", Columns.Multiplayer)
-        self.column_game_icons.add_attribute(
+        self.column_game_finish.add_attribute(
             self.cell_game_finish, "pixbuf", Columns.Finish)
         self.column_game_name.add_attribute(
             self.cell_game_name, "text", Columns.Name)
@@ -1218,9 +1231,9 @@ class MainWindow(Gtk.ApplicationWindow):
         # self.cell_game_name.set_property("editable", True)
         self.cell_game_name.set_property("ellipsize", Pango.EllipsizeMode.END)
 
-        self.cell_game_favorite.set_padding(4, 4)
+        self.cell_game_favorite.set_padding(2, 4)
         self.cell_game_multiplayer.set_padding(2, 4)
-        self.cell_game_finish.set_padding(4, 4)
+        self.cell_game_finish.set_padding(2, 4)
         self.cell_game_name.set_padding(6, 4)
         self.cell_game_play.set_padding(6, 4)
         self.cell_game_last_play.set_padding(6, 4)
@@ -1730,7 +1743,9 @@ class MainWindow(Gtk.ApplicationWindow):
         # Games treeview
         self.scroll_games.add(self.treeview_games)
 
-        self.treeview_games.append_column(self.column_game_icons)
+        self.treeview_games.append_column(self.column_game_favorite)
+        self.treeview_games.append_column(self.column_game_multiplayer)
+        self.treeview_games.append_column(self.column_game_finish)
         self.treeview_games.append_column(self.column_game_name)
         self.treeview_games.append_column(self.column_game_play)
         self.treeview_games.append_column(self.column_game_last_play)
@@ -4652,8 +4667,23 @@ class MainWindow(Gtk.ApplicationWindow):
         data1 = model.get_value(row1, Columns.Object)
         data2 = model.get_value(row2, Columns.Object)
 
+        # Favorite
+        if column == Columns.Favorite:
+            first = data1.favorite
+            second = data2.favorite
+
+        # Favorite
+        elif column == Columns.Multiplayer:
+            first = data1.multiplayer
+            second = data2.multiplayer
+
+        # Finish
+        elif column == Columns.Finish:
+            first = data1.finish
+            second = data2.finish
+
         # Last play
-        if column == Columns.LastPlay:
+        elif column == Columns.LastPlay:
             first = data1.last_launch_date
             second = data2.last_launch_date
 
