@@ -373,7 +373,9 @@ class EditorDialog(CommonWindow):
         if self.refresh_buffer:
             self.refresh_buffer = False
 
-            self.text_editor.set_sensitive(False)
+            self.set_subtitle("%s…" % _("Loading"))
+
+            self.window.set_sensitive(False)
 
             self.buffer_editor.delete(self.buffer_editor.get_start_iter(),
                 self.buffer_editor.get_end_iter())
@@ -390,26 +392,19 @@ class EditorDialog(CommonWindow):
 
         if exists(expanduser(self.path)):
             with open(self.path, 'r', errors="replace") as pipe:
-                lines = pipe.readlines()
+                self.buffer_editor.set_text(pipe.read())
 
-                for index in range(0, len(lines)):
-                    self.buffer_editor.insert(
-                        self.buffer_editor.get_end_iter(), lines[index])
-
-                    self.entry_path.set_progress_fraction(
-                        float(index / len(lines)))
-
-                    yield True
-
-            self.entry_path.set_progress_fraction(0.0)
+                yield True
 
         # Remove undo stack from GtkSource.Buffer
         if type(self.buffer_editor) is not Gtk.TextBuffer:
             self.buffer_editor.set_undo_manager(None)
 
-        self.text_editor.set_sensitive(True)
+        self.window.set_sensitive(True)
 
         self.refresh_buffer = True
+
+        self.set_subtitle("")
 
         yield False
 
