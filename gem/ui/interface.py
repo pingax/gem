@@ -1041,7 +1041,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.scroll_games = Gtk.ScrolledWindow()
 
         self.model_games = Gtk.ListStore(
-            bool,   # Favorite status
             Pixbuf, # Favorite icon
             Pixbuf, # Multiplayer icon
             Pixbuf, # Finish icon
@@ -1174,7 +1173,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.cell_game_save, False)
 
         self.column_game_icons.add_attribute(
-            self.cell_game_favorite, "pixbuf", Columns.Icon)
+            self.cell_game_favorite, "pixbuf", Columns.Favorite)
         self.column_game_icons.add_attribute(
             self.cell_game_multiplayer, "pixbuf", Columns.Multiplayer)
         self.column_game_icons.add_attribute(
@@ -4213,7 +4212,6 @@ class MainWindow(Gtk.ApplicationWindow):
                 if exists(game.filepath) and show:
 
                     row_data = [
-                        game.favorite,
                         self.alternative["favorite"],
                         self.alternative["multiplayer"],
                         self.alternative["unfinish"],
@@ -4231,7 +4229,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     # Favorite
                     if game.favorite:
-                        row_data[Columns.Icon] = self.icons["favorite"]
+                        row_data[Columns.Favorite] = self.icons["favorite"]
 
                     # Multiplayer
                     if game.multiplayer:
@@ -4240,8 +4238,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     # Finish
                     if game.finish:
-                        row_data[Columns.Finish] = \
-                            self.icons["finish"]
+                        row_data[Columns.Finish] = self.icons["finish"]
 
                     # Played
                     if game.played > 0:
@@ -5057,9 +5054,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
             if dialog.run() == Gtk.ResponseType.YES:
                 data = {
+                    Columns.Favorite: self.alternative["favorite"],
                     Columns.Name: game.filename,
-                    Columns.Favorite: False,
-                    Columns.Icon: self.alternative["favorite"],
                     Columns.Played: None,
                     Columns.LastPlay: None,
                     Columns.TimePlay: None,
@@ -5464,9 +5460,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 game.favorite = False
 
             self.model_games.set_value(
-                treeiter, Columns.Favorite, game.favorite)
-            self.model_games.set_value(
-                treeiter, Columns.Icon, icon)
+                treeiter, Columns.Favorite, icon)
             self.model_games.set_value(
                 treeiter, Columns.Object, game)
 

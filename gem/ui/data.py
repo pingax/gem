@@ -149,17 +149,16 @@ class Icons:
 
 class Columns:
     Favorite        = 0
-    Icon            = 1
-    Multiplayer     = 2
-    Finish          = 3
-    Name            = 4
-    Played          = 5
-    LastPlay        = 6
-    LastTimePlay    = 7
-    TimePlay        = 8
-    Score           = 9
-    Installed       = 10
-    Except          = 11
-    Snapshots       = 12
-    Save            = 13
-    Object          = 14
+    Multiplayer     = 1
+    Finish          = 2
+    Name            = 3
+    Played          = 4
+    LastPlay        = 5
+    LastTimePlay    = 6
+    TimePlay        = 7
+    Score           = 8
+    Installed       = 9
+    Except          = 10
+    Snapshots       = 11
+    Save            = 12
+    Object          = 13
