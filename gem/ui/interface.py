@@ -284,11 +284,11 @@ class MainWindow(Gtk.ApplicationWindow):
         self.grid_games = Gtk.Box()
         self.grid_games_placeholder = Gtk.Box()
 
-        self.grid_sidebar = Gtk.Box()
-        self.grid_sidebar_content = Gtk.Box()
-        self.grid_sidebar_informations = Gtk.Box()
-        self.grid_sidebar_game = Gtk.Grid()
-        self.grid_sidebar_tags = Gtk.FlowBox()
+        self.grid_sidebar = Gtk.Grid()
+        self.grid_sidebar_title = Gtk.Box()
+        self.grid_sidebar_tab_tags = Gtk.Box()
+        self.grid_sidebar_tab_informations = Gtk.Box()
+        self.grid_sidebar_informations = Gtk.Grid()
 
         # Properties
         self.grid.set_orientation(Gtk.Orientation.VERTICAL)
@@ -335,23 +335,27 @@ class MainWindow(Gtk.ApplicationWindow):
         self.grid_games_placeholder.set_border_width(18)
         self.grid_games_placeholder.set_orientation(Gtk.Orientation.VERTICAL)
 
+        self.grid_sidebar.set_column_spacing(12)
         self.grid_sidebar.set_border_width(6)
+        self.grid_sidebar.set_row_spacing(6)
 
-        self.grid_sidebar_content.set_orientation(Gtk.Orientation.VERTICAL)
-        self.grid_sidebar_content.set_border_width(12)
-        self.grid_sidebar_content.set_spacing(6)
+        self.grid_sidebar_title.set_orientation(Gtk.Orientation.HORIZONTAL)
+        self.grid_sidebar_title.set_border_width(6)
+        self.grid_sidebar_title.set_hexpand(True)
+        self.grid_sidebar_title.set_spacing(6)
 
-        self.grid_sidebar_informations.set_orientation(Gtk.Orientation.VERTICAL)
+        self.grid_sidebar_tab_informations.set_orientation(
+            Gtk.Orientation.HORIZONTAL)
+        self.grid_sidebar_tab_informations.set_spacing(6)
 
-        self.grid_sidebar_game.set_column_homogeneous(True)
-        self.grid_sidebar_game.set_column_spacing(12)
-        self.grid_sidebar_game.set_row_spacing(6)
+        self.grid_sidebar_tab_tags.set_orientation(
+            Gtk.Orientation.HORIZONTAL)
+        self.grid_sidebar_tab_tags.set_spacing(6)
 
-        self.grid_sidebar_tags.set_selection_mode(Gtk.SelectionMode.NONE)
-        self.grid_sidebar_tags.set_max_children_per_line(16)
-        self.grid_sidebar_tags.set_homogeneous(False)
-        self.grid_sidebar_tags.set_column_spacing(6)
-        self.grid_sidebar_tags.set_row_spacing(6)
+        self.grid_sidebar_informations.set_column_homogeneous(True)
+        self.grid_sidebar_informations.set_column_spacing(12)
+        self.grid_sidebar_informations.set_border_width(18)
+        self.grid_sidebar_informations.set_row_spacing(6)
 
         # ------------------------------------
         #   Headerbar
@@ -970,26 +974,81 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.paned_games = Gtk.Paned()
 
+        self.image_sidebar_title = Gtk.Image()
         self.label_sidebar_title = Gtk.Label()
 
         self.view_image_sidebar_game = Gtk.Viewport()
+        self.frame_sidebar_game = Gtk.Frame()
         self.image_sidebar_game = Gtk.Image()
 
-        self.separator_game = Gtk.Separator()
+        self.notebook_sidebar_game = Gtk.Notebook()
 
         # Properties
-        self.scroll_sidebar.set_size_request(432, 256)
+        self.scroll_sidebar.set_size_request(432, 262)
+        self.scroll_sidebar.set_policy(
+            Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER)
 
         self.paned_games.set_orientation(Gtk.Orientation.VERTICAL)
 
+        self.image_sidebar_title.set_no_show_all(True)
+        self.image_sidebar_title.set_halign(Gtk.Align.CENTER)
+        self.image_sidebar_title.set_valign(Gtk.Align.CENTER)
+
         self.label_sidebar_title.set_use_markup(True)
-        self.label_sidebar_title.set_margin_bottom(12)
+        self.label_sidebar_title.set_valign(Gtk.Align.CENTER)
         self.label_sidebar_title.set_ellipsize(Pango.EllipsizeMode.END)
 
         self.view_image_sidebar_game.drag_source_set(
             Gdk.ModifierType.BUTTON1_MASK, self.targets, Gdk.DragAction.COPY)
 
-        self.separator_game.set_no_show_all(True)
+        self.frame_sidebar_game.set_valign(Gtk.Align.CENTER)
+        self.frame_sidebar_game.set_halign(Gtk.Align.CENTER)
+
+        self.image_sidebar_game.set_halign(Gtk.Align.CENTER)
+        self.image_sidebar_game.set_valign(Gtk.Align.CENTER)
+
+        self.notebook_sidebar_game.set_no_show_all(True)
+        self.notebook_sidebar_game.set_hexpand(True)
+        self.notebook_sidebar_game.set_vexpand(True)
+
+        # ------------------------------------
+        #   Games - Sidebar informations
+        # ------------------------------------
+
+        self.scroll_sidebar_informations = Gtk.ScrolledWindow()
+
+        self.image_sidebar_informations = Gtk.Image()
+        self.label_sidebar_informations = Gtk.Label()
+
+        self.listbox_sidebar_informations = Gtk.ListBox()
+
+        # Properties
+        self.scroll_sidebar_informations.set_policy(
+            Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+
+        self.label_sidebar_informations.set_label(_("Informations"))
+
+        self.listbox_sidebar_informations.set_selection_mode(
+            Gtk.SelectionMode.NONE)
+
+        # ------------------------------------
+        #   Games - Sidebar tags
+        # ------------------------------------
+
+        self.scroll_sidebar_tags = Gtk.ScrolledWindow()
+
+        self.image_sidebar_tags = Gtk.Image()
+        self.label_sidebar_tags = Gtk.Label()
+
+        self.listbox_sidebar_tags = Gtk.ListBox()
+
+        # Properties
+        self.scroll_sidebar_tags.set_policy(
+            Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+
+        self.label_sidebar_tags.set_label(_("Tags"))
+
+        self.listbox_sidebar_tags.set_selection_mode(Gtk.SelectionMode.NONE)
 
         # ------------------------------------
         #   Games - Sidebar description
@@ -1705,30 +1764,40 @@ class MainWindow(Gtk.ApplicationWindow):
         self.paned_games.pack1(self.grid_games, True, False)
         self.paned_games.pack2(self.scroll_sidebar, False, False)
 
+        # Sidebar
         self.scroll_sidebar.add(self.grid_sidebar)
 
+        self.frame_sidebar_game.add(self.view_image_sidebar_game)
         self.view_image_sidebar_game.add(self.image_sidebar_game)
 
-        self.grid_sidebar.pack_start(
-            self.grid_sidebar_content, True, True, 0)
-        self.grid_sidebar.pack_start(
-            self.view_image_sidebar_game, False, False, 0)
+        self.grid_sidebar_title.pack_start(
+            self.image_sidebar_title, False, False, 0)
+        self.grid_sidebar_title.pack_start(
+            self.label_sidebar_title, True, True, 0)
 
-        self.grid_sidebar_content.pack_start(
-            self.label_sidebar_title, False, False, 0)
-        self.grid_sidebar_content.pack_start(
-            self.grid_sidebar_informations, True, True, 0)
+        # Sidebar - Informations
+        self.scroll_sidebar_informations.add(self.grid_sidebar_informations)
 
-        self.grid_sidebar_informations.pack_start(
-            self.grid_sidebar_game, True, True, 0)
-        self.grid_sidebar_informations.pack_start(
-            self.grid_sidebar_tags, False, False, 0)
+        self.grid_sidebar_tab_informations.pack_start(
+            self.label_sidebar_informations, True, True, 0)
+
+        self.notebook_sidebar_game.append_page(self.scroll_sidebar_informations,
+            self.grid_sidebar_tab_informations)
 
         for key, label_key, label_value in self.widgets_sidebar:
             index = self.widgets_sidebar.index((key, label_key, label_value))
 
-            self.grid_sidebar_game.attach(label_key, 0, index, 1, 1)
-            self.grid_sidebar_game.attach(label_value, 1, index, 1, 1)
+            self.grid_sidebar_informations.attach(label_key, 0, index, 1, 1)
+            self.grid_sidebar_informations.attach(label_value, 1, index, 1, 1)
+
+        # Sidebar - Tags
+        self.scroll_sidebar_tags.add(self.listbox_sidebar_tags)
+
+        self.grid_sidebar_tab_tags.pack_start(
+            self.label_sidebar_tags, True, True, 0)
+
+        self.notebook_sidebar_game.append_page(self.scroll_sidebar_tags,
+            self.grid_sidebar_tab_tags)
 
         # Games
         self.grid_games.pack_start(self.grid_games_placeholder, True, True, 0)
@@ -2047,6 +2116,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.view_image_sidebar_game.connect(
             "drag-data-get", self.__on_dnd_send_data)
+
+        self.listbox_sidebar_tags.connect(
+            "row-activated", self.__on_filter_tag)
 
         # ------------------------------------
         #   Games
@@ -2431,6 +2503,13 @@ class MainWindow(Gtk.ApplicationWindow):
         self.infobar.show_all()
         self.infobar.get_content_area().show_all()
 
+        self.scroll_sidebar_tags.show_all()
+        self.grid_sidebar_tab_tags.show_all()
+
+        self.scroll_sidebar_informations.show_all()
+        self.grid_sidebar_tab_informations.show_all()
+        self.grid_sidebar_informations.show_all()
+
         if self.use_classic_theme:
             self.logger.debug("Use classic theme for GTK+ interface")
             self.menubar.show_all()
@@ -2441,6 +2520,14 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.set_infobar()
         self.sensitive_interface()
+
+        # ------------------------------------
+        #   Sidebar notebook
+        # ------------------------------------
+
+        if init_interface:
+            # Switch on "Informations" tab by default in sidebar notebook
+            self.notebook_sidebar_game.set_current_page(0)
 
         # ------------------------------------
         #   Header
@@ -2472,40 +2559,64 @@ class MainWindow(Gtk.ApplicationWindow):
         sidebar_orientation = self.config.get(
             "gem", "sidebar_orientation", fallback="vertical")
 
+        # Right-side sidebar
         if sidebar_orientation == "horizontal" and \
             not previous_mode == Gtk.Orientation.HORIZONTAL:
 
             self.paned_games.set_position(-1)
             self.paned_games.set_orientation(Gtk.Orientation.HORIZONTAL)
 
-            self.grid_sidebar.set_orientation(Gtk.Orientation.VERTICAL)
-            self.grid_sidebar.reorder_child(self.view_image_sidebar_game, 0)
+            for child in self.grid_sidebar.get_children():
+                self.grid_sidebar.remove(child)
 
-            self.grid_sidebar_informations.set_spacing(6)
-            self.grid_sidebar_game.set_halign(Gtk.Align.CENTER)
+            self.grid_sidebar.attach(
+                self.grid_sidebar_title, 0, 0, 1, 1)
+            self.grid_sidebar.attach(
+                self.frame_sidebar_game, 0, 1, 1, 1)
+            self.grid_sidebar.attach(
+                self.notebook_sidebar_game, 0, 2, 1, 1)
 
             self.label_sidebar_title.set_halign(Gtk.Align.CENTER)
-            self.image_sidebar_game.set_halign(Gtk.Align.CENTER)
 
+            self.grid_sidebar_informations.set_halign(Gtk.Align.FILL)
+
+            self.view_image_sidebar_game.set_vexpand(False)
+            self.view_image_sidebar_game.set_hexpand(True)
+
+        # Bottom-side sidebar
         elif sidebar_orientation == "vertical" and \
             not previous_mode == Gtk.Orientation.VERTICAL:
 
             self.paned_games.set_position(-1)
             self.paned_games.set_orientation(Gtk.Orientation.VERTICAL)
 
-            self.grid_sidebar.set_orientation(Gtk.Orientation.HORIZONTAL)
-            self.grid_sidebar.reorder_child(self.view_image_sidebar_game, -1)
+            for child in self.grid_sidebar.get_children():
+                self.grid_sidebar.remove(child)
 
-            self.grid_sidebar_informations.set_spacing(12)
-            self.grid_sidebar_game.set_halign(Gtk.Align.START)
-            self.grid_sidebar_tags.set_halign(Gtk.Align.CENTER)
-            self.grid_sidebar_tags.set_orientation(Gtk.Orientation.HORIZONTAL)
+            self.grid_sidebar.attach(
+                self.grid_sidebar_title, 0, 0, 1, 1)
+            self.grid_sidebar.attach(
+                self.notebook_sidebar_game, 0, 1, 1, 1)
+            self.grid_sidebar.attach(
+                self.frame_sidebar_game, 1, 0, 1, 2)
 
             self.label_sidebar_title.set_halign(Gtk.Align.START)
-            self.image_sidebar_game.set_halign(Gtk.Align.END)
 
+            self.grid_sidebar_title.set_valign(Gtk.Align.START)
+
+            self.grid_sidebar_informations.set_halign(Gtk.Align.START)
+
+            self.view_image_sidebar_game.set_hexpand(False)
+            self.view_image_sidebar_game.set_vexpand(True)
+
+        # Show sidebar
         if sidebar_status:
             self.scroll_sidebar.show_all()
+
+            self.frame_sidebar_game.set_visible(False)
+            self.notebook_sidebar_game.set_visible(False)
+
+        # Hide sidebar
         else:
             self.scroll_sidebar.hide()
 
@@ -2848,21 +2959,27 @@ class MainWindow(Gtk.ApplicationWindow):
         return found
 
 
-    def __on_filter_tag(self, widget, tag):
+    def __on_filter_tag(self, widget, row):
         """ Refilter games list with a new tag
 
         Parameters
         ----------
         widget : Gtk.Widget
             Object which receive signal
-        tag : str
-            Tag to add to filter entry
+        row : Gtk.ListBoxRow
+            Activated ListBox row which contain a specific tag
         """
 
         text = str()
 
-        if not self.entry_filter.get_text() == str(tag):
-            text = str(tag)
+        if len(row.get_children()) > 0:
+            box = row.get_children()[0]
+
+            if len(box.get_children()) > 0:
+                label = box.get_children()[0]
+
+                if not self.entry_filter.get_text() == label.get_label():
+                    text = label.get_label()
 
         self.entry_filter.set_text(text)
 
@@ -3222,22 +3339,25 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.set_informations_headerbar(game, console)
 
+        self.frame_sidebar_game.set_visible(False)
+        self.notebook_sidebar_game.set_visible(False)
+
         # ----------------------------
         #   Game informations
         # ----------------------------
 
-        children = self.grid_sidebar_tags.get_children()
+        children = self.listbox_sidebar_tags.get_children()
 
         # Remove previous tags
         for widget in children:
-            self.grid_sidebar_tags.remove(widget)
+            self.listbox_sidebar_tags.remove(widget)
             # Delete widget instance
             del widget
 
         if game is not None:
 
             if console is not None:
-                self.separator_game.show()
+                self.notebook_sidebar_game.set_visible(True)
 
                 self.label_sidebar_title.set_markup(
                     "<span weight='bold' size='x-large'>%s</span>" % \
@@ -3289,13 +3409,16 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     if orientation == Gtk.Orientation.HORIZONTAL:
                         image = Pixbuf.new_from_file_at_scale(
-                            image, 400, -1, True)
+                            image, 418, 418, True)
 
                     else:
                         image = Pixbuf.new_from_file_at_scale(
-                            image, -1, 236, True)
+                            image, 260, 260, True)
 
                 self.image_sidebar_game.set_from_pixbuf(image)
+
+                if image is not None:
+                    self.frame_sidebar_game.set_visible(True)
 
                 # ----------------------------
                 #   Show informations
@@ -3343,13 +3466,22 @@ class MainWindow(Gtk.ApplicationWindow):
                         label_value.set_markup(str())
                         label_value.set_tooltip_text(str())
 
-                # Add tag as linkbutton
+                # Game tags
                 for tag in sorted(game.tags):
-                    button = Gtk.Button.new_with_label(tag)
-                    button.connect("clicked", self.__on_filter_tag, tag)
-                    button.show()
+                    label = Gtk.Label.new(tag)
+                    label.set_halign(Gtk.Align.START)
 
-                    self.grid_sidebar_tags.add(button)
+                    box = Gtk.Box()
+                    box.set_orientation(Gtk.Orientation.HORIZONTAL)
+                    box.set_border_width(6)
+
+                    box.pack_start(label, True, True, 0)
+
+                    row = Gtk.ListBoxRow()
+                    row.add(box)
+                    row.show_all()
+
+                    self.listbox_sidebar_tags.add(row)
 
                 # Game emulator
                 if emulator is not None:
@@ -3381,8 +3513,6 @@ class MainWindow(Gtk.ApplicationWindow):
             for key, label_key, label_value in self.widgets_sidebar:
                 label_key.hide()
                 label_value.hide()
-
-            self.separator_game.hide()
 
             self.label_sidebar_title.set_text(str())
 
