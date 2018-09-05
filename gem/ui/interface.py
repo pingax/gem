@@ -336,13 +336,12 @@ class MainWindow(Gtk.ApplicationWindow):
         self.grid_games_placeholder.set_orientation(Gtk.Orientation.VERTICAL)
 
         self.grid_sidebar.set_column_spacing(12)
-        self.grid_sidebar.set_border_width(6)
+        self.grid_sidebar.set_border_width(12)
         self.grid_sidebar.set_row_spacing(6)
 
         self.grid_sidebar_title.set_orientation(Gtk.Orientation.HORIZONTAL)
-        self.grid_sidebar_title.set_border_width(6)
         self.grid_sidebar_title.set_hexpand(True)
-        self.grid_sidebar_title.set_spacing(6)
+        self.grid_sidebar_title.set_spacing(12)
 
         self.grid_sidebar_tab_informations.set_orientation(
             Gtk.Orientation.HORIZONTAL)
@@ -792,6 +791,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.popover_consoles_options = Gtk.Popover()
 
+        self.image_consoles_option = Gtk.Image()
         self.button_consoles_option = Gtk.MenuButton()
 
         self.toolbar_item_statistic = Gtk.Button()
@@ -820,6 +820,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.toolbar_item_statistic.set_image(self.toolbar_image_statistic)
         self.toolbar_item_statistic.set_use_underline(True)
         self.toolbar_item_statistic.set_alignment(0, 0.5)
+        # TEMP: Set as not visible by default until the dialog is missing
+        self.toolbar_item_statistic.set_no_show_all(True)
 
         self.toolbar_image_statistic.set_valign(Gtk.Align.CENTER)
         self.toolbar_image_statistic.set_margin_right(6)
@@ -993,6 +995,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.image_sidebar_title.set_valign(Gtk.Align.CENTER)
 
         self.label_sidebar_title.set_use_markup(True)
+        self.label_sidebar_title.set_halign(Gtk.Align.START)
         self.label_sidebar_title.set_valign(Gtk.Align.CENTER)
         self.label_sidebar_title.set_ellipsize(Pango.EllipsizeMode.END)
 
@@ -1676,6 +1679,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.toolbar_item_screenshots.add(self.toolbar_image_screenshots)
         self.toolbar_item_output.add(self.toolbar_image_output)
         self.toolbar_item_notes.add(self.toolbar_image_notes)
+
+        self.button_consoles_option.add(self.image_consoles_option)
 
         self.grid_game_options.pack_start(
             self.toolbar_item_screenshots, False, False, 0)
@@ -2361,6 +2366,9 @@ class MainWindow(Gtk.ApplicationWindow):
             self.toolbar_image_refresh.set_from_icon_name(
                 Icons.Symbolic.Refresh, self.toolbar.get_icon_size())
 
+            self.image_consoles_option.set_from_icon_name(
+                Icons.Symbolic.ViewMore, self.toolbar.get_icon_size())
+
         # ------------------------------------
         #   Icons
         # ------------------------------------
@@ -2574,8 +2582,6 @@ class MainWindow(Gtk.ApplicationWindow):
             self.grid_sidebar.attach(
                 self.notebook_sidebar_game, 0, 2, 1, 1)
 
-            self.label_sidebar_title.set_halign(Gtk.Align.CENTER)
-
             self.grid_sidebar_informations.set_halign(Gtk.Align.FILL)
 
             self.view_image_sidebar_game.set_vexpand(False)
@@ -2597,8 +2603,6 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.notebook_sidebar_game, 0, 1, 1, 1)
             self.grid_sidebar.attach(
                 self.frame_sidebar_game, 1, 0, 1, 2)
-
-            self.label_sidebar_title.set_halign(Gtk.Align.START)
 
             self.grid_sidebar_title.set_valign(Gtk.Align.START)
 
@@ -3396,10 +3400,6 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.image_statusbar_screenshots.set_from_pixbuf(
                         self.alternative["snap"])
 
-                # A special cover image has been set by user
-                # if game.cover is not None and exists(game.cover):
-                    # image = game.cover
-
                 # An image has been set
                 if image is not None and exists(image):
                     self.sidebar_image = image
@@ -3408,7 +3408,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     if orientation == Gtk.Orientation.HORIZONTAL:
                         image = Pixbuf.new_from_file_at_scale(
-                            image, 418, 418, True)
+                            image, 406, 406, True)
 
                     else:
                         image = Pixbuf.new_from_file_at_scale(

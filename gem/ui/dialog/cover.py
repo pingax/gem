@@ -55,6 +55,14 @@ class CoverDialog(CommonWindow):
 
         self.game = game
 
+        self.mimetypes = [
+            "image/bmp",
+            "image/jpeg",
+            "image/png",
+            "image/svg+xml",
+            "image/svg+xml-compressed",
+        ]
+
         # ------------------------------------
         #   Prepare interface
         # ------------------------------------
@@ -128,8 +136,8 @@ class CoverDialog(CommonWindow):
         self.label_image_selector.set_halign(Gtk.Align.CENTER)
         self.label_image_selector.set_ellipsize(Pango.EllipsizeMode.END)
 
-        for pattern in [ "png", "jpg", "jpeg", "svg" ]:
-            self.filter_image_selector.add_pattern("*.%s" % pattern)
+        for pattern in self.mimetypes:
+            self.filter_image_selector.add_mime_type(pattern)
 
         self.dialog_image_selector.add_button(
             _("Cancel"), Gtk.ResponseType.CANCEL)

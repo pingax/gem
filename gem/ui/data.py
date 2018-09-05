@@ -88,6 +88,7 @@ class Icons:
     Fullscreen  = "view-fullscreen"
     Refresh     = "view-refresh"
     Restore     = "view-restore"
+    ViewMore    = "view-more" # Not standard
     Close       = "window-close"
     ZoomFit     = "zoom-fit-best"
     ZoomIn      = "zoom-in"
