@@ -985,8 +985,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Properties
         self.scroll_sidebar.set_size_request(432, 262)
-        self.scroll_sidebar.set_policy(
-            Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER)
 
         self.paned_games.set_orientation(Gtk.Orientation.VERTICAL)
 
@@ -3340,6 +3338,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.set_informations_headerbar(game, console)
 
         self.frame_sidebar_game.set_visible(False)
+        self.image_sidebar_title.set_visible(False)
         self.notebook_sidebar_game.set_visible(False)
 
         # ----------------------------
@@ -3398,8 +3397,8 @@ class MainWindow(Gtk.ApplicationWindow):
                         self.alternative["snap"])
 
                 # A special cover image has been set by user
-                if game.cover is not None and exists(game.cover):
-                    image = game.cover
+                # if game.cover is not None and exists(game.cover):
+                    # image = game.cover
 
                 # An image has been set
                 if image is not None and exists(image):
@@ -3419,6 +3418,24 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 if image is not None:
                     self.frame_sidebar_game.set_visible(True)
+
+                # ----------------------------
+                #   Show cover
+                # ----------------------------
+
+                image = None
+
+                # A special cover image has been set by user
+                if game.cover is not None and exists(game.cover):
+                    image = game.cover
+
+                    image = Pixbuf.new_from_file_at_scale(
+                        image, 64, 24, True)
+
+                self.image_sidebar_title.set_from_pixbuf(image)
+
+                if image is not None:
+                    self.image_sidebar_title.set_visible(True)
 
                 # ----------------------------
                 #   Show informations
