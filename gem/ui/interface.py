@@ -4589,6 +4589,10 @@ class MainWindow(Gtk.ApplicationWindow):
                 if game.emulator is not None:
                     emulator = game.emulator
 
+                if emulator.configuration is None or \
+                    not exists(emulator.configuration):
+                    self.toolbar_item_properties.set_sensitive(False)
+
                 # ----------------------------
                 #   Game data
                 # ----------------------------
