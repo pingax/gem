@@ -240,13 +240,8 @@ class CoverDialog(CommonWindow):
         try:
             pixbuf = Pixbuf.new_from_file(path)
 
-            if pixbuf.get_width() >= pixbuf.get_height():
-                self.image_preview.set_from_pixbuf(
-                    Pixbuf.new_from_file_at_scale(path, 400, -1, True))
-
-            else:
-                self.image_preview.set_from_pixbuf(
-                    Pixbuf.new_from_file_at_scale(path, -1, 236, True))
+            self.image_preview.set_from_pixbuf(
+                Pixbuf.new_from_file_at_scale(path, 400, 236, True))
 
         except:
             self.__on_reset_cover()

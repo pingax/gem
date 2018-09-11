@@ -15,13 +15,25 @@
 # ------------------------------------------------------------------------------
 
 # GEM
+from gem.engine.utils import *
+
 from gem.ui import *
 from gem.ui.data import *
+from gem.ui.utils import *
+
+from gem.ui.dialog.question import QuestionDialog
 
 from gem.ui.widgets.window import CommonWindow
 
+# Mimetypes
+from magic import from_file as magic_from_file
+
 # Translation
 from gettext import gettext as _
+
+# URL
+from urllib.parse import urlparse
+from urllib.request import url2pathname
 
 # ------------------------------------------------------------------------------
 #   Class
@@ -73,6 +85,12 @@ class EditorDialog(CommonWindow):
 
         self.modified_buffer = False
         self.refresh_buffer = True
+
+        # ------------------------------------
+        #   Targets
+        # ------------------------------------
+
+        self.targets = [ Gtk.TargetEntry.new("text/uri-list", 0, 1337) ]
 
         # ------------------------------------
         #   Prepare interface
@@ -175,7 +193,7 @@ class EditorDialog(CommonWindow):
         self.switch_line.set_halign(Gtk.Align.END)
         self.switch_line.set_valign(Gtk.Align.CENTER)
 
-        self.button_import.set_label("%s…" % _("Import"))
+        self.button_import.set_label(_("Import…"))
         self.button_import.set_relief(Gtk.ReliefStyle.NONE)
         self.button_import.set_image(self.image_import)
         self.button_import.set_use_underline(True)
@@ -186,7 +204,7 @@ class EditorDialog(CommonWindow):
         self.image_import.set_from_icon_name(
             Icons.Symbolic.SaveAs, Gtk.IconSize.BUTTON)
 
-        self.button_export.set_label("%s…" % _("Export"))
+        self.button_export.set_label(_("Export…"))
         self.button_export.set_relief(Gtk.ReliefStyle.NONE)
         self.button_export.set_image(self.image_export)
         self.button_export.set_use_underline(True)
@@ -250,6 +268,9 @@ class EditorDialog(CommonWindow):
         self.text_editor.set_right_margin(4)
         self.text_editor.set_bottom_margin(4)
         self.text_editor.set_buffer(self.buffer_editor)
+        self.text_editor.drag_dest_set(
+            Gtk.DestDefaults.MOTION | Gtk.DestDefaults.DROP, self.targets,
+            Gdk.DragAction.COPY)
 
         self.tag_found = self.buffer_editor.create_tag("found",
             background="yellow", foreground="black")
@@ -328,6 +349,12 @@ class EditorDialog(CommonWindow):
         self.button_bottom.connect("clicked", self.__on_move_search)
         self.button_up.connect("clicked", self.__on_move_search, True)
 
+        self.button_import.connect("clicked", self.__on_import_file)
+        self.button_export.connect("clicked", self.__on_export_file)
+
+        self.__drop_signal = self.text_editor.connect(
+            "drag-data-received", self.__on_dnd_received_data)
+
         if not self.editable:
             self.entry_path.connect("icon-press", self.__on_refresh_buffer)
 
@@ -373,7 +400,7 @@ class EditorDialog(CommonWindow):
         if self.refresh_buffer:
             self.refresh_buffer = False
 
-            self.set_subtitle("%s…" % _("Loading"))
+            self.set_subtitle(_("Loading…"))
 
             self.window.set_sensitive(False)
 
@@ -616,3 +643,587 @@ class EditorDialog(CommonWindow):
         """
 
         self.modified_buffer = True
+
+
+    def __on_import_file(self, widget, path=None):
+        """ Import a plain text file
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        self.window.set_sensitive(False)
+
+        dialog = ImportDialog(self, self.title, path)
+
+        if dialog.run() == Gtk.ResponseType.APPLY:
+            path = dialog.file_selector.get_filename()
+
+            if path is not None and exists(path):
+
+                with open(path, 'r') as pipe:
+                    textbuffer = pipe.read()
+
+                    if dialog.switch_replace.get_active():
+                        self.buffer_editor.set_text(textbuffer)
+
+                    else:
+                        self.buffer_editor.insert(
+                            self.buffer_editor.get_end_iter(), textbuffer)
+
+        dialog.destroy()
+
+        self.window.set_sensitive(True)
+
+
+    def __on_export_file(self, widget):
+        """ Export buffer content to a plain text file
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        self.window.set_sensitive(False)
+
+        dialog = ExportDialog(self, self.title)
+
+        if dialog.run() == Gtk.ResponseType.APPLY:
+            path = dialog.entry_selector.get_text()
+
+            if len(path) > 0:
+                replace = True
+
+                if exists(expanduser(path)):
+                    subdialog = QuestionDialog(self, _("Existing file"),
+                        _("Would you want to replace existing file ?"))
+
+                    if subdialog.run() == Gtk.ResponseType.NO:
+                        replace = False
+
+                    subdialog.destroy()
+
+                if replace:
+                    with open(expanduser(path), 'w') as pipe:
+                        pipe.write(self.buffer_editor.get_text(
+                            self.buffer_editor.get_start_iter(),
+                            self.buffer_editor.get_end_iter(), True))
+
+        dialog.destroy()
+
+        self.window.set_sensitive(True)
+
+
+    def __on_dnd_received_data(self, widget, context, x, y, data, info, time):
+        """ Manage drag & drop acquisition
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        context : Gdk.DragContext
+            Drag context
+        x : int
+            X coordinate where the drop happened
+        y : int
+            Y coordinate where the drop happened
+        data : Gtk.SelectionData
+            Received data
+        info : int
+            Info that has been registered with the target in the Gtk.TargetList
+        time : int
+            Timestamp at which the data was received
+        """
+
+        self.text_editor.handler_block(self.__drop_signal)
+
+        # Current acquisition not respect text/uri-list
+        if not info == 1337:
+            return
+
+        files = data.get_uris()
+
+        if len(files) > 0:
+            result = urlparse(files[0])
+
+            if result.scheme == "file":
+                path = expanduser(url2pathname(result.path))
+
+                try:
+                    mimetype = magic_from_file(path, mime=True)
+
+                    # Check mimetype format
+                    if mimetype is not None and '/' in mimetype:
+                        category, *filetype = mimetype.split('/')
+
+                        # Only retrieve text files
+                        if category == "text" and exists(path):
+                            self.__on_import_file(None, path)
+
+                except Exception as error:
+                    self.logger.exception(error)
+
+        self.text_editor.handler_unblock(self.__drop_signal)
+
+
+class ImportDialog(CommonWindow):
+
+    def __init__(self, parent, title, path=None):
+        """ Constructor
+
+        Parameters
+        ----------
+        parent : Gtk.Window
+            Parent object
+        title : str
+            Window title
+        path : str, optional
+            Set a default path in import filechooser widget
+        """
+
+        classic_theme = False
+        if parent is not None:
+            classic_theme = parent.use_classic_theme
+
+        CommonWindow.__init__(self,
+            parent, _("Import"), Icons.Symbolic.SaveAs, classic_theme)
+
+        # ------------------------------------
+        #   Variables
+        # ------------------------------------
+
+        self.import_title = title
+
+        self.path = path
+
+        self.mimetypes = [ "text/plain" ]
+
+        # ------------------------------------
+        #   Prepare interface
+        # ------------------------------------
+
+        # Init widgets
+        self.__init_widgets()
+
+        # Init signals
+        self.__init_signals()
+
+        # Start interface
+        self.__start_interface()
+
+
+    def __init_widgets(self):
+        """ Initialize interface widgets
+        """
+
+        self.set_size(520, -1)
+
+        self.set_spacing(6)
+
+        self.set_resizable(True)
+
+        # ------------------------------------
+        #   Grid
+        # ------------------------------------
+
+        self.grid_switch = Gtk.Grid()
+
+        # Properties
+        self.grid_switch.set_column_spacing(12)
+        self.grid_switch.set_row_spacing(6)
+
+        # ------------------------------------
+        #   Title
+        # ------------------------------------
+
+        self.label_title = Gtk.Label()
+
+        # Properties
+        self.label_title.set_markup(
+            "<span weight='bold' size='large'>%s</span>" % \
+            replace_for_markup(self.import_title))
+        self.label_title.set_use_markup(True)
+        self.label_title.set_halign(Gtk.Align.CENTER)
+        self.label_title.set_ellipsize(Pango.EllipsizeMode.END)
+
+        # ------------------------------------
+        #   File selector
+        # ------------------------------------
+
+        self.label_selector = Gtk.Label()
+
+        self.filter_selector = Gtk.FileFilter.new()
+
+        self.dialog_selector = Gtk.FileChooserDialog(
+            use_header_bar=not self.use_classic_theme)
+
+        self.file_selector = Gtk.FileChooserButton.new_with_dialog(
+            self.dialog_selector)
+
+        # Properties
+        self.label_selector.set_markup("<b>%s</b>" % _("File"))
+        self.label_selector.set_margin_top(12)
+        self.label_selector.set_hexpand(True)
+        self.label_selector.set_use_markup(True)
+        self.label_selector.set_single_line_mode(True)
+        self.label_selector.set_halign(Gtk.Align.CENTER)
+        self.label_selector.set_ellipsize(Pango.EllipsizeMode.END)
+
+        for pattern in self.mimetypes:
+            self.filter_selector.add_mime_type(pattern)
+
+        self.dialog_selector.add_button(
+            _("Cancel"), Gtk.ResponseType.CANCEL)
+        self.dialog_selector.add_button(
+            _("Accept"), Gtk.ResponseType.ACCEPT)
+        self.dialog_selector.set_filter(self.filter_selector)
+        self.dialog_selector.set_action(Gtk.FileChooserAction.OPEN)
+        self.dialog_selector.set_select_multiple(False)
+        self.dialog_selector.set_create_folders(False)
+        self.dialog_selector.set_local_only(True)
+
+        self.file_selector.set_hexpand(True)
+
+        # ------------------------------------
+        #   Optional data
+        # ------------------------------------
+
+        self.label_data = Gtk.Label()
+
+        self.switch_replace = Gtk.Switch()
+        self.label_replace = Gtk.Label()
+
+        # Properties
+        self.label_data.set_markup(
+            "<b>%s</b>" % _("Options"))
+        self.label_data.set_margin_top(12)
+        self.label_data.set_hexpand(True)
+        self.label_data.set_use_markup(True)
+        self.label_data.set_single_line_mode(True)
+        self.label_data.set_halign(Gtk.Align.CENTER)
+        self.label_data.set_ellipsize(Pango.EllipsizeMode.END)
+
+        self.label_replace.set_label(_("Replace current buffer"))
+        self.label_replace.set_halign(Gtk.Align.START)
+        self.label_replace.get_style_context().add_class("dim-label")
+
+        # ------------------------------------
+        #   Integrate widgets
+        # ------------------------------------
+
+        self.grid_switch.attach(self.switch_replace, 0, 1, 1, 1)
+        self.grid_switch.attach(self.label_replace, 1, 1, 2, 1)
+
+        self.pack_start(self.label_title, False, False)
+        self.pack_start(self.label_selector, False, False)
+        self.pack_start(self.file_selector, False, False)
+        self.pack_start(self.label_data, False, False)
+        self.pack_start(self.grid_switch)
+
+
+    def __init_signals(self):
+        """ Initialize widgets signals
+        """
+
+        self.file_selector.connect("file-set", self.__on_file_choose)
+
+
+    def __start_interface(self):
+        """ Load data and start interface
+        """
+
+        self.add_button(_("Cancel"), Gtk.ResponseType.CANCEL)
+        self.add_button(_("Apply"), Gtk.ResponseType.APPLY, Gtk.Align.END)
+
+        self.set_default_response(Gtk.ResponseType.APPLY)
+
+        if self.path is not None and exists(self.path):
+            self.file_selector.set_filename(self.path)
+
+        else:
+            self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
+
+
+    def __on_file_choose(self, *args):
+        """ User choose a file with FileChooser
+        """
+
+        path = self.file_selector.get_filename()
+
+        try:
+            mimetype = magic_from_file(path, mime=True)
+
+            # Check mimetype format
+            if mimetype is not None and '/' in mimetype:
+                category, *filetype = mimetype.split('/')
+
+                # Only retrieve text files
+                if category == "text" and exists(path):
+                    self.set_response_sensitive(Gtk.ResponseType.APPLY, True)
+
+                else:
+                    self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
+
+                    # Unselect this file cause is not a text one
+                    self.file_selector.unselect_all()
+
+        except Exception as error:
+            self.logger.exception(error)
+
+
+class ExportDialog(CommonWindow):
+
+    def __init__(self, parent, title):
+        """ Constructor
+
+        Parameters
+        ----------
+        parent : Gtk.Window
+            Parent object
+        title : str
+            Window title
+        """
+
+        classic_theme = False
+        if parent is not None:
+            classic_theme = parent.use_classic_theme
+
+        CommonWindow.__init__(self,
+            parent, _("Export"), Icons.Symbolic.Send, classic_theme)
+
+        # ------------------------------------
+        #   Variables
+        # ------------------------------------
+
+        self.import_title = title
+
+        self.mimetypes = [ "text/plain" ]
+
+        # ------------------------------------
+        #   Targets
+        # ------------------------------------
+
+        self.targets = [ Gtk.TargetEntry.new("text/uri-list", 0, 1337) ]
+
+        # ------------------------------------
+        #   Prepare interface
+        # ------------------------------------
+
+        # Init widgets
+        self.__init_widgets()
+
+        # Init signals
+        self.__init_signals()
+
+        # Start interface
+        self.__start_interface()
+
+
+    def __init_widgets(self):
+        """ Initialize interface widgets
+        """
+
+        self.set_size(520, -1)
+
+        self.set_spacing(6)
+
+        self.set_resizable(True)
+
+        # ------------------------------------
+        #   Grid
+        # ------------------------------------
+
+        self.grid_selector = Gtk.Box()
+
+        # Properties
+        self.grid_selector.set_orientation(Gtk.Orientation.HORIZONTAL)
+        self.grid_selector.set_spacing(6)
+
+        # ------------------------------------
+        #   Title
+        # ------------------------------------
+
+        self.label_title = Gtk.Label()
+
+        # Properties
+        self.label_title.set_markup(
+            "<span weight='bold' size='large'>%s</span>" % \
+            replace_for_markup(self.import_title))
+        self.label_title.set_use_markup(True)
+        self.label_title.set_halign(Gtk.Align.CENTER)
+        self.label_title.set_ellipsize(Pango.EllipsizeMode.END)
+
+        # ------------------------------------
+        #   File selector
+        # ------------------------------------
+
+        self.label_selector = Gtk.Label()
+
+        self.entry_selector = Gtk.Entry()
+
+        self.image_selector = Gtk.Image()
+        self.button_selector = Gtk.Button()
+
+        self.filter_selector = Gtk.FileFilter.new()
+
+        # Properties
+        self.label_selector.set_markup("<b>%s</b>" % _("File"))
+        self.label_selector.set_margin_top(12)
+        self.label_selector.set_hexpand(True)
+        self.label_selector.set_use_markup(True)
+        self.label_selector.set_single_line_mode(True)
+        self.label_selector.set_halign(Gtk.Align.CENTER)
+        self.label_selector.set_ellipsize(Pango.EllipsizeMode.END)
+
+        self.entry_selector.set_hexpand(True)
+        self.entry_selector.set_placeholder_text(_("Filepath…"))
+        self.entry_selector.set_icon_activatable(
+            Gtk.EntryIconPosition.PRIMARY, False)
+        self.entry_selector.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.PRIMARY, Icons.Symbolic.Send)
+        self.entry_selector.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
+        self.entry_selector.drag_dest_set(
+            Gtk.DestDefaults.MOTION | Gtk.DestDefaults.DROP, self.targets,
+            Gdk.DragAction.COPY)
+
+        self.image_selector.set_valign(Gtk.Align.CENTER)
+        self.image_selector.set_from_icon_name(
+            Icons.Symbolic.Open, Gtk.IconSize.BUTTON)
+
+        self.button_selector.set_image(self.image_selector)
+
+        for pattern in self.mimetypes:
+            self.filter_selector.add_mime_type(pattern)
+
+        # ------------------------------------
+        #   Integrate widgets
+        # ------------------------------------
+
+        self.grid_selector.pack_start(self.entry_selector, True, True, 0)
+        self.grid_selector.pack_start(self.button_selector, False, False, 0)
+
+        self.pack_start(self.label_title, False, False)
+        self.pack_start(self.label_selector, False, False)
+        self.pack_start(self.grid_selector, False, False)
+
+
+    def __init_signals(self):
+        """ Initialize widgets signals
+        """
+
+        self.entry_selector.connect("changed", self.__on_file_choose)
+        self.entry_selector.connect("icon-press", on_entry_clear)
+
+        self.__drop_signal = self.entry_selector.connect(
+            "drag-data-received", self.__on_dnd_received_data)
+
+        self.button_selector.connect("clicked", self.__on_file_set)
+
+
+    def __start_interface(self):
+        """ Load data and start interface
+        """
+
+        self.add_button(_("Cancel"), Gtk.ResponseType.CANCEL)
+        self.add_button(_("Apply"), Gtk.ResponseType.APPLY, Gtk.Align.END)
+
+        self.set_default_response(Gtk.ResponseType.APPLY)
+
+        self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
+
+
+    def __on_file_set(self, *args):
+        """ Open a FileChooserDialog to let user choose the export file
+        """
+
+        dialog = Gtk.FileChooserDialog(_("Export As…"),
+            self.window, Gtk.FileChooserAction.SAVE,
+            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+            Gtk.STOCK_OPEN, Gtk.ResponseType.OK),
+            use_header_bar=not self.use_classic_theme)
+
+        dialog.set_filter(self.filter_selector)
+        dialog.set_select_multiple(False)
+        dialog.set_create_folders(True)
+
+        path = expanduser(self.entry_selector.get_text())
+
+        if len(path) == 0:
+            dialog.set_current_folder(getenv("HOME", expanduser('~')))
+
+        else:
+            dialog.set_filename(path)
+
+        if dialog.run() == Gtk.ResponseType.OK:
+            self.entry_selector.set_text(dialog.get_filename())
+
+        dialog.destroy()
+
+
+    def __on_file_choose(self, *args):
+        """ User choose a file with FileChooser
+        """
+
+        path = expanduser(self.entry_selector.get_text())
+
+        if len(path) > 0 and not isdir(path) and access(dirname(path), W_OK):
+            self.set_response_sensitive(Gtk.ResponseType.APPLY, True)
+
+        else:
+            self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
+
+
+    def __on_dnd_received_data(self, widget, context, x, y, data, info, time):
+        """ Manage drag & drop acquisition
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        context : Gdk.DragContext
+            Drag context
+        x : int
+            X coordinate where the drop happened
+        y : int
+            Y coordinate where the drop happened
+        data : Gtk.SelectionData
+            Received data
+        info : int
+            Info that has been registered with the target in the Gtk.TargetList
+        time : int
+            Timestamp at which the data was received
+        """
+
+        self.entry_selector.handler_block(self.__drop_signal)
+
+        # Current acquisition not respect text/uri-list
+        if not info == 1337:
+            return
+
+        files = data.get_uris()
+
+        if len(files) > 0:
+            result = urlparse(files[0])
+
+            if result.scheme == "file":
+                path = expanduser(url2pathname(result.path))
+
+                try:
+                    mimetype = magic_from_file(path, mime=True)
+
+                    # Check mimetype format
+                    if mimetype is not None and '/' in mimetype:
+                        category, *filetype = mimetype.split('/')
+
+                        # Only retrieve text files
+                        if category == "text" and exists(path):
+                            self.entry_selector.set_text(path)
+
+                except Exception as error:
+                    self.logger.exception(error)
+
+        self.entry_selector.handler_unblock(self.__drop_signal)

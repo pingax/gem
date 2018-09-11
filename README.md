@@ -53,6 +53,7 @@ $ eopkg install gem
 
 * gtk+3
 * python3
+* python3-magic
 * python3-gobject
 * python3-setuptools
 

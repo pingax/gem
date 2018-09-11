@@ -3956,6 +3956,11 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 self.logger.info(_("Update note for %s") % title)
 
+            elif exists(path):
+                remove(path)
+
+                self.logger.debug("Remove note for %s" % title)
+
         self.config.modify("windows", "notes", "%dx%d" % dialog.get_size())
         self.config.update()
 

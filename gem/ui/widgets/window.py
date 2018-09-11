@@ -18,6 +18,9 @@
 from gem.ui import *
 from gem.ui.utils import *
 
+# Logging
+from logging import getLogger
+
 # Translation
 from gettext import gettext as _
 
@@ -56,6 +59,8 @@ class CommonWindow(object):
 
         self.help_data = list()
         self.sensitive_data = dict()
+
+        self.logger = getLogger("gem")
 
         # ------------------------------------
         #   Prepare interface

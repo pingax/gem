@@ -13,6 +13,7 @@
 
 ### GTK+ interface
 
+* New dependency → python3-magic
 * Add the statusbar for default theme and rewrite his contents
 * Add a tags selector to game properties dialog
 * Add more informations into game sidebar
@@ -23,6 +24,7 @@
 * Allow to drag the sidebar image to another application
 * Allow to duplicate a game and his data
 * Allow to sort games list treeview
+* Allow to import or export game note
 * Restore GTK+ menuitem behavior to main and game menus
 * Restore old dialog buttons behavior to both themes
 * Restore old renaming system based on dialog window
@@ -31,6 +33,7 @@
 * Fix game tooltip not update after game renaming
 * Fix shortcuts not updated after preferences modifications
 * Fix notes are not correctly close when closing application
+* Fix remove game note when the user save an empty text buffer
 
 ## Version 0.9.1 - Lavos (17 Feb, 2018)
 
