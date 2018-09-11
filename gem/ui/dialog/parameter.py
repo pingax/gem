@@ -311,8 +311,8 @@ class ParametersDialog(CommonWindow):
         self.popover_tags_placeholder.get_style_context().add_class("dim-label")
         self.popover_tags_placeholder.set_label(_("Empty"))
         self.popover_tags_placeholder.set_margin_bottom(6)
-        self.popover_tags_placeholder.set_margin_right(6)
-        self.popover_tags_placeholder.set_margin_left(6)
+        self.popover_tags_placeholder.set_margin_end(6)
+        self.popover_tags_placeholder.set_margin_start(6)
         self.popover_tags_placeholder.set_margin_top(6)
 
         # ------------------------------------
@@ -564,8 +564,8 @@ class ParametersDialog(CommonWindow):
             label = Gtk.Label()
             label.set_label(tag)
             label.set_margin_top(6)
-            label.set_margin_left(6)
-            label.set_margin_right(6)
+            label.set_margin_end(6)
+            label.set_margin_start(6)
             label.set_margin_bottom(6)
 
             row = Gtk.ListBoxRow()

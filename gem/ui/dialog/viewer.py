@@ -86,13 +86,13 @@ class ViewerDialog(CommonWindow):
         self.__default_size = 800
 
         # Get default display
-        display = Gdk.DisplayManager.get().get_default_display()
+        display = Gdk.Display.get_default()
 
         if display is not None:
-            # Retrieve default display screen
-            screen = display.get_default_screen()
+            # Retrieve default display monitor
+            monitor = display.get_primary_monitor()
             # Retrieve default monitor geometry
-            geometry = screen.get_monitor_geometry(screen.get_primary_monitor())
+            geometry = monitor.get_geometry()
 
             self.__default_size = min(
                 int(geometry.width / 2), int(geometry.height / 2))
@@ -277,8 +277,8 @@ class ViewerDialog(CommonWindow):
         self.button_overlay_previous.set_halign(Gtk.Align.START)
         self.button_overlay_previous.set_no_show_all(True)
         self.button_overlay_previous.set_margin_bottom(6)
-        self.button_overlay_previous.set_margin_right(6)
-        self.button_overlay_previous.set_margin_left(6)
+        self.button_overlay_previous.set_margin_start(6)
+        self.button_overlay_previous.set_margin_end(6)
         self.button_overlay_previous.set_margin_top(6)
 
         self.image_next.set_from_icon_name(
@@ -290,8 +290,8 @@ class ViewerDialog(CommonWindow):
         self.button_overlay_next.set_halign(Gtk.Align.END)
         self.button_overlay_next.set_no_show_all(True)
         self.button_overlay_next.set_margin_bottom(6)
-        self.button_overlay_next.set_margin_right(6)
-        self.button_overlay_next.set_margin_left(6)
+        self.button_overlay_next.set_margin_start(6)
+        self.button_overlay_next.set_margin_end(6)
         self.button_overlay_next.set_margin_top(6)
 
         # ------------------------------------

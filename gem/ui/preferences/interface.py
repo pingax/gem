@@ -428,7 +428,6 @@ class PreferencesWindow(CommonWindow):
         self.label_behavior.set_markup("<b>%s</b>" % _("Behavior"))
 
         self.label_last_console.set_line_wrap(True)
-        self.label_last_console.set_alignment(1, 0.5)
         self.label_last_console.set_halign(Gtk.Align.END)
         self.label_last_console.set_valign(Gtk.Align.CENTER)
         self.label_last_console.set_justify(Gtk.Justification.RIGHT)
@@ -441,7 +440,6 @@ class PreferencesWindow(CommonWindow):
         self.check_last_column.set_valign(Gtk.Align.CENTER)
 
         self.label_last_column.set_line_wrap(True)
-        self.label_last_column.set_alignment(1, 0.5)
         self.label_last_column.set_halign(Gtk.Align.END)
         self.label_last_column.set_valign(Gtk.Align.CENTER)
         self.label_last_column.set_justify(Gtk.Justification.RIGHT)
@@ -454,7 +452,6 @@ class PreferencesWindow(CommonWindow):
         self.check_last_console.set_valign(Gtk.Align.CENTER)
 
         self.label_hide_console.set_line_wrap(True)
-        self.label_hide_console.set_alignment(1, 0.5)
         self.label_hide_console.set_halign(Gtk.Align.END)
         self.label_hide_console.set_valign(Gtk.Align.CENTER)
         self.label_hide_console.set_justify(Gtk.Justification.RIGHT)
@@ -491,7 +488,6 @@ class PreferencesWindow(CommonWindow):
         self.label_editor.set_markup("<b>%s</b>" % _("Editor"))
 
         self.label_lines.set_line_wrap(True)
-        self.label_lines.set_alignment(1, 0.5)
         self.label_lines.set_halign(Gtk.Align.END)
         self.label_lines.set_valign(Gtk.Align.CENTER)
         self.label_lines.set_justify(Gtk.Justification.RIGHT)
@@ -504,7 +500,6 @@ class PreferencesWindow(CommonWindow):
         self.check_lines.set_valign(Gtk.Align.CENTER)
 
         self.label_editor_colorscheme.set_line_wrap(True)
-        self.label_editor_colorscheme.set_alignment(1, 0.5)
         self.label_editor_colorscheme.set_halign(Gtk.Align.END)
         self.label_editor_colorscheme.set_valign(Gtk.Align.CENTER)
         self.label_editor_colorscheme.set_justify(Gtk.Justification.RIGHT)
@@ -523,7 +518,6 @@ class PreferencesWindow(CommonWindow):
         self.combo_colorsheme.set_valign(Gtk.Align.CENTER)
 
         self.label_editor_font.set_line_wrap(True)
-        self.label_editor_font.set_alignment(1, 0.5)
         self.label_editor_font.set_halign(Gtk.Align.END)
         self.label_editor_font.set_valign(Gtk.Align.CENTER)
         self.label_editor_font.set_justify(Gtk.Justification.RIGHT)
@@ -560,7 +554,6 @@ class PreferencesWindow(CommonWindow):
         self.label_viewer.set_markup("<b>%s</b>" % _("Screenshots viewer"))
 
         self.label_native_viewer.set_line_wrap(True)
-        self.label_native_viewer.set_alignment(1, 0.5)
         self.label_native_viewer.set_halign(Gtk.Align.END)
         self.label_native_viewer.set_valign(Gtk.Align.CENTER)
         self.label_native_viewer.set_justify(Gtk.Justification.RIGHT)
@@ -573,7 +566,6 @@ class PreferencesWindow(CommonWindow):
         self.check_native_viewer.set_valign(Gtk.Align.CENTER)
 
         self.label_viewer_binary.set_line_wrap(True)
-        self.label_viewer_binary.set_alignment(1, 0.5)
         self.label_viewer_binary.set_halign(Gtk.Align.END)
         self.label_viewer_binary.set_valign(Gtk.Align.CENTER)
         self.label_viewer_binary.set_justify(Gtk.Justification.RIGHT)
@@ -588,7 +580,6 @@ class PreferencesWindow(CommonWindow):
         self.file_viewer_binary.set_valign(Gtk.Align.CENTER)
 
         self.label_viewer_options.set_line_wrap(True)
-        self.label_viewer_options.set_alignment(1, 0.5)
         self.label_viewer_options.set_halign(Gtk.Align.END)
         self.label_viewer_options.set_valign(Gtk.Align.CENTER)
         self.label_viewer_options.set_justify(Gtk.Justification.RIGHT)
@@ -628,8 +619,8 @@ class PreferencesWindow(CommonWindow):
         self.label_interface.set_markup("<b>%s</b>" % _("Interface"))
 
         self.label_classic_theme.set_line_wrap(True)
-        self.label_classic_theme.set_alignment(1, 0.5)
         self.label_classic_theme.set_halign(Gtk.Align.END)
+        self.label_classic_theme.set_valign(Gtk.Align.CENTER)
         self.label_classic_theme.set_justify(Gtk.Justification.RIGHT)
         self.label_classic_theme.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
         self.label_classic_theme.get_style_context().add_class("dim-label")
@@ -642,8 +633,8 @@ class PreferencesWindow(CommonWindow):
         self.check_classic_theme.set_valign(Gtk.Align.CENTER)
 
         self.label_header.set_line_wrap(True)
-        self.label_header.set_alignment(1, 0.5)
         self.label_header.set_halign(Gtk.Align.END)
+        self.label_header.set_valign(Gtk.Align.CENTER)
         self.label_header.set_justify(Gtk.Justification.RIGHT)
         self.label_header.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
         self.label_header.get_style_context().add_class("dim-label")
@@ -672,8 +663,8 @@ class PreferencesWindow(CommonWindow):
         self.label_toolbar.set_markup("<b>%s</b>" % _("Toolbar"))
 
         self.label_toolbar_icons.set_line_wrap(True)
-        self.label_toolbar_icons.set_alignment(1, 0.5)
         self.label_toolbar_icons.set_halign(Gtk.Align.END)
+        self.label_toolbar_icons.set_valign(Gtk.Align.CENTER)
         self.label_toolbar_icons.set_justify(Gtk.Justification.RIGHT)
         self.label_toolbar_icons.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
         self.label_toolbar_icons.get_style_context().add_class("dim-label")
@@ -715,8 +706,8 @@ class PreferencesWindow(CommonWindow):
         self.label_sidebar.set_markup("<b>%s</b>" % _("Sidebar"))
 
         self.label_sidebar_show.set_line_wrap(True)
-        self.label_sidebar_show.set_alignment(1, 0.5)
         self.label_sidebar_show.set_halign(Gtk.Align.END)
+        self.label_sidebar_show.set_valign(Gtk.Align.CENTER)
         self.label_sidebar_show.set_justify(Gtk.Justification.RIGHT)
         self.label_sidebar_show.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
         self.label_sidebar_show.get_style_context().add_class("dim-label")
@@ -727,8 +718,8 @@ class PreferencesWindow(CommonWindow):
         self.check_sidebar_show.set_valign(Gtk.Align.CENTER)
 
         self.label_sidebar_screenshot.set_line_wrap(True)
-        self.label_sidebar_screenshot.set_alignment(1, 0.5)
         self.label_sidebar_screenshot.set_halign(Gtk.Align.END)
+        self.label_sidebar_screenshot.set_valign(Gtk.Align.CENTER)
         self.label_sidebar_screenshot.set_justify(Gtk.Justification.RIGHT)
         self.label_sidebar_screenshot.set_line_wrap_mode(
             Pango.WrapMode.WORD_CHAR)
@@ -740,8 +731,8 @@ class PreferencesWindow(CommonWindow):
         self.check_sidebar_screenshot.set_valign(Gtk.Align.CENTER)
 
         self.label_sidebar_position.set_line_wrap(True)
-        self.label_sidebar_position.set_alignment(1, 0.5)
         self.label_sidebar_position.set_halign(Gtk.Align.END)
+        self.label_sidebar_position.set_valign(Gtk.Align.CENTER)
         self.label_sidebar_position.set_justify(Gtk.Justification.RIGHT)
         self.label_sidebar_position.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
         self.label_sidebar_position.get_style_context().add_class("dim-label")
@@ -781,8 +772,8 @@ class PreferencesWindow(CommonWindow):
         self.label_treeview.set_markup("<b>%s</b>" % _("Games list"))
 
         self.label_treeview_lines.set_line_wrap(True)
-        self.label_treeview_lines.set_alignment(1, 0.5)
         self.label_treeview_lines.set_halign(Gtk.Align.END)
+        self.label_treeview_lines.set_valign(Gtk.Align.CENTER)
         self.label_treeview_lines.set_justify(Gtk.Justification.RIGHT)
         self.label_treeview_lines.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
         self.label_treeview_lines.get_style_context().add_class("dim-label")
@@ -800,8 +791,8 @@ class PreferencesWindow(CommonWindow):
         self.combo_lines.set_valign(Gtk.Align.CENTER)
 
         self.label_icons.set_line_wrap(True)
-        self.label_icons.set_alignment(1, 0.5)
         self.label_icons.set_halign(Gtk.Align.END)
+        self.label_icons.set_valign(Gtk.Align.CENTER)
         self.label_icons.set_justify(Gtk.Justification.RIGHT)
         self.label_icons.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
         self.label_icons.get_style_context().add_class("dim-label")
@@ -838,8 +829,8 @@ class PreferencesWindow(CommonWindow):
         self.label_columns.set_markup("<b>%s</b>" % _("Columns appearance"))
 
         self.label_play.set_line_wrap(True)
-        self.label_play.set_alignment(1, 0.5)
         self.label_play.set_halign(Gtk.Align.END)
+        self.label_play.set_valign(Gtk.Align.CENTER)
         self.label_play.set_justify(Gtk.Justification.RIGHT)
         self.label_play.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
         self.label_play.get_style_context().add_class("dim-label")
@@ -850,8 +841,8 @@ class PreferencesWindow(CommonWindow):
         self.check_play.set_valign(Gtk.Align.CENTER)
 
         self.label_last_play.set_line_wrap(True)
-        self.label_last_play.set_alignment(1, 0.5)
         self.label_last_play.set_halign(Gtk.Align.END)
+        self.label_last_play.set_valign(Gtk.Align.CENTER)
         self.label_last_play.set_justify(Gtk.Justification.RIGHT)
         self.label_last_play.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
         self.label_last_play.get_style_context().add_class("dim-label")
@@ -862,8 +853,8 @@ class PreferencesWindow(CommonWindow):
         self.check_last_play.set_valign(Gtk.Align.CENTER)
 
         self.label_play_time.set_line_wrap(True)
-        self.label_play_time.set_alignment(1, 0.5)
         self.label_play_time.set_halign(Gtk.Align.END)
+        self.label_play_time.set_valign(Gtk.Align.CENTER)
         self.label_play_time.set_justify(Gtk.Justification.RIGHT)
         self.label_play_time.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
         self.label_play_time.get_style_context().add_class("dim-label")
@@ -874,8 +865,8 @@ class PreferencesWindow(CommonWindow):
         self.check_play_time.set_valign(Gtk.Align.CENTER)
 
         self.label_score.set_line_wrap(True)
-        self.label_score.set_alignment(1, 0.5)
         self.label_score.set_halign(Gtk.Align.END)
+        self.label_score.set_valign(Gtk.Align.CENTER)
         self.label_score.set_justify(Gtk.Justification.RIGHT)
         self.label_score.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
         self.label_score.get_style_context().add_class("dim-label")
@@ -886,8 +877,8 @@ class PreferencesWindow(CommonWindow):
         self.check_score.set_valign(Gtk.Align.CENTER)
 
         self.label_installed.set_line_wrap(True)
-        self.label_installed.set_alignment(1, 0.5)
         self.label_installed.set_halign(Gtk.Align.END)
+        self.label_installed.set_valign(Gtk.Align.CENTER)
         self.label_installed.set_justify(Gtk.Justification.RIGHT)
         self.label_installed.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
         self.label_installed.get_style_context().add_class("dim-label")
@@ -898,8 +889,8 @@ class PreferencesWindow(CommonWindow):
         self.check_installed.set_valign(Gtk.Align.CENTER)
 
         self.label_flags.set_line_wrap(True)
-        self.label_flags.set_alignment(1, 0.5)
         self.label_flags.set_halign(Gtk.Align.END)
+        self.label_flags.set_valign(Gtk.Align.CENTER)
         self.label_flags.set_justify(Gtk.Justification.RIGHT)
         self.label_flags.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
         self.label_flags.get_style_context().add_class("dim-label")
@@ -1590,7 +1581,7 @@ class PreferencesWindow(CommonWindow):
             self.config.modify("editor", "colorscheme",
                 self.combo_colorsheme.get_active_id())
             self.config.modify("editor", "font",
-                self.font_editor.get_font_name())
+                self.font_editor.get_font())
 
         # ------------------------------------
         #   Shortcuts
@@ -1734,7 +1725,7 @@ class PreferencesWindow(CommonWindow):
             if item is not None:
                 self.combo_colorsheme.set_active_iter(item)
 
-            self.font_editor.set_font_name(
+            self.font_editor.set_font(
                 self.config.item("editor", "font", "Sans 12"))
 
             self.gtksource = True

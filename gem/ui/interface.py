@@ -58,8 +58,8 @@ from urllib.request import url2pathname
 class MainWindow(Gtk.ApplicationWindow):
 
     __gsignals__ = {
-        "game-started": (SIGNAL_RUN_FIRST, None, [object]),
-        "game-terminate": (SIGNAL_RUN_LAST, None, [object]),
+        "game-started": (SignalFlags.RUN_FIRST, None, [object]),
+        "game-terminate": (SignalFlags.RUN_LAST, None, [object]),
     }
 
     def __init__(self, api):
@@ -112,13 +112,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.keys = list()
         # Store available shortcuts
         self.shortcuts = list()
-        # Store sidebar description ordre
-        self.sidebar_keys = [
-            ("played", _("Launch")),
-            ("play_time", _("Play time")),
-            ("last_play", _("Last launch")),
-            ("last_time", _("Last play time"))
-        ]
         # Store sidebar latest image path
         self.sidebar_image = None
 
@@ -247,7 +240,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.set_default_icon_name(Icons.Gaming)
 
         self.set_position(Gtk.WindowPosition.CENTER)
-        self.set_wmclass(GEM.Acronym.upper(), GEM.Acronym.lower())
 
         self.add_accel_group(self.shortcuts_group)
 
@@ -288,7 +280,10 @@ class MainWindow(Gtk.ApplicationWindow):
         self.grid_sidebar_title = Gtk.Box()
         self.grid_sidebar_tab_tags = Gtk.Box()
         self.grid_sidebar_tab_informations = Gtk.Box()
-        self.grid_sidebar_informations = Gtk.Grid()
+        self.grid_sidebar_informations = Gtk.Box()
+        self.grid_sidebar_informations_game = Gtk.Grid()
+        self.grid_sidebar_informations_data = Gtk.Grid()
+        self.grid_sidebar_score = Gtk.Box()
 
         # Properties
         self.grid.set_orientation(Gtk.Orientation.VERTICAL)
@@ -341,20 +336,33 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.grid_sidebar_title.set_orientation(Gtk.Orientation.HORIZONTAL)
         self.grid_sidebar_title.set_hexpand(True)
-        self.grid_sidebar_title.set_spacing(12)
+        self.grid_sidebar_title.set_spacing(6)
 
         self.grid_sidebar_tab_informations.set_orientation(
             Gtk.Orientation.HORIZONTAL)
         self.grid_sidebar_tab_informations.set_spacing(6)
 
-        self.grid_sidebar_tab_tags.set_orientation(
-            Gtk.Orientation.HORIZONTAL)
+        self.grid_sidebar_tab_tags.set_orientation(Gtk.Orientation.HORIZONTAL)
+        self.grid_sidebar_tab_tags.set_halign(Gtk.Align.FILL)
         self.grid_sidebar_tab_tags.set_spacing(6)
 
-        self.grid_sidebar_informations.set_column_homogeneous(True)
-        self.grid_sidebar_informations.set_column_spacing(12)
+        self.grid_sidebar_informations.set_homogeneous(False)
+        self.grid_sidebar_informations.set_halign(Gtk.Align.FILL)
         self.grid_sidebar_informations.set_border_width(18)
-        self.grid_sidebar_informations.set_row_spacing(6)
+        self.grid_sidebar_informations.set_vexpand(True)
+
+        self.grid_sidebar_informations_game.set_column_homogeneous(True)
+        self.grid_sidebar_informations_game.set_column_spacing(12)
+        self.grid_sidebar_informations_game.set_row_spacing(6)
+
+        self.grid_sidebar_informations_data.set_column_homogeneous(True)
+        self.grid_sidebar_informations_data.set_column_spacing(6)
+        self.grid_sidebar_informations_data.set_row_spacing(12)
+
+        self.grid_sidebar_score.set_halign(Gtk.Align.START)
+        self.grid_sidebar_score.set_valign(Gtk.Align.CENTER)
+        self.grid_sidebar_score.set_hexpand(True)
+        self.grid_sidebar_score.set_spacing(6)
 
         # ------------------------------------
         #   Headerbar
@@ -425,46 +433,56 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menu_item_addons.set_relief(Gtk.ReliefStyle.NONE)
         self.menu_item_addons.set_image(self.menu_image_addons)
         self.menu_item_addons.set_use_underline(True)
-        self.menu_item_addons.set_alignment(0, 0.5)
+        self.menu_item_addons.set_halign(Gtk.Align.FILL)
+        self.menu_item_addons.set_valign(Gtk.Align.CENTER)
+        self.menu_item_addons.get_children()[0].set_halign(Gtk.Align.START)
 
         self.menu_image_addons.set_valign(Gtk.Align.CENTER)
-        self.menu_image_addons.set_margin_right(6)
+        self.menu_image_addons.set_margin_end(6)
 
         self.menu_item_preferences.set_label(_("Preferences"))
         self.menu_item_preferences.set_relief(Gtk.ReliefStyle.NONE)
         self.menu_item_preferences.set_image(self.menu_image_preferences)
         self.menu_item_preferences.set_use_underline(True)
-        self.menu_item_preferences.set_alignment(0, 0.5)
+        self.menu_item_preferences.set_halign(Gtk.Align.FILL)
+        self.menu_item_preferences.set_valign(Gtk.Align.CENTER)
+        self.menu_item_preferences.get_children()[0].set_halign(Gtk.Align.START)
 
         self.menu_image_preferences.set_valign(Gtk.Align.CENTER)
-        self.menu_image_preferences.set_margin_right(6)
+        self.menu_image_preferences.set_margin_end(6)
 
         self.menu_item_gem_log.set_label(_("Output log"))
         self.menu_item_gem_log.set_relief(Gtk.ReliefStyle.NONE)
         self.menu_item_gem_log.set_image(self.menu_image_gem_log)
         self.menu_item_gem_log.set_use_underline(True)
-        self.menu_item_gem_log.set_alignment(0, 0.5)
+        self.menu_item_gem_log.set_halign(Gtk.Align.FILL)
+        self.menu_item_gem_log.set_valign(Gtk.Align.CENTER)
+        self.menu_item_gem_log.get_children()[0].set_halign(Gtk.Align.START)
 
         self.menu_image_gem_log.set_valign(Gtk.Align.CENTER)
-        self.menu_image_gem_log.set_margin_right(6)
+        self.menu_image_gem_log.set_margin_end(6)
 
         self.menu_item_about.set_label(_("About"))
         self.menu_item_about.set_relief(Gtk.ReliefStyle.NONE)
         self.menu_item_about.set_image(self.menu_image_about)
         self.menu_item_about.set_use_underline(True)
-        self.menu_item_about.set_alignment(0, 0.5)
+        self.menu_item_about.set_halign(Gtk.Align.FILL)
+        self.menu_item_about.set_valign(Gtk.Align.CENTER)
+        self.menu_item_about.get_children()[0].set_halign(Gtk.Align.START)
 
         self.menu_image_about.set_valign(Gtk.Align.CENTER)
-        self.menu_image_about.set_margin_right(6)
+        self.menu_image_about.set_margin_end(6)
 
         self.menu_item_quit.set_label(_("Quit"))
         self.menu_item_quit.set_relief(Gtk.ReliefStyle.NONE)
         self.menu_item_quit.set_image(self.menu_image_quit)
         self.menu_item_quit.set_use_underline(True)
-        self.menu_item_quit.set_alignment(0, 0.5)
+        self.menu_item_quit.set_halign(Gtk.Align.FILL)
+        self.menu_item_quit.set_valign(Gtk.Align.CENTER)
+        self.menu_item_quit.get_children()[0].set_halign(Gtk.Align.START)
 
         self.menu_image_quit.set_valign(Gtk.Align.CENTER)
-        self.menu_image_quit.set_margin_right(6)
+        self.menu_image_quit.set_margin_end(6)
 
         self.menu_item_main_display.set_label(_("Display"))
         self.menu_item_main_display.set_halign(Gtk.Align.START)
@@ -819,30 +837,38 @@ class MainWindow(Gtk.ApplicationWindow):
         self.toolbar_item_statistic.set_relief(Gtk.ReliefStyle.NONE)
         self.toolbar_item_statistic.set_image(self.toolbar_image_statistic)
         self.toolbar_item_statistic.set_use_underline(True)
-        self.toolbar_item_statistic.set_alignment(0, 0.5)
+        self.toolbar_item_statistic.set_halign(Gtk.Align.FILL)
+        self.toolbar_item_statistic.set_valign(Gtk.Align.CENTER)
         # TEMP: Set as not visible by default until the dialog is missing
         self.toolbar_item_statistic.set_no_show_all(True)
+        self.toolbar_item_statistic.get_children()[0].set_halign(
+            Gtk.Align.START)
 
         self.toolbar_image_statistic.set_valign(Gtk.Align.CENTER)
-        self.toolbar_image_statistic.set_margin_right(6)
+        self.toolbar_image_statistic.set_margin_end(6)
 
         self.toolbar_item_properties.set_label(_("Edit emulator"))
         self.toolbar_item_properties.set_relief(Gtk.ReliefStyle.NONE)
         self.toolbar_item_properties.set_image(self.toolbar_image_properties)
         self.toolbar_item_properties.set_use_underline(True)
-        self.toolbar_item_properties.set_alignment(0, 0.5)
+        self.toolbar_item_properties.set_halign(Gtk.Align.FILL)
+        self.toolbar_item_properties.set_valign(Gtk.Align.CENTER)
+        self.toolbar_item_properties.get_children()[0].set_halign(
+            Gtk.Align.START)
 
         self.toolbar_image_properties.set_valign(Gtk.Align.CENTER)
-        self.toolbar_image_properties.set_margin_right(6)
+        self.toolbar_image_properties.set_margin_end(6)
 
         self.toolbar_item_refresh.set_label(_("Refresh games list"))
         self.toolbar_item_refresh.set_relief(Gtk.ReliefStyle.NONE)
         self.toolbar_item_refresh.set_image(self.toolbar_image_refresh)
         self.toolbar_item_refresh.set_use_underline(True)
-        self.toolbar_item_refresh.set_alignment(0, 0.5)
+        self.toolbar_item_refresh.set_halign(Gtk.Align.FILL)
+        self.toolbar_item_refresh.set_valign(Gtk.Align.CENTER)
+        self.toolbar_item_refresh.get_children()[0].set_halign(Gtk.Align.START)
 
         self.toolbar_image_refresh.set_valign(Gtk.Align.CENTER)
-        self.toolbar_image_refresh.set_margin_right(6)
+        self.toolbar_image_refresh.set_margin_end(6)
 
         self.menu_item_filters_options.set_label(_("Options"))
         self.menu_item_filters_options.set_halign(Gtk.Align.START)
@@ -1021,7 +1047,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.image_sidebar_informations = Gtk.Image()
         self.label_sidebar_informations = Gtk.Label()
 
-        self.listbox_sidebar_informations = Gtk.ListBox()
+        self.expander_sidebar_informations = Gtk.Expander()
 
         # Properties
         self.scroll_sidebar_informations.set_policy(
@@ -1029,14 +1055,20 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.label_sidebar_informations.set_label(_("Informations"))
 
-        self.listbox_sidebar_informations.set_selection_mode(
-            Gtk.SelectionMode.NONE)
+        self.expander_sidebar_informations.set_label("<b>%s</b>" % _("Tags"))
+        self.expander_sidebar_informations.set_halign(Gtk.Align.FILL)
+        self.expander_sidebar_informations.set_valign(Gtk.Align.FILL)
+        self.expander_sidebar_informations.set_use_markup(True)
+        self.expander_sidebar_informations.set_expanded(True)
+        self.expander_sidebar_informations.set_hexpand(True)
+        self.expander_sidebar_informations.set_vexpand(True)
 
         # ------------------------------------
         #   Games - Sidebar tags
         # ------------------------------------
 
         self.scroll_sidebar_tags = Gtk.ScrolledWindow()
+        self.frame_sidebar_tags = Gtk.Frame()
 
         self.image_sidebar_tags = Gtk.Image()
         self.label_sidebar_tags = Gtk.Label()
@@ -1044,35 +1076,130 @@ class MainWindow(Gtk.ApplicationWindow):
         self.listbox_sidebar_tags = Gtk.ListBox()
 
         # Properties
+        self.scroll_sidebar_tags.set_vexpand(True)
         self.scroll_sidebar_tags.set_policy(
             Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
 
         self.label_sidebar_tags.set_label(_("Tags"))
 
         self.listbox_sidebar_tags.set_selection_mode(Gtk.SelectionMode.NONE)
+        self.listbox_sidebar_tags.set_valign(Gtk.Align.FILL)
+        self.listbox_sidebar_tags.set_vexpand(True)
 
         # ------------------------------------
         #   Games - Sidebar description
         # ------------------------------------
 
-        self.widgets_sidebar = list()
+        self.label_sidebar_played = Gtk.Label()
+        self.label_sidebar_played_value = Gtk.Label()
 
-        for key, value in self.sidebar_keys:
-            data = ( key, Gtk.Label(), Gtk.Label() )
+        self.label_sidebar_play_time = Gtk.Label()
+        self.label_sidebar_play_time_value = Gtk.Label()
 
-            # Properties
-            data[1].set_text(value)
-            data[1].set_halign(Gtk.Align.END)
-            data[1].set_valign(Gtk.Align.CENTER)
-            data[1].set_ellipsize(Pango.EllipsizeMode.END)
-            data[1].get_style_context().add_class("dim-label")
+        self.label_sidebar_last_play = Gtk.Label()
+        self.label_sidebar_last_play_value = Gtk.Label()
 
-            data[2].set_use_markup(True)
-            data[2].set_halign(Gtk.Align.START)
-            data[2].set_valign(Gtk.Align.CENTER)
-            data[2].set_ellipsize(Pango.EllipsizeMode.END)
+        self.label_sidebar_last_time = Gtk.Label()
+        self.label_sidebar_last_time_value = Gtk.Label()
 
-            self.widgets_sidebar.append(data)
+        self.label_sidebar_installed = Gtk.Label()
+        self.label_sidebar_installed_value = Gtk.Label()
+
+        self.label_sidebar_emulator = Gtk.Label()
+        self.label_sidebar_emulator_value = Gtk.Label()
+
+        self.label_sidebar_score = Gtk.Label()
+        self.image_sidebar_score_0 = Gtk.Image()
+        self.image_sidebar_score_1 = Gtk.Image()
+        self.image_sidebar_score_2 = Gtk.Image()
+        self.image_sidebar_score_3 = Gtk.Image()
+        self.image_sidebar_score_4 = Gtk.Image()
+
+        # Properties
+        self.label_sidebar_played.set_text(_("Launch"))
+        self.label_sidebar_played.set_halign(Gtk.Align.END)
+        self.label_sidebar_played.set_valign(Gtk.Align.CENTER)
+        self.label_sidebar_played.set_ellipsize(Pango.EllipsizeMode.END)
+        self.label_sidebar_played.get_style_context().add_class("dim-label")
+        self.label_sidebar_played.set_margin_bottom(12)
+
+        self.label_sidebar_played_value.set_use_markup(True)
+        self.label_sidebar_played_value.set_halign(Gtk.Align.START)
+        self.label_sidebar_played_value.set_valign(Gtk.Align.CENTER)
+        self.label_sidebar_played_value.set_ellipsize(Pango.EllipsizeMode.END)
+        self.label_sidebar_played_value.set_margin_bottom(12)
+
+        self.label_sidebar_play_time.set_text(_("Play time"))
+        self.label_sidebar_play_time.set_halign(Gtk.Align.END)
+        self.label_sidebar_play_time.set_valign(Gtk.Align.CENTER)
+        self.label_sidebar_play_time.set_ellipsize(Pango.EllipsizeMode.END)
+        self.label_sidebar_play_time.get_style_context().add_class("dim-label")
+        self.label_sidebar_play_time.set_margin_bottom(12)
+
+        self.label_sidebar_play_time_value.set_use_markup(True)
+        self.label_sidebar_play_time_value.set_halign(Gtk.Align.START)
+        self.label_sidebar_play_time_value.set_valign(Gtk.Align.CENTER)
+        self.label_sidebar_play_time_value.set_ellipsize(
+            Pango.EllipsizeMode.END)
+        self.label_sidebar_play_time_value.set_margin_bottom(12)
+
+        self.label_sidebar_last_play.set_text(_("Last launch"))
+        self.label_sidebar_last_play.set_halign(Gtk.Align.END)
+        self.label_sidebar_last_play.set_valign(Gtk.Align.CENTER)
+        self.label_sidebar_last_play.set_ellipsize(Pango.EllipsizeMode.END)
+        self.label_sidebar_last_play.get_style_context().add_class("dim-label")
+
+        self.label_sidebar_last_play_value.set_use_markup(True)
+        self.label_sidebar_last_play_value.set_halign(Gtk.Align.START)
+        self.label_sidebar_last_play_value.set_valign(Gtk.Align.CENTER)
+        self.label_sidebar_last_play_value.set_ellipsize(
+            Pango.EllipsizeMode.END)
+
+        self.label_sidebar_last_time.set_text(_("Last play time"))
+        self.label_sidebar_last_time.set_halign(Gtk.Align.END)
+        self.label_sidebar_last_time.set_valign(Gtk.Align.CENTER)
+        self.label_sidebar_last_time.set_ellipsize(Pango.EllipsizeMode.END)
+        self.label_sidebar_last_time.get_style_context().add_class("dim-label")
+
+        self.label_sidebar_last_time_value.set_use_markup(True)
+        self.label_sidebar_last_time_value.set_halign(Gtk.Align.START)
+        self.label_sidebar_last_time_value.set_valign(Gtk.Align.CENTER)
+        self.label_sidebar_last_time_value.set_ellipsize(
+            Pango.EllipsizeMode.END)
+
+        self.label_sidebar_installed.set_text(_("Installed"))
+        self.label_sidebar_installed.set_halign(Gtk.Align.END)
+        self.label_sidebar_installed.set_valign(Gtk.Align.CENTER)
+        self.label_sidebar_installed.set_ellipsize(Pango.EllipsizeMode.END)
+        self.label_sidebar_installed.get_style_context().add_class("dim-label")
+        self.label_sidebar_installed.set_margin_bottom(12)
+
+        self.label_sidebar_installed_value.set_use_markup(True)
+        self.label_sidebar_installed_value.set_halign(Gtk.Align.START)
+        self.label_sidebar_installed_value.set_valign(Gtk.Align.CENTER)
+        self.label_sidebar_installed_value.set_ellipsize(
+            Pango.EllipsizeMode.END)
+        self.label_sidebar_installed_value.set_margin_bottom(12)
+
+        self.label_sidebar_emulator.set_text(_("Emulator"))
+        self.label_sidebar_emulator.set_halign(Gtk.Align.END)
+        self.label_sidebar_emulator.set_valign(Gtk.Align.CENTER)
+        self.label_sidebar_emulator.set_ellipsize(Pango.EllipsizeMode.END)
+        self.label_sidebar_emulator.get_style_context().add_class("dim-label")
+        self.label_sidebar_emulator.set_margin_bottom(12)
+
+        self.label_sidebar_emulator_value.set_use_markup(True)
+        self.label_sidebar_emulator_value.set_halign(Gtk.Align.START)
+        self.label_sidebar_emulator_value.set_valign(Gtk.Align.CENTER)
+        self.label_sidebar_emulator_value.set_ellipsize(
+            Pango.EllipsizeMode.END)
+        self.label_sidebar_emulator_value.set_margin_bottom(12)
+
+        self.label_sidebar_score.set_text(_("Score"))
+        self.label_sidebar_score.set_halign(Gtk.Align.END)
+        self.label_sidebar_score.set_valign(Gtk.Align.CENTER)
+        self.label_sidebar_score.set_ellipsize(Pango.EllipsizeMode.END)
+        self.label_sidebar_score.get_style_context().add_class("dim-label")
 
         # ------------------------------------
         #   Games - Placeholder
@@ -1119,7 +1246,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.treeview_games = Gtk.TreeView()
 
         self.filter_games = self.model_games.filter_new()
-        self.sorted_games = Gtk.TreeModelSort(self.filter_games)
+        self.sorted_games = Gtk.TreeModelSort(model=self.filter_games)
 
         self.column_game_favorite = Gtk.TreeViewColumn()
         self.column_game_multiplayer = Gtk.TreeViewColumn()
@@ -1291,9 +1418,9 @@ class MainWindow(Gtk.ApplicationWindow):
         # self.cell_game_name.set_property("editable", True)
         self.cell_game_name.set_property("ellipsize", Pango.EllipsizeMode.END)
 
-        self.cell_game_favorite.set_padding(2, 4)
-        self.cell_game_multiplayer.set_padding(2, 4)
-        self.cell_game_finish.set_padding(2, 4)
+        self.cell_game_favorite.set_padding(0, 4)
+        self.cell_game_multiplayer.set_padding(0, 4)
+        self.cell_game_finish.set_padding(0, 4)
         self.cell_game_name.set_padding(6, 4)
         self.cell_game_play.set_padding(6, 4)
         self.cell_game_last_play.set_padding(6, 4)
@@ -1496,16 +1623,19 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.grid_statusbar.set_spacing(12)
         self.grid_statusbar.set_margin_top(0)
-        self.grid_statusbar.set_margin_left(0)
-        self.grid_statusbar.set_margin_right(0)
+        self.grid_statusbar.set_margin_end(0)
+        self.grid_statusbar.set_margin_start(0)
         self.grid_statusbar.set_margin_bottom(0)
 
         self.label_statusbar_console.set_use_markup(True)
-        self.label_statusbar_console.set_alignment(0, .5)
+        self.label_statusbar_console.set_halign(Gtk.Align.START)
+        self.label_statusbar_console.set_valign(Gtk.Align.CENTER)
         self.label_statusbar_emulator.set_use_markup(True)
-        self.label_statusbar_emulator.set_alignment(0, .5)
+        self.label_statusbar_emulator.set_halign(Gtk.Align.START)
+        self.label_statusbar_emulator.set_valign(Gtk.Align.CENTER)
         self.label_statusbar_game.set_ellipsize(Pango.EllipsizeMode.END)
-        self.label_statusbar_game.set_alignment(0, .5)
+        self.label_statusbar_game.set_halign(Gtk.Align.START)
+        self.label_statusbar_game.set_valign(Gtk.Align.CENTER)
 
         self.image_statusbar_properties.set_from_pixbuf(self.empty)
         self.image_statusbar_screenshots.set_from_pixbuf(self.empty)
@@ -1522,12 +1652,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.grid.pack_start(self.grid_infobar, False, False, 0)
         self.grid.pack_start(self.paned_games, True, True, 0)
         self.grid.pack_start(self.statusbar, False, False, 0)
-
-        self.grid.set_focus_chain([
-            self.headerbar,
-            self.toolbar,
-            self.scroll_games
-        ])
 
         # ------------------------------------
         #   Headerbar
@@ -1787,20 +1911,63 @@ class MainWindow(Gtk.ApplicationWindow):
         self.notebook_sidebar_game.append_page(self.scroll_sidebar_informations,
             self.grid_sidebar_tab_informations)
 
-        for key, label_key, label_value in self.widgets_sidebar:
-            index = self.widgets_sidebar.index((key, label_key, label_value))
+        self.grid_sidebar_informations.pack_start(
+            self.grid_sidebar_informations_game, False, False, 0)
+        self.grid_sidebar_informations.pack_start(
+            self.grid_sidebar_informations_data, False, False, 0)
+        self.grid_sidebar_informations.pack_start(
+            self.expander_sidebar_informations, True, True, 0)
 
-            self.grid_sidebar_informations.attach(label_key, 0, index, 1, 1)
-            self.grid_sidebar_informations.attach(label_value, 1, index, 1, 1)
+        self.grid_sidebar_informations_game.attach(
+            self.label_sidebar_played, 0, 0, 1, 1)
+        self.grid_sidebar_informations_game.attach(
+            self.label_sidebar_played_value, 1, 0, 1, 1)
+        self.grid_sidebar_informations_game.attach(
+            self.label_sidebar_play_time, 0, 1, 1, 1)
+        self.grid_sidebar_informations_game.attach(
+            self.label_sidebar_play_time_value, 1, 1, 1, 1)
+        self.grid_sidebar_informations_game.attach(
+            self.label_sidebar_last_play, 0, 2, 1, 1)
+        self.grid_sidebar_informations_game.attach(
+            self.label_sidebar_last_play_value, 1, 2, 1, 1)
+        self.grid_sidebar_informations_game.attach(
+            self.label_sidebar_last_time, 0, 3, 1, 1)
+        self.grid_sidebar_informations_game.attach(
+            self.label_sidebar_last_time_value, 1, 3, 1, 1)
+
+        self.grid_sidebar_informations_data.attach(
+            self.label_sidebar_installed, 0, 0, 1, 1)
+        self.grid_sidebar_informations_data.attach(
+            self.label_sidebar_installed_value, 1, 0, 1, 1)
+        self.grid_sidebar_informations_data.attach(
+            self.label_sidebar_emulator, 0, 1, 1, 1)
+        self.grid_sidebar_informations_data.attach(
+            self.label_sidebar_emulator_value, 1, 1, 1, 1)
+        self.grid_sidebar_informations_data.attach(
+            self.label_sidebar_score, 0, 2, 1, 1)
+        self.grid_sidebar_informations_data.attach(
+            self.grid_sidebar_score, 1, 2, 1, 1)
+
+        self.grid_sidebar_score.pack_start(
+            self.image_sidebar_score_0, False, False, 0)
+        self.grid_sidebar_score.pack_start(
+            self.image_sidebar_score_1, False, False, 0)
+        self.grid_sidebar_score.pack_start(
+            self.image_sidebar_score_2, False, False, 0)
+        self.grid_sidebar_score.pack_start(
+            self.image_sidebar_score_3, False, False, 0)
+        self.grid_sidebar_score.pack_start(
+            self.image_sidebar_score_4, False, False, 0)
 
         # Sidebar - Tags
-        self.scroll_sidebar_tags.add(self.listbox_sidebar_tags)
+        self.expander_sidebar_informations.add(self.scroll_sidebar_tags)
+
+        self.scroll_sidebar_tags.add(self.frame_sidebar_tags)
+
+        self.frame_sidebar_tags.add(self.listbox_sidebar_tags)
 
         self.grid_sidebar_tab_tags.pack_start(
             self.label_sidebar_tags, True, True, 0)
-
-        self.notebook_sidebar_game.append_page(self.scroll_sidebar_tags,
-            self.grid_sidebar_tab_tags)
 
         # Games
         self.grid_games.pack_start(self.grid_games_placeholder, True, True, 0)
@@ -2582,10 +2749,19 @@ class MainWindow(Gtk.ApplicationWindow):
             self.grid_sidebar.attach(
                 self.notebook_sidebar_game, 0, 2, 1, 1)
 
-            self.grid_sidebar_informations.set_halign(Gtk.Align.FILL)
-
             self.view_image_sidebar_game.set_vexpand(False)
             self.view_image_sidebar_game.set_hexpand(True)
+
+            self.grid_sidebar_informations_game.set_halign(Gtk.Align.FILL)
+            self.grid_sidebar_informations_game.set_hexpand(True)
+            self.grid_sidebar_informations_data.set_halign(Gtk.Align.FILL)
+            self.grid_sidebar_informations_data.set_hexpand(True)
+
+            self.grid_sidebar_informations.set_orientation(
+                Gtk.Orientation.VERTICAL)
+            self.grid_sidebar_informations.set_valign(Gtk.Align.FILL)
+            self.grid_sidebar_informations.set_spacing(18)
+            self.grid_sidebar_informations.show_all()
 
         # Bottom-side sidebar
         elif sidebar_orientation == "vertical" and \
@@ -2606,10 +2782,19 @@ class MainWindow(Gtk.ApplicationWindow):
 
             self.grid_sidebar_title.set_valign(Gtk.Align.START)
 
-            self.grid_sidebar_informations.set_halign(Gtk.Align.START)
-
             self.view_image_sidebar_game.set_hexpand(False)
             self.view_image_sidebar_game.set_vexpand(True)
+
+            self.grid_sidebar_informations_game.set_halign(Gtk.Align.START)
+            self.grid_sidebar_informations_game.set_hexpand(False)
+            self.grid_sidebar_informations_data.set_halign(Gtk.Align.START)
+            self.grid_sidebar_informations_data.set_hexpand(False)
+
+            self.grid_sidebar_informations.set_orientation(
+                Gtk.Orientation.HORIZONTAL)
+            self.grid_sidebar_informations.set_valign(Gtk.Align.FILL)
+            self.grid_sidebar_informations.set_spacing(18)
+            self.grid_sidebar_informations.show_all()
 
         # Show sidebar
         if sidebar_status:
@@ -2621,10 +2806,6 @@ class MainWindow(Gtk.ApplicationWindow):
         # Hide sidebar
         else:
             self.scroll_sidebar.hide()
-
-        for key, label_key, label_value in self.widgets_sidebar:
-            label_key.hide()
-            label_value.hide()
 
         # ------------------------------------
         #   Statusbar
@@ -3412,7 +3593,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     else:
                         image = Pixbuf.new_from_file_at_scale(
-                            image, 260, 260, True)
+                            image, 406, 230, True)
 
                 self.image_sidebar_game.set_from_pixbuf(image)
 
@@ -3441,52 +3622,80 @@ class MainWindow(Gtk.ApplicationWindow):
                 #   Show informations
                 # ----------------------------
 
-                widgets = {
-                    "played": {
+                widgets = [
+                    {
+                        "widget": self.label_sidebar_played_value,
                         "condition": game.played > 0,
-                        "markup": str(game.played),
-                        "tooltip": None
+                        "markup": str(game.played)
                     },
-                    "play_time": {
+                    {
+                        "widget": self.label_sidebar_play_time_value,
                         "condition": not game.play_time == timedelta(),
                         "markup": string_from_time(game.play_time),
                         "tooltip": parse_timedelta(game.play_time)
                     },
-                    "last_play": {
+                    {
+                        "widget": self.label_sidebar_last_play_value,
                         "condition": game.last_launch_date is not None,
                         "markup": string_from_date(game.last_launch_date),
                         "tooltip": str(game.last_launch_date)
                     },
-                    "last_time": {
+                    {
+                        "widget": self.label_sidebar_last_time_value,
                         "condition": not game.last_launch_time == timedelta(),
                         "markup": string_from_time(game.last_launch_time),
                         "tooltip": parse_timedelta(game.last_launch_time)
+                    },
+                    {
+                        "widget": self.label_sidebar_installed_value,
+                        "condition": game.installed is not None,
+                        "markup": string_from_date(game.installed),
+                        "tooltip": str(game.installed)
+                    },
+                    {
+                        "widget": self.grid_sidebar_score,
+                        "markup": str(game.score)
+                    },
+                    {
+                        "widget": self.label_sidebar_emulator_value,
+                        "condition": emulator is not None,
+                        "markup": emulator.name
                     }
-                }
+                ]
 
-                for key, label_key, label_value in self.widgets_sidebar:
-                    data = widgets[key]
+                for data in widgets:
 
-                    if data["condition"]:
-                        label_key.show()
-                        label_value.show()
+                    # Default label value widget
+                    if "condition" in data:
 
-                        label_value.set_markup(data["markup"])
+                        if data["condition"]:
+                            data["widget"].set_markup(data["markup"])
 
-                        if data["tooltip"] is not None:
-                            label_value.set_tooltip_text(data["tooltip"])
+                            if "tooltip" in data:
+                                data["widget"].set_tooltip_text(data["tooltip"])
 
-                    else:
-                        label_key.hide()
-                        label_value.hide()
+                        else:
+                            data["widget"].set_markup(str())
+                            data["widget"].set_tooltip_text(str())
 
-                        label_value.set_markup(str())
-                        label_value.set_tooltip_text(str())
+                    # Score case
+                    elif data["widget"] == self.grid_sidebar_score:
+                        children = data["widget"].get_children()
+
+                        for child in children:
+                            index = children.index(child)
+
+                            if game.score >= index + 1:
+                                child.set_from_pixbuf(self.icons["starred"])
+
+                            else:
+                                child.set_from_pixbuf(
+                                    self.alternative["no-starred"])
 
                 # Game tags
                 for tag in sorted(game.tags):
                     label = Gtk.Label.new(tag)
-                    label.set_halign(Gtk.Align.START)
+                    label.set_halign(Gtk.Align.FILL)
 
                     box = Gtk.Box()
                     box.set_orientation(Gtk.Orientation.HORIZONTAL)
@@ -3527,10 +3736,6 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.image_statusbar_screenshots.set_from_pixbuf(self.empty)
 
         else:
-            for key, label_key, label_value in self.widgets_sidebar:
-                label_key.hide()
-                label_value.hide()
-
             self.label_sidebar_title.set_text(str())
 
             self.image_sidebar_game.set_from_pixbuf(None)
@@ -6416,7 +6621,7 @@ class MainWindow(Gtk.ApplicationWindow):
         """ Check if Mednafen exists on user system
 
         This function read the first line of mednafen default output and check
-        if this one match "Starting Mednafen [\d+\.?]+".
+        if this one match "Starting Mednafen [0-9+.?]+".
 
         Returns
         -------
@@ -6442,7 +6647,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
             if output is not None:
                 result = match(
-                    "Starting Mednafen [\d+\.?]+", output.split('\n')[0])
+                    r'Starting Mednafen [\d+\.?]+', output.split('\n')[0])
 
                 if result is not None:
                     return True

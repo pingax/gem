@@ -30,8 +30,8 @@ from gettext import gettext as _
 class GameThread(Thread, GObject):
 
     __gsignals__ = {
-        "game-started": (SIGNAL_RUN_FIRST, None, [object]),
-        "game-terminate": (SIGNAL_RUN_LAST, None, [object]),
+        "game-started": (SignalFlags.RUN_FIRST, None, [object]),
+        "game-terminate": (SignalFlags.RUN_LAST, None, [object]),
     }
 
     def __init__(self, parent, console, emulator, game, command):

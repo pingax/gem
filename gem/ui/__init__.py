@@ -42,13 +42,12 @@ try:
 
     from gi.repository.Gdk import EventType
 
+    from gi.repository.GLib import MainLoop
     from gi.repository.GLib import idle_add
     from gi.repository.GLib import source_remove
 
     from gi.repository.GObject import GObject
-    from gi.repository.GObject import MainLoop
-    from gi.repository.GObject import SIGNAL_RUN_LAST
-    from gi.repository.GObject import SIGNAL_RUN_FIRST
+    from gi.repository.GObject import SignalFlags
 
     from gi.repository.GdkPixbuf import Pixbuf
     from gi.repository.GdkPixbuf import InterpType

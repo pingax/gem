@@ -197,10 +197,12 @@ class EditorDialog(CommonWindow):
         self.button_import.set_relief(Gtk.ReliefStyle.NONE)
         self.button_import.set_image(self.image_import)
         self.button_import.set_use_underline(True)
-        self.button_import.set_alignment(0, 0.5)
+        self.button_import.set_halign(Gtk.Align.FILL)
+        self.button_import.set_valign(Gtk.Align.CENTER)
+        self.button_import.get_children()[0].set_halign(Gtk.Align.START)
 
         self.image_import.set_valign(Gtk.Align.CENTER)
-        self.image_import.set_margin_right(6)
+        self.image_import.set_margin_end(6)
         self.image_import.set_from_icon_name(
             Icons.Symbolic.SaveAs, Gtk.IconSize.BUTTON)
 
@@ -208,10 +210,12 @@ class EditorDialog(CommonWindow):
         self.button_export.set_relief(Gtk.ReliefStyle.NONE)
         self.button_export.set_image(self.image_export)
         self.button_export.set_use_underline(True)
-        self.button_export.set_alignment(0, 0.5)
+        self.button_export.set_halign(Gtk.Align.FILL)
+        self.button_export.set_valign(Gtk.Align.CENTER)
+        self.button_export.get_children()[0].set_halign(Gtk.Align.START)
 
         self.image_export.set_valign(Gtk.Align.CENTER)
-        self.image_export.set_margin_right(6)
+        self.image_export.set_margin_end(6)
         self.image_export.set_from_icon_name(
             Icons.Symbolic.Send, Gtk.IconSize.BUTTON)
 
@@ -328,11 +332,12 @@ class EditorDialog(CommonWindow):
         self.grid_menu_options.attach(self.label_options, 0, 0, 2, 1)
         self.grid_menu_options.attach(self.label_line, 0, 1, 1, 1)
         self.grid_menu_options.attach(self.switch_line, 1, 1, 1, 1)
+        self.grid_menu_options.attach(Gtk.Separator(), 0, 2, 2, 1)
 
         if self.editable:
-            self.grid_menu_options.attach(Gtk.Separator(), 0, 2, 2, 1)
             self.grid_menu_options.attach(self.button_import, 0, 3, 2, 1)
-            self.grid_menu_options.attach(self.button_export, 0, 4, 2, 1)
+
+        self.grid_menu_options.attach(self.button_export, 0, 4, 2, 1)
 
 
     def __init_signals(self):
@@ -537,6 +542,7 @@ class EditorDialog(CommonWindow):
             if not self.current_index in range(len(self.founded_iter) - 1):
                 self.current_index = int()
 
+            # Remove selector tag from previous match iter
             match = self.founded_iter[self.current_index]
 
             self.buffer_editor.remove_tag(self.tag_current, match[0], match[1])
@@ -545,19 +551,21 @@ class EditorDialog(CommonWindow):
             if backward:
                 self.current_index -= 1
 
-                if self.current_index == -1:
+                if self.current_index < 0:
                     self.current_index = len(self.founded_iter) - 1
 
             else:
                 self.current_index += 1
 
-                if self.current_index == len(self.founded_iter):
+                if self.current_index >= len(self.founded_iter):
                     self.current_index = 0
 
+            # Add selector tag to current match iter
             match = self.founded_iter[self.current_index]
 
             self.buffer_editor.apply_tag(self.tag_current, match[0], match[1])
 
+            # Scroll editor to current match iter
             self.text_editor.scroll_to_iter(match[0], .25, False, .0, .0)
 
 
