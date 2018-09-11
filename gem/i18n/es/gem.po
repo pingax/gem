@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.4\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2018-01-21 10:33+0100\n"
+"PO-Revision-Date: 2018-09-11 16:19+0200\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -203,11 +203,6 @@ msgstr "Activar el modo pantalla completa del juego"
 # File: gem/gtk/preferences.py, line: 2572
 msgid "Argument which activate windowded mode"
 msgstr ""
-
-#
-# File: gem/windows.py, line: 319
-msgid "Auto line break"
-msgstr "Salto de línea automàtico"
 
 #
 # File: gem/interface.py, line: 642
@@ -433,6 +428,11 @@ msgid "Dialog"
 msgstr ""
 
 #
+# File: gem/ui/interface.py, line: 469
+msgid "Display"
+msgstr ""
+
+#
 # File: gem/gtk/windows.py, line: 1885
 msgid "Drag & Drop"
 msgstr ""
@@ -524,6 +524,22 @@ msgid "Executable"
 msgstr ""
 
 #
+# File: gem/ui/dialog/editor.py, line: 703
+msgid "Existing file"
+msgstr ""
+
+#
+# File: gem/ui/dialog/editor.py, line: 207
+# File: gem/ui/dialog/editor.py, line: 997
+msgid "Export"
+msgstr ""
+
+#
+# File: gem/ui/dialog/editor.py, line: 1145
+msgid "Export As"
+msgstr ""
+
+#
 # File: gem/preferences.py, line: 1342
 #, fuzzy
 msgid "Extensions"
@@ -551,6 +567,13 @@ msgstr ""
 # File: gem/gtk/preferences.py, line: 3458
 msgid "File"
 msgstr ""
+
+#
+# File: gem/interface.py, line: 401
+# File: gem/interface.py, line: 761
+#, fuzzy
+msgid "Filepath"
+msgstr "_Copiar la ruta del juego"
 
 #
 # File: gem/gtk/preferences.py, line: 2588
@@ -704,6 +727,12 @@ msgid "Icons size"
 msgstr ""
 
 #
+# File: gem/ui/dialog/editor.py, line: 196
+# File: gem/ui/dialog/editor.py, line: 794
+msgid "Import"
+msgstr ""
+
+#
 # File: gem/ui/interface.py, line: 669
 msgid "Increase score"
 msgstr ""
@@ -713,6 +742,12 @@ msgstr ""
 #, fuzzy
 msgid "Increase selected game score"
 msgstr "Abrir carpeta del juego seleccionado"
+
+#
+# File: gem/interface.py, line: 776
+#, fuzzy
+msgid "Informations"
+msgstr "_Reinicializar los datos del juego"
 
 #
 # File: gem/interface.py, line: 1411
@@ -797,6 +832,17 @@ msgstr "Lanzar el juego seleccionado"
 #
 # File: gem/gtk/preferences.py, line: 3454
 msgid "Library"
+msgstr ""
+
+#
+# File: gem/windows.py, line: 319
+#, fuzzy
+msgid "Line break"
+msgstr "Salto de línea automàtico"
+
+#
+# File: gem/ui/dialog/editor.py, line: 403
+msgid "Loading"
 msgstr ""
 
 #
@@ -896,6 +942,13 @@ msgid "New filename"
 msgstr "Usar el nombre del archivo de la ROM"
 
 #
+# File: gem/interface.py, line: 406
+# File: gem/interface.py, line: 766
+#, fuzzy
+msgid "New name"
+msgstr "Usar el nombre del archivo de la ROM"
+
+#
 # File: gem/gtk/windows.py, line: 791
 msgid ""
 "Nintendo console titles are identified by a 6 character identifier known as "
@@ -970,6 +1023,12 @@ msgstr "Establecer las opciones por defecto"
 #, fuzzy
 msgid "Optional data to remove"
 msgstr "Establecer las opciones por defecto"
+
+#
+# File: gem/preferences.py, line: 476
+#, fuzzy
+msgid "Options"
+msgstr "Acción"
 
 #
 # File: gem/interface.py, line: 572
@@ -1107,6 +1166,11 @@ msgstr "Renombrar %(old)s en %(new)s"
 # File: gem/preferences.py, line: 86
 msgid "Rename a game"
 msgstr "Renombrar un juego"
+
+#
+# File: gem/ui/dialog/editor.py, line: 911
+msgid "Replace current buffer"
+msgstr ""
 
 #
 # File: gem/gtk/interface.py, line: 802
@@ -1400,6 +1464,12 @@ msgid "Stop selected game"
 msgstr "Copiar la ruta del juego seleccionado"
 
 #
+# File: gem/interface.py, line: 451
+#, fuzzy
+msgid "Switch between fullscreen modes"
+msgstr "Alternar el modo pantalla completa del juego"
+
+#
 # File: gem/gtk/preferences.py, line: 648
 msgid "Switch to classic theme"
 msgstr ""
@@ -1650,6 +1720,12 @@ msgid "Would you really want to reset this game informations ?"
 msgstr "¿Quiere borrar esta entrada?"
 
 #
+# File: gem/preferences.py, line: 1196
+#, fuzzy
+msgid "Would you want to replace existing file ?"
+msgstr "¿Quiere borrar esta entrada?"
+
+#
 # File: gem/gtk/preferences.py, line: 2433
 msgid "Write your regex here..."
 msgstr ""
@@ -1835,132 +1911,3 @@ msgstr "_Herramientas"
 msgid "translator-credits"
 msgstr "agradecimientos a los traductores"
 
-#
-# File: gem/interface.py, line: 1584
-#~ msgid "%s has been deleted from disk"
-#~ msgstr "%s ha sido borrado del disco"
-
-#
-# File: gem/interface.py, line: 451
-#~ msgid "Activate game fullscreen mode"
-#~ msgstr "Activar el modo pantalla completa del juego"
-
-#
-# File: gem/main.py, line: 132
-#, fuzzy
-#~ msgid "An error occur during exec: %s"
-#~ msgstr "Un error ha ocurrido durante la ejecución del programa: %s"
-
-#
-# File: gem/interface.py, line: 1347
-#, fuzzy
-#~ msgid "Cannot import modules: %s"
-#~ msgstr "No puedo encontrar el emulador para %s"
-
-#
-# File: gem/interface.py, line: 396
-# File: gem/interface.py, line: 756
-# File: gem/interface.py, line: 1667
-#~ msgid "Custom _parameters"
-#~ msgstr "_Parametros personalizados"
-
-#
-# File: gem/interface.py, line: 522
-#, fuzzy
-#~ msgid "Filter..."
-#~ msgstr "Filtro"
-
-#
-# File: gem/interface.py, line: 381
-# File: gem/interface.py, line: 741
-#~ msgid "Mark as _favorite"
-#~ msgstr "Marcar como _favorito"
-
-#
-# File: gem/interface.py, line: 381
-# File: gem/interface.py, line: 741
-#, fuzzy
-#~ msgid "Mark as _finish"
-#~ msgstr "Marcar como _favorito"
-
-#
-# File: gem/interface.py, line: 386
-# File: gem/interface.py, line: 746
-#~ msgid "Mark as _multiplayer"
-#~ msgstr "Marcar como _mutijugador"
-
-#
-# File: gem/interface.py, line: 776
-#~ msgid "Remove game save files"
-#~ msgstr "Borrar partidas guardadas del juego"
-
-#
-# File: gem/interface.py, line: 2006
-#~ msgid "Remove game screenshots"
-#~ msgstr "Borrar capturas de pantalla del juego"
-
-#
-# File: gem/preferences.py, line: 86
-#, fuzzy
-#~ msgid "Reset"
-#~ msgstr "Renombrar un juego"
-
-#
-# File: gem/interface.py, line: 2006
-#, fuzzy
-#~ msgid "Screenshots"
-#~ msgstr "Mostrar las _capturas de pantalla"
-
-#
-# File: gem/interface.py, line: 527
-#~ msgid "Show _notes"
-#~ msgstr "Mostrar las _notas"
-
-#
-# File: gem/interface.py, line: 2006
-#~ msgid "Show _screenshots"
-#~ msgstr "Mostrar las _capturas de pantalla"
-
-#
-# File: gem/interface.py, line: 375
-#~ msgid "Show main _log"
-#~ msgstr "Mostrar _histórico principal"
-
-#
-# File: gem/interface.py, line: 572
-#~ msgid "Show output _log"
-#~ msgstr "Mostrar el _registro de salida"
-
-#
-# File: gem/windows.py, line: 915
-#, fuzzy
-#~ msgid "Viewer binary"
-#~ msgstr "Seleccionar un binario"
-
-#
-# File: gem/interface.py, line: 401
-# File: gem/interface.py, line: 761
-#~ msgid "_Copy file path"
-#~ msgstr "_Copiar la ruta del juego"
-
-#
-# File: gem/interface.py, line: 406
-# File: gem/interface.py, line: 766
-#~ msgid "_Open file path"
-#~ msgstr "_Abrir la ruta del archivo"
-
-#
-# File: gem/interface.py, line: 776
-#~ msgid "_Remove game from disk"
-#~ msgstr "_Borrar juego del disco"
-
-#
-# File: gem/interface.py, line: 776
-#~ msgid "_Reset game informations"
-#~ msgstr "_Reinicializar los datos del juego"
-
-#
-# File: gem/interface.py, line: 776
-#, fuzzy
-#~ msgid "_Reset informations"
-#~ msgstr "_Reinicializar los datos del juego"

@@ -193,7 +193,7 @@ class EditorDialog(CommonWindow):
         self.switch_line.set_halign(Gtk.Align.END)
         self.switch_line.set_valign(Gtk.Align.CENTER)
 
-        self.button_import.set_label(_("Import…"))
+        self.button_import.set_label("%s…" % _("Import"))
         self.button_import.set_relief(Gtk.ReliefStyle.NONE)
         self.button_import.set_image(self.image_import)
         self.button_import.set_use_underline(True)
@@ -204,7 +204,7 @@ class EditorDialog(CommonWindow):
         self.image_import.set_from_icon_name(
             Icons.Symbolic.SaveAs, Gtk.IconSize.BUTTON)
 
-        self.button_export.set_label(_("Export…"))
+        self.button_export.set_label("%s…" % _("Export"))
         self.button_export.set_relief(Gtk.ReliefStyle.NONE)
         self.button_export.set_image(self.image_export)
         self.button_export.set_use_underline(True)
@@ -400,7 +400,7 @@ class EditorDialog(CommonWindow):
         if self.refresh_buffer:
             self.refresh_buffer = False
 
-            self.set_subtitle(_("Loading…"))
+            self.set_subtitle("%s…" % _("Loading"))
 
             self.window.set_sensitive(False)
 
@@ -561,16 +561,16 @@ class EditorDialog(CommonWindow):
             self.text_editor.scroll_to_iter(match[0], .25, False, .0, .0)
 
 
-    def __on_entry_update(self, widget):
+    def __on_entry_update(self, widget=None):
         """ Search entry value in text buffer
 
         Parameters
         ----------
-        widget : Gtk.Widget
+        widget : Gtk.Widget, optional
             Object which receive signal
         """
 
-        text = widget.get_text()
+        text = self.entry_search.get_text()
 
         if not text == self.previous_search:
             self.current_index = int()
@@ -672,6 +672,8 @@ class EditorDialog(CommonWindow):
                     else:
                         self.buffer_editor.insert(
                             self.buffer_editor.get_end_iter(), textbuffer)
+
+                self.__on_entry_update()
 
         dialog.destroy()
 
@@ -1079,7 +1081,7 @@ class ExportDialog(CommonWindow):
         self.label_selector.set_ellipsize(Pango.EllipsizeMode.END)
 
         self.entry_selector.set_hexpand(True)
-        self.entry_selector.set_placeholder_text(_("Filepath…"))
+        self.entry_selector.set_placeholder_text("%s…" % _("Filepath"))
         self.entry_selector.set_icon_activatable(
             Gtk.EntryIconPosition.PRIMARY, False)
         self.entry_selector.set_icon_from_icon_name(
@@ -1140,7 +1142,7 @@ class ExportDialog(CommonWindow):
         """ Open a FileChooserDialog to let user choose the export file
         """
 
-        dialog = Gtk.FileChooserDialog(_("Export As…"),
+        dialog = Gtk.FileChooserDialog("%s…" % _("Export As"),
             self.window, Gtk.FileChooserAction.SAVE,
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
             Gtk.STOCK_OPEN, Gtk.ResponseType.OK),
