@@ -502,17 +502,6 @@ class EditorDialog(CommonWindow):
             # Match tags from text in buffer
             self.__on_search_and_mark(text, self.buffer_editor.get_start_iter())
 
-            if len(self.founded_iter) > 0:
-                match = self.founded_iter[self.current_index]
-
-                self.buffer_editor.apply_tag(
-                    self.tag_current, match[0], match[1])
-
-                self.text_editor.scroll_to_iter(match[0], .25, False, .0, .0)
-
-                # Avoid to do the same search twice
-                self.previous_search = text
-
 
     def __on_move_search(self, widget=None, backward=False):
         """ Move between search results
@@ -525,22 +514,24 @@ class EditorDialog(CommonWindow):
             If True, use backward search instead of forward (Default: False)
         """
 
-        if self.modified_buffer:
-            text = self.entry_search.get_text()
+        text = self.entry_search.get_text()
 
+        if self.modified_buffer:
             # Reset cursor position if different search
             if not text == self.previous_search:
-                self.current_index = int()
+                self.current_index = -1
 
             self.__init_search(text)
 
-            self.previous_search = str()
             self.modified_buffer = False
 
         if len(self.founded_iter) > 0:
+            # Avoid to do the same search twice
+            self.previous_search = text
+
             # Avoid to check an index which not exist anymore
-            if not self.current_index in range(len(self.founded_iter) - 1):
-                self.current_index = int()
+            if not self.current_index in range(len(self.founded_iter)):
+                self.current_index = -1
 
             # Remove selector tag from previous match iter
             match = self.founded_iter[self.current_index]
@@ -578,15 +569,7 @@ class EditorDialog(CommonWindow):
             Object which receive signal
         """
 
-        text = self.entry_search.get_text()
-
-        if not text == self.previous_search:
-            self.current_index = int()
-
-            self.__init_search(text)
-
-        else:
-            self.__on_move_search()
+        self.__on_move_search()
 
 
     def __on_entry_clear(self, widget, pos, event):
