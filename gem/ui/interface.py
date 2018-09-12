@@ -280,9 +280,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.grid_sidebar_title = Gtk.Box()
         self.grid_sidebar_tab_tags = Gtk.Box()
         self.grid_sidebar_tab_informations = Gtk.Box()
-        self.grid_sidebar_informations = Gtk.Box()
-        self.grid_sidebar_informations_game = Gtk.Grid()
-        self.grid_sidebar_informations_data = Gtk.Grid()
+        self.grid_sidebar_informations = Gtk.Grid()
+        self.grid_sidebar_informations = Gtk.Grid()
         self.grid_sidebar_score = Gtk.Box()
 
         # Properties
@@ -346,18 +345,12 @@ class MainWindow(Gtk.ApplicationWindow):
         self.grid_sidebar_tab_tags.set_halign(Gtk.Align.FILL)
         self.grid_sidebar_tab_tags.set_spacing(6)
 
-        self.grid_sidebar_informations.set_homogeneous(False)
+        self.grid_sidebar_informations.set_column_homogeneous(True)
         self.grid_sidebar_informations.set_halign(Gtk.Align.FILL)
+        self.grid_sidebar_informations.set_column_spacing(12)
         self.grid_sidebar_informations.set_border_width(18)
+        self.grid_sidebar_informations.set_row_spacing(6)
         self.grid_sidebar_informations.set_vexpand(True)
-
-        self.grid_sidebar_informations_game.set_column_homogeneous(True)
-        self.grid_sidebar_informations_game.set_column_spacing(12)
-        self.grid_sidebar_informations_game.set_row_spacing(6)
-
-        self.grid_sidebar_informations_data.set_column_homogeneous(True)
-        self.grid_sidebar_informations_data.set_column_spacing(6)
-        self.grid_sidebar_informations_data.set_row_spacing(12)
 
         self.grid_sidebar_score.set_halign(Gtk.Align.START)
         self.grid_sidebar_score.set_valign(Gtk.Align.CENTER)
@@ -1047,21 +1040,11 @@ class MainWindow(Gtk.ApplicationWindow):
         self.image_sidebar_informations = Gtk.Image()
         self.label_sidebar_informations = Gtk.Label()
 
-        self.expander_sidebar_informations = Gtk.Expander()
-
         # Properties
         self.scroll_sidebar_informations.set_policy(
-            Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+            Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
 
         self.label_sidebar_informations.set_label(_("Informations"))
-
-        self.expander_sidebar_informations.set_label("<b>%s</b>" % _("Tags"))
-        self.expander_sidebar_informations.set_halign(Gtk.Align.FILL)
-        self.expander_sidebar_informations.set_valign(Gtk.Align.FILL)
-        self.expander_sidebar_informations.set_use_markup(True)
-        self.expander_sidebar_informations.set_expanded(True)
-        self.expander_sidebar_informations.set_hexpand(True)
-        self.expander_sidebar_informations.set_vexpand(True)
 
         # ------------------------------------
         #   Games - Sidebar tags
@@ -1911,42 +1894,22 @@ class MainWindow(Gtk.ApplicationWindow):
         self.notebook_sidebar_game.append_page(self.scroll_sidebar_informations,
             self.grid_sidebar_tab_informations)
 
-        self.grid_sidebar_informations.pack_start(
-            self.grid_sidebar_informations_game, False, False, 0)
-        self.grid_sidebar_informations.pack_start(
-            self.grid_sidebar_informations_data, False, False, 0)
-        self.grid_sidebar_informations.pack_start(
-            self.expander_sidebar_informations, True, True, 0)
-
-        self.grid_sidebar_informations_game.attach(
+        self.grid_sidebar_informations.attach(
             self.label_sidebar_played, 0, 0, 1, 1)
-        self.grid_sidebar_informations_game.attach(
+        self.grid_sidebar_informations.attach(
             self.label_sidebar_played_value, 1, 0, 1, 1)
-        self.grid_sidebar_informations_game.attach(
+        self.grid_sidebar_informations.attach(
             self.label_sidebar_play_time, 0, 1, 1, 1)
-        self.grid_sidebar_informations_game.attach(
+        self.grid_sidebar_informations.attach(
             self.label_sidebar_play_time_value, 1, 1, 1, 1)
-        self.grid_sidebar_informations_game.attach(
+        self.grid_sidebar_informations.attach(
             self.label_sidebar_last_play, 0, 2, 1, 1)
-        self.grid_sidebar_informations_game.attach(
+        self.grid_sidebar_informations.attach(
             self.label_sidebar_last_play_value, 1, 2, 1, 1)
-        self.grid_sidebar_informations_game.attach(
+        self.grid_sidebar_informations.attach(
             self.label_sidebar_last_time, 0, 3, 1, 1)
-        self.grid_sidebar_informations_game.attach(
+        self.grid_sidebar_informations.attach(
             self.label_sidebar_last_time_value, 1, 3, 1, 1)
-
-        self.grid_sidebar_informations_data.attach(
-            self.label_sidebar_installed, 0, 0, 1, 1)
-        self.grid_sidebar_informations_data.attach(
-            self.label_sidebar_installed_value, 1, 0, 1, 1)
-        self.grid_sidebar_informations_data.attach(
-            self.label_sidebar_emulator, 0, 1, 1, 1)
-        self.grid_sidebar_informations_data.attach(
-            self.label_sidebar_emulator_value, 1, 1, 1, 1)
-        self.grid_sidebar_informations_data.attach(
-            self.label_sidebar_score, 0, 2, 1, 1)
-        self.grid_sidebar_informations_data.attach(
-            self.grid_sidebar_score, 1, 2, 1, 1)
 
         self.grid_sidebar_score.pack_start(
             self.image_sidebar_score_0, False, False, 0)
@@ -1960,14 +1923,15 @@ class MainWindow(Gtk.ApplicationWindow):
             self.image_sidebar_score_4, False, False, 0)
 
         # Sidebar - Tags
-        self.expander_sidebar_informations.add(self.scroll_sidebar_tags)
-
         self.scroll_sidebar_tags.add(self.frame_sidebar_tags)
 
         self.frame_sidebar_tags.add(self.listbox_sidebar_tags)
 
         self.grid_sidebar_tab_tags.pack_start(
             self.label_sidebar_tags, True, True, 0)
+
+        self.notebook_sidebar_game.append_page(self.scroll_sidebar_tags,
+            self.grid_sidebar_tab_tags)
 
         # Games
         self.grid_games.pack_start(self.grid_games_placeholder, True, True, 0)
@@ -2752,15 +2716,24 @@ class MainWindow(Gtk.ApplicationWindow):
             self.view_image_sidebar_game.set_vexpand(False)
             self.view_image_sidebar_game.set_hexpand(True)
 
-            self.grid_sidebar_informations_game.set_halign(Gtk.Align.FILL)
-            self.grid_sidebar_informations_game.set_hexpand(True)
-            self.grid_sidebar_informations_data.set_halign(Gtk.Align.FILL)
-            self.grid_sidebar_informations_data.set_hexpand(True)
+            widgets = [
+                (self.label_sidebar_installed, 0, 4),
+                (self.label_sidebar_installed_value, 1, 4),
+                (self.label_sidebar_emulator, 0, 5),
+                (self.label_sidebar_emulator_value, 1, 5),
+                (self.label_sidebar_score, 0, 6),
+                (self.grid_sidebar_score, 1, 6),
+            ]
 
-            self.grid_sidebar_informations.set_orientation(
-                Gtk.Orientation.VERTICAL)
-            self.grid_sidebar_informations.set_valign(Gtk.Align.FILL)
-            self.grid_sidebar_informations.set_spacing(18)
+            for widget, x, y in widgets:
+                if not init_interface:
+                    self.grid_sidebar_informations.remove(widget)
+
+                self.grid_sidebar_informations.attach(widget, x, y, 1, 1)
+
+            self.grid_sidebar_informations.set_column_homogeneous(True)
+            self.grid_sidebar_informations.set_halign(Gtk.Align.FILL)
+            self.grid_sidebar_informations.set_hexpand(True)
             self.grid_sidebar_informations.show_all()
 
         # Bottom-side sidebar
@@ -2785,15 +2758,24 @@ class MainWindow(Gtk.ApplicationWindow):
             self.view_image_sidebar_game.set_hexpand(False)
             self.view_image_sidebar_game.set_vexpand(True)
 
-            self.grid_sidebar_informations_game.set_halign(Gtk.Align.START)
-            self.grid_sidebar_informations_game.set_hexpand(False)
-            self.grid_sidebar_informations_data.set_halign(Gtk.Align.START)
-            self.grid_sidebar_informations_data.set_hexpand(False)
+            widgets = [
+                (self.label_sidebar_installed, 2, 0),
+                (self.label_sidebar_installed_value, 3, 0),
+                (self.label_sidebar_emulator, 2, 1),
+                (self.label_sidebar_emulator_value, 3, 1),
+                (self.label_sidebar_score, 2, 2),
+                (self.grid_sidebar_score, 3, 2),
+            ]
 
-            self.grid_sidebar_informations.set_orientation(
-                Gtk.Orientation.HORIZONTAL)
-            self.grid_sidebar_informations.set_valign(Gtk.Align.FILL)
-            self.grid_sidebar_informations.set_spacing(18)
+            for widget, x, y in widgets:
+                if not init_interface:
+                    self.grid_sidebar_informations.remove(widget)
+
+                self.grid_sidebar_informations.attach(widget, x, y, 1, 1)
+
+            self.grid_sidebar_informations.set_column_homogeneous(True)
+            self.grid_sidebar_informations.set_halign(Gtk.Align.START)
+            self.grid_sidebar_informations.set_hexpand(False)
             self.grid_sidebar_informations.show_all()
 
         # Show sidebar
