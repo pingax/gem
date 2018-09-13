@@ -149,17 +149,28 @@ class Icons:
         pass
 
 class Columns:
-    Favorite        = 0
-    Multiplayer     = 1
-    Finish          = 2
-    Name            = 3
-    Played          = 4
-    LastPlay        = 5
-    LastTimePlay    = 6
-    TimePlay        = 7
-    Score           = 8
-    Installed       = 9
-    Except          = 10
-    Snapshots       = 11
-    Save            = 12
-    Object          = 13
+
+    class Key:
+        List            = "list"
+        Grid            = "grid"
+
+    class List:
+        Favorite        = 0
+        Multiplayer     = 1
+        Finish          = 2
+        Name            = 3
+        Played          = 4
+        LastPlay        = 5
+        LastTimePlay    = 6
+        TimePlay        = 7
+        Score           = 8
+        Installed       = 9
+        Except          = 10
+        Snapshots       = 11
+        Save            = 12
+        Object          = 13
+
+    class Grid:
+        Icon            = 0
+        Name            = 1
+        Object          = 2
