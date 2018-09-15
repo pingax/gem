@@ -1198,10 +1198,14 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Games - Placeholder
         # ------------------------------------
 
+        self.scroll_games_placeholder = Gtk.ScrolledWindow()
+
         self.image_game_placeholder = Gtk.Image()
         self.label_game_placeholder = Gtk.Label()
 
         # Properties
+        self.scroll_games_placeholder.set_no_show_all(True)
+
         self.image_game_placeholder.set_from_icon_name(
             Icons.Symbolic.Gaming, Gtk.IconSize.DIALOG)
         self.image_game_placeholder.set_pixel_size(256)
@@ -1230,6 +1234,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.filter_games_grid = self.model_games_grid.filter_new()
 
         # Properties
+        self.scroll_games_grid.set_no_show_all(True)
+
         self.iconview_games.set_model(self.filter_games_grid)
         self.iconview_games.set_selection_mode(Gtk.SelectionMode.SINGLE)
         self.iconview_games.set_has_tooltip(True)
@@ -1300,6 +1306,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.cell_game_save = Gtk.CellRendererPixbuf()
 
         # Properties
+        self.scroll_games_list.set_no_show_all(True)
+
         self.sorted_games_list.set_sort_func(Columns.List.Favorite,
             self.__on_sort_games, Columns.List.Favorite)
         self.sorted_games_list.set_sort_func(Columns.List.Multiplayer,
@@ -1986,11 +1994,13 @@ class MainWindow(Gtk.ApplicationWindow):
             self.grid_sidebar_tab_tags)
 
         # Games
-        self.grid_games.pack_start(self.grid_games_placeholder, True, True, 0)
+        self.grid_games.pack_start(self.scroll_games_placeholder, True, True, 0)
         self.grid_games.pack_start(self.scroll_games_list, True, True, 0)
         self.grid_games.pack_start(self.scroll_games_grid, True, True, 0)
 
         # Games placeholder
+        self.scroll_games_placeholder.add(self.grid_games_placeholder)
+
         self.grid_games_placeholder.pack_start(
             self.image_game_placeholder, True, True, 0)
         self.grid_games_placeholder.pack_start(
@@ -2756,6 +2766,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.grid_sidebar_tab_informations.show_all()
         self.grid_sidebar_informations.show_all()
 
+        self.grid_games_placeholder.show_all()
+
         if self.use_classic_theme:
             self.logger.debug("Use classic theme for GTK+ interface")
             self.menubar.show_all()
@@ -2972,13 +2984,14 @@ class MainWindow(Gtk.ApplicationWindow):
         # ------------------------------------
 
         self.scroll_games_list.set_visible(False)
-        self.grid_games_placeholder.set_visible(False)
+        self.scroll_games_grid.set_visible(False)
+        self.scroll_games_placeholder.set_visible(False)
 
         current_console = self.append_consoles()
 
         # Show games placeholder when no console available or selected
         if current_console is None or len(self.listbox_consoles) == 0:
-            self.grid_games_placeholder.set_visible(True)
+            self.scroll_games_placeholder.set_visible(True)
 
         self.selection = dict(
             console=None,
@@ -4647,7 +4660,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.scroll_games_list.set_visible(False)
         self.scroll_games_grid.set_visible(False)
-        self.grid_games_placeholder.set_visible(True)
+
+        self.scroll_games_placeholder.set_visible(True)
 
         self.model_games_list.clear()
         self.model_games_grid.clear()
@@ -4677,11 +4691,13 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 if self.toolbar_item_list.get_active():
                     self.scroll_games_list.set_visible(True)
+                    self.treeview_games.show_all()
 
                 if self.toolbar_item_grid.get_active():
                     self.scroll_games_grid.set_visible(True)
+                    self.iconview_games.show_all()
 
-                self.grid_games_placeholder.set_visible(False)
+                self.scroll_games_placeholder.set_visible(False)
 
             yield True
 
@@ -5315,16 +5331,17 @@ class MainWindow(Gtk.ApplicationWindow):
         elif widget == self.toolbar_item_grid:
             self.toolbar_item_list.set_active(not status)
 
-        self.treeview_games.set_visible(self.toolbar_item_list.get_active())
-        self.iconview_games.set_visible(self.toolbar_item_grid.get_active())
+        if not self.scroll_games_placeholder.get_visible():
+            self.scroll_games_list.set_visible(
+                self.toolbar_item_list.get_active())
+            self.scroll_games_grid.set_visible(
+                self.toolbar_item_grid.get_active())
 
-        if self.treeview_games.get_visible():
-            self.scroll_games_list.show_all()
-            self.scroll_games_grid.hide()
+            if self.scroll_games_list.get_visible():
+                self.treeview_games.show_all()
 
-        elif self.iconview_games.get_visible():
-            self.scroll_games_grid.show_all()
-            self.scroll_games_list.hide()
+            elif self.scroll_games_grid.get_visible():
+                self.iconview_games.show_all()
 
         self.__unblock_signals()
 

@@ -720,11 +720,12 @@ class HelpDialog(CommonWindow):
         text = Gtk.Label()
 
         # Properties
-        text.set_alignment(0, 0)
         text.set_line_wrap(True)
         text.set_use_markup(True)
         text.set_max_width_chars(10)
         text.set_markup(self.message)
+        text.set_halign(Gtk.Align.START)
+        text.set_valign(Gtk.Align.START)
         text.set_justify(Gtk.Justification.FILL)
         text.set_line_wrap_mode(Pango.WrapMode.WORD)
 
