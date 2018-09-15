@@ -171,8 +171,8 @@ class ConsolePreferences(CommonWindow):
         self.switch_recursive = Gtk.Switch()
 
         # Properties
-        self.label_name.set_alignment(1, 0.5)
         self.label_name.set_halign(Gtk.Align.END)
+        self.label_name.set_valign(Gtk.Align.CENTER)
         self.label_name.set_justify(Gtk.Justification.RIGHT)
         self.label_name.get_style_context().add_class("dim-label")
         self.label_name.set_text(_("Name"))
@@ -181,8 +181,8 @@ class ConsolePreferences(CommonWindow):
         self.entry_name.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
 
-        self.label_folder.set_alignment(1, 0.5)
         self.label_folder.set_halign(Gtk.Align.END)
+        self.label_folder.set_valign(Gtk.Align.CENTER)
         self.label_folder.set_justify(Gtk.Justification.RIGHT)
         self.label_folder.get_style_context().add_class("dim-label")
         self.label_folder.set_text(_("Games folder"))
@@ -238,8 +238,8 @@ class ConsolePreferences(CommonWindow):
         self.label_emulator.set_halign(Gtk.Align.CENTER)
         self.label_emulator.set_markup("<b>%s</b>" % _("Default emulator"))
 
-        self.label_default.set_alignment(1, 0.5)
         self.label_default.set_halign(Gtk.Align.END)
+        self.label_default.set_valign(Gtk.Align.CENTER)
         self.label_default.set_justify(Gtk.Justification.RIGHT)
         self.label_default.get_style_context().add_class("dim-label")
         self.label_default.set_text(_("Emulator"))
@@ -258,8 +258,8 @@ class ConsolePreferences(CommonWindow):
 
         cell_emulators_icon.set_padding(4, 0)
 
-        self.label_extensions.set_alignment(1, 0.5)
         self.label_extensions.set_halign(Gtk.Align.END)
+        self.label_extensions.set_valign(Gtk.Align.CENTER)
         self.label_extensions.set_justify(Gtk.Justification.RIGHT)
         self.label_extensions.get_style_context().add_class("dim-label")
         self.label_extensions.set_text(_("Extensions"))
@@ -434,7 +434,7 @@ class ConsolePreferences(CommonWindow):
         for emulator in self.api.emulators.values():
             icon = emulator.icon
 
-            if not exists(expanduser(icon)):
+            if icon is not None and not exists(expanduser(icon)):
                 icon = self.api.get_local(
                     "icons", "emulators", "%s.%s" % (icon, Icons.Ext))
 
@@ -474,7 +474,7 @@ class ConsolePreferences(CommonWindow):
             self.path = self.console.icon
 
             icon = self.path
-            if not exists(expanduser(icon)):
+            if icon is not None and not exists(expanduser(icon)):
                 icon = self.api.get_local(
                     "icons", "consoles", "%s.%s" % (icon, Icons.Ext))
 

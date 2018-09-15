@@ -1830,11 +1830,15 @@ class PreferencesWindow(CommonWindow):
         for console in self.api.consoles.values():
             icon = console.icon
 
-            if not exists(expanduser(icon)):
-                icon = self.api.get_local(
-                    "icons", "consoles", "%s.%s" % (icon, Icons.Ext))
+            if icon is not None:
+                if not exists(expanduser(icon)):
+                    icon = self.api.get_local(
+                        "icons", "consoles", "%s.%s" % (icon, Icons.Ext))
 
-            image = icon_from_data(icon, self.empty, 48, 48)
+                image = icon_from_data(icon, self.empty, 48, 48)
+
+            else:
+                image = self.empty
 
             path = str()
             if console.path is not None:
@@ -1860,11 +1864,15 @@ class PreferencesWindow(CommonWindow):
         for emulator in self.api.emulators.values():
             icon = emulator.icon
 
-            if not exists(expanduser(icon)):
-                icon = self.api.get_local(
-                    "icons", "emulators", "%s.%s" % (icon, Icons.Ext))
+            if icon is not None:
+                if not exists(expanduser(icon)):
+                    icon = self.api.get_local(
+                        "icons", "emulators", "%s.%s" % (icon, Icons.Ext))
 
-            image = icon_from_data(icon, self.empty, 48, 48)
+                image = icon_from_data(icon, self.empty, 48, 48)
+
+            else:
+                image = self.empty
 
             check = str()
             if not emulator.exists:

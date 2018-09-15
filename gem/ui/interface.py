@@ -4428,12 +4428,17 @@ class MainWindow(Gtk.ApplicationWindow):
                 status = self.icons["favorite"]
 
             icon = console.icon
-            if not exists(expanduser(icon)):
-                icon = self.api.get_local(
-                    "icons", "consoles", "%s.%s" % (icon, Icons.Ext))
 
-            # Get console icon
-            icon = icon_from_data(icon, self.empty, size, size)
+            if icon is not None:
+                if not exists(expanduser(icon)):
+                    icon = self.api.get_local(
+                        "icons", "consoles", "%s.%s" % (icon, Icons.Ext))
+
+                # Get console icon
+                icon = icon_from_data(icon, self.empty, size, size)
+
+            else:
+                icon = self.empty
 
             return(console, icon, status)
 
@@ -4465,12 +4470,16 @@ class MainWindow(Gtk.ApplicationWindow):
 
         icon = row.data.icon
 
-        if not exists(expanduser(icon)):
-            icon = self.api.get_local(
-                "icons", "consoles", "%s.%s" % (icon, Icons.Ext))
+        if icon is not None:
+            if not exists(expanduser(icon)):
+                icon = self.api.get_local(
+                    "icons", "consoles", "%s.%s" % (icon, Icons.Ext))
 
-        self.__console_icon = set_pixbuf_opacity(
-            icon_from_data(icon, self.empty, 96, 96), 50)
+            self.__console_icon = set_pixbuf_opacity(
+                icon_from_data(icon, self.empty, 96, 96), 50)
+
+        else:
+            image = self.empty
 
         # ------------------------------------
         #   Check data

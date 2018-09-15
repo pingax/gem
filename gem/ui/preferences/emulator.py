@@ -152,8 +152,8 @@ class EmulatorPreferences(CommonWindow):
         self.image_emulator = Gtk.Image()
 
         # Properties
-        self.label_name.set_alignment(1, 0.5)
         self.label_name.set_halign(Gtk.Align.END)
+        self.label_name.set_valign(Gtk.Align.CENTER)
         self.label_name.set_justify(Gtk.Justification.RIGHT)
         self.label_name.get_style_context().add_class("dim-label")
         self.label_name.set_text(
@@ -163,8 +163,8 @@ class EmulatorPreferences(CommonWindow):
         self.entry_name.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
 
-        self.label_binary.set_alignment(1, 0.5)
         self.label_binary.set_halign(Gtk.Align.END)
+        self.label_binary.set_valign(Gtk.Align.CENTER)
         self.label_binary.set_justify(Gtk.Justification.RIGHT)
         self.label_binary.get_style_context().add_class("dim-label")
         self.label_binary.set_text(
@@ -221,8 +221,8 @@ class EmulatorPreferences(CommonWindow):
         self.label_arguments.set_markup(
             "<b>%s</b>" % _("Emulator arguments"))
 
-        self.label_launch.set_alignment(1, 0.5)
         self.label_launch.set_halign(Gtk.Align.END)
+        self.label_launch.set_valign(Gtk.Align.CENTER)
         self.label_launch.set_no_show_all(True)
         self.label_launch.set_justify(Gtk.Justification.RIGHT)
         self.label_launch.get_style_context().add_class("dim-label")
@@ -236,9 +236,9 @@ class EmulatorPreferences(CommonWindow):
         self.entry_launch.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
 
-        self.label_windowed.set_alignment(1, 0.5)
         self.label_windowed.set_no_show_all(True)
         self.label_windowed.set_halign(Gtk.Align.END)
+        self.label_windowed.set_valign(Gtk.Align.CENTER)
         self.label_windowed.set_justify(Gtk.Justification.RIGHT)
         self.label_windowed.get_style_context().add_class("dim-label")
         self.label_windowed.set_label(
@@ -250,9 +250,9 @@ class EmulatorPreferences(CommonWindow):
         self.entry_windowed.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
 
-        self.label_fullscreen.set_alignment(1, 0.5)
         self.label_fullscreen.set_no_show_all(True)
         self.label_fullscreen.set_halign(Gtk.Align.END)
+        self.label_fullscreen.set_valign(Gtk.Align.CENTER)
         self.label_fullscreen.set_justify(Gtk.Justification.RIGHT)
         self.label_fullscreen.get_style_context().add_class("dim-label")
         self.label_fullscreen.set_label(
@@ -288,9 +288,9 @@ class EmulatorPreferences(CommonWindow):
         self.label_files.set_markup(
             "<b>%s</b>" % _("Files patterns"))
 
-        self.label_save.set_alignment(1, 0.5)
         self.label_save.set_no_show_all(True)
         self.label_save.set_halign(Gtk.Align.END)
+        self.label_save.set_valign(Gtk.Align.CENTER)
         self.label_save.set_justify(Gtk.Justification.RIGHT)
         self.label_save.get_style_context().add_class("dim-label")
         self.label_save.set_label(
@@ -303,9 +303,9 @@ class EmulatorPreferences(CommonWindow):
         self.entry_save.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
 
-        self.label_screenshots.set_alignment(1, 0.5)
         self.label_screenshots.set_no_show_all(True)
         self.label_screenshots.set_halign(Gtk.Align.END)
+        self.label_screenshots.set_valign(Gtk.Align.CENTER)
         self.label_screenshots.set_justify(Gtk.Justification.RIGHT)
         self.label_screenshots.get_style_context().add_class("dim-label")
         self.label_screenshots.set_label(
@@ -319,9 +319,9 @@ class EmulatorPreferences(CommonWindow):
             Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
 
         self.label_joker.set_use_markup(True)
-        self.label_joker.set_alignment(1, 0.5)
         self.label_joker.set_no_show_all(True)
         self.label_joker.set_halign(Gtk.Align.END)
+        self.label_joker.set_valign(Gtk.Align.CENTER)
         self.label_joker.set_justify(Gtk.Justification.RIGHT)
         self.label_joker.get_style_context().add_class("dim-label")
         self.label_joker.set_markup(
@@ -439,7 +439,7 @@ class EmulatorPreferences(CommonWindow):
             self.path = self.emulator.icon
 
             icon = self.path
-            if not exists(expanduser(icon)):
+            if icon is not None and not exists(expanduser(icon)):
                 icon = self.api.get_local(
                     "icons", "emulators", "%s.%s" % (icon, Icons.Ext))
 
