@@ -164,6 +164,13 @@ class PreferencesWindow(CommonWindow):
             _("Dialog"): "dialog"
         }
 
+        self.tooltips = {
+            _("Show screenshot or cover"): "both",
+            _("Show screenshot only"): "screenshot",
+            _("Show cover only"): "cover",
+            _("Hide"): "none"
+        }
+
         self.selection = {
             "console": None,
             "emulator": None
@@ -277,6 +284,7 @@ class PreferencesWindow(CommonWindow):
         self.grid_sidebar_screenshot = Gtk.Box()
         self.grid_sidebar_position = Gtk.Box()
         self.grid_games_lines = Gtk.Box()
+        self.grid_games_tooltips = Gtk.Box()
         self.grid_games_icons = Gtk.Box()
         self.grid_columns_play = Gtk.Box()
         self.grid_columns_last_play = Gtk.Box()
@@ -355,6 +363,8 @@ class PreferencesWindow(CommonWindow):
 
         self.grid_games_lines.set_spacing(12)
         self.grid_games_lines.set_homogeneous(True)
+        self.grid_games_tooltips.set_spacing(12)
+        self.grid_games_tooltips.set_homogeneous(True)
         self.grid_games_icons.set_spacing(12)
         self.grid_games_icons.set_margin_top(6)
         self.grid_games_icons.set_homogeneous(True)
@@ -761,6 +771,13 @@ class PreferencesWindow(CommonWindow):
 
         self.cell_lines = Gtk.CellRendererText()
 
+        self.label_tooltips = Gtk.Label()
+
+        self.model_tooltips = Gtk.ListStore(str)
+        self.combo_tooltips = Gtk.ComboBox()
+
+        self.cell_tooltips = Gtk.CellRendererText()
+
         self.label_icons = Gtk.Label()
         self.check_icons = Gtk.Switch()
 
@@ -789,6 +806,25 @@ class PreferencesWindow(CommonWindow):
         self.combo_lines.set_size_request(300, -1)
         self.combo_lines.set_halign(Gtk.Align.START)
         self.combo_lines.set_valign(Gtk.Align.CENTER)
+
+        self.label_tooltips.set_line_wrap(True)
+        self.label_tooltips.set_halign(Gtk.Align.END)
+        self.label_tooltips.set_valign(Gtk.Align.CENTER)
+        self.label_tooltips.set_justify(Gtk.Justification.RIGHT)
+        self.label_tooltips.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
+        self.label_tooltips.get_style_context().add_class("dim-label")
+        self.label_tooltips.set_text(
+            _("Game tooltip image"))
+
+        self.model_tooltips.set_sort_column_id(0, Gtk.SortType.ASCENDING)
+
+        self.combo_tooltips.set_model(self.model_tooltips)
+        self.combo_tooltips.set_id_column(0)
+        self.combo_tooltips.pack_start(self.cell_tooltips, True)
+        self.combo_tooltips.add_attribute(self.cell_tooltips, "text", 0)
+        self.combo_tooltips.set_size_request(300, -1)
+        self.combo_tooltips.set_halign(Gtk.Align.START)
+        self.combo_tooltips.set_valign(Gtk.Align.CENTER)
 
         self.label_icons.set_line_wrap(True)
         self.label_icons.set_halign(Gtk.Align.END)
@@ -1244,6 +1280,8 @@ class PreferencesWindow(CommonWindow):
         self.grid_interface.pack_start(
             self.grid_games_lines, False, False, 0)
         self.grid_interface.pack_start(
+            self.grid_games_tooltips, False, False, 0)
+        self.grid_interface.pack_start(
             self.grid_games_icons, False, False, 0)
         self.grid_interface.pack_start(
             self.label_columns, False, False, 0)
@@ -1294,6 +1332,11 @@ class PreferencesWindow(CommonWindow):
             self.label_treeview_lines, True, True, 0)
         self.grid_games_lines.pack_start(
             self.combo_lines, True, True, 0)
+
+        self.grid_games_tooltips.pack_start(
+            self.label_tooltips, True, True, 0)
+        self.grid_games_tooltips.pack_start(
+            self.combo_tooltips, True, True, 0)
 
         self.grid_games_icons.pack_start(
             self.label_icons, True, True, 0)
@@ -1564,6 +1607,9 @@ class PreferencesWindow(CommonWindow):
         self.config.modify("gem", "games_treeview_lines",
             self.lines[self.combo_lines.get_active_id()])
 
+        self.config.modify("gem", "tooltip_image_type",
+            self.tooltips[self.combo_tooltips.get_active_id()])
+
         self.config.modify("viewer", "native",
             not self.check_native_viewer.get_active())
         self.config.modify("viewer", "binary",
@@ -1677,6 +1723,17 @@ class PreferencesWindow(CommonWindow):
 
         if item is not None:
             self.combo_lines.set_active_iter(item)
+
+        item = None
+        for key, value in self.tooltips.items():
+            row = self.model_tooltips.append([key])
+
+            if self.config.item(
+                "gem", "tooltip_image_type", "screenshot") == value:
+                item = row
+
+        if item is not None:
+            self.combo_tooltips.set_active_iter(item)
 
         self.check_icons.set_active(self.config.getboolean(
             "gem", "use_translucent_icons", fallback=True))
