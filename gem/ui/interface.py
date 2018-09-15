@@ -5163,21 +5163,31 @@ class MainWindow(Gtk.ApplicationWindow):
                     if game.emulator is not None:
                         emulator = game.emulator
 
-                    screenshots = sorted(emulator.get_screenshots(game))
-                    if len(screenshots) > 0:
-                        image = screenshots[-1]
+                    # Retrieve user choice for tooltip image
+                    tooltip_image = self.config.get(
+                        "gem", "tooltip_image_type", fallback="screenshot")
 
-                    if game.cover is not None and exists(game.cover):
-                        image = game.cover
+                    if not tooltip_image == "none":
 
-                    if image is not None and exists(image):
-                        pixbuf = Pixbuf.new_from_file(image)
+                        if tooltip_image in ["both", "cover"]:
+                            if game.cover is not None and exists(game.cover):
+                                image = game.cover
 
-                        # Resize pixbuf to have a 96 pixels height
-                        pixbuf = pixbuf.scale_simple(pixbuf.get_width() * float(
-                            96 / pixbuf.get_height()), 96, InterpType.TILES)
+                        if tooltip_image in ["both", "screenshot"]:
+                            screenshots = sorted(emulator.get_screenshots(game))
 
-                        self.__current_tooltip_pixbuf = pixbuf
+                            if len(screenshots) > 0:
+                                image = screenshots[-1]
+
+                        if image is not None and exists(image):
+                            # Resize pixbuf to have a 96 pixels height
+                            pixbuf = Pixbuf.new_from_file_at_scale(
+                                image, -1, 96, True)
+
+                            self.__current_tooltip_pixbuf = pixbuf
+
+                    else:
+                        self.__current_tooltip_pixbuf = None
 
                 # Only show tooltip when data are available
                 if len(self.__current_tooltip_data) > 0:

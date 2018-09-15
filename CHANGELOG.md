@@ -1,6 +1,8 @@
-# GEM Changelog
+GEM Changelog
+=============
 
-## Version 1.0 - Space Fox
+Version 1.0 - Space Fox
+-----------------------
 
 ### Engine
 
@@ -35,13 +37,15 @@
 * Fix notes are not correctly close when closing application
 * Fix remove game note when the user save an empty text buffer
 
-## Version 0.9.1 - Lavos (17 Feb, 2018)
+Version 0.9.1 - Lavos (17 Feb, 2018)
+------------------------------------
 
 ### GTK+ interface
 
 * Fix crash when launching mednafen memory file dialog
 
-## Version 0.9 - Frog Knight (21 Jan, 2018)
+Version 0.9 - Frog Knight (21 Jan, 2018)
+----------------------------------------
 
 ### Engine
 
@@ -75,7 +79,8 @@
 * Fix wrong parameter for dolphin-emu
 * Fix wrong exception in icon_from_data
 
-## Version 0.8 - Shadow Blade (26 July, 2017)
+Version 0.8 - Shadow Blade (26 July, 2017)
+------------------------------------------
 
 * Add an option to hide game in games list with specific regex
 * Add a sidebar which show game informations and a random screenshot
@@ -96,11 +101,13 @@
 * Fix editor dialog which crash without GtkSource
 * Fix create missing consoles roms folders
 
-## Version 0.7.1 - Count Dracula (13 June, 2017)
+Version 0.7.1 - Count Dracula (13 June, 2017)
+---------------------------------------------
 
 * Fix wrong generate command for emulator without default arguments
 
-## Version 0.7 - Vampire hunter (08 June, 2017)
+Version 0.7 - Vampire hunter (08 June, 2017)
+--------------------------------------------
 
 * Add an API to manage emulators, consoles and games
 * Add the backup memory type file generation for Mednafen
@@ -109,7 +116,8 @@
 * Fix game with custom name won't work correctly in self.__on_game_launch
 * Fix shortcuts in preferences are not store correctly in main configuration
 
-## Version 0.6.1 - Dr. Funfrock (30 Mar, 2017)
+Version 0.6.1 - Dr. Funfrock (30 Mar, 2017)
+-------------------------------------------
 
 * Add windows size memorization
 * Add a lock to avoid multi GEM instances
@@ -120,7 +128,8 @@
 * Fix random segfault when a game terminate
 * Fix cannot launch Exec command in generate menu entries when filepath has some spaces
 
-## Version 0.6 - Magicball (26 Feb, 2017)
+Version 0.6 - Magicball (26 Feb, 2017)
+--------------------------------------
 
 * Add the possibility to switch ui theme between dark and light
 * Add an icon in consoles combobox to alert user when a binary is missing
@@ -139,12 +148,14 @@
 * Fix set icons size to 22 pixels instead of 24 pixels
 * Fix drag a game to an extern application send the good file-uri
 
-## Version 0.5.2 - Flintheart Glomgold (29 Nov, 2016)
+Version 0.5.2 - Flintheart Glomgold (29 Nov, 2016)
+--------------------------------------------------
 
 * Fix cannot launch GEM from a fresh installation
 * Fix show errors when use emulator configurator with missing binary
 
-## Version 0.5.1 - Magica De Spell (5 Nov, 2016)
+Version 0.5.1 - Magica De Spell (5 Nov, 2016)
+---------------------------------------------
 
 * Change default rom folders for consoles.conf
 * Change default shortcut for "Remove from database" from Delete to Control+D
@@ -152,7 +163,8 @@
 * Fix use correct data for version and code name
 * Fix command generator not use specific default argument
 
-## Version 0.5 - Rich Duck (25 Oct, 2016)
+Version 0.5 - Rich Duck (25 Oct, 2016)
+--------------------------------------
 
 * Add an entry in game and main menus to remove a ROM and his data.
 * Add an entry in main menu to show GEM log.
@@ -177,7 +189,8 @@
 * Fix hide error when use a wrong regex in filter entry.
 * Fix write old value for emulators and consoles when a path not exists.
 
-## Version 0.4 - Blue Bomber (20 Aug, 2016)
+Version 0.4 - Blue Bomber (20 Aug, 2016)
+----------------------------------------
 
 * Add a native screenshots viewer.
 * Add the possibility to choose between native and custom screenshots viewer.
@@ -199,7 +212,8 @@
 * Fix wrong values in image viewer when use fit zoom.
 * Fix wrong years values for last play date value.
 
-## Version 0.3 - Fast Hedgehog (29 Feb, 2016)
+Version 0.3 - Fast Hedgehog (29 Feb, 2016)
+------------------------------------------
 
 * Improve database module to allow quick databases creation with configuration files.
 * Add a system to convert old database (version &lt; 0.3) to new schema.
@@ -213,7 +227,8 @@
 * Remove "date" option in main configuration file.
 * Fix game launcher which can run missing binaries.
 
-## Version 0.2 - Jumping Plumber (03 Feb, 2016)
+Version 0.2 - Jumping Plumber (03 Feb, 2016)
+--------------------------------------------
 
 * Extend main toolbar with common widgets.
 * Restructure configuration files to be more simple.
@@ -222,6 +237,7 @@
 * Add Stella, Hatari, Zsnes, Fceux and Dolphin emulators.
 * Add Nintendo GameCube, Nintendo Wii, NEC PC-Engine, Sega Game Gear, SNK NeoGeo Pocket and MAME consoles
 
-## Version 0.1 (16 May, 2015)
+Version 0.1 (16 May, 2015)
+--------------------------
 
 * First stable release
