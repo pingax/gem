@@ -37,6 +37,7 @@ from random import randint
 
 # Regex
 from re import match
+from re import search
 from re import IGNORECASE
 
 # System
@@ -82,11 +83,24 @@ class MainWindow(Gtk.ApplicationWindow):
         Gtk.ApplicationWindow.__init__(self)
 
         # ------------------------------------
+        #   Initialize API
+        # ------------------------------------
+
+        # GEM API
+        self.api = api
+
+        # Quick access to API logger
+        self.logger = api.logger
+
+        # Check development version
+        self.__version = self.check_version()
+
+        # ------------------------------------
         #   Initialize variables
         # ------------------------------------
 
         # Generate a title from GEM informations
-        self.title = "%s - %s (%s)" % (GEM.Name, GEM.Version, GEM.CodeName)
+        self.title = "%s - %s (%s)" % (GEM.Name, self.__version, GEM.CodeName)
 
         # Store thread id for game listing
         self.list_thread = int()
@@ -128,16 +142,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Check mednafen status
         self.__mednafen_status = self.check_mednafen()
-
-        # ------------------------------------
-        #   Initialize API
-        # ------------------------------------
-
-        # GEM API
-        self.api = api
-
-        # Quick access to API logger
-        self.logger = api.logger
 
         # ------------------------------------
         #   Initialize icons
@@ -4018,7 +4022,7 @@ class MainWindow(Gtk.ApplicationWindow):
         about.set_transient_for(self)
 
         about.set_program_name(GEM.Name)
-        about.set_version("%s (%s)" % (GEM.Version, GEM.CodeName))
+        about.set_version("%s (%s)" % (self.__version, GEM.CodeName))
         about.set_comments(GEM.Description)
         about.set_copyright(GEM.Copyleft)
         about.set_website(GEM.Website)
@@ -6951,6 +6955,39 @@ class MainWindow(Gtk.ApplicationWindow):
                     return True
 
         return False
+
+
+    def check_version(self):
+        """ Check development version when debug mode is activate
+
+        This function allow the developper to know which hash version is
+        currently using
+
+        Returns
+        -------
+        str
+            Application version
+        """
+
+        if self.api.debug:
+
+            if len(get_binary_path("git")) > 0:
+                proc = Popen(
+                    [ "git", "rev-parse", "--short", "HEAD" ],
+                    stdin=PIPE,
+                    stdout=PIPE,
+                    stderr=STDOUT,
+                    universal_newlines=True)
+
+                output, error_output = proc.communicate()
+
+                if output is not None:
+                    output = output.split('\n')[0]
+
+                    if match(r'[\d\w]+', output) is not None:
+                        return "%s-%s" % (GEM.Version, output)
+
+        return GEM.Version
 
 
     def set_game_data(self, index, data, gamename):
