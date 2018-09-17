@@ -87,7 +87,7 @@ class PreferencesWindow(CommonWindow):
             },
             _("Game"): {
                 "start": [
-                    _("Launch a game"), "Return"],
+                    _("Launch a game"), "<Control>Return"],
                 "favorite": [
                     _("Mark a game as favorite"), "F3"],
                 "multiplayer": [

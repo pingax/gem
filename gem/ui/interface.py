@@ -3322,7 +3322,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.menu_item_launch,
                     self.menubar_game_item_launch
                 ],
-                "keys": self.config.item("keys", "start", "Return")
+                "keys": self.config.item("keys", "start", "<Control>Return")
             },
             {
                 "path": "<GEM>/game/rename",
