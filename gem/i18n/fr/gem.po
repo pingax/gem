@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.6\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2018-09-11 16:19+0200\n"
+"PO-Revision-Date: 2018-09-17 21:33+0200\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -187,6 +187,11 @@ msgid "An exception error occur: %s"
 msgstr "Une exception est survenue: %s"
 
 #
+# File: gem/gtk/preferences.py, line: 802
+msgid "Appearance"
+msgstr "Apparence"
+
+#
 # File: gem/gtk/windows.py, line: 860
 # File: gem/gtk/windows.py, line: 1214
 msgid "Apply"
@@ -333,9 +338,9 @@ msgid "Colorscheme"
 msgstr "Thème de couleurs"
 
 #
-# File: gem/gtk/preferences.py, line: 802
-msgid "Columns appearance"
-msgstr "Apparence des colonnes"
+# File: gem/ui/preferences/interface.py, line: 791
+msgid "Columns"
+msgstr "Colonnes"
 
 #
 # File: gem/interface.py, line: 300
@@ -630,6 +635,11 @@ msgid "Game screenshots"
 msgstr "Captures d'écran du jeu"
 
 #
+# File: gem/ui/preferences/interface.py, line: 741
+msgid "Game tooltip image"
+msgstr "Image dans l'infobulle de jeu"
+
+#
 # File: src/window.py, line: 446
 msgid "Game's data from database"
 msgstr "Données du jeu dans la base de données"
@@ -640,14 +650,14 @@ msgid "GameID"
 msgstr "GameID"
 
 #
-# File: gem/interface.py, line: 220
-msgid "Games folder"
-msgstr "Dossier des jeux"
+# File: gem/preferences.py, line: 113
+msgid "Games"
+msgstr "Jeux"
 
 #
 # File: gem/interface.py, line: 220
-msgid "Games list"
-msgstr "Liste de jeux"
+msgid "Games folder"
+msgstr "Dossier des jeux"
 
 #
 # File: gem/preferences.py, line: 302
@@ -684,6 +694,11 @@ msgstr "Obtenir de l'aide à propos de cette fenêtre"
 # File: gem/windows.py, line: 238
 msgid "Help"
 msgstr "Aide"
+
+#
+# File: gem/ui/preferences/interface.py, line: 171
+msgid "Hide"
+msgstr "Cacher"
 
 #
 # File: gem/ui/preferences/interface.py, line: 462
@@ -811,6 +826,11 @@ msgstr "Bibliothèque"
 # File: gem/windows.py, line: 319
 msgid "Line break"
 msgstr "Retour à la ligne"
+
+#
+# File: gem/ui/preferences/interface.py, line: 714
+msgid "List view"
+msgstr "Liste détaillée"
 
 #
 # File: gem/ui/dialog/editor.py, line: 403
@@ -1281,6 +1301,11 @@ msgid "Show a game screenshots"
 msgstr "Afficher les captures d'écran d'un jeu"
 
 #
+# File: gem/ui/preferences/interface.py, line: 170
+msgid "Show cover only"
+msgstr "Montrer uniquement la couverture"
+
+#
 # File: gem/preferences.py, line: 338
 msgid "Show grid lines"
 msgstr "Afficher les lignes de grille"
@@ -1289,6 +1314,16 @@ msgstr "Afficher les lignes de grille"
 # File: gem/preferences.py, line: 338
 msgid "Show line numbers"
 msgstr "Afficher les numéros de ligne"
+
+#
+# File: src/window.py, line: 441
+msgid "Show screenshot only"
+msgstr "Afficher uniquement les captures d'écran"
+
+#
+# File: gem/preferences.py, line: 335
+msgid "Show screenshot or cover"
+msgstr "Afficher les captures d'écran ou la couverture"
 
 #
 # File: src/window.py, line: 441
@@ -1391,6 +1426,16 @@ msgstr "Alterner le mode plein écran"
 # File: gem/gtk/preferences.py, line: 648
 msgid "Switch to classic theme"
 msgstr "Utiliser le thème classique"
+
+#
+# File: gem/gtk/preferences.py, line: 648
+msgid "Switch to dark theme variant"
+msgstr "Utiliser la variante sombre du thème"
+
+#
+# File: gem/ui/preferences/interface.py, line: 447
+msgid "Tab width"
+msgstr "Taille des tabulations"
 
 #
 # File: gem/gtk/interface.py, line: 185
@@ -1813,3 +1858,8 @@ msgstr "_Outils"
 # File: gem/interface.py, line: 926
 msgid "translator-credits"
 msgstr "Lubert Aurélien (PacMiam)"
+
+#
+# File: gem/interface.py, line: 220
+#~ msgid "Games list"
+#~ msgstr "Liste de jeux"

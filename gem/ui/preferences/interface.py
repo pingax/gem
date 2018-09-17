@@ -263,35 +263,10 @@ class PreferencesWindow(CommonWindow):
 
         self.grid_general = Gtk.Box()
         self.grid_interface = Gtk.Box()
+        self.grid_games = Gtk.Box()
         self.grid_shortcuts = Gtk.Grid()
         self.grid_consoles = Gtk.Box()
         self.grid_emulators = Gtk.Box()
-
-        self.grid_last_console = Gtk.Box()
-        self.grid_last_column = Gtk.Box()
-        self.grid_hide_console = Gtk.Box()
-        self.grid_lines = Gtk.Box()
-        self.grid_colorsheme = Gtk.Box()
-        self.grid_font = Gtk.Box()
-        self.grid_viewer = Gtk.Box()
-        self.grid_binary = Gtk.Box()
-        self.grid_options = Gtk.Box()
-
-        self.grid_theme_classic = Gtk.Box()
-        self.grid_theme_header = Gtk.Box()
-        self.grid_toolbar_icons = Gtk.Box()
-        self.grid_sidebar_show = Gtk.Box()
-        self.grid_sidebar_screenshot = Gtk.Box()
-        self.grid_sidebar_position = Gtk.Box()
-        self.grid_games_lines = Gtk.Box()
-        self.grid_games_tooltips = Gtk.Box()
-        self.grid_games_icons = Gtk.Box()
-        self.grid_columns_play = Gtk.Box()
-        self.grid_columns_last_play = Gtk.Box()
-        self.grid_columns_play_time = Gtk.Box()
-        self.grid_columns_score = Gtk.Box()
-        self.grid_columns_installed = Gtk.Box()
-        self.grid_columns_flags = Gtk.Box()
 
         self.grid_consoles_buttons = Gtk.Box()
         self.grid_emulators_buttons = Gtk.Box()
@@ -301,13 +276,18 @@ class PreferencesWindow(CommonWindow):
 
         self.grid_general.set_spacing(6)
         self.grid_general.set_border_width(18)
-        self.grid_general.set_halign(Gtk.Align.CENTER)
+        self.grid_general.set_halign(Gtk.Align.FILL)
         self.grid_general.set_orientation(Gtk.Orientation.VERTICAL)
 
         self.grid_interface.set_spacing(6)
         self.grid_interface.set_border_width(18)
-        self.grid_interface.set_halign(Gtk.Align.CENTER)
+        self.grid_interface.set_halign(Gtk.Align.FILL)
         self.grid_interface.set_orientation(Gtk.Orientation.VERTICAL)
+
+        self.grid_games.set_spacing(6)
+        self.grid_games.set_border_width(18)
+        self.grid_games.set_halign(Gtk.Align.FILL)
+        self.grid_games.set_orientation(Gtk.Orientation.VERTICAL)
 
         self.grid_shortcuts.set_row_spacing(6)
         self.grid_shortcuts.set_column_spacing(12)
@@ -316,83 +296,23 @@ class PreferencesWindow(CommonWindow):
 
         self.grid_consoles.set_spacing(6)
         self.grid_consoles.set_border_width(18)
+        self.grid_consoles.set_orientation(Gtk.Orientation.VERTICAL)
 
         self.grid_emulators.set_spacing(6)
         self.grid_emulators.set_border_width(18)
-
-        self.grid_last_console.set_spacing(12)
-        self.grid_last_console.set_homogeneous(True)
-        self.grid_last_column.set_spacing(12)
-        self.grid_last_column.set_homogeneous(True)
-        self.grid_hide_console.set_spacing(12)
-        self.grid_hide_console.set_margin_top(12)
-        self.grid_hide_console.set_homogeneous(True)
-
-        self.grid_lines.set_spacing(12)
-        self.grid_lines.set_homogeneous(True)
-        self.grid_colorsheme.set_spacing(12)
-        self.grid_colorsheme.set_margin_top(6)
-        self.grid_colorsheme.set_homogeneous(True)
-        self.grid_font.set_spacing(12)
-        self.grid_font.set_homogeneous(True)
-
-        self.grid_viewer.set_spacing(12)
-        self.grid_viewer.set_homogeneous(True)
-        self.grid_binary.set_spacing(12)
-        self.grid_binary.set_margin_top(6)
-        self.grid_binary.set_homogeneous(True)
-        self.grid_options.set_spacing(12)
-        self.grid_options.set_homogeneous(True)
-
-        self.grid_theme_classic.set_spacing(12)
-        self.grid_theme_classic.set_homogeneous(True)
-        self.grid_theme_header.set_spacing(12)
-        self.grid_theme_header.set_margin_top(6)
-        self.grid_theme_header.set_homogeneous(True)
-
-        self.grid_toolbar_icons.set_spacing(12)
-        self.grid_toolbar_icons.set_homogeneous(True)
-
-        self.grid_sidebar_show.set_spacing(12)
-        self.grid_sidebar_show.set_homogeneous(True)
-        self.grid_sidebar_screenshot.set_spacing(12)
-        self.grid_sidebar_screenshot.set_margin_top(6)
-        self.grid_sidebar_screenshot.set_homogeneous(True)
-        self.grid_sidebar_position.set_spacing(12)
-        self.grid_sidebar_position.set_homogeneous(True)
-
-        self.grid_games_lines.set_spacing(12)
-        self.grid_games_lines.set_homogeneous(True)
-        self.grid_games_tooltips.set_spacing(12)
-        self.grid_games_tooltips.set_homogeneous(True)
-        self.grid_games_icons.set_spacing(12)
-        self.grid_games_icons.set_margin_top(6)
-        self.grid_games_icons.set_homogeneous(True)
-
-        self.grid_columns_play.set_spacing(12)
-        self.grid_columns_play.set_homogeneous(True)
-        self.grid_columns_last_play.set_spacing(12)
-        self.grid_columns_last_play.set_homogeneous(True)
-        self.grid_columns_play_time.set_spacing(12)
-        self.grid_columns_play_time.set_homogeneous(True)
-        self.grid_columns_score.set_spacing(12)
-        self.grid_columns_score.set_homogeneous(True)
-        self.grid_columns_installed.set_spacing(12)
-        self.grid_columns_installed.set_homogeneous(True)
-        self.grid_columns_flags.set_spacing(12)
-        self.grid_columns_flags.set_homogeneous(True)
+        self.grid_emulators.set_orientation(Gtk.Orientation.VERTICAL)
 
         Gtk.StyleContext.add_class(
             self.grid_consoles_buttons.get_style_context(), "linked")
         self.grid_consoles_buttons.set_spacing(-1)
-        self.grid_consoles_buttons.set_valign(Gtk.Align.START)
-        self.grid_consoles_buttons.set_orientation(Gtk.Orientation.VERTICAL)
+        self.grid_consoles_buttons.set_halign(Gtk.Align.CENTER)
+        self.grid_consoles_buttons.set_valign(Gtk.Align.CENTER)
 
         Gtk.StyleContext.add_class(
             self.grid_emulators_buttons.get_style_context(), "linked")
         self.grid_emulators_buttons.set_spacing(-1)
-        self.grid_emulators_buttons.set_valign(Gtk.Align.START)
-        self.grid_emulators_buttons.set_orientation(Gtk.Orientation.VERTICAL)
+        self.grid_emulators_buttons.set_halign(Gtk.Align.CENTER)
+        self.grid_emulators_buttons.set_valign(Gtk.Align.CENTER)
 
         # ------------------------------------
         #   Stack
@@ -420,124 +340,122 @@ class PreferencesWindow(CommonWindow):
         #   General - Behavior
         # ------------------------------------
 
-        self.label_behavior = Gtk.Label()
+        self.label_general_behavior = Gtk.Label()
 
-        self.label_last_console = Gtk.Label()
-        self.check_last_console = Gtk.Switch()
+        self.frame_general_behavior = Gtk.Frame()
+        self.listbox_general_behavior = Gtk.ListBox()
 
-        self.label_last_column = Gtk.Label()
-        self.check_last_column = Gtk.Switch()
+        self.widget_behavior_last_console = PreferencesItem()
+        self.switch_general_behavior_last_console = Gtk.Switch()
 
-        self.label_hide_console = Gtk.Label()
-        self.check_hide_console = Gtk.Switch()
+        self.widget_behavior_last_column = PreferencesItem()
+        self.switch_general_behavior_last_column = Gtk.Switch()
+
+        self.widget_behavior_hide_consoles = PreferencesItem()
+        self.switch_general_behavior_hide_consoles = Gtk.Switch()
 
         # Properties
-        self.label_behavior.set_hexpand(True)
-        self.label_behavior.set_use_markup(True)
-        self.label_behavior.set_halign(Gtk.Align.CENTER)
-        self.label_behavior.set_markup("<b>%s</b>" % _("Behavior"))
+        self.label_general_behavior.set_hexpand(True)
+        self.label_general_behavior.set_use_markup(True)
+        self.label_general_behavior.set_halign(Gtk.Align.CENTER)
+        self.label_general_behavior.set_markup(
+            "<b>%s</b>" % _("Behavior"))
 
-        self.label_last_console.set_line_wrap(True)
-        self.label_last_console.set_halign(Gtk.Align.END)
-        self.label_last_console.set_valign(Gtk.Align.CENTER)
-        self.label_last_console.set_justify(Gtk.Justification.RIGHT)
-        self.label_last_console.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
-        self.label_last_console.get_style_context().add_class("dim-label")
-        self.label_last_console.set_text(
+        self.frame_general_behavior.set_margin_bottom(12)
+
+        self.listbox_general_behavior.set_activate_on_single_click(True)
+        self.listbox_general_behavior.set_selection_mode(
+            Gtk.SelectionMode.NONE)
+
+        self.widget_behavior_last_console.set_widget(
+            self.switch_general_behavior_last_console)
+        self.widget_behavior_last_console.set_option_label(
             _("Remember the last selected console"))
 
-        self.check_last_column.set_halign(Gtk.Align.START)
-        self.check_last_column.set_valign(Gtk.Align.CENTER)
-
-        self.label_last_column.set_line_wrap(True)
-        self.label_last_column.set_halign(Gtk.Align.END)
-        self.label_last_column.set_valign(Gtk.Align.CENTER)
-        self.label_last_column.set_justify(Gtk.Justification.RIGHT)
-        self.label_last_column.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
-        self.label_last_column.get_style_context().add_class("dim-label")
-        self.label_last_column.set_text(
+        self.widget_behavior_last_column.set_widget(
+            self.switch_general_behavior_last_column)
+        self.widget_behavior_last_column.set_option_label(
             _("Remember the last sorted column"))
 
-        self.check_last_console.set_halign(Gtk.Align.START)
-        self.check_last_console.set_valign(Gtk.Align.CENTER)
-
-        self.label_hide_console.set_line_wrap(True)
-        self.label_hide_console.set_halign(Gtk.Align.END)
-        self.label_hide_console.set_valign(Gtk.Align.CENTER)
-        self.label_hide_console.set_justify(Gtk.Justification.RIGHT)
-        self.label_hide_console.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
-        self.label_hide_console.get_style_context().add_class("dim-label")
-        self.label_hide_console.set_text(
+        self.widget_behavior_hide_consoles.set_widget(
+            self.switch_general_behavior_hide_consoles)
+        self.widget_behavior_hide_consoles.set_option_label(
             _("Hide consoles without games"))
-
-        self.check_hide_console.set_halign(Gtk.Align.START)
-        self.check_hide_console.set_valign(Gtk.Align.CENTER)
 
         # ------------------------------------
         #   General - Editor
         # ------------------------------------
 
-        self.label_editor = Gtk.Label()
+        self.label_general_editor = Gtk.Label()
 
-        self.label_lines = Gtk.Label()
-        self.check_lines = Gtk.Switch()
+        self.frame_general_editor = Gtk.Frame()
+        self.listbox_general_editor = Gtk.ListBox()
 
-        self.label_editor_colorscheme = Gtk.Label()
-        self.model_colorsheme = Gtk.ListStore(str)
-        self.combo_colorsheme = Gtk.ComboBox()
-        self.cell_colorsheme = Gtk.CellRendererText()
+        self.widget_editor_lines_visible = PreferencesItem()
+        self.switch_general_editor_lines_visible = Gtk.Switch()
 
-        self.label_editor_font = Gtk.Label()
-        self.font_editor = Gtk.FontButton()
+        self.widget_editor_tab_width = PreferencesItem()
+        self.spin_general_editor_tab_width = Gtk.SpinButton()
+
+        self.widget_editor_colorscheme = PreferencesItem()
+        self.model_general_colorscheme = Gtk.ListStore(str)
+        self.combo_general_colorscheme = Gtk.ComboBox()
+        self.cell_general_colorscheme = Gtk.CellRendererText()
+
+        self.widget_editor_font = PreferencesItem()
+        self.font_general_editor_font = Gtk.FontButton()
 
         # Properties
-        self.label_editor.set_margin_top(18)
-        self.label_editor.set_hexpand(True)
-        self.label_editor.set_use_markup(True)
-        self.label_editor.set_halign(Gtk.Align.CENTER)
-        self.label_editor.set_markup("<b>%s</b>" % _("Editor"))
+        self.label_general_editor.set_hexpand(True)
+        self.label_general_editor.set_use_markup(True)
+        self.label_general_editor.set_halign(Gtk.Align.CENTER)
+        self.label_general_editor.set_markup(
+            "<b>%s</b>" % _("Editor"))
 
-        self.label_lines.set_line_wrap(True)
-        self.label_lines.set_halign(Gtk.Align.END)
-        self.label_lines.set_valign(Gtk.Align.CENTER)
-        self.label_lines.set_justify(Gtk.Justification.RIGHT)
-        self.label_lines.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
-        self.label_lines.get_style_context().add_class("dim-label")
-        self.label_lines.set_label(
+        self.frame_general_editor.set_margin_bottom(12)
+
+        self.listbox_general_editor.set_activate_on_single_click(True)
+        self.listbox_general_editor.set_selection_mode(
+            Gtk.SelectionMode.NONE)
+
+        self.widget_editor_lines_visible.set_widget(
+            self.switch_general_editor_lines_visible)
+        self.widget_editor_lines_visible.set_option_label(
             _("Show line numbers"))
 
-        self.check_lines.set_halign(Gtk.Align.START)
-        self.check_lines.set_valign(Gtk.Align.CENTER)
+        self.widget_editor_tab_width.set_widget(
+            self.spin_general_editor_tab_width)
+        self.widget_editor_tab_width.set_option_label(
+            _("Tab width"))
 
-        self.label_editor_colorscheme.set_line_wrap(True)
-        self.label_editor_colorscheme.set_halign(Gtk.Align.END)
-        self.label_editor_colorscheme.set_valign(Gtk.Align.CENTER)
-        self.label_editor_colorscheme.set_justify(Gtk.Justification.RIGHT)
-        self.label_editor_colorscheme.set_line_wrap_mode(
-            Pango.WrapMode.WORD_CHAR)
-        self.label_editor_colorscheme.get_style_context().add_class("dim-label")
-        self.label_editor_colorscheme.set_label(
+        self.spin_general_editor_tab_width.set_range(1.0, 40.0)
+        self.spin_general_editor_tab_width.set_increments(1, 4)
+        self.spin_general_editor_tab_width.set_numeric(True)
+        self.spin_general_editor_tab_width.set_digits(0)
+
+        self.widget_editor_colorscheme.set_widget(
+            self.combo_general_colorscheme)
+        self.widget_editor_colorscheme.set_option_label(
             _("Colorscheme"))
 
-        self.combo_colorsheme.set_model(self.model_colorsheme)
-        self.combo_colorsheme.set_id_column(0)
-        self.combo_colorsheme.pack_start(self.cell_colorsheme, True)
-        self.combo_colorsheme.add_attribute(self.cell_colorsheme, "text", 0)
-        self.combo_colorsheme.set_size_request(300, -1)
-        self.combo_colorsheme.set_halign(Gtk.Align.START)
-        self.combo_colorsheme.set_valign(Gtk.Align.CENTER)
+        self.model_general_colorscheme.set_sort_column_id(
+            0, Gtk.SortType.ASCENDING)
 
-        self.label_editor_font.set_line_wrap(True)
-        self.label_editor_font.set_halign(Gtk.Align.END)
-        self.label_editor_font.set_valign(Gtk.Align.CENTER)
-        self.label_editor_font.set_justify(Gtk.Justification.RIGHT)
-        self.label_editor_font.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
-        self.label_editor_font.get_style_context().add_class("dim-label")
-        self.label_editor_font.set_label(
+        self.combo_general_colorscheme.set_model(
+            self.model_general_colorscheme)
+        self.combo_general_colorscheme.set_id_column(0)
+        self.combo_general_colorscheme.pack_start(
+            self.cell_general_colorscheme, True)
+        self.combo_general_colorscheme.add_attribute(
+            self.cell_general_colorscheme, "text", 0)
+
+        self.widget_editor_font.set_widget(
+            self.font_general_editor_font)
+        self.widget_editor_font.set_option_label(
             _("Font"))
 
         # HACK: Set an ellipsize mode for the label inside FontButton
-        for child in self.font_editor.get_child():
+        for child in self.font_general_editor_font.get_child():
             if type(child) == Gtk.Label:
                 child.set_ellipsize(Pango.EllipsizeMode.END)
 
@@ -545,67 +463,52 @@ class PreferencesWindow(CommonWindow):
         #   General - Viewer
         # ------------------------------------
 
-        self.label_viewer = Gtk.Label()
+        self.label_general_viewer = Gtk.Label()
 
-        self.label_native_viewer = Gtk.Label()
-        self.check_native_viewer = Gtk.Switch()
+        self.frame_general_viewer = Gtk.Frame()
+        self.listbox_general_viewer = Gtk.ListBox()
 
-        self.label_viewer_binary = Gtk.Label()
-        self.file_viewer_binary = Gtk.FileChooserButton()
+        self.widget_viewer_alternative_viewer = PreferencesItem()
+        self.switch_general_viewer_alternative_viewer = Gtk.Switch()
 
-        self.label_viewer_options = Gtk.Label()
-        self.entry_viewer_options = Gtk.Entry()
+        self.widget_viewer_binary = PreferencesItem()
+        self.file_general_viewer_binary = Gtk.FileChooserButton()
+
+        self.widget_viewer_options = PreferencesItem()
+        self.entry_general_viewer_options = Gtk.Entry()
 
         # Properties
-        self.label_viewer.set_margin_top(18)
-        self.label_viewer.set_hexpand(True)
-        self.label_viewer.set_use_markup(True)
-        self.label_viewer.set_halign(Gtk.Align.CENTER)
-        self.label_viewer.set_markup("<b>%s</b>" % _("Screenshots viewer"))
+        self.label_general_viewer.set_hexpand(True)
+        self.label_general_viewer.set_use_markup(True)
+        self.label_general_viewer.set_halign(Gtk.Align.CENTER)
+        self.label_general_viewer.set_markup(
+            "<b>%s</b>" % _("Screenshots viewer"))
 
-        self.label_native_viewer.set_line_wrap(True)
-        self.label_native_viewer.set_halign(Gtk.Align.END)
-        self.label_native_viewer.set_valign(Gtk.Align.CENTER)
-        self.label_native_viewer.set_justify(Gtk.Justification.RIGHT)
-        self.label_native_viewer.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
-        self.label_native_viewer.get_style_context().add_class("dim-label")
-        self.label_native_viewer.set_text(
+        self.frame_general_viewer.set_margin_bottom(12)
+
+        self.listbox_general_viewer.set_activate_on_single_click(True)
+        self.listbox_general_viewer.set_selection_mode(
+            Gtk.SelectionMode.NONE)
+
+        self.widget_viewer_alternative_viewer.set_widget(
+            self.switch_general_viewer_alternative_viewer)
+        self.widget_viewer_alternative_viewer.set_option_label(
             _("Use an alternative application"))
 
-        self.check_native_viewer.set_halign(Gtk.Align.START)
-        self.check_native_viewer.set_valign(Gtk.Align.CENTER)
-
-        self.label_viewer_binary.set_line_wrap(True)
-        self.label_viewer_binary.set_halign(Gtk.Align.END)
-        self.label_viewer_binary.set_valign(Gtk.Align.CENTER)
-        self.label_viewer_binary.set_justify(Gtk.Justification.RIGHT)
-        self.label_viewer_binary.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
-        self.label_viewer_binary.get_style_context().add_class("dim-label")
-        self.label_viewer_binary.set_text(
+        self.widget_viewer_binary.set_widget(
+            self.file_general_viewer_binary)
+        self.widget_viewer_binary.set_option_label(
             _("Executable"))
 
-        self.file_viewer_binary.set_hexpand(True)
-        self.file_viewer_binary.set_size_request(300, -1)
-        self.file_viewer_binary.set_halign(Gtk.Align.START)
-        self.file_viewer_binary.set_valign(Gtk.Align.CENTER)
-
-        self.label_viewer_options.set_line_wrap(True)
-        self.label_viewer_options.set_halign(Gtk.Align.END)
-        self.label_viewer_options.set_valign(Gtk.Align.CENTER)
-        self.label_viewer_options.set_justify(Gtk.Justification.RIGHT)
-        self.label_viewer_options.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
-        self.label_viewer_options.get_style_context().add_class("dim-label")
-        self.label_viewer_options.set_text(
+        self.widget_viewer_options.set_widget(
+            self.entry_general_viewer_options)
+        self.widget_viewer_options.set_option_label(
             _("Parameters"))
 
-        self.entry_viewer_options.set_hexpand(True)
-        self.entry_viewer_options.set_icon_from_icon_name(
+        self.entry_general_viewer_options.set_icon_from_icon_name(
             Gtk.EntryIconPosition.PRIMARY, Icons.Symbolic.Terminal)
-        self.entry_viewer_options.set_icon_from_icon_name(
+        self.entry_general_viewer_options.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
-        self.entry_viewer_options.set_size_request(300, -1)
-        self.entry_viewer_options.set_halign(Gtk.Align.START)
-        self.entry_viewer_options.set_valign(Gtk.Align.CENTER)
 
         # ------------------------------------
         #   Interface
@@ -614,327 +517,281 @@ class PreferencesWindow(CommonWindow):
         self.scroll_interface = Gtk.ScrolledWindow()
         self.view_interface = Gtk.Viewport()
 
-        self.label_interface = Gtk.Label()
+        # ------------------------------------
+        #   Interface - Appearance
+        # ------------------------------------
 
-        self.label_classic_theme = Gtk.Label()
-        self.check_classic_theme = Gtk.Switch()
+        self.label_interface_appearance = Gtk.Label()
 
-        self.label_header = Gtk.Label()
-        self.check_header = Gtk.Switch()
+        self.frame_interface_appearance = Gtk.Frame()
+        self.listbox_interface_appearance = Gtk.ListBox()
+
+        self.widget_appearance_classic_theme = PreferencesItem()
+        self.switch_interface_appearance_classic_theme = Gtk.Switch()
+
+        self.widget_appearance_header_button = PreferencesItem()
+        self.switch_interface_appearance_header_buttons = Gtk.Switch()
 
         # Properties
-        self.label_interface.set_hexpand(True)
-        self.label_interface.set_use_markup(True)
-        self.label_interface.set_halign(Gtk.Align.CENTER)
-        self.label_interface.set_markup("<b>%s</b>" % _("Interface"))
+        self.label_interface_appearance.set_hexpand(True)
+        self.label_interface_appearance.set_use_markup(True)
+        self.label_interface_appearance.set_halign(Gtk.Align.CENTER)
+        self.label_interface_appearance.set_markup(
+            "<b>%s</b>" % _("Appearance"))
 
-        self.label_classic_theme.set_line_wrap(True)
-        self.label_classic_theme.set_halign(Gtk.Align.END)
-        self.label_classic_theme.set_valign(Gtk.Align.CENTER)
-        self.label_classic_theme.set_justify(Gtk.Justification.RIGHT)
-        self.label_classic_theme.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
-        self.label_classic_theme.get_style_context().add_class("dim-label")
-        self.label_classic_theme.set_text(
-            "%s*" % _("Switch to classic theme"))
-        self.label_classic_theme.set_tooltip_text(
+        self.frame_interface_appearance.set_margin_bottom(12)
+
+        self.listbox_interface_appearance.set_activate_on_single_click(True)
+        self.listbox_interface_appearance.set_selection_mode(
+            Gtk.SelectionMode.NONE)
+
+        self.widget_appearance_classic_theme.set_widget(
+            self.switch_interface_appearance_classic_theme)
+        self.widget_appearance_classic_theme.set_option_label(
+            _("Switch to classic theme"))
+        self.widget_appearance_classic_theme.set_description_label(
             _("You need to reload the application to apply this theme"))
 
-        self.check_classic_theme.set_halign(Gtk.Align.START)
-        self.check_classic_theme.set_valign(Gtk.Align.CENTER)
-
-        self.label_header.set_line_wrap(True)
-        self.label_header.set_halign(Gtk.Align.END)
-        self.label_header.set_valign(Gtk.Align.CENTER)
-        self.label_header.set_justify(Gtk.Justification.RIGHT)
-        self.label_header.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
-        self.label_header.get_style_context().add_class("dim-label")
-        self.label_header.set_text(
+        self.widget_appearance_header_button.set_widget(
+            self.switch_interface_appearance_header_buttons)
+        self.widget_appearance_header_button.set_option_label(
             _("Show window buttons in header bar"))
 
-        self.check_header.set_halign(Gtk.Align.START)
-        self.check_header.set_valign(Gtk.Align.CENTER)
-
         # ------------------------------------
-        #   Interface - Sidebar
+        #   Interface - Toolbar
         # ------------------------------------
 
-        self.label_toolbar = Gtk.Label()
+        self.label_interface_toolbar = Gtk.Label()
 
-        self.label_toolbar_icons = Gtk.Label()
-        self.model_toolbar = Gtk.ListStore(str)
-        self.combo_toolbar = Gtk.ComboBox()
-        self.cell_toolbar = Gtk.CellRendererText()
+        self.frame_interface_toolbar = Gtk.Frame()
+        self.listbox_interface_toolbar = Gtk.ListBox()
+
+        self.widget_toolbar_size = PreferencesItem()
+        self.model_interface_toolbar_size = Gtk.ListStore(str, str)
+        self.combo_interface_toolbar_size = Gtk.ComboBox()
+        self.cell_interface_toolbar_size = Gtk.CellRendererText()
 
         # Properties
-        self.label_toolbar.set_margin_top(18)
-        self.label_toolbar.set_hexpand(True)
-        self.label_toolbar.set_use_markup(True)
-        self.label_toolbar.set_halign(Gtk.Align.CENTER)
-        self.label_toolbar.set_markup("<b>%s</b>" % _("Toolbar"))
+        self.label_interface_toolbar.set_hexpand(True)
+        self.label_interface_toolbar.set_use_markup(True)
+        self.label_interface_toolbar.set_halign(Gtk.Align.CENTER)
+        self.label_interface_toolbar.set_markup(
+            "<b>%s</b>" % _("Toolbar"))
 
-        self.label_toolbar_icons.set_line_wrap(True)
-        self.label_toolbar_icons.set_halign(Gtk.Align.END)
-        self.label_toolbar_icons.set_valign(Gtk.Align.CENTER)
-        self.label_toolbar_icons.set_justify(Gtk.Justification.RIGHT)
-        self.label_toolbar_icons.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
-        self.label_toolbar_icons.get_style_context().add_class("dim-label")
-        self.label_toolbar_icons.set_label(
+        self.frame_interface_toolbar.set_margin_bottom(12)
+
+        self.listbox_interface_toolbar.set_activate_on_single_click(True)
+        self.listbox_interface_toolbar.set_selection_mode(
+            Gtk.SelectionMode.NONE)
+
+        self.widget_toolbar_size.set_widget(self.combo_interface_toolbar_size)
+        self.widget_toolbar_size.set_option_label(
             _("Icons size"))
 
-        self.model_toolbar.set_sort_column_id(0, Gtk.SortType.ASCENDING)
-
-        self.combo_toolbar.set_model(self.model_toolbar)
-        self.combo_toolbar.set_id_column(0)
-        self.combo_toolbar.pack_start(self.cell_toolbar, True)
-        self.combo_toolbar.add_attribute(self.cell_toolbar, "text", 0)
-        self.combo_toolbar.set_size_request(300, -1)
-        self.combo_toolbar.set_halign(Gtk.Align.START)
-        self.combo_toolbar.set_valign(Gtk.Align.CENTER)
+        self.combo_interface_toolbar_size.set_model(
+            self.model_interface_toolbar_size)
+        self.combo_interface_toolbar_size.set_id_column(0)
+        self.combo_interface_toolbar_size.pack_start(
+            self.cell_interface_toolbar_size, True)
+        self.combo_interface_toolbar_size.add_attribute(
+            self.cell_interface_toolbar_size, "text", 1)
 
         # ------------------------------------
         #   Interface - Sidebar
         # ------------------------------------
 
-        self.label_sidebar = Gtk.Label()
+        self.label_interface_sidebar = Gtk.Label()
 
-        self.label_sidebar_show = Gtk.Label()
-        self.check_sidebar_show = Gtk.Switch()
+        self.frame_interface_sidebar = Gtk.Frame()
+        self.listbox_interface_sidebar = Gtk.ListBox()
 
-        self.label_sidebar_screenshot = Gtk.Label()
-        self.check_sidebar_screenshot = Gtk.Switch()
+        self.widget_sidebar_visible = PreferencesItem()
+        self.switch_interface_sidebar_visible = Gtk.Switch()
 
-        self.label_sidebar_position = Gtk.Label()
-        self.model_sidebar = Gtk.ListStore(str)
-        self.combo_sidebar = Gtk.ComboBox()
-        self.cell_sidebar = Gtk.CellRendererText()
+        self.widget_sidebar_position = PreferencesItem()
+        self.model_interface_sidebar_position = Gtk.ListStore(str, str)
+        self.combo_interface_sidebar_position = Gtk.ComboBox()
+        self.cell_interface_sidebar_position = Gtk.CellRendererText()
+
+        self.widget_sidebar_random_screenshot = PreferencesItem()
+        self.switch_interface_random_screenshot = Gtk.Switch()
 
         # Properties
-        self.label_sidebar.set_margin_top(18)
-        self.label_sidebar.set_hexpand(True)
-        self.label_sidebar.set_use_markup(True)
-        self.label_sidebar.set_halign(Gtk.Align.CENTER)
-        self.label_sidebar.set_markup("<b>%s</b>" % _("Sidebar"))
+        self.label_interface_sidebar.set_hexpand(True)
+        self.label_interface_sidebar.set_use_markup(True)
+        self.label_interface_sidebar.set_halign(Gtk.Align.CENTER)
+        self.label_interface_sidebar.set_markup(
+            "<b>%s</b>" % _("Sidebar"))
 
-        self.label_sidebar_show.set_line_wrap(True)
-        self.label_sidebar_show.set_halign(Gtk.Align.END)
-        self.label_sidebar_show.set_valign(Gtk.Align.CENTER)
-        self.label_sidebar_show.set_justify(Gtk.Justification.RIGHT)
-        self.label_sidebar_show.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
-        self.label_sidebar_show.get_style_context().add_class("dim-label")
-        self.label_sidebar_show.set_text(
+        self.listbox_interface_sidebar.set_activate_on_single_click(True)
+        self.listbox_interface_sidebar.set_selection_mode(
+            Gtk.SelectionMode.NONE)
+
+        self.widget_sidebar_visible.set_widget(
+            self.switch_interface_sidebar_visible)
+        self.widget_sidebar_visible.set_option_label(
             _("Show sidebar"))
 
-        self.check_sidebar_show.set_halign(Gtk.Align.START)
-        self.check_sidebar_show.set_valign(Gtk.Align.CENTER)
-
-        self.label_sidebar_screenshot.set_line_wrap(True)
-        self.label_sidebar_screenshot.set_halign(Gtk.Align.END)
-        self.label_sidebar_screenshot.set_valign(Gtk.Align.CENTER)
-        self.label_sidebar_screenshot.set_justify(Gtk.Justification.RIGHT)
-        self.label_sidebar_screenshot.set_line_wrap_mode(
-            Pango.WrapMode.WORD_CHAR)
-        self.label_sidebar_screenshot.get_style_context().add_class("dim-label")
-        self.label_sidebar_screenshot.set_text(
-            _("Randomize screenshot"))
-
-        self.check_sidebar_screenshot.set_halign(Gtk.Align.START)
-        self.check_sidebar_screenshot.set_valign(Gtk.Align.CENTER)
-
-        self.label_sidebar_position.set_line_wrap(True)
-        self.label_sidebar_position.set_halign(Gtk.Align.END)
-        self.label_sidebar_position.set_valign(Gtk.Align.CENTER)
-        self.label_sidebar_position.set_justify(Gtk.Justification.RIGHT)
-        self.label_sidebar_position.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
-        self.label_sidebar_position.get_style_context().add_class("dim-label")
-        self.label_sidebar_position.set_label(
+        self.widget_sidebar_position.set_widget(
+            self.combo_interface_sidebar_position)
+        self.widget_sidebar_position.set_option_label(
             _("Sidebar position"))
 
-        self.model_sidebar.set_sort_column_id(0, Gtk.SortType.ASCENDING)
+        self.combo_interface_sidebar_position.set_model(
+            self.model_interface_sidebar_position)
+        self.combo_interface_sidebar_position.set_id_column(0)
+        self.combo_interface_sidebar_position.pack_start(
+            self.cell_interface_sidebar_position, True)
+        self.combo_interface_sidebar_position.add_attribute(
+            self.cell_interface_sidebar_position, "text", 1)
 
-        self.combo_sidebar.set_model(self.model_sidebar)
-        self.combo_sidebar.set_id_column(0)
-        self.combo_sidebar.pack_start(self.cell_sidebar, True)
-        self.combo_sidebar.add_attribute(self.cell_sidebar, "text", 0)
-        self.combo_sidebar.set_size_request(300, -1)
-        self.combo_sidebar.set_halign(Gtk.Align.START)
-        self.combo_sidebar.set_valign(Gtk.Align.CENTER)
+        self.widget_sidebar_random_screenshot.set_widget(
+            self.switch_interface_random_screenshot)
+        self.widget_sidebar_random_screenshot.set_option_label(
+            _("Randomize screenshot"))
 
         # ------------------------------------
-        #   Interface - Games list
+        #   Games
         # ------------------------------------
 
-        self.label_treeview = Gtk.Label()
-        self.label_treeview_lines = Gtk.Label()
+        self.scroll_games = Gtk.ScrolledWindow()
+        self.view_games = Gtk.Viewport()
 
-        self.model_lines = Gtk.ListStore(str)
-        self.combo_lines = Gtk.ComboBox()
+        # ------------------------------------
+        #   Games - Views
+        # ------------------------------------
 
-        self.cell_lines = Gtk.CellRendererText()
+        self.label_games_view = Gtk.Label()
 
-        self.label_tooltips = Gtk.Label()
+        self.frame_games_view = Gtk.Frame()
+        self.listbox_games_view = Gtk.ListBox()
 
-        self.model_tooltips = Gtk.ListStore(str)
-        self.combo_tooltips = Gtk.ComboBox()
+        self.widget_view_grid_lines = PreferencesItem()
+        self.model_games_view_grid_lines = Gtk.ListStore(str, str)
+        self.combo_games_view_grid_lines = Gtk.ComboBox()
+        self.cell_games_view_grid_lines = Gtk.CellRendererText()
 
-        self.cell_tooltips = Gtk.CellRendererText()
+        self.widget_view_tooltip_icon = PreferencesItem()
+        self.model_games_view_tooltip_icon = Gtk.ListStore(str, str)
+        self.combo_games_view_tooltip_icon = Gtk.ComboBox()
+        self.cell_games_view_tooltip_icon = Gtk.CellRendererText()
 
-        self.label_icons = Gtk.Label()
-        self.check_icons = Gtk.Switch()
+        self.widget_view_icons = PreferencesItem()
+        self.switch_games_view_icons = Gtk.Switch()
 
         # Properties
-        self.label_treeview.set_margin_top(18)
-        self.label_treeview.set_hexpand(True)
-        self.label_treeview.set_use_markup(True)
-        self.label_treeview.set_halign(Gtk.Align.CENTER)
-        self.label_treeview.set_markup("<b>%s</b>" % _("Games list"))
+        self.label_games_view.set_hexpand(True)
+        self.label_games_view.set_use_markup(True)
+        self.label_games_view.set_halign(Gtk.Align.CENTER)
+        self.label_games_view.set_markup(
+            "<b>%s</b>" % _("List view"))
 
-        self.label_treeview_lines.set_line_wrap(True)
-        self.label_treeview_lines.set_halign(Gtk.Align.END)
-        self.label_treeview_lines.set_valign(Gtk.Align.CENTER)
-        self.label_treeview_lines.set_justify(Gtk.Justification.RIGHT)
-        self.label_treeview_lines.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
-        self.label_treeview_lines.get_style_context().add_class("dim-label")
-        self.label_treeview_lines.set_text(
+        self.frame_games_view.set_margin_bottom(12)
+
+        self.listbox_games_view.set_activate_on_single_click(True)
+        self.listbox_games_view.set_selection_mode(
+            Gtk.SelectionMode.NONE)
+
+        self.widget_view_grid_lines.set_widget(
+            self.combo_games_view_grid_lines)
+        self.widget_view_grid_lines.set_option_label(
             _("Show grid lines"))
 
-        self.model_lines.set_sort_column_id(0, Gtk.SortType.ASCENDING)
+        self.combo_games_view_grid_lines.set_model(
+            self.model_games_view_grid_lines)
+        self.combo_games_view_grid_lines.set_id_column(0)
+        self.combo_games_view_grid_lines.pack_start(
+            self.cell_games_view_grid_lines, True)
+        self.combo_games_view_grid_lines.add_attribute(
+            self.cell_games_view_grid_lines, "text", 1)
 
-        self.combo_lines.set_model(self.model_lines)
-        self.combo_lines.set_id_column(0)
-        self.combo_lines.pack_start(self.cell_lines, True)
-        self.combo_lines.add_attribute(self.cell_lines, "text", 0)
-        self.combo_lines.set_size_request(300, -1)
-        self.combo_lines.set_halign(Gtk.Align.START)
-        self.combo_lines.set_valign(Gtk.Align.CENTER)
-
-        self.label_tooltips.set_line_wrap(True)
-        self.label_tooltips.set_halign(Gtk.Align.END)
-        self.label_tooltips.set_valign(Gtk.Align.CENTER)
-        self.label_tooltips.set_justify(Gtk.Justification.RIGHT)
-        self.label_tooltips.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
-        self.label_tooltips.get_style_context().add_class("dim-label")
-        self.label_tooltips.set_text(
+        self.widget_view_tooltip_icon.set_widget(
+            self.combo_games_view_tooltip_icon)
+        self.widget_view_tooltip_icon.set_option_label(
             _("Game tooltip image"))
 
-        self.model_tooltips.set_sort_column_id(0, Gtk.SortType.ASCENDING)
+        self.combo_games_view_tooltip_icon.set_model(
+            self.model_games_view_tooltip_icon)
+        self.combo_games_view_tooltip_icon.set_id_column(0)
+        self.combo_games_view_tooltip_icon.pack_start(
+            self.cell_games_view_tooltip_icon, True)
+        self.combo_games_view_tooltip_icon.add_attribute(
+            self.cell_games_view_tooltip_icon, "text", 1)
 
-        self.combo_tooltips.set_model(self.model_tooltips)
-        self.combo_tooltips.set_id_column(0)
-        self.combo_tooltips.pack_start(self.cell_tooltips, True)
-        self.combo_tooltips.add_attribute(self.cell_tooltips, "text", 0)
-        self.combo_tooltips.set_size_request(300, -1)
-        self.combo_tooltips.set_halign(Gtk.Align.START)
-        self.combo_tooltips.set_valign(Gtk.Align.CENTER)
-
-        self.label_icons.set_line_wrap(True)
-        self.label_icons.set_halign(Gtk.Align.END)
-        self.label_icons.set_valign(Gtk.Align.CENTER)
-        self.label_icons.set_justify(Gtk.Justification.RIGHT)
-        self.label_icons.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
-        self.label_icons.get_style_context().add_class("dim-label")
-        self.label_icons.set_label(
+        self.widget_view_icons.set_widget(
+            self.switch_games_view_icons)
+        self.widget_view_icons.set_option_label(
             _("Use translucent icons"))
-
-        self.check_icons.set_halign(Gtk.Align.START)
-        self.check_icons.set_valign(Gtk.Align.CENTER)
 
         # ------------------------------------
         #   Interface - Columns
         # ------------------------------------
 
-        self.label_columns = Gtk.Label()
+        self.label_games_column = Gtk.Label()
 
-        self.label_play = Gtk.Label()
-        self.check_play = Gtk.Switch()
-        self.label_last_play = Gtk.Label()
-        self.check_last_play = Gtk.Switch()
-        self.label_play_time = Gtk.Label()
-        self.check_play_time = Gtk.Switch()
-        self.label_score = Gtk.Label()
-        self.check_score = Gtk.Switch()
-        self.label_installed = Gtk.Label()
-        self.check_installed = Gtk.Switch()
-        self.label_flags = Gtk.Label()
-        self.check_flags = Gtk.Switch()
+        self.frame_games_column = Gtk.Frame()
+        self.listbox_games_column = Gtk.ListBox()
+
+        self.widget_column_play = PreferencesItem()
+        self.switch_games_column_play = Gtk.Switch()
+
+        self.widget_column_last_launch = PreferencesItem()
+        self.switch_games_column_last_launch = Gtk.Switch()
+
+        self.widget_column_play_time = PreferencesItem()
+        self.switch_games_column_play_time = Gtk.Switch()
+
+        self.widget_column_score = PreferencesItem()
+        self.switch_games_column_score = Gtk.Switch()
+
+        self.widget_column_installed = PreferencesItem()
+        self.switch_games_column_installed = Gtk.Switch()
+
+        self.widget_column_flags = PreferencesItem()
+        self.switch_games_column_flags = Gtk.Switch()
 
         # Properties
-        self.label_columns.set_margin_top(18)
-        self.label_columns.set_hexpand(True)
-        self.label_columns.set_use_markup(True)
-        self.label_columns.set_halign(Gtk.Align.CENTER)
-        self.label_columns.set_markup("<b>%s</b>" % _("Columns appearance"))
+        self.label_games_column.set_hexpand(True)
+        self.label_games_column.set_use_markup(True)
+        self.label_games_column.set_halign(Gtk.Align.CENTER)
+        self.label_games_column.set_markup(
+            "<b>%s</b>" % _("Columns"))
 
-        self.label_play.set_line_wrap(True)
-        self.label_play.set_halign(Gtk.Align.END)
-        self.label_play.set_valign(Gtk.Align.CENTER)
-        self.label_play.set_justify(Gtk.Justification.RIGHT)
-        self.label_play.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
-        self.label_play.get_style_context().add_class("dim-label")
-        self.label_play.set_label(
+        self.frame_games_column.set_margin_bottom(12)
+
+        self.listbox_games_column.set_activate_on_single_click(True)
+        self.listbox_games_column.set_selection_mode(
+            Gtk.SelectionMode.NONE)
+
+        self.widget_column_play.set_widget(
+            self.switch_games_column_play)
+        self.widget_column_play.set_option_label(
             _("Launch"))
 
-        self.check_play.set_halign(Gtk.Align.START)
-        self.check_play.set_valign(Gtk.Align.CENTER)
-
-        self.label_last_play.set_line_wrap(True)
-        self.label_last_play.set_halign(Gtk.Align.END)
-        self.label_last_play.set_valign(Gtk.Align.CENTER)
-        self.label_last_play.set_justify(Gtk.Justification.RIGHT)
-        self.label_last_play.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
-        self.label_last_play.get_style_context().add_class("dim-label")
-        self.label_last_play.set_label(
+        self.widget_column_last_launch.set_widget(
+            self.switch_games_column_last_launch)
+        self.widget_column_last_launch.set_option_label(
             _("Last launch"))
 
-        self.check_last_play.set_halign(Gtk.Align.START)
-        self.check_last_play.set_valign(Gtk.Align.CENTER)
-
-        self.label_play_time.set_line_wrap(True)
-        self.label_play_time.set_halign(Gtk.Align.END)
-        self.label_play_time.set_valign(Gtk.Align.CENTER)
-        self.label_play_time.set_justify(Gtk.Justification.RIGHT)
-        self.label_play_time.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
-        self.label_play_time.get_style_context().add_class("dim-label")
-        self.label_play_time.set_label(
+        self.widget_column_play_time.set_widget(
+            self.switch_games_column_play_time)
+        self.widget_column_play_time.set_option_label(
             _("Play time"))
 
-        self.check_play_time.set_halign(Gtk.Align.START)
-        self.check_play_time.set_valign(Gtk.Align.CENTER)
-
-        self.label_score.set_line_wrap(True)
-        self.label_score.set_halign(Gtk.Align.END)
-        self.label_score.set_valign(Gtk.Align.CENTER)
-        self.label_score.set_justify(Gtk.Justification.RIGHT)
-        self.label_score.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
-        self.label_score.get_style_context().add_class("dim-label")
-        self.label_score.set_label(
+        self.widget_column_score.set_widget(
+            self.switch_games_column_score)
+        self.widget_column_score.set_option_label(
             _("Score"))
 
-        self.check_score.set_halign(Gtk.Align.START)
-        self.check_score.set_valign(Gtk.Align.CENTER)
-
-        self.label_installed.set_line_wrap(True)
-        self.label_installed.set_halign(Gtk.Align.END)
-        self.label_installed.set_valign(Gtk.Align.CENTER)
-        self.label_installed.set_justify(Gtk.Justification.RIGHT)
-        self.label_installed.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
-        self.label_installed.get_style_context().add_class("dim-label")
-        self.label_installed.set_label(
+        self.widget_column_installed.set_widget(
+            self.switch_games_column_installed)
+        self.widget_column_installed.set_option_label(
             _("Installed"))
 
-        self.check_installed.set_halign(Gtk.Align.START)
-        self.check_installed.set_valign(Gtk.Align.CENTER)
-
-        self.label_flags.set_line_wrap(True)
-        self.label_flags.set_halign(Gtk.Align.END)
-        self.label_flags.set_valign(Gtk.Align.CENTER)
-        self.label_flags.set_justify(Gtk.Justification.RIGHT)
-        self.label_flags.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
-        self.label_flags.get_style_context().add_class("dim-label")
-        self.label_flags.set_label(
+        self.widget_column_flags.set_widget(
+            self.switch_games_column_flags)
+        self.widget_column_flags.set_option_label(
             _("Flags"))
-
-        self.check_flags.set_halign(Gtk.Align.START)
-        self.check_flags.set_valign(Gtk.Align.CENTER)
 
         # ------------------------------------
         #   Shortcuts
@@ -1170,224 +1027,142 @@ class PreferencesWindow(CommonWindow):
         self.box_stack.pack_start(self.sidebar_stack, False, False, 0)
         self.box_stack.pack_start(self.stack, True, True, 0)
 
+        # ------------------------------------
+        #   General
+        # ------------------------------------
+
         self.stack.add_titled(
             self.scroll_general, "general", _("General"))
-        self.stack.add_titled(
-            self.scroll_interface, "interface", _("Interface"))
-        self.stack.add_titled(
-            self.scroll_shortcuts, "shortcuts", _("Shortcuts"))
-        self.stack.add_titled(
-            self.scroll_consoles, "consoles", _("Consoles"))
-        self.stack.add_titled(
-            self.scroll_emulators, "emulators", _("Emulators"))
 
-        # General tab
-        self.grid_general.pack_start(
-            self.label_behavior, False, False, 0)
-        self.grid_general.pack_start(
-            self.grid_last_console, False, False, 0)
-        self.grid_general.pack_start(
-            self.grid_last_column, False, False, 0)
-        self.grid_general.pack_start(
-            self.grid_hide_console, False, False, 0)
-        self.grid_general.pack_start(
-            self.label_editor, False, False, 0)
-        self.grid_general.pack_start(
-            self.grid_lines, False, False, 0)
-        self.grid_general.pack_start(
-            self.grid_colorsheme, False, False, 0)
-        self.grid_general.pack_start(
-            self.grid_font, False, False, 0)
-        self.grid_general.pack_start(
-            self.label_viewer, False, False, 0)
-        self.grid_general.pack_start(
-            self.grid_viewer, False, False, 0)
-        self.grid_general.pack_start(
-            self.grid_binary, False, False, 0)
-        self.grid_general.pack_start(
-            self.grid_options, False, False, 0)
+        self.frame_general_behavior.add(self.listbox_general_behavior)
+        self.frame_general_editor.add(self.listbox_general_editor)
 
-        self.grid_last_console.pack_start(
-            self.label_last_console, True, True, 0)
-        self.grid_last_console.pack_start(
-            self.check_last_console, True, True, 0)
+        self.listbox_general_behavior.add(self.widget_behavior_last_console)
+        self.listbox_general_behavior.add(self.widget_behavior_last_column)
+        self.listbox_general_behavior.add(self.widget_behavior_hide_consoles)
 
-        self.grid_last_column.pack_start(
-            self.label_last_column, True, True, 0)
-        self.grid_last_column.pack_start(
-            self.check_last_column, True, True, 0)
+        self.listbox_general_editor.add(self.widget_editor_lines_visible)
+        self.listbox_general_editor.add(self.widget_editor_tab_width)
+        self.listbox_general_editor.add(self.widget_editor_colorscheme)
+        self.listbox_general_editor.add(self.widget_editor_font)
 
-        self.grid_hide_console.pack_start(
-            self.label_hide_console, True, True, 0)
-        self.grid_hide_console.pack_start(
-            self.check_hide_console, True, True, 0)
+        self.frame_general_viewer.add(self.listbox_general_viewer)
 
-        self.grid_lines.pack_start(
-            self.label_lines, True, True, 0)
-        self.grid_lines.pack_start(
-            self.check_lines, True, True, 0)
+        self.listbox_general_viewer.add(self.widget_viewer_alternative_viewer)
+        self.listbox_general_viewer.add(self.widget_viewer_binary)
+        self.listbox_general_viewer.add(self.widget_viewer_options)
 
-        self.grid_colorsheme.pack_start(
-            self.label_editor_colorscheme, True, True, 0)
-        self.grid_colorsheme.pack_start(
-            self.combo_colorsheme, True, True, 0)
-
-        self.grid_font.pack_start(
-            self.label_editor_font, True, True, 0)
-        self.grid_font.pack_start(
-            self.font_editor, True, True, 0)
-
-        self.grid_viewer.pack_start(
-            self.label_native_viewer, True, True, 0)
-        self.grid_viewer.pack_start(
-            self.check_native_viewer, True, True, 0)
-
-        self.grid_binary.pack_start(
-            self.label_viewer_binary, True, True, 0)
-        self.grid_binary.pack_start(
-            self.file_viewer_binary, True, True, 0)
-
-        self.grid_options.pack_start(
-            self.label_viewer_options, True, True, 0)
-        self.grid_options.pack_start(
-            self.entry_viewer_options, True, True, 0)
+        self.grid_general.pack_start(
+            self.label_general_behavior, False, False, 0)
+        self.grid_general.pack_start(
+            self.frame_general_behavior, False, False, 0)
+        self.grid_general.pack_start(
+            self.label_general_editor, False, False, 0)
+        self.grid_general.pack_start(
+            self.frame_general_editor, False, False, 0)
+        self.grid_general.pack_start(
+            self.label_general_viewer, False, False, 0)
+        self.grid_general.pack_start(
+            self.frame_general_viewer, False, False, 0)
 
         self.view_general.add(self.grid_general)
-
         self.scroll_general.add(self.view_general)
 
-        # Interface tab
-        self.grid_interface.pack_start(
-            self.label_interface, False, False, 0)
-        self.grid_interface.pack_start(
-            self.grid_theme_classic, False, False, 0)
-        self.grid_interface.pack_start(
-            self.grid_theme_header, False, False, 0)
-        self.grid_interface.pack_start(
-            self.label_toolbar, False, False, 0)
-        self.grid_interface.pack_start(
-            self.grid_toolbar_icons, False, False, 0)
-        self.grid_interface.pack_start(
-            self.label_sidebar, False, False, 0)
-        self.grid_interface.pack_start(
-            self.grid_sidebar_show, False, False, 0)
-        self.grid_interface.pack_start(
-            self.grid_sidebar_position, False, False, 0)
-        self.grid_interface.pack_start(
-            self.grid_sidebar_screenshot, False, False, 0)
-        self.grid_interface.pack_start(
-            self.label_treeview, False, False, 0)
-        self.grid_interface.pack_start(
-            self.grid_games_lines, False, False, 0)
-        self.grid_interface.pack_start(
-            self.grid_games_tooltips, False, False, 0)
-        self.grid_interface.pack_start(
-            self.grid_games_icons, False, False, 0)
-        self.grid_interface.pack_start(
-            self.label_columns, False, False, 0)
-        self.grid_interface.pack_start(
-            self.grid_columns_play, False, False, 0)
-        self.grid_interface.pack_start(
-            self.grid_columns_last_play, False, False, 0)
-        self.grid_interface.pack_start(
-            self.grid_columns_play_time, False, False, 0)
-        self.grid_interface.pack_start(
-            self.grid_columns_score, False, False, 0)
-        self.grid_interface.pack_start(
-            self.grid_columns_installed, False, False, 0)
-        self.grid_interface.pack_start(
-            self.grid_columns_flags, False, False, 0)
+        # ------------------------------------
+        #   Interface
+        # ------------------------------------
 
-        self.grid_theme_classic.pack_start(
-            self.label_classic_theme, True, True, 0)
-        self.grid_theme_classic.pack_start(
-            self.check_classic_theme, True, True, 0)
+        self.stack.add_titled(
+            self.scroll_interface, "interface", _("Interface"))
 
-        self.grid_theme_header.pack_start(
-            self.label_header, True, True, 0)
-        self.grid_theme_header.pack_start(
-            self.check_header, True, True, 0)
+        self.frame_interface_appearance.add(self.listbox_interface_appearance)
+        self.frame_interface_toolbar.add(self.listbox_interface_toolbar)
+        self.frame_interface_sidebar.add(self.listbox_interface_sidebar)
 
-        self.grid_toolbar_icons.pack_start(
-            self.label_toolbar_icons, True, True, 0)
-        self.grid_toolbar_icons.pack_start(
-            self.combo_toolbar, True, True, 0)
+        self.listbox_interface_appearance.add(
+            self.widget_appearance_classic_theme)
+        self.listbox_interface_appearance.add(
+            self.widget_appearance_header_button)
 
-        self.grid_sidebar_show.pack_start(
-            self.label_sidebar_show, True, True, 0)
-        self.grid_sidebar_show.pack_start(
-            self.check_sidebar_show, True, True, 0)
+        self.listbox_interface_toolbar.add(self.widget_toolbar_size)
 
-        self.grid_sidebar_screenshot.pack_start(
-            self.label_sidebar_screenshot, True, True, 0)
-        self.grid_sidebar_screenshot.pack_start(
-            self.check_sidebar_screenshot, True, True, 0)
+        self.listbox_interface_sidebar.add(self.widget_sidebar_visible)
+        self.listbox_interface_sidebar.add(self.widget_sidebar_position)
+        self.listbox_interface_sidebar.add(
+            self.widget_sidebar_random_screenshot)
 
-        self.grid_sidebar_position.pack_start(
-            self.label_sidebar_position, True, True, 0)
-        self.grid_sidebar_position.pack_start(
-            self.combo_sidebar, True, True, 0)
-
-        self.grid_games_lines.pack_start(
-            self.label_treeview_lines, True, True, 0)
-        self.grid_games_lines.pack_start(
-            self.combo_lines, True, True, 0)
-
-        self.grid_games_tooltips.pack_start(
-            self.label_tooltips, True, True, 0)
-        self.grid_games_tooltips.pack_start(
-            self.combo_tooltips, True, True, 0)
-
-        self.grid_games_icons.pack_start(
-            self.label_icons, True, True, 0)
-        self.grid_games_icons.pack_start(
-            self.check_icons, True, True, 0)
-
-        self.grid_columns_play.pack_start(
-            self.label_play, True, True, 0)
-        self.grid_columns_play.pack_start(
-            self.check_play, True, True, 0)
-
-        self.grid_columns_last_play.pack_start(
-            self.label_last_play, True, True, 0)
-        self.grid_columns_last_play.pack_start(
-            self.check_last_play, True, True, 0)
-
-        self.grid_columns_play_time.pack_start(
-            self.label_play_time, True, True, 0)
-        self.grid_columns_play_time.pack_start(
-            self.check_play_time, True, True, 0)
-
-        self.grid_columns_score.pack_start(
-            self.label_score, True, True, 0)
-        self.grid_columns_score.pack_start(
-            self.check_score, True, True, 0)
-
-        self.grid_columns_installed.pack_start(
-            self.label_installed, True, True, 0)
-        self.grid_columns_installed.pack_start(
-            self.check_installed, True, True, 0)
-
-        self.grid_columns_flags.pack_start(
-            self.label_flags, True, True, 0)
-        self.grid_columns_flags.pack_start(
-            self.check_flags, True, True, 0)
+        self.grid_interface.pack_start(
+            self.label_interface_appearance, False, False, 0)
+        self.grid_interface.pack_start(
+            self.frame_interface_appearance, False, False, 0)
+        self.grid_interface.pack_start(
+            self.label_interface_toolbar, False, False, 0)
+        self.grid_interface.pack_start(
+            self.frame_interface_toolbar, False, False, 0)
+        self.grid_interface.pack_start(
+            self.label_interface_sidebar, False, False, 0)
+        self.grid_interface.pack_start(
+            self.frame_interface_sidebar, False, False, 0)
 
         self.view_interface.add(self.grid_interface)
-
         self.scroll_interface.add(self.view_interface)
 
-        # Shortcuts tab
+        # ------------------------------------
+        #   Games
+        # ------------------------------------
+
+        self.stack.add_titled(
+            self.scroll_games, "games-list", _("Games"))
+
+        self.frame_games_view.add(self.listbox_games_view)
+
+        self.listbox_games_view.add(self.widget_view_grid_lines)
+        self.listbox_games_view.add(self.widget_view_tooltip_icon)
+        self.listbox_games_view.add(self.widget_view_icons)
+
+        self.frame_games_column.add(self.listbox_games_column)
+
+        self.listbox_games_column.add(self.widget_column_play)
+        self.listbox_games_column.add(self.widget_column_last_launch)
+        self.listbox_games_column.add(self.widget_column_play_time)
+        self.listbox_games_column.add(self.widget_column_score)
+        self.listbox_games_column.add(self.widget_column_installed)
+        self.listbox_games_column.add(self.widget_column_flags)
+
+        self.grid_games.pack_start(
+            self.label_games_view, False, False, 0)
+        self.grid_games.pack_start(
+            self.frame_games_view, False, False, 0)
+        self.grid_games.pack_start(
+            self.label_games_column, False, False, 0)
+        self.grid_games.pack_start(
+            self.frame_games_column, False, False, 0)
+
+        self.view_games.add(self.grid_games)
+        self.scroll_games.add(self.view_games)
+
+        # ------------------------------------
+        #   Shortcuts
+        # ------------------------------------
+
+        self.stack.add_titled(
+            self.scroll_shortcuts, "shortcuts", _("Shortcuts"))
+
         self.grid_shortcuts.attach(self.label_shortcuts, 0, 0, 1, 1)
         self.grid_shortcuts.attach(self.scroll_shortcuts_treeview, 0, 1, 1, 1)
 
         self.scroll_shortcuts_treeview.add(self.treeview_shortcuts)
 
         self.view_shortcuts.add(self.grid_shortcuts)
-
         self.scroll_shortcuts.add(self.view_shortcuts)
 
-        # Consoles tab
+        # ------------------------------------
+        #   Consoles
+        # ------------------------------------
+
+        self.stack.add_titled(
+            self.scroll_consoles, "consoles", _("Consoles"))
+
         self.grid_consoles.pack_start(
             self.grid_consoles_buttons, False, False, 0)
         self.grid_consoles.pack_start(
@@ -1403,10 +1178,15 @@ class PreferencesWindow(CommonWindow):
         self.scroll_consoles_treeview.add(self.treeview_consoles)
 
         self.view_consoles.add(self.grid_consoles)
-
         self.scroll_consoles.add(self.view_consoles)
 
-        # Emulators tab
+        # ------------------------------------
+        #   Emulators
+        # ------------------------------------
+
+        self.stack.add_titled(
+            self.scroll_emulators, "emulators", _("Emulators"))
+
         self.grid_emulators.pack_start(
             self.grid_emulators_buttons, False, False, 0)
         self.grid_emulators.pack_start(
@@ -1422,7 +1202,6 @@ class PreferencesWindow(CommonWindow):
         self.scroll_emulators_treeview.add(self.treeview_emulators)
 
         self.view_emulators.add(self.grid_emulators)
-
         self.scroll_emulators.add(self.view_emulators)
 
 
@@ -1441,18 +1220,41 @@ class PreferencesWindow(CommonWindow):
         #   General
         # ------------------------------------
 
-        self.entry_viewer_options.connect(
+        self.listbox_general_behavior.connect(
+            "row-activated", self.__on_activate_listboxrow)
+        self.listbox_general_editor.connect(
+            "row-activated", self.__on_activate_listboxrow)
+        self.listbox_general_viewer.connect(
+            "row-activated", self.__on_activate_listboxrow)
+
+        self.entry_general_viewer_options.connect(
             "icon-press", on_entry_clear)
 
-        self.check_native_viewer.connect(
+        self.switch_general_viewer_alternative_viewer.connect(
             "state-set", self.__on_check_native_viewer)
 
         # ------------------------------------
         #   Interface
         # ------------------------------------
 
-        self.check_sidebar_show.connect(
+        self.listbox_interface_appearance.connect(
+            "row-activated", self.__on_activate_listboxrow)
+        self.listbox_interface_toolbar.connect(
+            "row-activated", self.__on_activate_listboxrow)
+        self.listbox_interface_sidebar.connect(
+            "row-activated", self.__on_activate_listboxrow)
+
+        self.switch_interface_sidebar_visible.connect(
             "state-set", self.__on_check_sidebar)
+
+        # ------------------------------------
+        #   Games
+        # ------------------------------------
+
+        self.listbox_games_view.connect(
+            "row-activated", self.__on_activate_listboxrow)
+        self.listbox_games_column.connect(
+            "row-activated", self.__on_activate_listboxrow)
 
         # ------------------------------------
         #   Shortcuts
@@ -1500,6 +1302,200 @@ class PreferencesWindow(CommonWindow):
         """ Load data and start interface
         """
 
+        self.widgets = {
+
+            # ------------------------------------
+            #   General - Behavior
+            # ------------------------------------
+
+            self.widget_behavior_last_console: {
+                "type": Gtk.Switch,
+                "section": "gem",
+                "option": "load_console_startup",
+                "fallback": True
+            },
+            self.widget_behavior_last_column: {
+                "type": Gtk.Switch,
+                "section": "gem",
+                "option": "load_sort_column_startup",
+                "fallback": True
+            },
+            self.widget_behavior_hide_consoles: {
+                "type": Gtk.Switch,
+                "section": "gem",
+                "option": "hide_empty_console",
+                "fallback": False
+            },
+
+            # ------------------------------------
+            #   General - Editor
+            # ------------------------------------
+
+            self.widget_editor_lines_visible: {
+                "type": Gtk.Switch,
+                "section": "editor",
+                "option": "lines",
+                "fallback": True
+            },
+            self.widget_editor_tab_width: {
+                "type": Gtk.SpinButton,
+                "section": "editor",
+                "option": "tab",
+                "fallback": 4
+            },
+            self.widget_editor_colorscheme: {
+                "type": Gtk.ComboBox,
+                "section": "editor",
+                "option": "colorscheme",
+                "fallback": "classic"
+            },
+            self.widget_editor_font: {
+                "type": Gtk.FontButton,
+                "section": "editor",
+                "option": "font",
+                "fallback": "Sans 12"
+            },
+
+            # ------------------------------------
+            #   General - Viewer
+            # ------------------------------------
+
+            self.widget_viewer_alternative_viewer: {
+                "type": Gtk.Switch,
+                "section": "viewer",
+                "option": "native",
+                "fallback": True,
+                "reverse": True
+            },
+            self.widget_viewer_binary: {
+                "type": Gtk.FileChooserButton,
+                "section": "viewer",
+                "option": "binary",
+                "fallback": "/usr/bin/feh"
+            },
+            self.widget_viewer_options: {
+                "type": Gtk.Entry,
+                "section": "viewer",
+                "option": "options",
+                "fallback": "-x -d --force-aliasing -Z -q -g 700x600 -B black"
+            },
+
+            # ------------------------------------
+            #   Interface - Appearance
+            # ------------------------------------
+
+            self.widget_appearance_classic_theme: {
+                "type": Gtk.Switch,
+                "section": "gem",
+                "option": "use_classic_theme",
+                "fallback": True
+            },
+            self.widget_appearance_header_button: {
+                "type": Gtk.Switch,
+                "section": "gem",
+                "option": "show_header",
+                "fallback": True
+            },
+
+            # ------------------------------------
+            #   Interface - Toolbar
+            # ------------------------------------
+
+            self.widget_toolbar_size: {
+                "type": Gtk.ComboBox,
+                "section": "gem",
+                "option": "toolbar_icons_size",
+                "fallback": "small-toolbar"
+            },
+
+            # ------------------------------------
+            #   Interface - Sidebar
+            # ------------------------------------
+
+            self.widget_sidebar_visible: {
+                "type": Gtk.Switch,
+                "section": "gem",
+                "option": "show_sidebar",
+                "fallback": True
+            },
+            self.widget_sidebar_position: {
+                "type": Gtk.ComboBox,
+                "section": "gem",
+                "option": "sidebar_orientation",
+                "fallback": "vertical"
+            },
+            self.widget_sidebar_random_screenshot: {
+                "type": Gtk.Switch,
+                "section": "gem",
+                "option": "show_random_screenshot",
+                "fallback": True
+            },
+
+            # ------------------------------------
+            #   Games - List view
+            # ------------------------------------
+
+            self.widget_view_grid_lines: {
+                "type": Gtk.ComboBox,
+                "section": "gem",
+                "option": "games_treeview_lines",
+                "fallback": "none"
+            },
+            self.widget_view_tooltip_icon: {
+                "type": Gtk.ComboBox,
+                "section": "gem",
+                "option": "tooltip_image_type",
+                "fallback": "screenshot"
+            },
+            self.widget_view_icons: {
+                "type": Gtk.Switch,
+                "section": "gem",
+                "option": "use_translucent_icons",
+                "fallback": True
+            },
+
+            # ------------------------------------
+            #   Games - Columns
+            # ------------------------------------
+
+            self.widget_column_play: {
+                "type": Gtk.Switch,
+                "section": "columns",
+                "option": "play",
+                "fallback": True
+            },
+            self.widget_column_last_launch: {
+                "type": Gtk.Switch,
+                "section": "columns",
+                "option": "last_play",
+                "fallback": True
+            },
+            self.widget_column_play_time: {
+                "type": Gtk.Switch,
+                "section": "columns",
+                "option": "play_time",
+                "fallback": True
+            },
+            self.widget_column_score: {
+                "type": Gtk.Switch,
+                "section": "columns",
+                "option": "score",
+                "fallback": True
+            },
+            self.widget_column_installed: {
+                "type": Gtk.Switch,
+                "section": "columns",
+                "option": "installed",
+                "fallback": True
+            },
+            self.widget_column_flags: {
+                "type": Gtk.Switch,
+                "section": "columns",
+                "option": "flags",
+                "fallback": True
+            }
+        }
+
         self.button_cancel = self.add_button(
             _("Close"), Gtk.ResponseType.CLOSE)
 
@@ -1528,11 +1524,11 @@ class PreferencesWindow(CommonWindow):
         self.window.hide()
         self.window.unrealize()
 
+        self.show_all()
+
         # Update widget sensitive status
         self.__on_check_sidebar()
         self.__on_check_native_viewer()
-
-        self.show_all()
 
         # Avoid to remove console or emulator when games are launched
         if self.parent is not None and len(self.parent.threads) > 0:
@@ -1568,66 +1564,31 @@ class PreferencesWindow(CommonWindow):
         # Write emulators and consoles data
         self.api.write_data()
 
-        self.config.modify("gem", "load_console_startup",
-            self.check_last_console.get_active())
-        self.config.modify("gem", "load_sort_column_startup",
-            self.check_last_column.get_active())
-        self.config.modify("gem", "hide_empty_console",
-            self.check_hide_console.get_active())
+        for row, data in self.widgets.items():
+            widget = row.get_widget()
 
-        self.config.modify("gem", "toolbar_icons_size",
-            self.toolbar[self.combo_toolbar.get_active_id()])
+            if data["type"] == Gtk.ComboBox:
+                value = widget.get_active_id()
 
-        self.config.modify("gem", "use_classic_theme",
-            self.check_classic_theme.get_active())
-        self.config.modify("gem", "show_header",
-            self.check_header.get_active())
-        self.config.modify("gem", "show_sidebar",
-            self.check_sidebar_show.get_active())
-        self.config.modify("gem", "show_random_screenshot",
-            self.check_sidebar_screenshot.get_active())
-        self.config.modify("gem", "sidebar_orientation",
-            self.sidebar[self.combo_sidebar.get_active_id()])
+            elif data["type"] == Gtk.Entry:
+                value = widget.get_text()
 
-        self.config.modify("gem", "use_translucent_icons",
-            self.check_icons.get_active())
-        self.config.modify("columns", "play",
-            self.check_play.get_active())
-        self.config.modify("columns", "last_play",
-            self.check_last_play.get_active())
-        self.config.modify("columns", "play_time",
-            self.check_play_time.get_active())
-        self.config.modify("columns", "score",
-            self.check_score.get_active())
-        self.config.modify("columns", "installed",
-            self.check_installed.get_active())
-        self.config.modify("columns", "flags",
-            self.check_flags.get_active())
+            elif data["type"] == Gtk.FileChooserButton:
+                value = widget.get_filename()
 
-        self.config.modify("gem", "games_treeview_lines",
-            self.lines[self.combo_lines.get_active_id()])
+            elif data["type"] == Gtk.FontButton:
+                value = widget.get_font()
 
-        self.config.modify("gem", "tooltip_image_type",
-            self.tooltips[self.combo_tooltips.get_active_id()])
+            elif data["type"] == Gtk.SpinButton:
+                value = int(widget.get_value())
 
-        self.config.modify("viewer", "native",
-            not self.check_native_viewer.get_active())
-        self.config.modify("viewer", "binary",
-            self.file_viewer_binary.get_filename())
-        self.config.modify("viewer", "options",
-            self.entry_viewer_options.get_text())
+            elif data["type"] == Gtk.Switch:
+                value = widget.get_active()
 
-        # ------------------------------------
-        #   Editor
-        # ------------------------------------
+                if "reverse" in data and data["reverse"]:
+                    value = not value
 
-        if self.gtksource:
-            self.config.modify("editor", "lines",
-                self.check_lines.get_active())
-            self.config.modify("editor", "colorscheme",
-                self.combo_colorsheme.get_active_id())
-            self.config.modify("editor", "font",
-                self.font_editor.get_font())
+            self.config.modify(data["section"], data["option"], value)
 
         # ------------------------------------
         #   Shortcuts
@@ -1653,108 +1614,21 @@ class PreferencesWindow(CommonWindow):
         """ Load configuration files and fill widgets
         """
 
-        # ------------------------------------
-        #   General
-        # ------------------------------------
-
-        self.check_last_console.set_active(self.config.getboolean(
-            "gem", "load_console_startup", fallback=True))
-        self.check_last_column.set_active(self.config.getboolean(
-            "gem", "load_sort_column_startup", fallback=True))
-        self.check_hide_console.set_active(self.config.getboolean(
-            "gem", "hide_empty_console", fallback=True))
-
-        # ------------------------------------
-        #   Viewer
-        # ------------------------------------
-
-        self.check_native_viewer.set_active(not self.config.getboolean(
-            "viewer", "native", fallback=True))
-
-        self.file_viewer_binary.set_filename(
-            self.config.item("viewer", "binary"))
-        self.entry_viewer_options.set_text(
-            self.config.item("viewer", "options"))
-
-        # ------------------------------------
-        #   Interface
-        # ------------------------------------
-
-        self.check_classic_theme.set_active(self.config.getboolean(
-            "gem", "use_classic_theme", fallback=True))
-        self.check_header.set_active(self.config.getboolean(
-            "gem", "show_header", fallback=True))
-        self.check_sidebar_show.set_active(self.config.getboolean(
-            "gem", "show_sidebar", fallback=True))
-        self.check_sidebar_screenshot.set_active(self.config.getboolean(
-            "gem", "show_random_screenshot", fallback=True))
-
-        item = None
+        # Fill toolbar size combobox
         for key, value in self.toolbar.items():
-            row = self.model_toolbar.append([key])
+            self.model_interface_toolbar_size.append([value, key])
 
-            if self.config.item(
-                "gem", "toolbar_icons_size", "small-toolbar") == value:
-                item = row
-
-        if item is not None:
-            self.combo_toolbar.set_active_iter(item)
-
-        item = None
+        # Fill sidebar position combobox
         for key, value in self.sidebar.items():
-            row = self.model_sidebar.append([key])
+            self.model_interface_sidebar_position.append([value, key])
 
-            if self.config.item("gem", "sidebar_orientation", "none") == value:
-                item = row
-
-        if item is not None:
-            self.combo_sidebar.set_active_iter(item)
-
-        # ------------------------------------
-        #   Games list
-        # ------------------------------------
-
-        item = None
+        # Fill combobox
         for key, value in self.lines.items():
-            row = self.model_lines.append([key])
+            self.model_games_view_grid_lines.append([value, key])
 
-            if self.config.item("gem", "games_treeview_lines", "none") == value:
-                item = row
-
-        if item is not None:
-            self.combo_lines.set_active_iter(item)
-
-        item = None
+        # Fill combobox
         for key, value in self.tooltips.items():
-            row = self.model_tooltips.append([key])
-
-            if self.config.item(
-                "gem", "tooltip_image_type", "screenshot") == value:
-                item = row
-
-        if item is not None:
-            self.combo_tooltips.set_active_iter(item)
-
-        self.check_icons.set_active(self.config.getboolean(
-            "gem", "use_translucent_icons", fallback=True))
-
-        self.check_play.set_active(self.config.getboolean(
-            "columns", "play", fallback=True))
-
-        self.check_last_play.set_active(self.config.getboolean(
-            "columns", "last_play", fallback=True))
-
-        self.check_play_time.set_active(self.config.getboolean(
-            "columns", "play_time", fallback=True))
-
-        self.check_score.set_active(self.config.getboolean(
-            "columns", "score", fallback=True))
-
-        self.check_installed.set_active(self.config.getboolean(
-            "columns", "installed", fallback=True))
-
-        self.check_flags.set_active(self.config.getboolean(
-            "columns", "flags", fallback=True))
+            self.model_games_view_tooltip_icon.append([value, key])
 
         # ------------------------------------
         #   Editor
@@ -1765,30 +1639,50 @@ class PreferencesWindow(CommonWindow):
 
             from gi.repository.GtkSource import StyleSchemeManager
 
-            self.check_lines.set_active(
-                self.config.getboolean("editor", "lines", fallback=True))
-
-            colorscheme = self.config.item("editor", "colorscheme", "classic")
-
-            item = None
             for path in StyleSchemeManager().get_search_path():
                 for element in sorted(glob(path_join(path, "*.xml"))):
                     filename, extension = splitext(basename(element))
 
-                    row = self.model_colorsheme.append([filename])
-                    if filename == colorscheme:
-                        item = row
-
-            if item is not None:
-                self.combo_colorsheme.set_active_iter(item)
-
-            self.font_editor.set_font(
-                self.config.item("editor", "font", "Sans 12"))
-
-            self.gtksource = True
+                    self.model_general_colorscheme.append([filename])
 
         except Exception as error:
-            self.gtksource = False
+            pass
+
+        # ------------------------------------
+        #   Configuration file
+        # ------------------------------------
+
+        for row, data in self.widgets.items():
+            widget = row.get_widget()
+
+            if data["type"] == Gtk.ComboBox:
+                widget.set_active_id(self.config.get(
+                    data["section"], data["option"], fallback=data["fallback"]))
+
+            elif data["type"] == Gtk.Entry:
+                widget.set_text(self.config.get(
+                    data["section"], data["option"], fallback=data["fallback"]))
+
+            elif data["type"] == Gtk.FileChooserButton:
+                widget.set_filename(self.config.get(
+                    data["section"], data["option"], fallback=data["fallback"]))
+
+            elif data["type"] == Gtk.FontButton:
+                widget.set_font(self.config.get(
+                    data["section"], data["option"], fallback=data["fallback"]))
+
+            elif data["type"] == Gtk.SpinButton:
+                widget.set_value(self.config.getint(
+                    data["section"], data["option"], fallback=data["fallback"]))
+
+            elif data["type"] == Gtk.Switch:
+                value = self.config.getboolean(
+                    data["section"], data["option"], fallback=data["fallback"])
+
+                if "reverse" in data and data["reverse"]:
+                    value = not value
+
+                widget.set_active(value)
 
         # ------------------------------------
         #   Shortcuts
@@ -2011,13 +1905,10 @@ class PreferencesWindow(CommonWindow):
             New status for current widget (Default: None)
         """
 
-        status = self.check_native_viewer.get_active()
+        status = self.switch_general_viewer_alternative_viewer.get_active()
 
-        self.label_viewer_binary.set_sensitive(status)
-        self.file_viewer_binary.set_sensitive(status)
-
-        self.label_viewer_options.set_sensitive(status)
-        self.entry_viewer_options.set_sensitive(status)
+        self.widget_viewer_binary.set_sensitive(status)
+        self.widget_viewer_options.set_sensitive(status)
 
 
     def __on_check_sidebar(self, widget=None, state=None):
@@ -2031,12 +1922,10 @@ class PreferencesWindow(CommonWindow):
             New status for current widget (Default: None)
         """
 
-        status = self.check_sidebar_show.get_active()
+        status = self.switch_interface_sidebar_visible.get_active()
 
-        self.label_sidebar_screenshot.set_sensitive(status)
-        self.check_sidebar_screenshot.set_sensitive(status)
-        self.label_sidebar_position.set_sensitive(status)
-        self.combo_sidebar.set_sensitive(status)
+        self.widget_sidebar_position.set_sensitive(status)
+        self.widget_sidebar_random_screenshot.set_sensitive(status)
 
 
     def __on_modify_item(self, widget, manager, modification):
@@ -2149,3 +2038,189 @@ class PreferencesWindow(CommonWindow):
             elif manager == Manager.EMULATOR:
                 self.on_load_emulators()
 
+
+    def __on_activate_listboxrow(self, widget, row):
+        """ Activate internal widget when a row has been activated
+
+        Parameters
+        ----------
+        widget : Gtk.ListBox
+            Object which receive signal
+        row : Gtk.ListBoxRow
+            Activated row
+        """
+
+        widget = row.get_widget()
+
+        if type(widget) == Gtk.ComboBox:
+            widget.popup()
+
+        elif type(widget) == Gtk.Entry:
+            widget.grab_focus()
+
+        elif type(widget) == Gtk.FileChooserButton:
+            widget.activate()
+
+        elif type(widget) == Gtk.FontButton:
+            widget.clicked()
+
+        elif type(widget) == Gtk.SpinButton:
+            widget.grab_focus()
+
+        elif type(widget) == Gtk.Switch:
+            widget.set_active(not widget.get_active())
+
+
+class PreferencesItem(Gtk.ListBoxRow):
+
+    def __init__(self):
+        """ Constructor
+        """
+
+        Gtk.ListBoxRow.__init__(self)
+
+        # ------------------------------------
+        #   Initialize variables
+        # ------------------------------------
+
+        self.__widget = None
+
+        # ------------------------------------
+        #   Prepare interface
+        # ------------------------------------
+
+        # Init widgets
+        self.__init_widgets()
+
+        # Init packing
+        self.__init_packing()
+
+
+    def __init_widgets(self):
+        """ Initialize interface widgets
+        """
+
+        # ------------------------------------
+        #   Grids
+        # ------------------------------------
+
+        self.grid = Gtk.Box()
+        self.grid_labels = Gtk.Box()
+
+        # Properties
+        self.grid.set_homogeneous(False)
+        self.grid.set_border_width(6)
+        self.grid.set_spacing(12)
+
+        self.grid_labels.set_orientation(Gtk.Orientation.VERTICAL)
+        self.grid_labels.set_homogeneous(True)
+        self.grid_labels.set_spacing(2)
+
+        # ------------------------------------
+        #   Labels
+        # ------------------------------------
+
+        self.label_title = Gtk.Label()
+
+        self.label_description = Gtk.Label()
+
+        # Properties
+        self.label_title.set_line_wrap(True)
+        self.label_title.set_halign(Gtk.Align.START)
+        self.label_title.set_valign(Gtk.Align.CENTER)
+        self.label_title.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
+
+        self.label_description.set_hexpand(True)
+        self.label_description.set_line_wrap(True)
+        self.label_description.set_use_markup(True)
+        self.label_description.set_no_show_all(True)
+        self.label_description.set_halign(Gtk.Align.START)
+        self.label_description.set_valign(Gtk.Align.CENTER)
+        self.label_description.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
+        self.label_description.get_style_context().add_class("dim-label")
+
+
+    def __init_packing(self):
+        """ Initialize widgets packing in main window
+        """
+
+        self.add(self.grid)
+
+        self.grid.pack_start(self.grid_labels, True, True, 0)
+
+        self.grid_labels.pack_start(self.label_title, True, True, 0)
+        self.grid_labels.pack_start(self.label_description, True, True, 0)
+
+
+    def set_option_label(self, text):
+        """ Set the option label text
+
+        Parameters
+        ----------
+        text : str
+            Label text
+        """
+
+        self.label_title.set_text(text)
+
+
+    def set_description_label(self, text):
+        """ Set the description label text
+
+        Parameters
+        ----------
+        text : str
+            Label text
+        """
+
+        self.label_description.set_markup(
+            "<span size=\"small\">%s</span>" % text)
+        self.label_description.set_visible(len(text) > 0)
+
+
+    def set_widget(self, widget):
+        """ Set a new internal widget
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Internal widget to set
+        """
+
+        # Remove previous widget
+        if self.__widget is not None:
+            self.grid.remove(self.__widget)
+
+        # Add new widget
+        if widget is not None:
+            widget.set_valign(Gtk.Align.CENTER)
+
+            if not type(widget) in [Gtk.Switch, Gtk.SpinButton]:
+                widget.set_halign(Gtk.Align.FILL)
+                widget.set_hexpand(True)
+
+                self.grid.set_homogeneous(True)
+
+                self.grid.pack_start(widget, True, True, 0)
+
+            else:
+                widget.set_halign(Gtk.Align.END)
+                widget.set_hexpand(False)
+
+                self.grid.set_homogeneous(False)
+
+                self.grid.pack_start(widget, False, False, 0)
+
+        self.__widget = widget
+
+
+    def get_widget(self):
+        """ Retrieve internal widget
+
+        Returns
+        -------
+        Gtk.Widget
+            Internal widget
+        """
+
+        return self.__widget
