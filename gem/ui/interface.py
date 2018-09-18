@@ -5747,48 +5747,6 @@ class MainWindow(Gtk.ApplicationWindow):
             dialog.destroy()
 
 
-    def __on_game_clean(self, *args):
-        """ Reset game informations from database
-        """
-
-        game = self.selection["game"]
-
-        if game is not None:
-            treeiter = self.game_path[game.filename][1]
-
-            self.set_sensitive(False)
-
-            dialog = QuestionDialog(self, _("Reset game"),
-                _("Would you really want to reset this game informations ?"))
-
-            if dialog.run() == Gtk.ResponseType.YES:
-                data = {
-                    Columns.List.Favorite: self.alternative["favorite"],
-                    Columns.List.Name: game.filename,
-                    Columns.List.Played: None,
-                    Columns.List.LastPlay: None,
-                    Columns.List.TimePlay: None,
-                    Columns.List.LastTimePlay: None,
-                    Columns.List.Score: 0,
-                    Columns.List.Except: self.alternative["except"],
-                    Columns.List.Multiplayer: self.alternative["multiplayer"],
-                }
-
-                for key, value in data.items():
-                    self.model_games_list[treeiter][key] = value
-
-                game.reset()
-
-                # Update game from database
-                self.api.update_game(game)
-
-                self.set_informations()
-
-            self.set_sensitive(True)
-
-            dialog.destroy()
-
-
     def __on_game_maintenance(self, *args):
         """ Set some maintenance for selected game
         """
@@ -5833,9 +5791,30 @@ class MainWindow(Gtk.ApplicationWindow):
 
                             need_to_reload = True
 
-                        # Remove game from database
+                        # Clean game from database
                         if data["database"]:
-                            self.api.delete_game(game)
+                            game_data = {
+                                Columns.List.Favorite: \
+                                    self.alternative["favorite"],
+                                Columns.List.Name: game.filename,
+                                Columns.List.Played: None,
+                                Columns.List.LastPlay: None,
+                                Columns.List.TimePlay: None,
+                                Columns.List.LastTimePlay: None,
+                                Columns.List.Score: 0,
+                                Columns.List.Except: \
+                                    self.alternative["except"],
+                                Columns.List.Multiplayer: \
+                                    self.alternative["multiplayer"],
+                            }
+
+                            for key, value in game_data.items():
+                                self.model_games_list[treeiter][key] = value
+
+                            game.reset()
+
+                            # Update game from database
+                            self.api.update_game(game)
 
                             need_to_reload = True
 
@@ -5843,6 +5822,7 @@ class MainWindow(Gtk.ApplicationWindow):
                         elif data["environment"]:
                             game.environment = dict()
 
+                            # Update game from database
                             self.api.update_game(game)
 
                             need_to_reload = True

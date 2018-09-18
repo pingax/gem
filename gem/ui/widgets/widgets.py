@@ -679,6 +679,18 @@ class PreferencesItem(Gtk.ListBoxRow):
         self.label_title.set_text(text)
 
 
+    def get_option_label(self):
+        """ Retrieve the option label text
+
+        Returns
+        -------
+        str
+            Label text
+        """
+
+        return self.label_title.get_text()
+
+
     def set_description_label(self, text):
         """ Set the description label text
 

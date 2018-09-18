@@ -23,6 +23,7 @@ Version 1.0 - Space Fox
 * Add a color to filter button when some filters are active
 * Add to remove the desktop file when removing a game
 * Add a dialog to alert the user when a GEM instance already exists
+* Add a maintenance dialog to replace the clean database dialog
 * Allow to drag the sidebar image to another application
 * Allow to duplicate a game and his data
 * Allow to sort games list treeview
