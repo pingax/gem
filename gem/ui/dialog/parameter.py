@@ -79,7 +79,7 @@ class ParametersDialog(CommonWindow):
                     "identifier known as a GameID. This GameID is only used "
                     "with some emulators like Dolphin-emu. For more "
                     "informations, consult emulators documentation."),
-                _("Tags are split by spaces.")
+                _("Tags are split by commas.")
             ],
             _("Parameters"): {
                 "<key>": _("Use game key"),

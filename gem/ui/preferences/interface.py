@@ -372,17 +372,23 @@ class PreferencesWindow(CommonWindow):
         self.widget_behavior_last_console.set_widget(
             self.switch_general_behavior_last_console)
         self.widget_behavior_last_console.set_option_label(
-            _("Remember the last selected console"))
+            _("Restore last console"))
+        self.widget_behavior_last_console.set_description_label(
+            _("Restore the last selected console when application is opened"))
 
         self.widget_behavior_last_column.set_widget(
             self.switch_general_behavior_last_column)
         self.widget_behavior_last_column.set_option_label(
-            _("Remember the last sorted column"))
+            _("Restore sorted column"))
+        self.widget_behavior_last_column.set_description_label(
+            _("Restore the last sorted column when application is opened"))
 
         self.widget_behavior_hide_consoles.set_widget(
             self.switch_general_behavior_hide_consoles)
         self.widget_behavior_hide_consoles.set_option_label(
-            _("Hide consoles without games"))
+            _("Disable empty consoles"))
+        self.widget_behavior_hide_consoles.set_description_label(
+            _("Disable consoles without games"))
 
         # ------------------------------------
         #   General - Editor
@@ -423,12 +429,16 @@ class PreferencesWindow(CommonWindow):
         self.widget_editor_lines_visible.set_widget(
             self.switch_general_editor_lines_visible)
         self.widget_editor_lines_visible.set_option_label(
-            _("Show line numbers"))
+            _("Line numbers"))
+        self.widget_editor_lines_visible.set_description_label(
+            _("Show line number at beginning of each line"))
 
         self.widget_editor_tab_width.set_widget(
             self.spin_general_editor_tab_width)
         self.widget_editor_tab_width.set_option_label(
             _("Tab width"))
+        self.widget_editor_tab_width.set_description_label(
+            _("Width of a tab character in spaces"))
 
         self.spin_general_editor_tab_width.set_range(1.0, 40.0)
         self.spin_general_editor_tab_width.set_increments(1, 4)
@@ -438,7 +448,7 @@ class PreferencesWindow(CommonWindow):
         self.widget_editor_colorscheme.set_widget(
             self.combo_general_colorscheme)
         self.widget_editor_colorscheme.set_option_label(
-            _("Colorscheme"))
+            _("Color scheme"))
 
         self.model_general_colorscheme.set_sort_column_id(
             0, Gtk.SortType.ASCENDING)
@@ -454,7 +464,7 @@ class PreferencesWindow(CommonWindow):
         self.widget_editor_font.set_widget(
             self.font_general_editor_font)
         self.widget_editor_font.set_option_label(
-            _("Font"))
+            _("Editor font"))
 
         # HACK: Set an ellipsize mode for the label inside FontButton
         for child in self.font_general_editor_font.get_child():
@@ -495,7 +505,9 @@ class PreferencesWindow(CommonWindow):
         self.widget_viewer_alternative_viewer.set_widget(
             self.switch_general_viewer_alternative_viewer)
         self.widget_viewer_alternative_viewer.set_option_label(
-            _("Use an alternative application"))
+            _("Enable alternative application"))
+        self.widget_viewer_alternative_viewer.set_description_label(
+            _("Allow to use an alternative screenshots viewer"))
 
         self.widget_viewer_binary.set_widget(
             self.file_general_viewer_binary)
@@ -550,14 +562,16 @@ class PreferencesWindow(CommonWindow):
         self.widget_appearance_classic_theme.set_widget(
             self.switch_interface_appearance_classic_theme)
         self.widget_appearance_classic_theme.set_option_label(
-            _("Switch to classic theme"))
+            _("Enable classic theme"))
         self.widget_appearance_classic_theme.set_description_label(
-            _("You need to reload the application to apply this theme"))
+            _("Use a GTK+2 like appearance (Restart application is needed)"))
 
         self.widget_appearance_header_button.set_widget(
             self.switch_interface_appearance_header_buttons)
         self.widget_appearance_header_button.set_option_label(
-            _("Show window buttons in header bar"))
+            _("Enable close buttons"))
+        self.widget_appearance_header_button.set_description_label(
+            _("Enable close buttons in headerbar"))
 
         # ------------------------------------
         #   Interface - Toolbar
@@ -589,6 +603,8 @@ class PreferencesWindow(CommonWindow):
         self.widget_toolbar_size.set_widget(self.combo_interface_toolbar_size)
         self.widget_toolbar_size.set_option_label(
             _("Icons size"))
+        self.widget_toolbar_size.set_description_label(
+            _("The size of icons in toolbar"))
 
         self.combo_interface_toolbar_size.set_model(
             self.model_interface_toolbar_size)
@@ -632,12 +648,16 @@ class PreferencesWindow(CommonWindow):
         self.widget_sidebar_visible.set_widget(
             self.switch_interface_sidebar_visible)
         self.widget_sidebar_visible.set_option_label(
-            _("Show sidebar"))
+            _("Enable sidebar"))
+        self.widget_sidebar_visible.set_description_label(
+            _("Enable sidebar next to games view"))
 
         self.widget_sidebar_position.set_widget(
             self.combo_interface_sidebar_position)
         self.widget_sidebar_position.set_option_label(
-            _("Sidebar position"))
+            _("Position"))
+        self.widget_sidebar_position.set_description_label(
+            _("Set sidebar position as for games view"))
 
         self.combo_interface_sidebar_position.set_model(
             self.model_interface_sidebar_position)
@@ -650,7 +670,9 @@ class PreferencesWindow(CommonWindow):
         self.widget_sidebar_random_screenshot.set_widget(
             self.switch_interface_random_screenshot)
         self.widget_sidebar_random_screenshot.set_option_label(
-            _("Randomize screenshot"))
+            _("Enable randomize screenshot"))
+        self.widget_sidebar_random_screenshot.set_description_label(
+            _("Use a random game screenshot instead of latest"))
 
         # ------------------------------------
         #   Games
@@ -697,7 +719,9 @@ class PreferencesWindow(CommonWindow):
         self.widget_view_grid_lines.set_widget(
             self.combo_games_view_grid_lines)
         self.widget_view_grid_lines.set_option_label(
-            _("Show grid lines"))
+            _("Grid lines"))
+        self.widget_view_grid_lines.set_description_label(
+            _("Display lines in games list view"))
 
         self.combo_games_view_grid_lines.set_model(
             self.model_games_view_grid_lines)
@@ -710,7 +734,9 @@ class PreferencesWindow(CommonWindow):
         self.widget_view_tooltip_icon.set_widget(
             self.combo_games_view_tooltip_icon)
         self.widget_view_tooltip_icon.set_option_label(
-            _("Game tooltip image"))
+            _("Tooltip image"))
+        self.widget_view_tooltip_icon.set_description_label(
+            _("Display a specific image in game tooltip"))
 
         self.combo_games_view_tooltip_icon.set_model(
             self.model_games_view_tooltip_icon)
@@ -723,7 +749,9 @@ class PreferencesWindow(CommonWindow):
         self.widget_view_icons.set_widget(
             self.switch_games_view_icons)
         self.widget_view_icons.set_option_label(
-            _("Use translucent icons"))
+            _("Enable translucent icons"))
+        self.widget_view_icons.set_description_label(
+            _("Display translucent icons in games views instead of empty ones"))
 
         # ------------------------------------
         #   Interface - Columns
@@ -1113,9 +1141,9 @@ class PreferencesWindow(CommonWindow):
         self.listbox_interface_toolbar.add(self.widget_toolbar_size)
 
         self.listbox_interface_sidebar.add(self.widget_sidebar_visible)
-        self.listbox_interface_sidebar.add(self.widget_sidebar_position)
         self.listbox_interface_sidebar.add(
             self.widget_sidebar_random_screenshot)
+        self.listbox_interface_sidebar.add(self.widget_sidebar_position)
 
         self.grid_interface.pack_start(
             self.label_interface_appearance, False, False, 0)
@@ -2139,7 +2167,7 @@ class PreferencesItem(Gtk.ListBoxRow):
         self.grid.set_spacing(12)
 
         self.grid_labels.set_orientation(Gtk.Orientation.VERTICAL)
-        self.grid_labels.set_homogeneous(True)
+        self.grid_labels.set_homogeneous(False)
         self.grid_labels.set_spacing(2)
 
         # ------------------------------------
@@ -2153,7 +2181,7 @@ class PreferencesItem(Gtk.ListBoxRow):
         # Properties
         self.label_title.set_line_wrap(True)
         self.label_title.set_halign(Gtk.Align.START)
-        self.label_title.set_valign(Gtk.Align.CENTER)
+        self.label_title.set_valign(Gtk.Align.END)
         self.label_title.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
 
         self.label_description.set_hexpand(True)
@@ -2161,7 +2189,8 @@ class PreferencesItem(Gtk.ListBoxRow):
         self.label_description.set_use_markup(True)
         self.label_description.set_no_show_all(True)
         self.label_description.set_halign(Gtk.Align.START)
-        self.label_description.set_valign(Gtk.Align.CENTER)
+        self.label_description.set_valign(Gtk.Align.START)
+        self.label_description.set_justify(Gtk.Justification.FILL)
         self.label_description.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
         self.label_description.get_style_context().add_class("dim-label")
 
