@@ -92,10 +92,12 @@ class MessageDialog(CommonWindow):
         text.set_line_wrap_mode(Pango.WrapMode.WORD)
 
         if(self.center):
-            text.set_alignment(.5, .5)
+            text.set_halign(Gtk.Align.CENTER)
+            text.set_valign(Gtk.Align.CENTER)
             text.set_justify(Gtk.Justification.CENTER)
         else:
-            text.set_alignment(0, .5)
+            text.set_halign(Gtk.Align.START)
+            text.set_valign(Gtk.Align.CENTER)
             text.set_justify(Gtk.Justification.FILL)
 
         # ------------------------------------

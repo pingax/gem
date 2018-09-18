@@ -4371,6 +4371,7 @@ class MainWindow(Gtk.ApplicationWindow):
             # Get maximum icon size (this size cannot be under 24 pixels)
             size = max(size, data[1], data[2])
 
+        # Retrieve available consoles
         for console in self.api.consoles:
             console_data = self.__on_generate_console_row(console, size)
 
@@ -4388,8 +4389,15 @@ class MainWindow(Gtk.ApplicationWindow):
         self.__on_update_consoles()
 
         if len(self.listbox_consoles) > 0:
+            self.button_consoles.set_sensitive(True)
+            self.button_consoles_option.set_sensitive(True)
+
             self.logger.debug(
                 "%d console(s) has been added" % len(self.listbox_consoles))
+
+        else:
+            self.button_consoles.set_sensitive(False)
+            self.button_consoles_option.set_sensitive(False)
 
         return item
 
@@ -4410,41 +4418,46 @@ class MainWindow(Gtk.ApplicationWindow):
             Generation results
         """
 
-        console = self.api.get_console(identifier)
+        hide = self.config.getboolean(
+            "gem", "hide_empty_console", fallback=False)
 
-        # Reload games list
-        console.set_games(self.api)
+        console = self.api.get_console(identifier)
 
         # Check if console ROM path exist
         if console.emulator is not None and exists(console.path):
-            status = self.empty
 
-            # Check if current emulator can be launched
-            if not console.emulator.exists:
-                status = self.icons["warning"]
+            # Reload games list
+            console.set_games(self.api)
 
-                self.logger.warning(
-                    _("Cannot find %(binary)s for %(console)s") % {
-                        "binary": console.emulator.binary,
-                        "console": console.name })
+            if not hide or len(console.games) > 0:
+                status = self.empty
 
-            elif console.favorite:
-                status = self.icons["favorite"]
+                # Check if current emulator can be launched
+                if not console.emulator.exists:
+                    status = self.icons["warning"]
 
-            icon = console.icon
+                    self.logger.warning(
+                        _("Cannot find %(binary)s for %(console)s") % {
+                            "binary": console.emulator.binary,
+                            "console": console.name })
 
-            if icon is not None:
-                if not exists(expanduser(icon)):
-                    icon = self.api.get_local(
-                        "icons", "consoles", "%s.%s" % (icon, Icons.Ext))
+                elif console.favorite:
+                    status = self.icons["favorite"]
 
-                # Get console icon
-                icon = icon_from_data(icon, self.empty, size, size)
+                icon = console.icon
 
-            else:
-                icon = self.empty
+                if icon is not None:
+                    if not exists(expanduser(icon)):
+                        icon = self.api.get_local(
+                            "icons", "consoles", "%s.%s" % (icon, Icons.Ext))
 
-            return(console, icon, status)
+                    # Get console icon
+                    icon = icon_from_data(icon, self.empty, size, size)
+
+                else:
+                    icon = self.empty
+
+                return(console, icon, status)
 
         return None
 
@@ -4553,12 +4566,6 @@ class MainWindow(Gtk.ApplicationWindow):
         row : gem.gtk.widgets.ListBoxSelectorItem
             Activated row
         """
-
-        hide = self.config.getboolean(
-            "gem", "hide_empty_console", fallback=False)
-
-        if hide and len(row.data.games) == 0:
-            return False
 
         # Retrieve row label text
         text = row.get_label().get_text().lower()
