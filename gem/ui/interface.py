@@ -646,6 +646,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menubar_edit_item_open = Gtk.MenuItem()
         self.menubar_edit_item_cover = Gtk.MenuItem()
         self.menubar_edit_item_desktop = Gtk.MenuItem()
+        self.menubar_edit_item_maintenance = Gtk.MenuItem()
         self.menubar_edit_item_database = Gtk.MenuItem()
         self.menubar_edit_item_delete = Gtk.MenuItem()
         self.menubar_edit_item_mednafen = Gtk.MenuItem()
@@ -674,6 +675,10 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menubar_edit_item_desktop.set_label(
             _("_Generate a menu entry"))
         self.menubar_edit_item_desktop.set_use_underline(True)
+
+        self.menubar_edit_item_maintenance.set_label(
+            "%s…" % _("_Maintenance"))
+        self.menubar_edit_item_maintenance.set_use_underline(True)
 
         self.menubar_edit_item_database.set_label(
             "%s…" % _("_Reset data"))
@@ -1518,6 +1523,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menu_item_copy = Gtk.MenuItem()
         self.menu_item_open = Gtk.MenuItem()
         self.menu_item_cover = Gtk.MenuItem()
+        self.menu_item_maintenance = Gtk.MenuItem()
         self.menu_item_remove = Gtk.MenuItem()
         self.menu_item_database = Gtk.MenuItem()
 
@@ -1545,6 +1551,10 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menu_item_cover.set_label(
             "%s…" % _("Set game _cover"))
         self.menu_item_cover.set_use_underline(True)
+
+        self.menu_item_maintenance.set_label(
+            "%s…" % _("_Maintenance"))
+        self.menu_item_maintenance.set_use_underline(True)
 
         self.menu_item_database.set_label(
             "%s…" % _("_Reset data"))
@@ -1800,7 +1810,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menubar_edit_menu.insert(Gtk.SeparatorMenuItem(), -1)
         self.menubar_edit_menu.insert(self.menubar_edit_item_cover, -1)
         self.menubar_edit_menu.insert(Gtk.SeparatorMenuItem(), -1)
-        self.menubar_edit_menu.insert(self.menubar_edit_item_database, -1)
+        self.menubar_edit_menu.insert(self.menubar_edit_item_maintenance, -1)
         self.menubar_edit_menu.insert(Gtk.SeparatorMenuItem(), -1)
         self.menubar_edit_menu.insert(self.menubar_edit_item_delete, -1)
 
@@ -2055,7 +2065,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menu_games_edit.append(Gtk.SeparatorMenuItem())
         self.menu_games_edit.append(self.menu_item_cover)
         self.menu_games_edit.append(Gtk.SeparatorMenuItem())
-        self.menu_games_edit.append(self.menu_item_database)
+        self.menu_games_edit.append(self.menu_item_maintenance)
         self.menu_games_edit.append(Gtk.SeparatorMenuItem())
         self.menu_games_edit.append(self.menu_item_remove)
 
@@ -2152,8 +2162,8 @@ class MainWindow(Gtk.ApplicationWindow):
             "activate", self.__on_game_generate_desktop)
         self.menubar_edit_item_cover.connect(
             "activate", self.__on_game_cover)
-        self.menubar_edit_item_database.connect(
-            "activate", self.__on_game_clean)
+        self.menubar_edit_item_maintenance.connect(
+            "activate", self.__on_game_maintenance)
         self.menubar_edit_item_delete.connect(
             "activate", self.__on_game_removed)
         self.menubar_edit_item_mednafen.connect(
@@ -2280,8 +2290,8 @@ class MainWindow(Gtk.ApplicationWindow):
             "activate", self.__on_game_cover)
         self.menu_item_desktop.connect(
             "activate", self.__on_game_generate_desktop)
-        self.menu_item_database.connect(
-            "activate", self.__on_game_clean)
+        self.menu_item_maintenance.connect(
+            "activate", self.__on_game_maintenance)
         self.menu_item_remove.connect(
             "activate", self.__on_game_removed)
         self.menu_item_mednafen.connect(
@@ -3076,6 +3086,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menu_item_cover.set_sensitive(status)
         self.menu_item_desktop.set_sensitive(status)
         self.menu_item_remove.set_sensitive(status)
+        self.menu_item_maintenance.set_sensitive(status)
         self.menu_item_database.set_sensitive(status)
         self.menu_item_mednafen.set_sensitive(status)
         self.menu_item_duplicate.set_sensitive(status)
@@ -3104,6 +3115,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menubar_edit_item_open.set_sensitive(status)
         self.menubar_edit_item_cover.set_sensitive(status)
         self.menubar_edit_item_desktop.set_sensitive(status)
+        self.menubar_edit_item_maintenance.set_sensitive(status)
         self.menubar_edit_item_database.set_sensitive(status)
         self.menubar_edit_item_delete.set_sensitive(status)
         self.menubar_edit_item_mednafen.set_sensitive(status)
@@ -3523,12 +3535,12 @@ class MainWindow(Gtk.ApplicationWindow):
                 "keys": self.config.item("keys", "delete", "<Control>Delete")
             },
             {
-                "path": "<GEM>/game/remove",
+                "path": "<GEM>/game/maintenance",
                 "widgets": [
-                    self.menu_item_database,
-                    self.menubar_edit_item_database
+                    self.menu_item_maintenance,
+                    self.menubar_edit_item_maintenance
                 ],
-                "keys": self.config.item("keys", "remove", "Delete")
+                "keys": self.config.item("keys", "maintenance", "<Control>D")
             },
             {
                 "path": "<GEM>/preferences",
@@ -5777,6 +5789,81 @@ class MainWindow(Gtk.ApplicationWindow):
             dialog.destroy()
 
 
+    def __on_game_maintenance(self, *args):
+        """ Set some maintenance for selected game
+        """
+
+        game = self.selection["game"]
+        console = self.selection["console"]
+
+        if game is not None and console is not None:
+
+            # Avoid trying to remove an executed game
+            if not game.filename in self.threads:
+                treeiter = self.game_path[game.filename][1]
+
+                emulator = console.emulator
+                if game.emulator is not None:
+                    emulator = game.emulator
+
+                need_to_reload = False
+
+                # ----------------------------
+                #   Dialog
+                # ----------------------------
+
+                self.set_sensitive(False)
+
+                dialog = MaintenanceDialog(self, game, emulator)
+
+                if dialog.run() == Gtk.ResponseType.APPLY:
+                    try:
+                        self.logger.info(_("%s maintenance") % game.name)
+
+                        data = dialog.get_data()
+
+                        # Reload the games list
+                        if len(data["paths"]) > 0:
+
+                            # Duplicate game files
+                            for element in data["paths"]:
+                                self.logger.debug("Remove %s" % element)
+
+                                remove(element)
+
+                            need_to_reload = True
+
+                        # Remove game from database
+                        if data["database"]:
+                            self.api.delete_game(game)
+
+                            need_to_reload = True
+
+                        # Remove environment variables from game
+                        elif data["environment"]:
+                            game.environment = dict()
+
+                            self.api.update_game(game)
+
+                            need_to_reload = True
+
+                        # Set game output buttons as unsensitive
+                        if data["log"]:
+                            self.toolbar_item_output.set_sensitive(False)
+                            self.menu_item_output.set_sensitive(False)
+                            self.menubar_game_item_output.set_sensitive(False)
+
+                    except Exception as error:
+                        self.logger.exception("An error occur during removing")
+
+                dialog.destroy()
+
+                if need_to_reload:
+                    self.set_informations()
+
+                self.set_sensitive(True)
+
+
     def __on_game_removed(self, *args):
         """ Remove a game
 
@@ -5813,18 +5900,21 @@ class MainWindow(Gtk.ApplicationWindow):
 
                         data = dialog.get_data()
 
-                        # Duplicate game files
-                        for element in data["paths"]:
-                            self.logger.debug("Remove %s" % element)
+                        # Reload the games list
+                        if len(data["paths"]) > 0:
 
-                            remove(element)
+                            # Duplicate game files
+                            for element in data["paths"]:
+                                self.logger.debug("Remove %s" % element)
+
+                                remove(element)
+
+                            need_to_reload = True
 
                         # Remove game from database
                         if data["database"]:
                             self.api.delete_game(game)
 
-                        # Reload the games list
-                        if len(data["paths"]) > 0 or data["database"]:
                             need_to_reload = True
 
                     except Exception as error:
@@ -5875,18 +5965,21 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     data = dialog.get_data()
 
-                    # Duplicate game files
-                    for original, path in data["paths"]:
-                        self.logger.debug("Copy %s" % original)
+                    # Reload the games list
+                    if len(data["paths"]) > 0 or data["database"]:
 
-                        copy(original, path)
+                        # Duplicate game files
+                        for original, path in data["paths"]:
+                            self.logger.debug("Copy %s" % original)
+
+                            copy(original, path)
+
+                        need_to_reload = True
 
                     # Update game from database
                     if data["database"]:
                         self.api.update_game(game.copy(data["filepath"]))
 
-                    # Reload the games list
-                    if len(data["paths"]) > 0 or data["database"]:
                         need_to_reload = True
 
                 except Exception as error:
@@ -6092,7 +6185,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 if game.emulator is not None:
                     emulator = game.emulator
 
-                filepath = get_mednafen_memory_type(game)
+                filepath = self.get_mednafen_memory_type(game)
 
                 # Check if a type file already exist in mednafen sav folder
                 if exists(filepath):

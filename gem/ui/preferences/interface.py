@@ -26,6 +26,7 @@ from gem.ui.utils import *
 from gem.ui.dialog.question import QuestionDialog
 
 from gem.ui.widgets.window import CommonWindow
+from gem.ui.widgets.widgets import PreferencesItem
 
 from gem.ui.preferences.console import ConsolePreferences
 from gem.ui.preferences.emulator import EmulatorPreferences
@@ -122,8 +123,8 @@ class PreferencesWindow(CommonWindow):
                     _("Set selected game score as 5"), "<Primary>5"]
             },
             _("Edit"): {
-                "remove": [
-                    _("Remove a game from database"), "Delete"],
+                "maintenance": [
+                    _("Open a game maintenance dialog"), "<Control>D"],
                 "delete": [
                     _("Remove a game from disk"), "<Control>Delete"],
                 "rename": [
@@ -1275,11 +1276,11 @@ class PreferencesWindow(CommonWindow):
         # ------------------------------------
 
         self.listbox_general_behavior.connect(
-            "row-activated", self.__on_activate_listboxrow)
+            "row-activated", self.on_activate_listboxrow)
         self.listbox_general_editor.connect(
-            "row-activated", self.__on_activate_listboxrow)
+            "row-activated", self.on_activate_listboxrow)
         self.listbox_general_viewer.connect(
-            "row-activated", self.__on_activate_listboxrow)
+            "row-activated", self.on_activate_listboxrow)
 
         self.entry_general_viewer_options.connect(
             "icon-press", on_entry_clear)
@@ -1292,11 +1293,11 @@ class PreferencesWindow(CommonWindow):
         # ------------------------------------
 
         self.listbox_interface_appearance.connect(
-            "row-activated", self.__on_activate_listboxrow)
+            "row-activated", self.on_activate_listboxrow)
         self.listbox_interface_toolbar.connect(
-            "row-activated", self.__on_activate_listboxrow)
+            "row-activated", self.on_activate_listboxrow)
         self.listbox_interface_sidebar.connect(
-            "row-activated", self.__on_activate_listboxrow)
+            "row-activated", self.on_activate_listboxrow)
 
         self.switch_interface_sidebar_visible.connect(
             "state-set", self.__on_check_sidebar)
@@ -1306,9 +1307,9 @@ class PreferencesWindow(CommonWindow):
         # ------------------------------------
 
         self.listbox_games_view.connect(
-            "row-activated", self.__on_activate_listboxrow)
+            "row-activated", self.on_activate_listboxrow)
         self.listbox_games_column.connect(
-            "row-activated", self.__on_activate_listboxrow)
+            "row-activated", self.on_activate_listboxrow)
 
         # ------------------------------------
         #   Shortcuts
@@ -2091,191 +2092,3 @@ class PreferencesWindow(CommonWindow):
                 self.on_load_consoles()
             elif manager == Manager.EMULATOR:
                 self.on_load_emulators()
-
-
-    def __on_activate_listboxrow(self, widget, row):
-        """ Activate internal widget when a row has been activated
-
-        Parameters
-        ----------
-        widget : Gtk.ListBox
-            Object which receive signal
-        row : Gtk.ListBoxRow
-            Activated row
-        """
-
-        widget = row.get_widget()
-
-        if type(widget) == Gtk.ComboBox:
-            widget.popup()
-
-        elif type(widget) == Gtk.Entry:
-            widget.grab_focus()
-
-        elif type(widget) == Gtk.FileChooserButton:
-            widget.activate()
-
-        elif type(widget) == Gtk.FontButton:
-            widget.clicked()
-
-        elif type(widget) == Gtk.SpinButton:
-            widget.grab_focus()
-
-        elif type(widget) == Gtk.Switch:
-            widget.set_active(not widget.get_active())
-
-
-class PreferencesItem(Gtk.ListBoxRow):
-
-    def __init__(self):
-        """ Constructor
-        """
-
-        Gtk.ListBoxRow.__init__(self)
-
-        # ------------------------------------
-        #   Initialize variables
-        # ------------------------------------
-
-        self.__widget = None
-
-        # ------------------------------------
-        #   Prepare interface
-        # ------------------------------------
-
-        # Init widgets
-        self.__init_widgets()
-
-        # Init packing
-        self.__init_packing()
-
-
-    def __init_widgets(self):
-        """ Initialize interface widgets
-        """
-
-        # ------------------------------------
-        #   Grids
-        # ------------------------------------
-
-        self.grid = Gtk.Box()
-        self.grid_labels = Gtk.Box()
-
-        # Properties
-        self.grid.set_homogeneous(False)
-        self.grid.set_border_width(6)
-        self.grid.set_spacing(12)
-
-        self.grid_labels.set_orientation(Gtk.Orientation.VERTICAL)
-        self.grid_labels.set_homogeneous(False)
-        self.grid_labels.set_spacing(2)
-
-        # ------------------------------------
-        #   Labels
-        # ------------------------------------
-
-        self.label_title = Gtk.Label()
-
-        self.label_description = Gtk.Label()
-
-        # Properties
-        self.label_title.set_line_wrap(True)
-        self.label_title.set_halign(Gtk.Align.START)
-        self.label_title.set_valign(Gtk.Align.END)
-        self.label_title.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
-
-        self.label_description.set_hexpand(True)
-        self.label_description.set_line_wrap(True)
-        self.label_description.set_use_markup(True)
-        self.label_description.set_no_show_all(True)
-        self.label_description.set_halign(Gtk.Align.START)
-        self.label_description.set_valign(Gtk.Align.START)
-        self.label_description.set_justify(Gtk.Justification.FILL)
-        self.label_description.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
-        self.label_description.get_style_context().add_class("dim-label")
-
-
-    def __init_packing(self):
-        """ Initialize widgets packing in main window
-        """
-
-        self.add(self.grid)
-
-        self.grid.pack_start(self.grid_labels, True, True, 0)
-
-        self.grid_labels.pack_start(self.label_title, True, True, 0)
-        self.grid_labels.pack_start(self.label_description, True, True, 0)
-
-
-    def set_option_label(self, text):
-        """ Set the option label text
-
-        Parameters
-        ----------
-        text : str
-            Label text
-        """
-
-        self.label_title.set_text(text)
-
-
-    def set_description_label(self, text):
-        """ Set the description label text
-
-        Parameters
-        ----------
-        text : str
-            Label text
-        """
-
-        self.label_description.set_markup(
-            "<span size=\"small\">%s</span>" % text)
-        self.label_description.set_visible(len(text) > 0)
-
-
-    def set_widget(self, widget):
-        """ Set a new internal widget
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Internal widget to set
-        """
-
-        # Remove previous widget
-        if self.__widget is not None:
-            self.grid.remove(self.__widget)
-
-        # Add new widget
-        if widget is not None:
-            widget.set_valign(Gtk.Align.CENTER)
-
-            if not type(widget) in [Gtk.Switch, Gtk.SpinButton]:
-                widget.set_halign(Gtk.Align.FILL)
-                widget.set_hexpand(True)
-
-                self.grid.set_homogeneous(True)
-
-                self.grid.pack_start(widget, True, True, 0)
-
-            else:
-                widget.set_halign(Gtk.Align.END)
-                widget.set_hexpand(False)
-
-                self.grid.set_homogeneous(False)
-
-                self.grid.pack_start(widget, False, False, 0)
-
-        self.__widget = widget
-
-
-    def get_widget(self):
-        """ Retrieve internal widget
-
-        Returns
-        -------
-        Gtk.Widget
-            Internal widget
-        """
-
-        return self.__widget

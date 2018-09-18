@@ -153,6 +153,7 @@ class MednafenDialog(CommonWindow):
         #   Content list
         # ------------------------------------
 
+        frame = Gtk.Frame()
         scroll = Gtk.ScrolledWindow()
         view = Gtk.Viewport()
 
@@ -205,6 +206,8 @@ class MednafenDialog(CommonWindow):
         #   Integrate widgets
         # ------------------------------------
 
+        frame.add(self.treeview)
+
         scroll.add(view)
         view.add(grid)
 
@@ -216,7 +219,7 @@ class MednafenDialog(CommonWindow):
         grid.attach(label, 0, 0, 2, 1)
         grid.attach(label_game, 0, 1, 2, 1)
         grid.attach(buttons, 0, 2, 1, 1)
-        grid.attach(self.treeview, 1, 2, 1, 1)
+        grid.attach(frame, 1, 2, 1, 1)
         grid.attach(link, 0, 3, 2, 1)
 
         self.pack_start(scroll, True, True)

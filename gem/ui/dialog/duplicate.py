@@ -21,6 +21,7 @@ from gem.ui import *
 from gem.ui.data import *
 
 from gem.ui.widgets.window import CommonWindow
+from gem.ui.widgets.widgets import PreferencesItem
 
 # Translation
 from gettext import gettext as _
@@ -74,7 +75,7 @@ class DuplicateDialog(CommonWindow):
         """ Initialize interface widgets
         """
 
-        self.set_size(520, -1)
+        self.set_size(640, 480)
 
         self.set_spacing(6)
 
@@ -133,20 +134,24 @@ class DuplicateDialog(CommonWindow):
 
         self.label_data = Gtk.Label()
 
-        self.switch_savestate = Gtk.Switch()
-        self.label_savestate = Gtk.Label()
+        self.frame_options = Gtk.Frame()
+        self.scroll_options = Gtk.ScrolledWindow()
+        self.listbox_options = Gtk.ListBox()
 
-        self.switch_screenshot = Gtk.Switch()
-        self.label_screenshot = Gtk.Label()
-
+        self.widget_database = PreferencesItem()
         self.switch_database = Gtk.Switch()
-        self.label_database = Gtk.Label()
 
-        self.switch_notes = Gtk.Switch()
-        self.label_notes = Gtk.Label()
+        self.widget_savestate = PreferencesItem()
+        self.switch_savestate = Gtk.Switch()
 
+        self.widget_screenshot = PreferencesItem()
+        self.switch_screenshot = Gtk.Switch()
+
+        self.widget_note = PreferencesItem()
+        self.switch_note = Gtk.Switch()
+
+        self.widget_memory = PreferencesItem()
         self.switch_memory = Gtk.Switch()
-        self.label_memory = Gtk.Label()
 
         # Properties
         self.label_data.set_markup(
@@ -158,52 +163,64 @@ class DuplicateDialog(CommonWindow):
         self.label_data.set_halign(Gtk.Align.CENTER)
         self.label_data.set_ellipsize(Pango.EllipsizeMode.END)
 
-        self.label_savestate.set_label(_("Save files"))
-        self.label_savestate.set_halign(Gtk.Align.START)
-        self.label_savestate.get_style_context().add_class("dim-label")
+        self.listbox_options.set_activate_on_single_click(True)
+        self.listbox_options.set_selection_mode(
+            Gtk.SelectionMode.NONE)
 
-        self.label_screenshot.set_label(_("Game screenshots"))
-        self.label_screenshot.set_halign(Gtk.Align.START)
-        self.label_screenshot.get_style_context().add_class("dim-label")
+        self.widget_database.set_widget(self.switch_database)
+        self.widget_database.set_option_label(
+            _("Database"))
+        self.widget_database.set_description_label(
+            _("Duplicate game data from database"))
 
-        self.label_database.set_label(_("Game's data from database"))
-        self.label_database.set_halign(Gtk.Align.START)
-        self.label_database.get_style_context().add_class("dim-label")
+        self.widget_savestate.set_widget(self.switch_savestate)
+        self.widget_savestate.set_option_label(
+            _("Savestates"))
+        self.widget_savestate.set_description_label(
+            _("Duplicate savestates files"))
 
-        self.label_notes.set_label(_("Notes"))
-        self.label_notes.set_margin_top(12)
-        self.label_notes.set_halign(Gtk.Align.START)
-        self.label_notes.get_style_context().add_class("dim-label")
-        self.switch_notes.set_margin_top(12)
+        self.widget_screenshot.set_widget(self.switch_screenshot)
+        self.widget_screenshot.set_option_label(
+            _("Screenshots"))
+        self.widget_screenshot.set_description_label(
+            _("Duplicate screenshots files"))
 
-        self.label_memory.set_label(_("Memory file"))
-        self.label_memory.set_margin_top(12)
-        self.label_memory.set_halign(Gtk.Align.START)
-        self.label_memory.get_style_context().add_class("dim-label")
-        self.label_memory.set_no_show_all(True)
-        self.switch_memory.set_margin_top(12)
-        self.switch_memory.set_no_show_all(True)
+        self.widget_note.set_widget(self.switch_note)
+        self.widget_note.set_option_label(
+            _("Note"))
+        self.widget_note.set_description_label(
+            _("Duplicate game note file"))
+
+        self.widget_memory.set_widget(self.switch_memory)
+        self.widget_memory.set_option_label(
+            _("Flash memory"))
+        self.widget_memory.set_description_label(
+            _("Duplicate flash memory file"))
 
         # ------------------------------------
         #   Integrate widgets
         # ------------------------------------
 
-        self.grid_switch.attach(self.switch_savestate, 0, 1, 1, 1)
-        self.grid_switch.attach(self.label_savestate, 1, 1, 2, 1)
-        self.grid_switch.attach(self.switch_screenshot, 0, 2, 1, 1)
-        self.grid_switch.attach(self.label_screenshot, 1, 2, 2, 1)
-        self.grid_switch.attach(self.switch_database, 0, 3, 1, 1)
-        self.grid_switch.attach(self.label_database, 1, 3, 2, 1)
-        self.grid_switch.attach(self.switch_notes, 0, 4, 1, 1)
-        self.grid_switch.attach(self.label_notes, 1, 4, 2, 1)
-        self.grid_switch.attach(self.switch_memory, 0, 5, 1, 1)
-        self.grid_switch.attach(self.label_memory, 1, 5, 2, 1)
+        self.listbox_options.add(self.widget_database)
+        self.listbox_options.add(self.widget_savestate)
+        self.listbox_options.add(self.widget_screenshot)
+        self.listbox_options.add(self.widget_note)
+
+        # Check extension and emulator for GBA game on mednafen
+        if self.game.extension.lower() == ".gba" and \
+            "mednafen" in self.emulator.binary and \
+            self.parent.get_mednafen_status():
+            self.listbox_options.add(self.widget_memory)
+
+        self.scroll_options.add(self.listbox_options)
+
+        self.frame_options.add(self.scroll_options)
 
         self.pack_start(self.label_title, False, False)
         self.pack_start(self.label_name, False, False)
         self.pack_start(self.entry_name, False, False)
         self.pack_start(self.label_data, False, False)
-        self.pack_start(self.grid_switch)
+        self.pack_start(self.frame_options)
 
 
     def __init_signals(self):
@@ -211,6 +228,9 @@ class DuplicateDialog(CommonWindow):
         """
 
         self.entry_name.connect("changed", self.check_filename)
+
+        self.listbox_options.connect(
+            "row-activated", self.on_activate_listboxrow)
 
 
     def __start_interface(self):
@@ -223,13 +243,6 @@ class DuplicateDialog(CommonWindow):
         self.entry_name.set_text(self.game.filename)
 
         self.check_filename()
-
-        # Check extension and emulator for GBA game on mednafen
-        if self.game.extension.lower() == ".gba" and \
-            "mednafen" in self.emulator.binary and \
-            self.parent.get_mednafen_status():
-            self.switch_memory.show()
-            self.label_memory.show()
 
 
     def get_data(self):
@@ -281,13 +294,12 @@ class DuplicateDialog(CommonWindow):
         #   Notes
         # ------------------------------------
 
-        if self.switch_notes.get_active():
-            path = self.parent.api.get_local("notes")
+        if self.switch_note.get_active():
+            path = self.parent.api.get_local(self.game.note)
 
-            if exists(path_join(path, self.game.id + ".txt")):
-                data["paths"].append((
-                    path_join(path, self.game.id + ".txt"),
-                    path_join(path, generate_identifier(filename) + ".txt")))
+            if exists(path):
+                data["paths"].append((path, self.parent.api.get_local(
+                    "notes", generate_identifier(filename) + ".txt")))
 
         # ------------------------------------
         #   Memory type

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.6\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2018-09-18 11:44+0200\n"
+"PO-Revision-Date: 2018-09-18 15:29+0200\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -64,6 +64,13 @@ msgstr "Le binaire %s n'a pas été trouvé"
 #, python-format
 msgid "%s emulator not exist"
 msgstr "L'émulateur %s n'existe pas"
+
+#
+# File: gem/ui/interface.py, line: 680
+# File: gem/ui/interface.py, line: 1556
+#, python-format
+msgid "%s maintenance"
+msgstr "%s maintenance"
 
 #
 # File: gem/interface.py, line: 1882
@@ -224,6 +231,11 @@ msgid "Argument which activate windowded mode"
 msgstr "Argument utilisé pour activer le mode fenêtré"
 
 #
+# File: gem/ui/dialog/maintenance.py, line: 155
+msgid "Available actions"
+msgstr "Actions disponibles"
+
+#
 # File: src/window.py, line: 375
 msgid "Average play time"
 msgstr "Temps de jeu moyen"
@@ -333,6 +345,11 @@ msgid "Choose an icon"
 msgstr "Choisir une icône"
 
 #
+# File: src/window.py, line: 446
+msgid "Clean game data from database"
+msgstr "Nettoyer les données du jeu de la base de données"
+
+#
 # File: gem/interface.py, line: 1614
 msgid "Close"
 msgstr "Fermer"
@@ -387,6 +404,12 @@ msgid "Dark theme"
 msgstr "Thème sombre"
 
 #
+# File: gem/ui/dialog/delete.py, line: 164
+# File: gem/ui/dialog/duplicate.py, line: 172
+msgid "Database"
+msgstr "Base de données"
+
+#
 # File: gem/ui/interface.py, line: 673
 msgid "Decrease score"
 msgstr "Diminuer le score"
@@ -412,15 +435,50 @@ msgid "Default options"
 msgstr "Options par défaut"
 
 #
+# File: gem/ui/dialog/maintenance.py, line: 201
+msgid "Delete custom game environment variables"
+msgstr "Supprimer les variables d'environnement personnalisées du jeu"
+
+#
+# File: src/window.py, line: 446
+msgid "Delete desktop file"
+msgstr "Supprimer le fichier de menu"
+
+#
+# File: gem/interface.py, line: 400
+msgid "Delete flash memory file"
+msgstr "Supprimer le fichier de mémoire flash"
+
+#
+# File: src/window.py, line: 446
+msgid "Delete game data from database"
+msgstr "Supprimer les données du jeu de la base de données"
+
+#
+# File: src/window.py, line: 451
+msgid "Delete game log file"
+msgstr "Supprimer le fichier de journalisation du jeu"
+
+#
+# File: src/window.py, line: 451
+msgid "Delete game note file"
+msgstr "Supprimer le fichier de note du jeu"
+
+#
+# File: gem/gtk/preferences.py, line: 2597
+msgid "Delete savestates files"
+msgstr "Supprimer les fichiers de sauvegarde"
+
+#
+# File: gem/preferences.py, line: 335
+msgid "Delete screenshots files"
+msgstr "Supprimer les fichiers de captures d'écran"
+
+#
 # File: gem/preferences.py, line: 2004
 # File: gem/preferences.py, line: 2007
 msgid "Description"
 msgstr "Description"
-
-#
-# File: src/window.py, line: 446
-msgid "Desktop file"
-msgstr "Fichier de menu"
 
 #
 # File: gem/interface.py, line: 2054
@@ -489,6 +547,31 @@ msgstr "Dupliquer %s"
 # File: src/window.py, line: 451
 msgid "Duplicate a game"
 msgstr "Dupliquer un jeu"
+
+#
+# File: src/window.py, line: 451
+msgid "Duplicate flash memory file"
+msgstr "Dupliquer le fichier de mémoire flash"
+
+#
+# File: src/window.py, line: 446
+msgid "Duplicate game data from database"
+msgstr "Dupliquer les données du jeu de la base de données"
+
+#
+# File: src/window.py, line: 451
+msgid "Duplicate game note file"
+msgstr "Dupliquer le fichier de note du jeu"
+
+#
+# File: gem/gtk/preferences.py, line: 2597
+msgid "Duplicate savestates files"
+msgstr "Dupliquer les fichiers de sauvegarde"
+
+#
+# File: gem/preferences.py, line: 335
+msgid "Duplicate screenshots files"
+msgstr "Dupliquer les fichiers de captures d'écran"
 
 #
 # File: gem/preferences.py, line: 336
@@ -594,6 +677,11 @@ msgid "Environment"
 msgstr "Environnement"
 
 #
+# File: gem/gtk/windows.py, line: 1057
+msgid "Environment variables"
+msgstr "Variables d'environnement"
+
+#
 # File: gem/ui/preferences/interface.py, line: 581
 msgid "Executable"
 msgstr "Exécutable"
@@ -675,6 +763,12 @@ msgid "Flags"
 msgstr "Drapeaux"
 
 #
+# File: gem/ui/dialog/delete.py, line: 188
+# File: gem/ui/dialog/duplicate.py, line: 196
+msgid "Flash memory"
+msgstr "Mémoire flash"
+
+#
 # File: gem/preferences.py, line: 1279
 msgid "Fullscreen"
 msgstr "Plein écran"
@@ -709,16 +803,6 @@ msgstr "Couverture de jeu"
 # File: gem/gtk/windows.py, line: 943
 msgid "Game properties"
 msgstr "Propriétés du jeu"
-
-#
-# File: gem/preferences.py, line: 335
-msgid "Game screenshots"
-msgstr "Captures d'écran du jeu"
-
-#
-# File: src/window.py, line: 446
-msgid "Game's data from database"
-msgstr "Données du jeu dans la base de données"
 
 #
 # File: gem/preferences.py, line: 113
@@ -919,6 +1003,11 @@ msgid "Loading"
 msgstr "Chargement"
 
 #
+# File: gem/gtk/interface.py, line: 550
+msgid "Log"
+msgstr "Journal"
+
+#
 # File: gem/interface.py, line: 1505
 #, python-format
 msgid "Log to %s"
@@ -928,6 +1017,12 @@ msgstr "Journalisation dans %s"
 # File: gem/ui/interface.py, line: 397
 msgid "Main menu"
 msgstr "Menu principal"
+
+#
+# File: gem/ui/interface.py, line: 680
+# File: gem/ui/interface.py, line: 1556
+msgid "Maintenance"
+msgstr "Maintenance"
 
 #
 # File: src/window.py, line: 436
@@ -951,14 +1046,14 @@ msgid "Mednafen GBA documentation"
 msgstr "Documentation de Mednafen pour la GBA"
 
 #
-# File: gem/gtk/mednafen.py, line: 84
-msgid "Memory file"
-msgstr "Fichiers de mémoire"
-
-#
 # File: gem/gtk/preferences.py, line: 177
 msgid "Menu"
 msgstr "Comme les entrées de menu"
+
+#
+# File: gem/interface.py, line: 400
+msgid "Menu entry"
+msgstr "Entrée de menu"
 
 #
 # File: src/window.py, line: 446
@@ -1057,13 +1152,18 @@ msgstr "Aucune"
 
 #
 # File: gem/gtk/interface.py, line: 1182
-msgid "Notes"
-msgstr "Notes"
+msgid "Note"
+msgstr "Note"
 
 #
 # File: src/window.py, line: 451
 msgid "Open a game log"
 msgstr "Ouvrir le journal du jeu"
+
+#
+# File: src/window.py, line: 451
+msgid "Open a game maintenance dialog"
+msgstr "Ouvrir la fenêtre de maintenance du jeu"
 
 #
 # File: src/window.py, line: 451
@@ -1194,11 +1294,6 @@ msgstr "Supprimer un jeu"
 
 #
 # File: src/window.py, line: 446
-msgid "Remove a game from database"
-msgstr "Supprimer un jeu de la base de données"
-
-#
-# File: src/window.py, line: 446
 msgid "Remove a game from disk"
 msgstr "Supprimer un jeu du disque"
 
@@ -1279,8 +1374,8 @@ msgstr "Sauvegarde de la console %s pour le prochain lancement"
 
 #
 # File: gem/gtk/interface.py, line: 802
-msgid "Save files"
-msgstr "Fichiers de sauvegarde"
+msgid "Savestates"
+msgstr "Sauvegarde d'état"
 
 #
 # File: gem/ui/interface.py, line: 665
@@ -1289,6 +1384,11 @@ msgstr "Fichiers de sauvegarde"
 # File: gem/ui/preferences/interface.py, line: 859
 msgid "Score"
 msgstr "Score"
+
+#
+# File: gem/preferences.py, line: 335
+msgid "Screenshots"
+msgstr "Captures d'écran"
 
 #
 # File: gem/preferences.py, line: 335
@@ -1548,6 +1648,11 @@ msgstr "Les étiquettes sont séparées par des virgules."
 # File: gem/interface.py, line: 1501
 msgid "Terminate by keyboard interrupt"
 msgstr "Arrêt par interruption du clavier"
+
+#
+# File: gem/ui/dialog/maintenance.py, line: 118
+msgid "The following actions are irreversible, becareful !"
+msgstr "Les actions suivantes sont irréversibles, faites attention !"
 
 #
 # File: gem/gtk/windows.py, line: 1954
@@ -1899,6 +2004,12 @@ msgstr "_Lancer"
 # File: gem/gtk/interface.py, line: 550
 msgid "_Log"
 msgstr "_Journal"
+
+#
+# File: gem/ui/interface.py, line: 680
+# File: gem/ui/interface.py, line: 1556
+msgid "_Maintenance"
+msgstr "_Maintenance"
 
 #
 # File: gem/interface.py, line: 251

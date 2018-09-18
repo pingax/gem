@@ -66,6 +66,12 @@ msgid "%s emulator not exist"
 msgstr "¡El emulador %s no existe!"
 
 #
+# File: gem/preferences.py, line: 268
+#, fuzzy, python-format
+msgid "%s maintenance"
+msgstr "Cerrar interfaz"
+
+#
 # File: gem/interface.py, line: 2106
 #, python-format
 msgid "%s was generated successfully"
@@ -230,6 +236,11 @@ msgid "Argument which activate windowded mode"
 msgstr ""
 
 #
+# File: gem/ui/dialog/maintenance.py, line: 155
+msgid "Available actions"
+msgstr ""
+
+#
 # File: gem/interface.py, line: 642
 #, fuzzy
 msgid "Average play time"
@@ -342,6 +353,12 @@ msgid "Choose an icon"
 msgstr "Elegir un icono"
 
 #
+# File: gem/preferences.py, line: 85
+#, fuzzy
+msgid "Clean game data from database"
+msgstr "Borrar los datos del juego de la base de datos"
+
+#
 # File: gem/interface.py, line: 1614
 #, fuzzy
 msgid "Close"
@@ -401,6 +418,12 @@ msgid "Dark theme"
 msgstr "Usar el tema _oscuro"
 
 #
+# File: gem/ui/dialog/delete.py, line: 164
+# File: gem/ui/dialog/duplicate.py, line: 172
+msgid "Database"
+msgstr ""
+
+#
 # File: gem/ui/interface.py, line: 673
 msgid "Decrease score"
 msgstr ""
@@ -429,18 +452,59 @@ msgid "Default options"
 msgstr "Opciones por defecto"
 
 #
+# File: gem/ui/dialog/maintenance.py, line: 201
+msgid "Delete custom game environment variables"
+msgstr ""
+
+#
+# File: gem/interface.py, line: 776
+#, fuzzy
+msgid "Delete desktop file"
+msgstr "Borrar partidas guardadas del juego"
+
+#
+# File: gem/interface.py, line: 460
+#, fuzzy
+msgid "Delete flash memory file"
+msgstr "Generar una copia de seguridad del archivo de memoria"
+
+#
+# File: gem/preferences.py, line: 85
+#, fuzzy
+msgid "Delete game data from database"
+msgstr "Borrar los datos del juego de la base de datos"
+
+#
+# File: gem/preferences.py, line: 86
+#, fuzzy
+msgid "Delete game log file"
+msgstr "Renombrar un juego"
+
+#
+# File: gem/preferences.py, line: 86
+#, fuzzy
+msgid "Delete game note file"
+msgstr "Renombrar un juego"
+
+#
+# File: gem/configuration.py, line: 71
+#, fuzzy
+msgid "Delete savestates files"
+msgstr "No puedo abrir el archivo %s"
+
+#
+# File: gem/configuration.py, line: 71
+#, fuzzy
+msgid "Delete screenshots files"
+msgstr "No puedo abrir el archivo %s"
+
+#
 # File: gem/gtk/preferences.py, line: 2093
 # File: gem/gtk/preferences.py, line: 2096
 # File: gem/gtk/windows.py, line: 777
 # File: gem/gtk/windows.py, line: 780
 msgid "Description"
 msgstr "Descripción"
-
-#
-# File: gem/interface.py, line: 776
-#, fuzzy
-msgid "Desktop file"
-msgstr "Borrar partidas guardadas del juego"
 
 #
 # File: gem/interface.py, line: 2054
@@ -510,6 +574,36 @@ msgstr ""
 #, fuzzy
 msgid "Duplicate a game"
 msgstr "Renombrar un juego"
+
+#
+# File: gem/preferences.py, line: 86
+#, fuzzy
+msgid "Duplicate flash memory file"
+msgstr "Renombrar un juego"
+
+#
+# File: gem/preferences.py, line: 85
+#, fuzzy
+msgid "Duplicate game data from database"
+msgstr "Borrar los datos del juego de la base de datos"
+
+#
+# File: gem/preferences.py, line: 86
+#, fuzzy
+msgid "Duplicate game note file"
+msgstr "Renombrar un juego"
+
+#
+# File: gem/configuration.py, line: 71
+#, fuzzy
+msgid "Duplicate savestates files"
+msgstr "No puedo abrir el archivo %s"
+
+#
+# File: gem/configuration.py, line: 71
+#, fuzzy
+msgid "Duplicate screenshots files"
+msgstr "No puedo abrir el archivo %s"
 
 #
 # File: gem/preferences.py, line: 429
@@ -621,6 +715,11 @@ msgid "Environment"
 msgstr ""
 
 #
+# File: gem/ui/dialog/maintenance.py, line: 199
+msgid "Environment variables"
+msgstr ""
+
+#
 # File: gem/ui/preferences/interface.py, line: 581
 msgid "Executable"
 msgstr ""
@@ -705,6 +804,12 @@ msgid "Flags"
 msgstr "Notificaciones"
 
 #
+# File: gem/ui/dialog/delete.py, line: 188
+# File: gem/ui/dialog/duplicate.py, line: 196
+msgid "Flash memory"
+msgstr ""
+
+#
 # File: gem/preferences.py, line: 1675
 msgid "Fullscreen"
 msgstr "Pantalla completa"
@@ -741,18 +846,6 @@ msgstr "Lista de juegos"
 # File: gem/gtk/windows.py, line: 943
 msgid "Game properties"
 msgstr ""
-
-#
-# File: gem/interface.py, line: 2006
-#, fuzzy
-msgid "Game screenshots"
-msgstr "Borrar capturas de pantalla del juego"
-
-#
-# File: gem/preferences.py, line: 85
-#, fuzzy
-msgid "Game's data from database"
-msgstr "Borrar los datos del juego de la base de datos"
 
 #
 # File: gem/preferences.py, line: 113
@@ -961,6 +1054,11 @@ msgid "Loading"
 msgstr ""
 
 #
+# File: gem/ui/dialog/maintenance.py, line: 175
+msgid "Log"
+msgstr ""
+
+#
 # File: gem/interface.py, line: 1505
 #, python-format
 msgid "Log to %s"
@@ -969,6 +1067,11 @@ msgstr "Guardar historial en %s"
 #
 # File: gem/ui/interface.py, line: 397
 msgid "Main menu"
+msgstr ""
+
+#
+# File: gem/ui/dialog/maintenance.py, line: 53
+msgid "Maintenance"
 msgstr ""
 
 #
@@ -993,16 +1096,15 @@ msgid "Mednafen GBA documentation"
 msgstr "Documentación Mednafen GBA"
 
 #
-# File: gem/gtk/interface.py, line: 583
-# File: gem/gtk/interface.py, line: 1010
-#, fuzzy
-msgid "Memory file"
-msgstr "Escoge un tipo de _memoria"
-
-#
 # File: gem/gtk/preferences.py, line: 177
 msgid "Menu"
 msgstr ""
+
+#
+# File: gem/interface.py, line: 460
+#, fuzzy
+msgid "Menu entry"
+msgstr "_Generar una entrada de menú"
 
 #
 # File: gem/interface.py, line: 139
@@ -1111,13 +1213,19 @@ msgstr "Ninguno"
 #
 # File: gem/interface.py, line: 384
 #, fuzzy
-msgid "Notes"
+msgid "Note"
 msgstr "_Notas"
 
 #
 # File: gem/preferences.py, line: 86
 #, fuzzy
 msgid "Open a game log"
+msgstr "Abrir el historial del juego"
+
+#
+# File: gem/preferences.py, line: 86
+#, fuzzy
+msgid "Open a game maintenance dialog"
 msgstr "Abrir el historial del juego"
 
 #
@@ -1269,11 +1377,6 @@ msgid "Remove a game"
 msgstr "Renombrar un juego"
 
 #
-# File: gem/preferences.py, line: 85
-msgid "Remove a game from database"
-msgstr "Borrar un juego de la base de datos"
-
-#
 # File: gem/interface.py, line: 776
 msgid "Remove a game from disk"
 msgstr "Borrar un juego del disco"
@@ -1353,9 +1456,9 @@ msgid "Save %s console for next startup"
 msgstr "Guardar %s para el próximo arranque"
 
 #
-# File: gem/ui/dialog/delete.py, line: 165
-# File: gem/ui/dialog/duplicate.py, line: 162
-msgid "Save files"
+# File: gem/ui/dialog/delete.py, line: 176
+# File: gem/ui/dialog/duplicate.py, line: 178
+msgid "Savestates"
 msgstr ""
 
 #
@@ -1365,6 +1468,12 @@ msgstr ""
 # File: gem/ui/preferences/interface.py, line: 859
 msgid "Score"
 msgstr ""
+
+#
+# File: gem/interface.py, line: 2006
+#, fuzzy
+msgid "Screenshots"
+msgstr "Mostrar las _capturas de pantalla"
 
 #
 # File: gem/interface.py, line: 2006
@@ -1647,6 +1756,11 @@ msgstr ""
 # File: gem/interface.py, line: 1501
 msgid "Terminate by keyboard interrupt"
 msgstr "Finalizado por interrupción del teclado"
+
+#
+# File: gem/ui/dialog/maintenance.py, line: 118
+msgid "The following actions are irreversible, becareful !"
+msgstr ""
 
 #
 # File: gem/gtk/windows.py, line: 1954
@@ -2006,6 +2120,12 @@ msgid "_Log"
 msgstr ""
 
 #
+# File: gem/ui/interface.py, line: 680
+# File: gem/ui/interface.py, line: 1556
+msgid "_Maintenance"
+msgstr ""
+
+#
 # File: gem/interface.py, line: 386
 # File: gem/interface.py, line: 746
 #, fuzzy
@@ -2083,6 +2203,24 @@ msgstr "agradecimientos a los traductores"
 #~ msgstr "Fuente"
 
 #
+# File: gem/interface.py, line: 2006
+#, fuzzy
+#~ msgid "Game screenshots"
+#~ msgstr "Borrar capturas de pantalla del juego"
+
+#
 # File: gem/preferences.py, line: 328
 #~ msgid "Games list"
 #~ msgstr "Lista de juegos"
+
+#
+# File: gem/gtk/interface.py, line: 583
+# File: gem/gtk/interface.py, line: 1010
+#, fuzzy
+#~ msgid "Memory file"
+#~ msgstr "Escoge un tipo de _memoria"
+
+#
+# File: gem/preferences.py, line: 85
+#~ msgid "Remove a game from database"
+#~ msgstr "Borrar un juego de la base de datos"

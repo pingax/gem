@@ -27,3 +27,4 @@ from gem.ui.dialog.mednafen import MednafenDialog
 from gem.ui.dialog.duplicate import DuplicateDialog
 from gem.ui.dialog.parameter import ParametersDialog
 from gem.ui.dialog.dndconsole import DnDConsoleDialog
+from gem.ui.dialog.maintenance import MaintenanceDialog

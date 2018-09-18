@@ -1228,6 +1228,13 @@ class GEM(object):
 
             self.database.remove("games", { "filename": game.path[1] })
 
+        # Update game environment variables
+        self.logger.debug("Remove %s environment variables" % game.name)
+
+        self.environment.remove_section(game.id)
+
+        self.environment.update()
+
 
 class GEMObject(object):
 
@@ -1985,6 +1992,19 @@ class Game(GEMObject):
         """
 
         return path_join("logs", self.path[-1] + ".log")
+
+
+    @property
+    def note(self):
+        """ Return relative note file path
+
+        Returns
+        -------
+        str
+            filepath
+        """
+
+        return path_join("notes", self.id + ".txt")
 
 
 if __name__ == "__main__":

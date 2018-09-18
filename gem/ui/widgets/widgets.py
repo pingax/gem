@@ -29,103 +29,6 @@ from gettext import gettext as _
 #   Class
 # ------------------------------------------------------------------------------
 
-class MenuButton(Gtk.MenuButton):
-
-    def __init__(self):
-        """ Constructor
-        """
-
-        Gtk.MenuButton.__init__(self)
-
-        # ------------------------------------
-        #   Prepare interface
-        # ------------------------------------
-
-        # Init widgets
-        self.__init_widgets()
-
-
-    def __init_widgets(self):
-        """ Initialize interface widgets
-        """
-
-        pass
-
-
-class MenuButtonStore(Gtk.Box):
-
-    def __init__(self, *args):
-        """ Constructor
-        """
-
-        Gtk.Box.__init__(self)
-
-        # ------------------------------------
-        #   Initialize variables
-        # ------------------------------------
-
-        # Model storage object
-        self.__model = args
-
-        # ------------------------------------
-        #   Prepare interface
-        # ------------------------------------
-
-        # Init widgets
-        self.__init_widgets()
-
-
-    def __init_widgets(self):
-        """ Initialize interface widgets
-        """
-
-        for structure in self.__model:
-            widget = None
-
-            if type(structure) is str:
-                widget = Gtk.Label()
-                widget.set_hexpand(True)
-
-            elif type(structure) is Pixbuf:
-                widget = Gtk.Image()
-
-            elif type(structure) is bool:
-                widget = Gtk.CheckButton()
-
-            if widget is not None:
-                self.add(widget)
-
-
-    def get_column(self, index):
-        """ Retrieve widget from a specific column index
-
-        Parameters
-        ----------
-        index : int
-            Column index
-
-        Returns
-        -------
-        Gtk.Widget or None
-            Found widget
-        """
-
-        try:
-            return self.get_children()[index]
-
-        except IndexError:
-            return None
-
-
-class Popover(Gtk.Popover):
-
-    def __init__(self):
-        """ Constructor
-        """
-
-        Gtk.Popover.__init__(self)
-
-
 class ListBoxPopover(Gtk.Popover):
 
     def __init__(self):
@@ -208,8 +111,7 @@ class ListBoxPopover(Gtk.Popover):
 
         Parameters
         ----------
-        row : gem.gtk.widgets.ListBoxSelectorItem or
-            gem.gtk.widgets.ListBoxSelectorCheck
+        row : gem.gtk.widgets.ListBoxSelectorItem
             Row object
         """
 
@@ -682,17 +584,10 @@ class ListBoxSelectorItem(Gtk.ListBoxRow):
             self.status.set_from_pixbuf(status)
 
 
-class ListBoxSelectorCheck(Gtk.ListBoxRow):
+class PreferencesItem(Gtk.ListBoxRow):
 
-    def __init__(self, data, configurable=False):
+    def __init__(self):
         """ Constructor
-
-        Parameters
-        ----------
-        data : gem.gtk.addon.AddonThread
-            Addon instance
-        configurable : bool, optional
-            Configurable status
         """
 
         Gtk.ListBoxRow.__init__(self)
@@ -701,9 +596,7 @@ class ListBoxSelectorCheck(Gtk.ListBoxRow):
         #   Initialize variables
         # ------------------------------------
 
-        self.data = data
-
-        self.configurable = configurable
+        self.__widget = None
 
         # ------------------------------------
         #   Prepare interface
@@ -715,43 +608,51 @@ class ListBoxSelectorCheck(Gtk.ListBoxRow):
         # Init packing
         self.__init_packing()
 
-        # Start interface
-        self.__start_interface()
-
 
     def __init_widgets(self):
         """ Initialize interface widgets
         """
 
         # ------------------------------------
-        #   Grid
+        #   Grids
         # ------------------------------------
 
         self.grid = Gtk.Box()
+        self.grid_labels = Gtk.Box()
 
         # Properties
+        self.grid.set_homogeneous(False)
         self.grid.set_border_width(6)
         self.grid.set_spacing(12)
 
+        self.grid_labels.set_orientation(Gtk.Orientation.VERTICAL)
+        self.grid_labels.set_homogeneous(False)
+        self.grid_labels.set_spacing(2)
+
         # ------------------------------------
-        #   Row
+        #   Labels
         # ------------------------------------
 
-        self.check = Gtk.CheckButton()
+        self.label_title = Gtk.Label()
 
-        self.label = Gtk.Label()
-
-        self.image = Gtk.Image()
-        self.button = Gtk.Button()
+        self.label_description = Gtk.Label()
 
         # Properties
-        self.label.set_halign(Gtk.Align.START)
-        # self.label.set_text(self.data.name)
-        self.label.set_text(self.data)
+        self.label_title.set_line_wrap(True)
+        self.label_title.set_halign(Gtk.Align.START)
+        self.label_title.set_valign(Gtk.Align.END)
+        self.label_title.set_justify(Gtk.Justification.FILL)
+        self.label_title.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
 
-        self.image.set_from_icon_name(Icons.Symbolic.Addon, Gtk.IconSize.MENU)
-
-        self.button.set_relief(Gtk.ReliefStyle.NONE)
+        self.label_description.set_hexpand(True)
+        self.label_description.set_line_wrap(True)
+        self.label_description.set_use_markup(True)
+        self.label_description.set_no_show_all(True)
+        self.label_description.set_halign(Gtk.Align.START)
+        self.label_description.set_valign(Gtk.Align.START)
+        self.label_description.set_justify(Gtk.Justification.FILL)
+        self.label_description.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
+        self.label_description.get_style_context().add_class("dim-label")
 
 
     def __init_packing(self):
@@ -760,21 +661,81 @@ class ListBoxSelectorCheck(Gtk.ListBoxRow):
 
         self.add(self.grid)
 
-        self.button.add(self.image)
+        self.grid.pack_start(self.grid_labels, True, True, 0)
 
-        self.grid.pack_start(self.check, False, False, 0)
-        self.grid.pack_start(self.label, True, True, 0)
-
-        self.grid.pack_start(self.button, False, False, 0)
+        self.grid_labels.pack_start(self.label_title, True, True, 0)
+        self.grid_labels.pack_start(self.label_description, True, True, 0)
 
 
-    def __start_interface(self):
-        """ Load data and start interface
+    def set_option_label(self, text):
+        """ Set the option label text
+
+        Parameters
+        ----------
+        text : str
+            Label text
         """
 
-        self.show_all()
+        self.label_title.set_text(text)
 
-        if not self.configurable:
-            self.button.set_sensitive(False)
 
-            self.image.set_visible(False)
+    def set_description_label(self, text):
+        """ Set the description label text
+
+        Parameters
+        ----------
+        text : str
+            Label text
+        """
+
+        self.label_description.set_markup(
+            "<span size=\"small\">%s</span>" % text)
+        self.label_description.set_visible(len(text) > 0)
+
+
+    def set_widget(self, widget):
+        """ Set a new internal widget
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Internal widget to set
+        """
+
+        # Remove previous widget
+        if self.__widget is not None:
+            self.grid.remove(self.__widget)
+
+        # Add new widget
+        if widget is not None:
+            widget.set_valign(Gtk.Align.CENTER)
+
+            if not type(widget) in [Gtk.Switch, Gtk.SpinButton]:
+                widget.set_halign(Gtk.Align.FILL)
+                widget.set_hexpand(True)
+
+                self.grid.set_homogeneous(True)
+
+                self.grid.pack_start(widget, True, True, 0)
+
+            else:
+                widget.set_halign(Gtk.Align.END)
+                widget.set_hexpand(False)
+
+                self.grid.set_homogeneous(False)
+
+                self.grid.pack_start(widget, False, False, 0)
+
+        self.__widget = widget
+
+
+    def get_widget(self):
+        """ Retrieve internal widget
+
+        Returns
+        -------
+        Gtk.Widget
+            Internal widget
+        """
+
+        return self.__widget

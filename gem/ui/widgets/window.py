@@ -658,6 +658,38 @@ class CommonWindow(object):
         self.window.response(response)
 
 
+    def on_activate_listboxrow(self, widget, row):
+        """ Activate internal widget when a row has been activated
+
+        Parameters
+        ----------
+        widget : Gtk.ListBox
+            Object which receive signal
+        row : Gtk.ListBoxRow
+            Activated row
+        """
+
+        widget = row.get_widget()
+
+        if type(widget) == Gtk.ComboBox:
+            widget.popup()
+
+        elif type(widget) == Gtk.Entry:
+            widget.grab_focus()
+
+        elif type(widget) == Gtk.FileChooserButton:
+            widget.activate()
+
+        elif type(widget) == Gtk.FontButton:
+            widget.clicked()
+
+        elif type(widget) == Gtk.SpinButton:
+            widget.grab_focus()
+
+        elif type(widget) == Gtk.Switch:
+            widget.set_active(not widget.get_active())
+
+
 class HelpDialog(CommonWindow):
 
     def __init__(self, parent, title, message, icon):
