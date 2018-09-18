@@ -1322,6 +1322,8 @@ class MainWindow(Gtk.ApplicationWindow):
             self.__on_sort_games, Columns.List.LastPlay)
         self.sorted_games_list.set_sort_func(Columns.List.TimePlay,
             self.__on_sort_games, Columns.List.TimePlay)
+        self.sorted_games_list.set_sort_func(Columns.List.Score,
+            self.__on_sort_games, Columns.List.Score)
         self.sorted_games_list.set_sort_func(Columns.List.Installed,
             self.__on_sort_games, Columns.List.Installed)
 
@@ -5269,6 +5271,8 @@ class MainWindow(Gtk.ApplicationWindow):
             Sorting comparaison result
         """
 
+        order = Gtk.SortType.ASCENDING
+
         data1 = model.get_value(row1, Columns.List.Object)
         data2 = model.get_value(row2, Columns.List.Object)
 
@@ -5277,15 +5281,21 @@ class MainWindow(Gtk.ApplicationWindow):
             first = data1.favorite
             second = data2.favorite
 
-        # Favorite
+            order = self.column_game_favorite.get_sort_order()
+
+        # Multiplayer
         elif column == Columns.List.Multiplayer:
             first = data1.multiplayer
             second = data2.multiplayer
+
+            order = self.column_game_multiplayer.get_sort_order()
 
         # Finish
         elif column == Columns.List.Finish:
             first = data1.finish
             second = data2.finish
+
+            order = self.column_game_finish.get_sort_order()
 
         # Last play
         elif column == Columns.List.LastPlay:
@@ -5296,6 +5306,13 @@ class MainWindow(Gtk.ApplicationWindow):
         elif column == Columns.List.TimePlay:
             first = data1.play_time
             second = data2.play_time
+
+        # Score
+        elif column == Columns.List.Score:
+            first = data1.score
+            second = data2.score
+
+            order = self.column_game_score.get_sort_order()
 
         # Installed
         elif column == Columns.List.Installed:
@@ -5327,7 +5344,17 @@ class MainWindow(Gtk.ApplicationWindow):
             return -1
 
         elif first == second:
-            return 0
+
+            if data1.name.lower() < data2.name.lower():
+
+                if order == Gtk.SortType.ASCENDING:
+                    return -1
+
+                elif order == Gtk.SortType.DESCENDING:
+                    return 1
+
+            elif data1.name.lower() == data2.name.lower():
+                return 0
 
         return 1
 
