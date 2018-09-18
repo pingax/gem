@@ -286,9 +286,9 @@ class ParametersDialog(CommonWindow):
         label_tags.set_markup("<b>%s</b>" % _("Tags"))
 
         self.entry_tags.set_tooltip_text(
-            _("Use space to separate tags"))
+            _("Use comma to separate tags"))
         self.entry_tags.set_placeholder_text(
-            _("Use space to separate tags"))
+            _("Use comma to separate tags"))
         self.entry_tags.set_icon_from_icon_name(
             Gtk.EntryIconPosition.PRIMARY, Icons.Symbolic.AddText)
         self.entry_tags.set_icon_from_icon_name(
@@ -558,7 +558,7 @@ class ParametersDialog(CommonWindow):
 
         # Game tags
         if len(self.game.tags) > 0:
-            self.entry_tags.set_text(' '.join(self.game.tags))
+            self.entry_tags.set_text(', '.join(self.game.tags))
 
         for tag in self.interface.api.get_game_tags():
             label = Gtk.Label()
@@ -732,7 +732,7 @@ class ParametersDialog(CommonWindow):
         filter_text = self.entry_tags.get_text().strip()
 
         if len(filter_text) > 0:
-            text = "%s %s" % (self.entry_tags.get_text(), text)
+            text = "%s, %s" % (self.entry_tags.get_text(), text)
 
         self.entry_tags.set_text(text)
 

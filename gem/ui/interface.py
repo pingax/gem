@@ -5937,7 +5937,9 @@ class MainWindow(Gtk.ApplicationWindow):
                 if len(game.key) == 0:
                     game.key = None
 
-                game.tags = dialog.entry_tags.get_text().split()
+                game.tags.clear()
+                for tag in dialog.entry_tags.get_text().split(","):
+                    game.tags.append(tag.strip())
 
                 game.environment = dict()
 

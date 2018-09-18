@@ -1620,7 +1620,8 @@ class Console(GEMObject):
                     "name": game.name,
                     "filepath": game.filepath,
                     "environment": dict(),
-                    "installed": datetime.fromtimestamp(getctime(game.filepath)).date()
+                    "installed": datetime.fromtimestamp(
+                        getctime(game.filepath)).date()
                 }
 
                 # Set game environment variables
