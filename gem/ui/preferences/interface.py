@@ -268,8 +268,8 @@ class PreferencesWindow(CommonWindow):
         self.grid_consoles = Gtk.Box()
         self.grid_emulators = Gtk.Box()
 
-        self.grid_consoles_buttons = Gtk.Box()
-        self.grid_emulators_buttons = Gtk.Box()
+        self.grid_consoles_buttons = Gtk.ButtonBox()
+        self.grid_emulators_buttons = Gtk.ButtonBox()
 
         # Properties
         self.box_stack.set_orientation(Gtk.Orientation.HORIZONTAL)
@@ -305,12 +305,14 @@ class PreferencesWindow(CommonWindow):
         Gtk.StyleContext.add_class(
             self.grid_consoles_buttons.get_style_context(), "linked")
         self.grid_consoles_buttons.set_spacing(-1)
+        self.grid_consoles_buttons.set_homogeneous(True)
         self.grid_consoles_buttons.set_halign(Gtk.Align.CENTER)
         self.grid_consoles_buttons.set_valign(Gtk.Align.CENTER)
 
         Gtk.StyleContext.add_class(
             self.grid_emulators_buttons.get_style_context(), "linked")
         self.grid_emulators_buttons.set_spacing(-1)
+        self.grid_emulators_buttons.set_homogeneous(True)
         self.grid_emulators_buttons.set_halign(Gtk.Align.CENTER)
         self.grid_emulators_buttons.set_valign(Gtk.Align.CENTER)
 
@@ -920,20 +922,32 @@ class PreferencesWindow(CommonWindow):
 
         self.treeview_consoles.append_column(self.column_consoles_name)
 
+        self.image_consoles_add.set_margin_end(6)
         self.image_consoles_add.set_from_icon_name(
             Icons.Symbolic.Add, Gtk.IconSize.BUTTON)
-        self.button_consoles_add.set_image(self.image_consoles_add)
-        self.button_consoles_add.set_tooltip_text(_("Add"))
 
+        self.button_consoles_add.set_image(self.image_consoles_add)
+        self.button_consoles_add.set_label(_("Add"))
+        self.button_consoles_add.set_tooltip_text(
+            _("Add a new console"))
+
+        self.image_consoles_modify.set_margin_end(6)
         self.image_consoles_modify.set_from_icon_name(
             Icons.Symbolic.Edit, Gtk.IconSize.BUTTON)
-        self.button_consoles_modify.set_image(self.image_consoles_modify)
-        self.button_consoles_modify.set_tooltip_text(_("Modify"))
 
+        self.button_consoles_modify.set_image(self.image_consoles_modify)
+        self.button_consoles_modify.set_label(_("Modify"))
+        self.button_consoles_modify.set_tooltip_text(
+            _("Modify selected console"))
+
+        self.image_consoles_remove.set_margin_end(6)
         self.image_consoles_remove.set_from_icon_name(
             Icons.Symbolic.Remove, Gtk.IconSize.BUTTON)
+
         self.button_consoles_remove.set_image(self.image_consoles_remove)
-        self.button_consoles_remove.set_tooltip_text(_("Remove"))
+        self.button_consoles_remove.set_label(_("Remove"))
+        self.button_consoles_remove.set_tooltip_text(
+            _("Remove selected console"))
 
         # ------------------------------------
         #   Emulators
@@ -999,20 +1013,32 @@ class PreferencesWindow(CommonWindow):
 
         self.treeview_emulators.append_column(self.column_emulators_name)
 
+        self.image_emulators_add.set_margin_end(6)
         self.image_emulators_add.set_from_icon_name(
             Icons.Symbolic.Add, Gtk.IconSize.BUTTON)
-        self.button_emulators_add.set_image(self.image_emulators_add)
-        self.button_emulators_add.set_tooltip_text(_("Add"))
 
+        self.button_emulators_add.set_image(self.image_emulators_add)
+        self.button_emulators_add.set_label(_("Add"))
+        self.button_emulators_add.set_tooltip_text(
+            _("Add a new emulator"))
+
+        self.image_emulators_modify.set_margin_end(6)
         self.image_emulators_modify.set_from_icon_name(
             Icons.Symbolic.Edit, Gtk.IconSize.BUTTON)
-        self.button_emulators_modify.set_image(self.image_emulators_modify)
-        self.button_emulators_modify.set_tooltip_text(_("Modify"))
 
+        self.button_emulators_modify.set_image(self.image_emulators_modify)
+        self.button_emulators_modify.set_label(_("Modify"))
+        self.button_emulators_modify.set_tooltip_text(
+            _("Modify selected emulator"))
+
+        self.image_emulators_remove.set_margin_end(6)
         self.image_emulators_remove.set_from_icon_name(
             Icons.Symbolic.Remove, Gtk.IconSize.BUTTON)
+
         self.button_emulators_remove.set_image(self.image_emulators_remove)
-        self.button_emulators_remove.set_tooltip_text(_("Remove"))
+        self.button_emulators_remove.set_label(_("Remove"))
+        self.button_emulators_remove.set_tooltip_text(
+            _("Remove selected emulator"))
 
 
     def __init_packing(self):
