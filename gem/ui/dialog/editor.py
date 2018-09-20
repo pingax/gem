@@ -516,7 +516,7 @@ class EditorDialog(CommonWindow):
 
         text = self.entry_search.get_text()
 
-        if self.modified_buffer:
+        if self.modified_buffer or not text == self.previous_search:
             # Reset cursor position if different search
             if not text == self.previous_search:
                 self.current_index = -1
