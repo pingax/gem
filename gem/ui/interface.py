@@ -5724,6 +5724,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     game.name = new_name
 
+                    row, treepath, gridpath = self.game_path[game.filename]
+
                     treepath = self.model_games_list.get_path(
                         self.game_path[game.filename][1])
 
@@ -5731,6 +5733,10 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.model_games_list[treepath][Columns.List.Name] = str(
                         new_name)
                     self.model_games_list[treepath][Columns.List.Object] = game
+
+                    self.model_games_grid[gridpath][Columns.Grid.Name] = str(
+                        new_name)
+                    self.model_games_grid[gridpath][Columns.Grid.Object] = game
 
                     # Update game from database
                     self.api.update_game(game)
@@ -6215,7 +6221,7 @@ class MainWindow(Gtk.ApplicationWindow):
         game = self.selection["game"]
 
         if game is not None:
-            treeiter = self.game_path[game.filename][1]
+            row, treepath, gridpath = self.game_path[game.filename]
 
             if not game.favorite:
                 self.logger.debug("Mark %s as favorite" % game.name)
@@ -6232,9 +6238,12 @@ class MainWindow(Gtk.ApplicationWindow):
                 game.favorite = False
 
             self.model_games_list.set_value(
-                treeiter, Columns.List.Favorite, icon)
+                treepath, Columns.List.Favorite, icon)
             self.model_games_list.set_value(
-                treeiter, Columns.List.Object, game)
+                treepath, Columns.List.Object, game)
+
+            self.model_games_grid.set_value(
+                gridpath, Columns.Grid.Object, game)
 
             # Update game from database
             self.api.update_game(game)
@@ -6265,7 +6274,7 @@ class MainWindow(Gtk.ApplicationWindow):
         game = self.selection["game"]
 
         if game is not None:
-            treeiter = self.game_path[game.filename][1]
+            row, treepath, gridpath = self.game_path[game.filename]
 
             if not game.multiplayer:
                 self.logger.debug("Mark %s as multiplayers" % game.name)
@@ -6282,9 +6291,12 @@ class MainWindow(Gtk.ApplicationWindow):
                 game.multiplayer = False
 
             self.model_games_list.set_value(
-                treeiter, Columns.List.Multiplayer, icon)
+                treepath, Columns.List.Multiplayer, icon)
             self.model_games_list.set_value(
-                treeiter, Columns.List.Object, game)
+                treepath, Columns.List.Object, game)
+
+            self.model_games_grid.set_value(
+                gridpath, Columns.Grid.Object, game)
 
             # Update game from database
             self.api.update_game(game)
@@ -6315,7 +6327,7 @@ class MainWindow(Gtk.ApplicationWindow):
         game = self.selection["game"]
 
         if game is not None:
-            treeiter = self.game_path[game.filename][1]
+            row, treepath, gridpath = self.game_path[game.filename]
 
             if not game.finish:
                 self.logger.debug("Mark %s as finish" % game.name)
@@ -6332,9 +6344,12 @@ class MainWindow(Gtk.ApplicationWindow):
                 game.finish = False
 
             self.model_games_list.set_value(
-                treeiter, Columns.List.Finish, icon)
+                treepath, Columns.List.Finish, icon)
             self.model_games_list.set_value(
-                treeiter, Columns.List.Object, game)
+                treepath, Columns.List.Object, game)
+
+            self.model_games_grid.set_value(
+                gridpath, Columns.Grid.Object, game)
 
             # Update game from database
             self.api.update_game(game)
@@ -6390,12 +6405,19 @@ class MainWindow(Gtk.ApplicationWindow):
                 modification = True
 
         if modification:
-            self.model_games_list.set_value(self.game_path[game.filename][1],
-                Columns.List.Score, game.score)
-            self.model_games_list.set_value(self.game_path[game.filename][1],
-                Columns.List.Object, game)
+            row, treepath, gridpath = self.game_path[game.filename]
+
+            self.model_games_list.set_value(
+                treepath, Columns.List.Score, game.score)
+            self.model_games_list.set_value(
+                treepath, Columns.List.Object, game)
+
+            self.model_games_grid.set_value(
+                gridpath, Columns.Grid.Object, game)
 
             self.api.update_game(game)
+
+            self.set_informations()
 
 
     def __on_game_copy(self, *args):
