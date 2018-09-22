@@ -613,7 +613,8 @@ class EditorDialog(CommonWindow):
             Start position in text buffer
         """
 
-        match = start.forward_search(text, 0, self.buffer_editor.get_end_iter())
+        match = start.forward_search(text, Gtk.TextSearchFlags.CASE_INSENSITIVE,
+            self.buffer_editor.get_end_iter())
 
         while match is not None:
             self.founded_iter.append(match)
@@ -621,7 +622,8 @@ class EditorDialog(CommonWindow):
             self.buffer_editor.apply_tag(self.tag_found, match[0], match[1])
 
             match = match[1].forward_search(
-                text, 0, self.buffer_editor.get_end_iter())
+                text, Gtk.TextSearchFlags.CASE_INSENSITIVE,
+                self.buffer_editor.get_end_iter())
 
 
     def __on_buffer_modified(self, textbuffer):
