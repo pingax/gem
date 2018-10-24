@@ -22,6 +22,7 @@ from datetime import timedelta
 
 # Filesystem
 from os import W_OK
+from os import X_OK
 from os import mkdir
 from os import access
 from os import getenv

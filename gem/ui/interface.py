@@ -24,6 +24,7 @@ from gem.ui.data import *
 from gem.ui.utils import *
 
 from gem.ui.widgets.game import GameThread
+from gem.ui.widgets.script import ScriptThread
 from gem.ui.widgets.widgets import ListBoxPopover
 from gem.ui.widgets.widgets import ListBoxSelector
 
@@ -60,6 +61,7 @@ class MainWindow(Gtk.ApplicationWindow):
     __gsignals__ = {
         "game-started": (SignalFlags.RUN_FIRST, None, [object]),
         "game-terminate": (SignalFlags.RUN_LAST, None, [object]),
+        "script-terminate": (SignalFlags.RUN_LAST, None, [object]),
     }
 
     def __init__(self, api):
@@ -110,6 +112,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.alternative = dict()
         # Store started notes with note file path as key
         self.notes = dict()
+        # Store script threads with basename game file without extension as key
+        self.scripts = dict()
         # Store started threads with basename game file without extension as key
         self.threads = dict()
         # Store selected game informations with console, game and name as keys
@@ -2088,6 +2092,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.connect("game-started", self.__on_game_started)
         self.connect("game-terminate", self.__on_game_terminate)
+        self.connect("script-terminate", self.__on_script_terminate)
 
         # ------------------------------------
         #   Window
@@ -2457,10 +2462,12 @@ class MainWindow(Gtk.ApplicationWindow):
         if not self.list_thread == 0:
             source_remove(self.list_thread)
 
-        # Remove games launcher thread
-        if len(self.threads.keys()) > 0:
-            for thread in self.threads.copy().keys():
-                self.threads[thread].proc.terminate()
+        # Remove game and script threads
+        for thread in threading.enumerate().copy():
+
+            # Avoid to remove the main thread
+            if thread is not threading.main_thread():
+                thread.proc.terminate()
 
         # ------------------------------------
         #   Notes
@@ -5481,7 +5488,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
 
     def __on_game_started(self, widget, game):
-        """ Started the game processus
+        """ The game processus has been started
 
         Parameters
         ----------
@@ -5491,7 +5498,34 @@ class MainWindow(Gtk.ApplicationWindow):
             Game object
         """
 
-        pass
+        path = self.api.get_local("ongamestarted")
+
+        if exists(path) and access(path, X_OK):
+            thread = ScriptThread(self, path, game)
+
+            # Save thread references
+            self.scripts[game.filename] = thread
+
+            # Launch thread
+            thread.start()
+
+
+    def __on_script_terminate(self, widget, thread):
+        """ Terminate the script processus
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        thread : gem.widgets.script.ScriptThread
+            Game thread
+        """
+
+        # Remove this script from threads list
+        if thread.game.filename in self.scripts:
+            self.logger.debug("Remove %s from scripts cache" % thread.game.name)
+
+            del self.scripts[thread.game.filename]
 
 
     def __on_game_terminate(self, widget, thread):
@@ -5501,7 +5535,7 @@ class MainWindow(Gtk.ApplicationWindow):
         ----------
         widget : Gtk.Widget
             Object which receive signal
-        thread : gem.game.GameThread
+        thread : gem.widgets.game.GameThread
             Game thread
         """
 
@@ -5598,6 +5632,10 @@ class MainWindow(Gtk.ApplicationWindow):
             # Avoid to launch the game again when use Enter in game terminate
             # self.treeview_games.get_selection().unselect_all()
 
+        # ----------------------------
+        #   Manage thread
+        # ----------------------------
+
         # Remove this game from threads list
         if game.filename in self.threads:
             self.logger.debug("Remove %s from process cache" % game.name)
@@ -5607,6 +5645,27 @@ class MainWindow(Gtk.ApplicationWindow):
         if len(self.threads) == 0:
             self.menu_item_preferences.set_sensitive(True)
             self.menubar_main_item_preferences.set_sensitive(True)
+
+        # ----------------------------
+        #   Manage script
+        # ----------------------------
+
+        # Remove this script from threads list
+        if game.filename in self.scripts:
+            self.logger.debug("Remove %s from scripts cache" % game.name)
+
+            del self.scripts[game.filename]
+
+        path = self.api.get_local("ongamestopped")
+
+        if exists(path) and access(path, X_OK):
+            thread = ScriptThread(self, path, game)
+
+            # Save thread references
+            self.scripts[game.filename] = thread
+
+            # Launch thread
+            thread.start()
 
 
     def __on_game_renamed(self, *args):

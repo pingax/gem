@@ -23,6 +23,7 @@ from subprocess import Popen
 from subprocess import STDOUT
 
 # Threading
+import threading
 from threading import Thread
 
 # ------------------------------------------------------------------------------

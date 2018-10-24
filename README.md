@@ -47,7 +47,6 @@ $ eopkg install gem
 
 ### Icons
 
-* Interface: [Tango](http://tango.freedesktop.org/Tango_Desktop_Project)
 * Emulators: [Gelide](http://gelide.sourceforge.net/index.php?lang=en) (for most of them)
 * Consoles: [Evan-Amos](https://commons.wikimedia.org/wiki/User:Evan-Amos)
 
@@ -55,7 +54,7 @@ Dependencies
 ------------
 
 * gtk+3
-* python3
+* python3 >= 3.4
 * python3-magic
 * python3-gobject
 * python3-setuptools
@@ -131,3 +130,4 @@ box:
 * Desmume (Nintendo DS)
 * Dolphin (Nintendo GameCube et Nintendo Wii)
 * Gens (Sega Genesis)
+* DosBOX
