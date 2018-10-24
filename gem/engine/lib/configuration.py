@@ -210,7 +210,7 @@ class Configuration(ConfigParser):
         """
 
         if not exists(expanduser(secondary_path)):
-            raise OSError(2, "Cannot find file", filepath)
+            raise OSError(2, "Cannot find file", secondary_path)
 
         config = Configuration(expanduser(secondary_path))
 

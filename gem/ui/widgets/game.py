@@ -41,7 +41,7 @@ class GameThread(Thread, GObject):
         ----------
         parent : gem.interface.Interface
             Main interface to access public variables
-        emulator : gem.api.Console
+        console : gem.api.Console
             Console object
         emulator : gem.api.Emulator
             Emulator object

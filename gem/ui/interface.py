@@ -24,7 +24,6 @@ from gem.ui.data import *
 from gem.ui.utils import *
 
 from gem.ui.widgets.game import GameThread
-from gem.ui.widgets.addon import AddonThread
 from gem.ui.widgets.widgets import ListBoxPopover
 from gem.ui.widgets.widgets import ListBoxSelector
 
@@ -113,8 +112,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.notes = dict()
         # Store started threads with basename game file without extension as key
         self.threads = dict()
-        # Store modules functions
-        self.modules = dict()
         # Store selected game informations with console, game and name as keys
         self.selection = dict()
         # Store shortcut with Gtk.Widget as key
@@ -404,9 +401,6 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Headerbar - Main menu
         # ------------------------------------
 
-        self.menu_image_addons = Gtk.Image()
-        self.menu_item_addons = Gtk.Button()
-
         self.menu_image_preferences = Gtk.Image()
         self.menu_item_preferences = Gtk.Button()
 
@@ -431,17 +425,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menu_item_statusbar = Gtk.Switch()
 
         # Properties
-        self.menu_item_addons.set_label(_("Addons"))
-        self.menu_item_addons.set_relief(Gtk.ReliefStyle.NONE)
-        self.menu_item_addons.set_image(self.menu_image_addons)
-        self.menu_item_addons.set_use_underline(True)
-        self.menu_item_addons.set_halign(Gtk.Align.FILL)
-        self.menu_item_addons.set_valign(Gtk.Align.CENTER)
-        self.menu_item_addons.get_children()[0].set_halign(Gtk.Align.START)
-
-        self.menu_image_addons.set_valign(Gtk.Align.CENTER)
-        self.menu_image_addons.set_margin_end(6)
-
         self.menu_item_preferences.set_label(_("Preferences"))
         self.menu_item_preferences.set_relief(Gtk.ReliefStyle.NONE)
         self.menu_item_preferences.set_image(self.menu_image_preferences)
@@ -547,7 +530,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menubar_main_item_statusbar = Gtk.CheckMenuItem()
 
         self.menubar_main_item_preferences = Gtk.MenuItem()
-        self.menubar_main_item_addons = Gtk.MenuItem()
         self.menubar_main_item_log = Gtk.MenuItem()
 
         self.menubar_main_item_quit = Gtk.MenuItem()
@@ -568,10 +550,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menubar_main_item_preferences.set_label(
             "%s…" % _("_Preferences"))
         self.menubar_main_item_preferences.set_use_underline(True)
-
-        self.menubar_main_item_addons.set_label(
-            "%s…" % _("_Addons"))
-        self.menubar_main_item_addons.set_use_underline(True)
 
         self.menubar_main_item_log.set_label(
             "%s…" % _("_Log"))
@@ -1241,11 +1219,15 @@ class MainWindow(Gtk.ApplicationWindow):
         self.iconview_games = Gtk.IconView()
 
         self.filter_games_grid = self.model_games_grid.filter_new()
+        self.sorted_games_grid = Gtk.TreeModelSort(model=self.filter_games_grid)
 
         # Properties
         self.scroll_games_grid.set_no_show_all(True)
 
-        self.iconview_games.set_model(self.filter_games_grid)
+        self.sorted_games_grid.set_sort_column_id(
+            Columns.Grid.Name, Gtk.SortType.ASCENDING)
+
+        self.iconview_games.set_model(self.sorted_games_grid)
         self.iconview_games.set_selection_mode(Gtk.SelectionMode.SINGLE)
         self.iconview_games.set_has_tooltip(True)
         self.iconview_games.set_column_spacing(0)
@@ -1460,22 +1442,19 @@ class MainWindow(Gtk.ApplicationWindow):
         # self.cell_game_name.set_property("editable", True)
         self.cell_game_name.set_property("ellipsize", Pango.EllipsizeMode.END)
 
-        self.cell_game_favorite.set_padding(0, 4)
-        self.cell_game_multiplayer.set_padding(0, 4)
-        self.cell_game_finish.set_padding(0, 4)
-        self.cell_game_name.set_padding(6, 4)
-        self.cell_game_play.set_padding(6, 4)
-        self.cell_game_last_play.set_padding(6, 4)
-        self.cell_game_last_play_time.set_padding(6, 4)
-        self.cell_game_score_first.set_padding(4, 4)
-        self.cell_game_score_second.set_padding(2, 4)
-        self.cell_game_score_third.set_padding(2, 4)
-        self.cell_game_score_fourth.set_padding(2, 4)
-        self.cell_game_score_fifth.set_padding(4, 4)
-        self.cell_game_installed.set_padding(6, 4)
-        self.cell_game_except.set_padding(4, 4)
-        self.cell_game_snapshots.set_padding(2, 4)
-        self.cell_game_save.set_padding(4, 4)
+        self.cell_game_name.set_padding(4, 4)
+        self.cell_game_play.set_padding(4, 0)
+        self.cell_game_last_play.set_padding(4, 0)
+        self.cell_game_last_play_time.set_padding(4, 0)
+        self.cell_game_score_first.set_padding(2, 0)
+        self.cell_game_score_second.set_padding(2, 0)
+        self.cell_game_score_third.set_padding(2, 0)
+        self.cell_game_score_fourth.set_padding(2, 0)
+        self.cell_game_score_fifth.set_padding(2, 0)
+        self.cell_game_installed.set_padding(4, 0)
+        self.cell_game_except.set_padding(2, 0)
+        self.cell_game_snapshots.set_padding(2, 0)
+        self.cell_game_save.set_padding(2, 0)
 
         # ------------------------------------
         #   Games - Menu
@@ -1739,8 +1718,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.grid_main_popover.attach(
             self.menu_item_preferences, 0, 5, 2, 1)
         self.grid_main_popover.attach(
-            self.menu_item_addons, 0, 6, 2, 1)
-        self.grid_main_popover.attach(
             Gtk.Separator(), 0, 7, 2, 1)
         self.grid_main_popover.attach(
             self.menu_item_gem_log, 0, 8, 2, 1)
@@ -1769,7 +1746,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menubar_main_menu.insert(self.menubar_main_item_statusbar, -1)
         self.menubar_main_menu.insert(Gtk.SeparatorMenuItem(), -1)
         self.menubar_main_menu.insert(self.menubar_main_item_preferences, -1)
-        self.menubar_main_menu.insert(self.menubar_main_item_addons, -1)
         self.menubar_main_menu.insert(self.menubar_main_item_log, -1)
         self.menubar_main_menu.insert(Gtk.SeparatorMenuItem(), -1)
         self.menubar_main_menu.insert(self.menubar_main_item_quit, -1)
@@ -2187,8 +2163,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.menubar_main_item_preferences.connect(
             "activate", self.__on_show_preferences)
-        self.menubar_main_item_addons.connect(
-            "activate", self.__on_show_modules)
         self.menubar_main_item_log.connect(
             "activate", self.__on_show_log)
 
@@ -2315,8 +2289,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.menu_item_preferences.connect(
             "clicked", self.__on_show_preferences)
-        self.menu_item_addons.connect(
-            "clicked", self.__on_show_modules)
 
         self.menu_item_gem_log.connect(
             "clicked", self.__on_show_log)
@@ -2389,6 +2361,10 @@ class MainWindow(Gtk.ApplicationWindow):
     def __start_interface(self):
         """ Load data and start interface
         """
+
+        self.logger.debug("Use GTK+ library v.%d.%d.%d" % (
+            Gtk.get_major_version(), Gtk.get_minor_version(),
+            Gtk.get_micro_version()))
 
         # Define signals per toggle buttons
         self.__signals = {
@@ -2586,8 +2562,6 @@ class MainWindow(Gtk.ApplicationWindow):
             not self.toolbar_sizes[icon_size] == self.toolbar.get_icon_size():
             self.headerbar_image_menu.set_from_icon_name(
                 Icons.Symbolic.Menu, self.toolbar_sizes[icon_size])
-            self.menu_image_addons.set_from_icon_name(
-                Icons.Symbolic.Addon, self.toolbar_sizes[icon_size])
             self.headerbar_image_fullscreen.set_from_icon_name(
                 Icons.Symbolic.Restore, self.toolbar_sizes[icon_size])
             self.menu_image_preferences.set_from_icon_name(
@@ -2751,12 +2725,6 @@ class MainWindow(Gtk.ApplicationWindow):
         # ------------------------------------
 
         self.__init_shortcuts()
-
-        # ------------------------------------
-        #   Modules
-        # ------------------------------------
-
-        self.__init_modules()
 
         # ------------------------------------
         #   Widgets
@@ -3031,37 +2999,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.__unblock_signals()
 
 
-    def __init_modules(self):
-        """ Initialize available modules
-
-        Notes
-        -----
-        The modules are available in two folders
-
-          - GEM source folder as gem/plugins/
-          - User local folder as ~/.local/share/gem/plugins
-
-        The modules in user local folder are taken hover GEM source folder
-        """
-
-        self.modules = dict()
-
-        for path in [ get_data("plugins"), self.api.get_local("plugins") ]:
-
-            if exists(path):
-
-                # List available modules
-                for plugin in glob(path_join(path, '*', "manifest.conf")):
-                    config = Configuration(plugin)
-
-                    # Check if module manifest is okay
-                    if config.has_section("plugin"):
-                        name = config.get("plugin", "name", fallback=str())
-
-                        if len(name) > 0:
-                            self.modules[name] = AddonThread(name, plugin)
-
-
     def sensitive_interface(self, status=False):
         """ Update sensitive status for main widgets
 
@@ -3265,7 +3202,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
             for first, second, status in flags:
 
-                # Check if one the two checkbox is not active
+                # Check if one of the two checkbox is not active
                 if not (first and second):
                     found = found and (
                         (status and first) or (not status and second))
@@ -3550,15 +3487,6 @@ class MainWindow(Gtk.ApplicationWindow):
                 ],
                 "keys": self.config.item("keys", "preferences", "<Control>P"),
                 "function": self.__on_show_preferences
-            },
-            {
-                "path": "<GEM>/addons",
-                "widgets": [
-                    self,
-                    self.menubar_main_item_addons
-                ],
-                "keys": self.config.item("keys", "addons", "<Control>M"),
-                "function": self.__on_show_modules
             },
             {
                 "path": "<GEM>/log",
@@ -4763,7 +4691,7 @@ class MainWindow(Gtk.ApplicationWindow):
                         self.alternative["multiplayer"],
                         self.alternative["unfinish"],
                         game.name,
-                        int(),          # Played
+                        game.played,
                         str(),          # Last launch date
                         str(),          # Last launch time
                         str(),          # Total play time
@@ -4786,10 +4714,6 @@ class MainWindow(Gtk.ApplicationWindow):
                     # Finish
                     if game.finish:
                         row_data[Columns.List.Finish] = self.icons["finish"]
-
-                    # Played
-                    if game.played > 0:
-                        row_data[Columns.List.Played] = game.played
 
                     # Last launch date
                     if game.last_launch_date is not None:
@@ -4857,6 +4781,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     #   Refesh view
                     # ------------------------------------
 
+                    # Store both Gtk.TreeIter under game filename key
                     self.game_path[game.filename] = [game, row_list, row_grid]
 
                     iteration += 1
@@ -4976,10 +4901,11 @@ class MainWindow(Gtk.ApplicationWindow):
                     elif treeview == self.iconview_games:
                         treeiter = model.get_iter(selection)
 
-            # Get selection from treeview
+            # Get selection from TreeView
             elif treeview == self.treeview_games:
                 model, treeiter = treeview.get_selection().get_selected()
 
+            # Get selection from IconView
             elif treeview == self.iconview_games:
                 model = treeview.get_model()
                 items = treeview.get_selected_items()
@@ -5081,17 +5007,23 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.menu_item_finish.set_active(
                         game.finish)
 
+                    # Retrieve row path for TreeView widget
                     if treeview == self.treeview_games:
-                        path = self.model_games_grid.get_path(
-                            self.game_path[game.filename][2])
+                        path = \
+                            self.sorted_games_grid.convert_child_path_to_path(
+                            self.model_games_grid.get_path(
+                            self.game_path[game.filename][2]))
 
                         self.iconview_games.select_path(path)
                         self.iconview_games.scroll_to_path(
                             path, True, 0.5, 0.5)
 
+                    # Retrieve row path for IconView widget
                     elif treeview == self.iconview_games:
-                        path = self.model_games_list.get_path(
-                            self.game_path[game.filename][1])
+                        path = \
+                            self.sorted_games_list.convert_child_path_to_path(
+                            self.model_games_list.get_path(
+                            self.game_path[game.filename][1]))
 
                         self.treeview_games.set_cursor(path, None, False)
                         self.treeview_games.scroll_to_cell(
