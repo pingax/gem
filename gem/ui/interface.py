@@ -4105,20 +4105,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.set_sensitive(True)
 
 
-    def __on_show_modules(self, *args):
-        """ Show modules window
-        """
-
-        self.set_sensitive(False)
-
-        dialog = ModulesDialog(self)
-
-        dialog.run()
-        dialog.destroy()
-
-        self.set_sensitive(True)
-
-
     def __on_show_log(self, *args):
         """ Show gem log
 
