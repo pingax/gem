@@ -5007,9 +5007,13 @@ class MainWindow(Gtk.ApplicationWindow):
                             self.model_games_grid.get_path(
                             self.game_path[game.filename][2]))
 
-                        self.iconview_games.select_path(path)
-                        self.iconview_games.scroll_to_path(
-                            path, True, 0.5, 0.5)
+                        if path is not None:
+                            self.iconview_games.select_path(path)
+                            self.iconview_games.scroll_to_path(
+                                path, True, 0.5, 0.5)
+
+                        else:
+                            self.iconview_games.unselect_all()
 
                     # Retrieve row path for IconView widget
                     elif treeview == self.iconview_games:
@@ -5018,9 +5022,13 @@ class MainWindow(Gtk.ApplicationWindow):
                             self.model_games_list.get_path(
                             self.game_path[game.filename][1]))
 
-                        self.treeview_games.set_cursor(path, None, False)
-                        self.treeview_games.scroll_to_cell(
-                            path, None, True, 0.5, 0.5)
+                        if path is not None:
+                            self.treeview_games.set_cursor(path, None, False)
+                            self.treeview_games.scroll_to_cell(
+                                path, None, True, 0.5, 0.5)
+
+                        else:
+                            self.treeview_games.get_selection().unselect_all()
 
                     self.__unblock_signals()
 
