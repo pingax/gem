@@ -227,8 +227,14 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Main loop
         # ------------------------------------
 
-        self.main_loop = MainLoop()
-        self.main_loop.run()
+        try:
+            self.main_loop = MainLoop()
+            self.main_loop.run()
+
+        except KeyboardInterrupt as error:
+            self.logger.warning("Terminate by keyboard interrupt")
+
+            self.__stop_interface()
 
 
     def __init_widgets(self):
@@ -2454,6 +2460,8 @@ class MainWindow(Gtk.ApplicationWindow):
         """ Save data and stop interface
         """
 
+        self.logger.info(_("Close interface"))
+
         # ------------------------------------
         #   Threads
         # ------------------------------------
@@ -2468,6 +2476,9 @@ class MainWindow(Gtk.ApplicationWindow):
             # Avoid to remove the main thread
             if thread is not threading.main_thread():
                 thread.proc.terminate()
+                thread.join()
+
+                self.__on_game_terminate(None, thread)
 
         # ------------------------------------
         #   Notes
@@ -2530,8 +2541,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.config.modify("windows", "main", "%dx%d" % self.get_size())
         self.config.update()
-
-        self.logger.info(_("Close interface"))
 
         self.main_loop.quit()
 
