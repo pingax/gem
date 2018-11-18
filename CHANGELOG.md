@@ -39,6 +39,7 @@ Version 1.0 - Space Fox
 * Fix remove game note when the user save an empty text buffer
 * Fix console without icon raise TypeError exceptions
 * Fix disable consoles selector when no console available
+* Fix wrong treeiter used when games list was filtered
 
 Version 0.9.1 - Lavos (17 Feb, 2018)
 ------------------------------------

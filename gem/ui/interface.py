@@ -4911,17 +4911,21 @@ class MainWindow(Gtk.ApplicationWindow):
                 run_game = True and not self.is_rename
 
         # ----------------------------
-        #   Game selected
+        #   Retrieve selection
         # ----------------------------
 
         # Get game data
-        if treeiter is not None:
+        if type(treeiter) is Gtk.TreeIter:
 
             column_id = Columns.List.Object
-            if treeview == self.iconview_games:
+            if type(treeview) is Gtk.IconView:
                 column_id = Columns.Grid.Object
 
             game = model.get_value(treeiter, column_id)
+
+        # ----------------------------
+        #   Game selected
+        # ----------------------------
 
         # Check if the selected game has already been showed
         same_game = (self.selection["game"] == game)
@@ -4945,9 +4949,10 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.toolbar_item_properties.set_sensitive(False)
 
                 # ----------------------------
-                #   Game data
+                #   Manage widgets
                 # ----------------------------
 
+                # This game is currently running
                 if game.filename in self.threads:
                     self.__on_game_launch_button_update(False)
                     self.headerbar_item_launch.set_sensitive(True)
@@ -4962,7 +4967,9 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.menubar_edit_item_delete.set_sensitive(False)
                     self.menubar_edit_item_mednafen.set_sensitive(False)
 
+                # This is not the same selection, so we change widgets status
                 if not same_game:
+
                     # Check extension and emulator for GBA game on mednafen
                     if not game.extension.lower() == ".gba" or \
                         not "mednafen" in emulator.binary or \
@@ -4970,10 +4977,8 @@ class MainWindow(Gtk.ApplicationWindow):
                         self.menu_item_mednafen.set_sensitive(False)
                         self.menubar_edit_item_mednafen.set_sensitive(False)
 
-                    screenshots = emulator.get_screenshots(game)
-
                     # Check screenshots
-                    if len(screenshots) == 0:
+                    if len(emulator.get_screenshots(game)) == 0:
                         self.toolbar_item_screenshots.set_sensitive(False)
                         self.menu_item_screenshots.set_sensitive(False)
                         self.menubar_game_item_screenshots.set_sensitive(False)
@@ -5000,12 +5005,17 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.menu_item_finish.set_active(
                         game.finish)
 
-                    # Retrieve row path for TreeView widget
-                    if treeview == self.treeview_games:
-                        path = \
-                            self.sorted_games_grid.convert_child_path_to_path(
-                            self.model_games_grid.get_path(
-                            self.game_path[game.filename][2]))
+                    # Retrieve path from storage cache
+                    treeiter, griditer = self.game_path[game.filename][1:]
+
+                    # Update selection in grid view
+                    if type(treeview) is Gtk.TreeView:
+                        subiter = \
+                            self.sorted_games_grid.convert_child_iter_to_iter(
+                            self.filter_games_grid.convert_child_iter_to_iter(
+                            griditer)[1])[1]
+
+                        path = self.sorted_games_grid.get_path(subiter)
 
                         if path is not None:
                             self.iconview_games.select_path(path)
@@ -5015,12 +5025,14 @@ class MainWindow(Gtk.ApplicationWindow):
                         else:
                             self.iconview_games.unselect_all()
 
-                    # Retrieve row path for IconView widget
-                    elif treeview == self.iconview_games:
-                        path = \
-                            self.sorted_games_list.convert_child_path_to_path(
-                            self.model_games_list.get_path(
-                            self.game_path[game.filename][1]))
+                    # Update selection in list view
+                    elif type(treeview) is Gtk.IconView:
+                        subiter = \
+                            self.sorted_games_list.convert_child_iter_to_iter(
+                            self.filter_games_list.convert_child_iter_to_iter(
+                            treeiter)[1])[1]
+
+                        path = self.sorted_games_list.get_path(subiter)
 
                         if path is not None:
                             self.treeview_games.set_cursor(path, None, False)
@@ -5032,9 +5044,11 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     self.__unblock_signals()
 
+                # The user has do a specific action to launch current game
                 if run_game:
                     self.__on_game_launch()
 
+        # No game has been choosen (when the user click in the empty view area)
         else:
             self.treeview_games.get_selection().unselect_all()
             self.iconview_games.unselect_all()
@@ -5044,6 +5058,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.__on_game_launch_button_update(True)
             self.headerbar_item_launch.set_sensitive(False)
 
+        # Update sidebar when this is another selection
         if not same_game:
             self.set_informations()
 
