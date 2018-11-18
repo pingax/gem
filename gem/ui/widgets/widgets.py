@@ -640,7 +640,6 @@ class PreferencesItem(Gtk.ListBoxRow):
         # Properties
         self.label_title.set_line_wrap(True)
         self.label_title.set_halign(Gtk.Align.START)
-        self.label_title.set_valign(Gtk.Align.END)
         self.label_title.set_justify(Gtk.Justification.FILL)
         self.label_title.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
 
@@ -700,8 +699,15 @@ class PreferencesItem(Gtk.ListBoxRow):
             Label text
         """
 
-        self.label_description.set_markup(
-            "<span size=\"small\">%s</span>" % text)
+        if len(text) > 0:
+            self.label_description.set_markup(
+                "<span size=\"small\">%s</span>" % text)
+
+            self.label_title.set_valign(Gtk.Align.END)
+
+        else:
+            self.label_title.set_valign(Gtk.Align.CENTER)
+
         self.label_description.set_visible(len(text) > 0)
 
 
