@@ -59,13 +59,10 @@ class ParametersDialog(CommonWindow):
         self.interface = parent
 
         self.api = parent.api
+        self.icons = parent.icons
 
         self.game = game
         self.emulator = emulator
-
-        # HACK: Create an empty image to avoid g_object_set_qdata warning
-        self.empty = Pixbuf.new(Colorspace.RGB, True, 8, 24, 24)
-        self.empty.fill(0x00000000)
 
         self.help_data = {
             "order": [
@@ -530,11 +527,11 @@ class ParametersDialog(CommonWindow):
                 icon = self.api.get_local(
                     "icons", "emulators", "%s.%s" % (icon, Icons.Ext))
 
-            icon = icon_from_data(icon, self.empty, 24, 24)
+            icon = icon_from_data(icon, self.icons.blank(24), 24, 24)
 
-            warning = self.empty
+            warning = self.icons.blank()
             if not emulator.exists:
-                warning = self.interface.icons["warning"]
+                warning = self.icons.get("warning")
 
             row = self.model.append([icon, emulator.name, warning])
 

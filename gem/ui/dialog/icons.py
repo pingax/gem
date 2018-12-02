@@ -21,6 +21,8 @@ from gem.ui.utils import *
 
 from gem.ui.widgets.window import CommonWindow
 
+from gem.ui.widgets.widgets import IconsGenerator
+
 # Translation
 from gettext import gettext as _
 
@@ -57,16 +59,9 @@ class IconsDialog(CommonWindow):
 
         self.folder = folder
 
-        if parent is None:
-            self.api = None
+        self.api = parent.api
 
-            self.empty = Pixbuf(Colorspace.RGB, True, 8, 24, 24)
-            self.empty.fill(0x00000000)
-
-        else:
-            self.api = parent.api
-
-            self.empty = parent.empty
+        self.icons = parent.icons
 
         # ------------------------------------
         #   Initialization
@@ -227,7 +222,7 @@ class IconsDialog(CommonWindow):
                         "icons", self.folder, "%s.%s" % (icon, Icons.Ext))
 
                 self.icons_data[name] = self.model_icons.append([
-                    icon_from_data(icon, self.empty, 72, 72), name ])
+                    icon_from_data(icon, self.icons.blank(72), 72, 72), name ])
 
             # Set filechooser or icons view selected item
             if self.path is not None:
@@ -252,10 +247,14 @@ class IconsDialog(CommonWindow):
         """
 
         if self.stack.get_visible_child_name() == "library":
-            selection = self.view_icons.get_selected_items()[0]
+            selection = self.view_icons.get_selected_items()
 
-            path = self.model_icons.get_value(
-                self.model_icons.get_iter(selection), 1)
+            if len(selection) > 0:
+                path = self.model_icons.get_value(
+                    self.model_icons.get_iter(selection[0]), 1)
+
+            else:
+                path = None
 
         else:
             path = self.file_icons.get_filename()

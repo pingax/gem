@@ -73,7 +73,7 @@ class ConsolePreferences(CommonWindow):
         self.modify = modify
 
         # Empty Pixbuf icon
-        self.empty = parent.empty
+        self.icons = parent.icons
 
         self.help_data = {
             "order": [
@@ -438,11 +438,11 @@ class ConsolePreferences(CommonWindow):
                 icon = self.api.get_local(
                     "icons", "emulators", "%s.%s" % (icon, Icons.Ext))
 
-            icon = icon_from_data(icon, self.empty, 24, 24)
+            icon = icon_from_data(icon, self.icons.blank(24), 24, 24)
 
-            warning = self.empty
+            warning = self.icons.blank(24)
             if not emulator.exists:
-                warning = icon_load(Icons.Warning, 24, self.empty)
+                warning = icon_load(Icons.Warning, 24, self.icons.blank(24))
 
             emulators_rows[emulator.id] = self.model_emulators.append(
                 [icon, emulator.name, warning])
@@ -479,7 +479,7 @@ class ConsolePreferences(CommonWindow):
                     "icons", "consoles", "%s.%s" % (icon, Icons.Ext))
 
             self.image_console.set_from_pixbuf(
-                icon_from_data(icon, self.empty, 64, 64))
+                icon_from_data(icon, self.icons.blank(64), 64, 64))
 
             # Ignores
             for ignore in self.console.ignores:
@@ -599,7 +599,7 @@ class ConsolePreferences(CommonWindow):
                     "icons", "consoles", "%s.%s" % (icon, Icons.Ext))
 
             self.image_console.set_from_pixbuf(
-                icon_from_data(icon, self.empty, 64, 64))
+                icon_from_data(icon, self.icons.blank(64), 64, 64))
 
             self.path = dialog.new_path
 

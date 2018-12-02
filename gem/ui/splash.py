@@ -20,6 +20,8 @@ from gem.engine.utils import get_data
 
 from gem.ui import *
 
+from gem.ui.widgets.widgets import IconsGenerator
+
 # System
 from time import sleep
 
@@ -74,10 +76,9 @@ class Splash(Gtk.Window):
         #   Initialize icons
         # ------------------------------------
 
-        # Get user icon theme
-        self.icons_theme = Gtk.IconTheme.get_default()
+        self.icons = IconsGenerator()
 
-        self.icons_theme.append_search_path(get_data(path_join("icons", "ui")))
+        self.icons.theme.append_search_path(get_data(path_join("icons", "ui")))
 
         # ------------------------------------
         #   Prepare interface

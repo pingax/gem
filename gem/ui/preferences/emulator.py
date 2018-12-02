@@ -71,7 +71,7 @@ class EmulatorPreferences(CommonWindow):
         self.modify = modify
 
         # Empty Pixbuf icon
-        self.empty = parent.empty
+        self.icons = parent.icons
 
         self.help_data = {
             "order": [
@@ -444,7 +444,7 @@ class EmulatorPreferences(CommonWindow):
                     "icons", "emulators", "%s.%s" % (icon, Icons.Ext))
 
             self.image_emulator.set_from_pixbuf(
-                icon_from_data(icon, self.empty, 64, 64))
+                icon_from_data(icon, self.icons.blank(64), 64, 64))
 
             # Regex
             if self.emulator.savestates is not None:
@@ -681,7 +681,7 @@ class EmulatorPreferences(CommonWindow):
                     "icons", "emulators", "%s.%s" % (icon, Icons.Ext))
 
             self.image_emulator.set_from_pixbuf(
-                icon_from_data(icon, self.empty, 64, 64))
+                icon_from_data(icon, self.icons.blank(64), 64, 64))
 
             self.path = dialog.new_path
 

@@ -188,3 +188,35 @@ def on_entry_clear(widget, pos, event):
         return True
 
     return False
+
+
+def on_activate_listboxrow(listbox, row):
+        """ Activate internal widget when a row has been activated
+
+        Parameters
+        ----------
+        listbox : Gtk.ListBox
+            Object which receive signal
+        row : gem.widgets.widgets.PreferencesItem
+            Activated row
+        """
+
+        widget = row.get_widget()
+
+        if type(widget) == Gtk.ComboBox:
+            widget.popup()
+
+        elif type(widget) == Gtk.Entry:
+            widget.grab_focus()
+
+        elif type(widget) == Gtk.FileChooserButton:
+            widget.activate()
+
+        elif type(widget) in [Gtk.Button, Gtk.FontButton]:
+            widget.clicked()
+
+        elif type(widget) == Gtk.SpinButton:
+            widget.grab_focus()
+
+        elif type(widget) == Gtk.Switch:
+            widget.set_active(not widget.get_active())

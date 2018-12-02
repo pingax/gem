@@ -53,12 +53,6 @@ def main():
     parser_api.add_argument("--create-folders",
         action="store_true", help="create folders if not exists")
 
-    parser_interface = parser.add_argument_group("interface arguments")
-    parser_interface.add_argument("-i", "--gtk-ui", default=True,
-        action="store_true", help="launch gem with GTK+ interface (default)")
-    parser_interface.add_argument("-p", "--gtk-config",
-        action="store_true", help="configure gem with GTK+ interface")
-
     args = parser.parse_args()
 
     # ------------------------------------
@@ -87,20 +81,19 @@ def main():
 
         try:
             # Show a GTK+ dialog to alert user
-            if args.gtk_ui or args.gtk_config:
-                from gi import require_version
+            from gi import require_version
 
-                require_version("Gtk", "3.0")
+            require_version("Gtk", "3.0")
 
-                from gi.repository import Gtk
+            from gi.repository import Gtk
 
-                dialog = Gtk.MessageDialog(None, 0, Gtk.MessageType.INFO,
-                    Gtk.ButtonsType.OK, _("A GEM instance already exists"))
-                dialog.format_secondary_text(
-                    _("GEM is already running with PID %d") % gem.pid)
+            dialog = Gtk.MessageDialog(None, 0, Gtk.MessageType.INFO,
+                Gtk.ButtonsType.OK, _("A GEM instance already exists"))
+            dialog.format_secondary_text(
+                _("GEM is already running with PID %d") % gem.pid)
 
-                dialog.run()
-                dialog.destroy()
+            dialog.run()
+            dialog.destroy()
 
         except Exception:
             pass
@@ -114,7 +107,7 @@ def main():
 
     try:
         # Default configuration files
-        for path in [ "gem.conf", "consoles.conf", "emulators.conf" ]:
+        for path in ("gem.conf", "consoles.conf", "emulators.conf"):
 
             if not exists(gem.get_config(path)):
                 gem.logger.debug("Copy default %s" % path)
@@ -126,59 +119,51 @@ def main():
         #   GTK interface
         # ------------------------------------
 
-        if args.gtk_ui or args.gtk_config:
+        # Check display settings
+        if "DISPLAY" in environ and len(environ["DISPLAY"]) > 0:
 
-            # Check display settings
-            if "DISPLAY" in environ and len(environ["DISPLAY"]) > 0:
+            # Default folders
+            for folder in ("icons", "logs", "notes"):
+                if not exists(gem.get_local(folder)):
+                    gem.logger.debug("Generate %s folder" % folder)
 
-                # Default folders
-                for folder in [ "icons", "logs", "notes" ]:
-                    if not exists(gem.get_local(folder)):
-                        gem.logger.debug("Generate %s folder" % folder)
+                    mkdir(gem.get_local(folder))
 
-                        mkdir(gem.get_local(folder))
+            # Icons folders
+            for path in ("consoles", "emulators"):
 
-                # Icons folders
-                for path in [ "consoles", "emulators" ]:
+                if not exists(gem.get_local("icons", path)):
+                    gem.logger.debug("Copy default %s icons" % path)
 
-                    if not exists(gem.get_local("icons", path)):
-                        gem.logger.debug("Copy default %s icons" % path)
+                    mkdir(gem.get_local("icons", path))
 
-                        mkdir(gem.get_local("icons", path))
+                    # Copy default icons
+                    for filename in glob(
+                        path_join(get_data("icons"), path, "*")):
 
-                        # Copy default icons
-                        for filename in glob(
-                            path_join(get_data("icons"), path, "*")):
+                        if isfile(filename):
+                            copy(filename, gem.get_local(
+                                "icons", path, basename(filename)))
 
-                            if isfile(filename):
-                                copy(filename, gem.get_local(
-                                    "icons", path, basename(filename)))
+            # ------------------------------------
+            #   Launch interface
+            # ------------------------------------
 
-                # ------------------------------------
-                #   Launch interface
-                # ------------------------------------
+            gem.logger.debug("Start GEM with PID %s" % gem.pid)
 
-                gem.logger.debug("Start GEM with PID %s" % gem.pid)
+            # Start splash
+            from gem.ui.splash import Splash
+            Splash(gem)
 
-                # Start splash
-                from gem.ui.splash import Splash
-                Splash(gem)
+            # Start interface
+            from gem.ui.interface import MainWindow
+            MainWindow(gem)
 
-                # Start preferences
-                if args.gtk_config:
-                    from gem.ui.preferences.interface import PreferencesWindow
-                    PreferencesWindow(gem).run()
+            # Remove lock
+            gem.free_lock()
 
-                # Start interface
-                elif args.gtk_ui:
-                    from gem.ui.interface import MainWindow
-                    MainWindow(gem)
-
-                # Remove lock
-                gem.free_lock()
-
-            else:
-                gem.logger.critical(_("Cannot launch GEM without display"))
+        else:
+            gem.logger.critical(_("Cannot launch GEM without display"))
 
     except ImportError as error:
         gem.logger.exception("Cannot import modules: %s" % str(error))

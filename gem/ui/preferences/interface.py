@@ -27,6 +27,7 @@ from gem.ui.dialog.question import QuestionDialog
 
 from gem.ui.widgets.window import CommonWindow
 from gem.ui.widgets.widgets import PreferencesItem
+from gem.ui.widgets.widgets import IconsGenerator
 
 from gem.ui.preferences.console import ConsolePreferences
 from gem.ui.preferences.emulator import EmulatorPreferences
@@ -45,7 +46,7 @@ class Manager(object):
 
 class PreferencesWindow(CommonWindow):
 
-    def __init__(self, api, parent=None):
+    def __init__(self, api, parent):
         """ Constructor
 
         Parameters
@@ -64,12 +65,17 @@ class PreferencesWindow(CommonWindow):
         if type(api) is not GEM:
             raise TypeError("Wrong type for api, expected gem.engine.api.GEM")
 
+        CommonWindow.__init__(self, parent, _("Preferences"),
+            Icons.Symbolic.Preferences, parent.use_classic_theme)
+
         # ------------------------------------
         #   Initialize variables
         # ------------------------------------
 
         # API instance
-        self.api = api
+        self.api = parent.api
+
+        self.icons = parent.icons
 
         self.shortcuts = {
             _("Interface"): {
@@ -182,43 +188,6 @@ class PreferencesWindow(CommonWindow):
         # ------------------------------------
 
         self.config = Configuration(expanduser(self.api.get_config("gem.conf")))
-
-        if parent is not None:
-            # Get user icon theme
-            self.icons_theme = parent.icons_theme
-
-            self.empty = parent.empty
-
-            self.use_classic_theme = parent.use_classic_theme
-
-        else:
-            # Initialize GEM
-            self.api.init()
-
-            # Get user icon theme
-            self.icons_theme = Gtk.IconTheme.get_default()
-
-            self.icons_theme.append_search_path(
-                get_data(path_join("icons", "ui")))
-
-            # HACK: Create an empty image to avoid g_object_set_qdata warning
-            self.empty = Pixbuf.new(Colorspace.RGB, True, 8, 24, 24)
-            self.empty.fill(0x00000000)
-
-            # Generate symbolic icons class
-            for key, value in Icons.__dict__.items():
-                if not key.startswith("__") and not key.endswith("__"):
-                    setattr(Icons.Symbolic, key, "%s-symbolic" % value)
-
-            # Set light/dark theme
-            on_change_theme(self.config.getboolean(
-                "gem", "dark_theme", fallback=False))
-
-            self.use_classic_theme = self.config.getboolean(
-                "gem", "use_classic_theme", fallback=False)
-
-        CommonWindow.__init__(self, parent, _("Preferences"),
-            Icons.Symbolic.Preferences, self.use_classic_theme)
 
         # ------------------------------------
         #   Initialize logger
@@ -1784,10 +1753,10 @@ class PreferencesWindow(CommonWindow):
                     icon = self.api.get_local(
                         "icons", "consoles", "%s.%s" % (icon, Icons.Ext))
 
-                image = icon_from_data(icon, self.empty, 48, 48)
+                image = icon_from_data(icon, self.icons.blank(48), 48, 48)
 
             else:
-                image = self.empty
+                image = self.icons.blank()
 
             path = str()
             if console.path is not None:
@@ -1818,10 +1787,10 @@ class PreferencesWindow(CommonWindow):
                     icon = self.api.get_local(
                         "icons", "emulators", "%s.%s" % (icon, Icons.Ext))
 
-                image = icon_from_data(icon, self.empty, 48, 48)
+                image = icon_from_data(icon, self.icons.blank(48), 48, 48)
 
             else:
-                image = self.empty
+                image = self.icons.blank(48)
 
             check = str()
             if not emulator.exists:

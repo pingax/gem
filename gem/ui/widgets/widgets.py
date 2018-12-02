@@ -63,8 +63,8 @@ class ListBoxPopover(Gtk.Popover):
 
         # Properties
         self.grid_popover.set_orientation(Gtk.Orientation.VERTICAL)
-        self.grid_popover.set_border_width(12)
-        self.grid_popover.set_spacing(12)
+        self.grid_popover.set_border_width(6)
+        self.grid_popover.set_spacing(6)
 
         # ------------------------------------
         #   Content
@@ -79,7 +79,7 @@ class ListBoxPopover(Gtk.Popover):
         # Properties
         self.entry_selector.set_placeholder_text("%s…" % _("Filter"))
 
-        self.scroll_selector.set_size_request(-1, 256)
+        self.scroll_selector.set_size_request(-1, 350)
         self.scroll_selector.set_policy(
             Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
 
@@ -94,9 +94,9 @@ class ListBoxPopover(Gtk.Popover):
         self.scroll_selector.add(self.listbox_selector)
 
         self.grid_popover.pack_start(
-            self.frame_selector, True, True, 0)
-        self.grid_popover.pack_start(
             self.entry_selector, False, False, 0)
+        self.grid_popover.pack_start(
+            self.frame_selector, True, True, 0)
 
 
     def __start_interface(self):
@@ -728,7 +728,7 @@ class PreferencesItem(Gtk.ListBoxRow):
         if widget is not None:
             widget.set_valign(Gtk.Align.CENTER)
 
-            if not type(widget) in [Gtk.Switch, Gtk.SpinButton]:
+            if not type(widget) in [Gtk.Switch, Gtk.Button, Gtk.SpinButton]:
                 widget.set_halign(Gtk.Align.FILL)
                 widget.set_hexpand(True)
 
@@ -757,3 +757,141 @@ class PreferencesItem(Gtk.ListBoxRow):
         """
 
         return self.__widget
+
+
+class IconsGenerator(object):
+
+    def __init__(self, **kwargs):
+        """ Constructor
+
+        Parameters
+        ----------
+        size : int
+            Default icons size
+        """
+
+        # ------------------------------------
+        #   Initialize variables
+        # ------------------------------------
+
+        self.theme = Gtk.IconTheme.get_default()
+
+        self.__translucent_status = True
+
+        self.__sizes = (8, 16, 22, 24, 32, 48, 64, 96)
+
+        # ------------------------------------
+        #   Initialize icons
+        # ------------------------------------
+
+        self.__normal = dict()
+        self.__translucent = dict()
+
+        if len(kwargs) > 0:
+
+            for key, icon in kwargs.items():
+                self.__normal[key] = dict()
+                self.__translucent[key] = dict()
+
+                for size in self.__sizes:
+                    self.__normal[key][size] = icon_load(icon, size)
+
+                    self.__translucent[key][size] = set_pixbuf_opacity(
+                        self.__normal[key][size], 50)
+
+        # ------------------------------------
+        #   Initialize blank icons
+        # ------------------------------------
+
+        self.__blank = dict()
+
+        for size in self.__sizes:
+            self.__blank[size] = Pixbuf.new(Colorspace.RGB, True, 8, size, size)
+            self.__blank[size].fill(0x00000000)
+
+
+    def blank(self, size=22):
+        """ Retrieve a blank icon with a specific size
+
+        Parameters
+        ----------
+        size : int, optional
+            Blank icon size in pixels (Default: 22)
+
+        Returns
+        -------
+        Gdk.GdkPixbuf.Pixbuf
+            Generated icon
+        """
+
+        if not size in self.__sizes:
+            size = 22
+
+        return self.__blank[size]
+
+
+    def get(self, name, size=22):
+        """ Retrieve an icon with a specific size
+
+        Parameters
+        ----------
+        name : str
+            Icon name
+        size : int, optional
+            Icon size in pixels (Default: 22)
+
+        Returns
+        -------
+        Gdk.GdkPixbuf.Pixbuf
+            Generated icon
+        """
+
+        if not size in self.__sizes:
+            size = 22
+
+        if name in self.__normal.keys():
+            return self.__normal[name][size]
+
+        return self.blank(size)
+
+
+    def get_translucent(self, name, size=22):
+        """ Retrieve a translucent icon with a specific size
+
+        Parameters
+        ----------
+        name : str
+            Icon name
+        size : int, optional
+            Icon size in pixels (Default: 22)
+
+        Returns
+        -------
+        Gdk.GdkPixbuf.Pixbuf
+            Generated icon
+        """
+
+        if self.__translucent_status:
+
+            if not size in self.__sizes:
+                size = 22
+
+            if name in self.__translucent.keys():
+                return self.__translucent[name][size]
+
+        return self.blank(size)
+
+
+    def set_translucent_status(self, status):
+        """ Define the translucent status
+
+        When this status is set to false, get_translucent function return a
+        blank icon
+
+        Parameters
+        ----------
+        status : bool
+            Translucent status
+        """
+
+        self.__translucent_status = status
