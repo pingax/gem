@@ -324,7 +324,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.grid_games_placeholder.set_orientation(Gtk.Orientation.VERTICAL)
 
         self.grid_sidebar.set_column_spacing(12)
-        self.grid_sidebar.set_border_width(12)
+        self.grid_sidebar.set_border_width(6)
         self.grid_sidebar.set_row_spacing(6)
 
         self.grid_sidebar_title.set_orientation(Gtk.Orientation.HORIZONTAL)
@@ -985,7 +985,9 @@ class MainWindow(Gtk.ApplicationWindow):
         self.notebook_sidebar_game = Gtk.Notebook()
 
         # Properties
-        self.scroll_sidebar.set_size_request(432, 262)
+        self.scroll_sidebar.set_size_request(400, 230)
+        self.scroll_sidebar.set_policy(
+            Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
 
         self.paned_games.set_orientation(Gtk.Orientation.VERTICAL)
 
@@ -2841,8 +2843,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.infobar.show_all()
         self.infobar.get_content_area().show_all()
 
-        self.scroll_sidebar_tags.show_all()
-        self.grid_sidebar_tab_tags.show_all()
+        self.scroll_sidebar.show_all()
 
         self.scroll_sidebar_informations.show_all()
         self.grid_sidebar_tab_informations.show_all()
@@ -3689,11 +3690,11 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     if orientation == Gtk.Orientation.HORIZONTAL:
                         image = Pixbuf.new_from_file_at_scale(
-                            image, 406, 406, True)
+                            image, 386, 386, True)
 
                     else:
                         image = Pixbuf.new_from_file_at_scale(
-                            image, 406, 230, True)
+                            image, 386, 216, True)
 
                 self.image_sidebar_game.set_from_pixbuf(image)
 
