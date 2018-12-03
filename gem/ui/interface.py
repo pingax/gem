@@ -2844,10 +2844,11 @@ class MainWindow(Gtk.ApplicationWindow):
         self.infobar.get_content_area().show_all()
 
         self.scroll_sidebar.show_all()
-
+        self.scroll_sidebar_tags.show_all()
         self.scroll_sidebar_informations.show_all()
+
+        self.grid_sidebar_tab_tags.show_all()
         self.grid_sidebar_tab_informations.show_all()
-        self.grid_sidebar_informations.show_all()
 
         self.grid_games_placeholder.show_all()
 
@@ -2922,6 +2923,8 @@ class MainWindow(Gtk.ApplicationWindow):
             self.grid_sidebar.attach(
                 self.notebook_sidebar_game, 0, 2, 1, 1)
 
+            self.grid_sidebar.show_all()
+
             self.view_image_sidebar_game.set_vexpand(False)
             self.view_image_sidebar_game.set_hexpand(True)
 
@@ -2962,6 +2965,8 @@ class MainWindow(Gtk.ApplicationWindow):
             self.grid_sidebar.attach(
                 self.frame_sidebar_game, 1, 0, 1, 2)
 
+            self.grid_sidebar.show_all()
+
             self.grid_sidebar_title.set_valign(Gtk.Align.START)
 
             self.view_image_sidebar_game.set_hexpand(False)
@@ -2989,14 +2994,14 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Show sidebar
         if sidebar_status:
-            self.scroll_sidebar.show_all()
+            self.scroll_sidebar.set_visible(True)
 
             self.frame_sidebar_game.set_visible(False)
             self.notebook_sidebar_game.set_visible(False)
 
         # Hide sidebar
         else:
-            self.scroll_sidebar.hide()
+            self.scroll_sidebar.set_visible(False)
 
         # ------------------------------------
         #   Statusbar

@@ -119,9 +119,10 @@ class GameThread(Thread, GObject):
                     stdout=pipe,
                     stderr=pipe,
                     env=environment,
+                    start_new_session=True,
                     universal_newlines=True)
 
-                output, error_output = self.proc.communicate()
+                self.proc.communicate()
 
             self.logger.info(_("Close %s") % self.game.name)
 
