@@ -3855,7 +3855,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.image_statusbar_screenshots.set_from_pixbuf(self.icons.blank())
 
 
-    def set_informations_headerbar(self, game, console):
+    def set_informations_headerbar(self, game=None, console=None):
         """ Update headerbar and statusbar informations from games list
 
         Parameters
@@ -3865,6 +3865,12 @@ class MainWindow(Gtk.ApplicationWindow):
         console : gem.api.Console
             Console object
         """
+
+        if game is None:
+            game = self.selection["game"]
+
+        if console is None:
+            console = self.selection["console"]
 
         self.label_statusbar_console.set_visible(False)
         self.label_statusbar_emulator.set_visible(False)
@@ -4460,7 +4466,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.selection["console"] = row.data
 
         self.set_infobar()
-        self.set_informations()
+        self.set_informations_headerbar()
 
         icon = row.data.icon
 
@@ -4660,6 +4666,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.model_games_list.clear()
         self.model_games_grid.clear()
 
+        self.set_informations()
+
         if console.emulator is not None:
             self.selection["console"] = console
 
@@ -4822,7 +4830,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     # Store both Gtk.TreeIter under game filename key
                     self.game_path[game.filename] = [game, row_list, row_grid]
 
-                    self.set_informations()
+                    self.set_informations_headerbar()
 
                     self.treeview_games.thaw_child_notify()
                     yield True
@@ -4832,7 +4840,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.treeview_games.set_enable_search(True)
             self.treeview_games.thaw_child_notify()
 
-        self.set_informations()
+        self.set_informations_headerbar()
 
         # ------------------------------------
         #   Cannot read games path
