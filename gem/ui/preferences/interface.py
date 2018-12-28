@@ -221,9 +221,11 @@ class PreferencesWindow(CommonWindow):
         self.set_border_width(6)
         self.set_spacing(6)
 
-        if self.parent is None:
-            self.set_subtitle(
-                "%s - %s (%s)" % (GEM.Name, GEM.Version, GEM.CodeName))
+        self.button_cancel = self.add_button(
+            _("Close"), Gtk.ResponseType.CLOSE)
+
+        self.button_save = self.add_button(
+            _("Accept"), Gtk.ResponseType.APPLY, Gtk.Align.END)
 
         # ------------------------------------
         #   Grids
@@ -1240,6 +1242,9 @@ class PreferencesWindow(CommonWindow):
         self.window.connect(
             "delete-event", self.__stop_interface)
 
+        self.button_cancel.connect("clicked", self.__stop_interface)
+        self.button_save.connect("clicked", self.__stop_interface)
+
         # ------------------------------------
         #   General
         # ------------------------------------
@@ -1520,33 +1525,39 @@ class PreferencesWindow(CommonWindow):
             }
         }
 
-        self.button_cancel = self.add_button(
-            _("Close"), Gtk.ResponseType.CLOSE)
-
-        self.button_save = self.add_button(
-            _("Accept"), Gtk.ResponseType.APPLY, Gtk.Align.END)
-
-        if self.parent is None:
-            self.button_cancel.connect("clicked", self.__stop_interface)
-            self.button_save.connect("clicked", self.__stop_interface)
-
         self.load_configuration()
+
+        # ------------------------------------
+        #   Window size
+        # ------------------------------------
+
+        window_size = Gdk.Geometry()
+        window_size.min_width = 640
+        window_size.min_height = 480
+        window_size.base_width = 800
+        window_size.base_height = 600
 
         try:
             width, height = self.config.get(
                 "windows", "preferences", fallback="800x600").split('x')
 
-            self.window.set_default_size(int(width), int(height))
+            window_size.base_width = int(width)
+            window_size.base_height = int(height)
+
             self.window.resize(int(width), int(height))
 
         except ValueError as error:
             self.logger.error(
                 _("Cannot resize preferences window: %s") % str(error))
 
-            self.window.set_default_size(800, 600)
+        self.window.set_geometry_hints(self.window, window_size,
+            Gdk.WindowHints.MIN_SIZE | Gdk.WindowHints.BASE_SIZE)
 
-        self.window.hide()
-        self.window.unrealize()
+        self.set_size(window_size.base_width, window_size.base_height)
+
+        # ------------------------------------
+        #   Widgets
+        # ------------------------------------
 
         self.show_all()
 
@@ -1576,9 +1587,6 @@ class PreferencesWindow(CommonWindow):
 
         self.config.modify("windows", "preferences", "%dx%d" % self.get_size())
         self.config.update()
-
-        if self.parent is None:
-            self.destroy()
 
 
     def save_configuration(self):

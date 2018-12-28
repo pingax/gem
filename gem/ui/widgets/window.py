@@ -524,6 +524,20 @@ class CommonWindow(object):
 
 
     def set_size(self, width, height):
+        """ Set default size for dialog
+
+        Parameters
+        ----------
+        width : int
+            Dialog width
+        height : int
+            Dialog height
+        """
+
+        self.window.set_default_size(width, height)
+
+
+    def set_size_request(self, width, height):
         """ Set a new size for dialog
 
         Parameters
@@ -534,8 +548,7 @@ class CommonWindow(object):
             Dialog height
         """
 
-        # self.window.set_size_request(width, height)
-        self.window.set_default_size(width, height)
+        self.window.set_size_request(width, height)
 
 
     def set_modal(self, modal):

@@ -2560,9 +2560,9 @@ class MainWindow(Gtk.ApplicationWindow):
             dialog = MessageDialog(self, _("Welcome !"),
                 _("Welcome and thanks for choosing GEM as emulators manager. "
                 "Start using GEM by droping some roms into interface.\n\n"
-                "Enjoy and have fun :D"), Icons.SmileBig, False)
+                "Enjoy and have fun :D"), Icons.Symbolic.SmileBig, False)
 
-            dialog.set_size(500, -1)
+            dialog.set_size_request(500, -1)
 
             dialog.run()
             dialog.destroy()
@@ -3606,7 +3606,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     "kind of code is usefull in a game, not in an emulators "
                     "manager !", Icons.Symbolic.Monkey)
 
-                dialog.set_size(500, -1)
+                dialog.set_size_request(500, -1)
 
                 dialog.run()
                 dialog.destroy()
@@ -4627,8 +4627,6 @@ class MainWindow(Gtk.ApplicationWindow):
             raise TypeError(
                 "Wrong type for console, expected gem.engine.api.Console")
 
-        iteration = int()
-
         # Get current thread id
         current_thread_id = self.list_thread
 
@@ -4824,13 +4822,11 @@ class MainWindow(Gtk.ApplicationWindow):
                     # Store both Gtk.TreeIter under game filename key
                     self.game_path[game.filename] = [game, row_list, row_grid]
 
-                    iteration += 1
-                    if (iteration % 20 == 0):
-                        self.set_informations()
+                    self.set_informations()
 
-                        self.treeview_games.thaw_child_notify()
-                        yield True
-                        self.treeview_games.freeze_child_notify()
+                    self.treeview_games.thaw_child_notify()
+                    yield True
+                    self.treeview_games.freeze_child_notify()
 
             # Restore options for packages treeviews
             self.treeview_games.set_enable_search(True)

@@ -158,8 +158,8 @@ class ParametersDialog(CommonWindow):
         grid_tags.set_spacing(-1)
         grid_tags.set_orientation(Gtk.Orientation.HORIZONTAL)
 
-        self.grid_tags_popover.set_spacing(12)
-        self.grid_tags_popover.set_border_width(12)
+        self.grid_tags_popover.set_spacing(6)
+        self.grid_tags_popover.set_border_width(6)
         self.grid_tags_popover.set_homogeneous(False)
         self.grid_tags_popover.set_orientation(Gtk.Orientation.VERTICAL)
 

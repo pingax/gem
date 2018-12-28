@@ -76,8 +76,6 @@ class MessageDialog(CommonWindow):
         """ Initialize interface widgets
         """
 
-        self.set_size(500, -1)
-
         # ------------------------------------
         #   Message
         # ------------------------------------
@@ -92,12 +90,9 @@ class MessageDialog(CommonWindow):
         text.set_line_wrap_mode(Pango.WrapMode.WORD)
 
         if(self.center):
-            text.set_halign(Gtk.Align.CENTER)
-            text.set_valign(Gtk.Align.CENTER)
             text.set_justify(Gtk.Justification.CENTER)
+
         else:
-            text.set_halign(Gtk.Align.START)
-            text.set_valign(Gtk.Align.CENTER)
             text.set_justify(Gtk.Justification.FILL)
 
         # ------------------------------------
