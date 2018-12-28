@@ -5099,7 +5099,8 @@ class MainWindow(Gtk.ApplicationWindow):
             self.selection["game"] = None
 
             self.__on_game_launch_button_update(True)
-            self.button_headerbar_launch.set_sensitive(False)
+
+            self.sensitive_interface()
 
         # Update sidebar when this is another selection
         if not same_game:
