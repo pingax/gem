@@ -81,6 +81,7 @@ class Icons:
     AddText     = "insert-text"
     Add         = "list-add"
     Remove      = "list-remove"
+    Paperclip   = "mail-attachment"
     Launch      = "media-playback-start"
     Menu        = "open-menu" # Not standard
     Stop        = "process-stop"

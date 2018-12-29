@@ -175,7 +175,11 @@ class Splash(Gtk.Window):
         """ Load data and start interface
         """
 
+        self.set_auto_startup_notification(False)
+
         self.show_all()
+
+        self.set_auto_startup_notification(True)
 
         self.label_progress.hide()
         self.progressbar.hide()
