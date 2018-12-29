@@ -24,6 +24,7 @@ from gem.ui.utils import *
 from gem.ui.dialog.question import QuestionDialog
 
 from gem.ui.widgets.window import CommonWindow
+from gem.ui.widgets.widgets import PreferencesItem
 
 # Mimetypes
 from magic import from_file as magic_from_file
@@ -119,19 +120,20 @@ class EditorDialog(CommonWindow):
         #   Grid
         # ------------------------------------
 
-        grid_tools = Gtk.Box()
-        grid_search = Gtk.Box()
+        self.grid_tools = Gtk.Box()
+        self.grid_search = Gtk.Box()
 
-        self.grid_menu_options = Gtk.Grid()
+        self.grid_menu_options = Gtk.Box()
 
         # Properties
-        grid_tools.set_spacing(12)
+        self.grid_tools.set_spacing(12)
 
-        Gtk.StyleContext.add_class(grid_search.get_style_context(), "linked")
+        Gtk.StyleContext.add_class(
+            self.grid_search.get_style_context(), "linked")
 
-        self.grid_menu_options.set_border_width(12)
-        self.grid_menu_options.set_row_spacing(6)
-        self.grid_menu_options.set_column_spacing(12)
+        self.grid_menu_options.set_spacing(6)
+        self.grid_menu_options.set_border_width(6)
+        self.grid_menu_options.set_orientation(Gtk.Orientation.VERTICAL)
 
         # ------------------------------------
         #   Path
@@ -159,17 +161,6 @@ class EditorDialog(CommonWindow):
 
         self.popover_menu = Gtk.Popover()
 
-        self.label_options = Gtk.Label()
-
-        self.label_line = Gtk.Label()
-        self.switch_line = Gtk.Switch()
-
-        self.button_import = Gtk.Button()
-        self.image_import = Gtk.Image()
-
-        self.button_export = Gtk.Button()
-        self.image_export = Gtk.Image()
-
         # Properties
         self.image_menu.set_from_icon_name(
             Icons.Symbolic.Menu, Gtk.IconSize.BUTTON)
@@ -181,43 +172,61 @@ class EditorDialog(CommonWindow):
         self.popover_menu.add(self.grid_menu_options)
         self.popover_menu.set_modal(True)
 
-        self.label_options.set_label(_("Options"))
-        self.label_options.set_halign(Gtk.Align.START)
-        self.label_options.set_valign(Gtk.Align.CENTER)
-        self.label_options.get_style_context().add_class("dim-label")
+        # ------------------------------------
+        #   Menu - Options
+        # ------------------------------------
 
-        self.label_line.set_label(_("Line break"))
-        self.label_line.set_halign(Gtk.Align.START)
-        self.label_line.set_valign(Gtk.Align.CENTER)
+        self.frame_menu_options = Gtk.Frame()
+        self.listbox_menu_options = Gtk.ListBox()
 
-        self.switch_line.set_halign(Gtk.Align.END)
-        self.switch_line.set_valign(Gtk.Align.CENTER)
+        self.widget_line = PreferencesItem()
+        self.switch_line = Gtk.Switch()
 
-        self.button_import.set_label("%s…" % _("Import"))
-        self.button_import.set_relief(Gtk.ReliefStyle.NONE)
+        # Properties
+        self.listbox_menu_options.set_activate_on_single_click(True)
+        self.listbox_menu_options.set_selection_mode(
+            Gtk.SelectionMode.NONE)
+
+        self.widget_line.set_widget(self.switch_line)
+        self.widget_line.set_option_label(_("Line break"))
+
+        # ------------------------------------
+        #   Menu - Actions
+        # ------------------------------------
+
+        self.frame_menu_actions = Gtk.Frame()
+        self.listbox_menu_actions = Gtk.ListBox()
+
+        self.widget_import = PreferencesItem()
+        self.image_import = Gtk.Image()
+        self.button_import = Gtk.Button()
+
+        self.widget_export = PreferencesItem()
+        self.image_export = Gtk.Image()
+        self.button_export = Gtk.Button()
+
+        # Properties
+        self.listbox_menu_actions.set_activate_on_single_click(True)
+        self.listbox_menu_actions.set_selection_mode(
+            Gtk.SelectionMode.NONE)
+
         self.button_import.set_image(self.image_import)
-        self.button_import.set_use_underline(True)
-        self.button_import.set_halign(Gtk.Align.FILL)
-        self.button_import.set_valign(Gtk.Align.CENTER)
-        self.button_import.get_children()[0].set_halign(Gtk.Align.START)
+        self.button_import.set_relief(Gtk.ReliefStyle.NONE)
 
-        self.image_import.set_valign(Gtk.Align.CENTER)
-        self.image_import.set_margin_end(6)
         self.image_import.set_from_icon_name(
             Icons.Symbolic.SaveAs, Gtk.IconSize.BUTTON)
 
-        self.button_export.set_label("%s…" % _("Export"))
-        self.button_export.set_relief(Gtk.ReliefStyle.NONE)
-        self.button_export.set_image(self.image_export)
-        self.button_export.set_use_underline(True)
-        self.button_export.set_halign(Gtk.Align.FILL)
-        self.button_export.set_valign(Gtk.Align.CENTER)
-        self.button_export.get_children()[0].set_halign(Gtk.Align.START)
+        self.widget_import.set_widget(self.button_import)
+        self.widget_import.set_option_label("%s…" % _("Import"))
 
-        self.image_export.set_valign(Gtk.Align.CENTER)
-        self.image_export.set_margin_end(6)
+        self.button_export.set_image(self.image_export)
+        self.button_export.set_relief(Gtk.ReliefStyle.NONE)
+
         self.image_export.set_from_icon_name(
             Icons.Symbolic.Send, Gtk.IconSize.BUTTON)
+
+        self.widget_export.set_widget(self.button_export)
+        self.widget_export.set_option_label("%s…" % _("Export"))
 
         # ------------------------------------
         #   Editor
@@ -316,28 +325,34 @@ class EditorDialog(CommonWindow):
         #   Integrate widgets
         # ------------------------------------
 
-        grid_tools.pack_start(self.entry_path, True, True, 0)
-        grid_tools.pack_start(grid_search, False, False, 0)
-        grid_tools.pack_start(self.button_menu, False, False, 0)
+        self.grid_tools.pack_start(self.entry_path, True, True, 0)
+        self.grid_tools.pack_start(self.grid_search, False, False, 0)
+        self.grid_tools.pack_start(self.button_menu, False, False, 0)
 
-        self.pack_start(grid_tools, False, False)
+        self.pack_start(self.grid_tools, False, False)
         self.pack_start(scroll_editor, True, True)
 
         scroll_editor.add(self.text_editor)
 
-        grid_search.pack_start(self.entry_search, False, True, 0)
-        grid_search.pack_start(self.button_up, False, True, 0)
-        grid_search.pack_start(self.button_bottom, False, True, 0)
+        self.grid_search.pack_start(self.entry_search, False, True, 0)
+        self.grid_search.pack_start(self.button_up, False, True, 0)
+        self.grid_search.pack_start(self.button_bottom, False, True, 0)
 
-        self.grid_menu_options.attach(self.label_options, 0, 0, 2, 1)
-        self.grid_menu_options.attach(self.label_line, 0, 1, 1, 1)
-        self.grid_menu_options.attach(self.switch_line, 1, 1, 1, 1)
-        self.grid_menu_options.attach(Gtk.Separator(), 0, 2, 2, 1)
+        self.grid_menu_options.pack_start(
+            self.frame_menu_options, False, False, 0)
+        self.grid_menu_options.pack_start(
+            self.frame_menu_actions, False, False, 0)
+
+        self.frame_menu_options.add(self.listbox_menu_options)
+
+        self.listbox_menu_options.add(self.widget_line)
+
+        self.frame_menu_actions.add(self.listbox_menu_actions)
 
         if self.editable:
-            self.grid_menu_options.attach(self.button_import, 0, 3, 2, 1)
+            self.listbox_menu_actions.add(self.widget_import)
 
-        self.grid_menu_options.attach(self.button_export, 0, 4, 2, 1)
+        self.listbox_menu_actions.add(self.widget_export)
 
 
     def __init_signals(self):
@@ -356,6 +371,11 @@ class EditorDialog(CommonWindow):
 
         self.button_import.connect("clicked", self.__on_import_file)
         self.button_export.connect("clicked", self.__on_export_file)
+
+        self.listbox_menu_options.connect(
+            "row-activated", on_activate_listboxrow)
+        self.listbox_menu_actions.connect(
+            "row-activated", on_activate_listboxrow)
 
         self.__drop_signal = self.text_editor.connect(
             "drag-data-received", self.__on_dnd_received_data)
@@ -1135,11 +1155,15 @@ class ExportDialog(CommonWindow):
         """ Open a FileChooserDialog to let user choose the export file
         """
 
-        dialog = Gtk.FileChooserDialog("%s…" % _("Export As"),
-            self.window, Gtk.FileChooserAction.SAVE,
-            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-            Gtk.STOCK_OPEN, Gtk.ResponseType.OK),
+        dialog = Gtk.FileChooserDialog(
+            title="%s…" % _("Export As"),
+            action=Gtk.FileChooserAction.SAVE,
+            transient_for=self.window,
             use_header_bar=not self.use_classic_theme)
+
+        dialog.add_buttons(
+            Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+            Gtk.STOCK_OPEN, Gtk.ResponseType.OK)
 
         dialog.set_filter(self.filter_selector)
         dialog.set_select_multiple(False)
