@@ -655,11 +655,15 @@ class EmulatorPreferences(CommonWindow):
             Object which receive signal
         """
 
-        dialog = Gtk.FileChooserDialog(_("Select a binary"),
-            self.interface.window, Gtk.FileChooserAction.OPEN,
-            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-            Gtk.STOCK_OPEN, Gtk.ResponseType.OK),
+        dialog = Gtk.FileChooserDialog(
+            title=_("Select a binary"),
+            action=Gtk.FileChooserAction.OPEN,
+            transient_for=self.interface.window,
             use_header_bar=not self.use_classic_theme)
+
+        dialog.add_buttons(
+            Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+            Gtk.STOCK_OPEN, Gtk.ResponseType.OK)
 
         if dialog.run() == Gtk.ResponseType.OK:
             self.entry_binary.set_text(dialog.get_filename())
