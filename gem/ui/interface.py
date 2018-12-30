@@ -138,13 +138,13 @@ class MainWindow(Gtk.ApplicationWindow):
         # Manage fullscreen from boolean variable
         self.__fullscreen_status = False
 
-        # Store previous sizes for resize function
-        self.__previous_window_size = tuple()
-
         # Avoid to reload game tooltip every time the user move in line
         self.__current_tooltip = None
         self.__current_tooltip_data = list()
         self.__current_tooltip_pixbuf = None
+
+        # Store previous sidebar orientation
+        self.__current_orientation = None
 
         # Check mednafen status
         self.__mednafen_status = self.check_mednafen()
@@ -363,7 +363,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.grid_sidebar_informations_header.set_hexpand(True)
         self.grid_sidebar_informations_header.set_vexpand(True)
 
-        self.grid_sidebar_informations_footer.set_column_homogeneous(True)
+        self.grid_sidebar_informations_footer.set_column_homogeneous(False)
         self.grid_sidebar_informations_footer.set_halign(Gtk.Align.FILL)
         self.grid_sidebar_informations_footer.set_column_spacing(12)
         self.grid_sidebar_informations_footer.set_border_width(6)
@@ -1000,16 +1000,19 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.scroll_sidebar = Gtk.ScrolledWindow()
 
-        self.paned_games = Gtk.Paned()
+        self.vpaned_games = Gtk.Paned()
+        self.hpaned_games = Gtk.Paned()
 
         # Properties
-        self.paned_games.set_orientation(Gtk.Orientation.VERTICAL)
+        self.vpaned_games.set_orientation(Gtk.Orientation.VERTICAL)
+        self.hpaned_games.set_orientation(Gtk.Orientation.HORIZONTAL)
 
         # ------------------------------------
         #   Games - Sidebar title
         # ------------------------------------
 
         self.image_sidebar_title = Gtk.Image()
+
         self.label_sidebar_title = Gtk.Label()
 
         # Properties
@@ -1017,10 +1020,14 @@ class MainWindow(Gtk.ApplicationWindow):
         self.image_sidebar_title.set_halign(Gtk.Align.CENTER)
         self.image_sidebar_title.set_valign(Gtk.Align.CENTER)
 
+        self.label_sidebar_title.set_xalign(0.0)
+        self.label_sidebar_title.set_hexpand(True)
+        self.label_sidebar_title.set_line_wrap(True)
         self.label_sidebar_title.set_use_markup(True)
+        self.label_sidebar_title.set_single_line_mode(False)
         self.label_sidebar_title.set_halign(Gtk.Align.START)
         self.label_sidebar_title.set_valign(Gtk.Align.CENTER)
-        self.label_sidebar_title.set_ellipsize(Pango.EllipsizeMode.END)
+        self.label_sidebar_title.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
 
         # ------------------------------------
         #   Games - Sidebar tags
@@ -1037,6 +1044,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.listbox_sidebar_tags = Gtk.ListBox()
 
         # Properties
+        self.button_sidebar_tags.set_halign(Gtk.Align.END)
+        self.button_sidebar_tags.set_valign(Gtk.Align.CENTER)
         self.button_sidebar_tags.set_tooltip_text(_("Tags"))
         self.button_sidebar_tags.set_use_popover(True)
 
@@ -1677,7 +1686,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.grid.pack_start(self.menubar, False, False, 0)
         self.grid.pack_start(self.toolbar, False, False, 0)
         self.grid.pack_start(self.grid_infobar, False, False, 0)
-        self.grid.pack_start(self.paned_games, True, True, 0)
+        self.grid.pack_start(self.vpaned_games, True, True, 0)
         self.grid.pack_start(self.statusbar, False, False, 0)
 
         # ------------------------------------
@@ -1926,8 +1935,9 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Games
         # ------------------------------------
 
-        self.paned_games.pack1(self.grid_games, False, True)
-        self.paned_games.pack2(self.scroll_sidebar, True, True)
+        self.vpaned_games.pack1(self.hpaned_games, True, True)
+
+        self.hpaned_games.pack1(self.grid_games, True, True)
 
         # Sidebar
         self.scroll_sidebar.add(self.grid_sidebar)
@@ -2125,8 +2135,6 @@ class MainWindow(Gtk.ApplicationWindow):
             "delete-event", self.__stop_interface)
         self.connect(
             "key-press-event", self.__on_manage_keys)
-        # self.connect(
-            # "configure-event", self.__on_resize_window)
 
         self.connect(
             "drag-data-received", self.__on_dnd_received_data)
@@ -2852,9 +2860,6 @@ class MainWindow(Gtk.ApplicationWindow):
             self.set_geometry_hints(self, self.window_size,
                 Gdk.WindowHints.MIN_SIZE | Gdk.WindowHints.BASE_SIZE)
 
-            self.__previous_window_size = (
-                self.window_size.base_width, self.window_size.base_height)
-
             self.set_position(Gtk.WindowPosition.CENTER)
 
             self.hide()
@@ -2928,9 +2933,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menubar_main_item_sidebar.set_active(sidebar_status)
 
         # Avoid to reload paned_game if user has not change orientation
-        previous_mode = self.paned_games.get_orientation()
         if init_interface:
-            previous_mode = None
+            self.__current_orientation = None
 
         # Wanted sidebar orientation
         sidebar_orientation = self.config.get(
@@ -2938,7 +2942,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Right-side sidebar
         if sidebar_orientation == "horizontal" and \
-            not previous_mode == Gtk.Orientation.HORIZONTAL:
+            not self.__current_orientation == Gtk.Orientation.HORIZONTAL:
 
             self.grid_sidebar.show_all()
 
@@ -2953,14 +2957,25 @@ class MainWindow(Gtk.ApplicationWindow):
                 Gtk.Orientation.VERTICAL)
 
             self.grid_sidebar_informations_header.set_margin_bottom(6)
+            self.grid_sidebar_informations_header.set_column_homogeneous(True)
+            self.grid_sidebar_informations_footer.set_column_homogeneous(True)
 
-            self.paned_games.set_orientation(Gtk.Orientation.HORIZONTAL)
-            self.paned_games.set_position(
-                self.paned_games.get_allocated_width() - 350)
+            if not init_interface:
+                self.vpaned_games.remove(self.scroll_sidebar)
+
+            self.hpaned_games.pack2(self.scroll_sidebar, False, True)
+
+            self.hpaned_games.set_position(
+                self.vpaned_games.get_allocated_width() - 350)
+
+            self.scroll_sidebar.set_min_content_width(350)
+            self.scroll_sidebar.set_min_content_height(-1)
+
+            self.__current_orientation = Gtk.Orientation.HORIZONTAL
 
         # Bottom-side sidebar
         elif sidebar_orientation == "vertical" and \
-            not previous_mode == Gtk.Orientation.VERTICAL:
+            not self.__current_orientation == Gtk.Orientation.VERTICAL:
 
             self.grid_sidebar.show_all()
 
@@ -2977,10 +2992,21 @@ class MainWindow(Gtk.ApplicationWindow):
                 Gtk.Orientation.HORIZONTAL)
 
             self.grid_sidebar_informations_header.set_margin_bottom(0)
+            self.grid_sidebar_informations_header.set_column_homogeneous(False)
+            self.grid_sidebar_informations_footer.set_column_homogeneous(False)
 
-            self.paned_games.set_orientation(Gtk.Orientation.VERTICAL)
-            self.paned_games.set_position(
-                self.paned_games.get_allocated_height() - 220)
+            if not init_interface:
+                self.hpaned_games.remove(self.scroll_sidebar)
+
+            self.vpaned_games.pack2(self.scroll_sidebar, False, True)
+
+            self.vpaned_games.set_position(
+                self.vpaned_games.get_allocated_height() - 240)
+
+            self.scroll_sidebar.set_min_content_width(-1)
+            self.scroll_sidebar.set_min_content_height(240)
+
+            self.__current_orientation = Gtk.Orientation.VERTICAL
 
         # Show sidebar
         if sidebar_status:
@@ -3642,7 +3668,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
             if console is not None:
                 self.label_sidebar_title.set_markup(
-                    "<span weight='bold' size='x-large'>%s</span>" % \
+                    "<span weight='bold'>%s</span>" % \
                     replace_for_markup(game.name))
 
                 # Get rom specified emulator
@@ -3683,17 +3709,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 if image is not None and exists(image):
                     self.sidebar_image = image
 
-                    orientation = self.paned_games.get_orientation()
-
-                    # Right side
-                    if orientation == Gtk.Orientation.HORIZONTAL:
-                        size = (400, 180)
-
-                    # Bottom side
-                    else:
-                        size = (350, 150)
-
-                    image = Pixbuf.new_from_file_at_scale(image, *size, True)
+                    image = Pixbuf.new_from_file_at_scale(image, 300, 180, True)
 
                 self.image_sidebar_screenshot.set_from_pixbuf(image)
 
@@ -3792,6 +3808,9 @@ class MainWindow(Gtk.ApplicationWindow):
                                 child.set_from_pixbuf(
                                     self.icons.get_translucent("nostarred"))
 
+                self.button_sidebar_tags.set_sensitive(False)
+                self.button_sidebar_tags.set_visible(True)
+
                 # Game tags
                 for tag in sorted(game.tags):
                     label = Gtk.Label.new(tag)
@@ -3810,7 +3829,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.listbox_sidebar_tags.add(row)
 
                 if len(game.tags) > 0:
-                    self.button_sidebar_tags.set_visible(True)
+                    self.button_sidebar_tags.set_sensitive(True)
 
                 # Game emulator
                 if emulator is not None:
@@ -6704,34 +6723,6 @@ class MainWindow(Gtk.ApplicationWindow):
                     return True
 
         return False
-
-
-    def __on_resize_window(self, widget, event):
-        """ Update widgets size when user resize main window
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        event : Gdk.EventConfigure
-            Event which triggered the signal
-        """
-
-        if event.type == Gdk.EventType.CONFIGURE:
-
-            if not self.__previous_window_size == (event.width, event.height):
-                orientation = self.paned_games.get_orientation()
-
-                # Right side
-                if orientation == Gtk.Orientation.HORIZONTAL:
-                    pass
-
-                # Bottom side
-                else:
-                    pass
-
-                # Update size cache
-                self.__previous_window_size = (event.width, event.height)
 
 
     def __on_activate_fullscreen(self, widget, *args):
