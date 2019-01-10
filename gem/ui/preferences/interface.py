@@ -606,6 +606,9 @@ class PreferencesWindow(CommonWindow):
         self.widget_sidebar_random_screenshot = PreferencesItem()
         self.switch_interface_random_screenshot = Gtk.Switch()
 
+        self.widget_sidebar_ellipsize = PreferencesItem()
+        self.switch_interface_ellipsize = Gtk.Switch()
+
         # Properties
         self.label_interface_sidebar.set_hexpand(True)
         self.label_interface_sidebar.set_use_markup(True)
@@ -645,6 +648,13 @@ class PreferencesWindow(CommonWindow):
             _("Enable randomize screenshot"))
         self.widget_sidebar_random_screenshot.set_description_label(
             _("Use a random game screenshot instead of latest"))
+
+        self.widget_sidebar_ellipsize.set_widget(
+            self.switch_interface_ellipsize)
+        self.widget_sidebar_ellipsize.set_option_label(
+            _("Enable ellipsize title mode"))
+        self.widget_sidebar_ellipsize.set_description_label(
+            _("Add an ellipsis to title when there is not enough space"))
 
         # ------------------------------------
         #   Games
@@ -1113,9 +1123,10 @@ class PreferencesWindow(CommonWindow):
         self.listbox_interface_toolbar.add(self.widget_toolbar_size)
 
         self.listbox_interface_sidebar.add(self.widget_sidebar_visible)
+        self.listbox_interface_sidebar.add(self.widget_sidebar_position)
         self.listbox_interface_sidebar.add(
             self.widget_sidebar_random_screenshot)
-        self.listbox_interface_sidebar.add(self.widget_sidebar_position)
+        self.listbox_interface_sidebar.add(self.widget_sidebar_ellipsize)
 
         self.grid_interface.pack_start(
             self.label_interface_appearance, False, False, 0)
@@ -1457,6 +1468,12 @@ class PreferencesWindow(CommonWindow):
                 "type": Gtk.Switch,
                 "section": "gem",
                 "option": "show_random_screenshot",
+                "fallback": True
+            },
+            self.widget_sidebar_ellipsize: {
+                "type": Gtk.Switch,
+                "section": "gem",
+                "option": "sidebar_title_ellipsize",
                 "fallback": True
             },
 
@@ -1958,6 +1975,7 @@ class PreferencesWindow(CommonWindow):
 
         self.widget_sidebar_position.set_sensitive(status)
         self.widget_sidebar_random_screenshot.set_sensitive(status)
+        self.widget_sidebar_ellipsize.set_sensitive(status)
 
 
     def __on_modify_item(self, widget, manager, modification):

@@ -1022,12 +1022,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.label_sidebar_title.set_xalign(0.0)
         self.label_sidebar_title.set_hexpand(True)
-        self.label_sidebar_title.set_line_wrap(True)
         self.label_sidebar_title.set_use_markup(True)
-        self.label_sidebar_title.set_single_line_mode(False)
         self.label_sidebar_title.set_halign(Gtk.Align.START)
         self.label_sidebar_title.set_valign(Gtk.Align.CENTER)
-        self.label_sidebar_title.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
 
         # ------------------------------------
         #   Games - Sidebar tags
@@ -2936,6 +2933,28 @@ class MainWindow(Gtk.ApplicationWindow):
         if init_interface:
             self.__current_orientation = None
 
+        # Check sidebar title ellipsize mode
+        sidebar_ellipsize = self.config.getboolean(
+            "gem", "sidebar_title_ellipsize", fallback=True)
+
+        if sidebar_ellipsize:
+            self.label_sidebar_title.set_single_line_mode(True)
+            self.label_sidebar_title.set_line_wrap(False)
+
+            self.label_sidebar_title.set_line_wrap_mode(
+                Pango.WrapMode.WORD)
+
+            self.label_sidebar_title.set_ellipsize(Pango.EllipsizeMode.END)
+
+        else:
+            self.label_sidebar_title.set_single_line_mode(False)
+            self.label_sidebar_title.set_line_wrap(True)
+
+            self.label_sidebar_title.set_line_wrap_mode(
+                Pango.WrapMode.WORD_CHAR)
+
+            self.label_sidebar_title.set_ellipsize(Pango.EllipsizeMode.NONE)
+
         # Wanted sidebar orientation
         sidebar_orientation = self.config.get(
             "gem", "sidebar_orientation", fallback="vertical")
@@ -3668,7 +3687,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
             if console is not None:
                 self.label_sidebar_title.set_markup(
-                    "<span weight='bold'>%s</span>" % \
+                    "<span weight='bold' size='large'>%s</span>" % \
                     replace_for_markup(game.name))
 
                 # Get rom specified emulator
