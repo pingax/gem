@@ -908,8 +908,12 @@ class ImportDialog(CommonWindow):
 
         self.label_data = Gtk.Label()
 
+        self.frame_options = Gtk.Frame()
+        self.scroll_options = Gtk.ScrolledWindow()
+        self.listbox_options = Gtk.ListBox()
+
+        self.widget_replace = PreferencesItem()
         self.switch_replace = Gtk.Switch()
-        self.label_replace = Gtk.Label()
 
         # Properties
         self.label_data.set_markup(
@@ -921,29 +925,40 @@ class ImportDialog(CommonWindow):
         self.label_data.set_halign(Gtk.Align.CENTER)
         self.label_data.set_ellipsize(Pango.EllipsizeMode.END)
 
-        self.label_replace.set_label(_("Replace current buffer"))
-        self.label_replace.set_halign(Gtk.Align.START)
-        self.label_replace.get_style_context().add_class("dim-label")
+        self.listbox_options.set_activate_on_single_click(True)
+        self.listbox_options.set_selection_mode(
+            Gtk.SelectionMode.NONE)
+
+        self.widget_replace.set_widget(self.switch_replace)
+        self.widget_replace.set_option_label(
+            _("Replace current buffer"))
 
         # ------------------------------------
         #   Integrate widgets
         # ------------------------------------
 
-        self.grid_switch.attach(self.switch_replace, 0, 1, 1, 1)
-        self.grid_switch.attach(self.label_replace, 1, 1, 2, 1)
+        self.listbox_options.add(self.widget_replace)
+
+        self.scroll_options.add(self.listbox_options)
+
+        self.frame_options.add(self.scroll_options)
 
         self.pack_start(self.label_title, False, False)
         self.pack_start(self.label_selector, False, False)
         self.pack_start(self.file_selector, False, False)
         self.pack_start(self.label_data, False, False)
-        self.pack_start(self.grid_switch)
+        self.pack_start(self.frame_options)
 
 
     def __init_signals(self):
         """ Initialize widgets signals
         """
 
-        self.file_selector.connect("file-set", self.__on_file_choose)
+        self.file_selector.connect(
+            "file-set", self.__on_file_choose)
+
+        self.listbox_options.connect(
+            "row-activated", self.on_activate_listboxrow)
 
 
     def __start_interface(self):
