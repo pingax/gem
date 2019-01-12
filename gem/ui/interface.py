@@ -1048,7 +1048,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.popover_sidebar_tags.set_modal(True)
 
-        self.scroll_sidebar_tags.set_size_request(150, 200)
+        self.scroll_sidebar_tags.set_size_request(150, -1)
+        self.scroll_sidebar_tags.set_max_content_height(200)
+        self.scroll_sidebar_tags.set_propagate_natural_height(True)
         self.scroll_sidebar_tags.set_border_width(6)
         self.scroll_sidebar_tags.set_policy(
             Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
