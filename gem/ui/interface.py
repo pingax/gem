@@ -765,6 +765,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.item_toolbar_search = Gtk.ToolItem()
         self.item_toolbar_filters = Gtk.ToolItem()
         self.item_toolbar_separator = Gtk.SeparatorToolItem()
+        self.item_toolbar_console_separator = Gtk.SeparatorToolItem()
 
         self.button_toolbar_parameters = Gtk.Button()
         self.button_toolbar_screenshots = Gtk.Button()
@@ -1826,7 +1827,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.toolbar.insert(self.item_toolbar_view_mode, -1)
         self.toolbar.insert(self.item_toolbar_separator, -1)
         self.toolbar.insert(self.item_toolbar_consoles, -1)
-        self.toolbar.insert(Gtk.SeparatorToolItem(), -1)
+        self.toolbar.insert(self.item_toolbar_console_separator, -1)
         self.toolbar.insert(self.item_toolbar_search, -1)
 
         self.item_toolbar_properties.add(self.button_toolbar_parameters)
@@ -3120,6 +3121,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
             self.__on_selected_console(self.button_consoles, current_console)
 
+        self.set_informations()
+
         self.__unblock_signals()
 
 
@@ -4407,15 +4410,21 @@ class MainWindow(Gtk.ApplicationWindow):
         self.__on_update_consoles()
 
         if len(self.listbox_consoles) > 0:
-            self.button_consoles.set_sensitive(True)
-            self.button_consoles_menu.set_sensitive(True)
+            self.scroll_sidebar.set_visible(self.config.getboolean(
+                "gem", "show_sidebar", fallback=True))
+
+            self.button_consoles.set_visible(True)
+            self.button_consoles_menu.set_visible(True)
+            self.item_toolbar_console_separator.set_visible(True)
 
             self.logger.debug(
                 "%d console(s) has been added" % len(self.listbox_consoles))
 
         else:
-            self.button_consoles.set_sensitive(False)
-            self.button_consoles_menu.set_sensitive(False)
+            self.scroll_sidebar.set_visible(False)
+            self.button_consoles.set_visible(False)
+            self.button_consoles_menu.set_visible(False)
+            self.item_toolbar_console_separator.set_visible(False)
 
         return item
 
@@ -4726,7 +4735,8 @@ class MainWindow(Gtk.ApplicationWindow):
             games.sort(key=lambda game: game.name.lower().replace(' ', ''))
 
             if len(games) > 0:
-                self.scroll_sidebar.set_visible(True)
+                self.scroll_sidebar.set_visible(self.config.getboolean(
+                    "gem", "show_sidebar", fallback=True))
 
                 if self.button_toolbar_list.get_active():
                     self.scroll_games_list.set_visible(True)

@@ -268,6 +268,11 @@ class ListBoxSelector(Gtk.MenuButton):
         """ Clear listbox items
         """
 
+        self.label_selector_name.set_label(str())
+
+        self.image_selector_icon.set_from_pixbuf(None)
+        self.image_selector_status.set_from_pixbuf(None)
+
         children = self.listbox_selector.get_children()
 
         for child in children:
