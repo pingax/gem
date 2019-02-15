@@ -18,6 +18,9 @@
 from gem.ui import *
 from gem.ui.data import *
 
+# Regex
+from re import findall as re_findall
+
 # ------------------------------------------------------------------------------
 #   Misc functions
 # ------------------------------------------------------------------------------
@@ -220,3 +223,37 @@ def on_activate_listboxrow(listbox, row):
 
         elif type(widget) == Gtk.Switch:
             widget.set_active(not widget.get_active())
+
+
+def magic_from_file(filename, mime=False):
+    """ Fallback function to retrieve file type when python-magic is missing
+
+    Parameters
+    ----------
+    filename : str
+        File path to read
+    mime : bool
+        Retrieve the file mimetype, otherwise a readable name (Default: False)
+
+    Returns
+    -------
+    str
+        File type result as human readable name or mimetype
+    """
+
+    commands = ["file", str(filename)]
+
+    if mime:
+        commands.insert(1, "--mime-type")
+
+    with Popen(commands, stdout=PIPE, stdin=PIPE,
+        stderr=STDOUT, universal_newlines=True) as pipe:
+
+        output, error_output = pipe.communicate()
+
+    result = re_findall(r"^%s\:\s+(.*)$" % str(filename), output[:-1])
+
+    if len(result) > 0:
+        return result[0]
+
+    return str()

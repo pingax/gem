@@ -19,7 +19,8 @@ from gem.engine.utils import *
 
 from gem.ui import *
 from gem.ui.data import *
-from gem.ui.utils import *
+from gem.ui.utils import on_entry_clear
+from gem.ui.utils import on_activate_listboxrow
 
 from gem.ui.dialog.question import QuestionDialog
 
@@ -27,7 +28,11 @@ from gem.ui.widgets.window import CommonWindow
 from gem.ui.widgets.widgets import PreferencesItem
 
 # Mimetypes
-from magic import from_file as magic_from_file
+try:
+    from magic import from_file as magic_from_file
+
+except ImportError as error:
+    from gem.ui.utils import magic_from_file
 
 # Translation
 from gettext import gettext as _

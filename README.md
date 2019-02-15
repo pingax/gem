@@ -53,9 +53,9 @@ $ eopkg install gem
 Dependencies
 ------------
 
+* file
 * gtk+3
 * python3 >= 3.4
-* python3-magic
 * python3-gobject
 * python3-setuptools
 
@@ -64,6 +64,7 @@ Dependencies
 * gnome-icon-theme
 * gnome-icon-theme-symbolic
 * gtksourceview
+* python3-magic
 * python3-xdg
 
 Retrieve source code
