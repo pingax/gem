@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: 0.6\n"
+"Project-Id-Version: 1.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2018-09-18 15:29+0200\n"
+"PO-Revision-Date: 2019-02-23 11:46+0100\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 1.5.7\n"
+"X-Generator: Geany / PoHelper 1.34\n"
 
 # File: src/window.py, line: 1064
 #, python-format
@@ -171,9 +171,10 @@ msgid "Add a new emulator"
 msgstr "Ajouter un nouvel émulateur"
 
 #
-# File: gem/ui/interface.py, line: 400
-msgid "Addons"
-msgstr "Modules"
+# File: gem/ui/preferences/interface.py, line: 657
+msgid "Add an ellipsis to title when there is not enough space"
+msgstr ""
+"Ajouter des points de suspenssion au titre quand il n'y a pas assez d'espace"
 
 #
 # File: gem/ui/preferences/console.py, line: 338
@@ -289,10 +290,10 @@ msgid "Cannot access to game: %s"
 msgstr "Impossible d'accéder au jeu: %s"
 
 #
-# File: gem/interface.py, line: 1097
+# File: gem/gtk/game.py, line: 171
 #, python-format
-msgid "Cannot find %(binary)s for %(console)s"
-msgstr "Impossible de trouver %(binary)s pour %(console)s !"
+msgid "Cannot access to script: %s"
+msgstr "Impossible d'accéder au script: %s"
 
 #
 # File: gem/interface.py, line: 942
@@ -502,11 +503,6 @@ msgid "Disable empty consoles"
 msgstr "Désactiver les consoles vides"
 
 #
-# File: gem/ui/interface.py, line: 469
-msgid "Display"
-msgstr "Affichage"
-
-#
 # File: gem/ui/preferences/interface.py, line: 739
 msgid "Display a specific image in game tooltip"
 msgstr "Afficher une image spécifique dans l'infobulle de jeu"
@@ -576,19 +572,13 @@ msgstr "Dupliquer les fichiers de captures d'écran"
 #
 # File: gem/preferences.py, line: 336
 msgid "Edit"
-msgstr "Éditer"
+msgstr "Modifier"
 
 #
 # File: gem/interface.py, line: 300
 #, python-format
 msgid "Edit %s configuration"
-msgstr "Édition de la configuration de %s"
-
-#
-# File: gem/configuration.py, line: 144
-# File: gem/configuration.py, line: 301
-msgid "Edit emulator"
-msgstr "Éditer l'émulateur"
+msgstr "Modifier la configuration de %s"
 
 #
 # File: gem/preferences.py, line: 336
@@ -650,6 +640,11 @@ msgstr "Activer les boutons de fermeture"
 # File: gem/preferences.py, line: 257
 msgid "Enable close buttons in headerbar"
 msgstr "Activer les boutons de fenêtre dans la barre de titre"
+
+#
+# File: gem/gtk/preferences.py, line: 648
+msgid "Enable ellipsize title mode"
+msgstr "Activer les points de suspension pour le titre"
 
 #
 # File: gem/preferences.py, line: 335
@@ -892,11 +887,6 @@ msgid "Increase selected game score"
 msgstr "Augmenter le score du jeu sélectionné"
 
 #
-# File: gem/ui/interface.py, line: 1030
-msgid "Informations"
-msgstr "Informations"
-
-#
 # File: gem/interface.py, line: 1411
 #, python-format
 msgid "Initialize %s"
@@ -1076,11 +1066,6 @@ msgstr "Modifier la console sélectionnée"
 # File: gem/configuration.py, line: 301
 msgid "Modify selected emulator"
 msgstr "Éditer l'émulateur sélectionné"
-
-#
-# File: gem/ui/dialog/modules.py, line: 48
-msgid "Modules"
-msgstr "Modules"
 
 #
 # File: gem/gtk/preferences.py, line: 1787
@@ -1267,11 +1252,6 @@ msgid "Recursive"
 msgstr "Récursive"
 
 #
-# File: gem/interface.py, line: 220
-msgid "Refresh games list"
-msgstr "Recharger la liste de jeux"
-
-#
 # File: gem/preferences.py, line: 1233
 msgid "Regular expressions for ignored files"
 msgstr "Expressions régulières pour les fichiers ignorés"
@@ -1327,11 +1307,6 @@ msgstr "Remplacer l'actuel tampon de texte"
 # File: gem/gtk/interface.py, line: 802
 msgid "Reset filters"
 msgstr "Réinitialisation"
-
-#
-# File: src/window.py, line: 451
-msgid "Reset game"
-msgstr "Remise à zéro du jeu"
 
 #
 # File: gem/gtk/preferences.py, line: 477
@@ -1416,9 +1391,14 @@ msgid "Set custom parameters"
 msgstr "Définir des paramètres personnalisés"
 
 #
-# File: src/window.py, line: 451
-msgid "Set game _cover"
-msgstr "Définir la _couverture"
+# File: gem/ui/interface.py, line: 624
+msgid "Set game _thumbnail"
+msgstr "Définir la _vignette du jeu"
+
+#
+# File: gem/ui/interface.py, line: 1463
+msgid "Set game thumbnail"
+msgstr "Définir la vignette du jeu"
 
 #
 # File: gem/ui/interface.py, line: 677
@@ -1560,11 +1540,6 @@ msgstr "Afficher les captures d'écran du jeu sélectionné"
 # File: gem/preferences.py, line: 338
 msgid "Show sidebar"
 msgstr "Montrer la barre latérale"
-
-#
-# File: gem/gtk/windows.py, line: 1052
-msgid "Show statistics"
-msgstr "Montrer les statistiques"
 
 #
 # File: gem/preferences.py, line: 338
@@ -1891,11 +1866,6 @@ msgstr "Voulez-vous vraiment supprimer cette entrée ?"
 
 #
 # File: src/window.py, line: 940
-msgid "Would you really want to reset this game informations ?"
-msgstr "Voulez-vous vraiment remettre à zéro les informations de ce jeu ?"
-
-#
-# File: src/window.py, line: 940
 msgid "Would you want to replace existing file ?"
 msgstr "Voulez-vous vraiment remplacer ce fichier ?"
 
@@ -1920,7 +1890,7 @@ msgid ""
 "You can edit interface shortcuts for some actions. Click on a shortcut and "
 "insert wanted shortcut with your keyboard."
 msgstr ""
-"Vous pouvez éditer les raccourcis de l'interface pour différentes actions. "
+"Vous pouvez modifier les raccourcis de l'interface pour différentes actions. "
 "Cliquez sur un raccourci et insérez le raccourci souhaité avec votre clavier."
 
 #
@@ -1933,11 +1903,6 @@ msgstr ""
 # File: src/window.py, line: 247
 msgid "_About"
 msgstr "À _propos"
-
-#
-# File: gem/ui/interface.py, line: 400
-msgid "_Addons"
-msgstr "_Modules"
 
 #
 # File: gem/interface.py, line: 660
@@ -1958,7 +1923,12 @@ msgstr "_Dupliquer"
 #
 # File: gem/preferences.py, line: 336
 msgid "_Edit"
-msgstr "_Éditer"
+msgstr "_Modifier"
+
+#
+# File: gem/interface.py, line: 300
+msgid "_Edit configuration"
+msgstr "_Modifier la configuration"
 
 #
 # File: gem/gtk/interface.py, line: 792
@@ -2041,6 +2011,16 @@ msgstr "_Propriétés"
 # File: src/window.py, line: 239
 msgid "_Quit"
 msgstr "_Quitter"
+
+#
+# File: gem/gtk/preferences.py, line: 2294
+msgid "_Recursive"
+msgstr "_Récursive"
+
+#
+# File: gem/interface.py, line: 220
+msgid "_Reload games list"
+msgstr "_Recharger la liste de jeux"
 
 #
 # File: src/window.py, line: 446

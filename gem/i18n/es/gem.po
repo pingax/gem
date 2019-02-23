@@ -173,8 +173,8 @@ msgid "Add a new emulator"
 msgstr "Editar emulador"
 
 #
-# File: gem/ui/interface.py, line: 400
-msgid "Addons"
+# File: gem/ui/preferences/interface.py, line: 657
+msgid "Add an ellipsis to title when there is not enough space"
 msgstr ""
 
 #
@@ -295,10 +295,10 @@ msgid "Cannot access to game: %s"
 msgstr "No puedo abrir la interfaz: %s"
 
 #
-# File: gem/interface.py, line: 1318
-#, python-format
-msgid "Cannot find %(binary)s for %(console)s"
-msgstr "No puedo encontrar el %(binary)s para la %(console)s"
+# File: gem/main.py, line: 128
+#, fuzzy, python-format
+msgid "Cannot access to script: %s"
+msgstr "No puedo abrir la interfaz: %s"
 
 #
 # File: gem/interface.py, line: 2033
@@ -528,11 +528,6 @@ msgid "Disable empty consoles"
 msgstr ""
 
 #
-# File: gem/ui/interface.py, line: 469
-msgid "Display"
-msgstr ""
-
-#
 # File: gem/ui/preferences/interface.py, line: 739
 msgid "Display a specific image in game tooltip"
 msgstr ""
@@ -617,14 +612,6 @@ msgid "Edit %s configuration"
 msgstr "Actualizar el archivo de configuración de %s"
 
 #
-# File: gem/interface.py, line: 1257
-# File: gem/preferences.py, line: 547
-# File: gem/preferences.py, line: 1362
-# File: gem/windows.py, line: 794
-msgid "Edit emulator"
-msgstr "Editar emulador"
-
-#
 # File: gem/preferences.py, line: 429
 msgid "Editor"
 msgstr "Editor"
@@ -685,6 +672,11 @@ msgstr ""
 #, fuzzy
 msgid "Enable close buttons in headerbar"
 msgstr "Mostrar los botones de cerrar en la barra principal"
+
+#
+# File: gem/ui/preferences/interface.py, line: 655
+msgid "Enable ellipsize title mode"
+msgstr ""
 
 #
 # File: gem/interface.py, line: 2006
@@ -941,12 +933,6 @@ msgid "Increase selected game score"
 msgstr "Abrir carpeta del juego seleccionado"
 
 #
-# File: gem/interface.py, line: 776
-#, fuzzy
-msgid "Informations"
-msgstr "_Reinicializar los datos del juego"
-
-#
 # File: gem/interface.py, line: 1411
 #, python-format
 msgid "Initialize %s"
@@ -1131,11 +1117,6 @@ msgstr ""
 #, fuzzy
 msgid "Modify selected emulator"
 msgstr "Editar emulador"
-
-#
-# File: gem/ui/dialog/modules.py, line: 48
-msgid "Modules"
-msgstr ""
 
 #
 # File: gem/gtk/preferences.py, line: 1879
@@ -1346,12 +1327,6 @@ msgid "Recursive"
 msgstr ""
 
 #
-# File: gem/preferences.py, line: 328
-#, fuzzy
-msgid "Refresh games list"
-msgstr "Lista de juegos"
-
-#
 # File: gem/preferences.py, line: 1624
 #, fuzzy
 msgid "Regular expressions for ignored files"
@@ -1412,12 +1387,6 @@ msgstr ""
 # File: gem/gtk/interface.py, line: 802
 msgid "Reset filters"
 msgstr ""
-
-#
-# File: gem/preferences.py, line: 86
-#, fuzzy
-msgid "Reset game"
-msgstr "Renombrar un juego"
 
 #
 # File: gem/ui/preferences/interface.py, line: 375
@@ -1505,10 +1474,14 @@ msgid "Set custom parameters"
 msgstr "Crear parametros personalizados"
 
 #
-# File: gem/preferences.py, line: 86
-#, fuzzy
-msgid "Set game _cover"
-msgstr "Abrir las notas del juego"
+# File: gem/ui/interface.py, line: 624
+msgid "Set game _thumbnail"
+msgstr ""
+
+#
+# File: gem/ui/interface.py, line: 1463
+msgid "Set game thumbnail"
+msgstr ""
 
 #
 # File: gem/ui/interface.py, line: 677
@@ -1661,12 +1634,6 @@ msgstr "Mostrar las capturas de pantalla seleccionadas del juego"
 # File: gem/preferences.py, line: 431
 #, fuzzy
 msgid "Show sidebar"
-msgstr "Mostrar los números de línea"
-
-#
-# File: gem/preferences.py, line: 431
-#, fuzzy
-msgid "Show statistics"
 msgstr "Mostrar los números de línea"
 
 #
@@ -2001,12 +1968,6 @@ msgstr "¿Quiere borrar esta entrada?"
 #
 # File: gem/preferences.py, line: 1196
 #, fuzzy
-msgid "Would you really want to reset this game informations ?"
-msgstr "¿Quiere borrar esta entrada?"
-
-#
-# File: gem/preferences.py, line: 1196
-#, fuzzy
 msgid "Would you want to replace existing file ?"
 msgstr "¿Quiere borrar esta entrada?"
 
@@ -2045,11 +2006,6 @@ msgid "_About"
 msgstr "_A cerca de"
 
 #
-# File: gem/ui/interface.py, line: 532
-msgid "_Addons"
-msgstr ""
-
-#
 # File: gem/interface.py, line: 401
 # File: gem/interface.py, line: 761
 #, fuzzy
@@ -2071,6 +2027,12 @@ msgstr ""
 # File: gem/preferences.py, line: 429
 msgid "_Edit"
 msgstr "_Editar"
+
+#
+# File: gem/preferences.py, line: 1602
+#, fuzzy
+msgid "_Edit configuration"
+msgstr "Actualizar el archivo de configuración de %s"
 
 #
 # File: gem/interface.py, line: 381
@@ -2160,6 +2122,17 @@ msgid "_Quit"
 msgstr "_Salir"
 
 #
+# File: gem/ui/interface.py, line: 768
+msgid "_Recursive"
+msgstr ""
+
+#
+# File: gem/preferences.py, line: 328
+#, fuzzy
+msgid "_Reload games list"
+msgstr "Lista de juegos"
+
+#
 # File: gem/interface.py, line: 776
 #, fuzzy
 msgid "_Remove from disk"
@@ -2198,6 +2171,19 @@ msgid "translator-credits"
 msgstr "agradecimientos a los traductores"
 
 #
+# File: gem/interface.py, line: 1318
+#~ msgid "Cannot find %(binary)s for %(console)s"
+#~ msgstr "No puedo encontrar el %(binary)s para la %(console)s"
+
+#
+# File: gem/interface.py, line: 1257
+# File: gem/preferences.py, line: 547
+# File: gem/preferences.py, line: 1362
+# File: gem/windows.py, line: 794
+#~ msgid "Edit emulator"
+#~ msgstr "Editar emulador"
+
+#
 # File: gem/preferences.py, line: 219
 #~ msgid "Font"
 #~ msgstr "Fuente"
@@ -2214,6 +2200,12 @@ msgstr "agradecimientos a los traductores"
 #~ msgstr "Lista de juegos"
 
 #
+# File: gem/interface.py, line: 776
+#, fuzzy
+#~ msgid "Informations"
+#~ msgstr "_Reinicializar los datos del juego"
+
+#
 # File: gem/gtk/interface.py, line: 583
 # File: gem/gtk/interface.py, line: 1010
 #, fuzzy
@@ -2224,3 +2216,27 @@ msgstr "agradecimientos a los traductores"
 # File: gem/preferences.py, line: 85
 #~ msgid "Remove a game from database"
 #~ msgstr "Borrar un juego de la base de datos"
+
+#
+# File: gem/preferences.py, line: 86
+#, fuzzy
+#~ msgid "Reset game"
+#~ msgstr "Renombrar un juego"
+
+#
+# File: gem/preferences.py, line: 86
+#, fuzzy
+#~ msgid "Set game _cover"
+#~ msgstr "Abrir las notas del juego"
+
+#
+# File: gem/preferences.py, line: 431
+#, fuzzy
+#~ msgid "Show statistics"
+#~ msgstr "Mostrar los números de línea"
+
+#
+# File: gem/preferences.py, line: 1196
+#, fuzzy
+#~ msgid "Would you really want to reset this game informations ?"
+#~ msgstr "¿Quiere borrar esta entrada?"
