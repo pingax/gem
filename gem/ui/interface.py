@@ -321,7 +321,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.grid_games_placeholder.set_border_width(18)
 
-        self.grid_sidebar.set_border_width(6)
+        self.grid_sidebar.set_border_width(12)
         self.grid_sidebar.set_hexpand(True)
         self.grid_sidebar.set_vexpand(True)
         self.grid_sidebar.set_column_homogeneous(False)
@@ -1264,32 +1264,38 @@ class MainWindow(Gtk.ApplicationWindow):
         self.column_game_installed.set_title(_("Installed"))
         self.column_game_flags.set_title(_("Flags"))
 
+        self.column_game_favorite.set_reorderable(True)
         self.column_game_favorite.pack_start(
             self.cell_game_favorite, False)
         self.column_game_favorite.set_sort_column_id(Columns.List.Favorite)
 
+        self.column_game_multiplayer.set_reorderable(True)
         self.column_game_multiplayer.pack_start(
             self.cell_game_multiplayer, False)
         self.column_game_multiplayer.set_sort_column_id(
             Columns.List.Multiplayer)
 
+        self.column_game_finish.set_reorderable(True)
         self.column_game_finish.pack_start(
             self.cell_game_finish, False)
         self.column_game_finish.set_sort_column_id(Columns.List.Finish)
 
         self.column_game_name.set_expand(True)
         self.column_game_name.set_resizable(True)
+        self.column_game_name.set_reorderable(True)
         self.column_game_name.set_min_width(100)
         self.column_game_name.set_fixed_width(300)
         self.column_game_name.set_sort_column_id(Columns.List.Name)
         self.column_game_name.pack_start(
             self.cell_game_name, True)
 
+        self.column_game_play.set_reorderable(True)
         self.column_game_play.set_sort_column_id(Columns.List.Played)
         self.column_game_play.set_alignment(.5)
         self.column_game_play.pack_start(
             self.cell_game_play, False)
 
+        self.column_game_last_play.set_reorderable(True)
         self.column_game_last_play.set_sort_column_id(Columns.List.LastPlay)
         self.column_game_last_play.set_alignment(.5)
         self.column_game_last_play.pack_start(
@@ -1297,11 +1303,13 @@ class MainWindow(Gtk.ApplicationWindow):
         self.column_game_last_play.pack_start(
             self.cell_game_last_play_time, False)
 
+        self.column_game_play_time.set_reorderable(True)
         self.column_game_play_time.set_sort_column_id(Columns.List.TimePlay)
         self.column_game_play_time.set_alignment(.5)
         self.column_game_play_time.pack_start(
             self.cell_game_play_time, False)
 
+        self.column_game_score.set_reorderable(True)
         self.column_game_score.set_sort_column_id(Columns.List.Score)
         self.column_game_score.set_alignment(.5)
         self.column_game_score.pack_start(
@@ -1315,11 +1323,13 @@ class MainWindow(Gtk.ApplicationWindow):
         self.column_game_score.pack_start(
             self.cell_game_score_fifth, False)
 
+        self.column_game_installed.set_reorderable(True)
         self.column_game_installed.set_sort_column_id(Columns.List.Installed)
         self.column_game_installed.set_alignment(.5)
         self.column_game_installed.pack_start(
             self.cell_game_installed, False)
 
+        self.column_game_flags.set_reorderable(True)
         self.column_game_flags.set_alignment(.5)
         self.column_game_flags.pack_start(
             self.cell_game_except, False)
@@ -1947,17 +1957,6 @@ class MainWindow(Gtk.ApplicationWindow):
         # Games treeview / list
         self.scroll_games_list.add(self.treeview_games)
 
-        self.treeview_games.append_column(self.column_game_favorite)
-        self.treeview_games.append_column(self.column_game_multiplayer)
-        self.treeview_games.append_column(self.column_game_finish)
-        self.treeview_games.append_column(self.column_game_name)
-        self.treeview_games.append_column(self.column_game_play)
-        self.treeview_games.append_column(self.column_game_last_play)
-        self.treeview_games.append_column(self.column_game_play_time)
-        self.treeview_games.append_column(self.column_game_score)
-        self.treeview_games.append_column(self.column_game_installed)
-        self.treeview_games.append_column(self.column_game_flags)
-
         # Games menu
         self.menu_games.append(self.menu_item_launch)
         self.menu_games.append(Gtk.SeparatorMenuItem())
@@ -2408,6 +2407,10 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Store treeview columns references
         self.__columns_storage = {
+            "favorite": self.column_game_favorite,
+            "multiplayer": self.column_game_multiplayer,
+            "finish": self.column_game_finish,
+            "name": self.column_game_name,
             "play": self.column_game_play,
             "last_play": self.column_game_last_play,
             "play_time": self.column_game_play_time,
@@ -2614,6 +2617,17 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.config.modify("gem", "last_sort_column_order", "desc")
 
         # ------------------------------------
+        #   Columns order
+        # ------------------------------------
+
+        columns = list()
+
+        for column in self.treeview_games.get_columns():
+            columns.append(column.identifier)
+
+        self.config.modify("columns", "order", ':'.join(columns))
+
+        # ------------------------------------
         #   Games view mode
         # ------------------------------------
 
@@ -2695,6 +2709,32 @@ class MainWindow(Gtk.ApplicationWindow):
 
             else:
                 self.button_headerbar_list.set_active(True)
+
+            # ------------------------------------
+            #   Columns order
+            # ------------------------------------
+
+            original_order = Columns.Order.split(':')
+
+            custom_order = self.config.get(
+                "columns", "order", fallback=Columns.Order).split(':')
+
+            # Avoid to check custom_order
+            if not custom_order == original_order:
+
+                # Append missing column from columns_order string
+                for key in original_order:
+                    if not key in custom_order:
+                        custom_order.append(key)
+
+            # Append column in games treeview
+            for column in custom_order:
+
+                # Store identifier for __stop_interface function
+                setattr(self.__columns_storage[column], "identifier", column)
+
+                self.treeview_games.append_column(
+                    self.__columns_storage[column])
 
             # ------------------------------------
             #   Column sorting

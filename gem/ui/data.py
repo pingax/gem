@@ -151,6 +151,9 @@ class Icons:
 
 class Columns:
 
+    Order = "favorite:multiplayer:finish:name:play:play_time:last_play:" \
+        "score:installed:flags"
+
     class Key:
         List            = "list"
         Grid            = "grid"
@@ -170,6 +173,7 @@ class Columns:
         Snapshots       = 11
         Save            = 12
         Object          = 13
+        Thumbnail       = 14
 
     class Grid:
         Icon            = 0
