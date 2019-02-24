@@ -15,7 +15,7 @@ Version 1.0 - Space Fox
 
 ### GTK+ interface
 
-* New dependency → python3-magic
+* New optional dependency → python3-magic
 * Add the statusbar for default theme and rewrite his contents
 * Add a tags selector to game properties dialog
 * Add more informations into game sidebar

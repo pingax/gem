@@ -1192,7 +1192,8 @@ class MainWindow(Gtk.ApplicationWindow):
             Pixbuf, # Custom parameters
             Pixbuf, # Screenshots
             Pixbuf, # Save states
-            object  # Game object
+            object, # Game object
+            Pixbuf  # Thumbnail
         )
         self.treeview_games = Gtk.TreeView()
 
@@ -1227,6 +1228,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.cell_game_except = Gtk.CellRendererPixbuf()
         self.cell_game_snapshots = Gtk.CellRendererPixbuf()
         self.cell_game_save = Gtk.CellRendererPixbuf()
+        self.cell_game_thumbnail = Gtk.CellRendererPixbuf()
 
         # Properties
         self.scroll_games_list.set_no_show_all(True)
@@ -1287,6 +1289,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.column_game_name.set_fixed_width(300)
         self.column_game_name.set_sort_column_id(Columns.List.Name)
         self.column_game_name.pack_start(
+            self.cell_game_thumbnail, False)
+        self.column_game_name.pack_start(
             self.cell_game_name, True)
 
         self.column_game_play.set_reorderable(True)
@@ -1346,6 +1350,8 @@ class MainWindow(Gtk.ApplicationWindow):
             self.cell_game_finish, "pixbuf", Columns.List.Finish)
         self.column_game_name.add_attribute(
             self.cell_game_name, "text", Columns.List.Name)
+        self.column_game_name.add_attribute(
+            self.cell_game_thumbnail, "pixbuf", Columns.List.Thumbnail)
         self.column_game_play.add_attribute(
             self.cell_game_play, "text", Columns.List.Played)
         self.column_game_last_play.add_attribute(
@@ -1370,6 +1376,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.cell_game_multiplayer.set_alignment(.5, .5)
         self.cell_game_finish.set_alignment(.5, .5)
         self.cell_game_name.set_alignment(0, .5)
+        self.cell_game_thumbnail.set_alignment(.5, .5)
         self.cell_game_play.set_alignment(.5, .5)
         self.cell_game_last_play.set_alignment(0, .5)
         self.cell_game_last_play_time.set_alignment(1, .5)
@@ -1385,6 +1392,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.cell_game_name.set_property("ellipsize", Pango.EllipsizeMode.END)
 
         self.cell_game_name.set_padding(4, 4)
+        self.cell_game_thumbnail.set_padding(2, 0)
         self.cell_game_play.set_padding(4, 0)
         self.cell_game_last_play.set_padding(4, 0)
         self.cell_game_last_play_time.set_padding(4, 0)
@@ -4501,6 +4509,9 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.__console_icon = set_pixbuf_opacity(
                     icon_from_data(icon, self.icons.blank(96), 96, 96), 50)
 
+                self.__console_thumbnail = set_pixbuf_opacity(
+                    icon_from_data(icon, self.icons.blank(22), 22, 255), 50)
+
             else:
                 image = self.icons.blank()
 
@@ -4802,6 +4813,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
             yield True
 
+            # Start a timer for debug purpose
+            started = datetime.now()
+
             for game in games:
 
                 # Another thread has been called by user, close this one
@@ -4822,6 +4836,24 @@ class MainWindow(Gtk.ApplicationWindow):
                 if exists(game.filepath) and show:
 
                     # ------------------------------------
+                    #   Grid mode
+                    # ------------------------------------
+
+                    row_data = [
+                        self.__console_icon,
+                        game.name,
+                        game ]
+
+                    # Thumbnail
+                    if game.cover is not None and exists(game.cover):
+                        icon = Pixbuf.new_from_file_at_scale(
+                            expanduser(game.cover), 96, 96, True)
+
+                        row_data[Columns.Grid.Icon] = icon
+
+                    row_grid = self.model_games_grid.append(row_data)
+
+                    # ------------------------------------
                     #   List mode
                     # ------------------------------------
 
@@ -4839,7 +4871,8 @@ class MainWindow(Gtk.ApplicationWindow):
                         self.icons.get_translucent("parameter"),
                         self.icons.get_translucent("screenshot"),
                         self.icons.get_translucent("savestate"),
-                        game ]
+                        game,
+                        self.__console_thumbnail ]
 
                     # Favorite
                     if game.favorite:
@@ -4903,24 +4936,12 @@ class MainWindow(Gtk.ApplicationWindow):
                         row_data[Columns.List.Save] = \
                             self.icons.get("savestate")
 
-                    row_list = self.model_games_list.append(row_data)
-
-                    # ------------------------------------
-                    #   Grid mode
-                    # ------------------------------------
-
-                    row_data = [
-                        self.__console_icon,
-                        game.name,
-                        game ]
-
-                    # Cover icon
+                    # Thumbnail
                     if game.cover is not None and exists(game.cover):
-                        row_data[Columns.Grid.Icon] = \
-                            Pixbuf.new_from_file_at_scale(
-                            expanduser(game.cover), 96, 96, True)
+                        row_data[Columns.List.Thumbnail] = \
+                            icon.scale_simple(22, 22, InterpType.BILINEAR)
 
-                    row_grid = self.model_games_grid.append(row_data)
+                    row_list = self.model_games_list.append(row_data)
 
                     # ------------------------------------
                     #   Refesh view
@@ -4939,7 +4960,15 @@ class MainWindow(Gtk.ApplicationWindow):
             self.treeview_games.set_enable_search(True)
             self.treeview_games.thaw_child_notify()
 
-        self.set_informations_headerbar()
+            self.set_informations_headerbar()
+
+            # ------------------------------------
+            #   Timer - Debug
+            # ------------------------------------
+
+            self.logger.debug("Append %d games for %s in %s second(s)" % (
+                len(console.get_games()), console.name,
+                (datetime.now() - started).total_seconds()))
 
         # ------------------------------------
         #   Cannot read games path
@@ -6638,21 +6667,23 @@ class MainWindow(Gtk.ApplicationWindow):
                     # Update game from database
                     self.api.update_game(game)
 
-                    self.set_informations()
-
-                    # Update games icon in grid view
-                    treeiter = self.game_path[game.filename][2]
+                    icon = self.__console_icon
+                    thumbnail = self.__console_thumbnail
 
                     if game.cover is not None and exists(game.cover):
                         icon = Pixbuf.new_from_file_at_scale(
                             expanduser(game.cover), 96, 96, True)
 
-                        self.model_games_grid.set_value(
-                            treeiter, Columns.Grid.Icon, icon)
+                        thumbnail= icon.scale_simple(
+                            22, 22, InterpType.BILINEAR)
 
-                    else:
-                        self.model_games_grid.set_value(
-                            treeiter, Columns.Grid.Icon, self.__console_icon)
+                    treeiter = self.game_path[game.filename]
+
+                    self.model_games_grid.set_value(
+                        treeiter[2], Columns.Grid.Icon, icon)
+
+                    self.model_games_list.set_value(
+                        treeiter[1], Columns.List.Thumbnail, thumbnail)
 
             self.set_sensitive(True)
 
