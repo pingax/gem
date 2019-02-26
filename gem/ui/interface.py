@@ -7403,7 +7403,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 if key == "consoles":
                     collection_path = expanduser(self.api.get_local(
-                        "icons", key, "%s.%s" % (path, Icons.Ext)))
+                        "icons", "%s.%s" % (path, Icons.Ext)))
 
                     # Generate a new cache icon
                     if exists(collection_path) and isfile(collection_path):

@@ -779,8 +779,8 @@ class ConsolePreferences(CommonWindow):
 
             # Check icon from icons theme
             if not exists(path):
-                collection_path = expanduser(self.api.get_local(
-                    "icons", "consoles", "%s.%s" % (path, Icons.Ext)))
+                collection_path = expanduser(
+                    self.api.get_local("icons", "%s.%s" % (path, Icons.Ext)))
 
                 # Retrieve icon from collection
                 if exists(collection_path) and isfile(collection_path):

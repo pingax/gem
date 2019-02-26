@@ -279,7 +279,7 @@ class IconsDialog(CommonWindow):
         yield True
 
         # Retrieve files from icons collection
-        pattern = self.api.get_local("icons", self.folder, "*.%s" % Icons.Ext)
+        pattern = self.api.get_local("icons", "*.%s" % Icons.Ext)
 
         for path in sorted(glob(pattern)):
             path = expanduser(path)
