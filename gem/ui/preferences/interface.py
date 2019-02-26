@@ -1771,17 +1771,12 @@ class PreferencesWindow(CommonWindow):
         self.selection["console"] = None
 
         for console in self.api.consoles.values():
-            icon = console.icon
 
-            if icon is not None:
-                if not exists(expanduser(icon)):
-                    icon = self.api.get_local(
-                        "icons", "consoles", "%s.%s" % (icon, Icons.Ext))
+            icon = self.parent.get_pixbuf_from_cache(
+                "consoles", 48, console.id, console.icon)
 
-                image = icon_from_data(icon, self.icons.blank(48), 48, 48)
-
-            else:
-                image = self.icons.blank()
+            if icon is None:
+                icon = self.icons.blank(48)
 
             path = str()
             if console.path is not None:
@@ -1792,7 +1787,7 @@ class PreferencesWindow(CommonWindow):
                 check = Icons.Symbolic.Warning
 
             self.model_consoles.append([
-                image, "<b>%s</b>\n<small>%s</small>" % (
+                icon, "<b>%s</b>\n<small>%s</small>" % (
                 console.name, path), check, console.id])
 
 
@@ -1805,24 +1800,19 @@ class PreferencesWindow(CommonWindow):
         self.selection["emulator"] = None
 
         for emulator in self.api.emulators.values():
-            icon = emulator.icon
 
-            if icon is not None:
-                if not exists(expanduser(icon)):
-                    icon = self.api.get_local(
-                        "icons", "emulators", "%s.%s" % (icon, Icons.Ext))
+            icon = self.parent.get_pixbuf_from_cache(
+                "emulators", 48, emulator.id, emulator.icon)
 
-                image = icon_from_data(icon, self.icons.blank(48), 48, 48)
-
-            else:
-                image = self.icons.blank(48)
+            if icon is None:
+                icon = self.icons.blank(48)
 
             check = str()
             if not emulator.exists:
                 check = Icons.Symbolic.Warning
 
             self.model_emulators.append([
-                image, "<b>%s</b>\n<small>%s</small>" % (
+                icon, "<b>%s</b>\n<small>%s</small>" % (
                 emulator.name, emulator.binary), check, emulator.id])
 
 
@@ -2071,8 +2061,17 @@ class PreferencesWindow(CommonWindow):
                 _("Would you really want to remove this entry ?"))
 
             if dialog.run() == Gtk.ResponseType.YES:
+
                 if manager == Manager.CONSOLE:
                     self.api.delete_console(data.id)
+
+                    for size in ("24x24", "48x48"):
+                        path = self.parent.get_icon_from_cache(
+                            "consoles", size, "%s.png" % data.id)
+
+                        if exists(path):
+                            remove(path)
+
                 elif manager == Manager.EMULATOR:
                     self.api.delete_emulator(data.id)
 

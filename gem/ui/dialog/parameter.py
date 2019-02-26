@@ -201,12 +201,11 @@ class ParametersDialog(CommonWindow):
 
         label_emulator = Gtk.Label()
 
-        self.model = Gtk.ListStore(Pixbuf, str, Pixbuf)
+        self.model = Gtk.ListStore(Pixbuf, str)
         self.combo = Gtk.ComboBox()
 
         cell_icon = Gtk.CellRendererPixbuf()
         cell_name = Gtk.CellRendererText()
-        cell_warning = Gtk.CellRendererPixbuf()
 
         # Properties
         label_emulator.set_use_markup(True)
@@ -221,8 +220,6 @@ class ParametersDialog(CommonWindow):
         self.combo.add_attribute(cell_icon, "pixbuf", 0)
         self.combo.pack_start(cell_name, True)
         self.combo.add_attribute(cell_name, "text", 1)
-        self.combo.pack_start(cell_warning, False)
-        self.combo.add_attribute(cell_warning, "pixbuf", 2)
 
         cell_icon.set_padding(4, 0)
 
@@ -521,29 +518,26 @@ class ParametersDialog(CommonWindow):
         self.add_help(self.help_data)
 
         for emulator in self.interface.api.emulators.values():
-            icon = emulator.icon
 
-            if not exists(expanduser(icon)):
-                icon = self.api.get_local(
-                    "icons", "emulators", "%s.%s" % (icon, Icons.Ext))
+            if emulator.exists:
 
-            icon = icon_from_data(icon, self.icons.blank(24), 24, 24)
+                icon = self.parent.get_pixbuf_from_cache(
+                    "emulators", 22, emulator.id, emulator.icon)
 
-            warning = self.icons.blank()
-            if not emulator.exists:
-                warning = self.icons.get("warning")
+                if icon is None:
+                    icon = self.icons.blank(22)
 
-            row = self.model.append([icon, emulator.name, warning])
+                row = self.model.append([icon, emulator.name])
 
-            if self.emulator["rom"] is not None:
-                if emulator.name == self.emulator["rom"].name:
-                    self.combo.set_active_iter(row)
+                if self.emulator["rom"] is not None:
+                    if emulator.name == self.emulator["rom"].name:
+                        self.combo.set_active_iter(row)
 
-            elif self.emulator["console"] is not None:
-                if emulator.name == self.emulator["console"].name:
-                    self.combo.set_active_iter(row)
+                elif self.emulator["console"] is not None:
+                    if emulator.name == self.emulator["console"].name:
+                        self.combo.set_active_iter(row)
 
-        self.combo.set_wrap_width(int(len(self.model) / 10))
+        self.combo.set_wrap_width(int(len(self.model) / 6))
 
         # Emulator parameters
         if self.emulator["parameters"] is not None:

@@ -63,12 +63,17 @@ class IconsDialog(CommonWindow):
 
         self.icons = parent.icons
 
+        self.thread = int()
+
         # ------------------------------------
         #   Initialization
         # ------------------------------------
 
         # Init widgets
         self.__init_widgets()
+
+        # Init packing
+        self.__init_packing()
 
         # Init signals
         self.__init_signals()
@@ -136,7 +141,6 @@ class IconsDialog(CommonWindow):
         self.view_icons.set_model(self.model_icons)
         self.view_icons.set_pixbuf_column(0)
         self.view_icons.set_tooltip_column(1)
-        # self.view_icons.set_item_width(96)
         self.view_icons.set_selection_mode(Gtk.SelectionMode.SINGLE)
 
         self.model_icons.set_sort_column_id(1, Gtk.SortType.ASCENDING)
@@ -147,20 +151,27 @@ class IconsDialog(CommonWindow):
         self.scroll_icons.set_policy(
             Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
 
-        # ------------------------------------
-        #   Add widgets into interface
-        # ------------------------------------
 
-        self.stack.add_titled(self.scroll_icons, "library", _("Library"))
+    def __init_packing(self):
+        """ Initialize widgets packing in main window
+        """
 
-        self.scroll_icons.add(self.view_icons)
+        if self.folder == "consoles":
+            self.stack.add_titled(self.scroll_icons, "library", _("Library"))
 
-        self.stack.add_titled(self.frame_icons, "file", _("File"))
+            self.scroll_icons.add(self.view_icons)
 
-        self.frame_icons.add(self.file_icons)
+            self.stack.add_titled(self.frame_icons, "file", _("File"))
 
-        self.pack_start(self.stack_switcher, False, False)
-        self.pack_start(self.stack, True, True)
+            self.frame_icons.add(self.file_icons)
+
+            self.pack_start(self.stack_switcher, False, False)
+            self.pack_start(self.stack, True, True)
+
+        else:
+            self.frame_icons.add(self.file_icons)
+
+            self.pack_start(self.frame_icons, True, True)
 
 
     def __init_signals(self):
@@ -182,6 +193,10 @@ class IconsDialog(CommonWindow):
         self.load_interface()
 
         response = self.run()
+
+        # Remove icons listing thread
+        if not self.thread == 0:
+            source_remove(self.thread)
 
         if response == Gtk.ResponseType.APPLY:
             self.save_interface()
@@ -205,59 +220,96 @@ class IconsDialog(CommonWindow):
         """ Insert data into interface's widgets
         """
 
-        self.icons_data = dict()
-
-        # Set authorized pattern for file selector
-        for pattern in [ "png", "jpg", "jpeg", "svg" ]:
-            self.__file_patterns.add_pattern("*.%s" % pattern)
+        # Set authorized mime types for file selector
+        self.__file_patterns.add_mime_type("image/*")
 
         # Fill icons view
         if self.api is not None:
 
-            for icon in glob(self.api.get_local("icons", self.folder, "*.png")):
-                name = splitext(basename(icon))[0]
+            # Load icons collection
+            if self.folder == "consoles":
+                self.icons_data = dict()
 
-                if not exists(expanduser(icon)):
-                    icon = self.api.get_local(
-                        "icons", self.folder, "%s.%s" % (icon, Icons.Ext))
+                if not self.thread == 0:
+                    source_remove(self.thread)
 
-                self.icons_data[name] = self.model_icons.append([
-                    icon_from_data(icon, self.icons.blank(72), 72, 72), name ])
+                self.thread = idle_add(self.append_icons(64).__next__)
 
-            # Set filechooser or icons view selected item
-            if self.path is not None:
+            # Check the choosen path
+            if self.path is not None and exists(self.path):
 
-                # Check if current path is a gem icons
-                data = self.api.get_local(
-                    "icons", self.folder, self.path + ".png")
-
-                if data is not None and exists(data):
-                    self.view_icons.select_path(
-                        self.model_icons.get_path(self.icons_data[self.path]))
-
-                else:
+                if self.folder == "consoles":
                     self.frame_icons.show()
                     self.stack.set_visible_child(self.frame_icons)
 
-                    self.file_icons.set_filename(self.path)
+                self.file_icons.set_filename(self.path)
 
 
     def save_interface(self):
         """ Return all the data from interface
         """
 
-        if self.stack.get_visible_child_name() == "library":
-            selection = self.view_icons.get_selected_items()
+        # Retrieve path from file selector
+        self.new_path = self.file_icons.get_filename()
 
-            if len(selection) > 0:
-                path = self.model_icons.get_value(
-                    self.model_icons.get_iter(selection[0]), 1)
+        # Check icons collection
+        if self.folder == "consoles":
 
-            else:
-                path = None
+            # Retrieve icon from icons collection
+            if self.stack.get_visible_child_name() == "library":
+                self.new_path = None
 
-        else:
-            path = self.file_icons.get_filename()
+                items = self.view_icons.get_selected_items()
 
-        if not path == self.path:
-            self.new_path = path
+                # An icon is selected
+                if len(items) > 0:
+                    self.new_path = self.model_icons.get_value(
+                        self.model_icons.get_iter(items[0]), 1)
+
+
+    def append_icons(self, size):
+        """ Append icons in icons view with a specific size
+
+        Parameters
+        ----------
+        size : int
+            Specified icon size
+        """
+
+        yield True
+
+        # Retrieve files from icons collection
+        pattern = self.api.get_local("icons", self.folder, "*.%s" % Icons.Ext)
+
+        for path in sorted(glob(pattern)):
+            path = expanduser(path)
+
+            # Retrieve icon name for label
+            name = splitext(basename(path))[0]
+
+            # Retrieve an empty icon
+            icon = self.icons.blank(size)
+
+            # Generate an icon for found file
+            if exists(path) and isfile(path):
+
+                # Check the file mime-type to avoid non-image file
+                if magic_from_file(path, mime=True).startswith("image/"):
+                    icon = Pixbuf.new_from_file_at_scale(path, size, size, True)
+
+            self.icons_data[name] = self.model_icons.append([icon, name])
+
+            # Current icon match the choosen one
+            if self.path == name:
+
+                # Only select current icon if no selection is available
+                if len(self.view_icons.get_selected_items()) == 0:
+                    self.view_icons.select_path(
+                        self.model_icons.get_path(self.icons_data[name]))
+
+            yield True
+
+        # Remove thread id from memory
+        self.thread = int()
+
+        yield False

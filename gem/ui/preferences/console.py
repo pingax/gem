@@ -158,6 +158,9 @@ class ConsolePreferences(CommonWindow):
         self.label_name = Gtk.Label()
         self.entry_name = Gtk.Entry()
 
+        self.label_icon = Gtk.Label()
+        self.entry_icon = Gtk.Entry()
+
         self.label_folder = Gtk.Label()
         self.file_folder = Gtk.FileChooserButton()
 
@@ -179,6 +182,16 @@ class ConsolePreferences(CommonWindow):
 
         self.entry_name.set_hexpand(True)
         self.entry_name.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
+
+        self.label_icon.set_halign(Gtk.Align.END)
+        self.label_icon.set_valign(Gtk.Align.CENTER)
+        self.label_icon.set_justify(Gtk.Justification.RIGHT)
+        self.label_icon.get_style_context().add_class("dim-label")
+        self.label_icon.set_text(_("Icon"))
+
+        self.entry_icon.set_hexpand(True)
+        self.entry_icon.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
 
         self.label_folder.set_halign(Gtk.Align.END)
@@ -221,12 +234,11 @@ class ConsolePreferences(CommonWindow):
 
         self.label_default = Gtk.Label()
 
-        self.model_emulators = Gtk.ListStore(Pixbuf, str, Pixbuf)
+        self.model_emulators = Gtk.ListStore(Pixbuf, str)
         self.combo_emulators = Gtk.ComboBox()
 
         cell_emulators_icon = Gtk.CellRendererPixbuf()
         cell_emulators_name = Gtk.CellRendererText()
-        cell_emulators_warning = Gtk.CellRendererPixbuf()
 
         self.label_extensions = Gtk.Label()
         self.entry_extensions = Gtk.Entry()
@@ -253,8 +265,6 @@ class ConsolePreferences(CommonWindow):
         self.combo_emulators.add_attribute(cell_emulators_icon, "pixbuf", 0)
         self.combo_emulators.pack_start(cell_emulators_name, True)
         self.combo_emulators.add_attribute(cell_emulators_name, "text", 1)
-        self.combo_emulators.pack_start(cell_emulators_warning, False)
-        self.combo_emulators.add_attribute(cell_emulators_warning, "pixbuf", 2)
 
         cell_emulators_icon.set_padding(4, 0)
 
@@ -351,27 +361,30 @@ class ConsolePreferences(CommonWindow):
         self.grid_preferences.attach(self.label_name, 0, 0, 1, 1)
         self.grid_preferences.attach(self.entry_name, 1, 0, 1, 1)
 
-        self.grid_preferences.attach(self.label_folder, 0, 1, 1, 1)
-        self.grid_preferences.attach(self.file_folder, 1, 1, 1, 1)
+        self.grid_preferences.attach(self.label_icon, 0, 1, 1, 1)
+        self.grid_preferences.attach(self.entry_icon, 1, 1, 1, 1)
+
+        self.grid_preferences.attach(self.label_folder, 0, 2, 1, 1)
+        self.grid_preferences.attach(self.file_folder, 1, 2, 2, 1)
 
         self.grid_preferences.attach(self.button_console, 2, 0, 1, 2)
 
-        self.grid_preferences.attach(self.label_favorite, 0, 2, 1, 1)
-        self.grid_preferences.attach(self.switch_favorite, 1, 2, 2, 1)
+        self.grid_preferences.attach(self.label_favorite, 0, 3, 1, 1)
+        self.grid_preferences.attach(self.switch_favorite, 1, 3, 2, 1)
 
-        self.grid_preferences.attach(self.label_recursive, 0, 3, 1, 1)
-        self.grid_preferences.attach(self.switch_recursive, 1, 3, 2, 1)
+        self.grid_preferences.attach(self.label_recursive, 0, 4, 1, 1)
+        self.grid_preferences.attach(self.switch_recursive, 1, 4, 2, 1)
 
-        self.grid_preferences.attach(self.label_emulator, 0, 4, 3, 1)
+        self.grid_preferences.attach(self.label_emulator, 0, 5, 3, 1)
 
-        self.grid_preferences.attach(self.label_default, 0, 5, 1, 1)
-        self.grid_preferences.attach(self.combo_emulators, 1, 5, 2, 1)
+        self.grid_preferences.attach(self.label_default, 0, 6, 1, 1)
+        self.grid_preferences.attach(self.combo_emulators, 1, 6, 2, 1)
 
-        self.grid_preferences.attach(self.label_extensions, 0, 6, 1, 1)
-        self.grid_preferences.attach(self.entry_extensions, 1, 6, 2, 1)
+        self.grid_preferences.attach(self.label_extensions, 0, 7, 1, 1)
+        self.grid_preferences.attach(self.entry_extensions, 1, 7, 2, 1)
 
-        self.grid_preferences.attach(self.label_ignores, 0, 7, 3, 1)
-        self.grid_preferences.attach(self.grid_ignores, 0, 8, 3, 1)
+        self.grid_preferences.attach(self.label_ignores, 0, 8, 3, 1)
+        self.grid_preferences.attach(self.grid_ignores, 0, 9, 3, 1)
 
         # Console options
         self.button_console.set_image(self.image_console)
@@ -401,6 +414,9 @@ class ConsolePreferences(CommonWindow):
 
         self.entry_name.connect("changed", self.__update_dialog)
         self.entry_name.connect("icon-press", on_entry_clear)
+
+        self.entry_icon.connect("changed", self.__on_icon_update)
+        self.entry_icon.connect("icon-press", on_entry_clear)
 
         self.file_folder.connect("file-set", self.__update_dialog)
 
@@ -432,22 +448,19 @@ class ConsolePreferences(CommonWindow):
         emulators_rows = dict()
 
         for emulator in self.api.emulators.values():
-            icon = emulator.icon
 
-            if icon is not None and not exists(expanduser(icon)):
-                icon = self.api.get_local(
-                    "icons", "emulators", "%s.%s" % (icon, Icons.Ext))
+            if emulator.exists:
 
-            icon = icon_from_data(icon, self.icons.blank(24), 24, 24)
+                icon = self.interface.parent.get_pixbuf_from_cache(
+                    "emulators", 22, emulator.id, emulator.icon)
 
-            warning = self.icons.blank(24)
-            if not emulator.exists:
-                warning = icon_load(Icons.Warning, 24, self.icons.blank(24))
+                if icon is None:
+                    icon = self.icons.blank(22)
 
-            emulators_rows[emulator.id] = self.model_emulators.append(
-                [icon, emulator.name, warning])
+                emulators_rows[emulator.id] = self.model_emulators.append(
+                    [icon, emulator.name])
 
-        self.combo_emulators.set_wrap_width(int(len(self.model_emulators) / 10))
+        self.combo_emulators.set_wrap_width(int(len(self.model_emulators) / 6))
 
         # ------------------------------------
         #   Init data
@@ -471,15 +484,17 @@ class ConsolePreferences(CommonWindow):
             self.entry_extensions.set_text(' '.join(self.console.extensions))
 
             # Icon
+            self.entry_icon.set_text(self.console.icon)
+
             self.path = self.console.icon
 
-            icon = self.path
-            if icon is not None and not exists(expanduser(icon)):
-                icon = self.api.get_local(
-                    "icons", "consoles", "%s.%s" % (icon, Icons.Ext))
+            icon = self.interface.parent.get_pixbuf_from_cache(
+                "consoles", 64, self.console.id, self.console.icon)
 
-            self.image_console.set_from_pixbuf(
-                icon_from_data(icon, self.icons.blank(64), 64, 64))
+            if icon is None:
+                icon = self.icons.blank(64)
+
+            self.image_console.set_from_pixbuf(icon)
 
             # Ignores
             for ignore in self.console.ignores:
@@ -517,6 +532,14 @@ class ConsolePreferences(CommonWindow):
                 if self.modify:
                     self.api.delete_console(self.console.id)
 
+                # Remove thumbnails from cache
+                for size in ("22x22", "24x24", "48x48", "64x64", "96x96"):
+                    cache_path = self.interface.parent.get_icon_from_cache(
+                        "consoles", size, "%s.png" % self.console.id)
+
+                    if exists(cache_path):
+                        remove(cache_path)
+
                 # Append a new console
                 self.api.add_console(self.data)
 
@@ -549,12 +572,6 @@ class ConsolePreferences(CommonWindow):
         if path is None or not exists(path):
             path = self.console.path
 
-        icon = self.path
-        if icon is not None and path_join(
-            get_data("icons"), basename(icon)) == icon:
-
-            icon = splitext(basename(icon))[0]
-
         extensions = list()
         if len(self.entry_extensions.get_text()) > 0:
             extensions = self.entry_extensions.get_text().split()
@@ -570,7 +587,7 @@ class ConsolePreferences(CommonWindow):
             "id": identifier,
             "name": self.section,
             "path": path,
-            "icon": icon,
+            "icon": expanduser(self.entry_icon.get_text()),
             "ignores": ignores,
             "extensions": extensions,
             "favorite": self.switch_favorite.get_active(),
@@ -592,18 +609,27 @@ class ConsolePreferences(CommonWindow):
         dialog = IconsDialog(self, _("Choose an icon"), self.path, "consoles")
 
         if dialog.new_path is not None:
-            icon = dialog.new_path
-
-            if not exists(expanduser(icon)):
-                icon = self.api.get_local(
-                    "icons", "consoles", "%s.%s" % (icon, Icons.Ext))
-
-            self.image_console.set_from_pixbuf(
-                icon_from_data(icon, self.icons.blank(64), 64, 64))
-
             self.path = dialog.new_path
 
+            # Update icon thumbnail
+            self.set_icon(self.image_console, self.path)
+
+            # Update icon entry
+            self.entry_icon.set_text(self.path)
+
         dialog.destroy()
+
+
+    def __on_icon_update(self, widget):
+        """ Update icon thumbnail when the icon entry is update
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        self.set_icon(self.image_console, widget.get_text())
 
 
     def __on_append_item(self, widget):
@@ -730,4 +756,48 @@ class ConsolePreferences(CommonWindow):
         self.button_ignores_add.set_visible(status)
         self.image_ignores_remove.set_visible(status)
         self.button_ignores_remove.set_visible(status)
+
+
+    def set_icon(self, widget, path, size=64):
+        """ Set thumbnail icon from a specific path
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Icon widget to update
+        path : str
+            Icon path
+        size : int, optional
+            Icon size in pixels (Default: 64)
+        """
+
+        # Retrieve an empty icon
+        icon = self.icons.blank(size)
+
+        if len(path) > 0:
+            path = expanduser(path)
+
+            # Check icon from icons theme
+            if not exists(path):
+                collection_path = expanduser(self.api.get_local(
+                    "icons", "consoles", "%s.%s" % (path, Icons.Ext)))
+
+                # Retrieve icon from collection
+                if exists(collection_path) and isfile(collection_path):
+
+                    # Check the file mime-type to avoid non-image file
+                    if magic_from_file(
+                        collection_path, mime=True).startswith("image/"):
+
+                        icon = Pixbuf.new_from_file_at_scale(
+                            collection_path, size, size, True)
+
+            # Retrieve icon from file
+            elif isfile(path):
+
+                # Check the file mime-type to avoid non-image file
+                if magic_from_file(path, mime=True).startswith("image/"):
+                    icon = Pixbuf.new_from_file_at_scale(path, size, size, True)
+
+        widget.set_from_pixbuf(icon)
 

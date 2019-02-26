@@ -487,6 +487,12 @@ msgid "Delete game note file"
 msgstr "Renombrar un juego"
 
 #
+# File: gem/preferences.py, line: 85
+#, fuzzy
+msgid "Delete generated icons from cache"
+msgstr "Borrar los datos del juego de la base de datos"
+
+#
 # File: gem/configuration.py, line: 71
 #, fuzzy
 msgid "Delete savestates files"
@@ -909,6 +915,17 @@ msgstr ""
 # File: gem/preferences.py, line: 98
 msgid "Horizontal"
 msgstr "Horizontal"
+
+#
+# File: gem/ui/preferences/console.py, line: 191
+# File: gem/ui/preferences/emulator.py, line: 174
+msgid "Icon"
+msgstr ""
+
+#
+# File: gem/ui/dialog/delete.py, line: 193
+msgid "Icons cache"
+msgstr ""
 
 #
 # File: gem/ui/preferences/interface.py, line: 679

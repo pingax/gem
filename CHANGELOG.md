@@ -4,18 +4,31 @@ GEM Changelog
 Version 1.0 - Space Fox
 -----------------------
 
+### Data
+
+* Add emulators licenses file
+* Switch 'Nintendo SNES' emulator to mednafen from consoles.conf
+* Switch 'SEGA Megadrive' emulator to mednafen from consoles.conf
+* Remove consoles `old` folder
+* Remove emulators icons
+* Remove MAME console
+* Remove Snes9x, MAME, visualBoyAdvance and ZSNES emulators from emulators.conf
+* Move `gem.svg` and `gem.desktop` into `/data`
+
 ### Engine
 
 * Add cover field to game database
 * Add score field to game database
 * Add installed date field to game object
 * Add favorite field to console object
-* Add GEM.get_game_tags function to API
+* Add `GEM.get_game_tags` function to API
+
 * Allow to set specific configuration paths in constructor parameters
 
 ### GTK+ interface
 
 * New optional dependency → python3-magic
+
 * Add the statusbar for default theme and rewrite his contents
 * Add a tags selector to game properties dialog
 * Add more informations into game sidebar
@@ -24,14 +37,18 @@ Version 1.0 - Space Fox
 * Add to remove the desktop file when removing a game
 * Add a dialog to alert the user when a GEM instance already exists
 * Add a maintenance dialog to replace the clean database dialog
+* Add a cache folder to save games and consoles icons
+
 * Allow to reorder games treeview columns
 * Allow to drag the sidebar image to another application
 * Allow to duplicate a game and his data
 * Allow to sort games list treeview
 * Allow to import or export game note
+
 * Restore GTK+ menuitem behavior to main and game menus
 * Restore old dialog buttons behavior to both themes
 * Restore old renaming system based on dialog window
+
 * Fix wrong object set during drag and drop process
 * Fix missing global shortcuts in default theme
 * Fix game tooltip not update after game renaming
@@ -41,6 +58,14 @@ Version 1.0 - Space Fox
 * Fix console without icon raise TypeError exceptions
 * Fix disable consoles selector when no console available
 * Fix wrong treeiter used when games list was filtered
+
+### Launcher
+
+* Add --cache argument to specify an icons cache folder (Default: $XDG_CACHE_HOME)
+
+* Move consoles icons from `icons/consoles` to `icons` in local folder ($XDG_DATA_HOME/gem)
+
+* Remove --create-folders argument
 
 Version 0.9.1 - Lavos (17 Feb, 2018)
 ------------------------------------
@@ -54,11 +79,11 @@ Version 0.9 - Frog Knight (21 Jan, 2018)
 
 ### Engine
 
-* Add GEM.get_games function to API
-* Add GEM.get_consoles function to API
-* Add GEM.get_emulators function to API
-* Add Game.new static function to API
-* Add Game.reset function to API
+* Add `GEM.get_games` function to API
+* Add `GEM.get_consoles` function to API
+* Add `GEM.get_emulators` function to API
+* Add `Game.new` static function to API
+* Add `Game.reset` function to API
 * Add finish flag field
 * Add console recursive mode field
 * Add environment variables management from configuration file
@@ -139,7 +164,7 @@ Version 0.6 - Magicball (26 Feb, 2017)
 * Add the possibility to switch ui theme between dark and light
 * Add an icon in consoles combobox to alert user when a binary is missing
 * Add the possibility to use basename for emulator binary instead of full path
-* Add &lt;conf_path&gt;, &lt;rom_path&gt;, &lt;rom_name&gt;, &lt;rom_file&gt; to default argument
+* Add `<conf_path>`, `<rom_path>`, `<rom_name>`, `<rom_file>` to default argument
 * Add the possibility to create notes pad for a game
 * Add translucent icons into games treeview
 * Add debug mode
@@ -221,7 +246,7 @@ Version 0.3 - Fast Hedgehog (29 Feb, 2016)
 ------------------------------------------
 
 * Improve database module to allow quick databases creation with configuration files.
-* Add a system to convert old database (version &lt; 0.3) to new schema.
+* Add a system to convert old database (version `< 0.3`) to new schema.
 * Add few explanations on consoles and emulators preferences.
 * Add possibility to configure shortcuts in preferences.
 * Add possibility to hide output tab and statusbar in preferences.

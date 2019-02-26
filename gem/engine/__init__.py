@@ -45,6 +45,7 @@ from glob import glob
 from copy import deepcopy
 
 from shutil import move
+from shutil import rmtree
 from shutil import copy2 as copy
 
 # Logging

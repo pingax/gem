@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-02-23 11:46+0100\n"
+"PO-Revision-Date: 2019-02-25 21:12+0100\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -466,6 +466,11 @@ msgid "Delete game note file"
 msgstr "Supprimer le fichier de note du jeu"
 
 #
+# File: src/window.py, line: 446
+msgid "Delete generated icons from cache"
+msgstr "Supprimer les icônes générées dans le cache"
+
+#
 # File: gem/gtk/preferences.py, line: 2597
 msgid "Delete savestates files"
 msgstr "Supprimer les fichiers de sauvegarde"
@@ -864,6 +869,17 @@ msgstr "Cacher"
 # File: gem/preferences.py, line: 98
 msgid "Horizontal"
 msgstr "Horizontales"
+
+#
+# File: gem/ui/preferences/console.py, line: 191
+# File: gem/ui/preferences/emulator.py, line: 174
+msgid "Icon"
+msgstr "Icône"
+
+#
+# File: gem/gtk/preferences.py, line: 725
+msgid "Icons cache"
+msgstr "Cache des icônes"
 
 #
 # File: gem/gtk/preferences.py, line: 725

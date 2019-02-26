@@ -289,17 +289,12 @@ def generate_identifier(name):
     'double-dragon-iii-the-sacred-stones-europe'
     """
 
-    # Replace special characters
-    name = sub(",|'|\)|\[|\]|!|\?|\.|~", ' ', name)
-    name = sub("\(|:|_", '-', name)
+    # Retrieve only alphanumeric element from filename
+    name = sub(r"[^\w\d]+", ' ', name.lower())
+    # Remove useless spaces and replace the others with a dash
+    name = sub(r"[\s|_]+", '-', name.strip())
 
-    # Replace multiple dashs with only one
-    name = sub("-+", ' ', name)
-
-    # Replace multiple spaces with only one
-    name = sub(" +", ' ', name)
-
-    return name.strip().replace(' ', '-').lower()
+    return name
 
 
 def generate_extension(extension):

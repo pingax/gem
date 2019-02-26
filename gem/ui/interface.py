@@ -64,13 +64,15 @@ class MainWindow(Gtk.ApplicationWindow):
         "script-terminate": (SignalFlags.RUN_LAST, None, [object]),
     }
 
-    def __init__(self, api):
+    def __init__(self, api, cache):
         """ Constructor
 
         Parameters
         ----------
         api : gem.engine.api.GEM
             GEM API instance
+        cache : str
+            Cache folder path
 
         Raises
         ------
@@ -95,6 +97,13 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Check development version
         self.__version = self.check_version()
+
+        # Cache folder
+        if cache is not None:
+            self.__cache = expanduser(cache)
+
+        else:
+            self.__cache = expanduser(path_join(xdg_cache_home, "gem"))
 
         # ------------------------------------
         #   Initialize variables
@@ -168,8 +177,6 @@ class MainWindow(Gtk.ApplicationWindow):
             unfinish=Icons.Uncertain,
             nostarred=Icons.NoStarred,
             starred=Icons.Starred)
-
-        self.icons.theme.append_search_path(get_data(path_join("icons", "ui")))
 
         # Generate symbolic icons class
         for key, value in Icons.__dict__.items():
@@ -2491,7 +2498,8 @@ class MainWindow(Gtk.ApplicationWindow):
         """
 
         self.logger.debug("Use GTK+ library v.%d.%d.%d" % (
-            Gtk.get_major_version(), Gtk.get_minor_version(),
+            Gtk.get_major_version(),
+            Gtk.get_minor_version(),
             Gtk.get_micro_version()))
 
         # ------------------------------------
@@ -4339,15 +4347,9 @@ class MainWindow(Gtk.ApplicationWindow):
         for child in self.listbox_consoles.get_children():
             self.listbox_consoles.remove(child)
 
-        # Get toolbar icons size
-        data = Gtk.IconSize.lookup(self.__current_toolbar_size)
-        if data is not None and len(data) == 3:
-            # Get maximum icon size (this size cannot be under 24 pixels)
-            size = max(size, data[1], data[2])
-
         # Retrieve available consoles
         for console in self.api.consoles:
-            console_data = self.__on_generate_console_row(console, size)
+            console_data = self.__on_generate_console_row(console)
 
             if console_data is not None:
                 row = self.__on_append_console_row(*console_data)
@@ -4427,21 +4429,21 @@ class MainWindow(Gtk.ApplicationWindow):
         return row_console
 
 
-    def __on_generate_console_row(self, identifier, size):
+    def __on_generate_console_row(self, identifier):
         """ Generate console row data from a specific console
 
         Parameters
         ----------
         identifier : str
             Console identifier
-        size : int
-            Console icon size in pixels
 
         Returns
         -------
         tuple or None
             Generation results
         """
+
+        need_save = False
 
         hide = self.config.getboolean(
             "gem", "hide_empty_console", fallback=False)
@@ -4455,19 +4457,12 @@ class MainWindow(Gtk.ApplicationWindow):
             console.set_games(self.api)
 
             if not hide or len(console.games) > 0:
-                icon = console.icon
 
-                if icon is not None:
-                    if not exists(expanduser(icon)):
-                        icon = self.api.get_local(
-                            "icons", "consoles", "%s.%s" % (icon, Icons.Ext))
+                icon = self.get_pixbuf_from_cache(
+                    "consoles", 24, console.id, console.icon)
 
-                    # Get console icon
-                    icon = icon_from_data(
-                        icon, self.icons.blank(size), size, size)
-
-                else:
-                    icon = self.icons.blank()
+                if icon is None:
+                    icon = self.icons.blank(24)
 
                 return(console, icon)
 
@@ -4499,21 +4494,17 @@ class MainWindow(Gtk.ApplicationWindow):
             self.set_infobar()
             self.set_informations_headerbar()
 
-            icon = row.console.icon
+            self.__console_icon = self.get_pixbuf_from_cache(
+                "consoles", 96, row.console.id, row.console.icon)
 
-            if icon is not None:
-                if not exists(expanduser(icon)):
-                    icon = self.api.get_local(
-                        "icons", "consoles", "%s.%s" % (icon, Icons.Ext))
+            if self.__console_icon is None:
+                self.__console_icon = self.icons.blank(96)
 
-                self.__console_icon = set_pixbuf_opacity(
-                    icon_from_data(icon, self.icons.blank(96), 96, 96), 50)
+            self.__console_thumbnail = self.get_pixbuf_from_cache(
+                "consoles", 22, row.console.id, row.console.icon)
 
-                self.__console_thumbnail = set_pixbuf_opacity(
-                    icon_from_data(icon, self.icons.blank(22), 22, 255), 50)
-
-            else:
-                image = self.icons.blank()
+            if self.__console_thumbnail is None:
+                self.__console_thumbnail = self.icons.blank(22)
 
             # ------------------------------------
             #   Check data
@@ -4844,11 +4835,11 @@ class MainWindow(Gtk.ApplicationWindow):
                         game.name,
                         game ]
 
-                    # Thumbnail
-                    if game.cover is not None and exists(game.cover):
-                        icon = Pixbuf.new_from_file_at_scale(
-                            expanduser(game.cover), 96, 96, True)
+                    # Large icon
+                    icon = self.get_pixbuf_from_cache(
+                        "games", 96, game.id, game.cover)
 
+                    if icon is not None:
                         row_data[Columns.Grid.Icon] = icon
 
                     row_grid = self.model_games_grid.append(row_data)
@@ -4936,10 +4927,12 @@ class MainWindow(Gtk.ApplicationWindow):
                         row_data[Columns.List.Save] = \
                             self.icons.get("savestate")
 
-                    # Thumbnail
-                    if game.cover is not None and exists(game.cover):
-                        row_data[Columns.List.Thumbnail] = \
-                            icon.scale_simple(22, 22, InterpType.BILINEAR)
+                    # Thumbnail icon
+                    icon = self.get_pixbuf_from_cache(
+                        "games", 22, game.id, game.cover)
+
+                    if icon is not None:
+                        row_data[Columns.List.Thumbnail] = icon
 
                     row_list = self.model_games_list.append(row_data)
 
@@ -5122,10 +5115,6 @@ class MainWindow(Gtk.ApplicationWindow):
                 emulator = console.emulator
                 if game.emulator is not None:
                     emulator = game.emulator
-
-                if emulator.configuration is None or \
-                    not exists(emulator.configuration):
-                    self.widget_consoles_properties.set_sensitive(False)
 
                 # ----------------------------
                 #   Manage widgets
@@ -6667,20 +6656,61 @@ class MainWindow(Gtk.ApplicationWindow):
                     # Update game from database
                     self.api.update_game(game)
 
-                    icon = self.__console_icon
-                    thumbnail = self.__console_thumbnail
-
-                    if game.cover is not None and exists(game.cover):
-                        icon = Pixbuf.new_from_file_at_scale(
-                            expanduser(game.cover), 96, 96, True)
-
-                        thumbnail= icon.scale_simple(
-                            22, 22, InterpType.BILINEAR)
-
                     treeiter = self.game_path[game.filename]
 
+                    large_cache_path = self.get_icon_from_cache(
+                        "games", "96x96", "%s.png" % game.id)
+
+                    thumbnail_cache_path = self.get_icon_from_cache(
+                        "games", "22x22", "%s.png" % game.id)
+
+                    # A new icon is available so we regenerate icon cache
+                    if game.cover is not None and exists(game.cover):
+
+                        # ----------------------------
+                        #   Large grid icon
+                        # ----------------------------
+
+                        try:
+                            large = Pixbuf.new_from_file_at_scale(
+                                expanduser(game.cover), 96, 96, True)
+
+                            large.savev(
+                                large_cache_path, "png", list(), list())
+
+                        except GLib.Error as error:
+                            self.logger.exception(
+                                "An error occur during cover generation")
+
+                        # ----------------------------
+                        #   Thumbnail icon
+                        # ----------------------------
+
+                        try:
+                            thumbnail = Pixbuf.new_from_file_at_scale(
+                                expanduser(game.cover), 22, 22, True)
+
+                            thumbnail.savev(
+                                thumbnail_cache_path, "png", list(), list())
+
+                        except GLib.Error as error:
+                            self.logger.exception(
+                                "An error occur during cover generation")
+
+                    # Remove previous cache icons
+                    else:
+                        large = self.__console_icon
+
+                        thumbnail = self.__console_thumbnail
+
+                        if exists(large_cache_path):
+                            remove(large_cache_path)
+
+                        if exists(thumbnail_cache_path):
+                            remove(thumbnail_cache_path)
+
                     self.model_games_grid.set_value(
-                        treeiter[2], Columns.Grid.Icon, icon)
+                        treeiter[2], Columns.Grid.Icon, large)
 
                     self.model_games_list.set_value(
                         treeiter[1], Columns.List.Thumbnail, thumbnail)
@@ -7320,6 +7350,108 @@ class MainWindow(Gtk.ApplicationWindow):
 
         if treeiter is not None:
             self.model_games_list[treeiter[1]][index] = data
+
+
+    def get_icon_from_cache(self, *args):
+        """ Retrieve icon from cache folder
+
+        Returns
+        -------
+        str
+            Cached icon path
+        """
+
+        return expanduser(path_join(self.__cache, *args))
+
+
+    def get_pixbuf_from_cache(self, key, size, identifier, path):
+        """ Retrieve an icon from cache or generate it
+
+        Parameters
+        ----------
+        key : str
+            Cache category folder
+        size : int
+            Pixbuf size in pixels
+        identifier : str
+            Icon identifier
+        path : str or None
+            Icon path
+
+        Returns
+        -------
+        Gdk.Pixbuf or None
+            New cached icon or None if no icon has been generated
+        """
+
+        icon = None
+        need_save = False
+
+        cache_path = self.get_icon_from_cache(
+            key, "%dx%d" % (size, size), "%s.png" % identifier)
+
+        # Retrieve icon from cache folder
+        if exists(cache_path) and isfile(cache_path):
+            return Pixbuf.new_from_file(cache_path)
+
+        # Generate a new cache icon
+        elif path is not None:
+            path = expanduser(path)
+
+            # Retrieve icon from sepecific collection
+            if not exists(path):
+
+                if key == "consoles":
+                    collection_path = expanduser(self.api.get_local(
+                        "icons", key, "%s.%s" % (path, Icons.Ext)))
+
+                    # Generate a new cache icon
+                    if exists(collection_path) and isfile(collection_path):
+
+                        # Check the file mime-type to avoid non-image file
+                        if magic_from_file(
+                            collection_path, mime=True).startswith("image/"):
+
+                            icon = Pixbuf.new_from_file_at_scale(
+                                collection_path, size, size, True)
+
+                            need_save = True
+
+                elif key == "emulators":
+
+                    if self.icons.theme.has_icon(path):
+                        icon = self.icons.theme.load_icon(
+                            path, size, Gtk.IconLookupFlags.FORCE_SIZE)
+
+                        need_save = True
+
+            # Generate a new cache icon
+            elif exists(path) and isfile(path):
+
+                # Check the file mime-type to avoid non-image file
+                if magic_from_file(path, mime=True).startswith("image/"):
+                    icon = Pixbuf.new_from_file_at_scale(path, size, size, True)
+
+                    need_save = True
+
+            # Save generated icon to cache
+            if need_save:
+                try:
+                    self.logger.debug(
+                        "Save generated icon to %s" % cache_path)
+
+                    if not exists(dirname(cache_path)):
+                        makedirs(dirname(cache_path))
+
+                    icon.savev(cache_path, "png", list(), list())
+
+                except GLib.Error as error:
+                    self.logger.exception(
+                        "An error occur during cache generation")
+
+            return icon
+
+        return None
 
 
     def get_mednafen_status(self):

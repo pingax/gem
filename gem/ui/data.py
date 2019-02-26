@@ -24,6 +24,7 @@ from gem.engine.lib import *
 
 try:
     from xdg.BaseDirectory import xdg_data_home
+    from xdg.BaseDirectory import xdg_cache_home
     from xdg.BaseDirectory import xdg_config_home
 
 except ImportError as error:
@@ -33,6 +34,11 @@ except ImportError as error:
         xdg_data_home = environ["XDG_DATA_HOME"]
     else:
         xdg_data_home = expanduser("~/.local/share")
+
+    if "XDG_CACHE_HOME" in environ:
+        xdg_cache_home = environ["XDG_CACHE_HOME"]
+    else:
+        xdg_cache_home = expanduser("~/.cache")
 
     if "XDG_CONFIG_HOME" in environ:
         xdg_config_home = environ["XDG_CONFIG_HOME"]
@@ -48,6 +54,9 @@ class Documents:
 
 class Folders:
     Apps        = path_join(expanduser(xdg_data_home), "applications")
+    Cache       = path_join(expanduser(xdg_cache_home), "gem")
+    Local       = path_join(expanduser(xdg_data_home), "gem")
+    Config      = path_join(expanduser(xdg_config_home), "gem")
 
 class Icons:
     Ext         = "png"

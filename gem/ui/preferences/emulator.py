@@ -142,6 +142,9 @@ class EmulatorPreferences(CommonWindow):
         self.label_name = Gtk.Label()
         self.entry_name = Gtk.Entry()
 
+        self.label_icon = Gtk.Label()
+        self.entry_icon = Gtk.Entry()
+
         self.label_binary = Gtk.Label()
         self.entry_binary = Gtk.Entry()
 
@@ -161,6 +164,17 @@ class EmulatorPreferences(CommonWindow):
 
         self.entry_name.set_hexpand(True)
         self.entry_name.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
+
+        self.label_icon.set_halign(Gtk.Align.END)
+        self.label_icon.set_valign(Gtk.Align.CENTER)
+        self.label_icon.set_justify(Gtk.Justification.RIGHT)
+        self.label_icon.get_style_context().add_class("dim-label")
+        self.label_icon.set_text(
+            _("Icon"))
+
+        self.entry_icon.set_hexpand(True)
+        self.entry_icon.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
 
         self.label_binary.set_halign(Gtk.Align.END)
@@ -349,13 +363,16 @@ class EmulatorPreferences(CommonWindow):
         self.grid_preferences.attach(self.label_name, 0, 0, 1, 1)
         self.grid_preferences.attach(self.entry_name, 1, 0, 1, 1)
 
-        self.grid_preferences.attach(self.label_binary, 0, 1, 1, 1)
-        self.grid_preferences.attach(self.grid_binary, 1, 1, 1, 1)
+        self.grid_preferences.attach(self.label_icon, 0, 1, 1, 1)
+        self.grid_preferences.attach(self.entry_icon, 1, 1, 1, 1)
+
+        self.grid_preferences.attach(self.label_binary, 0, 2, 1, 1)
+        self.grid_preferences.attach(self.grid_binary, 1, 2, 2, 1)
 
         self.grid_preferences.attach(self.button_emulator, 2, 0, 1, 2)
 
-        self.grid_preferences.attach(self.label_configuration, 0, 2, 1, 1)
-        self.grid_preferences.attach(self.file_configuration, 1, 2, 2, 1)
+        self.grid_preferences.attach(self.label_configuration, 0, 3, 1, 1)
+        self.grid_preferences.attach(self.file_configuration, 1, 3, 2, 1)
 
         self.grid_preferences.attach(self.label_arguments, 0, 4, 3, 1)
 
@@ -379,6 +396,7 @@ class EmulatorPreferences(CommonWindow):
         # Emulator options
         self.button_binary.set_image(self.image_binary)
 
+        # Emulator icon
         self.button_emulator.set_image(self.image_emulator)
 
         # Emulator binary
@@ -392,6 +410,9 @@ class EmulatorPreferences(CommonWindow):
 
         self.entry_name.connect("changed", self.__on_entry_update)
         self.entry_name.connect("icon-press", on_entry_clear)
+
+        self.entry_icon.connect("changed", self.__on_icon_update)
+        self.entry_icon.connect("icon-press", on_entry_clear)
 
         self.entry_binary.connect("changed", self.__on_entry_update)
         self.entry_binary.connect("icon-press", on_entry_clear)
@@ -438,13 +459,16 @@ class EmulatorPreferences(CommonWindow):
             # Icon
             self.path = self.emulator.icon
 
-            icon = self.path
-            if icon is not None and not exists(expanduser(icon)):
-                icon = self.api.get_local(
-                    "icons", "emulators", "%s.%s" % (icon, Icons.Ext))
+            if self.path is not None:
+                self.entry_icon.set_text(self.path)
 
-            self.image_emulator.set_from_pixbuf(
-                icon_from_data(icon, self.icons.blank(64), 64, 64))
+            icon = self.interface.parent.get_pixbuf_from_cache(
+                "emulators", 64, self.emulator.id, self.emulator.icon)
+
+            if icon is None:
+                icon = self.icons.blank(64)
+
+            self.image_emulator.set_from_pixbuf(icon)
 
             # Regex
             if self.emulator.savestates is not None:
@@ -490,6 +514,14 @@ class EmulatorPreferences(CommonWindow):
 
                     self.api.delete_emulator(self.emulator.id)
 
+                # Remove thumbnails from cache
+                for size in ("22x22", "48x48", "64x64"):
+                    cache_path = self.interface.parent.get_icon_from_cache(
+                        "emulators", size, "%s.png" % self.emulator.id)
+
+                    if exists(cache_path):
+                        remove(cache_path)
+
                 # Append a new emulator
                 self.api.add_emulator(self.data)
 
@@ -527,12 +559,6 @@ class EmulatorPreferences(CommonWindow):
         if binary is None:
             binary = str()
 
-        icon = self.path
-        if icon is not None and path_join(
-            get_data("icons"), basename(icon)) == icon:
-
-            icon = splitext(basename(icon))[0]
-
         configuration = self.file_configuration.get_filename()
         if configuration is None or not exists(configuration):
             configuration = None
@@ -561,7 +587,7 @@ class EmulatorPreferences(CommonWindow):
             "id": identifier,
             "name": self.section,
             "binary": binary,
-            "icon": icon,
+            "icon": expanduser(self.entry_icon.get_text()),
             "configuration": configuration,
             "savestates": savestates,
             "screenshots": screenshots,
@@ -591,21 +617,24 @@ class EmulatorPreferences(CommonWindow):
 
         name = self.entry_name.get_text()
 
-        if name is None or len(name) == 0:
-            self.error = True
+        if len(name) > 0:
+
+            # Always check identifier to avoid NES != NeS
+            name = generate_identifier(name)
+
+            # Check if current emulator exists in database
+            if name in self.api.emulators:
+
+                # Avoid to use a name which already exists in database
+                if self.emulator is not None and not self.emulator.id == name:
+                    self.error = True
+
+                    icon = Icons.Error
+                    tooltip = _("This emulator already exist, please, "
+                        "choose another name")
 
         else:
-            # Always check identifier to avoid NES != NeS
-            identifier = generate_identifier(name)
-
-            if identifier in self.api.emulators and (not self.modify or (
-                self.modify and not name == self.emulator.name)):
-
-                status = False
-
-                icon = Icons.Error
-                tooltip = _(
-                    "This emulator already exist, please, choose another name")
+            self.error = True
 
         if widget == self.entry_name:
             self.entry_name.set_icon_from_icon_name(
@@ -619,12 +648,14 @@ class EmulatorPreferences(CommonWindow):
         icon = None
         tooltip = None
 
-        path = self.entry_binary.get_text()
+        binary_path = self.entry_binary.get_text()
 
-        if path is None or len(path) == 0:
+        # No binary available in entry
+        if len(binary_path) == 0:
             self.error = True
 
-        elif len(get_binary_path(path)) == 0:
+        # Binary not exists in available $PATH variable
+        elif len(get_binary_path(binary_path)) == 0:
             self.error = True
 
             icon = Icons.Error
@@ -644,6 +675,18 @@ class EmulatorPreferences(CommonWindow):
 
         else:
             self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
+
+
+    def __on_icon_update(self, widget):
+        """ Update icon thumbnail when the icon entry is update
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        self.set_icon(self.image_emulator, widget.get_text())
 
 
     def __on_file_set(self, widget):
@@ -673,21 +716,23 @@ class EmulatorPreferences(CommonWindow):
 
     def __on_select_icon(self, widget):
         """ Select a new icon
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
         """
 
         dialog = IconsDialog(self, _("Choose an icon"), self.path, "emulators")
 
         if dialog.new_path is not None:
-            icon = dialog.new_path
-
-            if not exists(expanduser(icon)):
-                icon = self.api.get_local(
-                    "icons", "emulators", "%s.%s" % (icon, Icons.Ext))
-
-            self.image_emulator.set_from_pixbuf(
-                icon_from_data(icon, self.icons.blank(64), 64, 64))
-
             self.path = dialog.new_path
+
+            # Update icon thumbnail
+            self.set_icon(self.image_emulator, self.path)
+
+            # Update icon entry
+            self.entry_icon.set_text(self.path)
 
         dialog.destroy()
 
@@ -711,3 +756,40 @@ class EmulatorPreferences(CommonWindow):
         self.label_screenshots.set_visible(status)
         self.entry_screenshots.set_visible(status)
         self.label_joker.set_visible(status)
+
+
+    def set_icon(self, widget, path, size=64):
+        """ Set thumbnail icon from a specific path
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Icon widget to update
+        path : str
+            Icon path
+        size : int, optional
+            Icon size in pixels (Default: 64)
+        """
+
+        # Retrieve an empty icon
+        icon = self.icons.blank(size)
+
+        if len(path) > 0:
+            path = expanduser(path)
+
+            # Check icon from icons theme
+            if not exists(path):
+
+                # Retrieve icon from collection
+                if self.icons.theme.has_icon(path):
+                    icon = self.icons.theme.load_icon(
+                        path, size, Gtk.IconLookupFlags.FORCE_SIZE)
+
+            # Retrieve icon from file
+            elif isfile(path):
+
+                # Check the file mime-type to avoid non-image file
+                if magic_from_file(path, mime=True).startswith("image/"):
+                    icon = Pixbuf.new_from_file_at_scale(path, size, size, True)
+
+        widget.set_from_pixbuf(icon)
