@@ -14,6 +14,7 @@ setup(
     author_email = "pacmiam@tuxfamily.org",
     description = "Graphical Emulators Manager",
     url = "https://gem.tuxfamily.org",
+    download_url = "https://download.tuxfamily.org/gem/releases/",
     license = "GPLv3",
 
     packages = find_packages(),
@@ -26,10 +27,12 @@ setup(
     },
 
     classifiers = [
-        "Programming Language :: Python :: 3.6",
         "Development Status :: Stable",
+        "Environment :: Desktop Environment",
+        "Intended Audience :: End Users/Desktop",
         "License :: GPL3",
         "Operating System :: GNU/Linux",
+        "Programming Language :: Python :: 3.6",
         "Topic :: Games",
         "Topic :: Utilities",
     ],

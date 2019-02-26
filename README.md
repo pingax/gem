@@ -9,6 +9,8 @@ to stay the simplest.
 
 GEM is available under [GPLv3 license](https://www.gnu.org/licenses/gpl-3.0.html).
 
+Integrated emulators licenses available [here](docs/LICENSE.emulators.md).
+
 More informations on [GEM website](https://gem.tuxfamily.org/).
 
 Authors
@@ -47,7 +49,6 @@ $ eopkg install gem
 
 ### Icons
 
-* Emulators: [Gelide](http://gelide.sourceforge.net/index.php?lang=en) (for most of them)
 * Consoles: [Evan-Amos](https://commons.wikimedia.org/wiki/User:Evan-Amos)
 
 Dependencies
@@ -87,15 +88,12 @@ Go to the GEM source code root folder and launch the following command:
 $ python3 -m gem
 ```
 
-It's possible to set the configuration folders with --config and --local
-arguments:
+It's possible to set the configuration folders with --cache, --config and
+--local arguments:
 
 ```
-$ python3 -m gem --config ~/.config/gem --local ~/.local/gem
+$ python3 -m gem --cache ~/.cache --config ~/.config/gem --local ~/.local/gem
 ```
-
-Note: GEM not create the specified folders by default. This behavior is
-available with the --create-folders argument.
 
 Installation
 ------------
@@ -118,16 +116,12 @@ Emulators
 Default configuration files allow you to use the following emulators out of the
 box:
 
-* Mame
 * Mednafen
 * Stella (Atari 2600)
 * Hatari (Atari ST)
 * Fceux (Nintendo NES)
 * Nestopia (Nintendo NES)
-* Zsnes (Nintendo SNES)
-* Snes9x (Nintendo SNES)
 * Mupen64plus (Nintendo 64)
-* VisualBoyAdvance (Nintendo GBA)
 * Desmume (Nintendo DS)
 * Dolphin (Nintendo GameCube et Nintendo Wii)
 * Gens (Sega Genesis)

@@ -1,4 +1,19 @@
 #!/usr/bin/env bash
+# ------------------------------------------------------------------------------
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 3 of the License.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+#  MA 02110-1301, USA.
+# ------------------------------------------------------------------------------
 
 if [ -z "$BASH_VERSION" ]; then
     bash $0 $@
@@ -9,17 +24,30 @@ if [ $EUID -ne 0 ] ; then
     echo "Need to use root account to install GEM"
 
 else
-    echo "==> Install GEM"
-    python3 setup.py install --prefix=/usr
+    PREFIX="${PREFIX:=/usr}"
 
-    echo "==> Remove build folders"
-    rm -Rf build dist gem.egg-info
+    # ----------------------------------------
+    #   Setup script
+    # ----------------------------------------
 
-    echo "==> Install icon file"
-    mkdir -p /usr/share/pixmaps/
-    cp gem/icons/ui/gem.svg /usr/share/pixmaps/
+    echo -e "\033[1m==> Install GEM\033[0m"
+    python3 setup.py install --root="/" --prefix="${PREFIX}" -O1
 
-    echo "==> Install desktop file"
-    mkdir -p /usr/share/applications/
-    cp gem.desktop /usr/share/applications/
+    echo -e "\033[1m==> Remove build folders\033[0m"
+    rm -Rfv "build" "dist" "gem.egg-info"
+
+    # ----------------------------------------
+    #   Application data
+    # ----------------------------------------
+
+    echo -e "\033[1m==> Install icon files\033[0m"
+    mkdir -pv "${PREFIX}/share/pixmaps/"
+    cp -v "data/gem.svg" "${PREFIX}/share/pixmaps/"
+
+    mkdir -pv "${PREFIX}/share/icons/hicolor/scalable/apps/"
+    cp -v "data/gem.svg" "${PREFIX}/share/icons/hicolor/scalable/apps/"
+
+    echo -e "\033[1m==> Install desktop file\033[0m"
+    mkdir -pv "${PREFIX}/share/applications/"
+    cp -v "data/gem.desktop" "${PREFIX}/share/applications/"
 fi
