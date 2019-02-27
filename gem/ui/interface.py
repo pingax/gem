@@ -4501,7 +4501,7 @@ class MainWindow(Gtk.ApplicationWindow):
         return None
 
 
-    def __on_selected_console(self, widget, row):
+    def __on_selected_console(self, widget, row, force=False):
         """ Select a console
 
         This function occurs when the user select a console in the consoles
@@ -4513,10 +4513,12 @@ class MainWindow(Gtk.ApplicationWindow):
             Object which receive signal
         row : gem.gtk.widgets.ListBoxSelectorItem
             Activated row
+        force : bool
+            Force console selection even if this is the same console
         """
 
         # Avoid to reload the same console
-        if not self.selection["console"] == row.console:
+        if force or not self.selection["console"] == row.console:
             self.__block_signals()
 
             self.selection["name"] = None
@@ -5409,7 +5411,7 @@ class MainWindow(Gtk.ApplicationWindow):
         row = self.listbox_consoles.get_selected_row()
 
         if row is not None:
-            self.__on_selected_console(None, row)
+            self.__on_selected_console(None, row, force=True)
 
 
     def __on_sort_games(self, model, row1, row2, column):
@@ -6853,15 +6855,15 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.set_sensitive(True)
 
 
-    def __on_game_menu_show(self, treeview, event):
+    def __on_game_menu_show(self, widget, event):
         """ Open context menu
 
         This function open context-menu when user right-click or use context key
-        on games treeview
+        on games views
 
         Parameters
         ----------
-        treeview : Gtk.Treeview
+        widget : Gtk.Widget
             Object which receive signal
         event : Gdk.EventButton or Gdk.EventKey
             Event which triggered this signal
@@ -6877,19 +6879,30 @@ class MainWindow(Gtk.ApplicationWindow):
         # Gdk.EventButton - Mouse
         if event.type == EventType.BUTTON_PRESS:
             if event.button == Gdk.BUTTON_SECONDARY:
-                treeiter = treeview.get_path_at_pos(int(event.x), int(event.y))
+                selection = False
 
-                if treeiter is not None:
+                x, y = int(event.x), int(event.y)
 
-                    if treeview == self.treeview_games:
-                        path, col = treeiter[0:2]
+                # List view
+                if widget == self.treeview_games:
+                    treeiter = widget.get_path_at_pos(x, y)
 
-                        treeview.set_cursor(path, col, 0)
+                    if treeiter is not None:
+                        widget.set_cursor(treeiter[0], treeiter[1], False)
 
-                    if treeview == self.iconview_games:
-                        treeview.select_path(treeiter)
+                        selection = True
 
-                    treeview.grab_focus()
+                # Grid icons view
+                if widget == self.iconview_games:
+                    treeiter = widget.get_path_at_pos(x, y)
+
+                    if treeiter is not None:
+                        widget.select_path(treeiter)
+
+                        selection = True
+
+                if selection:
+                    widget.grab_focus()
 
                     self.menu_games.popup_at_pointer(event)
 
@@ -6899,12 +6912,12 @@ class MainWindow(Gtk.ApplicationWindow):
         elif event.type == EventType.KEY_RELEASE:
             if event.keyval == Gdk.KEY_Menu:
 
-                if treeview == self.treeview_games:
-                    model, treeiter = treeview.get_selection().get_selected()
+                if widget == self.treeview_games:
+                    model, treeiter = widget.get_selection().get_selected()
 
-                elif treeview == self.iconview_games:
-                    model = treeview.get_model()
-                    items = treeview.get_selected_items()
+                elif widget == self.iconview_games:
+                    model = widget.get_model()
+                    items = widget.get_selected_items()
 
                     if len(items) >= 1:
                         treeiter = model.get_iter(items[0])

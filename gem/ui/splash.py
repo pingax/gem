@@ -179,8 +179,6 @@ class Splash(Gtk.Window):
 
         self.show_all()
 
-        self.set_auto_startup_notification(True)
-
         self.label_progress.hide()
         self.progressbar.hide()
 
@@ -203,6 +201,8 @@ class Splash(Gtk.Window):
     def close(self):
         """ Stop interface
         """
+
+        self.set_auto_startup_notification(True)
 
         # Sleep to avoid ultra quick splash
         sleep(0.42)
