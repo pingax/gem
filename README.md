@@ -7,11 +7,16 @@ to stay the simplest.
 
 ![GEM main interface](https://gem.tuxfamily.org/data/medias/preview.tb.png)
 
+More informations on [GEM website](https://gem.tuxfamily.org/).
+
+Licenses
+--------
+
 GEM is available under [GPLv3 license](https://www.gnu.org/licenses/gpl-3.0.html).
 
-Integrated emulators licenses available [here](docs/LICENSE.emulators.md).
+GEM logo is available under [Free Art License](http://artlibre.org/licence/lal/en/).
 
-More informations on [GEM website](https://gem.tuxfamily.org/).
+More informations about available emulators licenses [here](docs/LICENSE.emulators.md).
 
 Authors
 -------
