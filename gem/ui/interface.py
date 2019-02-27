@@ -376,6 +376,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.popover_menu.set_modal(True)
 
+        self.button_headerbar_grid.set_tooltip_text(_("Grid icons"))
+        self.button_headerbar_list.set_tooltip_text(_("List view"))
+
         # ------------------------------------
         #   Headerbar - Main menu
         # ------------------------------------
@@ -485,6 +488,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menubar = Gtk.MenuBar()
 
         self.menubar_item_main = Gtk.MenuItem()
+        self.menubar_item_view = Gtk.MenuItem()
         self.menubar_item_game = Gtk.MenuItem()
         self.menubar_item_edit = Gtk.MenuItem()
         self.menubar_item_tools = Gtk.MenuItem()
@@ -493,6 +497,8 @@ class MainWindow(Gtk.ApplicationWindow):
         # Properties
         self.menubar_item_main.set_label(_("_GEM"))
         self.menubar_item_main.set_use_underline(True)
+        self.menubar_item_view.set_label(_("_View"))
+        self.menubar_item_view.set_use_underline(True)
         self.menubar_item_game.set_label(_("_Game"))
         self.menubar_item_game.set_use_underline(True)
         self.menubar_item_edit.set_label(_("_Edit"))
@@ -506,28 +512,12 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.menubar_main_menu = Gtk.Menu()
 
-        self.menubar_main_item_dark_theme = Gtk.CheckMenuItem()
-        self.menubar_main_item_sidebar = Gtk.CheckMenuItem()
-        self.menubar_main_item_statusbar = Gtk.CheckMenuItem()
-
         self.menubar_main_item_preferences = Gtk.MenuItem()
         self.menubar_main_item_log = Gtk.MenuItem()
 
         self.menubar_main_item_quit = Gtk.MenuItem()
 
         # Properties
-        self.menubar_main_item_dark_theme.set_label(
-            _("Use _dark theme"))
-        self.menubar_main_item_dark_theme.set_use_underline(True)
-
-        self.menubar_main_item_sidebar.set_label(
-            _("Show _sidebar"))
-        self.menubar_main_item_sidebar.set_use_underline(True)
-
-        self.menubar_main_item_statusbar.set_label(
-            _("Show _statusbar"))
-        self.menubar_main_item_statusbar.set_use_underline(True)
-
         self.menubar_main_item_preferences.set_label(
             "%s…" % _("_Preferences"))
         self.menubar_main_item_preferences.set_use_underline(True)
@@ -539,6 +529,39 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menubar_main_item_quit.set_label(
             _("_Quit"))
         self.menubar_main_item_quit.set_use_underline(True)
+
+        # ------------------------------------
+        #   Menubar - View items
+        # ------------------------------------
+
+        self.menubar_view_menu = Gtk.Menu()
+
+        self.menubar_view_item_dark_theme = Gtk.CheckMenuItem()
+        self.menubar_view_item_sidebar = Gtk.CheckMenuItem()
+        self.menubar_view_item_statusbar = Gtk.CheckMenuItem()
+
+        self.menubar_view_item_list = Gtk.RadioMenuItem()
+        self.menubar_view_item_grid = Gtk.RadioMenuItem()
+
+        # Properties
+        self.menubar_view_item_dark_theme.set_label(
+            _("Use _dark theme"))
+        self.menubar_view_item_dark_theme.set_use_underline(True)
+
+        self.menubar_view_item_sidebar.set_label(
+            _("Show _sidebar"))
+        self.menubar_view_item_sidebar.set_use_underline(True)
+
+        self.menubar_view_item_statusbar.set_label(
+            _("Show _statusbar"))
+        self.menubar_view_item_statusbar.set_use_underline(True)
+
+        self.menubar_view_item_list.set_label(
+            _("List view"))
+
+        self.menubar_view_item_grid.set_label(
+            _("Grid icons"))
+        self.menubar_view_item_grid.join_group(self.menubar_view_item_list)
 
         # ------------------------------------
         #   Menubar - Game items
@@ -1691,6 +1714,7 @@ class MainWindow(Gtk.ApplicationWindow):
         # ------------------------------------
 
         self.menubar.insert(self.menubar_item_main, -1)
+        self.menubar.insert(self.menubar_item_view, -1)
         self.menubar.insert(self.menubar_item_game, -1)
         self.menubar.insert(self.menubar_item_edit, -1)
         self.menubar.insert(self.menubar_item_help, -1)
@@ -1698,15 +1722,20 @@ class MainWindow(Gtk.ApplicationWindow):
         # Menu - Main items
         self.menubar_item_main.set_submenu(self.menubar_main_menu)
 
-        self.menubar_main_menu.insert(Gtk.SeparatorMenuItem(), -1)
-        self.menubar_main_menu.insert(self.menubar_main_item_dark_theme, -1)
-        self.menubar_main_menu.insert(self.menubar_main_item_sidebar, -1)
-        self.menubar_main_menu.insert(self.menubar_main_item_statusbar, -1)
-        self.menubar_main_menu.insert(Gtk.SeparatorMenuItem(), -1)
         self.menubar_main_menu.insert(self.menubar_main_item_preferences, -1)
         self.menubar_main_menu.insert(self.menubar_main_item_log, -1)
         self.menubar_main_menu.insert(Gtk.SeparatorMenuItem(), -1)
         self.menubar_main_menu.insert(self.menubar_main_item_quit, -1)
+
+        # Menu - View items
+        self.menubar_item_view.set_submenu(self.menubar_view_menu)
+
+        self.menubar_view_menu.insert(self.menubar_view_item_dark_theme, -1)
+        self.menubar_view_menu.insert(self.menubar_view_item_sidebar, -1)
+        self.menubar_view_menu.insert(self.menubar_view_item_statusbar, -1)
+        self.menubar_view_menu.insert(Gtk.SeparatorMenuItem(), -1)
+        self.menubar_view_menu.insert(self.menubar_view_item_list, -1)
+        self.menubar_view_menu.insert(self.menubar_view_item_grid, -1)
 
         # Menu - Game items
         self.menubar_item_game.set_submenu(self.menubar_game_menu)
@@ -2100,6 +2129,11 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menubar_main_item_quit.connect(
             "activate", self.__stop_interface)
 
+        self.list_view_signal_menubar = self.menubar_view_item_list.connect(
+            "toggled", self.__on_switch_games_view)
+        self.grid_view_signal_menubar = self.menubar_view_item_grid.connect(
+            "toggled", self.__on_switch_games_view)
+
         self.menubar_edit_item_rename.connect(
             "activate", self.__on_game_renamed)
         self.menubar_edit_item_duplicate.connect(
@@ -2140,11 +2174,11 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menubar_main_item_log.connect(
             "activate", self.__on_show_log)
 
-        self.dark_signal_menubar = self.menubar_main_item_dark_theme.connect(
+        self.dark_signal_menubar = self.menubar_view_item_dark_theme.connect(
             "toggled", self.__on_activate_dark_theme)
-        self.side_signal_menubar = self.menubar_main_item_sidebar.connect(
+        self.side_signal_menubar = self.menubar_view_item_sidebar.connect(
             "toggled", self.__on_activate_sidebar)
-        self.status_signal_menubar = self.menubar_main_item_statusbar.connect(
+        self.status_signal_menubar = self.menubar_view_item_statusbar.connect(
             "toggled", self.__on_activate_statusbar)
 
         self.menubar_help_item_about.connect(
@@ -2383,41 +2417,43 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Define signals per toggle buttons
         self.__signals_storage = {
-            self.button_toolbar_fullscreen: self.fullscreen_signal_tool,
-            self.button_headerbar_list: self.list_view_signal,
             self.button_headerbar_grid: self.grid_view_signal,
-            self.switch_menu_dark_theme: self.dark_signal_menu,
+            self.button_headerbar_list: self.list_view_signal,
+            self.button_toolbar_fullscreen: self.fullscreen_signal_tool,
+            self.menu_item_consoles_favorite: self.favorite_signal_options,
+            self.menu_item_consoles_recursive: self.recursive_signal_options,
             self.menu_item_favorite: self.favorite_signal_menu,
             self.menu_item_finish: self.finish_signal_menu,
             self.menu_item_multiplayer: self.multi_signal_menu,
-            self.switch_menu_sidebar: self.side_signal_menu,
-            self.switch_menu_statusbar: self.status_signal_menu,
             self.menubar_game_item_favorite: self.favorite_signal_menubar,
             self.menubar_game_item_finish: self.finish_signal_menubar,
             self.menubar_game_item_fullscreen: self.fullscreen_signal,
             self.menubar_game_item_multiplayer: self.multi_signal_menubar,
-            self.menubar_main_item_dark_theme: self.dark_signal_menubar,
-            self.menubar_main_item_sidebar: self.side_signal_menubar,
-            self.menubar_main_item_statusbar: self.status_signal_menubar,
-            self.menu_item_consoles_favorite: self.favorite_signal_options,
-            self.menu_item_consoles_recursive: self.recursive_signal_options,
+            self.menubar_view_item_dark_theme: self.dark_signal_menubar,
+            self.menubar_view_item_sidebar: self.side_signal_menubar,
+            self.menubar_view_item_statusbar: self.status_signal_menubar,
+            self.menubar_view_item_list: self.list_view_signal_menubar,
+            self.menubar_view_item_grid: self.grid_view_signal_menubar,
+            self.switch_menu_dark_theme: self.dark_signal_menu,
+            self.switch_menu_sidebar: self.side_signal_menu,
+            self.switch_menu_statusbar: self.status_signal_menu,
         }
 
         # Store image references with associate icons
         self.__images_storage = {
-            self.image_headerbar_menu: Icons.Symbolic.Menu,
-            self.image_toolbar_fullscreen: Icons.Symbolic.Restore,
-            self.image_menu_preferences: Icons.Symbolic.System,
-            self.image_menu_log: Icons.Symbolic.Terminal,
-            self.image_menu_about: Icons.Symbolic.About,
-            self.image_menu_quit: Icons.Symbolic.Quit,
             self.image_headerbar_grid: Icons.Symbolic.Grid,
             self.image_headerbar_list: Icons.Symbolic.List,
+            self.image_headerbar_menu: Icons.Symbolic.Menu,
+            self.image_menu_about: Icons.Symbolic.About,
+            self.image_menu_log: Icons.Symbolic.Terminal,
+            self.image_menu_preferences: Icons.Symbolic.System,
+            self.image_menu_quit: Icons.Symbolic.Quit,
+            self.image_sidebar_tags: Icons.Symbolic.Paperclip,
+            self.image_toolbar_fullscreen: Icons.Symbolic.Restore,
+            self.image_toolbar_notes: Icons.Symbolic.Editor,
+            self.image_toolbar_output: Icons.Symbolic.Terminal,
             self.image_toolbar_parameters: Icons.Symbolic.Properties,
             self.image_toolbar_screenshots: Icons.Symbolic.Camera,
-            self.image_toolbar_output: Icons.Symbolic.Terminal,
-            self.image_toolbar_notes: Icons.Symbolic.Editor,
-            self.image_sidebar_tags: Icons.Symbolic.Paperclip
         }
 
         # Store treeview columns references
@@ -2722,9 +2758,11 @@ class MainWindow(Gtk.ApplicationWindow):
 
             if view_mode == Columns.Key.Grid:
                 self.button_headerbar_grid.set_active(True)
+                self.menubar_view_item_grid.set_active(True)
 
             else:
                 self.button_headerbar_list.set_active(True)
+                self.menubar_view_item_list.set_active(True)
 
             # ------------------------------------
             #   Columns order
@@ -2789,7 +2827,7 @@ class MainWindow(Gtk.ApplicationWindow):
             on_change_theme(dark_theme_status)
 
             self.switch_menu_dark_theme.set_active(dark_theme_status)
-            self.menubar_main_item_dark_theme.set_active(dark_theme_status)
+            self.menubar_view_item_dark_theme.set_active(dark_theme_status)
 
             if dark_theme_status:
                 self.logger.debug("Use dark variant for GTK+ theme")
@@ -2895,7 +2933,7 @@ class MainWindow(Gtk.ApplicationWindow):
             "gem", "show_sidebar", fallback=True)
 
         self.switch_menu_sidebar.set_active(sidebar_status)
-        self.menubar_main_item_sidebar.set_active(sidebar_status)
+        self.menubar_view_item_sidebar.set_active(sidebar_status)
 
         # Avoid to reload paned_game if user has not change orientation
         if init_interface:
@@ -3021,7 +3059,7 @@ class MainWindow(Gtk.ApplicationWindow):
             "gem", "show_statusbar", fallback=True)
 
         self.switch_menu_statusbar.set_active(statusbar_status)
-        self.menubar_main_item_statusbar.set_active(statusbar_status)
+        self.menubar_view_item_statusbar.set_active(statusbar_status)
 
         if statusbar_status:
             self.statusbar.show()
@@ -3498,7 +3536,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 "path": "<GEM>/sidebar",
                 "widgets": [
                     self,
-                    self.menubar_main_item_sidebar
+                    self.menubar_view_item_sidebar
                 ],
                 "keys": self.config.item("keys", "sidebar", "F9"),
                 "function": self.__on_activate_sidebar
@@ -3507,7 +3545,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 "path": "<GEM>/statusbar",
                 "widgets": [
                     self,
-                    self.menubar_main_item_statusbar
+                    self.menubar_view_item_statusbar
                 ],
                 "keys": self.config.item("keys", "statusbar", "<Control>F9"),
                 "function": self.__on_activate_statusbar
@@ -5504,8 +5542,18 @@ class MainWindow(Gtk.ApplicationWindow):
         if widget == self.button_headerbar_list:
             self.button_headerbar_grid.set_active(not status)
 
+            self.menubar_view_item_list.set_active(status)
+
         elif widget == self.button_headerbar_grid:
             self.button_headerbar_list.set_active(not status)
+
+            self.menubar_view_item_grid.set_active(status)
+
+        elif widget == self.menubar_view_item_list:
+            self.button_headerbar_list.set_active(status)
+
+        elif widget == self.menubar_view_item_grid:
+            self.button_headerbar_grid.set_active(status)
 
         if not self.scroll_games_placeholder.get_visible():
             self.scroll_games_list.set_visible(
@@ -6930,7 +6978,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.config.update()
 
         self.switch_menu_dark_theme.set_active(dark_theme_status)
-        self.menubar_main_item_dark_theme.set_active(dark_theme_status)
+        self.menubar_view_item_dark_theme.set_active(dark_theme_status)
 
         self.__unblock_signals()
 
@@ -6960,7 +7008,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.config.update()
 
         self.switch_menu_sidebar.set_active(sidebar_status)
-        self.menubar_main_item_sidebar.set_active(sidebar_status)
+        self.menubar_view_item_sidebar.set_active(sidebar_status)
 
         self.__unblock_signals()
 
@@ -6990,7 +7038,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.config.update()
 
         self.switch_menu_statusbar.set_active(statusbar_status)
-        self.menubar_main_item_statusbar.set_active(statusbar_status)
+        self.menubar_view_item_statusbar.set_active(statusbar_status)
 
         self.__unblock_signals()
 

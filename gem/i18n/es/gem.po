@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.4\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2018-09-11 16:19+0200\n"
+"PO-Revision-Date: 2019-02-27 09:10+0100\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 2.0.1\n"
+"X-Generator: Geany / PoHelper 1.34\n"
 
 # File: gem/interface.py, line: 2123
 #, python-format
@@ -894,6 +894,12 @@ msgstr "Crear una entrada en el menú para %s"
 # File: gem/gtk/widgets.py, line: 212
 msgid "Get some help about this dialog"
 msgstr ""
+
+#
+# File: gem/preferences.py, line: 431
+#, fuzzy
+msgid "Grid icons"
+msgstr "Mostrar los números de línea"
 
 #
 # File: gem/preferences.py, line: 431
@@ -2183,77 +2189,17 @@ msgid "_Tools"
 msgstr "_Herramientas"
 
 #
+# File: gem/ui/interface.py, line: 497
+msgid "_View"
+msgstr ""
+
+#
 # File: gem/preferences.py, line: 280
 msgid "translator-credits"
-msgstr "agradecimientos a los traductores"
-
-#
-# File: gem/interface.py, line: 1318
-#~ msgid "Cannot find %(binary)s for %(console)s"
-#~ msgstr "No puedo encontrar el %(binary)s para la %(console)s"
-
-#
-# File: gem/interface.py, line: 1257
-# File: gem/preferences.py, line: 547
-# File: gem/preferences.py, line: 1362
-# File: gem/windows.py, line: 794
-#~ msgid "Edit emulator"
-#~ msgstr "Editar emulador"
-
-#
-# File: gem/preferences.py, line: 219
-#~ msgid "Font"
-#~ msgstr "Fuente"
-
-#
-# File: gem/interface.py, line: 2006
-#, fuzzy
-#~ msgid "Game screenshots"
-#~ msgstr "Borrar capturas de pantalla del juego"
-
-#
-# File: gem/preferences.py, line: 328
-#~ msgid "Games list"
-#~ msgstr "Lista de juegos"
-
-#
-# File: gem/interface.py, line: 776
-#, fuzzy
-#~ msgid "Informations"
-#~ msgstr "_Reinicializar los datos del juego"
-
-#
-# File: gem/gtk/interface.py, line: 583
-# File: gem/gtk/interface.py, line: 1010
-#, fuzzy
-#~ msgid "Memory file"
-#~ msgstr "Escoge un tipo de _memoria"
-
-#
-# File: gem/preferences.py, line: 85
-#~ msgid "Remove a game from database"
-#~ msgstr "Borrar un juego de la base de datos"
-
-#
-# File: gem/preferences.py, line: 86
-#, fuzzy
-#~ msgid "Reset game"
-#~ msgstr "Renombrar un juego"
-
-#
-# File: gem/preferences.py, line: 86
-#, fuzzy
-#~ msgid "Set game _cover"
-#~ msgstr "Abrir las notas del juego"
+msgstr ""
 
 #
 # File: gem/preferences.py, line: 431
 #, fuzzy
-#~ msgid "Show statistics"
+#~ msgid "Grid view"
 #~ msgstr "Mostrar los números de línea"
-
-#
-# File: gem/preferences.py, line: 1196
-#, fuzzy
-#~ msgid "Would you really want to reset this game informations ?"
-#~ msgstr "¿Quiere borrar esta entrada?"
