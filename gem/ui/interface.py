@@ -6050,6 +6050,15 @@ class MainWindow(Gtk.ApplicationWindow):
                             self.menu_item_output.set_sensitive(False)
                             self.menubar_game_item_output.set_sensitive(False)
 
+                        self.menu_item_favorite.set_active(False)
+                        self.menubar_game_item_favorite.set_active(False)
+
+                        self.menu_item_multiplayer.set_active(False)
+                        self.menubar_game_item_multiplayer.set_active(False)
+
+                        self.menu_item_finish.set_active(False)
+                        self.menubar_game_item_finish.set_active(False)
+
                     except Exception as error:
                         self.logger.exception("An error occur during removing")
 
