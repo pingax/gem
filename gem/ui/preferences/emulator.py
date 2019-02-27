@@ -515,12 +515,13 @@ class EmulatorPreferences(CommonWindow):
                     self.api.delete_emulator(self.emulator.id)
 
                 # Remove thumbnails from cache
-                for size in ("22x22", "48x48", "64x64"):
-                    cache_path = self.interface.parent.get_icon_from_cache(
-                        "emulators", size, "%s.png" % self.emulator.id)
+                if self.emulator is not None:
+                    for size in ("22x22", "48x48", "64x64"):
+                        cache_path = self.interface.parent.get_icon_from_cache(
+                            "emulators", size, "%s.png" % self.emulator.id)
 
-                    if exists(cache_path):
-                        remove(cache_path)
+                        if exists(cache_path):
+                            remove(cache_path)
 
                 # Append a new emulator
                 self.api.add_emulator(self.data)

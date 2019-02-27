@@ -533,12 +533,13 @@ class ConsolePreferences(CommonWindow):
                     self.api.delete_console(self.console.id)
 
                 # Remove thumbnails from cache
-                for size in ("22x22", "24x24", "48x48", "64x64", "96x96"):
-                    cache_path = self.interface.parent.get_icon_from_cache(
-                        "consoles", size, "%s.png" % self.console.id)
+                if self.console is not None:
+                    for size in ("22x22", "24x24", "48x48", "64x64", "96x96"):
+                        cache_path = self.interface.parent.get_icon_from_cache(
+                            "consoles", size, "%s.png" % self.console.id)
 
-                    if exists(cache_path):
-                        remove(cache_path)
+                        if exists(cache_path):
+                            remove(cache_path)
 
                 # Append a new console
                 self.api.add_console(self.data)

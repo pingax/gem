@@ -1442,15 +1442,6 @@ class Emulator(GEMObject):
         command = str()
 
         # ----------------------------
-        #   Default arguments
-        # ----------------------------
-
-        if game.default is not None:
-            command += " %s" % str(game.default)
-        elif self.default is not None:
-            command += " %s" % str(self.default)
-
-        # ----------------------------
         #   Set fullscreen mode
         # ----------------------------
 
@@ -1458,6 +1449,15 @@ class Emulator(GEMObject):
             command += " %s" % str(self.fullscreen)
         elif not fullscreen and self.windowed is not None:
             command += " %s" % str(self.windowed)
+
+        # ----------------------------
+        #   Default arguments
+        # ----------------------------
+
+        if game.default is not None:
+            command += " %s" % str(game.default)
+        elif self.default is not None:
+            command += " %s" % str(self.default)
 
         # ----------------------------
         #   Replace special parameters
