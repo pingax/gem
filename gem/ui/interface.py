@@ -1016,17 +1016,12 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Sidebar - Game screenshot
         # ------------------------------------
 
-        self.scroll_sidebar_screenshot = Gtk.ScrolledWindow()
         self.view_sidebar_screenshot = Gtk.Viewport()
 
         self.frame_sidebar_screenshot = Gtk.Frame()
         self.image_sidebar_screenshot = Gtk.Image()
 
         # Properties
-        self.scroll_sidebar_screenshot.set_propagate_natural_width(True)
-        self.scroll_sidebar_screenshot.set_propagate_natural_height(True)
-        self.scroll_sidebar_screenshot.set_hexpand(False)
-
         self.view_sidebar_screenshot.drag_source_set(
             Gdk.ModifierType.BUTTON1_MASK, self.targets, Gdk.DragAction.COPY)
 
@@ -1928,6 +1923,7 @@ class MainWindow(Gtk.ApplicationWindow):
         # Sidebar
         self.scroll_sidebar.add(self.grid_sidebar)
 
+        self.view_sidebar_screenshot.add(self.frame_sidebar_screenshot)
         self.frame_sidebar_screenshot.add(self.image_sidebar_screenshot)
 
         self.grid_sidebar.attach(
@@ -1938,7 +1934,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.grid_sidebar_informations, 0, 2, 1, 1)
 
         self.grid_sidebar_content.pack_start(
-            self.frame_sidebar_screenshot, True, True, 0)
+            self.view_sidebar_screenshot, True, True, 0)
         self.grid_sidebar_content.pack_start(
             self.grid_sidebar_score, False, False, 0)
 
@@ -2890,7 +2886,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.scroll_sidebar.show_all()
         self.scroll_sidebar_tags.show_all()
-        self.scroll_sidebar_screenshot.show_all()
         self.scroll_sidebar_informations.show_all()
 
         self.grid_games_placeholder.show_all()
@@ -3042,7 +3037,6 @@ class MainWindow(Gtk.ApplicationWindow):
         if sidebar_status:
             self.scroll_sidebar.set_visible(True)
 
-            self.scroll_sidebar_screenshot.set_visible(False)
             self.frame_sidebar_screenshot.set_visible(False)
 
             self.grid_sidebar_informations.show_all()
