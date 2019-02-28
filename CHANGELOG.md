@@ -68,6 +68,7 @@ Version 1.0 - Space Fox
 * Fix console without icon raise TypeError exceptions
 * Fix disable consoles selector when no console available
 * Fix wrong treeiter used when games list was filtered
+* Fix a console is selected before the last used console selection with the 'load_console_startup' option
 
 ### Launcher
 

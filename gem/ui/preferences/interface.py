@@ -77,6 +77,8 @@ class PreferencesWindow(CommonWindow):
 
         self.icons = parent.icons
 
+        self.interface = parent
+
         self.shortcuts = {
             _("Interface"): {
                 "fullscreen": [

@@ -71,7 +71,7 @@ class ConsolePreferences(CommonWindow):
 
         self.modify = modify
 
-        if type(parent) is CommonWindow:
+        if getattr(parent, "interface", None) is not None:
             self.interface = parent.interface
 
         else:
