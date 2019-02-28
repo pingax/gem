@@ -49,6 +49,7 @@ try:
 
     from gi.repository.GObject import GObject
     from gi.repository.GObject import SignalFlags
+    from gi.repository.GObject import signal_stop_emission_by_name
 
     from gi.repository.GdkPixbuf import Pixbuf
     from gi.repository.GdkPixbuf import InterpType

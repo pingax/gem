@@ -42,7 +42,7 @@ except ImportError as error:
 #   Methods
 # ------------------------------------------------------------------------------
 
-def get_data(path, egg="gem"):
+def get_data(*path, egg="gem"):
     """ Provides easy access to data in a python egg or local folder
 
     This function search a path in a specific python egg or in local folder. The
@@ -62,6 +62,8 @@ def get_data(path, egg="gem"):
     str or None
         Path
     """
+
+    path = expanduser(path_join(*path))
 
     try:
         data = resource_filename(egg, path)

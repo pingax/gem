@@ -34,6 +34,7 @@ from gem.ui.preferences.interface import PreferencesWindow
 
 # Random
 from random import randint
+from random import shuffle
 
 # Regex
 from re import match
@@ -1923,8 +1924,8 @@ class MainWindow(Gtk.ApplicationWindow):
         # Sidebar
         self.scroll_sidebar.add(self.grid_sidebar)
 
-        self.view_sidebar_screenshot.add(self.frame_sidebar_screenshot)
-        self.frame_sidebar_screenshot.add(self.image_sidebar_screenshot)
+        self.frame_sidebar_screenshot.add(self.view_sidebar_screenshot)
+        self.view_sidebar_screenshot.add(self.image_sidebar_screenshot)
 
         self.grid_sidebar.attach(
             self.label_sidebar_title, 0, 0, 1, 1)
@@ -1934,7 +1935,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.grid_sidebar_informations, 0, 2, 1, 1)
 
         self.grid_sidebar_content.pack_start(
-            self.view_sidebar_screenshot, True, True, 0)
+            self.frame_sidebar_screenshot, True, True, 0)
         self.grid_sidebar_content.pack_start(
             self.grid_sidebar_score, False, False, 0)
 
@@ -2525,6 +2526,182 @@ class MainWindow(Gtk.ApplicationWindow):
         )
 
 
+    def __init_interface(self):
+        """ Init main interface
+        """
+
+        self.selection = dict(console=None, game=None)
+
+        # ------------------------------------
+        #   Toolbar icons
+        # ------------------------------------
+
+        if self.toolbar_icons_size in self.__toolbar_sizes:
+            size = self.__toolbar_sizes[self.toolbar_icons_size]
+
+            # Avoid to change icon size if there is no change
+            if not size == self.__current_toolbar_size:
+                self.__current_toolbar_size = size
+
+                for widget, icon in self.__images_storage.items():
+                    widget.set_from_icon_name(icon, size)
+
+        # ------------------------------------
+        #   Toolbar view switcher
+        # ------------------------------------
+
+        if self.view_mode == Columns.Key.Grid:
+            self.button_headerbar_grid.set_active(True)
+            self.menubar_view_item_grid.set_active(True)
+
+        else:
+            self.button_headerbar_list.set_active(True)
+            self.menubar_view_item_list.set_active(True)
+
+        # ------------------------------------
+        #   Toolbar design
+        # ------------------------------------
+
+        # Update design colorscheme
+        on_change_theme(self.use_dark_theme)
+
+        self.switch_menu_dark_theme.set_active(self.use_dark_theme)
+        self.menubar_view_item_dark_theme.set_active(self.use_dark_theme)
+
+        if self.use_dark_theme:
+            self.logger.debug("Use dark variant for GTK+ theme")
+
+        else:
+            self.logger.debug("Use light variant for GTK+ theme")
+
+        # Update design template
+        if not self.use_classic_theme:
+            self.logger.debug("Use default theme for GTK+ interface")
+            self.set_titlebar(self.headerbar)
+
+        else:
+            self.logger.debug("Use classic theme for GTK+ interface")
+
+        # ------------------------------------
+        #   Treeview columns order
+        # ------------------------------------
+
+        custom_order = deepcopy(self.columns_order)
+        original_order = Columns.Order.split(':')
+
+        # Avoid to check custom_order
+        if not custom_order == original_order:
+
+            # Append missing column from columns_order string
+            for key in original_order:
+                if not key in custom_order:
+                    custom_order.append(key)
+
+        # Append column in games treeview
+        for column in custom_order:
+
+            # Store identifier for __stop_interface function
+            setattr(self.__columns_storage[column], "identifier", column)
+
+            self.treeview_games.append_column(self.__columns_storage[column])
+
+        # ------------------------------------
+        #   Treeview columns sorting
+        # ------------------------------------
+
+        column, order = (Columns.List.Name, Gtk.SortType.ASCENDING)
+
+        if self.load_sort_column_at_startup:
+            column = getattr(Columns.List, self.load_last_column, None)
+
+            # Cannot found a column, use the default one
+            if column is None:
+                column = Columns.List.Name
+
+            if self.load_sort_column_order == "desc":
+                order = Gtk.SortType.DESCENDING
+
+        self.sorted_games_list.set_sort_column_id(column, order)
+
+        # ------------------------------------
+        #   Window size
+        # ------------------------------------
+
+        try:
+            width, height = self.main_window_size
+
+            self.window_size.base_width = int(width)
+            self.window_size.base_height = int(height)
+
+            self.resize(int(width), int(height))
+
+        except ValueError as error:
+            self.logger.error(_("Cannot resize main window: %s") % str(error))
+
+        self.set_geometry_hints(self, self.window_size,
+            Gdk.WindowHints.MIN_SIZE | Gdk.WindowHints.BASE_SIZE)
+
+        self.set_position(Gtk.WindowPosition.CENTER)
+
+
+    def __show_interface(self):
+        """ Show main interface widgets
+        """
+
+        self.hide()
+        self.unrealize()
+
+        self.show_all()
+
+        self.grid_menu.show_all()
+        self.grid_consoles_menu.show_all()
+        self.grid_game_filters_popover.show_all()
+
+        self.infobar.get_content_area().show_all()
+
+        self.grid_sidebar.show_all()
+        self.scroll_sidebar.show_all()
+        self.scroll_sidebar_tags.show_all()
+        self.scroll_sidebar_informations.show_all()
+
+        self.grid_games_placeholder.show_all()
+
+        self.menu_games.show_all()
+        self.menu_consoles.show_all()
+
+        # Manage window template
+        if self.use_classic_theme:
+            self.menubar.show_all()
+
+        else:
+            self.menubar.hide()
+
+        # Manage sidebar visibility
+        self.scroll_sidebar.set_visible(self.show_sidebar)
+
+        self.grid_sidebar_score.set_visible(False)
+        self.grid_sidebar_informations.set_visible(False)
+        self.frame_sidebar_screenshot.set_visible(False)
+
+        if self.show_sidebar:
+            self.frame_sidebar_screenshot.set_visible(False)
+
+            self.grid_sidebar_informations.show_all()
+
+        # Manage statusbar visibility
+        if self.show_statusbar:
+            self.statusbar.show()
+            self.grid_statusbar.show_all()
+
+        else:
+            self.statusbar.hide()
+
+        # Manage games views
+        self.scroll_games_list.set_visible(False)
+        self.scroll_games_grid.set_visible(False)
+        self.scroll_games_placeholder.set_visible(True)
+
+
     def __start_interface(self):
         """ Load data and start interface
         """
@@ -2695,6 +2872,95 @@ class MainWindow(Gtk.ApplicationWindow):
         self.main_loop.quit()
 
 
+    def load_configuration(self):
+        """ Load main configuration file and store values
+        """
+
+        if getattr(self, "config", None) is None:
+            self.config = Configuration(self.api.get_config("gem.conf"))
+
+            # Get missing keys from config/gem.conf
+            self.config.add_missing_data(get_data("config", "gem.conf"))
+
+        else:
+            self.logger.debug("Reload configuration file")
+
+            self.config.reload()
+
+        # ------------------------------------
+        #   Configuration values
+        # ------------------------------------
+
+        self.toolbar_icons_size = self.config.get(
+            "gem", "toolbar_icons_size", fallback="small-toolbar")
+
+        self.icon_translucent = self.config.getboolean(
+            "gem", "use_translucent_icons", fallback=False)
+
+        self.view_mode = self.config.get(
+            "gem", "games_view_mode", fallback=Columns.Key.List)
+
+        self.columns_order = self.config.get(
+            "columns", "order", fallback=Columns.Order).split(':')
+
+        self.load_last_column = self.config.get(
+            "gem", "last_sort_column", fallback="Name")
+
+        self.load_sort_column_at_startup = self.config.getboolean(
+            "gem", "load_sort_column_startup", fallback=True)
+
+        self.load_sort_column_order = self.config.get(
+            "gem", "last_sort_column_order", fallback="asc")
+
+        self.load_console_at_startup = self.config.getboolean(
+            "gem", "load_console_startup", fallback=True)
+
+        self.load_last_console = self.config.get(
+            "gem", "last_console", fallback=None)
+
+        self.hide_empty_console = self.config.getboolean(
+            "gem", "hide_empty_console", fallback=False)
+
+        self.use_dark_theme = self.config.getboolean(
+            "gem", "dark_theme", fallback=False)
+
+        self.use_classic_theme = self.config.getboolean(
+            "gem", "use_classic_theme", fallback=False)
+
+        self.use_ellipsize_title = self.config.getboolean(
+            "gem", "sidebar_title_ellipsize", fallback=True)
+
+        self.use_random_screenshot = self.config.getboolean(
+            "gem", "show_random_screenshot", fallback=True)
+
+        self.show_headerbar_buttons = self.config.getboolean(
+            "gem", "show_header", fallback=True)
+
+        self.show_sidebar = self.config.getboolean(
+            "gem", "show_sidebar", fallback=True)
+
+        self.show_statusbar = self.config.getboolean(
+            "gem", "show_statusbar", fallback=True)
+
+        self.sidebar_orientation = self.config.get(
+            "gem", "sidebar_orientation", fallback="vertical")
+
+        self.treeview_lines = self.config.item(
+            "gem", "games_treeview_lines", "none")
+
+        self.main_window_size = self.config.get(
+            "windows", "main", fallback="1024x768").split('x')
+
+        # ------------------------------------
+        #   Configuration operations
+        # ------------------------------------
+
+        # Avoid to have an empty string for last console value
+        if type(self.load_last_console) == 0 and \
+            len(self.load_last_console) == 0:
+            self.load_last_console = None
+
+
     def load_interface(self, init_interface=False):
         """ Load main interface
 
@@ -2708,215 +2974,38 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.api.init()
 
-        # ------------------------------------
-        #   Configuration
-        # ------------------------------------
+        # Retrieve user configuration
+        self.load_configuration()
 
-        self.config = Configuration(self.api.get_config("gem.conf"))
-
-        # Get missing keys from config/gem.conf
-        self.config.add_missing_data(get_data(path_join("config", "gem.conf")))
-
-        # ------------------------------------
-        #   Toolbar
-        # ------------------------------------
-
-        icon_size = self.config.get(
-            "gem", "toolbar_icons_size", fallback="small-toolbar")
-
-        if init_interface and icon_size in self.__toolbar_sizes:
-            size = self.__toolbar_sizes[icon_size]
-
-            # Avoid to change icon size if there is no change
-            if not size == self.__current_toolbar_size:
-
-                self.__current_toolbar_size = self.__toolbar_sizes[icon_size]
-
-                for widget, icon in self.__images_storage.items():
-                    widget.set_from_icon_name(
-                        icon, self.__current_toolbar_size)
-
-        # ------------------------------------
-        #   Icons
-        # ------------------------------------
-
-        self.icons.set_translucent_status(self.config.getboolean(
-            "gem", "use_translucent_icons", fallback=False))
-
-        # ------------------------------------
-        #   Window first drawing
-        # ------------------------------------
-
-        if init_interface:
-
-            view_mode = self.config.get(
-                "gem", "games_view_mode", fallback=Columns.Key.List)
-
-            if view_mode == Columns.Key.Grid:
-                self.button_headerbar_grid.set_active(True)
-                self.menubar_view_item_grid.set_active(True)
-
-            else:
-                self.button_headerbar_list.set_active(True)
-                self.menubar_view_item_list.set_active(True)
-
-            # ------------------------------------
-            #   Columns order
-            # ------------------------------------
-
-            original_order = Columns.Order.split(':')
-
-            custom_order = self.config.get(
-                "columns", "order", fallback=Columns.Order).split(':')
-
-            # Avoid to check custom_order
-            if not custom_order == original_order:
-
-                # Append missing column from columns_order string
-                for key in original_order:
-                    if not key in custom_order:
-                        custom_order.append(key)
-
-            # Append column in games treeview
-            for column in custom_order:
-
-                # Store identifier for __stop_interface function
-                setattr(self.__columns_storage[column], "identifier", column)
-
-                self.treeview_games.append_column(
-                    self.__columns_storage[column])
-
-            # ------------------------------------
-            #   Column sorting
-            # ------------------------------------
-
-            if self.config.getboolean(
-                "gem", "load_sort_column_startup", fallback=True):
-
-                column = getattr(Columns.List, self.config.get(
-                    "gem", "last_sort_column", fallback="Name"), None)
-                order = self.config.get(
-                    "gem", "last_sort_column_order", fallback="asc")
-
-                if column is None:
-                    column, order = (Columns.List.Name, "asc")
-
-                if order == "desc":
-                    self.sorted_games_list.set_sort_column_id(
-                        column, Gtk.SortType.DESCENDING)
-
-                else:
-                    self.sorted_games_list.set_sort_column_id(
-                        column, Gtk.SortType.ASCENDING)
-
-            else:
-                self.sorted_games_list.set_sort_column_id(
-                    Columns.List.Name, Gtk.SortType.ASCENDING)
-
-            # ------------------------------------
-            #   Color theme
-            # ------------------------------------
-
-            dark_theme_status = self.config.getboolean(
-                "gem", "dark_theme", fallback=False)
-
-            on_change_theme(dark_theme_status)
-
-            self.switch_menu_dark_theme.set_active(dark_theme_status)
-            self.menubar_view_item_dark_theme.set_active(dark_theme_status)
-
-            if dark_theme_status:
-                self.logger.debug("Use dark variant for GTK+ theme")
-            else:
-                self.logger.debug("Use light variant for GTK+ theme")
-
-            self.use_classic_theme = self.config.getboolean(
-                "gem", "use_classic_theme", fallback=False)
-
-            # ------------------------------------
-            #   Window classic theme
-            # ------------------------------------
-
-            if not self.use_classic_theme:
-                self.set_titlebar(self.headerbar)
-
-            # ------------------------------------
-            #   Window size
-            # ------------------------------------
-
-            try:
-                width, height = self.config.get(
-                    "windows", "main", fallback="1024x768").split('x')
-
-                self.window_size.base_width = int(width)
-                self.window_size.base_height = int(height)
-
-                self.resize(int(width), int(height))
-
-            except ValueError as error:
-                self.logger.error(
-                    _("Cannot resize main window: %s") % str(error))
-
-            self.set_geometry_hints(self, self.window_size,
-                Gdk.WindowHints.MIN_SIZE | Gdk.WindowHints.BASE_SIZE)
-
-            self.set_position(Gtk.WindowPosition.CENTER)
-
-            self.hide()
-            self.unrealize()
-
-        # ------------------------------------
-        #   Shortcuts
-        # ------------------------------------
-
+        # Retrieve user shortcuts
         self.__init_shortcuts()
+
+        # Initialize main widgets
+        if init_interface:
+            self.__init_interface()
+
+            self.__show_interface()
 
         # ------------------------------------
         #   Widgets
         # ------------------------------------
 
-        self.show_all()
-
-        self.grid_menu.show_all()
-        self.grid_consoles_menu.show_all()
-        self.grid_game_filters_popover.show_all()
-
-        self.infobar.show_all()
-        self.infobar.get_content_area().show_all()
-
-        self.scroll_sidebar.show_all()
-        self.scroll_sidebar_tags.show_all()
-        self.scroll_sidebar_informations.show_all()
-
-        self.grid_games_placeholder.show_all()
-
-        self.menu_games.show_all()
-        self.menu_consoles.show_all()
-
-        if self.use_classic_theme:
-            self.logger.debug("Use classic theme for GTK+ interface")
-            self.menubar.show_all()
-
-        else:
-            self.logger.debug("Use default theme for GTK+ interface")
-            self.menubar.hide()
-
         self.set_infobar()
         self.sensitive_interface()
 
-        # ------------------------------------
-        #   Header
-        # ------------------------------------
+        # Show window buttons into headerbar
+        self.headerbar.set_show_close_button(self.show_headerbar_buttons)
 
-        self.headerbar.set_show_close_button(
-            self.config.getboolean("gem", "show_header", fallback=True))
+        # Show sidebar visibility buttons
+        self.switch_menu_sidebar.set_active(self.show_sidebar)
+        self.menubar_view_item_sidebar.set_active(self.show_sidebar)
 
-        # ------------------------------------
-        #   Consoles
-        # ------------------------------------
+        # Show statusbar visibility buttons
+        self.switch_menu_statusbar.set_active(self.show_statusbar)
+        self.menubar_view_item_statusbar.set_active(self.show_statusbar)
 
-        consoles_position = self.config.getboolean(
-            "gem", "use_combobox_consoles", fallback=True)
+        # Use translucent icons in games views
+        self.icons.set_translucent_status(self.icon_translucent)
 
         # ------------------------------------
         #   Sidebar
@@ -2924,51 +3013,26 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.sidebar_image = None
 
-        sidebar_status = self.config.getboolean(
-            "gem", "show_sidebar", fallback=True)
-
-        self.switch_menu_sidebar.set_active(sidebar_status)
-        self.menubar_view_item_sidebar.set_active(sidebar_status)
-
-        # Avoid to reload paned_game if user has not change orientation
-        if init_interface:
-            self.__current_orientation = None
-
-        # Check sidebar title ellipsize mode
-        sidebar_ellipsize = self.config.getboolean(
-            "gem", "sidebar_title_ellipsize", fallback=True)
-
-        if sidebar_ellipsize:
-            self.label_sidebar_title.set_single_line_mode(True)
+        if self.use_ellipsize_title:
             self.label_sidebar_title.set_line_wrap(False)
-
-            self.label_sidebar_title.set_line_wrap_mode(
-                Pango.WrapMode.WORD)
-
+            self.label_sidebar_title.set_single_line_mode(True)
             self.label_sidebar_title.set_ellipsize(Pango.EllipsizeMode.END)
+            self.label_sidebar_title.set_line_wrap_mode(Pango.WrapMode.WORD)
 
         else:
-            self.label_sidebar_title.set_single_line_mode(False)
             self.label_sidebar_title.set_line_wrap(True)
-
+            self.label_sidebar_title.set_single_line_mode(False)
+            self.label_sidebar_title.set_ellipsize(Pango.EllipsizeMode.NONE)
             self.label_sidebar_title.set_line_wrap_mode(
                 Pango.WrapMode.WORD_CHAR)
 
-            self.label_sidebar_title.set_ellipsize(Pango.EllipsizeMode.NONE)
-
-        # Wanted sidebar orientation
-        sidebar_orientation = self.config.get(
-            "gem", "sidebar_orientation", fallback="vertical")
-
         # Right-side sidebar
-        if sidebar_orientation == "horizontal" and \
+        if self.sidebar_orientation == "horizontal" and \
             not self.__current_orientation == Gtk.Orientation.HORIZONTAL:
 
             self.label_sidebar_title.set_justify(Gtk.Justification.CENTER)
             self.label_sidebar_title.set_halign(Gtk.Align.CENTER)
             self.label_sidebar_title.set_xalign(0.5)
-
-            self.grid_sidebar.show_all()
 
             # Change game screenshot and score placement
             self.grid_sidebar.remove(self.grid_sidebar_content)
@@ -2978,11 +3042,9 @@ class MainWindow(Gtk.ApplicationWindow):
             self.grid_sidebar_content.set_margin_bottom(12)
 
             self.grid_sidebar_informations.set_halign(Gtk.Align.FILL)
-            self.grid_sidebar_informations.set_hexpand(True)
+            self.grid_sidebar_informations.set_column_homogeneous(True)
             self.grid_sidebar_informations.set_orientation(
                 Gtk.Orientation.VERTICAL)
-
-            self.grid_sidebar_informations.set_column_homogeneous(True)
 
             if not init_interface:
                 self.vpaned_games.remove(self.scroll_sidebar)
@@ -2998,14 +3060,12 @@ class MainWindow(Gtk.ApplicationWindow):
             self.__current_orientation = Gtk.Orientation.HORIZONTAL
 
         # Bottom-side sidebar
-        elif sidebar_orientation == "vertical" and \
+        elif self.sidebar_orientation == "vertical" and \
             not self.__current_orientation == Gtk.Orientation.VERTICAL:
 
             self.label_sidebar_title.set_justify(Gtk.Justification.LEFT)
             self.label_sidebar_title.set_halign(Gtk.Align.START)
             self.label_sidebar_title.set_xalign(0.0)
-
-            self.grid_sidebar.show_all()
 
             # Change game screenshot and score placement
             self.grid_sidebar.remove(self.grid_sidebar_content)
@@ -3014,11 +3074,9 @@ class MainWindow(Gtk.ApplicationWindow):
             self.grid_sidebar_content.set_margin_bottom(0)
 
             self.grid_sidebar_informations.set_halign(Gtk.Align.START)
-            self.grid_sidebar_informations.set_hexpand(True)
+            self.grid_sidebar_informations.set_column_homogeneous(False)
             self.grid_sidebar_informations.set_orientation(
                 Gtk.Orientation.HORIZONTAL)
-
-            self.grid_sidebar_informations.set_column_homogeneous(False)
 
             if not init_interface:
                 self.hpaned_games.remove(self.scroll_sidebar)
@@ -3033,50 +3091,14 @@ class MainWindow(Gtk.ApplicationWindow):
 
             self.__current_orientation = Gtk.Orientation.VERTICAL
 
-        # Show sidebar
-        if sidebar_status:
-            self.scroll_sidebar.set_visible(True)
-
-            self.frame_sidebar_screenshot.set_visible(False)
-
-            self.grid_sidebar_informations.show_all()
-
-        # Hide sidebar
-        else:
-            self.scroll_sidebar.set_visible(False)
-
         # ------------------------------------
-        #   Statusbar
+        #   Treeview
         # ------------------------------------
 
-        statusbar_status = self.config.getboolean(
-            "gem", "show_statusbar", fallback=True)
-
-        self.switch_menu_statusbar.set_active(statusbar_status)
-        self.menubar_view_item_statusbar.set_active(statusbar_status)
-
-        if statusbar_status:
-            self.statusbar.show()
-
-            self.image_statusbar_properties.show()
-            self.image_statusbar_screenshots.show()
-            self.image_statusbar_savestates.show()
-
-        else:
-            self.statusbar.hide()
-
-        # ------------------------------------
-        #   Games
-        # ------------------------------------
-
-        # Game rename status
-        self.is_rename = False
-
-        # Games - Treeview
-        line = self.config.item("gem", "games_treeview_lines", "none")
-
-        if line in self.__treeview_lines:
-            self.treeview_games.set_grid_lines(self.__treeview_lines[line])
+        # Games - Treeview lines
+        if self.treeview_lines in self.__treeview_lines:
+            self.treeview_games.set_grid_lines(
+                self.__treeview_lines[self.treeview_lines])
 
         # Games - Treeview columns
         for key, widget in self.__columns_storage.items():
@@ -3096,35 +3118,37 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Console
         # ------------------------------------
 
-        self.scroll_games_list.set_visible(False)
-        self.scroll_games_grid.set_visible(False)
-        self.scroll_games_placeholder.set_visible(False)
+        self.append_consoles()
 
-        current_console = self.append_consoles()
+        selected_row = None
 
-        # Show games placeholder when no console available or selected
-        if current_console is None or len(self.listbox_consoles) == 0:
-            self.scroll_games_placeholder.set_visible(True)
+        # A console already has been selected
+        if self.selection["console"] is not None:
 
-        self.selection = dict(console=None, game=None)
+            if self.selection["console"].id in self.consoles_iter.keys():
+                selected_row = self.consoles_iter[self.selection["console"].id]
 
-        if current_console is None:
-            self.model_games_list.clear()
+        # Check last loaded console in gem.conf
+        elif self.load_console_at_startup:
 
-            if len(self.consoles_iter.keys()) > 0:
-                row = list(self.consoles_iter.values())[0]
+            # Load first available console in consoles list
+            if len(self.listbox_consoles) > 0:
+                selected_row = self.listbox_consoles.get_row_at_index(0)
 
-                self.listbox_consoles.select_row(row)
+            # Load latest selected console
+            if init_interface and self.load_last_console is not None:
 
-                self.__on_selected_console(self.listbox_consoles, row)
+                # Avoid to load an unexisting console
+                if self.load_last_console in self.consoles_iter.keys():
+                    selected_row = self.consoles_iter[self.load_last_console]
 
+        # Load console games
+        if selected_row is not None:
+            self.__on_selected_console(None, selected_row, True)
+
+        # Manage default widgets visibility when no console selected
         else:
-            self.listbox_consoles.select_row(current_console)
-
-            self.__on_selected_console(
-                self.listbox_consoles, current_console)
-
-        self.set_informations()
+            self.set_informations()
 
         self.__unblock_signals()
 
@@ -3671,221 +3695,210 @@ class MainWindow(Gtk.ApplicationWindow):
         game = self.selection["game"]
         console = self.selection["console"]
 
+        # ----------------------------------------
+        #   Reset widgets
+        # ----------------------------------------
+
         self.set_informations_headerbar(game, console)
 
+        # Hide sidebar widgets
         self.grid_sidebar_score.set_visible(False)
         self.grid_sidebar_informations.set_visible(False)
         self.frame_sidebar_screenshot.set_visible(False)
 
-        # ----------------------------
-        #   Game informations
-        # ----------------------------
-
-        children = self.listbox_sidebar_tags.get_children()
-
-        # Remove previous tags
-        for widget in children:
+        # Remove tags list
+        for widget in self.listbox_sidebar_tags.get_children():
             self.listbox_sidebar_tags.remove(widget)
-            # Delete widget instance
-            del widget
 
-        if game is not None:
+        self.label_sidebar_title.set_text(str())
+
+        # Reset sidebar screenshot
+        self.image_sidebar_screenshot.set_from_pixbuf(None)
+
+        # Reset statusbar flags icons
+        self.image_statusbar_properties.set_from_pixbuf(self.icons.blank())
+        self.image_statusbar_savestates.set_from_pixbuf(self.icons.blank())
+        self.image_statusbar_screenshots.set_from_pixbuf(self.icons.blank())
+
+        # ----------------------------------------
+        #   Set game informations
+        # ----------------------------------------
+
+        if game is not None and console is not None:
             self.grid_sidebar_score.set_visible(True)
             self.grid_sidebar_informations.set_visible(True)
 
-            if console is not None:
-                self.label_sidebar_title.set_markup(
-                    "<span weight='bold' size='large'>%s</span>" % \
-                    replace_for_markup(game.name))
+            self.label_sidebar_title.set_markup("<span weight='bold' "
+                "size='large'>%s</span>" % replace_for_markup(game.name))
 
-                # Get rom specified emulator
-                emulator = console.emulator
+            # Get rom specified emulator
+            emulator = console.emulator
 
-                if game.emulator is not None:
-                    emulator = game.emulator
+            if game.emulator is not None:
+                emulator = game.emulator
 
-                # ----------------------------
-                #   Show screenshot
-                # ----------------------------
+            # ----------------------------------------
+            #   Show game tags
+            # ----------------------------------------
 
-                image = None
+            self.button_sidebar_tags.set_sensitive(len(game.tags) > 0)
 
-                screenshots = sorted(emulator.get_screenshots(game))
+            # Append game tags
+            for tag in sorted(game.tags):
+                label = Gtk.Label.new(tag)
+                label.set_halign(Gtk.Align.FILL)
 
-                # Check if rom has some screenshots
-                if len(screenshots) > 0:
-                    self.image_statusbar_screenshots.set_from_pixbuf(
-                        self.icons.get("screenshot"))
+                box = Gtk.Box.new(Gtk.Orientation.HORIZONTAL, 6)
+                box.pack_start(label, True, True, 0)
 
-                    # Get the latest screenshot from list
-                    index = -1
+                row = Gtk.ListBoxRow()
+                row.add(box)
+                row.show_all()
 
-                    # Get a random file from rom screenshots
-                    if self.config.getboolean(
-                        "gem", "show_random_screenshot", fallback=True):
-                        index = randint(0, len(screenshots) - 1)
+                self.listbox_sidebar_tags.add(row)
 
-                    image = screenshots[index]
+            # ----------------------------------------
+            #   Statusbar flags
+            # ----------------------------------------
 
-                # No screenshots available
+            # Retrieve game screenshots from emulator screenshots path
+            screenshots = emulator.get_screenshots(game)
+
+            pixbuf = self.icons.get_translucent("screenshot")
+
+            # Check if rom has some screenshots
+            if len(screenshots) > 0:
+                pixbuf = self.icons.get("screenshot")
+
+                # Ordered game screenshots
+                if not self.use_random_screenshot:
+                    screenshots = sorted(screenshots)
+
+                # Get a random file from game screenshots
                 else:
-                    self.image_statusbar_screenshots.set_from_pixbuf(
-                        self.icons.get_translucent("screenshot"))
+                    shuffle(screenshots)
 
-                # Set maximum size with current file
-                if image is not None and exists(image):
-                    self.sidebar_image = image
+                self.sidebar_image = screenshots[-1]
 
-                    # Right-side
+            # Set statusbar icon for screenshot status
+            self.image_statusbar_screenshots.set_from_pixbuf(pixbuf)
+
+            # Game emulator
+            if emulator is not None:
+
+                # Game savestates
+                pixbuf = self.icons.get_translucent("savestate")
+
+                if len(emulator.get_savestates(game)) > 0:
+                    pixbuf = self.icons.get("savestate")
+
+                self.image_statusbar_savestates.set_from_pixbuf(pixbuf)
+
+                # Game custom parameters
+                pixbuf = self.icons.get_translucent("parameter")
+
+                if game.default is not None or (game.emulator is not None and \
+                    not game.emulator.name == console.emulator.name):
+                    pixbuf = self.icons.get("parameter")
+
+                self.image_statusbar_properties.set_from_pixbuf(pixbuf)
+
+            # ----------------------------------------
+            #   Sidebar screenshot
+            # ----------------------------------------
+
+            if self.sidebar_image is not None:
+                pixbuf = None
+
+                if exists(self.sidebar_image):
+
+                    height = 200
                     if self.__current_orientation == Gtk.Orientation.HORIZONTAL:
-                        image = Pixbuf.new_from_file_at_scale(
-                            image, 300, 250, True)
+                        height = 250
 
-                    # Bottom-side
-                    else:
-                        image = Pixbuf.new_from_file_at_scale(
-                            image, 300, 200, True)
+                    pixbuf = Pixbuf.new_from_file_at_scale(
+                        self.sidebar_image, 300, height, True)
 
-                self.image_sidebar_screenshot.set_from_pixbuf(image)
+                # Set sidebar screenshot
+                self.image_sidebar_screenshot.set_from_pixbuf(pixbuf)
 
-                if image is not None:
-                    self.frame_sidebar_screenshot.set_visible(True)
-                    self.frame_sidebar_screenshot.show_all()
+                self.frame_sidebar_screenshot.set_visible(True)
+                self.frame_sidebar_screenshot.show_all()
 
-                # ----------------------------
-                #   Show informations
-                # ----------------------------
+            # ----------------------------------------
+            #   Sidebar informations
+            # ----------------------------------------
 
-                widgets = [
-                    {
-                        "widget": self.label_sidebar_played_value,
-                        "condition": game.played > 0,
-                        "markup": str(game.played)
-                    },
-                    {
-                        "widget": self.label_sidebar_play_time_value,
-                        "condition": not game.play_time == timedelta(),
-                        "markup": string_from_time(game.play_time),
-                        "tooltip": parse_timedelta(game.play_time)
-                    },
-                    {
-                        "widget": self.label_sidebar_last_play_value,
-                        "condition": game.last_launch_date is not None,
-                        "markup": string_from_date(game.last_launch_date),
-                        "tooltip": str(game.last_launch_date)
-                    },
-                    {
-                        "widget": self.label_sidebar_last_time_value,
-                        "condition": not game.last_launch_time == timedelta(),
-                        "markup": string_from_time(game.last_launch_time),
-                        "tooltip": parse_timedelta(game.last_launch_time)
-                    },
-                    {
-                        "widget": self.label_sidebar_installed_value,
-                        "condition": game.installed is not None,
-                        "markup": string_from_date(game.installed),
-                        "tooltip": str(game.installed)
-                    },
-                    {
-                        "widget": self.grid_sidebar_score,
-                        "markup": str(game.score)
-                    },
-                    {
-                        "widget": self.label_sidebar_emulator_value,
-                        "condition": emulator is not None,
-                        "markup": emulator.name
-                    }
-                ]
+            widgets = [
+                {
+                    "widget": self.label_sidebar_played_value,
+                    "condition": game.played > 0,
+                    "markup": str(game.played)
+                },
+                {
+                    "widget": self.label_sidebar_play_time_value,
+                    "condition": not game.play_time == timedelta(),
+                    "markup": string_from_time(game.play_time),
+                    "tooltip": parse_timedelta(game.play_time)
+                },
+                {
+                    "widget": self.label_sidebar_last_play_value,
+                    "condition": game.last_launch_date is not None,
+                    "markup": string_from_date(game.last_launch_date),
+                    "tooltip": str(game.last_launch_date)
+                },
+                {
+                    "widget": self.label_sidebar_last_time_value,
+                    "condition": not game.last_launch_time == timedelta(),
+                    "markup": string_from_time(game.last_launch_time),
+                    "tooltip": parse_timedelta(game.last_launch_time)
+                },
+                {
+                    "widget": self.label_sidebar_installed_value,
+                    "condition": game.installed is not None,
+                    "markup": string_from_date(game.installed),
+                    "tooltip": str(game.installed)
+                },
+                {
+                    "widget": self.grid_sidebar_score,
+                    "markup": str(game.score)
+                },
+                {
+                    "widget": self.label_sidebar_emulator_value,
+                    "condition": emulator is not None,
+                    "markup": emulator.name
+                }
+            ]
 
-                for data in widgets:
+            for data in widgets:
 
-                    # Default label value widget
-                    if "condition" in data:
+                # Default label value widget
+                if "condition" in data:
+                    data["widget"].set_markup(str())
+                    data["widget"].set_tooltip_text(str())
 
-                        if data["condition"]:
-                            data["widget"].set_markup(data["markup"])
+                    if data["condition"]:
+                        data["widget"].set_markup(data["markup"])
 
-                            if "tooltip" in data:
-                                data["widget"].set_tooltip_text(data["tooltip"])
+                        # Set tooltip for current widget
+                        if "tooltip" in data:
+                            data["widget"].set_tooltip_text(data["tooltip"])
 
-                        else:
-                            data["widget"].set_markup(str())
-                            data["widget"].set_tooltip_text(str())
+                # Score case
+                elif data["widget"] == self.grid_sidebar_score:
+                    children = data["widget"].get_children()
 
-                    # Score case
-                    elif data["widget"] == self.grid_sidebar_score:
-                        children = data["widget"].get_children()
+                    # Append star icons to sidebar
+                    for child in children:
+                        icon = Icons.Symbolic.NoStarred
+                        if game.score >= children.index(child) + 1:
+                            icon = Icons.Symbolic.Starred
 
-                        for child in children:
-                            index = children.index(child)
+                        child.set_from_icon_name(
+                            icon, Gtk.IconSize.LARGE_TOOLBAR)
 
-                            if game.score >= index + 1:
-                                child.set_from_pixbuf(
-                                    self.icons.get("starred"))
-
-                            else:
-                                child.set_from_pixbuf(
-                                    self.icons.get_translucent("nostarred"))
-
-                self.button_sidebar_tags.set_sensitive(False)
-
-                # Game tags
-                for tag in sorted(game.tags):
-                    label = Gtk.Label.new(tag)
-                    label.set_halign(Gtk.Align.FILL)
-
-                    box = Gtk.Box()
-                    box.set_orientation(Gtk.Orientation.HORIZONTAL)
-                    box.set_border_width(6)
-
-                    box.pack_start(label, True, True, 0)
-
-                    row = Gtk.ListBoxRow()
-                    row.add(box)
-                    row.show_all()
-
-                    self.listbox_sidebar_tags.add(row)
-
-                if len(game.tags) > 0:
-                    self.button_sidebar_tags.set_sensitive(True)
-
-                # Game emulator
-                if emulator is not None:
-
-                    # Game savestates
-                    if len(emulator.get_savestates(game)) > 0:
-                        self.image_statusbar_savestates.set_from_pixbuf(
-                            self.icons.get("savestate"))
-                    else:
-                        self.image_statusbar_savestates.set_from_pixbuf(
-                            self.icons.get_translucent("savestate"))
-
-                    # Game custom parameters
-                    if (game.emulator is not None and \
-                        not game.emulator.name == console.emulator.name) or \
-                        game.default is not None:
-                        self.image_statusbar_properties.set_from_pixbuf(
-                            self.icons.get("parameter"))
-                    else:
-                        self.image_statusbar_properties.set_from_pixbuf(
-                            self.icons.get_translucent("parameter"))
-
-                else:
-                    self.image_statusbar_savestates.set_from_pixbuf(
-                        self.icons.blank())
-                    self.image_statusbar_properties.set_from_pixbuf(
-                        self.icons.blank())
-                    self.image_statusbar_screenshots.set_from_pixbuf(
-                        self.icons.blank())
-
-        else:
-            self.label_sidebar_title.set_text(str())
-
-            self.image_sidebar_screenshot.set_from_pixbuf(None)
-
-            self.image_statusbar_properties.set_from_pixbuf(self.icons.blank())
-            self.image_statusbar_savestates.set_from_pixbuf(self.icons.blank())
-            self.image_statusbar_screenshots.set_from_pixbuf(self.icons.blank())
+                    # Show game score as tooltip
+                    data["widget"].set_tooltip_text("%d/5" % game.score)
 
 
     def set_informations_headerbar(self, game=None, console=None):
@@ -3905,18 +3918,22 @@ class MainWindow(Gtk.ApplicationWindow):
         if console is None:
             console = self.selection["console"]
 
-        self.label_statusbar_console.set_visible(False)
-        self.label_statusbar_emulator.set_visible(False)
-
-        texts = list()
         emulator = None
-
-        # ----------------------------
-        #   Console
-        # ----------------------------
-
         if console is not None:
             emulator = console.emulator
+
+        self.label_statusbar_console.set_visible(console is not None)
+        self.label_statusbar_emulator.set_visible(emulator is not None)
+        self.label_statusbar_game.set_visible(game is not None)
+
+        texts = list()
+
+        # ----------------------------------------
+        #   Console
+        # ----------------------------------------
+
+        if console is not None:
+            text = _("N/A")
 
             if len(self.filter_games_list) == 1:
                 text = _("1 game available")
@@ -3928,22 +3945,22 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 texts.append(text)
 
-            else:
-                text = _("N/A")
-
-            self.label_statusbar_console.set_visible(True)
             self.label_statusbar_console.set_markup(
                 "<b>%s</b> : %s" % (_("Console"), text))
 
-        else:
-            self.label_statusbar_console.set_visible(False)
+        # ----------------------------------------
+        #   Emulator
+        # ----------------------------------------
 
-        # ----------------------------
+        if emulator is not None:
+            self.label_statusbar_emulator.set_markup(
+                "<b>%s</b> : %s" % (_("Emulator"), emulator.name))
+
+        # ----------------------------------------
         #   Game
-        # ----------------------------
+        # ----------------------------------------
 
         if game is not None:
-            self.label_statusbar_game.set_visible(True)
             self.label_statusbar_game.set_text(game.name)
 
             if game.emulator is not None:
@@ -3951,22 +3968,12 @@ class MainWindow(Gtk.ApplicationWindow):
 
             texts.append(game.name)
 
-        else:
-            self.label_statusbar_game.set_visible(False)
+        # ----------------------------------------
+        #   Headerbar
+        # ----------------------------------------
 
-        # ----------------------------
-        #   Emulator
-        # ----------------------------
-
-        if emulator is not None:
-            self.label_statusbar_emulator.set_visible(True)
-            self.label_statusbar_emulator.set_markup(
-                "<b>%s</b> : %s" % (_("Emulator"), emulator.name))
-
-        else:
-            self.label_statusbar_emulator.set_visible(False)
-
-        self.headerbar.set_subtitle(" - ".join(texts))
+        if not self.use_classic_theme:
+            self.headerbar.set_subtitle(" - ".join(texts))
 
 
     def set_message(self, title, message, icon="dialog-error", popup=True):
@@ -4109,9 +4116,9 @@ class MainWindow(Gtk.ApplicationWindow):
             # Check if rom has some screenshots
             results = emulator.get_screenshots(game)
 
-            # ----------------------------
+            # ----------------------------------------
             #   Show screenshots viewer
-            # ----------------------------
+            # ----------------------------------------
 
             if len(results) > 0:
                 title = "%s (%s)" % (game.name, console.name)
@@ -4162,9 +4169,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 self.set_sensitive(True)
 
-                # ----------------------------
+                # ----------------------------------------
                 #   Check screenshots
-                # ----------------------------
+                # ----------------------------------------
 
                 if len(emulator.get_screenshots(game)) == 0:
                     self.set_game_data(Columns.List.Snapshots,
@@ -4361,16 +4368,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         This function add every consoles into consoles combobox and inform user
         when an emulator binary is missing
-
-        Returns
-        -------
-        Gtk.TreeIter or None
-            Selected row
         """
-
-        item = None
-
-        size = 24
 
         # Reset consoles caches
         self.consoles_iter.clear()
@@ -4378,6 +4376,10 @@ class MainWindow(Gtk.ApplicationWindow):
         # Remove previous consoles objects
         for child in self.listbox_consoles.get_children():
             self.listbox_consoles.remove(child)
+
+        # Reset games view content
+        self.model_games_list.clear()
+        self.model_games_grid.clear()
 
         # Retrieve available consoles
         for console in self.api.consoles:
@@ -4389,26 +4391,57 @@ class MainWindow(Gtk.ApplicationWindow):
                 # Store console iter
                 self.consoles_iter[row.console.id] = row
 
-                # Check if previous selected console was this one
-                selection = self.selection.get("console")
-                if selection is not None and selection.name == row.console.name:
-                    item = row
-
         self.__on_update_consoles()
 
         if len(self.listbox_consoles) > 0:
             self.scroll_consoles.set_visible(True)
-            self.scroll_sidebar.set_visible(self.config.getboolean(
-                "gem", "show_sidebar", fallback=True))
+            self.scroll_sidebar.set_visible(self.show_sidebar)
 
             self.logger.debug(
                 "%d console(s) has been added" % len(self.listbox_consoles))
 
+        # Show games placeholder when no console available
         else:
+            self.scroll_games_placeholder.set_visible(True)
             self.scroll_consoles.set_visible(False)
             self.scroll_sidebar.set_visible(False)
 
-        return item
+
+    def __on_generate_console_row(self, identifier):
+        """ Generate console row data from a specific console
+
+        Parameters
+        ----------
+        identifier : str
+            Console identifier
+
+        Returns
+        -------
+        tuple or None
+            Generation results
+        """
+
+        need_save = False
+
+        console = self.api.get_console(identifier)
+
+        # Check if console ROM path exist
+        if exists(console.path):
+
+            # Reload games list
+            console.set_games(self.api)
+
+            if not self.hide_empty_console or len(console.games) > 0:
+
+                icon = self.get_pixbuf_from_cache(
+                    "consoles", 24, console.id, console.icon)
+
+                if icon is None:
+                    icon = self.icons.blank(24)
+
+                return (console, icon)
+
+        return None
 
 
     def __on_append_console_row(self, console, icon):
@@ -4461,46 +4494,6 @@ class MainWindow(Gtk.ApplicationWindow):
         return row_console
 
 
-    def __on_generate_console_row(self, identifier):
-        """ Generate console row data from a specific console
-
-        Parameters
-        ----------
-        identifier : str
-            Console identifier
-
-        Returns
-        -------
-        tuple or None
-            Generation results
-        """
-
-        need_save = False
-
-        hide = self.config.getboolean(
-            "gem", "hide_empty_console", fallback=False)
-
-        console = self.api.get_console(identifier)
-
-        # Check if console ROM path exist
-        if console.emulator is not None and exists(console.path):
-
-            # Reload games list
-            console.set_games(self.api)
-
-            if not hide or len(console.games) > 0:
-
-                icon = self.get_pixbuf_from_cache(
-                    "consoles", 24, console.id, console.icon)
-
-                if icon is None:
-                    icon = self.icons.blank(24)
-
-                return(console, icon)
-
-        return None
-
-
     def __on_selected_console(self, widget, row, force=False):
         """ Select a console
 
@@ -4527,6 +4520,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
             self.set_infobar()
             self.set_informations_headerbar()
+
+            self.logger.debug("Select %s console" % row.console.name)
 
             self.__console_icon = self.get_pixbuf_from_cache(
                 "consoles", 96, row.console.id, row.console.icon)
@@ -5065,9 +5060,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
         run_game = False
 
-        # ----------------------------
+        # ----------------------------------------
         #   Keyboard
-        # ----------------------------
+        # ----------------------------------------
 
         if event.type == EventType.KEY_RELEASE:
 
@@ -5081,9 +5076,9 @@ class MainWindow(Gtk.ApplicationWindow):
                 if len(items) >= 1:
                     treeiter = model.get_iter(items[0])
 
-        # ----------------------------
+        # ----------------------------------------
         #   Mouse
-        # ----------------------------
+        # ----------------------------------------
 
         elif event.type in available_events and event.button in (1, 2, 3):
 
@@ -5114,11 +5109,11 @@ class MainWindow(Gtk.ApplicationWindow):
 
             # Mouse - Double click with left mouse button
             if event.type == EventType._2BUTTON_PRESS and event.button == 1:
-                run_game = True and not self.is_rename
+                run_game = True
 
-        # ----------------------------
+        # ----------------------------------------
         #   Retrieve selection
-        # ----------------------------
+        # ----------------------------------------
 
         # Get game data
         if type(treeiter) is Gtk.TreeIter:
@@ -5129,9 +5124,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
             game = model.get_value(treeiter, column_id)
 
-        # ----------------------------
+        # ----------------------------------------
         #   Game selected
-        # ----------------------------
+        # ----------------------------------------
 
         # Check if the selected game has already been showed
         same_game = (self.selection["game"] == game)
@@ -5150,9 +5145,9 @@ class MainWindow(Gtk.ApplicationWindow):
                 if game.emulator is not None:
                     emulator = game.emulator
 
-                # ----------------------------
+                # ----------------------------------------
                 #   Manage widgets
-                # ----------------------------
+                # ----------------------------------------
 
                 # This game is currently running
                 if game.filename in self.threads:
@@ -5482,9 +5477,9 @@ class MainWindow(Gtk.ApplicationWindow):
             first = data1.installed
             second = data2.installed
 
-        # ----------------------------
+        # ----------------------------------------
         #   Compare
-        # ----------------------------
+        # ----------------------------------------
 
         # Sort by name in the case where this games are never been launched
         if first is None and second is None:
@@ -5648,9 +5643,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
         binary = str()
 
-        # ----------------------------
+        # ----------------------------------------
         #   Check selection
-        # ----------------------------
+        # ----------------------------------------
 
         game = self.selection["game"]
 
@@ -5666,12 +5661,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
             return False
 
-        if self.is_rename:
-            return False
-
-        # ----------------------------
+        # ----------------------------------------
         #   Check emulator
-        # ----------------------------
+        # ----------------------------------------
 
         console = self.selection["console"]
 
@@ -5684,9 +5676,9 @@ class MainWindow(Gtk.ApplicationWindow):
             if emulator is not None and emulator.id in self.api.emulators:
                 self.logger.info(_("Initialize %s") % game.name)
 
-                # ----------------------------
+                # ----------------------------------------
                 #   Generate correct command
-                # ----------------------------
+                # ----------------------------------------
 
                 try:
                     command = emulator.command(game,
@@ -5699,9 +5691,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 if len(command) > 0:
 
-                    # ----------------------------
+                    # ----------------------------------------
                     #   Run game
-                    # ----------------------------
+                    # ----------------------------------------
 
                     thread = GameThread(self, console, emulator, game, command)
 
@@ -5775,9 +5767,9 @@ class MainWindow(Gtk.ApplicationWindow):
             Game thread
         """
 
-        # ----------------------------
+        # ----------------------------------------
         #   Save game data
-        # ----------------------------
+        # ----------------------------------------
 
         emulator = thread.emulator
 
@@ -5786,9 +5778,9 @@ class MainWindow(Gtk.ApplicationWindow):
             # Get the last occurence from database
             game = self.api.get_game(thread.console.id, thread.game.id)
 
-            # ----------------------------
+            # ----------------------------------------
             #   Update data
-            # ----------------------------
+            # ----------------------------------------
 
             # Play data
             game.played += 1
@@ -5836,9 +5828,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
             self.set_informations()
 
-        # ----------------------------
+        # ----------------------------------------
         #   Refresh widgets
-        # ----------------------------
+        # ----------------------------------------
 
         # Get current selected file
         select_game = self.selection["game"]
@@ -5868,9 +5860,9 @@ class MainWindow(Gtk.ApplicationWindow):
             # Avoid to launch the game again when use Enter in game terminate
             # self.treeview_games.get_selection().unselect_all()
 
-        # ----------------------------
+        # ----------------------------------------
         #   Manage thread
-        # ----------------------------
+        # ----------------------------------------
 
         # Remove this game from threads list
         if game.filename in self.threads:
@@ -5882,9 +5874,9 @@ class MainWindow(Gtk.ApplicationWindow):
             self.widget_menu_preferences.set_sensitive(True)
             self.menubar_main_item_preferences.set_sensitive(True)
 
-        # ----------------------------
+        # ----------------------------------------
         #   Manage script
-        # ----------------------------
+        # ----------------------------------------
 
         # Remove this script from threads list
         if game.filename in self.scripts:
@@ -5985,9 +5977,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 need_to_reload = False
 
-                # ----------------------------
+                # ----------------------------------------
                 #   Dialog
-                # ----------------------------
+                # ----------------------------------------
 
                 self.set_sensitive(False)
 
@@ -6094,9 +6086,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 need_to_reload = False
 
-                # ----------------------------
+                # ----------------------------------------
                 #   Dialog
-                # ----------------------------
+                # ----------------------------------------
 
                 self.set_sensitive(False)
 
@@ -6159,9 +6151,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
             need_to_reload = False
 
-            # ----------------------------
+            # ----------------------------------------
             #   Dialog
-            # ----------------------------
+            # ----------------------------------------
 
             self.set_sensitive(False)
 
@@ -6231,9 +6223,9 @@ class MainWindow(Gtk.ApplicationWindow):
                 if console.emulator.default is not None:
                     parameters = console.emulator.default
 
-            # ----------------------------
+            # ----------------------------------------
             #   Generate data
-            # ----------------------------
+            # ----------------------------------------
 
             if game.emulator is not None and \
                 not game.emulator == emulator["console"]:
@@ -6243,9 +6235,9 @@ class MainWindow(Gtk.ApplicationWindow):
                 not game.default == parameters:
                 emulator["parameters"] = game.default
 
-            # ----------------------------
+            # ----------------------------------------
             #   Dialog
-            # ----------------------------
+            # ----------------------------------------
 
             self.set_sensitive(False)
 
@@ -6283,9 +6275,9 @@ class MainWindow(Gtk.ApplicationWindow):
                 # Update game from database
                 self.api.update_game(game)
 
-                # ----------------------------
+                # ----------------------------------------
                 #   Check diferences
-                # ----------------------------
+                # ----------------------------------------
 
                 custom = False
 
@@ -6303,9 +6295,9 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.set_game_data(Columns.List.Except,
                         self.icons.get_translucent("parameter"), game.filename)
 
-                # ----------------------------
+                # ----------------------------------------
                 #   Update icons
-                # ----------------------------
+                # ----------------------------------------
 
                 new_emulator = emulator["console"]
                 if game.emulator is not None:
@@ -6404,9 +6396,9 @@ class MainWindow(Gtk.ApplicationWindow):
                             if len(data) == 2:
                                 content[data[0]] = int(data[1])
 
-                # ----------------------------
+                # ----------------------------------------
                 #   Dialog
-                # ----------------------------
+                # ----------------------------------------
 
                 self.set_sensitive(False)
 
@@ -6720,9 +6712,9 @@ class MainWindow(Gtk.ApplicationWindow):
                     # A new icon is available so we regenerate icon cache
                     if game.cover is not None and exists(game.cover):
 
-                        # ----------------------------
+                        # ----------------------------------------
                         #   Large grid icon
-                        # ----------------------------
+                        # ----------------------------------------
 
                         try:
                             large = Pixbuf.new_from_file_at_scale(
@@ -6735,9 +6727,9 @@ class MainWindow(Gtk.ApplicationWindow):
                             self.logger.exception(
                                 "An error occur during cover generation")
 
-                        # ----------------------------
+                        # ----------------------------------------
                         #   Thumbnail icon
-                        # ----------------------------
+                        # ----------------------------------------
 
                         try:
                             thumbnail = Pixbuf.new_from_file_at_scale(
@@ -6796,9 +6788,9 @@ class MainWindow(Gtk.ApplicationWindow):
             if emulator is not None and emulator.id in self.api.emulators:
                 name = "%s.desktop" % game.filename
 
-                # ----------------------------
+                # ----------------------------------------
                 #   Fill template
-                # ----------------------------
+                # ----------------------------------------
 
                 icon = console.icon
                 if not exists(icon):
@@ -7117,7 +7109,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.logger.debug("Received data from drag & drop")
 
-        widget.stop_emission("drag_data_received")
+        signal_stop_emission_by_name(widget, "drag_data_received")
 
         # Current acquisition not respect text/uri-list
         if not info == 1337:
@@ -7145,9 +7137,9 @@ class MainWindow(Gtk.ApplicationWindow):
                     # Lowercase extension
                     ext = ext.lower()
 
-                    # ----------------------------
+                    # ----------------------------------------
                     #   Get right console for rom
-                    # ----------------------------
+                    # ----------------------------------------
 
                     if not keep_console:
 
@@ -7184,16 +7176,16 @@ class MainWindow(Gtk.ApplicationWindow):
 
                                 self.set_sensitive(True)
 
-            # ----------------------------
+            # ----------------------------------------
             #   Check console
-            # ----------------------------
+            # ----------------------------------------
 
             if console is not None:
                 rom_path = expanduser(console.path)
 
-                # ----------------------------
+                # ----------------------------------------
                 #   Install roms
-                # ----------------------------
+                # ----------------------------------------
 
                 if rom_path is not None and not dirname(path) == rom_path and \
                     exists(rom_path) and access(rom_path, W_OK):
@@ -7236,9 +7228,9 @@ class MainWindow(Gtk.ApplicationWindow):
                         if hide and len(glob(path_join(rom_path, '*'))) == 1:
                             need_to_reload = True
 
-                # ----------------------------
+                # ----------------------------------------
                 #   Errors
-                # ----------------------------
+                # ----------------------------------------
 
                 if dirname(path) == rom_path:
                     pass

@@ -74,6 +74,14 @@ class Configuration(ConfigParser):
         return '\n'.join(text)
 
 
+    def reload(self):
+        """ Read again the configuration file if exists
+        """
+
+        if exists(self.path):
+            self.read(self.path)
+
+
     def item(self, section, option, default=None):
         """ Return an item from configuration
 

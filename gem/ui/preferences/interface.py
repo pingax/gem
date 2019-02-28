@@ -1597,9 +1597,6 @@ class PreferencesWindow(CommonWindow):
             Object which receive signal (Default: None)
         """
 
-        if self.parent is None and widget == self.button_save:
-            self.save_configuration()
-
         self.window.hide()
 
         self.config.modify("windows", "preferences", "%dx%d" % self.get_size())
