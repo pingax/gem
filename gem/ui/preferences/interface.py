@@ -1608,7 +1608,7 @@ class PreferencesWindow(CommonWindow):
         """
 
         # Write emulators and consoles data
-        self.api.write_data()
+        self.api.write_data(GEM.Consoles, GEM.Emulators, GEM.Environment)
 
         for row, data in self.widgets.items():
             widget = row.get_widget()
@@ -1978,6 +1978,8 @@ class PreferencesWindow(CommonWindow):
             Use edit mode instead of append mode
         """
 
+        dialog = None
+
         self.selection = {
             "console": None,
             "emulator": None }
@@ -2003,7 +2005,7 @@ class PreferencesWindow(CommonWindow):
             if modification:
                 self.selection["console"] = console
 
-            ConsolePreferences(self, console, modification)
+            dialog = ConsolePreferences(self, console, modification)
 
         elif manager == Manager.EMULATOR:
             emulator = self.api.get_emulator(identifier)
@@ -2011,7 +2013,20 @@ class PreferencesWindow(CommonWindow):
             if modification:
                 self.selection["emulator"] = emulator
 
-            EmulatorPreferences(self, emulator, modification)
+            dialog = EmulatorPreferences(self, emulator, modification)
+
+        if dialog is not None:
+
+            if dialog.run() == Gtk.ResponseType.APPLY:
+                dialog.save()
+
+                if manager == Manager.CONSOLE:
+                    self.on_load_consoles()
+
+                elif manager == Manager.EMULATOR:
+                    self.on_load_emulators()
+
+            dialog.destroy()
 
         return True
 

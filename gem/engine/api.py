@@ -618,7 +618,7 @@ class GEM(object):
             config.update()
 
 
-    def write_data(self):
+    def write_data(self, *files):
         """ Write data into configuration files and database
 
         Returns
@@ -639,7 +639,7 @@ class GEM(object):
 
         try:
             # Check GEM configuration files
-            for path in [ GEM.Consoles, GEM.Emulators, GEM.Environment ]:
+            for path in files:
                 # Get configuration filename for storage
                 name, ext = splitext(path)
 
@@ -821,6 +821,11 @@ class GEM(object):
         data : dict
             Emulator information as dictionary
 
+        Returns
+        -------
+        gem.engine.api.Emulator
+            New emulator object
+
         Raises
         ------
         TypeError
@@ -863,6 +868,8 @@ class GEM(object):
 
         # Store the new emulator
         self.__data["emulators"][data["id"]] = emulator
+
+        return emulator
 
 
     def delete_emulator(self, emulator):
@@ -987,6 +994,11 @@ class GEM(object):
         data : dict
             Console information as dictionary
 
+        Returns
+        -------
+        gem.engine.api.Console
+            New console object
+
         Raises
         ------
         TypeError
@@ -1036,6 +1048,8 @@ class GEM(object):
 
         # Store the new emulator
         self.__data["consoles"][data["id"]] = console
+
+        return console
 
 
     def delete_console(self, console):

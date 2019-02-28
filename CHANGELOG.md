@@ -7,8 +7,10 @@ Version 1.0 - Space Fox
 ### Data
 
 * Add emulators licenses file
+
 * Switch 'Nintendo SNES' emulator to mednafen from consoles.conf
 * Switch 'SEGA Megadrive' emulator to mednafen from consoles.conf
+
 * Remove consoles `old` folder
 * Remove emulators icons
 * Remove MAME console
@@ -22,8 +24,12 @@ Version 1.0 - Space Fox
 * Add installed date field to game object
 * Add favorite field to console object
 * Add `GEM.get_game_tags` function to API
+* Add dynamic files parameter to `write_data` function to write only some configuration file
 
 * Allow to set specific configuration paths in constructor parameters
+
+* Modify `GEM.add_emulator` to return the new emulator
+* Modify `GEM.add_console` to return the new console
 
 ### GTK+ interface
 
@@ -39,12 +45,15 @@ Version 1.0 - Space Fox
 * Add a dialog to alert the user when a GEM instance already exists
 * Add a maintenance dialog to replace the clean database dialog
 * Add a cache folder to save games and consoles icons
+* Add a thumbnail next to game name in games treeview
 
 * Allow to reorder games treeview columns
 * Allow to drag the sidebar image to another application
 * Allow to duplicate a game and his data
 * Allow to sort games list treeview
 * Allow to import or export game note
+* Allow to configure console from console context menu in main interface
+* Allow to configure emulator from console context menu in main interface
 
 * Restore GTK+ menuitem behavior to main and game menus
 * Restore old dialog buttons behavior to both themes

@@ -69,8 +69,13 @@ class ConsolePreferences(CommonWindow):
         self.file_error = False
         self.emulator_error = False
 
-        self.interface = parent
         self.modify = modify
+
+        if type(parent) is CommonWindow:
+            self.interface = parent.interface
+
+        else:
+            self.interface = parent
 
         # Empty Pixbuf icon
         self.icons = parent.icons
@@ -451,7 +456,7 @@ class ConsolePreferences(CommonWindow):
 
             if emulator.exists:
 
-                icon = self.interface.parent.get_pixbuf_from_cache(
+                icon = self.interface.get_pixbuf_from_cache(
                     "emulators", 22, emulator.id, emulator.icon)
 
                 if icon is None:
@@ -488,7 +493,7 @@ class ConsolePreferences(CommonWindow):
 
             self.path = self.console.icon
 
-            icon = self.interface.parent.get_pixbuf_from_cache(
+            icon = self.interface.get_pixbuf_from_cache(
                 "consoles", 64, self.console.id, self.console.icon)
 
             if icon is None:
@@ -516,37 +521,31 @@ class ConsolePreferences(CommonWindow):
 
         self.__on_check_advanced_mode()
 
-        # ------------------------------------
-        #   Start dialog
-        # ------------------------------------
 
-        need_reload = False
+    def save(self):
+        """ Save modification
+        """
 
-        response = self.run()
+        self.__on_save_data()
 
-        # Save console
-        if response == Gtk.ResponseType.APPLY:
-            self.__on_save_data()
+        if self.data is not None:
 
-            if self.data is not None:
-                if self.modify:
-                    self.api.delete_console(self.console.id)
+            if self.modify:
+                same_icon = self.console.icon == self.data["icon"]
 
-                # Remove thumbnails from cache
-                if self.console is not None:
-                    for size in ("22x22", "24x24", "48x48", "64x64", "96x96"):
-                        cache_path = self.interface.parent.get_icon_from_cache(
-                            "consoles", size, "%s.png" % self.console.id)
+                self.api.delete_console(self.console.id)
 
-                        if exists(cache_path):
-                            remove(cache_path)
+            # Remove thumbnails from cache
+            if self.console is not None and not same_icon:
+                for size in ("22x22", "24x24", "48x48", "64x64", "96x96"):
+                    cache_path = self.interface.get_icon_from_cache(
+                        "consoles", size, "%s.png" % self.console.id)
 
-                # Append a new console
-                self.api.add_console(self.data)
+                    if exists(cache_path):
+                        remove(cache_path)
 
-            need_reload = True
-
-        self.destroy()
+            # Append a new console
+            self.console = self.api.add_console(self.data)
 
         status = self.config.getboolean("advanced", "console", fallback=False)
 
@@ -555,8 +554,7 @@ class ConsolePreferences(CommonWindow):
                 "advanced", "console", self.check_advanced.get_active())
             self.config.update()
 
-        if need_reload:
-            self.interface.on_load_consoles()
+        return self.console.id
 
 
     def __on_save_data(self):

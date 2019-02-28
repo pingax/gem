@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.4\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-02-27 09:10+0100\n"
+"PO-Revision-Date: 2019-02-28 15:22+0100\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -2058,6 +2058,18 @@ msgid "_Edit configuration"
 msgstr "Actualizar el archivo de configuración de %s"
 
 #
+# File: gem/preferences.py, line: 1602
+#, fuzzy
+msgid "_Edit console"
+msgstr "Actualizar el archivo de configuración de %s"
+
+#
+# File: gem/preferences.py, line: 280
+#, fuzzy
+msgid "_Edit emulator"
+msgstr "Emulador"
+
+#
 # File: gem/interface.py, line: 381
 # File: gem/interface.py, line: 741
 #, fuzzy
@@ -2197,9 +2209,3 @@ msgstr ""
 # File: gem/preferences.py, line: 280
 msgid "translator-credits"
 msgstr ""
-
-#
-# File: gem/preferences.py, line: 431
-#, fuzzy
-#~ msgid "Grid view"
-#~ msgstr "Mostrar los números de línea"

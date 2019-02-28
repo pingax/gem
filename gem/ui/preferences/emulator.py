@@ -67,8 +67,13 @@ class EmulatorPreferences(CommonWindow):
 
         self.error = False
 
-        self.interface = parent
         self.modify = modify
+
+        if type(parent) is CommonWindow:
+            self.interface = parent.interface
+
+        else:
+            self.interface = parent
 
         # Empty Pixbuf icon
         self.icons = parent.icons
@@ -462,7 +467,7 @@ class EmulatorPreferences(CommonWindow):
             if self.path is not None:
                 self.entry_icon.set_text(self.path)
 
-            icon = self.interface.parent.get_pixbuf_from_cache(
+            icon = self.interface.get_pixbuf_from_cache(
                 "emulators", 64, self.emulator.id, self.emulator.icon)
 
             if icon is None:
@@ -495,45 +500,39 @@ class EmulatorPreferences(CommonWindow):
 
         self.__on_check_advanced_mode()
 
-        # ------------------------------------
-        #   Start dialog
-        # ------------------------------------
 
-        need_reload = False
+    def save(self):
+        """ Save modification
+        """
 
-        response = self.run()
+        self.__on_save_data()
 
-        # Save emulator
-        if response == Gtk.ResponseType.APPLY:
-            self.__on_save_data()
+        if self.data is not None:
 
-            if self.data is not None:
-                if self.modify:
-                    # Store identifier for rename function
-                    previous_identifier = self.emulator.id
+            if self.modify:
+                same_icon = self.emulator.icon == self.data["icon"]
 
-                    self.api.delete_emulator(self.emulator.id)
+                # Store identifier for rename function
+                previous_identifier = self.emulator.id
 
-                # Remove thumbnails from cache
-                if self.emulator is not None:
-                    for size in ("22x22", "48x48", "64x64"):
-                        cache_path = self.interface.parent.get_icon_from_cache(
-                            "emulators", size, "%s.png" % self.emulator.id)
+                self.api.delete_emulator(self.emulator.id)
 
-                        if exists(cache_path):
-                            remove(cache_path)
+            # Remove thumbnails from cache
+            if self.emulator is not None and not same_icon:
+                for size in ("22x22", "48x48", "64x64"):
+                    cache_path = self.interface.get_icon_from_cache(
+                        "emulators", size, "%s.png" % self.emulator.id)
 
-                # Append a new emulator
-                self.api.add_emulator(self.data)
+                    if exists(cache_path):
+                        remove(cache_path)
 
-                # This emulator has been renamed
-                if self.modify and not self.data["id"] == previous_identifier:
-                    self.api.rename_emulator(
-                        previous_identifier, self.data["id"])
+            # Append a new emulator
+            self.emulator = self.api.add_emulator(self.data)
 
-            need_reload = True
-
-        self.destroy()
+            # This emulator has been renamed
+            if self.modify and not self.data["id"] == previous_identifier:
+                self.api.rename_emulator(
+                    previous_identifier, self.data["id"])
 
         status = self.config.getboolean("advanced", "emulator", fallback=False)
 
@@ -542,8 +541,7 @@ class EmulatorPreferences(CommonWindow):
                 "advanced", "emulator", self.check_advanced.get_active())
             self.config.update()
 
-        if need_reload:
-            self.interface.on_load_emulators()
+        return self.emulator.id
 
 
     def __on_save_data(self):

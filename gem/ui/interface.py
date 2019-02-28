@@ -30,6 +30,8 @@ from gem.ui.widgets.widgets import IconsGenerator
 
 from gem.ui.dialog import *
 
+from gem.ui.preferences.interface import ConsolePreferences
+from gem.ui.preferences.interface import EmulatorPreferences
 from gem.ui.preferences.interface import PreferencesWindow
 
 # Random
@@ -776,23 +778,35 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.menu_consoles = Gtk.Menu()
 
-        self.menu_item_consoles_edit = Gtk.MenuItem()
+        self.menu_item_consoles_console = Gtk.MenuItem()
+
+        self.menu_item_consoles_emulator = Gtk.MenuItem()
+        self.menu_item_consoles_config = Gtk.MenuItem()
+
         self.menu_item_consoles_reload = Gtk.MenuItem()
 
         self.menu_item_consoles_favorite = Gtk.CheckMenuItem()
         self.menu_item_consoles_recursive = Gtk.CheckMenuItem()
 
         # Properties
-        self.menu_item_consoles_edit.set_label(
+        self.menu_item_consoles_console.set_label(
+            _("_Edit console"))
+        self.menu_item_consoles_console.set_use_underline(True)
+
+        self.menu_item_consoles_emulator.set_label(
+            _("_Edit emulator"))
+        self.menu_item_consoles_emulator.set_use_underline(True)
+
+        self.menu_item_consoles_config.set_label(
             _("_Edit configuration"))
-        self.menu_item_consoles_edit.set_use_underline(True)
+        self.menu_item_consoles_config.set_use_underline(True)
 
         self.menu_item_consoles_reload.set_label(
             _("_Reload games list"))
         self.menu_item_consoles_reload.set_use_underline(True)
 
         self.menu_item_consoles_favorite.set_label(
-            _("Favorite"))
+            _("_Favorite"))
         self.menu_item_consoles_favorite.set_use_underline(True)
 
         self.menu_item_consoles_recursive.set_label(
@@ -1814,7 +1828,11 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Menu - Consoles
         # ------------------------------------
 
-        self.menu_consoles.append(self.menu_item_consoles_edit)
+        self.menu_consoles.append(self.menu_item_consoles_console)
+        self.menu_consoles.append(Gtk.SeparatorMenuItem())
+        self.menu_consoles.append(self.menu_item_consoles_emulator)
+        self.menu_consoles.append(self.menu_item_consoles_config)
+        self.menu_consoles.append(Gtk.SeparatorMenuItem())
         self.menu_consoles.append(self.menu_item_consoles_reload)
         self.menu_consoles.append(Gtk.SeparatorMenuItem())
         self.menu_consoles.append(self.menu_item_consoles_favorite)
@@ -2203,8 +2221,14 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Menu - Consoles
         # ------------------------------------
 
-        self.menu_item_consoles_edit.connect(
+        self.menu_item_consoles_console.connect(
+            "activate", self.__on_show_console_editor)
+
+        self.menu_item_consoles_emulator.connect(
+            "activate", self.__on_show_emulator_editor)
+        self.menu_item_consoles_config.connect(
             "activate", self.__on_show_emulator_config)
+
         self.menu_item_consoles_reload.connect(
             "activate", self.__on_reload_games)
 
@@ -4317,6 +4341,156 @@ class MainWindow(Gtk.ApplicationWindow):
             del self.notes[path]
 
 
+    def __on_show_console_editor(self, widget, *args):
+        """ Open console editor dialog
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        self.__block_signals()
+
+        selected_row = self.listbox_consoles.get_selected_row()
+
+        if self.__current_menu_row is not None:
+            console = self.__current_menu_row.console
+
+            dialog = ConsolePreferences(self, console, True)
+
+            if dialog.run() == Gtk.ResponseType.APPLY:
+                self.logger.debug("Save %s modifications" % console.name)
+
+                identifier = dialog.save()
+
+                if not console.id == identifier:
+                    # Remove previous console storage
+                    del self.consoles_iter[console.id]
+
+                    # Store row with the new identifier
+                    self.consoles_iter[identifier] = self.__current_menu_row
+
+                # Write console data
+                self.api.write_data(GEM.Consoles)
+
+                # Retrieve a new console instance from database
+                console = self.api.get_console(identifier)
+
+                # ----------------------------------------
+                #   Update console row
+                # ----------------------------------------
+
+                self.__current_menu_row.console = console
+
+                # Console name
+                self.__current_menu_row.label.set_text(console.name)
+
+                # Console icon
+                icon = self.get_pixbuf_from_cache(
+                    "consoles", 24, console.id, console.icon)
+
+                if icon is None:
+                    icon = self.icons.blank(24)
+
+                self.__current_menu_row.image_icon.set_from_pixbuf(icon)
+
+                # Console favorite status icon
+                icon = None
+                if console.favorite:
+                    icon = Icons.Symbolic.Favorite
+
+                self.__current_menu_row.image_status.set_from_icon_name(
+                    icon, Gtk.IconSize.MENU)
+
+                # Console flag selectors
+                self.menu_item_consoles_favorite.set_active(console.favorite)
+                self.menu_item_consoles_recursive.set_active(console.recursive)
+
+                # ----------------------------------------
+                #   Refilter consoles list
+                # ----------------------------------------
+
+                self.__on_update_consoles()
+
+                # ----------------------------------------
+                #   Reload games list
+                # ----------------------------------------
+
+                if selected_row == self.__current_menu_row:
+                    self.selection["console"] = self.__current_menu_row.console
+
+                    self.__on_reload_games()
+
+            dialog.destroy()
+
+        self.__unblock_signals()
+
+
+    def __on_show_emulator_editor(self, widget, *args):
+        """ Open console editor dialog
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        self.__block_signals()
+
+        selected_row = self.listbox_consoles.get_selected_row()
+
+        if self.__current_menu_row is not None:
+            emulator = self.__current_menu_row.console.emulator
+
+            dialog = EmulatorPreferences(self, emulator, True)
+
+            if dialog.run() == Gtk.ResponseType.APPLY:
+                self.logger.debug("Save %s modifications" % emulator.name)
+
+                identifier = dialog.save()
+
+                # Write console data
+                self.api.write_data(GEM.Emulators)
+
+                # Retrieve a new emulator instance from database
+                emulator = self.api.get_emulator(identifier)
+
+                # ----------------------------------------
+                #   Update console row
+                # ----------------------------------------
+
+                self.__current_menu_row.console.emulator = emulator
+
+                self.menu_item_consoles_config.set_sensitive(
+                    emulator is not None and exists(emulator.configuration))
+
+                # ----------------------------------------
+                #   Reload games list
+                # ----------------------------------------
+
+                same_emulator = False
+
+                if selected_row is not None:
+                    identifier = selected_row.console.emulator.id
+
+                    # Reload games list if selected console has the same
+                    # emulator to avoid missing references
+                    same_emulator = identifier == emulator.id
+
+                if selected_row == self.__current_menu_row:
+                    self.selection["console"] = self.__current_menu_row.console
+
+                    self.__on_reload_games()
+
+                elif same_emulator:
+                    self.__on_reload_games()
+
+            dialog.destroy()
+
+        self.__unblock_signals()
+
+
     def __on_show_emulator_config(self, *args):
         """ Edit emulator configuration file
         """
@@ -4486,7 +4660,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
         row_console.show_all()
 
+        setattr(row_console, "label", label_console)
         setattr(row_console, "console", console)
+        setattr(row_console, "image_icon", image_console)
         setattr(row_console, "image_status", image_console_status)
 
         self.listbox_consoles.add(row_console)
@@ -4675,14 +4851,14 @@ class MainWindow(Gtk.ApplicationWindow):
                 if row is not None:
                     self.__current_menu_row = row
 
-                    self.menu_item_consoles_edit.set_sensitive(False)
+                    self.menu_item_consoles_config.set_sensitive(False)
 
                     # Check console emulator
                     if row.console.emulator is not None:
                         configuration = row.console.emulator.configuration
 
                         # Check emulator configurator
-                        self.menu_item_consoles_edit.set_sensitive(
+                        self.menu_item_consoles_config.set_sensitive(
                             configuration is not None and exists(configuration))
 
                     self.menu_item_consoles_reload.set_sensitive(
@@ -4705,14 +4881,14 @@ class MainWindow(Gtk.ApplicationWindow):
                 if row is not None:
                     self.__current_menu_row = row
 
-                    self.menu_item_consoles_edit.set_sensitive(False)
+                    self.menu_item_consoles_config.set_sensitive(False)
 
                     # Check console emulator
                     if row.console.emulator is not None:
                         configuration = row.console.emulator.configuration
 
                         # Check emulator configurator
-                        self.menu_item_consoles_edit.set_sensitive(
+                        self.menu_item_consoles_config.set_sensitive(
                             configuration is not None and exists(configuration))
 
                     self.menu_item_consoles_reload.set_sensitive(
