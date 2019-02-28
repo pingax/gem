@@ -669,11 +669,7 @@ class EmulatorPreferences(CommonWindow):
         #   Manage error
         # ------------------------------------
 
-        if not self.error:
-            self.set_response_sensitive(Gtk.ResponseType.APPLY, True)
-
-        else:
-            self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
+        self.set_response_sensitive(Gtk.ResponseType.APPLY, not self.error)
 
 
     def __on_icon_update(self, widget):

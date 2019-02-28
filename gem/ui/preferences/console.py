@@ -417,19 +417,19 @@ class ConsolePreferences(CommonWindow):
         """ Initialize widgets signals
         """
 
-        self.entry_name.connect("changed", self.__update_dialog)
+        self.entry_name.connect("changed", self.__on_entry_update)
         self.entry_name.connect("icon-press", on_entry_clear)
 
         self.entry_icon.connect("changed", self.__on_icon_update)
         self.entry_icon.connect("icon-press", on_entry_clear)
 
-        self.file_folder.connect("file-set", self.__update_dialog)
+        self.file_folder.connect("file-set", self.__on_entry_update)
 
         self.entry_extensions.connect("icon-press", on_entry_clear)
 
         self.button_console.connect("clicked", self.__on_select_icon)
 
-        self.combo_emulators.connect("changed", self.__update_dialog)
+        self.combo_emulators.connect("changed", self.__on_entry_update)
 
         self.cell_ignores.connect("edited", self.__on_edited_cell)
 
@@ -596,6 +596,77 @@ class ConsolePreferences(CommonWindow):
         }
 
 
+    def __on_entry_update(self, widget):
+        """ Update dialog response sensitive status
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        self.error = False
+
+        # ------------------------------------
+        #   Console name
+        # ------------------------------------
+
+        icon = None
+        tooltip = None
+
+        name = self.entry_name.get_text()
+
+        if len(name) > 0:
+
+            # Always check identifier to avoid NES != NeS
+            name = generate_identifier(name)
+
+            # Check if current console exists in database
+            if name in self.api.consoles:
+
+                # Avoid to use a name which already exists in database
+                if self.console is not None and not self.console.id == name:
+                    self.error = True
+
+                    icon = Icons.Error
+                    tooltip = _("This console already exist, please, "
+                        "choose another name")
+
+        else:
+            self.error = True
+
+        self.entry_name.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.PRIMARY, icon)
+        self.entry_name.set_tooltip_text(tooltip)
+
+        # ------------------------------------
+        #   Console roms folder
+        # ------------------------------------
+
+        path = self.file_folder.get_filename()
+
+        if path is None or not exists(expanduser(path)):
+            self.error = True
+
+        # ------------------------------------
+        #   Start dialog
+        # ------------------------------------
+
+        self.set_response_sensitive(Gtk.ResponseType.APPLY, not self.error)
+
+
+    def __on_icon_update(self, widget):
+        """ Update icon thumbnail when the icon entry is update
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        self.set_icon(self.image_console, widget.get_text())
+
+
     def __on_select_icon(self, widget):
         """ Select a new icon
 
@@ -617,18 +688,6 @@ class ConsolePreferences(CommonWindow):
             self.entry_icon.set_text(self.path)
 
         dialog.destroy()
-
-
-    def __on_icon_update(self, widget):
-        """ Update icon thumbnail when the icon entry is update
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        """
-
-        self.set_icon(self.image_console, widget.get_text())
 
 
     def __on_append_item(self, widget):
@@ -671,70 +730,6 @@ class ConsolePreferences(CommonWindow):
         """
 
         self.model_ignores[path][0] = str(text)
-
-
-    def __update_dialog(self, widget):
-        """ Update dialog response sensitive status
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        """
-
-        status = True
-        icon, tooltip = None, None
-
-        # ------------------------------------
-        #   Console name
-        # ------------------------------------
-
-        name = self.entry_name.get_text()
-
-        if len(name) == 0:
-            status = False
-
-        else:
-            # Always check identifier to avoid NES != NeS
-            identifier = generate_identifier(name)
-
-            if identifier in self.api.consoles and (not self.modify or (
-                self.modify and not name == self.console.name)):
-
-                status = False
-
-                icon = Icons.Error
-                tooltip = _(
-                    "This console already exist, please, choose another name")
-
-        self.entry_name.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.PRIMARY, icon)
-        self.entry_name.set_tooltip_text(tooltip)
-
-        # ------------------------------------
-        #   Console roms folder
-        # ------------------------------------
-
-        path = self.file_folder.get_filename()
-
-        if path is None or not exists(expanduser(path)):
-            status = False
-
-        # ------------------------------------
-        #   Console emulator
-        # ------------------------------------
-
-        # emulator = self.api.get_emulator(self.combo_emulators.get_active_id())
-
-        # Allow to validate dialog if selected emulator binary exist
-        # if emulator is None or emulator.binary is None or not emulator.exists:
-            # status = False
-
-        # ------------------------------------
-        #   Start dialog
-        # ------------------------------------
-
-        self.set_response_sensitive(Gtk.ResponseType.APPLY, status)
 
 
     def __on_check_advanced_mode(self, *args):
