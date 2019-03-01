@@ -1679,7 +1679,7 @@ class Console(GEMObject):
                             seconds=int(seconds))
 
                     # Set last play date
-                    last_launch_date = None
+                    last_launch_date = date(1, 1, 1)
                     if "last_play" in data and len(data["last_play"]) > 0:
                         last_launch_date = data["last_play"]
 
@@ -1820,7 +1820,7 @@ class Game(GEMObject):
         "played": int(),
         "play_time": timedelta(),
         "last_launch_time": timedelta(),
-        "last_launch_date": None,
+        "last_launch_date": date(1, 1, 1),
         "emulator": None,
         "default": None,
         "key": None,

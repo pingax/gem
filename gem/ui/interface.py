@@ -3867,7 +3867,8 @@ class MainWindow(Gtk.ApplicationWindow):
                 },
                 {
                     "widget": self.label_sidebar_last_play_value,
-                    "condition": game.last_launch_date is not None,
+                    "condition": not game.last_launch_date.strftime(
+                        "%d%m%y") == "010101",
                     "markup": string_from_date(game.last_launch_date),
                     "tooltip": str(game.last_launch_date)
                 },
@@ -4980,7 +4981,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.treeview_games.freeze_child_notify()
 
             # ------------------------------------
-            #   Load games
+            #   Prepare games
             # ------------------------------------
 
             console.set_games(self.api)
@@ -4988,7 +4989,54 @@ class MainWindow(Gtk.ApplicationWindow):
             emulator = self.api.get_emulator(console.emulator.id)
 
             games = console.get_games()
-            games.sort(key=lambda game: game.name.lower().replace(' ', ''))
+
+            column, order = self.sorted_games_list.get_sort_column_id()
+
+            # Retrieve reverse value from column order
+            reverse = order == Gtk.SortType.DESCENDING
+
+            # Name
+            if column == Columns.List.Name:
+                games.sort(key=lambda game: game.name.lower().replace(' ', ''),
+                    reverse=reverse)
+
+            # Favorite
+            elif column == Columns.List.Favorite:
+                games.sort(key=lambda game: game.favorite, reverse=reverse)
+
+            # Multiplayer
+            elif column == Columns.List.Multiplayer:
+                key = lambda game: game.multiplayer
+                games.sort(key=lambda game: game.multiplayer, reverse=reverse)
+
+            # Finish
+            elif column == Columns.List.Finish:
+                games.sort(key=lambda game: game.finish, reverse=reverse)
+
+            # Played
+            elif column == Columns.List.Played:
+                games.sort(key=lambda game: game.played, reverse=reverse)
+
+            # Last play
+            elif column == Columns.List.LastPlay:
+                games.sort(
+                    key=lambda game: game.last_launch_date, reverse=reverse)
+
+            # Play time
+            elif column == Columns.List.TimePlay:
+                games.sort(key=lambda game: game.play_time, reverse=reverse)
+
+            # Score
+            elif column == Columns.List.Score:
+                games.sort(key=lambda game: game.score, reverse=reverse)
+
+            # Installed
+            elif column == Columns.List.Installed:
+                games.sort(key=lambda game: game.installed, reverse=reverse)
+
+            # ------------------------------------
+            #   Load games
+            # ------------------------------------
 
             if len(games) > 0:
                 self.scroll_sidebar.set_visible(self.config.getboolean(
@@ -5086,7 +5134,7 @@ class MainWindow(Gtk.ApplicationWindow):
                             self.icons.get("finish")
 
                     # Last launch date
-                    if game.last_launch_date is not None:
+                    if not game.last_launch_date.strftime("%d%m%y") == "010101":
                         row_data[Columns.List.LastPlay] = \
                             string_from_date(game.last_launch_date)
 

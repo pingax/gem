@@ -69,6 +69,7 @@ Version 1.0 - Space Fox
 * Fix disable consoles selector when no console available
 * Fix wrong treeiter used when games list was filtered
 * Fix a console is selected before the last used console selection with the 'load_console_startup' option
+* Fix loose file selection in icons file selector when switch from 'Library' to 'File'
 
 ### Launcher
 
