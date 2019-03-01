@@ -54,15 +54,23 @@ class IconsDialog(CommonWindow):
         #   Variables
         # ------------------------------------
 
-        self.path = path
-        self.new_path = None
-
-        self.folder = folder
-
         self.api = parent.api
 
         self.icons = parent.icons
 
+        # Current file path
+        self.path = path
+        # The new file path
+        self.new_path = None
+
+        # File selector management
+        self.__file_path = None
+        self.__file_active = False
+
+        # Collection type
+        self.folder = folder
+
+        # Collection thread loading instance
         self.thread = int()
 
         # ------------------------------------
@@ -178,6 +186,10 @@ class IconsDialog(CommonWindow):
         """ Initialize widgets signals
         """
 
+        # Only activate the last child cause there are RadioButton
+        children = self.stack_switcher.get_children()
+        children[-1].connect("clicked", self.__on_switch_stack_view)
+
         self.file_icons.connect("file-activated", self.__on_selected_icon)
 
         self.view_icons.connect("item-activated", self.__on_selected_icon)
@@ -216,6 +228,27 @@ class IconsDialog(CommonWindow):
         self.emit_response(None, Gtk.ResponseType.APPLY)
 
 
+    def __on_switch_stack_view(self, widget):
+        """ Check file selector to avoid to lost file selection
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        # The focus is not in the file selector anymore
+        if not widget.get_active():
+            self.__file_active = False
+
+            self.__file_path = self.file_icons.get_filename()
+
+        elif not self.__file_active and self.__file_path is not None:
+            self.__file_active = True
+
+            self.file_icons.set_filename(self.__file_path)
+
+
     def load_interface(self):
         """ Insert data into interface's widgets
         """
@@ -243,6 +276,9 @@ class IconsDialog(CommonWindow):
                     self.stack.set_visible_child(self.frame_icons)
 
                 self.file_icons.set_filename(self.path)
+
+                self.__file_path = self.path
+                self.__file_active = True
 
 
     def save_interface(self):
