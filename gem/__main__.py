@@ -23,6 +23,13 @@ from gem.engine.utils import get_data
 from gem.ui.data import Icons
 from gem.ui.data import Folders
 
+# Mimetypes
+try:
+    from magic import from_file as magic_from_file
+
+except ImportError as error:
+    from gem.ui.utils import magic_from_file
+
 # System
 from argparse import ArgumentParser
 
@@ -120,7 +127,7 @@ def main():
                 gem.logger.debug("Copy default %s" % path)
 
                 # Copy default configuration
-                copy(get_data(path_join("config", path)), gem.get_config(path))
+                copy(get_data("config", path), gem.get_config(path))
 
         # ------------------------------------
         #   Cache folders
@@ -150,7 +157,7 @@ def main():
         if "DISPLAY" in environ and len(environ["DISPLAY"]) > 0:
 
             # Default folders
-            for folder in ("icons", "logs", "notes"):
+            for folder in ("logs", "notes"):
 
                 if not exists(gem.get_local(folder)):
                     gem.logger.debug("Generate %s folder" % folder)
@@ -187,7 +194,7 @@ def main():
             if move_collection:
                 gem.logger.debug("Generate consoles icons folder")
 
-                for path in glob(path_join(icons_path, "*.%s" % Icons.Ext)):
+                for path in glob("%s/*.%s" % (get_data("icons"), Icons.Ext)):
 
                     # Check the file mime-type to avoid non-image file
                     if isfile(path) and magic_from_file(

@@ -78,8 +78,6 @@ class Splash(Gtk.Window):
 
         self.icons = IconsGenerator()
 
-        self.icons.theme.append_search_path(get_data(path_join("icons", "ui")))
-
         # ------------------------------------
         #   Prepare interface
         # ------------------------------------
