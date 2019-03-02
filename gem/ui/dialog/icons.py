@@ -188,7 +188,8 @@ class IconsDialog(CommonWindow):
 
         # Only activate the last child cause there are RadioButton
         children = self.stack_switcher.get_children()
-        children[-1].connect("clicked", self.__on_switch_stack_view)
+        if len(children) > 0:
+            children[-1].connect("clicked", self.__on_switch_stack_view)
 
         self.file_icons.connect("file-activated", self.__on_selected_icon)
 
