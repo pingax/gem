@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.4\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-03-04 10:53+0100\n"
+"PO-Revision-Date: 2019-03-04 17:58+0100\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -127,12 +127,6 @@ msgstr ""
 #, fuzzy, python-format
 msgid "A memory error occur: %s"
 msgstr "MemoryError: %s"
-
-#
-# File: gem/interface.py, line: 419
-#, fuzzy
-msgid "About"
-msgstr "_A cerca de"
 
 #
 # File: gem/gtk/preferences.py, line: 1509
@@ -412,12 +406,6 @@ msgid "Cover image"
 msgstr ""
 
 #
-# File: gem/interface.py, line: 391
-#, fuzzy
-msgid "Dark theme"
-msgstr "Usar el tema _oscuro"
-
-#
 # File: gem/ui/dialog/delete.py, line: 164
 # File: gem/ui/dialog/duplicate.py, line: 172
 msgid "Database"
@@ -542,6 +530,12 @@ msgstr ""
 # File: gem/ui/preferences/interface.py, line: 724
 msgid "Display lines in games list view"
 msgstr ""
+
+#
+# File: gem/interface.py, line: 642
+#, fuzzy
+msgid "Display menu"
+msgstr "Tiempo jugado"
 
 #
 # File: gem/ui/preferences/interface.py, line: 754
@@ -1278,12 +1272,6 @@ msgid "Output _log"
 msgstr "Mostrar el _registro de salida"
 
 #
-# File: gem/interface.py, line: 572
-#, fuzzy
-msgid "Output log"
-msgstr "Mostrar el _registro de salida"
-
-#
 # File: gem/interface.py, line: 396
 # File: gem/interface.py, line: 756
 # File: gem/interface.py, line: 1667
@@ -1332,12 +1320,6 @@ msgstr "Preferencias"
 # File: gem/ui/dialog/cover.py, line: 160
 msgid "Preview"
 msgstr ""
-
-#
-# File: gem/interface.py, line: 363
-#, fuzzy
-msgid "Quit"
-msgstr "_Salir"
 
 #
 # File: gem/preferences.py, line: 94
@@ -1704,11 +1686,6 @@ msgid "Statistic"
 msgstr ""
 
 #
-# File: gem/gtk/interface.py, line: 505
-msgid "Statusbar"
-msgstr ""
-
-#
 # File: gem/gtk/interface.py, line: 3661
 # File: gem/gtk/interface.py, line: 3663
 msgid "Stop"
@@ -2046,6 +2023,13 @@ msgid "_Decrease score"
 msgstr ""
 
 #
+# File: gem/interface.py, line: 386
+# File: gem/interface.py, line: 746
+#, fuzzy
+msgid "_Display"
+msgstr "Marcar como _mutijugador"
+
+#
 # File: gem/ui/interface.py, line: 621
 # File: gem/ui/interface.py, line: 1265
 msgid "_Duplicate"
@@ -2204,11 +2188,6 @@ msgstr "Mostrar las _capturas de pantalla"
 # File: gem/gtk/interface.py, line: 422
 msgid "_Tools"
 msgstr "_Herramientas"
-
-#
-# File: gem/ui/interface.py, line: 497
-msgid "_View"
-msgstr ""
 
 #
 # File: gem/preferences.py, line: 280

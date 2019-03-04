@@ -274,7 +274,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.grid = Gtk.Box.new(Gtk.Orientation.VERTICAL, 0)
 
-        self.grid_menu = Gtk.Box.new(Gtk.Orientation.VERTICAL, 6)
         self.grid_game_view_mode = Gtk.Box()
 
         self.grid_consoles = Gtk.Box.new(Gtk.Orientation.VERTICAL, 0)
@@ -300,8 +299,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.grid_sidebar_informations = Gtk.Grid()
 
         # Properties
-        self.grid_menu.set_border_width(6)
-
         Gtk.StyleContext.add_class(
             self.grid_game_view_mode.get_style_context(), "linked")
         self.grid_game_view_mode.set_spacing(-1)
@@ -360,9 +357,10 @@ class MainWindow(Gtk.ApplicationWindow):
         self.headerbar = Gtk.HeaderBar()
 
         self.image_headerbar_menu = Gtk.Image()
-        self.button_headerbar_menu = Gtk.MenuButton()
+        self.button_headerbar_main = Gtk.MenuButton()
 
-        self.popover_menu = Gtk.Popover()
+        self.image_headerbar_view = Gtk.Image()
+        self.button_headerbar_view = Gtk.MenuButton()
 
         self.button_headerbar_grid = Gtk.ToggleButton()
         self.button_headerbar_list = Gtk.ToggleButton()
@@ -374,115 +372,14 @@ class MainWindow(Gtk.ApplicationWindow):
         self.headerbar.set_title(self.title)
         self.headerbar.set_subtitle(str())
 
-        self.button_headerbar_menu.set_tooltip_text(_("Main menu"))
-        self.button_headerbar_menu.set_use_popover(True)
+        self.button_headerbar_main.set_tooltip_text(_("Main menu"))
+        self.button_headerbar_main.set_use_popover(False)
 
-        self.popover_menu.set_modal(True)
+        self.button_headerbar_view.set_tooltip_text(_("Display menu"))
+        self.button_headerbar_view.set_use_popover(False)
 
         self.button_headerbar_grid.set_tooltip_text(_("Grid icons"))
         self.button_headerbar_list.set_tooltip_text(_("List view"))
-
-        # ------------------------------------
-        #   Headerbar - Main menu
-        # ------------------------------------
-
-        self.frame_menu_actions = Gtk.Frame()
-        self.listbox_menu_actions = Gtk.ListBox()
-
-        self.widget_menu_preferences = PreferencesItem()
-        self.image_menu_preferences = Gtk.Image()
-        self.button_menu_preferences = Gtk.Button()
-
-        self.widget_menu_log = PreferencesItem()
-        self.image_menu_log = Gtk.Image()
-        self.button_menu_log = Gtk.Button()
-
-        self.frame_menu_system = Gtk.Frame()
-        self.listbox_menu_system = Gtk.ListBox()
-
-        self.widget_menu_about = PreferencesItem()
-        self.image_menu_about = Gtk.Image()
-        self.button_menu_about = Gtk.Button()
-
-        self.widget_menu_quit = PreferencesItem()
-        self.image_menu_quit = Gtk.Image()
-        self.button_menu_quit = Gtk.Button()
-
-        self.frame_menu_options = Gtk.Frame()
-        self.listbox_menu_options = Gtk.ListBox()
-
-        self.widget_menu_dark_theme = PreferencesItem()
-        self.switch_menu_dark_theme = Gtk.Switch()
-
-        self.widget_menu_sidebar = PreferencesItem()
-        self.switch_menu_sidebar = Gtk.Switch()
-
-        self.widget_menu_statusbar = PreferencesItem()
-        self.switch_menu_statusbar = Gtk.Switch()
-
-        # Properties
-        self.listbox_menu_actions.set_activate_on_single_click(True)
-        self.listbox_menu_actions.set_selection_mode(
-            Gtk.SelectionMode.NONE)
-
-        self.button_menu_preferences.set_image(
-            self.image_menu_preferences)
-        self.button_menu_preferences.set_relief(Gtk.ReliefStyle.NONE)
-
-        self.widget_menu_preferences.set_widget(
-            self.button_menu_preferences)
-        self.widget_menu_preferences.set_option_label(
-            _("Preferences"))
-
-        self.button_menu_log.set_image(
-            self.image_menu_log)
-        self.button_menu_log.set_relief(Gtk.ReliefStyle.NONE)
-
-        self.widget_menu_log.set_widget(
-            self.button_menu_log)
-        self.widget_menu_log.set_option_label(
-            _("Output log"))
-
-        self.button_menu_about.set_image(
-            self.image_menu_about)
-        self.button_menu_about.set_relief(Gtk.ReliefStyle.NONE)
-
-        self.listbox_menu_system.set_activate_on_single_click(True)
-        self.listbox_menu_system.set_selection_mode(
-            Gtk.SelectionMode.NONE)
-
-        self.widget_menu_about.set_widget(
-            self.button_menu_about)
-        self.widget_menu_about.set_option_label(
-            _("About"))
-
-        self.button_menu_quit.set_image(
-            self.image_menu_quit)
-        self.button_menu_quit.set_relief(Gtk.ReliefStyle.NONE)
-
-        self.widget_menu_quit.set_widget(
-            self.button_menu_quit)
-        self.widget_menu_quit.set_option_label(
-            _("Quit"))
-
-        self.listbox_menu_options.set_activate_on_single_click(True)
-        self.listbox_menu_options.set_selection_mode(
-            Gtk.SelectionMode.NONE)
-
-        self.widget_menu_dark_theme.set_widget(
-            self.switch_menu_dark_theme)
-        self.widget_menu_dark_theme.set_option_label(
-            _("Dark theme"))
-
-        self.widget_menu_sidebar.set_widget(
-            self.switch_menu_sidebar)
-        self.widget_menu_sidebar.set_option_label(
-            _("Sidebar"))
-
-        self.widget_menu_statusbar.set_widget(
-            self.switch_menu_statusbar)
-        self.widget_menu_statusbar.set_option_label(
-            _("Statusbar"))
 
         # ------------------------------------
         #   Menubar
@@ -490,294 +387,294 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.menubar = Gtk.MenuBar()
 
-        self.menubar_item_main = Gtk.MenuItem()
-        self.menubar_item_view = Gtk.MenuItem()
-        self.menubar_item_game = Gtk.MenuItem()
-        self.menubar_item_edit = Gtk.MenuItem()
-        self.menubar_item_tools = Gtk.MenuItem()
-        self.menubar_item_help = Gtk.MenuItem()
+        self.item_menubar_main = Gtk.MenuItem()
+        self.item_menubar_view = Gtk.MenuItem()
+        self.item_menubar_game = Gtk.MenuItem()
+        self.item_menubar_edit = Gtk.MenuItem()
+        self.item_menubar_tools = Gtk.MenuItem()
+        self.item_menubar_help = Gtk.MenuItem()
 
         # Properties
-        self.menubar_item_main.set_label(_("_GEM"))
-        self.menubar_item_main.set_use_underline(True)
-        self.menubar_item_view.set_label(_("_View"))
-        self.menubar_item_view.set_use_underline(True)
-        self.menubar_item_game.set_label(_("_Game"))
-        self.menubar_item_game.set_use_underline(True)
-        self.menubar_item_edit.set_label(_("_Edit"))
-        self.menubar_item_edit.set_use_underline(True)
-        self.menubar_item_help.set_label(_("_Help"))
-        self.menubar_item_help.set_use_underline(True)
+        self.item_menubar_main.set_label(_("_GEM"))
+        self.item_menubar_main.set_use_underline(True)
+        self.item_menubar_view.set_label(_("_Display"))
+        self.item_menubar_view.set_use_underline(True)
+        self.item_menubar_game.set_label(_("_Game"))
+        self.item_menubar_game.set_use_underline(True)
+        self.item_menubar_edit.set_label(_("_Edit"))
+        self.item_menubar_edit.set_use_underline(True)
+        self.item_menubar_help.set_label(_("_Help"))
+        self.item_menubar_help.set_use_underline(True)
 
         # ------------------------------------
         #   Menubar - Main items
         # ------------------------------------
 
-        self.menubar_main_menu = Gtk.Menu()
+        self.menu_menubar_main = Gtk.Menu()
 
-        self.menubar_main_item_preferences = Gtk.MenuItem()
-        self.menubar_main_item_log = Gtk.MenuItem()
+        self.item_menubar_preferences = Gtk.MenuItem()
+        self.item_menubar_log = Gtk.MenuItem()
 
-        self.menubar_main_item_quit = Gtk.MenuItem()
+        self.item_menubar_quit = Gtk.MenuItem()
 
         # Properties
-        self.menubar_main_item_preferences.set_label(
+        self.item_menubar_preferences.set_label(
             "%s…" % _("_Preferences"))
-        self.menubar_main_item_preferences.set_use_underline(True)
+        self.item_menubar_preferences.set_use_underline(True)
 
-        self.menubar_main_item_log.set_label(
+        self.item_menubar_log.set_label(
             "%s…" % _("_Log"))
-        self.menubar_main_item_log.set_use_underline(True)
+        self.item_menubar_log.set_use_underline(True)
 
-        self.menubar_main_item_quit.set_label(
+        self.item_menubar_quit.set_label(
             _("_Quit"))
-        self.menubar_main_item_quit.set_use_underline(True)
+        self.item_menubar_quit.set_use_underline(True)
 
         # ------------------------------------
         #   Menubar - View items
         # ------------------------------------
 
-        self.menubar_view_menu = Gtk.Menu()
+        self.menu_menubar_view = Gtk.Menu()
 
-        self.menubar_view_menu_column = Gtk.Menu()
-        self.menubar_view_item_column = Gtk.MenuItem()
+        self.menu_menubar_columns = Gtk.Menu()
+        self.item_menubar_columns = Gtk.MenuItem()
 
-        self.menubar_view_item_column_favorite = Gtk.CheckMenuItem()
-        self.menubar_view_item_column_multiplayer = Gtk.CheckMenuItem()
-        self.menubar_view_item_column_finish = Gtk.CheckMenuItem()
-        self.menubar_view_item_column_play = Gtk.CheckMenuItem()
-        self.menubar_view_item_column_play_time = Gtk.CheckMenuItem()
-        self.menubar_view_item_column_last_play = Gtk.CheckMenuItem()
-        self.menubar_view_item_column_score = Gtk.CheckMenuItem()
-        self.menubar_view_item_column_installed = Gtk.CheckMenuItem()
-        self.menubar_view_item_column_flags = Gtk.CheckMenuItem()
+        self.item_menubar_columns_favorite = Gtk.CheckMenuItem()
+        self.item_menubar_columns_multiplayer = Gtk.CheckMenuItem()
+        self.item_menubar_columns_finish = Gtk.CheckMenuItem()
+        self.item_menubar_columns_play = Gtk.CheckMenuItem()
+        self.item_menubar_columns_play_time = Gtk.CheckMenuItem()
+        self.item_menubar_columns_last_play = Gtk.CheckMenuItem()
+        self.item_menubar_columns_score = Gtk.CheckMenuItem()
+        self.item_menubar_columns_installed = Gtk.CheckMenuItem()
+        self.item_menubar_columns_flags = Gtk.CheckMenuItem()
 
-        self.menubar_view_item_dark_theme = Gtk.CheckMenuItem()
-        self.menubar_view_item_sidebar = Gtk.CheckMenuItem()
-        self.menubar_view_item_statusbar = Gtk.CheckMenuItem()
+        self.item_menubar_dark_theme = Gtk.CheckMenuItem()
+        self.item_menubar_sidebar = Gtk.CheckMenuItem()
+        self.item_menubar_statusbar = Gtk.CheckMenuItem()
 
-        self.menubar_view_item_list = Gtk.RadioMenuItem()
-        self.menubar_view_item_grid = Gtk.RadioMenuItem()
+        self.item_menubar_list = Gtk.RadioMenuItem()
+        self.item_menubar_grid = Gtk.RadioMenuItem()
 
         # Properties
-        self.menubar_view_item_column.set_label(
+        self.item_menubar_columns.set_label(
             _("_Columns visibility"))
-        self.menubar_view_item_column.set_use_underline(True)
+        self.item_menubar_columns.set_use_underline(True)
 
-        self.menubar_view_item_column_favorite.set_label(
+        self.item_menubar_columns_favorite.set_label(
             _("Favorite"))
-        self.menubar_view_item_column_multiplayer.set_label(
+        self.item_menubar_columns_multiplayer.set_label(
             _("Multiplayer"))
-        self.menubar_view_item_column_finish.set_label(
+        self.item_menubar_columns_finish.set_label(
             _("Finish"))
-        self.menubar_view_item_column_play.set_label(
+        self.item_menubar_columns_play.set_label(
             _("Launch"))
-        self.menubar_view_item_column_play_time.set_label(
+        self.item_menubar_columns_play_time.set_label(
             _("Play time"))
-        self.menubar_view_item_column_last_play.set_label(
+        self.item_menubar_columns_last_play.set_label(
             _("Last launch"))
-        self.menubar_view_item_column_score.set_label(
+        self.item_menubar_columns_score.set_label(
             _("Score"))
-        self.menubar_view_item_column_installed.set_label(
+        self.item_menubar_columns_installed.set_label(
             _("Installed"))
-        self.menubar_view_item_column_flags.set_label(
+        self.item_menubar_columns_flags.set_label(
             _("Flags"))
 
-        self.menubar_view_item_dark_theme.set_label(
+        self.item_menubar_dark_theme.set_label(
             _("Use _dark theme"))
-        self.menubar_view_item_dark_theme.set_use_underline(True)
+        self.item_menubar_dark_theme.set_use_underline(True)
 
-        self.menubar_view_item_sidebar.set_label(
+        self.item_menubar_sidebar.set_label(
             _("Show _sidebar"))
-        self.menubar_view_item_sidebar.set_use_underline(True)
+        self.item_menubar_sidebar.set_use_underline(True)
 
-        self.menubar_view_item_statusbar.set_label(
+        self.item_menubar_statusbar.set_label(
             _("Show _statusbar"))
-        self.menubar_view_item_statusbar.set_use_underline(True)
+        self.item_menubar_statusbar.set_use_underline(True)
 
-        self.menubar_view_item_list.set_label(
+        self.item_menubar_list.set_label(
             _("List view"))
 
-        self.menubar_view_item_grid.set_label(
+        self.item_menubar_grid.set_label(
             _("Grid icons"))
-        self.menubar_view_item_grid.join_group(self.menubar_view_item_list)
+        self.item_menubar_grid.join_group(self.item_menubar_list)
 
         # ------------------------------------
         #   Menubar - Game items
         # ------------------------------------
 
-        self.menubar_game_menu = Gtk.Menu()
+        self.menu_menubar_game = Gtk.Menu()
 
-        self.menubar_game_item_launch = Gtk.MenuItem()
-        self.menubar_game_item_screenshots = Gtk.MenuItem()
-        self.menubar_game_item_output = Gtk.MenuItem()
-        self.menubar_game_item_notes = Gtk.MenuItem()
-        self.menubar_game_item_properties = Gtk.MenuItem()
+        self.item_menubar_game_launch = Gtk.MenuItem()
+        self.item_menubar_game_screenshots = Gtk.MenuItem()
+        self.item_menubar_game_output = Gtk.MenuItem()
+        self.item_menubar_game_notes = Gtk.MenuItem()
+        self.item_menubar_game_properties = Gtk.MenuItem()
 
-        self.menubar_game_item_favorite = Gtk.CheckMenuItem()
-        self.menubar_game_item_multiplayer = Gtk.CheckMenuItem()
-        self.menubar_game_item_finish = Gtk.CheckMenuItem()
-        self.menubar_game_item_fullscreen = Gtk.CheckMenuItem()
+        self.item_menubar_game_favorite = Gtk.CheckMenuItem()
+        self.item_menubar_game_multiplayer = Gtk.CheckMenuItem()
+        self.item_menubar_game_finish = Gtk.CheckMenuItem()
+        self.item_menubar_game_fullscreen = Gtk.CheckMenuItem()
 
         # Properties
-        self.menubar_game_item_launch.set_label(
+        self.item_menubar_game_launch.set_label(
             _("_Launch"))
-        self.menubar_game_item_launch.set_use_underline(True)
+        self.item_menubar_game_launch.set_use_underline(True)
 
-        self.menubar_game_item_favorite.set_label(
+        self.item_menubar_game_favorite.set_label(
             _("_Favorite"))
-        self.menubar_game_item_favorite.set_use_underline(True)
+        self.item_menubar_game_favorite.set_use_underline(True)
 
-        self.menubar_game_item_multiplayer.set_label(
+        self.item_menubar_game_multiplayer.set_label(
             _("_Multiplayer"))
-        self.menubar_game_item_multiplayer.set_use_underline(True)
+        self.item_menubar_game_multiplayer.set_use_underline(True)
 
-        self.menubar_game_item_finish.set_label(
+        self.item_menubar_game_finish.set_label(
             _("_Finish"))
-        self.menubar_game_item_finish.set_use_underline(True)
+        self.item_menubar_game_finish.set_use_underline(True)
 
-        self.menubar_game_item_screenshots.set_label(
+        self.item_menubar_game_screenshots.set_label(
             "%s…" % _("_Screenshots"))
-        self.menubar_game_item_screenshots.set_use_underline(True)
+        self.item_menubar_game_screenshots.set_use_underline(True)
 
-        self.menubar_game_item_output.set_label(
+        self.item_menubar_game_output.set_label(
             "%s…" % _("Output _log"))
-        self.menubar_game_item_output.set_use_underline(True)
+        self.item_menubar_game_output.set_use_underline(True)
 
-        self.menubar_game_item_notes.set_label(
+        self.item_menubar_game_notes.set_label(
             "%s…" % _("_Notes"))
-        self.menubar_game_item_notes.set_use_underline(True)
+        self.item_menubar_game_notes.set_use_underline(True)
 
-        self.menubar_game_item_properties.set_label(
+        self.item_menubar_game_properties.set_label(
             "%s…" % _("_Properties"))
-        self.menubar_game_item_properties.set_use_underline(True)
+        self.item_menubar_game_properties.set_use_underline(True)
 
-        self.menubar_game_item_fullscreen.set_label(
+        self.item_menubar_game_fullscreen.set_label(
             _("Fullscreen mode"))
 
         # ------------------------------------
         #   Menubar - Edit items
         # ------------------------------------
 
-        self.menubar_edit_menu = Gtk.Menu()
+        self.menu_menubar_edit = Gtk.Menu()
 
-        self.menubar_edit_item_rename = Gtk.MenuItem()
-        self.menubar_edit_item_duplicate = Gtk.MenuItem()
-        self.menubar_edit_item_copy = Gtk.MenuItem()
-        self.menubar_edit_item_open = Gtk.MenuItem()
-        self.menubar_edit_item_cover = Gtk.MenuItem()
-        self.menubar_edit_item_desktop = Gtk.MenuItem()
-        self.menubar_edit_item_maintenance = Gtk.MenuItem()
-        self.menubar_edit_item_database = Gtk.MenuItem()
-        self.menubar_edit_item_delete = Gtk.MenuItem()
-        self.menubar_edit_item_mednafen = Gtk.MenuItem()
+        self.item_menubar_rename = Gtk.MenuItem()
+        self.item_menubar_duplicate = Gtk.MenuItem()
+        self.item_menubar_copy = Gtk.MenuItem()
+        self.item_menubar_open = Gtk.MenuItem()
+        self.item_menubar_cover = Gtk.MenuItem()
+        self.item_menubar_desktop = Gtk.MenuItem()
+        self.item_menubar_maintenance = Gtk.MenuItem()
+        self.item_menubar_database = Gtk.MenuItem()
+        self.item_menubar_delete = Gtk.MenuItem()
+        self.item_menubar_mednafen = Gtk.MenuItem()
 
         # Properties
-        self.menubar_edit_item_rename.set_label(
+        self.item_menubar_rename.set_label(
             "%s…" % _("_Rename"))
-        self.menubar_edit_item_rename.set_use_underline(True)
+        self.item_menubar_rename.set_use_underline(True)
 
-        self.menubar_edit_item_duplicate.set_label(
+        self.item_menubar_duplicate.set_label(
             "%s…" % _("_Duplicate"))
-        self.menubar_edit_item_duplicate.set_use_underline(True)
+        self.item_menubar_duplicate.set_use_underline(True)
 
-        self.menubar_edit_item_copy.set_label(
+        self.item_menubar_copy.set_label(
             _("_Copy path"))
-        self.menubar_edit_item_copy.set_use_underline(True)
+        self.item_menubar_copy.set_use_underline(True)
 
-        self.menubar_edit_item_open.set_label(
+        self.item_menubar_open.set_label(
             _("_Open path"))
-        self.menubar_edit_item_open.set_use_underline(True)
+        self.item_menubar_open.set_use_underline(True)
 
-        self.menubar_edit_item_cover.set_label(
+        self.item_menubar_cover.set_label(
             "%s…" % _("Set game _thumbnail"))
-        self.menubar_edit_item_cover.set_use_underline(True)
+        self.item_menubar_cover.set_use_underline(True)
 
-        self.menubar_edit_item_desktop.set_label(
+        self.item_menubar_desktop.set_label(
             _("_Generate a menu entry"))
-        self.menubar_edit_item_desktop.set_use_underline(True)
+        self.item_menubar_desktop.set_use_underline(True)
 
-        self.menubar_edit_item_maintenance.set_label(
+        self.item_menubar_maintenance.set_label(
             "%s…" % _("_Maintenance"))
-        self.menubar_edit_item_maintenance.set_use_underline(True)
+        self.item_menubar_maintenance.set_use_underline(True)
 
-        self.menubar_edit_item_database.set_label(
+        self.item_menubar_database.set_label(
             "%s…" % _("_Reset data"))
-        self.menubar_edit_item_database.set_use_underline(True)
+        self.item_menubar_database.set_use_underline(True)
 
-        self.menubar_edit_item_delete.set_label(
+        self.item_menubar_delete.set_label(
             "%s…" % _("_Remove from disk"))
-        self.menubar_edit_item_delete.set_use_underline(True)
+        self.item_menubar_delete.set_use_underline(True)
 
-        self.menubar_edit_item_mednafen.set_label(
+        self.item_menubar_mednafen.set_label(
             "%s…" % _("Specify a _memory type"))
-        self.menubar_edit_item_mednafen.set_use_underline(True)
+        self.item_menubar_mednafen.set_use_underline(True)
 
         # ------------------------------------
         #   Menubar - Edit - Score items
         # ------------------------------------
 
-        self.menubar_edit_score = Gtk.Menu()
-        self.menubar_edit_item_score = Gtk.MenuItem()
+        self.menu_menubar_score = Gtk.Menu()
+        self.item_menubar_score = Gtk.MenuItem()
 
-        self.menubar_edit_item_score_up = Gtk.MenuItem()
-        self.menubar_edit_item_score_down = Gtk.MenuItem()
-        self.menubar_edit_item_score_0 = Gtk.MenuItem()
-        self.menubar_edit_item_score_1 = Gtk.MenuItem()
-        self.menubar_edit_item_score_2 = Gtk.MenuItem()
-        self.menubar_edit_item_score_3 = Gtk.MenuItem()
-        self.menubar_edit_item_score_4 = Gtk.MenuItem()
-        self.menubar_edit_item_score_5 = Gtk.MenuItem()
+        self.item_menubar_score_up = Gtk.MenuItem()
+        self.item_menubar_score_down = Gtk.MenuItem()
+        self.item_menubar_score_0 = Gtk.MenuItem()
+        self.item_menubar_score_1 = Gtk.MenuItem()
+        self.item_menubar_score_2 = Gtk.MenuItem()
+        self.item_menubar_score_3 = Gtk.MenuItem()
+        self.item_menubar_score_4 = Gtk.MenuItem()
+        self.item_menubar_score_5 = Gtk.MenuItem()
 
         # Properties
-        self.menubar_edit_item_score.set_label(
+        self.item_menubar_score.set_label(
             _("Score"))
-        self.menubar_edit_item_score.set_use_underline(True)
+        self.item_menubar_score.set_use_underline(True)
 
-        self.menubar_edit_item_score_up.set_label(
+        self.item_menubar_score_up.set_label(
             _("Increase score"))
-        self.menubar_edit_item_score_up.set_use_underline(True)
+        self.item_menubar_score_up.set_use_underline(True)
 
-        self.menubar_edit_item_score_down.set_label(
+        self.item_menubar_score_down.set_label(
             _("Decrease score"))
-        self.menubar_edit_item_score_down.set_use_underline(True)
+        self.item_menubar_score_down.set_use_underline(True)
 
-        self.menubar_edit_item_score_0.set_label(
+        self.item_menubar_score_0.set_label(
             _("Set score as 0"))
-        self.menubar_edit_item_score_0.set_use_underline(True)
+        self.item_menubar_score_0.set_use_underline(True)
 
-        self.menubar_edit_item_score_1.set_label(
+        self.item_menubar_score_1.set_label(
             _("Set score as 1"))
-        self.menubar_edit_item_score_1.set_use_underline(True)
+        self.item_menubar_score_1.set_use_underline(True)
 
-        self.menubar_edit_item_score_2.set_label(
+        self.item_menubar_score_2.set_label(
             _("Set score as 2"))
-        self.menubar_edit_item_score_2.set_use_underline(True)
+        self.item_menubar_score_2.set_use_underline(True)
 
-        self.menubar_edit_item_score_3.set_label(
+        self.item_menubar_score_3.set_label(
             _("Set score as 3"))
-        self.menubar_edit_item_score_3.set_use_underline(True)
+        self.item_menubar_score_3.set_use_underline(True)
 
-        self.menubar_edit_item_score_4.set_label(
+        self.item_menubar_score_4.set_label(
             _("Set score as 4"))
-        self.menubar_edit_item_score_4.set_use_underline(True)
+        self.item_menubar_score_4.set_use_underline(True)
 
-        self.menubar_edit_item_score_5.set_label(
+        self.item_menubar_score_5.set_label(
             _("Set score as 5"))
-        self.menubar_edit_item_score_5.set_use_underline(True)
+        self.item_menubar_score_5.set_use_underline(True)
 
         # ------------------------------------
         #   Menubar - Help items
         # ------------------------------------
 
-        self.menubar_help_menu = Gtk.Menu()
+        self.menu_menubar_help = Gtk.Menu()
 
-        self.menubar_help_item_about = Gtk.MenuItem()
+        self.item_menubar_about = Gtk.MenuItem()
 
         # Properties
-        self.menubar_help_item_about.set_label(
+        self.item_menubar_about.set_label(
             _("_About"))
-        self.menubar_help_item_about.set_use_underline(True)
+        self.item_menubar_about.set_use_underline(True)
 
         # ------------------------------------
         #   Toolbar - Consoles
@@ -814,41 +711,41 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.menu_consoles = Gtk.Menu()
 
-        self.menu_item_consoles_console = Gtk.MenuItem()
+        self.item_consoles_console = Gtk.MenuItem()
 
-        self.menu_item_consoles_emulator = Gtk.MenuItem()
-        self.menu_item_consoles_config = Gtk.MenuItem()
+        self.item_consoles_emulator = Gtk.MenuItem()
+        self.item_consoles_config = Gtk.MenuItem()
 
-        self.menu_item_consoles_reload = Gtk.MenuItem()
+        self.item_consoles_reload = Gtk.MenuItem()
 
-        self.menu_item_consoles_favorite = Gtk.CheckMenuItem()
-        self.menu_item_consoles_recursive = Gtk.CheckMenuItem()
+        self.item_consoles_favorite = Gtk.CheckMenuItem()
+        self.item_consoles_recursive = Gtk.CheckMenuItem()
 
         # Properties
-        self.menu_item_consoles_console.set_label(
+        self.item_consoles_console.set_label(
             _("_Edit console"))
-        self.menu_item_consoles_console.set_use_underline(True)
+        self.item_consoles_console.set_use_underline(True)
 
-        self.menu_item_consoles_emulator.set_label(
+        self.item_consoles_emulator.set_label(
             _("_Edit emulator"))
-        self.menu_item_consoles_emulator.set_use_underline(True)
+        self.item_consoles_emulator.set_use_underline(True)
 
-        self.menu_item_consoles_config.set_label(
+        self.item_consoles_config.set_label(
             _("_Edit configuration"))
-        self.menu_item_consoles_config.set_use_underline(True)
+        self.item_consoles_config.set_use_underline(True)
 
-        self.menu_item_consoles_reload.set_label(
+        self.item_consoles_reload.set_label(
             _("_Reload games list"))
-        self.menu_item_consoles_reload.set_use_underline(True)
+        self.item_consoles_reload.set_use_underline(True)
 
-        self.menu_item_consoles_favorite.set_label(
+        self.item_consoles_favorite.set_label(
             _("_Favorite"))
-        self.menu_item_consoles_favorite.set_use_underline(True)
+        self.item_consoles_favorite.set_use_underline(True)
 
-        self.menu_item_consoles_recursive.set_label(
+        self.item_consoles_recursive.set_label(
             _("_Recursive"))
-        self.menu_item_consoles_recursive.set_use_underline(True)
-        self.menu_item_consoles_recursive.set_tooltip_text(
+        self.item_consoles_recursive.set_use_underline(True)
+        self.item_consoles_recursive.set_tooltip_text(
             _("You need to reload games list to apply changes"))
 
         # ------------------------------------
@@ -1492,173 +1389,173 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Menu - Game
         # ------------------------------------
 
-        self.menu_games = Gtk.Menu()
+        self.menu_game = Gtk.Menu()
 
-        self.menu_item_launch = Gtk.MenuItem()
-        self.menu_item_properties = Gtk.MenuItem()
+        self.item_game_launch = Gtk.MenuItem()
+        self.item_game_properties = Gtk.MenuItem()
 
-        self.menu_item_favorite = Gtk.CheckMenuItem()
-        self.menu_item_multiplayer = Gtk.CheckMenuItem()
-        self.menu_item_finish = Gtk.CheckMenuItem()
+        self.item_game_favorite = Gtk.CheckMenuItem()
+        self.item_game_multiplayer = Gtk.CheckMenuItem()
+        self.item_game_finish = Gtk.CheckMenuItem()
 
         # Properties
-        self.menu_item_launch.set_label(
+        self.item_game_launch.set_label(
             _("_Launch"))
-        self.menu_item_launch.set_use_underline(True)
+        self.item_game_launch.set_use_underline(True)
 
-        self.menu_item_favorite.set_label(
+        self.item_game_favorite.set_label(
             _("_Favorite"))
-        self.menu_item_favorite.set_use_underline(True)
+        self.item_game_favorite.set_use_underline(True)
 
-        self.menu_item_multiplayer.set_label(
+        self.item_game_multiplayer.set_label(
             _("_Multiplayer"))
-        self.menu_item_multiplayer.set_use_underline(True)
+        self.item_game_multiplayer.set_use_underline(True)
 
-        self.menu_item_finish.set_label(
+        self.item_game_finish.set_label(
             _("_Finish"))
-        self.menu_item_finish.set_use_underline(True)
+        self.item_game_finish.set_use_underline(True)
 
-        self.menu_item_properties.set_label(
+        self.item_game_properties.set_label(
             "%s…" % _("_Properties"))
-        self.menu_item_properties.set_use_underline(True)
+        self.item_game_properties.set_use_underline(True)
 
         # ------------------------------------
         #   Menu - Game edit
         # ------------------------------------
 
-        self.menu_games_edit = Gtk.Menu()
-        self.menu_item_edit = Gtk.MenuItem()
+        self.menu_game_edit = Gtk.Menu()
+        self.item_game_edit = Gtk.MenuItem()
 
-        self.menu_item_rename = Gtk.MenuItem()
-        self.menu_item_duplicate = Gtk.MenuItem()
-        self.menu_item_copy = Gtk.MenuItem()
-        self.menu_item_open = Gtk.MenuItem()
-        self.menu_item_cover = Gtk.MenuItem()
-        self.menu_item_maintenance = Gtk.MenuItem()
-        self.menu_item_remove = Gtk.MenuItem()
-        self.menu_item_database = Gtk.MenuItem()
+        self.item_game_rename = Gtk.MenuItem()
+        self.item_game_duplicate = Gtk.MenuItem()
+        self.item_game_copy = Gtk.MenuItem()
+        self.item_game_open = Gtk.MenuItem()
+        self.item_game_cover = Gtk.MenuItem()
+        self.item_game_maintenance = Gtk.MenuItem()
+        self.item_game_remove = Gtk.MenuItem()
+        self.item_game_database = Gtk.MenuItem()
 
         # Properties
-        self.menu_item_edit.set_label(
+        self.item_game_edit.set_label(
             _("_Edit"))
-        self.menu_item_edit.set_use_underline(True)
+        self.item_game_edit.set_use_underline(True)
 
-        self.menu_item_rename.set_label(
+        self.item_game_rename.set_label(
             "%s…" % _("_Rename"))
-        self.menu_item_rename.set_use_underline(True)
+        self.item_game_rename.set_use_underline(True)
 
-        self.menu_item_duplicate.set_label(
+        self.item_game_duplicate.set_label(
             "%s…" % _("_Duplicate"))
-        self.menu_item_duplicate.set_use_underline(True)
+        self.item_game_duplicate.set_use_underline(True)
 
-        self.menu_item_copy.set_label(
+        self.item_game_copy.set_label(
             _("_Copy path"))
-        self.menu_item_copy.set_use_underline(True)
+        self.item_game_copy.set_use_underline(True)
 
-        self.menu_item_open.set_label(
+        self.item_game_open.set_label(
             _("_Open path"))
-        self.menu_item_open.set_use_underline(True)
+        self.item_game_open.set_use_underline(True)
 
-        self.menu_item_cover.set_label(
+        self.item_game_cover.set_label(
             "%s…" % _("Set game thumbnail"))
-        self.menu_item_cover.set_use_underline(True)
+        self.item_game_cover.set_use_underline(True)
 
-        self.menu_item_maintenance.set_label(
+        self.item_game_maintenance.set_label(
             "%s…" % _("_Maintenance"))
-        self.menu_item_maintenance.set_use_underline(True)
+        self.item_game_maintenance.set_use_underline(True)
 
-        self.menu_item_database.set_label(
+        self.item_game_database.set_label(
             "%s…" % _("_Reset data"))
-        self.menu_item_database.set_use_underline(True)
+        self.item_game_database.set_use_underline(True)
 
-        self.menu_item_remove.set_label(
+        self.item_game_remove.set_label(
             "%s…" % _("_Remove from disk"))
-        self.menu_item_remove.set_use_underline(True)
+        self.item_game_remove.set_use_underline(True)
 
         # ------------------------------------
         #   Menu - Game score
         # ------------------------------------
 
-        self.menu_games_score = Gtk.Menu()
-        self.menu_item_score = Gtk.MenuItem()
+        self.menu_game_score = Gtk.Menu()
+        self.item_game_score = Gtk.MenuItem()
 
-        self.menu_item_score_up = Gtk.MenuItem()
-        self.menu_item_score_down = Gtk.MenuItem()
-        self.menu_item_score_0 = Gtk.MenuItem()
-        self.menu_item_score_1 = Gtk.MenuItem()
-        self.menu_item_score_2 = Gtk.MenuItem()
-        self.menu_item_score_3 = Gtk.MenuItem()
-        self.menu_item_score_4 = Gtk.MenuItem()
-        self.menu_item_score_5 = Gtk.MenuItem()
+        self.item_game_score_up = Gtk.MenuItem()
+        self.item_game_score_down = Gtk.MenuItem()
+        self.item_game_score_0 = Gtk.MenuItem()
+        self.item_game_score_1 = Gtk.MenuItem()
+        self.item_game_score_2 = Gtk.MenuItem()
+        self.item_game_score_3 = Gtk.MenuItem()
+        self.item_game_score_4 = Gtk.MenuItem()
+        self.item_game_score_5 = Gtk.MenuItem()
 
         # Properties
-        self.menu_item_score.set_label(
+        self.item_game_score.set_label(
             _("_Score"))
-        self.menu_item_score.set_use_underline(True)
+        self.item_game_score.set_use_underline(True)
 
-        self.menu_item_score_up.set_label(
+        self.item_game_score_up.set_label(
             _("_Increase score"))
-        self.menu_item_score_up.set_use_underline(True)
+        self.item_game_score_up.set_use_underline(True)
 
-        self.menu_item_score_down.set_label(
+        self.item_game_score_down.set_label(
             _("_Decrease score"))
-        self.menu_item_score_down.set_use_underline(True)
+        self.item_game_score_down.set_use_underline(True)
 
-        self.menu_item_score_0.set_label(
+        self.item_game_score_0.set_label(
             _("Set score as 0"))
-        self.menu_item_score_0.set_use_underline(True)
+        self.item_game_score_0.set_use_underline(True)
 
-        self.menu_item_score_1.set_label(
+        self.item_game_score_1.set_label(
             _("Set score as 1"))
-        self.menu_item_score_1.set_use_underline(True)
+        self.item_game_score_1.set_use_underline(True)
 
-        self.menu_item_score_2.set_label(
+        self.item_game_score_2.set_label(
             _("Set score as 2"))
-        self.menu_item_score_2.set_use_underline(True)
+        self.item_game_score_2.set_use_underline(True)
 
-        self.menu_item_score_3.set_label(
+        self.item_game_score_3.set_label(
             _("Set score as 3"))
-        self.menu_item_score_3.set_use_underline(True)
+        self.item_game_score_3.set_use_underline(True)
 
-        self.menu_item_score_4.set_label(
+        self.item_game_score_4.set_label(
             _("Set score as 4"))
-        self.menu_item_score_4.set_use_underline(True)
+        self.item_game_score_4.set_use_underline(True)
 
-        self.menu_item_score_5.set_label(
+        self.item_game_score_5.set_label(
             _("Set score as 5"))
-        self.menu_item_score_5.set_use_underline(True)
+        self.item_game_score_5.set_use_underline(True)
 
         # ------------------------------------
         #   Menu - Game tools
         # ------------------------------------
 
-        self.menu_games_tools = Gtk.Menu()
-        self.menu_item_tools = Gtk.MenuItem()
+        self.menu_game_tools = Gtk.Menu()
+        self.item_game_tools = Gtk.MenuItem()
 
-        self.menu_item_screenshots = Gtk.MenuItem()
-        self.menu_item_output = Gtk.MenuItem()
-        self.menu_item_notes = Gtk.MenuItem()
-        self.menu_item_desktop = Gtk.MenuItem()
-        self.menu_item_mednafen = Gtk.MenuItem()
+        self.item_game_screenshots = Gtk.MenuItem()
+        self.item_game_output = Gtk.MenuItem()
+        self.item_game_notes = Gtk.MenuItem()
+        self.item_game_desktop = Gtk.MenuItem()
+        self.item_game_mednafen = Gtk.MenuItem()
 
         # Properties
-        self.menu_item_tools.set_label(_("_Tools"))
-        self.menu_item_tools.set_use_underline(True)
+        self.item_game_tools.set_label(_("_Tools"))
+        self.item_game_tools.set_use_underline(True)
 
-        self.menu_item_screenshots.set_label("%s…" % _("_Screenshots"))
-        self.menu_item_screenshots.set_use_underline(True)
+        self.item_game_screenshots.set_label("%s…" % _("_Screenshots"))
+        self.item_game_screenshots.set_use_underline(True)
 
-        self.menu_item_output.set_label("%s…" % _("Output _log"))
-        self.menu_item_output.set_use_underline(True)
+        self.item_game_output.set_label("%s…" % _("Output _log"))
+        self.item_game_output.set_use_underline(True)
 
-        self.menu_item_notes.set_label("%s…" % _("_Notes"))
-        self.menu_item_notes.set_use_underline(True)
+        self.item_game_notes.set_label("%s…" % _("_Notes"))
+        self.item_game_notes.set_use_underline(True)
 
-        self.menu_item_desktop.set_label(_("_Generate a menu entry"))
-        self.menu_item_desktop.set_use_underline(True)
+        self.item_game_desktop.set_label(_("_Generate a menu entry"))
+        self.item_game_desktop.set_use_underline(True)
 
-        self.menu_item_mednafen.set_label("%s…" % _("Specify a _memory type"))
-        self.menu_item_mednafen.set_use_underline(True)
+        self.item_game_mednafen.set_label("%s…" % _("Specify a _memory type"))
+        self.item_game_mednafen.set_use_underline(True)
 
         # ------------------------------------
         #   Statusbar
@@ -1713,44 +1610,13 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Headerbar
         # ------------------------------------
 
-        self.headerbar.pack_start(self.button_headerbar_menu)
+        self.headerbar.pack_start(self.button_headerbar_main)
+        self.headerbar.pack_start(self.button_headerbar_view)
         self.headerbar.pack_end(self.grid_game_view_mode)
 
         # Headerbar main menu
-        self.button_headerbar_menu.add(self.image_headerbar_menu)
-        self.button_headerbar_menu.set_popover(self.popover_menu)
-
-        self.popover_menu.add(self.grid_menu)
-
-        self.grid_menu.pack_start(
-            self.frame_menu_options, False, False, 0)
-        self.grid_menu.pack_start(
-            self.frame_menu_actions, False, False, 0)
-        self.grid_menu.pack_start(
-            self.frame_menu_system, False, False, 0)
-
-        self.frame_menu_options.add(self.listbox_menu_options)
-
-        self.listbox_menu_options.add(
-            self.widget_menu_dark_theme)
-        self.listbox_menu_options.add(
-            self.widget_menu_sidebar)
-        self.listbox_menu_options.add(
-            self.widget_menu_statusbar)
-
-        self.frame_menu_actions.add(self.listbox_menu_actions)
-
-        self.listbox_menu_actions.add(
-            self.widget_menu_preferences)
-        self.listbox_menu_actions.add(
-            self.widget_menu_log)
-
-        self.frame_menu_system.add(self.listbox_menu_system)
-
-        self.listbox_menu_system.add(
-            self.widget_menu_about)
-        self.listbox_menu_system.add(
-            self.widget_menu_quit)
+        self.button_headerbar_main.add(self.image_headerbar_menu)
+        self.button_headerbar_view.add(self.image_headerbar_view)
 
         # Headerbar games list view mode
         self.grid_game_view_mode.pack_start(
@@ -1765,107 +1631,101 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Menubar
         # ------------------------------------
 
-        self.menubar.append(self.menubar_item_main)
-        self.menubar.append(self.menubar_item_view)
-        self.menubar.append(self.menubar_item_game)
-        self.menubar.append(self.menubar_item_edit)
-        self.menubar.append(self.menubar_item_help)
+        self.menubar.append(self.item_menubar_main)
+        self.menubar.append(self.item_menubar_view)
+        self.menubar.append(self.item_menubar_game)
+        self.menubar.append(self.item_menubar_edit)
+        self.menubar.append(self.item_menubar_help)
 
         # Menu - Main items
-        self.menubar_item_main.set_submenu(self.menubar_main_menu)
-
-        self.menubar_main_menu.append(self.menubar_main_item_preferences)
-        self.menubar_main_menu.append(self.menubar_main_item_log)
-        self.menubar_main_menu.append(Gtk.SeparatorMenuItem())
-        self.menubar_main_menu.append(self.menubar_main_item_quit)
+        self.menu_menubar_main.append(self.item_menubar_preferences)
+        self.menu_menubar_main.append(self.item_menubar_log)
+        self.menu_menubar_main.append(Gtk.SeparatorMenuItem())
+        self.menu_menubar_main.append(self.item_menubar_quit)
 
         # Menu - View items
-        self.menubar_item_view.set_submenu(self.menubar_view_menu)
+        self.menu_menubar_view.append(self.item_menubar_columns)
+        self.menu_menubar_view.append(Gtk.SeparatorMenuItem())
+        self.menu_menubar_view.append(self.item_menubar_dark_theme)
+        self.menu_menubar_view.append(self.item_menubar_sidebar)
+        self.menu_menubar_view.append(self.item_menubar_statusbar)
+        self.menu_menubar_view.append(Gtk.SeparatorMenuItem())
+        self.menu_menubar_view.append(self.item_menubar_list)
+        self.menu_menubar_view.append(self.item_menubar_grid)
 
-        self.menubar_view_menu.append(self.menubar_view_item_column)
-        self.menubar_view_menu.append(Gtk.SeparatorMenuItem())
-        self.menubar_view_menu.append(self.menubar_view_item_dark_theme)
-        self.menubar_view_menu.append(self.menubar_view_item_sidebar)
-        self.menubar_view_menu.append(self.menubar_view_item_statusbar)
-        self.menubar_view_menu.append(Gtk.SeparatorMenuItem())
-        self.menubar_view_menu.append(self.menubar_view_item_list)
-        self.menubar_view_menu.append(self.menubar_view_item_grid)
+        self.item_menubar_columns.set_submenu(self.menu_menubar_columns)
 
-        self.menubar_view_item_column.set_submenu(self.menubar_view_menu_column)
-
-        self.menubar_view_menu_column.append(
-            self.menubar_view_item_column_favorite)
-        self.menubar_view_menu_column.append(
-            self.menubar_view_item_column_multiplayer)
-        self.menubar_view_menu_column.append(
-            self.menubar_view_item_column_finish)
-        self.menubar_view_menu_column.append(
-            self.menubar_view_item_column_play)
-        self.menubar_view_menu_column.append(
-            self.menubar_view_item_column_play_time)
-        self.menubar_view_menu_column.append(
-            self.menubar_view_item_column_last_play)
-        self.menubar_view_menu_column.append(
-            self.menubar_view_item_column_score)
-        self.menubar_view_menu_column.append(
-            self.menubar_view_item_column_installed)
-        self.menubar_view_menu_column.append(
-            self.menubar_view_item_column_flags)
+        self.menu_menubar_columns.append(
+            self.item_menubar_columns_favorite)
+        self.menu_menubar_columns.append(
+            self.item_menubar_columns_multiplayer)
+        self.menu_menubar_columns.append(
+            self.item_menubar_columns_finish)
+        self.menu_menubar_columns.append(
+            self.item_menubar_columns_play)
+        self.menu_menubar_columns.append(
+            self.item_menubar_columns_play_time)
+        self.menu_menubar_columns.append(
+            self.item_menubar_columns_last_play)
+        self.menu_menubar_columns.append(
+            self.item_menubar_columns_score)
+        self.menu_menubar_columns.append(
+            self.item_menubar_columns_installed)
+        self.menu_menubar_columns.append(
+            self.item_menubar_columns_flags)
 
         # Menu - Game items
-        self.menubar_item_game.set_submenu(self.menubar_game_menu)
+        self.item_menubar_game.set_submenu(self.menu_menubar_game)
 
-        self.menubar_game_menu.append(self.menubar_game_item_launch)
-        self.menubar_game_menu.append(Gtk.SeparatorMenuItem())
-        self.menubar_game_menu.append(self.menubar_game_item_favorite)
-        self.menubar_game_menu.append(self.menubar_game_item_multiplayer)
-        self.menubar_game_menu.append(self.menubar_game_item_finish)
-        self.menubar_game_menu.append(Gtk.SeparatorMenuItem())
-        self.menubar_game_menu.append(self.menubar_game_item_properties)
-        self.menubar_game_menu.append(Gtk.SeparatorMenuItem())
-        self.menubar_game_menu.append(self.menubar_game_item_screenshots)
-        self.menubar_game_menu.append(self.menubar_game_item_output)
-        self.menubar_game_menu.append(self.menubar_game_item_notes)
-        self.menubar_game_menu.append(Gtk.SeparatorMenuItem())
-        self.menubar_game_menu.append(self.menubar_game_item_fullscreen)
+        self.menu_menubar_game.append(self.item_menubar_game_launch)
+        self.menu_menubar_game.append(Gtk.SeparatorMenuItem())
+        self.menu_menubar_game.append(self.item_menubar_game_favorite)
+        self.menu_menubar_game.append(self.item_menubar_game_multiplayer)
+        self.menu_menubar_game.append(self.item_menubar_game_finish)
+        self.menu_menubar_game.append(Gtk.SeparatorMenuItem())
+        self.menu_menubar_game.append(self.item_menubar_game_properties)
+        self.menu_menubar_game.append(Gtk.SeparatorMenuItem())
+        self.menu_menubar_game.append(self.item_menubar_game_screenshots)
+        self.menu_menubar_game.append(self.item_menubar_game_output)
+        self.menu_menubar_game.append(self.item_menubar_game_notes)
+        self.menu_menubar_game.append(Gtk.SeparatorMenuItem())
+        self.menu_menubar_game.append(self.item_menubar_game_fullscreen)
 
         # Menu - Edit items
-        self.menubar_item_edit.set_submenu(self.menubar_edit_menu)
+        self.item_menubar_edit.set_submenu(self.menu_menubar_edit)
 
-        self.menubar_edit_item_score.set_submenu(self.menubar_edit_score)
+        self.item_menubar_score.set_submenu(self.menu_menubar_score)
 
-        self.menubar_edit_menu.append(self.menubar_edit_item_score)
-        self.menubar_edit_menu.append(Gtk.SeparatorMenuItem())
-        self.menubar_edit_menu.append(self.menubar_edit_item_rename)
-        self.menubar_edit_menu.append(Gtk.SeparatorMenuItem())
-        self.menubar_edit_menu.append(self.menubar_edit_item_duplicate)
-        self.menubar_edit_menu.append(Gtk.SeparatorMenuItem())
-        self.menubar_edit_menu.append(self.menubar_edit_item_mednafen)
-        self.menubar_edit_menu.append(Gtk.SeparatorMenuItem())
-        self.menubar_edit_menu.append(self.menubar_edit_item_copy)
-        self.menubar_edit_menu.append(self.menubar_edit_item_open)
-        self.menubar_edit_menu.append(self.menubar_edit_item_desktop)
-        self.menubar_edit_menu.append(Gtk.SeparatorMenuItem())
-        self.menubar_edit_menu.append(self.menubar_edit_item_cover)
-        self.menubar_edit_menu.append(Gtk.SeparatorMenuItem())
-        self.menubar_edit_menu.append(self.menubar_edit_item_maintenance)
-        self.menubar_edit_menu.append(Gtk.SeparatorMenuItem())
-        self.menubar_edit_menu.append(self.menubar_edit_item_delete)
+        self.menu_menubar_edit.append(self.item_menubar_score)
+        self.menu_menubar_edit.append(Gtk.SeparatorMenuItem())
+        self.menu_menubar_edit.append(self.item_menubar_rename)
+        self.menu_menubar_edit.append(Gtk.SeparatorMenuItem())
+        self.menu_menubar_edit.append(self.item_menubar_duplicate)
+        self.menu_menubar_edit.append(Gtk.SeparatorMenuItem())
+        self.menu_menubar_edit.append(self.item_menubar_mednafen)
+        self.menu_menubar_edit.append(Gtk.SeparatorMenuItem())
+        self.menu_menubar_edit.append(self.item_menubar_copy)
+        self.menu_menubar_edit.append(self.item_menubar_open)
+        self.menu_menubar_edit.append(self.item_menubar_desktop)
+        self.menu_menubar_edit.append(Gtk.SeparatorMenuItem())
+        self.menu_menubar_edit.append(self.item_menubar_cover)
+        self.menu_menubar_edit.append(Gtk.SeparatorMenuItem())
+        self.menu_menubar_edit.append(self.item_menubar_maintenance)
+        self.menu_menubar_edit.append(Gtk.SeparatorMenuItem())
+        self.menu_menubar_edit.append(self.item_menubar_delete)
 
-        self.menubar_edit_score.append(self.menubar_edit_item_score_up)
-        self.menubar_edit_score.append(self.menubar_edit_item_score_down)
-        self.menubar_edit_score.append(Gtk.SeparatorMenuItem())
-        self.menubar_edit_score.append(self.menubar_edit_item_score_0)
-        self.menubar_edit_score.append(self.menubar_edit_item_score_1)
-        self.menubar_edit_score.append(self.menubar_edit_item_score_2)
-        self.menubar_edit_score.append(self.menubar_edit_item_score_3)
-        self.menubar_edit_score.append(self.menubar_edit_item_score_4)
-        self.menubar_edit_score.append(self.menubar_edit_item_score_5)
+        self.menu_menubar_score.append(self.item_menubar_score_up)
+        self.menu_menubar_score.append(self.item_menubar_score_down)
+        self.menu_menubar_score.append(Gtk.SeparatorMenuItem())
+        self.menu_menubar_score.append(self.item_menubar_score_0)
+        self.menu_menubar_score.append(self.item_menubar_score_1)
+        self.menu_menubar_score.append(self.item_menubar_score_2)
+        self.menu_menubar_score.append(self.item_menubar_score_3)
+        self.menu_menubar_score.append(self.item_menubar_score_4)
+        self.menu_menubar_score.append(self.item_menubar_score_5)
 
         # Menu - Help items
-        self.menubar_item_help.set_submenu(self.menubar_help_menu)
-
-        self.menubar_help_menu.insert(self.menubar_help_item_about, -1)
+        self.item_menubar_help.set_submenu(self.menu_menubar_help)
 
         # ------------------------------------
         #   Toolbar - Consoles
@@ -1893,15 +1753,15 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Menu - Consoles
         # ------------------------------------
 
-        self.menu_consoles.append(self.menu_item_consoles_console)
+        self.menu_consoles.append(self.item_consoles_console)
         self.menu_consoles.append(Gtk.SeparatorMenuItem())
-        self.menu_consoles.append(self.menu_item_consoles_emulator)
-        self.menu_consoles.append(self.menu_item_consoles_config)
+        self.menu_consoles.append(self.item_consoles_emulator)
+        self.menu_consoles.append(self.item_consoles_config)
         self.menu_consoles.append(Gtk.SeparatorMenuItem())
-        self.menu_consoles.append(self.menu_item_consoles_reload)
+        self.menu_consoles.append(self.item_consoles_reload)
         self.menu_consoles.append(Gtk.SeparatorMenuItem())
-        self.menu_consoles.append(self.menu_item_consoles_favorite)
-        self.menu_consoles.append(self.menu_item_consoles_recursive)
+        self.menu_consoles.append(self.item_consoles_favorite)
+        self.menu_consoles.append(self.item_consoles_recursive)
 
         # ------------------------------------
         #   Toolbar - Games
@@ -2082,52 +1942,52 @@ class MainWindow(Gtk.ApplicationWindow):
         self.scroll_games_list.add(self.treeview_games)
 
         # Games menu
-        self.menu_games.append(self.menu_item_launch)
-        self.menu_games.append(Gtk.SeparatorMenuItem())
-        self.menu_games.append(self.menu_item_favorite)
-        self.menu_games.append(self.menu_item_multiplayer)
-        self.menu_games.append(self.menu_item_finish)
-        self.menu_games.append(Gtk.SeparatorMenuItem())
-        self.menu_games.append(self.menu_item_properties)
-        self.menu_games.append(Gtk.SeparatorMenuItem())
-        self.menu_games.append(self.menu_item_edit)
-        self.menu_games.append(self.menu_item_score)
-        self.menu_games.append(self.menu_item_tools)
+        self.menu_game.append(self.item_game_launch)
+        self.menu_game.append(Gtk.SeparatorMenuItem())
+        self.menu_game.append(self.item_game_favorite)
+        self.menu_game.append(self.item_game_multiplayer)
+        self.menu_game.append(self.item_game_finish)
+        self.menu_game.append(Gtk.SeparatorMenuItem())
+        self.menu_game.append(self.item_game_properties)
+        self.menu_game.append(Gtk.SeparatorMenuItem())
+        self.menu_game.append(self.item_game_edit)
+        self.menu_game.append(self.item_game_score)
+        self.menu_game.append(self.item_game_tools)
 
-        self.menu_item_edit.set_submenu(self.menu_games_edit)
-        self.menu_item_score.set_submenu(self.menu_games_score)
-        self.menu_item_tools.set_submenu(self.menu_games_tools)
+        self.item_game_edit.set_submenu(self.menu_game_edit)
+        self.item_game_score.set_submenu(self.menu_game_score)
+        self.item_game_tools.set_submenu(self.menu_game_tools)
 
-        self.menu_games_edit.append(self.menu_item_rename)
-        self.menu_games_edit.append(Gtk.SeparatorMenuItem())
-        self.menu_games_edit.append(self.menu_item_duplicate)
-        self.menu_games_edit.append(Gtk.SeparatorMenuItem())
-        self.menu_games_edit.append(self.menu_item_copy)
-        self.menu_games_edit.append(self.menu_item_open)
-        self.menu_games_edit.append(Gtk.SeparatorMenuItem())
-        self.menu_games_edit.append(self.menu_item_cover)
-        self.menu_games_edit.append(Gtk.SeparatorMenuItem())
-        self.menu_games_edit.append(self.menu_item_maintenance)
-        self.menu_games_edit.append(Gtk.SeparatorMenuItem())
-        self.menu_games_edit.append(self.menu_item_remove)
+        self.menu_game_edit.append(self.item_game_rename)
+        self.menu_game_edit.append(Gtk.SeparatorMenuItem())
+        self.menu_game_edit.append(self.item_game_duplicate)
+        self.menu_game_edit.append(Gtk.SeparatorMenuItem())
+        self.menu_game_edit.append(self.item_game_copy)
+        self.menu_game_edit.append(self.item_game_open)
+        self.menu_game_edit.append(Gtk.SeparatorMenuItem())
+        self.menu_game_edit.append(self.item_game_cover)
+        self.menu_game_edit.append(Gtk.SeparatorMenuItem())
+        self.menu_game_edit.append(self.item_game_maintenance)
+        self.menu_game_edit.append(Gtk.SeparatorMenuItem())
+        self.menu_game_edit.append(self.item_game_remove)
 
-        self.menu_games_score.append(self.menu_item_score_up)
-        self.menu_games_score.append(self.menu_item_score_down)
-        self.menu_games_score.append(Gtk.SeparatorMenuItem())
-        self.menu_games_score.append(self.menu_item_score_0)
-        self.menu_games_score.append(self.menu_item_score_1)
-        self.menu_games_score.append(self.menu_item_score_2)
-        self.menu_games_score.append(self.menu_item_score_3)
-        self.menu_games_score.append(self.menu_item_score_4)
-        self.menu_games_score.append(self.menu_item_score_5)
+        self.menu_game_score.append(self.item_game_score_up)
+        self.menu_game_score.append(self.item_game_score_down)
+        self.menu_game_score.append(Gtk.SeparatorMenuItem())
+        self.menu_game_score.append(self.item_game_score_0)
+        self.menu_game_score.append(self.item_game_score_1)
+        self.menu_game_score.append(self.item_game_score_2)
+        self.menu_game_score.append(self.item_game_score_3)
+        self.menu_game_score.append(self.item_game_score_4)
+        self.menu_game_score.append(self.item_game_score_5)
 
-        self.menu_games_tools.append(self.menu_item_screenshots)
-        self.menu_games_tools.append(self.menu_item_output)
-        self.menu_games_tools.append(self.menu_item_notes)
-        self.menu_games_tools.append(Gtk.SeparatorMenuItem())
-        self.menu_games_tools.append(self.menu_item_desktop)
-        self.menu_games_tools.append(Gtk.SeparatorMenuItem())
-        self.menu_games_tools.append(self.menu_item_mednafen)
+        self.menu_game_tools.append(self.item_game_screenshots)
+        self.menu_game_tools.append(self.item_game_output)
+        self.menu_game_tools.append(self.item_game_notes)
+        self.menu_game_tools.append(Gtk.SeparatorMenuItem())
+        self.menu_game_tools.append(self.item_game_desktop)
+        self.menu_game_tools.append(Gtk.SeparatorMenuItem())
+        self.menu_game_tools.append(self.item_game_mednafen)
 
         # ------------------------------------
         #   Statusbar
@@ -2172,124 +2032,116 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Headerbar
         # ------------------------------------
 
-        self.listbox_menu_options.connect(
-            "row-activated", on_activate_listboxrow)
-        self.listbox_menu_actions.connect(
-            "row-activated", on_activate_listboxrow)
-        self.listbox_menu_system.connect(
-            "row-activated", on_activate_listboxrow)
-
-        self.list_view_signal = self.button_headerbar_list.connect(
+        self.signal_headerbar_list = self.button_headerbar_list.connect(
             "toggled", self.__on_switch_games_view)
-        self.grid_view_signal = self.button_headerbar_grid.connect(
+        self.signal_headerbar_grid = self.button_headerbar_grid.connect(
             "toggled", self.__on_switch_games_view)
 
         # ------------------------------------
         #   Menubar
         # ------------------------------------
 
-        self.menubar_game_item_launch.connect(
-            "activate", self.__on_game_launch)
-        self.favorite_signal_menubar = self.menubar_game_item_favorite.connect(
-            "activate", self.__on_game_marked_as_favorite)
-        self.multi_signal_menubar = self.menubar_game_item_multiplayer.connect(
-            "activate", self.__on_game_marked_as_multiplayer)
-        self.finish_signal_menubar = self.menubar_game_item_finish.connect(
-            "activate", self.__on_game_marked_as_finish)
-        self.menubar_game_item_properties.connect(
-            "activate", self.__on_game_parameters)
-        self.menubar_game_item_screenshots.connect(
-            "activate", self.__on_show_viewer)
-        self.menubar_game_item_output.connect(
+        self.item_menubar_preferences.connect(
+            "activate", self.__on_show_preferences)
+        self.item_menubar_log.connect(
             "activate", self.__on_show_log)
-        self.menubar_game_item_notes.connect(
-            "activate", self.__on_show_notes)
-        self.fullscreen_signal = self.menubar_game_item_fullscreen.connect(
-            "toggled", self.__on_activate_fullscreen)
-        self.menubar_main_item_quit.connect(
+        self.item_menubar_quit.connect(
             "activate", self.__stop_interface)
 
-        self.favorite_view_signal_menubar = \
-            self.menubar_view_item_column_favorite.connect(
-            "activate", self.__on_switch_column_visibility, "favorite")
-        self.multiplayer_view_signal_menubar = \
-            self.menubar_view_item_column_multiplayer.connect(
-            "activate", self.__on_switch_column_visibility, "multiplayer")
-        self.finish_view_signal_menubar = \
-            self.menubar_view_item_column_finish.connect(
-            "activate", self.__on_switch_column_visibility, "finish")
-        self.play_view_signal_menubar = \
-            self.menubar_view_item_column_play.connect(
-            "activate", self.__on_switch_column_visibility, "play")
-        self.play_time_view_signal_menubar = \
-            self.menubar_view_item_column_play_time.connect(
-            "activate", self.__on_switch_column_visibility, "play_time")
-        self.last_play_view_signal_menubar = \
-            self.menubar_view_item_column_last_play.connect(
-            "activate", self.__on_switch_column_visibility, "last_play")
-        self.score_view_signal_menubar = \
-            self.menubar_view_item_column_score.connect(
-            "activate", self.__on_switch_column_visibility, "score")
-        self.installed_view_signal_menubar = \
-            self.menubar_view_item_column_installed.connect(
-            "activate", self.__on_switch_column_visibility, "installed")
-        self.flags_view_signal_menubar = \
-            self.menubar_view_item_column_flags.connect(
-            "activate", self.__on_switch_column_visibility, "flags")
-
-        self.list_view_signal_menubar = self.menubar_view_item_list.connect(
-            "toggled", self.__on_switch_games_view)
-        self.grid_view_signal_menubar = self.menubar_view_item_grid.connect(
-            "toggled", self.__on_switch_games_view)
-
-        self.menubar_edit_item_rename.connect(
-            "activate", self.__on_game_renamed)
-        self.menubar_edit_item_duplicate.connect(
-            "activate", self.__on_game_duplicate)
-        self.menubar_edit_item_copy.connect(
-            "activate", self.__on_game_copy)
-        self.menubar_edit_item_open.connect(
-            "activate", self.__on_game_open)
-        self.menubar_edit_item_desktop.connect(
-            "activate", self.__on_game_generate_desktop)
-        self.menubar_edit_item_cover.connect(
-            "activate", self.__on_game_cover)
-        self.menubar_edit_item_maintenance.connect(
-            "activate", self.__on_game_maintenance)
-        self.menubar_edit_item_delete.connect(
-            "activate", self.__on_game_removed)
-        self.menubar_edit_item_mednafen.connect(
-            "activate", self.__on_game_backup_memory)
-        self.menubar_edit_item_score_up.connect(
-            "activate", self.__on_game_score)
-        self.menubar_edit_item_score_down.connect(
-            "activate", self.__on_game_score)
-        self.menubar_edit_item_score_0.connect(
-            "activate", self.__on_game_score, 0)
-        self.menubar_edit_item_score_1.connect(
-            "activate", self.__on_game_score, 1)
-        self.menubar_edit_item_score_2.connect(
-            "activate", self.__on_game_score, 2)
-        self.menubar_edit_item_score_3.connect(
-            "activate", self.__on_game_score, 3)
-        self.menubar_edit_item_score_4.connect(
-            "activate", self.__on_game_score, 4)
-        self.menubar_edit_item_score_5.connect(
-            "activate", self.__on_game_score, 5)
-
-        self.menubar_main_item_preferences.connect(
-            "activate", self.__on_show_preferences)
-        self.menubar_main_item_log.connect(
-            "activate", self.__on_show_log)
-
-        self.dark_signal_menubar = self.menubar_view_item_dark_theme.connect(
+        self.signal_menu_dark_theme = self.item_menubar_dark_theme.connect(
             "toggled", self.__on_activate_dark_theme)
-        self.side_signal_menubar = self.menubar_view_item_sidebar.connect(
+        self.signal_menu_sidebar = self.item_menubar_sidebar.connect(
             "toggled", self.__on_activate_sidebar)
-        self.status_signal_menubar = self.menubar_view_item_statusbar.connect(
+        self.signal_menu_statusbar = self.item_menubar_statusbar.connect(
             "toggled", self.__on_activate_statusbar)
 
-        self.menubar_help_item_about.connect(
+        self.signal_menu_favorite = self.item_menubar_columns_favorite.connect(
+            "activate", self.__on_switch_column_visibility, "favorite")
+        self.signal_menu_multiplayer = \
+            self.item_menubar_columns_multiplayer.connect(
+            "activate", self.__on_switch_column_visibility, "multiplayer")
+        self.signal_menu_finish = self.item_menubar_columns_finish.connect(
+            "activate", self.__on_switch_column_visibility, "finish")
+        self.signal_menu_play = self.item_menubar_columns_play.connect(
+            "activate", self.__on_switch_column_visibility, "play")
+        self.signal_menu_play_time = \
+            self.item_menubar_columns_play_time.connect(
+            "activate", self.__on_switch_column_visibility, "play_time")
+        self.signal_menu_last_play = \
+            self.item_menubar_columns_last_play.connect(
+            "activate", self.__on_switch_column_visibility, "last_play")
+        self.signal_menu_score = self.item_menubar_columns_score.connect(
+            "activate", self.__on_switch_column_visibility, "score")
+        self.signal_menu_installed = \
+            self.item_menubar_columns_installed.connect(
+            "activate", self.__on_switch_column_visibility, "installed")
+        self.signal_menu_flags = self.item_menubar_columns_flags.connect(
+            "activate", self.__on_switch_column_visibility, "flags")
+
+        self.signal_menu_list = self.item_menubar_list.connect(
+            "toggled", self.__on_switch_games_view)
+        self.signal_menu_grid = self.item_menubar_grid.connect(
+            "toggled", self.__on_switch_games_view)
+
+        self.item_menubar_game_launch.connect(
+            "activate", self.__on_game_launch)
+        self.item_menubar_game_properties.connect(
+            "activate", self.__on_game_parameters)
+        self.item_menubar_game_screenshots.connect(
+            "activate", self.__on_show_viewer)
+        self.item_menubar_game_output.connect(
+            "activate", self.__on_show_log)
+        self.item_menubar_game_notes.connect(
+            "activate", self.__on_show_notes)
+
+        self.signal_menu_game_favorite = \
+            self.item_menubar_game_favorite.connect(
+            "activate", self.__on_game_marked_as_favorite)
+        self.signal_menu_game_multiplayer = \
+            self.item_menubar_game_multiplayer.connect(
+            "activate", self.__on_game_marked_as_multiplayer)
+        self.signal_menu_game_finish = self.item_menubar_game_finish.connect(
+            "activate", self.__on_game_marked_as_finish)
+
+        self.signal_menu_fullscreen = self.item_menubar_game_fullscreen.connect(
+            "toggled", self.__on_activate_fullscreen)
+
+        self.item_menubar_rename.connect(
+            "activate", self.__on_game_renamed)
+        self.item_menubar_duplicate.connect(
+            "activate", self.__on_game_duplicate)
+        self.item_menubar_copy.connect(
+            "activate", self.__on_game_copy)
+        self.item_menubar_open.connect(
+            "activate", self.__on_game_open)
+        self.item_menubar_desktop.connect(
+            "activate", self.__on_game_generate_desktop)
+        self.item_menubar_cover.connect(
+            "activate", self.__on_game_cover)
+        self.item_menubar_maintenance.connect(
+            "activate", self.__on_game_maintenance)
+        self.item_menubar_delete.connect(
+            "activate", self.__on_game_removed)
+        self.item_menubar_mednafen.connect(
+            "activate", self.__on_game_backup_memory)
+        self.item_menubar_score_up.connect(
+            "activate", self.__on_game_score)
+        self.item_menubar_score_down.connect(
+            "activate", self.__on_game_score)
+        self.item_menubar_score_0.connect(
+            "activate", self.__on_game_score, 0)
+        self.item_menubar_score_1.connect(
+            "activate", self.__on_game_score, 1)
+        self.item_menubar_score_2.connect(
+            "activate", self.__on_game_score, 2)
+        self.item_menubar_score_3.connect(
+            "activate", self.__on_game_score, 3)
+        self.item_menubar_score_4.connect(
+            "activate", self.__on_game_score, 4)
+        self.item_menubar_score_5.connect(
+            "activate", self.__on_game_score, 5)
+
+        self.item_menubar_about.connect(
             "activate", self.__on_show_about)
 
         # ------------------------------------
@@ -2314,22 +2166,22 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Menu - Consoles
         # ------------------------------------
 
-        self.menu_item_consoles_console.connect(
+        self.item_consoles_console.connect(
             "activate", self.__on_show_console_editor)
 
-        self.menu_item_consoles_emulator.connect(
+        self.item_consoles_emulator.connect(
             "activate", self.__on_show_emulator_editor)
-        self.menu_item_consoles_config.connect(
+        self.item_consoles_config.connect(
             "activate", self.__on_show_emulator_config)
 
-        self.menu_item_consoles_reload.connect(
+        self.item_consoles_reload.connect(
             "activate", self.__on_reload_games)
 
-        self.favorite_signal_options = \
-            self.menu_item_consoles_favorite.connect(
+        self.signal_console_favorite = \
+            self.item_consoles_favorite.connect(
             "activate", self.__on_change_console_option)
-        self.recursive_signal_options = \
-            self.menu_item_consoles_recursive.connect(
+        self.signal_console_recursive = \
+            self.item_consoles_recursive.connect(
             "activate", self.__on_change_console_option)
 
         # ------------------------------------
@@ -2338,7 +2190,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.button_toolbar_launch.connect(
             "clicked", self.__on_game_launch)
-        self.fullscreen_signal_tool = self.button_toolbar_fullscreen.connect(
+        self.signal_toolbar_fullscreen = self.button_toolbar_fullscreen.connect(
             "toggled", self.__on_activate_fullscreen)
         self.button_toolbar_screenshots.connect(
             "clicked", self.__on_show_viewer)
@@ -2381,73 +2233,57 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Menu - Game
         # ------------------------------------
 
-        self.menu_item_launch.connect(
+        self.item_game_launch.connect(
             "activate", self.__on_game_launch)
-        self.favorite_signal_menu = self.menu_item_favorite.connect(
+        self.signal_game_favorite = self.item_game_favorite.connect(
             "activate", self.__on_game_marked_as_favorite)
-        self.multi_signal_menu = self.menu_item_multiplayer.connect(
+        self.signal_game_multiplayer = self.item_game_multiplayer.connect(
             "activate", self.__on_game_marked_as_multiplayer)
-        self.finish_signal_menu = self.menu_item_finish.connect(
+        self.signal_game_finish = self.item_game_finish.connect(
             "activate", self.__on_game_marked_as_finish)
-        self.menu_item_screenshots.connect(
+        self.item_game_screenshots.connect(
             "activate", self.__on_show_viewer)
-        self.menu_item_output.connect(
+        self.item_game_output.connect(
             "activate", self.__on_game_log)
-        self.menu_item_notes.connect(
+        self.item_game_notes.connect(
             "activate", self.__on_show_notes)
 
-        self.menu_item_rename.connect(
+        self.item_game_rename.connect(
             "activate", self.__on_game_renamed)
-        self.menu_item_duplicate.connect(
+        self.item_game_duplicate.connect(
             "activate", self.__on_game_duplicate)
-        self.menu_item_properties.connect(
+        self.item_game_properties.connect(
             "activate", self.__on_game_parameters)
-        self.menu_item_copy.connect(
+        self.item_game_copy.connect(
             "activate", self.__on_game_copy)
-        self.menu_item_open.connect(
+        self.item_game_open.connect(
             "activate", self.__on_game_open)
-        self.menu_item_cover.connect(
+        self.item_game_cover.connect(
             "activate", self.__on_game_cover)
-        self.menu_item_desktop.connect(
+        self.item_game_desktop.connect(
             "activate", self.__on_game_generate_desktop)
-        self.menu_item_maintenance.connect(
+        self.item_game_maintenance.connect(
             "activate", self.__on_game_maintenance)
-        self.menu_item_remove.connect(
+        self.item_game_remove.connect(
             "activate", self.__on_game_removed)
-        self.menu_item_mednafen.connect(
+        self.item_game_mednafen.connect(
             "activate", self.__on_game_backup_memory)
-        self.menu_item_score_up.connect(
+        self.item_game_score_up.connect(
             "activate", self.__on_game_score)
-        self.menu_item_score_down.connect(
+        self.item_game_score_down.connect(
             "activate", self.__on_game_score)
-        self.menu_item_score_0.connect(
+        self.item_game_score_0.connect(
             "activate", self.__on_game_score, 0)
-        self.menu_item_score_1.connect(
+        self.item_game_score_1.connect(
             "activate", self.__on_game_score, 1)
-        self.menu_item_score_2.connect(
+        self.item_game_score_2.connect(
             "activate", self.__on_game_score, 2)
-        self.menu_item_score_3.connect(
+        self.item_game_score_3.connect(
             "activate", self.__on_game_score, 3)
-        self.menu_item_score_4.connect(
+        self.item_game_score_4.connect(
             "activate", self.__on_game_score, 4)
-        self.menu_item_score_5.connect(
+        self.item_game_score_5.connect(
             "activate", self.__on_game_score, 5)
-
-        self.button_menu_preferences.connect(
-            "clicked", self.__on_show_preferences)
-
-        self.button_menu_log.connect(
-            "clicked", self.__on_show_log)
-        self.dark_signal_menu = self.switch_menu_dark_theme.connect(
-            "state-set", self.__on_activate_dark_theme)
-        self.side_signal_menu = self.switch_menu_sidebar.connect(
-            "state-set", self.__on_activate_sidebar)
-        self.status_signal_menu = self.switch_menu_statusbar.connect(
-            "state-set", self.__on_activate_statusbar)
-        self.button_menu_about.connect(
-            "clicked", self.__on_show_about)
-        self.button_menu_quit.connect(
-            "clicked", self.__stop_interface)
 
         # ------------------------------------
         #   Sidebar - Games
@@ -2531,41 +2367,38 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Define signals per toggle buttons
         self.__signals_storage = {
-            self.button_headerbar_grid: self.grid_view_signal,
-            self.button_headerbar_list: self.list_view_signal,
-            self.button_toolbar_fullscreen: self.fullscreen_signal_tool,
-            self.menu_item_consoles_favorite: self.favorite_signal_options,
-            self.menu_item_consoles_recursive: self.recursive_signal_options,
-            self.menu_item_favorite: self.favorite_signal_menu,
-            self.menu_item_finish: self.finish_signal_menu,
-            self.menu_item_multiplayer: self.multi_signal_menu,
-            self.menubar_game_item_favorite: self.favorite_signal_menubar,
-            self.menubar_game_item_finish: self.finish_signal_menubar,
-            self.menubar_game_item_fullscreen: self.fullscreen_signal,
-            self.menubar_game_item_multiplayer: self.multi_signal_menubar,
-            self.menubar_view_item_column_favorite:
-                self.favorite_view_signal_menubar,
-            self.menubar_view_item_column_finish:
-                self.finish_view_signal_menubar,
-            self.menubar_view_item_column_flags: self.flags_view_signal_menubar,
-            self.menubar_view_item_column_installed:
-                self.installed_view_signal_menubar,
-            self.menubar_view_item_column_last_play:
-                self.last_play_view_signal_menubar,
-            self.menubar_view_item_column_multiplayer:
-                self.multiplayer_view_signal_menubar,
-            self.menubar_view_item_column_play: self.play_view_signal_menubar,
-            self.menubar_view_item_column_play_time:
-                self.play_time_view_signal_menubar,
-            self.menubar_view_item_column_score: self.score_view_signal_menubar,
-            self.menubar_view_item_dark_theme: self.dark_signal_menubar,
-            self.menubar_view_item_grid: self.grid_view_signal_menubar,
-            self.menubar_view_item_list: self.list_view_signal_menubar,
-            self.menubar_view_item_sidebar: self.side_signal_menubar,
-            self.menubar_view_item_statusbar: self.status_signal_menubar,
-            self.switch_menu_dark_theme: self.dark_signal_menu,
-            self.switch_menu_sidebar: self.side_signal_menu,
-            self.switch_menu_statusbar: self.status_signal_menu,
+            # Headerbar
+            self.button_headerbar_grid: self.signal_headerbar_grid,
+            self.button_headerbar_list: self.signal_headerbar_list,
+            # Menubar
+            self.item_menubar_columns_favorite: self.signal_menu_favorite,
+            self.item_menubar_columns_finish: self.signal_menu_finish,
+            self.item_menubar_columns_flags: self.signal_menu_flags,
+            self.item_menubar_columns_installed: self.signal_menu_installed,
+            self.item_menubar_columns_last_play: self.signal_menu_last_play,
+            self.item_menubar_columns_multiplayer: self.signal_menu_multiplayer,
+            self.item_menubar_columns_play: self.signal_menu_play,
+            self.item_menubar_columns_play_time: self.signal_menu_play_time,
+            self.item_menubar_columns_score: self.signal_menu_score,
+            self.item_menubar_dark_theme: self.signal_menu_dark_theme,
+            self.item_menubar_game_favorite: self.signal_menu_game_favorite,
+            self.item_menubar_game_finish: self.signal_menu_game_finish,
+            self.item_menubar_game_fullscreen: self.signal_menu_fullscreen,
+            self.item_menubar_game_multiplayer:
+                self.signal_menu_game_multiplayer,
+            self.item_menubar_grid: self.signal_menu_grid,
+            self.item_menubar_list: self.signal_menu_list,
+            self.item_menubar_sidebar: self.signal_menu_sidebar,
+            self.item_menubar_statusbar: self.signal_menu_statusbar,
+            # Toolbar
+            self.button_toolbar_fullscreen: self.signal_toolbar_fullscreen,
+            # Console menu
+            self.item_consoles_favorite: self.signal_console_favorite,
+            self.item_consoles_recursive: self.signal_console_recursive,
+            # Game menu
+            self.item_game_favorite: self.signal_game_favorite,
+            self.item_game_finish: self.signal_game_finish,
+            self.item_game_multiplayer: self.signal_game_multiplayer
         }
 
         # Store image references with associate icons
@@ -2573,16 +2406,13 @@ class MainWindow(Gtk.ApplicationWindow):
             self.image_headerbar_grid: Icons.Symbolic.Grid,
             self.image_headerbar_list: Icons.Symbolic.List,
             self.image_headerbar_menu: Icons.Symbolic.Menu,
-            self.image_menu_about: Icons.Symbolic.About,
-            self.image_menu_log: Icons.Symbolic.Terminal,
-            self.image_menu_preferences: Icons.Symbolic.System,
-            self.image_menu_quit: Icons.Symbolic.Quit,
+            self.image_headerbar_view: Icons.Symbolic.ViewMore,
             self.image_sidebar_tags: Icons.Symbolic.Paperclip,
             self.image_toolbar_fullscreen: Icons.Symbolic.Restore,
             self.image_toolbar_notes: Icons.Symbolic.Editor,
             self.image_toolbar_output: Icons.Symbolic.Terminal,
             self.image_toolbar_parameters: Icons.Symbolic.Properties,
-            self.image_toolbar_screenshots: Icons.Symbolic.Camera,
+            self.image_toolbar_screenshots: Icons.Symbolic.Camera
         }
 
         # Store treeview columns references
@@ -2603,48 +2433,48 @@ class MainWindow(Gtk.ApplicationWindow):
         self.__widgets_storage = (
             self.button_toolbar_launch,
             # Menubar
-            self.menubar_game_item_launch,
-            self.menubar_game_item_favorite,
-            self.menubar_game_item_multiplayer,
-            self.menubar_game_item_finish,
-            self.menubar_game_item_screenshots,
-            self.menubar_game_item_output,
-            self.menubar_game_item_notes,
-            self.menubar_game_item_properties,
-            self.menubar_edit_item_rename,
-            self.menubar_edit_item_copy,
-            self.menubar_edit_item_open,
-            self.menubar_edit_item_cover,
-            self.menubar_edit_item_desktop,
-            self.menubar_edit_item_maintenance,
-            self.menubar_edit_item_database,
-            self.menubar_edit_item_delete,
-            self.menubar_edit_item_mednafen,
-            self.menubar_edit_item_score,
-            self.menubar_edit_item_duplicate,
+            self.item_menubar_copy,
+            self.item_menubar_cover,
+            self.item_menubar_database,
+            self.item_menubar_delete,
+            self.item_menubar_desktop,
+            self.item_menubar_duplicate,
+            self.item_menubar_game_favorite,
+            self.item_menubar_game_finish,
+            self.item_menubar_game_launch,
+            self.item_menubar_game_multiplayer,
+            self.item_menubar_game_notes,
+            self.item_menubar_game_output,
+            self.item_menubar_game_properties,
+            self.item_menubar_game_screenshots,
+            self.item_menubar_maintenance,
+            self.item_menubar_mednafen,
+            self.item_menubar_open,
+            self.item_menubar_rename,
+            self.item_menubar_score,
             # Toolbar
-            self.button_toolbar_output,
+            self.button_sidebar_tags,
             self.button_toolbar_notes,
+            self.button_toolbar_output,
             self.button_toolbar_parameters,
             self.button_toolbar_screenshots,
-            self.button_sidebar_tags,
             # Game menu
-            self.menu_item_rename,
-            self.menu_item_favorite,
-            self.menu_item_multiplayer,
-            self.menu_item_finish,
-            self.menu_item_screenshots,
-            self.menu_item_output,
-            self.menu_item_notes,
-            self.menu_item_copy,
-            self.menu_item_open,
-            self.menu_item_cover,
-            self.menu_item_desktop,
-            self.menu_item_remove,
-            self.menu_item_maintenance,
-            self.menu_item_database,
-            self.menu_item_mednafen,
-            self.menu_item_duplicate
+            self.item_game_copy,
+            self.item_game_cover,
+            self.item_game_database,
+            self.item_game_desktop,
+            self.item_game_duplicate,
+            self.item_game_favorite,
+            self.item_game_finish,
+            self.item_game_maintenance,
+            self.item_game_mednafen,
+            self.item_game_multiplayer,
+            self.item_game_notes,
+            self.item_game_open,
+            self.item_game_output,
+            self.item_game_remove,
+            self.item_game_rename,
+            self.item_game_screenshots
         )
 
         # Store filter widget references
@@ -2658,11 +2488,322 @@ class MainWindow(Gtk.ApplicationWindow):
         )
 
 
+    def __init_shortcuts(self):
+        """ Generate shortcuts signals from user configuration
+        """
+
+        shortcuts = [
+            {
+                "path": "<GEM>/game/open",
+                "widgets": [
+                    self.item_game_open,
+                    self.item_menubar_open
+                ],
+                "keys": self.config.item("keys", "open", "<Control>O")
+            },
+            {
+                "path": "<GEM>/game/copy",
+                "widgets": [
+                    self.item_game_copy,
+                    self.item_menubar_copy
+                ],
+                "keys": self.config.item("keys", "copy", "<Control>C")
+            },
+            {
+                "path": "<GEM>/game/desktop",
+                "widgets": [
+                    self.item_game_desktop,
+                    self.item_menubar_desktop
+                ],
+                "keys": self.config.item("keys", "desktop", "<Control>G")
+            },
+            {
+                "path": "<GEM>/game/start",
+                "widgets": [
+                    self.item_game_launch,
+                    self.item_menubar_game_launch
+                ],
+                "keys": self.config.item("keys", "start", "<Control>Return")
+            },
+            {
+                "path": "<GEM>/game/rename",
+                "widgets": [
+                    self.item_game_rename,
+                    self.item_menubar_rename
+                ],
+                "keys": self.config.item("keys", "rename", "F2")
+            },
+            {
+                "path": "<GEM>/game/duplicate",
+                "widgets": [
+                    self.item_game_duplicate,
+                    self.item_menubar_duplicate
+                ],
+                "keys": self.config.item("keys", "duplicate", "<Control>U")
+            },
+            {
+                "path": "<GEM>/game/favorite",
+                "widgets": [
+                    self.item_game_favorite,
+                    self.item_menubar_game_favorite
+                ],
+                "keys": self.config.item("keys", "favorite", "F3")
+            },
+            {
+                "path": "<GEM>/game/multiplayer",
+                "widgets": [
+                    self.item_game_multiplayer,
+                    self.item_menubar_game_multiplayer
+                ],
+                "keys": self.config.item("keys", "multiplayer", "F4")
+            },
+            {
+                "path": "<GEM>/game/finish",
+                "widgets": [
+                    self.item_game_finish,
+                    self.item_menubar_game_finish
+                ],
+                "keys": self.config.item("keys", "finish", "<Control>F3")
+            },
+            {
+                "path": "<GEM>/game/score/up",
+                "widgets": [
+                    self.item_game_score_up,
+                    self.item_menubar_score_up
+                ],
+                "keys": self.config.item(
+                    "keys", "score-up", "<Control>Page_Up")
+            },
+            {
+                "path": "<GEM>/game/score/down",
+                "widgets": [
+                    self.item_game_score_down,
+                    self.item_menubar_score_down
+                ],
+                "keys": self.config.item(
+                    "keys", "score-down", "<Control>Page_Down")
+            },
+            {
+                "path": "<GEM>/game/score/0",
+                "widgets": [
+                    self.item_game_score_0,
+                    self.item_menubar_score_0
+                ],
+                "keys": self.config.item(
+                    "keys", "score-0", "<Primary>0")
+            },
+            {
+                "path": "<GEM>/game/score/1",
+                "widgets": [
+                    self.item_game_score_1,
+                    self.item_menubar_score_1
+                ],
+                "keys": self.config.item(
+                    "keys", "score-1", "<Primary>1")
+            },
+            {
+                "path": "<GEM>/game/score/2",
+                "widgets": [
+                    self.item_game_score_2,
+                    self.item_menubar_score_2
+                ],
+                "keys": self.config.item(
+                    "keys", "score-2", "<Primary>2")
+            },
+            {
+                "path": "<GEM>/game/score/3",
+                "widgets": [
+                    self.item_game_score_3,
+                    self.item_menubar_score_3
+                ],
+                "keys": self.config.item(
+                    "keys", "score-3", "<Primary>3")
+            },
+            {
+                "path": "<GEM>/game/score/4",
+                "widgets": [
+                    self.item_game_score_4,
+                    self.item_menubar_score_4
+                ],
+                "keys": self.config.item(
+                    "keys", "score-4", "<Primary>4")
+            },
+            {
+                "path": "<GEM>/game/score/5",
+                "widgets": [
+                    self.item_game_score_5,
+                    self.item_menubar_score_5
+                ],
+                "keys": self.config.item(
+                    "keys", "score-5", "<Primary>5")
+            },
+            {
+                "path": "<GEM>/game/cover",
+                "widgets": [
+                    self.item_game_cover,
+                    self.item_menubar_cover
+                ],
+                "keys": self.config.item("keys", "cover", "<Control>I")
+            },
+            {
+                "path": "<GEM>/game/screenshots",
+                "widgets": [
+                    self.item_game_screenshots,
+                    self.item_menubar_game_screenshots,
+                    self.button_toolbar_screenshots
+                ],
+                "keys": self.config.item("keys", "snapshots", "F5")
+            },
+            {
+                "path": "<GEM>/game/log",
+                "widgets": [
+                    self.item_game_output,
+                    self.item_menubar_game_output
+                ],
+                "keys": self.config.item("keys", "log", "F6")
+            },
+            {
+                "path": "<GEM>/game/notes",
+                "widgets": [
+                    self.item_game_notes,
+                    self.item_menubar_game_notes
+                ],
+                "keys": self.config.item("keys", "notes", "F7")
+            },
+            {
+                "path": "<GEM>/game/memory",
+                "widgets": [
+                    self.item_game_mednafen,
+                    self.item_menubar_mednafen
+                ],
+                "keys": self.config.item("keys", "memory", "F8")
+            },
+            {
+                "path": "<GEM>/fullscreen",
+                "widgets": [
+                    self.item_menubar_game_fullscreen
+                ],
+                "keys": self.config.item("keys", "fullscreen", "F11"),
+                "function": self.__on_activate_fullscreen
+            },
+            {
+                "path": "<GEM>/sidebar",
+                "widgets": [
+                    self.item_menubar_sidebar
+                ],
+                "keys": self.config.item("keys", "sidebar", "F9"),
+                "function": self.__on_activate_sidebar
+            },
+            {
+                "path": "<GEM>/statusbar",
+                "widgets": [
+                    self.item_menubar_statusbar
+                ],
+                "keys": self.config.item("keys", "statusbar", "<Control>F9"),
+                "function": self.__on_activate_statusbar
+            },
+            {
+                "path": "<GEM>/game/exceptions",
+                "widgets": [
+                    self.item_game_properties,
+                    self.item_menubar_game_properties
+                ],
+                "keys": self.config.item("keys", "exceptions", "F12")
+            },
+            {
+                "path": "<GEM>/game/delete",
+                "widgets": [
+                    self.item_game_remove,
+                    self.item_menubar_delete
+                ],
+                "keys": self.config.item("keys", "delete", "<Control>Delete")
+            },
+            {
+                "path": "<GEM>/game/maintenance",
+                "widgets": [
+                    self.item_game_maintenance,
+                    self.item_menubar_maintenance
+                ],
+                "keys": self.config.item("keys", "maintenance", "<Control>D")
+            },
+            {
+                "path": "<GEM>/preferences",
+                "widgets": [
+                    self.item_menubar_preferences
+                ],
+                "keys": self.config.item("keys", "preferences", "<Control>P"),
+                "function": self.__on_show_preferences
+            },
+            {
+                "path": "<GEM>/log",
+                "widgets": [
+                    self.item_menubar_log
+                ],
+                "keys": self.config.item("keys", "gem", "<Control>L"),
+                "function": self.__on_show_log
+            },
+            {
+                "path": "<GEM>/quit",
+                "widgets": [
+                    self.item_menubar_quit
+                ],
+                "keys": self.config.item("keys", "quit", "<Control>Q"),
+                "function": self.__stop_interface
+            }
+        ]
+
+        # Disconnect previous shortcut to avoid multiple allocation
+        for key, mod in self.shortcuts:
+            self.shortcuts_group.disconnect_key(key, mod)
+
+        for data in shortcuts:
+            key, mod = Gtk.accelerator_parse(data["keys"])
+
+            if Gtk.accelerator_valid(key, mod):
+
+                self.shortcuts_map.change_entry(data["path"], key, mod, True)
+
+                for widget in data["widgets"]:
+
+                    # Global signals
+                    if type(widget) is MainWindow:
+
+                        # Avoid to have multiple shortcuts with classic theme
+                        if not self.use_classic_theme:
+                            self.shortcuts_group.connect(key, mod,
+                                Gtk.AccelFlags.VISIBLE, data["function"])
+
+                    # Local signals
+                    else:
+                        widget.add_accelerator("activate", self.shortcuts_group,
+                            key, mod, Gtk.AccelFlags.VISIBLE)
+
+                    # Store current shortcut to remove it properly later
+                    self.shortcuts.append((key, mod))
+
+
     def __init_interface(self):
         """ Init main interface
         """
 
         self.selection = dict(console=None, game=None)
+
+        # ------------------------------------
+        #   Menus
+        # ------------------------------------
+
+        if self.use_classic_theme:
+            self.item_menubar_main.set_submenu(self.menu_menubar_main)
+            self.item_menubar_view.set_submenu(self.menu_menubar_view)
+
+            self.menu_menubar_help.append(self.item_menubar_about)
+
+        else:
+            self.button_headerbar_main.set_popup(self.menu_menubar_main)
+            self.button_headerbar_view.set_popup(self.menu_menubar_view)
+
+            self.menu_menubar_main.insert(self.item_menubar_about, 3)
+            self.menu_menubar_main.insert(Gtk.SeparatorMenuItem(), 4)
 
         # ------------------------------------
         #   Toolbar icons
@@ -2684,11 +2825,11 @@ class MainWindow(Gtk.ApplicationWindow):
 
         if self.view_mode == Columns.Key.Grid:
             self.button_headerbar_grid.set_active(True)
-            self.menubar_view_item_grid.set_active(True)
+            self.item_menubar_grid.set_active(True)
 
         else:
             self.button_headerbar_list.set_active(True)
-            self.menubar_view_item_list.set_active(True)
+            self.item_menubar_list.set_active(True)
 
         # ------------------------------------
         #   Toolbar design
@@ -2697,8 +2838,7 @@ class MainWindow(Gtk.ApplicationWindow):
         # Update design colorscheme
         on_change_theme(self.use_dark_theme)
 
-        self.switch_menu_dark_theme.set_active(self.use_dark_theme)
-        self.menubar_view_item_dark_theme.set_active(self.use_dark_theme)
+        self.item_menubar_dark_theme.set_active(self.use_dark_theme)
 
         if self.use_dark_theme:
             self.logger.debug("Use dark variant for GTK+ theme")
@@ -2785,7 +2925,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.show_all()
 
-        self.grid_menu.show_all()
         self.grid_consoles_menu.show_all()
         self.grid_game_filters_popover.show_all()
 
@@ -2798,15 +2937,19 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.grid_games_placeholder.show_all()
 
-        self.menu_games.show_all()
-        self.menu_consoles.show_all()
-
         # Manage window template
         if self.use_classic_theme:
             self.menubar.show_all()
 
         else:
             self.menubar.hide()
+
+        self.menu_menubar_main.show_all()
+        self.menu_menubar_view.show_all()
+        self.menu_menubar_edit.show_all()
+        self.menu_menubar_help.show_all()
+        self.menu_consoles.show_all()
+        self.menu_game.show_all()
 
         # Manage sidebar visibility
         self.scroll_sidebar.set_visible(self.show_sidebar)
@@ -3129,12 +3272,10 @@ class MainWindow(Gtk.ApplicationWindow):
         self.headerbar.set_show_close_button(self.show_headerbar_buttons)
 
         # Show sidebar visibility buttons
-        self.switch_menu_sidebar.set_active(self.show_sidebar)
-        self.menubar_view_item_sidebar.set_active(self.show_sidebar)
+        self.item_menubar_sidebar.set_active(self.show_sidebar)
 
         # Show statusbar visibility buttons
-        self.switch_menu_statusbar.set_active(self.show_statusbar)
-        self.menubar_view_item_statusbar.set_active(self.show_statusbar)
+        self.item_menubar_statusbar.set_active(self.show_statusbar)
 
         # Use translucent icons in games views
         self.icons.set_translucent_status(self.icon_translucent)
@@ -3239,7 +3380,7 @@ class MainWindow(Gtk.ApplicationWindow):
             widget.set_visible(visibility)
 
             # Retrieve menubar item
-            menu_item = getattr(self, "menubar_view_item_column_%s" % key, None)
+            menu_item = getattr(self, "item_menubar_columns_%s" % key, None)
             if menu_item is not None:
                 menu_item.set_active(visibility)
 
@@ -3487,306 +3628,6 @@ class MainWindow(Gtk.ApplicationWindow):
                     text = label
 
         self.entry_toolbar_filters.set_text(text)
-
-
-    def __init_shortcuts(self):
-        """ Generate shortcuts signals from user configuration
-        """
-
-        shortcuts = [
-            {
-                "path": "<GEM>/game/open",
-                "widgets": [
-                    self.menu_item_open,
-                    self.menubar_edit_item_open
-                ],
-                "keys": self.config.item("keys", "open", "<Control>O")
-            },
-            {
-                "path": "<GEM>/game/copy",
-                "widgets": [
-                    self.menu_item_copy,
-                    self.menubar_edit_item_copy
-                ],
-                "keys": self.config.item("keys", "copy", "<Control>C")
-            },
-            {
-                "path": "<GEM>/game/desktop",
-                "widgets": [
-                    self.menu_item_desktop,
-                    self.menubar_edit_item_desktop
-                ],
-                "keys": self.config.item("keys", "desktop", "<Control>G")
-            },
-            {
-                "path": "<GEM>/game/start",
-                "widgets": [
-                    self.menu_item_launch,
-                    self.menubar_game_item_launch
-                ],
-                "keys": self.config.item("keys", "start", "<Control>Return")
-            },
-            {
-                "path": "<GEM>/game/rename",
-                "widgets": [
-                    self.menu_item_rename,
-                    self.menubar_edit_item_rename
-                ],
-                "keys": self.config.item("keys", "rename", "F2")
-            },
-            {
-                "path": "<GEM>/game/duplicate",
-                "widgets": [
-                    self.menu_item_duplicate,
-                    self.menubar_edit_item_duplicate
-                ],
-                "keys": self.config.item("keys", "duplicate", "<Control>U")
-            },
-            {
-                "path": "<GEM>/game/favorite",
-                "widgets": [
-                    self.menu_item_favorite,
-                    self.menubar_game_item_favorite
-                ],
-                "keys": self.config.item("keys", "favorite", "F3")
-            },
-            {
-                "path": "<GEM>/game/multiplayer",
-                "widgets": [
-                    self.menu_item_multiplayer,
-                    self.menubar_game_item_multiplayer
-                ],
-                "keys": self.config.item("keys", "multiplayer", "F4")
-            },
-            {
-                "path": "<GEM>/game/finish",
-                "widgets": [
-                    self.menu_item_finish,
-                    self.menubar_game_item_finish
-                ],
-                "keys": self.config.item("keys", "finish", "<Control>F3")
-            },
-            {
-                "path": "<GEM>/game/score/up",
-                "widgets": [
-                    self.menu_item_score_up,
-                    self.menubar_edit_item_score_up
-                ],
-                "keys": self.config.item(
-                    "keys", "score-up", "<Control>Page_Up")
-            },
-            {
-                "path": "<GEM>/game/score/down",
-                "widgets": [
-                    self.menu_item_score_down,
-                    self.menubar_edit_item_score_down
-                ],
-                "keys": self.config.item(
-                    "keys", "score-down", "<Control>Page_Down")
-            },
-            {
-                "path": "<GEM>/game/score/0",
-                "widgets": [
-                    self.menu_item_score_0,
-                    self.menubar_edit_item_score_0
-                ],
-                "keys": self.config.item(
-                    "keys", "score-0", "<Primary>0")
-            },
-            {
-                "path": "<GEM>/game/score/1",
-                "widgets": [
-                    self.menu_item_score_1,
-                    self.menubar_edit_item_score_1
-                ],
-                "keys": self.config.item(
-                    "keys", "score-1", "<Primary>1")
-            },
-            {
-                "path": "<GEM>/game/score/2",
-                "widgets": [
-                    self.menu_item_score_2,
-                    self.menubar_edit_item_score_2
-                ],
-                "keys": self.config.item(
-                    "keys", "score-2", "<Primary>2")
-            },
-            {
-                "path": "<GEM>/game/score/3",
-                "widgets": [
-                    self.menu_item_score_3,
-                    self.menubar_edit_item_score_3
-                ],
-                "keys": self.config.item(
-                    "keys", "score-3", "<Primary>3")
-            },
-            {
-                "path": "<GEM>/game/score/4",
-                "widgets": [
-                    self.menu_item_score_4,
-                    self.menubar_edit_item_score_4
-                ],
-                "keys": self.config.item(
-                    "keys", "score-4", "<Primary>4")
-            },
-            {
-                "path": "<GEM>/game/score/5",
-                "widgets": [
-                    self.menu_item_score_5,
-                    self.menubar_edit_item_score_5
-                ],
-                "keys": self.config.item(
-                    "keys", "score-5", "<Primary>5")
-            },
-            {
-                "path": "<GEM>/game/cover",
-                "widgets": [
-                    self.menu_item_cover,
-                    self.menubar_edit_item_cover
-                ],
-                "keys": self.config.item("keys", "cover", "<Control>I")
-            },
-            {
-                "path": "<GEM>/game/screenshots",
-                "widgets": [
-                    self.menu_item_screenshots,
-                    self.menubar_game_item_screenshots,
-                    self.button_toolbar_screenshots
-                ],
-                "keys": self.config.item("keys", "snapshots", "F5")
-            },
-            {
-                "path": "<GEM>/game/log",
-                "widgets": [
-                    self.menu_item_output,
-                    self.menubar_game_item_output
-                ],
-                "keys": self.config.item("keys", "log", "F6")
-            },
-            {
-                "path": "<GEM>/game/notes",
-                "widgets": [
-                    self.menu_item_notes,
-                    self.menubar_game_item_notes
-                ],
-                "keys": self.config.item("keys", "notes", "F7")
-            },
-            {
-                "path": "<GEM>/game/memory",
-                "widgets": [
-                    self.menu_item_mednafen,
-                    self.menubar_edit_item_mednafen
-                ],
-                "keys": self.config.item("keys", "memory", "F8")
-            },
-            {
-                "path": "<GEM>/fullscreen",
-                "widgets": [
-                    self,
-                    self.menubar_game_item_fullscreen
-                ],
-                "keys": self.config.item("keys", "fullscreen", "F11"),
-                "function": self.__on_activate_fullscreen
-            },
-            {
-                "path": "<GEM>/sidebar",
-                "widgets": [
-                    self,
-                    self.menubar_view_item_sidebar
-                ],
-                "keys": self.config.item("keys", "sidebar", "F9"),
-                "function": self.__on_activate_sidebar
-            },
-            {
-                "path": "<GEM>/statusbar",
-                "widgets": [
-                    self,
-                    self.menubar_view_item_statusbar
-                ],
-                "keys": self.config.item("keys", "statusbar", "<Control>F9"),
-                "function": self.__on_activate_statusbar
-            },
-            {
-                "path": "<GEM>/game/exceptions",
-                "widgets": [
-                    self.menu_item_properties,
-                    self.menubar_game_item_properties
-                ],
-                "keys": self.config.item("keys", "exceptions", "F12")
-            },
-            {
-                "path": "<GEM>/game/delete",
-                "widgets": [
-                    self.menu_item_remove,
-                    self.menubar_edit_item_delete
-                ],
-                "keys": self.config.item("keys", "delete", "<Control>Delete")
-            },
-            {
-                "path": "<GEM>/game/maintenance",
-                "widgets": [
-                    self.menu_item_maintenance,
-                    self.menubar_edit_item_maintenance
-                ],
-                "keys": self.config.item("keys", "maintenance", "<Control>D")
-            },
-            {
-                "path": "<GEM>/preferences",
-                "widgets": [
-                    self,
-                    self.menubar_main_item_preferences
-                ],
-                "keys": self.config.item("keys", "preferences", "<Control>P"),
-                "function": self.__on_show_preferences
-            },
-            {
-                "path": "<GEM>/log",
-                "widgets": [
-                    self,
-                    self.menubar_main_item_log
-                ],
-                "keys": self.config.item("keys", "gem", "<Control>L"),
-                "function": self.__on_show_log
-            },
-            {
-                "path": "<GEM>/quit",
-                "widgets": [
-                    self,
-                    self.menubar_main_item_quit
-                ],
-                "keys": self.config.item("keys", "quit", "<Control>Q"),
-                "function": self.__stop_interface
-            }
-        ]
-
-        # Disconnect previous shortcut to avoid multiple allocation
-        for key, mod in self.shortcuts:
-            self.shortcuts_group.disconnect_key(key, mod)
-
-        for data in shortcuts:
-            key, mod = Gtk.accelerator_parse(data["keys"])
-
-            if Gtk.accelerator_valid(key, mod):
-
-                self.shortcuts_map.change_entry(data["path"], key, mod, True)
-
-                for widget in data["widgets"]:
-
-                    # Global signals
-                    if type(widget) is MainWindow:
-
-                        # Avoid to have multiple shortcuts with classic theme
-                        if not self.use_classic_theme:
-                            self.shortcuts_group.connect(key, mod,
-                                Gtk.AccelFlags.VISIBLE, data["function"])
-
-                    # Local signals
-                    else:
-                        widget.add_accelerator("activate", self.shortcuts_group,
-                            key, mod, Gtk.AccelFlags.VISIBLE)
-
-                    # Store current shortcut to remove it properly later
-                    self.shortcuts.append((key, mod))
 
 
     def __on_manage_keys(self, widget, event):
@@ -4519,8 +4360,8 @@ class MainWindow(Gtk.ApplicationWindow):
                     icon, Gtk.IconSize.MENU)
 
                 # Console flag selectors
-                self.menu_item_consoles_favorite.set_active(console.favorite)
-                self.menu_item_consoles_recursive.set_active(console.recursive)
+                self.item_consoles_favorite.set_active(console.favorite)
+                self.item_consoles_recursive.set_active(console.recursive)
 
                 # ----------------------------------------
                 #   Refilter consoles list
@@ -4577,7 +4418,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 self.__current_menu_row.console.emulator = emulator
 
-                self.menu_item_consoles_config.set_sensitive(
+                self.item_consoles_config.set_sensitive(
                     emulator is not None and exists(emulator.configuration))
 
                 # ----------------------------------------
@@ -4908,13 +4749,13 @@ class MainWindow(Gtk.ApplicationWindow):
 
         if self.__current_menu_row is not None:
 
-            if widget == self.menu_item_consoles_recursive:
+            if widget == self.item_consoles_recursive:
                 self.__current_menu_row.console.recursive = \
                     not self.__current_menu_row.console.recursive
 
                 self.api.write_object(self.__current_menu_row.console)
 
-            elif widget == self.menu_item_consoles_favorite:
+            elif widget == self.item_consoles_favorite:
                 self.__current_menu_row.console.favorite = \
                     not self.__current_menu_row.console.favorite
 
@@ -4966,22 +4807,22 @@ class MainWindow(Gtk.ApplicationWindow):
                 if row is not None:
                     self.__current_menu_row = row
 
-                    self.menu_item_consoles_config.set_sensitive(False)
+                    self.item_consoles_config.set_sensitive(False)
 
                     # Check console emulator
                     if row.console.emulator is not None:
                         configuration = row.console.emulator.configuration
 
                         # Check emulator configurator
-                        self.menu_item_consoles_config.set_sensitive(
+                        self.item_consoles_config.set_sensitive(
                             configuration is not None and exists(configuration))
 
-                    self.menu_item_consoles_reload.set_sensitive(
+                    self.item_consoles_reload.set_sensitive(
                         selected_row == row)
 
-                    self.menu_item_consoles_favorite.set_active(
+                    self.item_consoles_favorite.set_active(
                         row.console.favorite)
-                    self.menu_item_consoles_recursive.set_active(
+                    self.item_consoles_recursive.set_active(
                         row.console.recursive)
 
                     self.menu_consoles.popup_at_pointer(event)
@@ -4996,22 +4837,22 @@ class MainWindow(Gtk.ApplicationWindow):
                 if row is not None:
                     self.__current_menu_row = row
 
-                    self.menu_item_consoles_config.set_sensitive(False)
+                    self.item_consoles_config.set_sensitive(False)
 
                     # Check console emulator
                     if row.console.emulator is not None:
                         configuration = row.console.emulator.configuration
 
                         # Check emulator configurator
-                        self.menu_item_consoles_config.set_sensitive(
+                        self.item_consoles_config.set_sensitive(
                             configuration is not None and exists(configuration))
 
-                    self.menu_item_consoles_reload.set_sensitive(
+                    self.item_consoles_reload.set_sensitive(
                         selected_row == row)
 
-                    self.menu_item_consoles_favorite.set_active(
+                    self.item_consoles_favorite.set_active(
                         row.console.favorite)
-                    self.menu_item_consoles_recursive.set_active(
+                    self.item_consoles_recursive.set_active(
                         row.console.recursive)
 
                     self.menu_consoles.popup_at_widget(
@@ -5492,15 +5333,15 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.__on_game_launch_button_update(False)
                     self.button_toolbar_launch.set_sensitive(True)
 
-                    self.menu_item_launch.set_sensitive(False)
-                    self.menu_item_database.set_sensitive(False)
-                    self.menu_item_remove.set_sensitive(False)
-                    self.menu_item_mednafen.set_sensitive(False)
+                    self.item_game_launch.set_sensitive(False)
+                    self.item_game_database.set_sensitive(False)
+                    self.item_game_remove.set_sensitive(False)
+                    self.item_game_mednafen.set_sensitive(False)
 
-                    self.menubar_game_item_launch.set_sensitive(False)
-                    self.menubar_edit_item_database.set_sensitive(False)
-                    self.menubar_edit_item_delete.set_sensitive(False)
-                    self.menubar_edit_item_mednafen.set_sensitive(False)
+                    self.item_menubar_game_launch.set_sensitive(False)
+                    self.item_menubar_database.set_sensitive(False)
+                    self.item_menubar_delete.set_sensitive(False)
+                    self.item_menubar_mednafen.set_sensitive(False)
 
                 # This is not the same selection, so we change widgets status
                 if not same_game:
@@ -5509,35 +5350,35 @@ class MainWindow(Gtk.ApplicationWindow):
                     if not game.extension.lower() == ".gba" or \
                         not "mednafen" in emulator.binary or \
                         not self.__mednafen_status:
-                        self.menu_item_mednafen.set_sensitive(False)
-                        self.menubar_edit_item_mednafen.set_sensitive(False)
+                        self.item_game_mednafen.set_sensitive(False)
+                        self.item_menubar_mednafen.set_sensitive(False)
 
                     # Check screenshots
                     if len(emulator.get_screenshots(game)) == 0:
                         self.button_toolbar_screenshots.set_sensitive(False)
-                        self.menu_item_screenshots.set_sensitive(False)
-                        self.menubar_game_item_screenshots.set_sensitive(False)
+                        self.item_game_screenshots.set_sensitive(False)
+                        self.item_menubar_game_screenshots.set_sensitive(False)
 
                     if self.check_log() is None:
                         self.button_toolbar_output.set_sensitive(False)
-                        self.menu_item_output.set_sensitive(False)
-                        self.menubar_game_item_output.set_sensitive(False)
+                        self.item_game_output.set_sensitive(False)
+                        self.item_menubar_game_output.set_sensitive(False)
 
                     # Block signals
                     self.__block_signals()
 
-                    self.menubar_game_item_favorite.set_active(
+                    self.item_menubar_game_favorite.set_active(
                         game.favorite)
-                    self.menubar_game_item_multiplayer.set_active(
+                    self.item_menubar_game_multiplayer.set_active(
                         game.multiplayer)
-                    self.menubar_game_item_finish.set_active(
+                    self.item_menubar_game_finish.set_active(
                         game.finish)
 
-                    self.menu_item_favorite.set_active(
+                    self.item_game_favorite.set_active(
                         game.favorite)
-                    self.menu_item_multiplayer.set_active(
+                    self.item_game_multiplayer.set_active(
                         game.multiplayer)
-                    self.menu_item_finish.set_active(
+                    self.item_game_finish.set_active(
                         game.finish)
 
                     # Retrieve path from storage cache
@@ -5871,17 +5712,17 @@ class MainWindow(Gtk.ApplicationWindow):
         if widget == self.button_headerbar_list:
             self.button_headerbar_grid.set_active(not status)
 
-            self.menubar_view_item_list.set_active(status)
+            self.item_menubar_list.set_active(status)
 
         elif widget == self.button_headerbar_grid:
             self.button_headerbar_list.set_active(not status)
 
-            self.menubar_view_item_grid.set_active(status)
+            self.item_menubar_grid.set_active(status)
 
-        elif widget == self.menubar_view_item_list:
+        elif widget == self.item_menubar_list:
             self.button_headerbar_list.set_active(status)
 
-        elif widget == self.menubar_view_item_grid:
+        elif widget == self.item_menubar_grid:
             self.button_headerbar_grid.set_active(status)
 
         if not self.scroll_games_placeholder.get_visible():
@@ -6067,9 +5908,9 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.__on_game_launch_button_update(False)
                     self.button_toolbar_launch.set_sensitive(True)
 
-                    self.menu_item_output.set_sensitive(True)
+                    self.item_game_output.set_sensitive(True)
                     self.button_toolbar_output.set_sensitive(True)
-                    self.menubar_game_item_output.set_sensitive(True)
+                    self.item_menubar_game_output.set_sensitive(True)
 
                     return True
 
@@ -6172,7 +6013,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.set_game_data(Columns.List.Snapshots,
                     self.icons.get("screenshot"), game.filename)
                 self.button_toolbar_screenshots.set_sensitive(True)
-                self.menubar_game_item_screenshots.set_sensitive(True)
+                self.item_menubar_game_screenshots.set_sensitive(True)
 
             else:
                 self.set_game_data(Columns.List.Snapshots,
@@ -6203,20 +6044,20 @@ class MainWindow(Gtk.ApplicationWindow):
             self.__on_game_launch_button_update(True)
             self.button_toolbar_launch.set_sensitive(True)
 
-            self.menu_item_launch.set_sensitive(True)
-            self.menu_item_database.set_sensitive(True)
-            self.menu_item_remove.set_sensitive(True)
+            self.item_game_launch.set_sensitive(True)
+            self.item_game_database.set_sensitive(True)
+            self.item_game_remove.set_sensitive(True)
 
-            self.menubar_game_item_launch.set_sensitive(True)
-            self.menubar_edit_item_database.set_sensitive(True)
-            self.menubar_edit_item_delete.set_sensitive(True)
+            self.item_menubar_game_launch.set_sensitive(True)
+            self.item_menubar_database.set_sensitive(True)
+            self.item_menubar_delete.set_sensitive(True)
 
             # Check extension and emulator for GBA game on mednafen
             if not game.extension.lower() == ".gba" or \
                 not "mednafen" in emulator.binary or \
                 not self.__mednafen_status:
-                self.menu_item_mednafen.set_sensitive(True)
-                self.menubar_edit_item_mednafen.set_sensitive(True)
+                self.item_game_mednafen.set_sensitive(True)
+                self.item_menubar_mednafen.set_sensitive(True)
 
             # Avoid to launch the game again when use Enter in game terminate
             # self.treeview_games.get_selection().unselect_all()
@@ -6233,7 +6074,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         if len(self.threads) == 0:
             self.widget_menu_preferences.set_sensitive(True)
-            self.menubar_main_item_preferences.set_sensitive(True)
+            self.item_menubar_preferences.set_sensitive(True)
 
         # ----------------------------------------
         #   Manage script
@@ -6402,17 +6243,17 @@ class MainWindow(Gtk.ApplicationWindow):
                         # Set game output buttons as unsensitive
                         if data["log"]:
                             self.button_toolbar_output.set_sensitive(False)
-                            self.menu_item_output.set_sensitive(False)
-                            self.menubar_game_item_output.set_sensitive(False)
+                            self.item_game_output.set_sensitive(False)
+                            self.item_menubar_game_output.set_sensitive(False)
 
-                        self.menu_item_favorite.set_active(False)
-                        self.menubar_game_item_favorite.set_active(False)
+                        self.item_game_favorite.set_active(False)
+                        self.item_menubar_game_favorite.set_active(False)
 
-                        self.menu_item_multiplayer.set_active(False)
-                        self.menubar_game_item_multiplayer.set_active(False)
+                        self.item_game_multiplayer.set_active(False)
+                        self.item_menubar_game_multiplayer.set_active(False)
 
-                        self.menu_item_finish.set_active(False)
-                        self.menubar_game_item_finish.set_active(False)
+                        self.item_game_finish.set_active(False)
+                        self.item_menubar_game_finish.set_active(False)
 
                     except Exception as error:
                         self.logger.exception("An error occur during removing")
@@ -6670,14 +6511,14 @@ class MainWindow(Gtk.ApplicationWindow):
                         self.icons.get("screenshot"), game.filename)
 
                     self.button_toolbar_screenshots.set_sensitive(True)
-                    self.menubar_game_item_screenshots.set_sensitive(True)
+                    self.item_menubar_game_screenshots.set_sensitive(True)
 
                 else:
                     self.set_game_data(Columns.List.Snapshots,
                         self.icons.get_translucent("screenshot"), game.filename)
 
                     self.button_toolbar_screenshots.set_sensitive(False)
-                    self.menubar_game_item_screenshots.set_sensitive(False)
+                    self.item_menubar_game_screenshots.set_sensitive(False)
 
                 # Savestates
                 if len(new_emulator.get_savestates(game)) > 0:
@@ -6734,7 +6575,7 @@ class MainWindow(Gtk.ApplicationWindow):
         This function can only be used with a GBA game and Mednafen emulator.
         """
 
-        if self.menu_item_mednafen.get_sensitive():
+        if self.item_game_mednafen.get_sensitive():
 
             game = self.selection["game"]
             console = self.selection["console"]
@@ -6823,14 +6664,14 @@ class MainWindow(Gtk.ApplicationWindow):
             # Update game from database
             self.api.update_game(game)
 
-            self.menubar_game_item_favorite.set_active(game.favorite)
-            self.menu_item_favorite.set_active(game.favorite)
+            self.item_menubar_game_favorite.set_active(game.favorite)
+            self.item_game_favorite.set_active(game.favorite)
 
             self.check_selection()
 
         else:
-            self.menubar_game_item_favorite.set_active(False)
-            self.menu_item_favorite.set_active(False)
+            self.item_menubar_game_favorite.set_active(False)
+            self.item_game_favorite.set_active(False)
 
         self.filters_update(None)
 
@@ -6876,14 +6717,14 @@ class MainWindow(Gtk.ApplicationWindow):
             # Update game from database
             self.api.update_game(game)
 
-            self.menubar_game_item_multiplayer.set_active(game.multiplayer)
-            self.menu_item_multiplayer.set_active(game.multiplayer)
+            self.item_menubar_game_multiplayer.set_active(game.multiplayer)
+            self.item_game_multiplayer.set_active(game.multiplayer)
 
             self.check_selection()
 
         else:
-            self.menubar_game_item_multiplayer.set_active(False)
-            self.menu_item_multiplayer.set_active(False)
+            self.item_menubar_game_multiplayer.set_active(False)
+            self.item_game_multiplayer.set_active(False)
 
         self.filters_update(None)
 
@@ -6929,14 +6770,14 @@ class MainWindow(Gtk.ApplicationWindow):
             # Update game from database
             self.api.update_game(game)
 
-            self.menubar_game_item_finish.set_active(game.finish)
-            self.menu_item_finish.set_active(game.finish)
+            self.item_menubar_game_finish.set_active(game.finish)
+            self.item_game_finish.set_active(game.finish)
 
             self.check_selection()
 
         else:
-            self.menubar_game_item_finish.set_active(False)
-            self.menu_item_finish.set_active(False)
+            self.item_menubar_game_finish.set_active(False)
+            self.item_game_finish.set_active(False)
 
         self.filters_update(None)
 
@@ -6959,7 +6800,7 @@ class MainWindow(Gtk.ApplicationWindow):
         if game is not None:
 
             if widget in [
-                self.menubar_edit_item_score_up, self.menu_item_score_up]:
+                self.item_menubar_score_up, self.item_game_score_up]:
 
                 if game.score < 5:
                     game.score += 1
@@ -6967,7 +6808,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     modification = True
 
             elif widget in [
-                self.menubar_edit_item_score_down, self.menu_item_score_down]:
+                self.item_menubar_score_down, self.item_game_score_down]:
 
                 if game.score > 0:
                     game.score -= 1
@@ -7257,7 +7098,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 if selection:
                     widget.grab_focus()
 
-                    self.menu_games.popup_at_pointer(event)
+                    self.menu_game.popup_at_pointer(event)
 
                     return True
 
@@ -7276,7 +7117,7 @@ class MainWindow(Gtk.ApplicationWindow):
                         treeiter = model.get_iter(items[0])
 
                 if treeiter is not None:
-                    self.menu_games.popup_at_pointer(event)
+                    self.menu_game.popup_at_pointer(event)
 
                     return True
 
@@ -7317,7 +7158,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 "suggested-action")
 
         self.button_toolbar_fullscreen.set_active(self.__fullscreen_status)
-        self.menubar_game_item_fullscreen.set_active(self.__fullscreen_status)
+        self.item_menubar_game_fullscreen.set_active(self.__fullscreen_status)
 
         self.__unblock_signals()
 
@@ -7346,8 +7187,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.config.modify("gem", "dark_theme", dark_theme_status)
         self.config.update()
 
-        self.switch_menu_dark_theme.set_active(dark_theme_status)
-        self.menubar_view_item_dark_theme.set_active(dark_theme_status)
+        self.item_menubar_dark_theme.set_active(dark_theme_status)
 
         self.__unblock_signals()
 
@@ -7376,8 +7216,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.config.modify("gem", "show_sidebar", sidebar_status)
         self.config.update()
 
-        self.switch_menu_sidebar.set_active(sidebar_status)
-        self.menubar_view_item_sidebar.set_active(sidebar_status)
+        self.item_menubar_sidebar.set_active(sidebar_status)
 
         self.__unblock_signals()
 
@@ -7406,8 +7245,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.config.modify("gem", "show_statusbar", statusbar_status)
         self.config.update()
 
-        self.switch_menu_statusbar.set_active(statusbar_status)
-        self.menubar_view_item_statusbar.set_active(statusbar_status)
+        self.item_menubar_statusbar.set_active(statusbar_status)
 
         self.__unblock_signals()
 

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-03-04 10:43+0100\n"
+"PO-Revision-Date: 2019-03-04 17:58+0100\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -130,11 +130,6 @@ msgstr ""
 #, python-format
 msgid "A memory error occur: %s"
 msgstr "Une erreur mémoire est survenue: %s"
-
-#
-# File: src/window.py, line: 247
-msgid "About"
-msgstr "À propos"
 
 #
 # File: gem/gtk/preferences.py, line: 1509
@@ -400,11 +395,6 @@ msgid "Cover image"
 msgstr "Image de couverture"
 
 #
-# File: gem/interface.py, line: 391
-msgid "Dark theme"
-msgstr "Thème sombre"
-
-#
 # File: gem/ui/dialog/delete.py, line: 164
 # File: gem/ui/dialog/duplicate.py, line: 172
 msgid "Database"
@@ -516,6 +506,11 @@ msgstr "Afficher une image spécifique dans l'infobulle de jeu"
 # File: gem/ui/preferences/interface.py, line: 724
 msgid "Display lines in games list view"
 msgstr "Afficher des lignes dans la liste de jeux"
+
+#
+# File: src/window.py, line: 375
+msgid "Display menu"
+msgstr "Menu d'affichage"
 
 #
 # File: gem/ui/preferences/interface.py, line: 754
@@ -1212,11 +1207,6 @@ msgid "Output _log"
 msgstr "_Journal de sortie"
 
 #
-# File: gem/interface.py, line: 405
-msgid "Output log"
-msgstr "Journal de sortie"
-
-#
 # File: gem/interface.py, line: 336
 msgid "Parameters"
 msgstr "Paramètres"
@@ -1256,11 +1246,6 @@ msgstr "Préférences"
 # File: gem/ui/dialog/cover.py, line: 160
 msgid "Preview"
 msgstr "Prévisualisation"
-
-#
-# File: src/window.py, line: 239
-msgid "Quit"
-msgstr "Quitter"
 
 #
 # File: gem/preferences.py, line: 91
@@ -1604,11 +1589,6 @@ msgid "Statistic"
 msgstr "Statistique"
 
 #
-# File: gem/gtk/interface.py, line: 505
-msgid "Statusbar"
-msgstr "Barre de statut"
-
-#
 # File: gem/gtk/interface.py, line: 3661
 # File: gem/gtk/interface.py, line: 3663
 msgid "Stop"
@@ -1941,6 +1921,12 @@ msgid "_Decrease score"
 msgstr "_Diminuer le score"
 
 #
+# File: gem/interface.py, line: 251
+# File: gem/interface.py, line: 550
+msgid "_Display"
+msgstr "_Affichage"
+
+#
 # File: gem/ui/interface.py, line: 621
 # File: gem/ui/interface.py, line: 1265
 msgid "_Duplicate"
@@ -2088,11 +2074,6 @@ msgstr "_Captures d'écran"
 # File: gem/interface.py, line: 475
 msgid "_Tools"
 msgstr "_Outils"
-
-#
-# File: gem/ui/interface.py, line: 497
-msgid "_View"
-msgstr "_Vue"
 
 #
 # File: gem/interface.py, line: 926
