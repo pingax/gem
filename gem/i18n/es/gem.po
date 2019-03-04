@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.4\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-02-28 15:22+0100\n"
+"PO-Revision-Date: 2019-03-04 10:53+0100\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -19,9 +19,9 @@ msgstr "hace %d días"
 
 #
 # File: gem/interface.py, line: 532
-#, fuzzy, python-format
+#, python-format
 msgid "%d games available"
-msgstr "%s juegos disponibles"
+msgstr "%d juegos disponibles"
 
 #
 # File: gem/utils.py, line: 332
@@ -61,9 +61,9 @@ msgstr ""
 
 #
 # File: gem/interface.py, line: 1354
-#, fuzzy, python-format
+#, python-format
 msgid "%s emulator not exist"
-msgstr "¡El emulador %s no existe!"
+msgstr "El emulador %s no existe"
 
 #
 # File: gem/preferences.py, line: 268
@@ -2027,6 +2027,11 @@ msgstr ""
 # File: gem/interface.py, line: 419
 msgid "_About"
 msgstr "_A cerca de"
+
+#
+# File: gem/ui/interface.py, line: 564
+msgid "_Columns visibility"
+msgstr ""
 
 #
 # File: gem/interface.py, line: 401
