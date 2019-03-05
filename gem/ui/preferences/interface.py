@@ -746,6 +746,15 @@ class PreferencesWindow(CommonWindow):
         self.frame_games_column = Gtk.Frame()
         self.listbox_games_column = Gtk.ListBox()
 
+        self.widget_column_favorite = PreferencesItem()
+        self.switch_games_column_favorite = Gtk.Switch()
+
+        self.widget_column_multiplayer = PreferencesItem()
+        self.switch_games_column_multiplayer = Gtk.Switch()
+
+        self.widget_column_finish = PreferencesItem()
+        self.switch_games_column_finish = Gtk.Switch()
+
         self.widget_column_play = PreferencesItem()
         self.switch_games_column_play = Gtk.Switch()
 
@@ -776,6 +785,21 @@ class PreferencesWindow(CommonWindow):
         self.listbox_games_column.set_activate_on_single_click(True)
         self.listbox_games_column.set_selection_mode(
             Gtk.SelectionMode.NONE)
+
+        self.widget_column_favorite.set_widget(
+            self.switch_games_column_favorite)
+        self.widget_column_favorite.set_option_label(
+            _("Favorite"))
+
+        self.widget_column_multiplayer.set_widget(
+            self.switch_games_column_multiplayer)
+        self.widget_column_multiplayer.set_option_label(
+            _("Multiplayer"))
+
+        self.widget_column_finish.set_widget(
+            self.switch_games_column_finish)
+        self.widget_column_finish.set_option_label(
+            _("Finish"))
 
         self.widget_column_play.set_widget(
             self.switch_games_column_play)
@@ -1161,6 +1185,9 @@ class PreferencesWindow(CommonWindow):
 
         self.frame_games_column.add(self.listbox_games_column)
 
+        self.listbox_games_column.add(self.widget_column_favorite)
+        self.listbox_games_column.add(self.widget_column_multiplayer)
+        self.listbox_games_column.add(self.widget_column_finish)
         self.listbox_games_column.add(self.widget_column_play)
         self.listbox_games_column.add(self.widget_column_last_launch)
         self.listbox_games_column.add(self.widget_column_play_time)
@@ -1506,6 +1533,24 @@ class PreferencesWindow(CommonWindow):
             #   Games - Columns
             # ------------------------------------
 
+            self.widget_column_favorite: {
+                "type": Gtk.Switch,
+                "section": "columns",
+                "option": "favorite",
+                "fallback": True
+            },
+            self.widget_column_multiplayer: {
+                "type": Gtk.Switch,
+                "section": "columns",
+                "option": "multiplayer",
+                "fallback": True
+            },
+            self.widget_column_finish: {
+                "type": Gtk.Switch,
+                "section": "columns",
+                "option": "finish",
+                "fallback": True
+            },
             self.widget_column_play: {
                 "type": Gtk.Switch,
                 "section": "columns",
