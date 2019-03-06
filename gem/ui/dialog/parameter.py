@@ -15,13 +15,29 @@
 # ------------------------------------------------------------------------------
 
 # GEM
-from gem.engine.utils import *
+from gem.engine.utils import parse_timedelta
 
-from gem.ui import *
-from gem.ui.data import *
-from gem.ui.utils import *
-
+from gem.ui.data import Icons
+from gem.ui.utils import replace_for_markup
 from gem.ui.widgets.window import CommonWindow
+
+# GObject
+try:
+    from gi import require_version
+
+    require_version("Gtk", "3.0")
+
+    from gi.repository import Gtk
+    from gi.repository import GdkPixbuf
+    from gi.repository import Pango
+
+except ImportError as error:
+    from sys import exit
+
+    exit("Cannot found python3-gobject module: %s" % str(error))
+
+# System
+from os import environ
 
 # Translation
 from gettext import gettext as _
@@ -50,7 +66,7 @@ class ParametersDialog(CommonWindow):
             classic_theme = parent.use_classic_theme
 
         CommonWindow.__init__(self, parent,
-            _("Game properties"), Icons.Symbolic.Gaming, classic_theme)
+            _("Game properties"), Icons.Symbolic.GAMING, classic_theme)
 
         # ------------------------------------
         #   Initialize variables
@@ -201,7 +217,7 @@ class ParametersDialog(CommonWindow):
 
         label_emulator = Gtk.Label()
 
-        self.model = Gtk.ListStore(Pixbuf, str)
+        self.model = Gtk.ListStore(GdkPixbuf.Pixbuf, str)
         self.combo = Gtk.ComboBox()
 
         cell_icon = Gtk.CellRendererPixbuf()
@@ -231,9 +247,9 @@ class ParametersDialog(CommonWindow):
 
         # Properties
         self.entry_arguments.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.PRIMARY, Icons.Symbolic.Terminal)
+            Gtk.EntryIconPosition.PRIMARY, Icons.Symbolic.TERMINAL)
         self.entry_arguments.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.CLEAR)
 
         # ------------------------------------
         #   Key
@@ -251,9 +267,9 @@ class ParametersDialog(CommonWindow):
 
         self.entry_key.set_placeholder_text(_("No default value"))
         self.entry_key.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.PRIMARY, Icons.Symbolic.Password)
+            Gtk.EntryIconPosition.PRIMARY, Icons.Symbolic.PASSWORD)
         self.entry_key.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.CLEAR)
 
         # ------------------------------------
         #   Tags
@@ -284,12 +300,12 @@ class ParametersDialog(CommonWindow):
         self.entry_tags.set_placeholder_text(
             _("Use comma to separate tags"))
         self.entry_tags.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.PRIMARY, Icons.Symbolic.AddText)
+            Gtk.EntryIconPosition.PRIMARY, Icons.Symbolic.ADD_TEXT)
         self.entry_tags.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.CLEAR)
 
         self.image_tags.set_from_icon_name(
-            Icons.Symbolic.Add, Gtk.IconSize.SMALL_TOOLBAR)
+            Icons.Symbolic.ADD, Gtk.IconSize.SMALL_TOOLBAR)
 
         self.button_tags.set_popover(self.popover_tags)
         self.button_tags.set_image(self.image_tags)
@@ -370,9 +386,9 @@ class ParametersDialog(CommonWindow):
         scroll_environment.set_shadow_type(Gtk.ShadowType.OUT)
 
         image_environment_add.set_from_icon_name(
-            Icons.Symbolic.Add, Gtk.IconSize.BUTTON)
+            Icons.Symbolic.ADD, Gtk.IconSize.BUTTON)
         image_environment_remove.set_from_icon_name(
-            Icons.Symbolic.Remove, Gtk.IconSize.BUTTON)
+            Icons.Symbolic.REMOVE, Gtk.IconSize.BUTTON)
 
         self.treeview_environment.set_model(self.store_environment)
         self.treeview_environment.set_headers_clickable(False)

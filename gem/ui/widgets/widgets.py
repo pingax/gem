@@ -15,12 +15,24 @@
 # ------------------------------------------------------------------------------
 
 # GEM
-from gem.engine.api import Console
-from gem.engine.api import Emulator
 from gem.engine.utils import *
 
-from gem.ui import *
 from gem.ui.utils import *
+
+# GObject
+try:
+    from gi import require_version
+
+    require_version("Gtk", "3.0")
+
+    from gi.repository import Gtk
+    from gi.repository import GdkPixbuf
+    from gi.repository import Pango
+
+except ImportError as error:
+    from sys import exit
+
+    exit("Cannot found python3-gobject module: %s" % str(error))
 
 # Translation
 from gettext import gettext as _
@@ -251,7 +263,8 @@ class IconsGenerator(object):
         self.__blank = dict()
 
         for size in self.__sizes:
-            self.__blank[size] = Pixbuf.new(Colorspace.RGB, True, 8, size, size)
+            self.__blank[size] = GdkPixbuf.Pixbuf.new(
+                GdkPixbuf.Colorspace.RGB, True, 8, size, size)
             self.__blank[size].fill(0x00000000)
 
 

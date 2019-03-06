@@ -14,12 +14,34 @@
 #  MA 02110-1301, USA.
 # ------------------------------------------------------------------------------
 
-# GEM
-from gem.ui import *
-from gem.ui.data import *
+# Datetime
+from datetime import date
+from datetime import timedelta
+
+# GObject
+try:
+    from gi import require_version
+
+    require_version("Gtk", "3.0")
+
+    from gi.repository import Gtk
+    from gi.repository import GdkPixbuf
+
+except ImportError as error:
+    from sys import exit
+
+    exit("Cannot found python3-gobject module: %s" % str(error))
+
+# Processus
+from subprocess import PIPE
+from subprocess import Popen
+from subprocess import STDOUT
 
 # Regex
 from re import findall as re_findall
+
+# Translation
+from gettext import gettext as _
 
 # ------------------------------------------------------------------------------
 #   Misc functions
@@ -34,7 +56,7 @@ def icon_from_data(path, fallback=None, width=24, height=24):
 
     Parameters
     ----------
-    path : str
+    path : pathlib.Path
         Absolute or relative icon path
     fallback : GdkPixbuf.Pixbuf, optional
         Fallback icon to return instead of empty (Default: None)
@@ -49,22 +71,24 @@ def icon_from_data(path, fallback=None, width=24, height=24):
         Pixbuf icon object
     """
 
-    if path is not None and exists(expanduser(path)):
+    if path.exists():
 
         try:
-            return Pixbuf.new_from_file_at_size(expanduser(path), width, height)
+            return GdkPixbuf.Pixbuf.new_from_file_at_size(
+                str(path), width, height)
         except:
             pass
 
     # Return an empty icon
     if fallback is None:
-        fallback = Pixbuf.new(Colorspace.RGB, True, 8, width, height)
+        fallback = GdkPixbuf.Pixbuf.new(
+            GdkPixbuf.Colorspace.RGB, True, 8, width, height)
         fallback.fill(0x00000000)
 
     return fallback
 
 
-def icon_load(name, size=16, fallback=Icons.Missing):
+def icon_load(name, size=16, fallback="image-missing"):
     """ Load an icon from IconTheme
 
     This function search an icon in current user icons theme. If founded, return
@@ -95,14 +119,14 @@ def icon_load(name, size=16, fallback=Icons.Missing):
                 name, size, Gtk.IconLookupFlags.FORCE_SVG)
 
         except:
-            if type(fallback) == Pixbuf:
+            if type(fallback) == GdkPixbuf.Pixbuf:
                 return fallback
 
             return icons_theme.load_icon(
                 fallback, size, Gtk.IconLookupFlags.FORCE_SVG)
 
     # Return fallback icon (in the case where is a Pixbuf)
-    if type(fallback) == Pixbuf:
+    if type(fallback) == GdkPixbuf.Pixbuf:
         return fallback
 
     # Find fallback icon in icons theme
@@ -112,7 +136,7 @@ def icon_load(name, size=16, fallback=Icons.Missing):
 
     # Instead, return default image
     return icons_theme.load_icon(
-        Icons.Missing, size, Gtk.IconLookupFlags.FORCE_SVG)
+        "image-missing", size, Gtk.IconLookupFlags.FORCE_SVG)
 
 
 def set_pixbuf_opacity(pixbuf, opacity):
@@ -139,12 +163,13 @@ def set_pixbuf_opacity(pixbuf, opacity):
 
     width, height = pixbuf.get_width(), pixbuf.get_height()
 
-    new_pixbuf = Pixbuf.new(Colorspace.RGB, True, 8, width, height)
+    new_pixbuf = GdkPixbuf.Pixbuf.new(
+        GdkPixbuf.Colorspace.RGB, True, 8, width, height)
     new_pixbuf.fill(0x00000000)
 
     try:
         pixbuf.composite(new_pixbuf, 0, 0, width, height, 0, 0, 1, 1,
-            InterpType.NEAREST, opacity)
+            GdkPixbuf.InterpType.NEAREST, opacity)
     except:
         pass
 
@@ -223,6 +248,124 @@ def on_activate_listboxrow(listbox, row):
 
         elif type(widget) == Gtk.Switch:
             widget.set_active(not widget.get_active())
+
+
+def string_from_date(date_object):
+    """ Convert a datetime to a pretty string
+
+    Get a pretty string from the interval between NOW() and the wanted date
+
+    Parameters
+    ----------
+    date_object : datetime.datetime
+        Date to compare with NOW()
+
+    Returns
+    -------
+    str or None
+        Convert value
+    """
+
+    if date_object is None:
+        return None
+
+    days = (date.today() - date_object).days
+
+    if days == 0:
+        return _("Today")
+    elif days == 1:
+        return _("Yesterday")
+    elif days < 30:
+        return _("%d days ago") % int(days)
+
+    months = int(days / 30)
+
+    if months == 1:
+        return _("Last month")
+    elif months < 12:
+        return _("%d months ago") % int(months)
+
+    years = int(months / 12)
+
+    if years < 2:
+        return _("Last year")
+
+    return _("%d years ago") % int(years)
+
+
+def string_from_time(time_object):
+    """ Convert a time to a pretty string
+
+    Get a pretty string from the interval between NOW() and the wanted date
+
+    Parameters
+    ----------
+    time_object : datetime.datetime
+        Date to compare with NOW()
+
+    Returns
+    -------
+    str or None
+        Convert value
+    """
+
+    if time_object is None:
+        return None
+
+    hours, minutes, seconds = int(), int(), int()
+
+    if type(time_object) is timedelta:
+        hours, seconds = divmod(time_object.seconds, 3600)
+
+        if seconds > 0:
+            minutes, seconds = divmod(seconds, 60)
+
+        hours += time_object.days * 24
+
+    if hours == 0:
+        if minutes == 0:
+            if seconds == 0:
+                return str()
+            elif seconds == 1:
+                return _("1 second")
+
+            return _("%d seconds") % seconds
+
+        elif minutes == 1:
+            return _("1 minute")
+
+        return _("%d minutes") % minutes
+
+    elif hours == 1:
+        return _("1 hour")
+
+    return _("%d hours") % hours
+
+
+def replace_for_markup(text):
+    """ Replace some characters in text for markup compatibility
+
+    Parameters
+    ----------
+    text : str
+        Text to parser
+
+    Returns
+    -------
+    str
+        Replaced text
+    """
+
+    characters = {
+        '&': "&amp;",
+        '<': "&lt;",
+        '>': "&gt;",
+    }
+
+    for key, value in characters.items():
+        text = text.replace(key, value)
+
+    return text
 
 
 def magic_from_file(filename, mime=False):

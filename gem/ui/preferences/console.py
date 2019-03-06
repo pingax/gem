@@ -14,17 +14,34 @@
 #  MA 02110-1301, USA.
 # ------------------------------------------------------------------------------
 
+# Filesystem
+from os import remove
+
+from pathlib import Path
+
 # GEM
-from gem.engine import *
-from gem.engine.utils import *
+from gem.engine.utils import generate_identifier
 
-from gem.ui import *
-from gem.ui.data import *
-from gem.ui.utils import *
-
+from gem.ui.data import Icons
+from gem.ui.utils import on_entry_clear
+from gem.ui.utils import magic_from_file
 from gem.ui.dialog.icons import IconsDialog
-
 from gem.ui.widgets.window import CommonWindow
+
+# GObject
+try:
+    from gi import require_version
+
+    require_version("Gtk", "3.0")
+
+    from gi.repository import Gtk
+    from gi.repository import GdkPixbuf
+    from gi.repository import Pango
+
+except ImportError as error:
+    from sys import exit
+
+    exit("Cannot found python3-gobject module: %s" % str(error))
 
 # Translation
 from gettext import gettext as _
@@ -49,7 +66,7 @@ class ConsolePreferences(CommonWindow):
         """
 
         CommonWindow.__init__(self, parent, _("Console"),
-            Icons.Symbolic.Gaming, parent.use_classic_theme)
+            Icons.Symbolic.GAMING, parent.use_classic_theme)
 
         # ------------------------------------
         #   Initialize variables
@@ -187,7 +204,7 @@ class ConsolePreferences(CommonWindow):
 
         self.entry_name.set_hexpand(True)
         self.entry_name.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.CLEAR)
 
         self.label_icon.set_halign(Gtk.Align.END)
         self.label_icon.set_valign(Gtk.Align.CENTER)
@@ -197,7 +214,7 @@ class ConsolePreferences(CommonWindow):
 
         self.entry_icon.set_hexpand(True)
         self.entry_icon.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.CLEAR)
 
         self.label_folder.set_halign(Gtk.Align.END)
         self.label_folder.set_valign(Gtk.Align.CENTER)
@@ -239,7 +256,7 @@ class ConsolePreferences(CommonWindow):
 
         self.label_default = Gtk.Label()
 
-        self.model_emulators = Gtk.ListStore(Pixbuf, str)
+        self.model_emulators = Gtk.ListStore(GdkPixbuf.Pixbuf, str)
         self.combo_emulators = Gtk.ComboBox()
 
         cell_emulators_icon = Gtk.CellRendererPixbuf()
@@ -285,7 +302,7 @@ class ConsolePreferences(CommonWindow):
         self.entry_extensions.set_placeholder_text(
             _("Use space to separate extensions"))
         self.entry_extensions.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.CLEAR)
 
         # ------------------------------------
         #   Ignores options
@@ -323,9 +340,9 @@ class ConsolePreferences(CommonWindow):
             "<b>%s</b>" % _("Regular expressions for ignored files"))
 
         self.image_ignores_add.set_from_icon_name(
-            Icons.Symbolic.Add, Gtk.IconSize.BUTTON)
+            Icons.Symbolic.ADD, Gtk.IconSize.BUTTON)
         self.image_ignores_remove.set_from_icon_name(
-            Icons.Symbolic.Remove, Gtk.IconSize.BUTTON)
+            Icons.Symbolic.REMOVE, Gtk.IconSize.BUTTON)
 
         self.button_ignores_add.set_no_show_all(True)
         self.button_ignores_remove.set_no_show_all(True)
@@ -476,8 +493,8 @@ class ConsolePreferences(CommonWindow):
 
             # Folder
             folder = self.console.path
-            if folder is not None and exists(folder):
-                self.file_folder.set_current_folder(folder)
+            if folder.exists():
+                self.file_folder.set_current_folder(str(folder))
 
             # Favorite status
             self.switch_favorite.set_active(self.console.favorite)
@@ -489,9 +506,9 @@ class ConsolePreferences(CommonWindow):
             self.entry_extensions.set_text(' '.join(self.console.extensions))
 
             # Icon
-            self.entry_icon.set_text(self.console.icon)
-
             self.path = self.console.icon
+
+            self.entry_icon.set_text(str(self.path))
 
             icon = self.interface.get_pixbuf_from_cache(
                 "consoles", 64, self.console.id, self.console.icon)
@@ -541,7 +558,7 @@ class ConsolePreferences(CommonWindow):
                     cache_path = self.interface.get_icon_from_cache(
                         "consoles", size, "%s.png" % self.console.id)
 
-                    if exists(cache_path):
+                    if cache_path.exists():
                         remove(cache_path)
 
             # Append a new console
@@ -563,37 +580,39 @@ class ConsolePreferences(CommonWindow):
 
         self.section = self.entry_name.get_text()
 
-        identifier = None
-        if len(self.section) > 0:
-            identifier = generate_identifier(self.section)
-
-        path = self.file_folder.get_filename()
-        if path is None or not exists(path):
-            path = self.console.path
-
-        extensions = list()
-        if len(self.entry_extensions.get_text()) > 0:
-            extensions = self.entry_extensions.get_text().split()
-
-        ignores = list()
-        for row in self.model_ignores:
-            data = self.model_ignores.get_value(row.iter, 0)
-
-            if data is not None and len(data) > 0:
-                ignores.append(data)
-
         self.data = {
-            "id": identifier,
+            "id": None,
             "name": self.section,
-            "path": path,
-            "icon": expanduser(self.entry_icon.get_text()),
-            "ignores": ignores,
-            "extensions": extensions,
+            "path": self.console.path,
+            "icon": None,
+            "ignores": list(),
+            "extensions": list(),
             "favorite": self.switch_favorite.get_active(),
             "recursive": self.switch_recursive.get_active(),
             "emulator": self.api.get_emulator(
                 self.combo_emulators.get_active_id())
         }
+
+        if len(self.section) > 0:
+            self.data["id"] = generate_identifier(self.section)
+
+        value = self.file_folder.get_filename()
+        if len(value) > 0:
+            self.data["path"] = Path(value).expanduser()
+
+        value = self.entry_icon.get_text().strip()
+        if len(value) > 0:
+            self.data["icon"] = Path(value).expanduser()
+
+        value = self.entry_extensions.get_text().strip()
+        if len(value) > 0:
+            self.data["extensions"] = value.split()
+
+        for row in self.model_ignores:
+            data = self.model_ignores.get_value(row.iter, 0)
+
+            if data is not None and len(data) > 0:
+                self.data["ignores"].append(data)
 
 
     def __on_entry_update(self, widget):
@@ -628,7 +647,7 @@ class ConsolePreferences(CommonWindow):
                 if self.console is not None and not self.console.id == name:
                     self.error = True
 
-                    icon = Icons.Error
+                    icon = Icons.ERROR
                     tooltip = _("This console already exist, please, "
                         "choose another name")
 
@@ -645,7 +664,7 @@ class ConsolePreferences(CommonWindow):
 
         path = self.file_folder.get_filename()
 
-        if path is None or not exists(expanduser(path)):
+        if path is None or not Path(path).expanduser().exists():
             self.error = True
 
         # ------------------------------------
@@ -664,7 +683,13 @@ class ConsolePreferences(CommonWindow):
             Object which receive signal
         """
 
-        self.set_icon(self.image_console, widget.get_text())
+        value = widget.get_text()
+
+        self.path = None
+        if len(value) > 0:
+            self.path = Path(value).expanduser()
+
+        self.set_icon(self.image_console, self.path)
 
 
     def __on_select_icon(self, widget):
@@ -679,13 +704,13 @@ class ConsolePreferences(CommonWindow):
         dialog = IconsDialog(self, _("Choose an icon"), self.path, "consoles")
 
         if dialog.new_path is not None:
-            self.path = dialog.new_path
+            self.path = Path(dialog.new_path).expanduser()
 
             # Update icon thumbnail
             self.set_icon(self.image_console, self.path)
 
             # Update icon entry
-            self.entry_icon.set_text(self.path)
+            self.entry_icon.set_text(dialog.new_path)
 
         dialog.destroy()
 
@@ -759,7 +784,7 @@ class ConsolePreferences(CommonWindow):
         ----------
         widget : Gtk.Widget
             Icon widget to update
-        path : str
+        path : pathlib.Path
             Icon path
         size : int, optional
             Icon size in pixels (Default: 64)
@@ -768,30 +793,29 @@ class ConsolePreferences(CommonWindow):
         # Retrieve an empty icon
         icon = self.icons.blank(size)
 
-        if len(path) > 0:
-            path = expanduser(path)
+        if path is not None:
 
             # Check icon from icons theme
-            if not exists(path):
-                collection_path = expanduser(
-                    self.api.get_local("icons", "%s.%s" % (path, Icons.Ext)))
+            if not path.exists():
+                collection_path = self.api.get_local("icons", "%s.png" % path)
 
                 # Retrieve icon from collection
-                if exists(collection_path) and isfile(collection_path):
+                if collection_path.exists() and collection_path.is_file():
 
                     # Check the file mime-type to avoid non-image file
                     if magic_from_file(
                         collection_path, mime=True).startswith("image/"):
 
-                        icon = Pixbuf.new_from_file_at_scale(
-                            collection_path, size, size, True)
+                        icon = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                            str(collection_path), size, size, True)
 
             # Retrieve icon from file
-            elif isfile(path):
+            elif path.is_file():
 
                 # Check the file mime-type to avoid non-image file
                 if magic_from_file(path, mime=True).startswith("image/"):
-                    icon = Pixbuf.new_from_file_at_scale(path, size, size, True)
+                    icon = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                        str(path), size, size, True)
 
         widget.set_from_pixbuf(icon)
 

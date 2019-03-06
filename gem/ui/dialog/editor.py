@@ -14,18 +14,38 @@
 #  MA 02110-1301, USA.
 # ------------------------------------------------------------------------------
 
+# Filesystem
+from os import W_OK
+from os import access
+
+from pathlib import Path
+
 # GEM
-from gem.engine.utils import *
-
-from gem.ui import *
-from gem.ui.data import *
+from gem.ui.data import Icons
 from gem.ui.utils import on_entry_clear
+from gem.ui.utils import magic_from_file
+from gem.ui.utils import replace_for_markup
 from gem.ui.utils import on_activate_listboxrow
-
 from gem.ui.dialog.question import QuestionDialog
-
 from gem.ui.widgets.window import CommonWindow
 from gem.ui.widgets.widgets import PreferencesItem
+
+# GObject
+try:
+    from gi import require_version
+
+    require_version("Gtk", "3.0")
+
+    from gi.repository import Gtk
+    from gi.repository import GLib
+    from gi.repository import Gdk
+    from gi.repository import GdkPixbuf
+    from gi.repository import Pango
+
+except ImportError as error:
+    from sys import exit
+
+    exit("Cannot found python3-gobject module: %s" % str(error))
 
 # Translation
 from gettext import gettext as _
@@ -40,8 +60,7 @@ from urllib.request import url2pathname
 
 class EditorDialog(CommonWindow):
 
-    def __init__(self, parent, title, file_path, size, editable=True,
-        icon=Icons.Editor):
+    def __init__(self, parent, title, file_path, size, icon, editable=True):
         """ Constructor
 
         Parameters
@@ -54,11 +73,11 @@ class EditorDialog(CommonWindow):
             File path
         size : (int, int)
             Dialog size
+        icon : gem.data.Icons
+            Default icon name
         editable : bool, optional
             If True, allow to modify and save text buffer to file_path
             (Default: True)
-        icon : str, optional
-            Default icon name (Default: gtk-file)
         """
 
         classic_theme = False
@@ -142,13 +161,13 @@ class EditorDialog(CommonWindow):
         # Properties
         self.entry_path.set_editable(False)
         self.entry_path.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.PRIMARY, Icons.Symbolic.Text)
+            Gtk.EntryIconPosition.PRIMARY, Icons.Symbolic.TEXT)
         self.entry_path.set_icon_activatable(
             Gtk.EntryIconPosition.PRIMARY, False)
 
         if not self.editable:
             self.entry_path.set_icon_from_icon_name(
-                Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Refresh)
+                Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.REFRESH)
 
         # ------------------------------------
         #   Menu
@@ -161,7 +180,7 @@ class EditorDialog(CommonWindow):
 
         # Properties
         self.image_menu.set_from_icon_name(
-            Icons.Symbolic.Menu, Gtk.IconSize.BUTTON)
+            Icons.Symbolic.MENU, Gtk.IconSize.BUTTON)
 
         self.button_menu.add(self.image_menu)
         self.button_menu.set_use_popover(True)
@@ -212,7 +231,7 @@ class EditorDialog(CommonWindow):
         self.button_import.set_relief(Gtk.ReliefStyle.NONE)
 
         self.image_import.set_from_icon_name(
-            Icons.Symbolic.SaveAs, Gtk.IconSize.BUTTON)
+            Icons.Symbolic.SAVE_AS, Gtk.IconSize.BUTTON)
 
         self.widget_import.set_widget(self.button_import)
         self.widget_import.set_option_label("%s…" % _("Import"))
@@ -221,7 +240,7 @@ class EditorDialog(CommonWindow):
         self.button_export.set_relief(Gtk.ReliefStyle.NONE)
 
         self.image_export.set_from_icon_name(
-            Icons.Symbolic.Send, Gtk.IconSize.BUTTON)
+            Icons.Symbolic.SEND, Gtk.IconSize.BUTTON)
 
         self.widget_export.set_widget(self.button_export)
         self.widget_export.set_option_label("%s…" % _("Export"))
@@ -303,19 +322,19 @@ class EditorDialog(CommonWindow):
         # Properties
         self.entry_search.set_placeholder_text(_("Search"))
         self.entry_search.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.PRIMARY, Icons.Symbolic.Find)
+            Gtk.EntryIconPosition.PRIMARY, Icons.Symbolic.FIND)
         self.entry_search.set_icon_activatable(
             Gtk.EntryIconPosition.PRIMARY, False)
         self.entry_search.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.CLEAR)
 
         self.image_up.set_from_icon_name(
-            Icons.Symbolic.Previous, Gtk.IconSize.BUTTON)
+            Icons.Symbolic.PREVIOUS, Gtk.IconSize.BUTTON)
 
         self.button_up.set_image(self.image_up)
 
         self.image_bottom.set_from_icon_name(
-            Icons.Symbolic.Next, Gtk.IconSize.BUTTON)
+            Icons.Symbolic.NEXT, Gtk.IconSize.BUTTON)
 
         self.button_bottom.set_image(self.image_bottom)
 
@@ -395,7 +414,7 @@ class EditorDialog(CommonWindow):
         elif self.use_classic_theme:
             self.add_button(_("Close"), Gtk.ResponseType.CLOSE)
 
-        self.entry_path.set_text(self.path)
+        self.entry_path.set_text(str(self.path))
 
         self.set_size(int(self.__width), int(self.__height))
 
@@ -427,11 +446,12 @@ class EditorDialog(CommonWindow):
 
             self.window.set_sensitive(False)
 
-            self.buffer_editor.delete(self.buffer_editor.get_start_iter(),
+            self.buffer_editor.delete(
+                self.buffer_editor.get_start_iter(),
                 self.buffer_editor.get_end_iter())
 
             loader = self.__on_load_file()
-            self.buffer_thread = idle_add(loader.__next__)
+            self.buffer_thread = GLib.idle_add(loader.__next__)
 
 
     def __on_load_file(self):
@@ -440,11 +460,10 @@ class EditorDialog(CommonWindow):
 
         yield True
 
-        if exists(expanduser(self.path)):
-            with open(self.path, 'r', errors="replace") as pipe:
-                self.buffer_editor.set_text(pipe.read())
+        if self.path.exists():
+            self.buffer_editor.set_text(self.path.read_text(errors="replace"))
 
-                yield True
+            yield True
 
         # Remove undo stack from GtkSource.Buffer
         if type(self.buffer_editor) is not Gtk.TextBuffer:
@@ -670,12 +689,13 @@ class EditorDialog(CommonWindow):
         dialog = ImportDialog(self, self.title, path)
 
         if dialog.run() == Gtk.ResponseType.APPLY:
-            path = dialog.file_selector.get_filename()
+            filename = dialog.file_selector.get_filename()
 
-            if path is not None and exists(path):
+            if len(filename) > 0:
+                path = Path(filename).expanduser()
 
-                with open(path, 'r') as pipe:
-                    textbuffer = pipe.read()
+                if path.exists():
+                    textbuffer = path.read_text()
 
                     if dialog.switch_replace.get_active():
                         self.buffer_editor.set_text(textbuffer)
@@ -684,7 +704,7 @@ class EditorDialog(CommonWindow):
                         self.buffer_editor.insert(
                             self.buffer_editor.get_end_iter(), textbuffer)
 
-                self.__on_entry_update()
+                    self.__on_entry_update()
 
         dialog.destroy()
 
@@ -705,12 +725,14 @@ class EditorDialog(CommonWindow):
         dialog = ExportDialog(self, self.title)
 
         if dialog.run() == Gtk.ResponseType.APPLY:
-            path = dialog.entry_selector.get_text()
+            filename = dialog.entry_selector.get_text()
 
-            if len(path) > 0:
+            if len(filename) > 0:
+                path = Path(filename).expanduser()
+
                 replace = True
 
-                if exists(expanduser(path)):
+                if path.exists():
                     subdialog = QuestionDialog(self, _("Existing file"),
                         _("Would you want to replace existing file ?"))
 
@@ -720,10 +742,9 @@ class EditorDialog(CommonWindow):
                     subdialog.destroy()
 
                 if replace:
-                    with open(expanduser(path), 'w') as pipe:
-                        pipe.write(self.buffer_editor.get_text(
-                            self.buffer_editor.get_start_iter(),
-                            self.buffer_editor.get_end_iter(), True))
+                    path.write_text(self.buffer_editor.get_text(
+                        self.buffer_editor.get_start_iter(),
+                        self.buffer_editor.get_end_iter(), True))
 
         dialog.destroy()
 
@@ -763,7 +784,7 @@ class EditorDialog(CommonWindow):
             result = urlparse(files[0])
 
             if result.scheme == "file":
-                path = expanduser(url2pathname(result.path))
+                path = Path(url2pathname(result.path)).expanduser()
 
                 try:
                     mimetype = magic_from_file(path, mime=True)
@@ -773,7 +794,7 @@ class EditorDialog(CommonWindow):
                         category, *filetype = mimetype.split('/')
 
                         # Only retrieve text files
-                        if category == "text" and exists(path):
+                        if category == "text" and path.exists():
                             self.__on_import_file(None, path)
 
                 except Exception as error:
@@ -802,7 +823,7 @@ class ImportDialog(CommonWindow):
             classic_theme = parent.use_classic_theme
 
         CommonWindow.__init__(self,
-            parent, _("Import"), Icons.Symbolic.SaveAs, classic_theme)
+            parent, _("Import"), Icons.Symbolic.SAVE_AS, classic_theme)
 
         # ------------------------------------
         #   Variables
@@ -968,8 +989,8 @@ class ImportDialog(CommonWindow):
 
         self.set_default_response(Gtk.ResponseType.APPLY)
 
-        if self.path is not None and exists(self.path):
-            self.file_selector.set_filename(self.path)
+        if self.path is not None and self.path.exists():
+            self.file_selector.set_filename(str(self.path))
 
         else:
             self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
@@ -979,27 +1000,32 @@ class ImportDialog(CommonWindow):
         """ User choose a file with FileChooser
         """
 
-        path = self.file_selector.get_filename()
+        status = False
 
-        try:
-            mimetype = magic_from_file(path, mime=True)
+        name = self.file_selector.get_filename().strip()
 
-            # Check mimetype format
-            if mimetype is not None and '/' in mimetype:
-                category, *filetype = mimetype.split('/')
+        if len(name) > 0:
+            path = Path(name).expanduser()
 
-                # Only retrieve text files
-                if category == "text" and exists(path):
-                    self.set_response_sensitive(Gtk.ResponseType.APPLY, True)
+            try:
+                mimetype = magic_from_file(path, mime=True)
 
-                else:
-                    self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
+                # Check mimetype format
+                if mimetype is not None and '/' in mimetype:
+                    category, *filetype = mimetype.split('/')
+
+                    # Only retrieve text files
+                    if category == "text" and path.exists():
+                        status = True
 
                     # Unselect this file cause is not a text one
-                    self.file_selector.unselect_all()
+                    else:
+                        self.file_selector.unselect_all()
 
-        except Exception as error:
-            self.logger.exception(error)
+            except Exception as error:
+                self.logger.exception(error)
+
+        self.set_response_sensitive(Gtk.ResponseType.APPLY, status)
 
 
 class ExportDialog(CommonWindow):
@@ -1020,7 +1046,7 @@ class ExportDialog(CommonWindow):
             classic_theme = parent.use_classic_theme
 
         CommonWindow.__init__(self,
-            parent, _("Export"), Icons.Symbolic.Send, classic_theme)
+            parent, _("Export"), Icons.Symbolic.SEND, classic_theme)
 
         # ------------------------------------
         #   Variables
@@ -1111,16 +1137,16 @@ class ExportDialog(CommonWindow):
         self.entry_selector.set_icon_activatable(
             Gtk.EntryIconPosition.PRIMARY, False)
         self.entry_selector.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.PRIMARY, Icons.Symbolic.Send)
+            Gtk.EntryIconPosition.PRIMARY, Icons.Symbolic.SEND)
         self.entry_selector.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.CLEAR)
         self.entry_selector.drag_dest_set(
             Gtk.DestDefaults.MOTION | Gtk.DestDefaults.DROP, self.targets,
             Gdk.DragAction.COPY)
 
         self.image_selector.set_valign(Gtk.Align.CENTER)
         self.image_selector.set_from_icon_name(
-            Icons.Symbolic.Open, Gtk.IconSize.BUTTON)
+            Icons.Symbolic.OPEN, Gtk.IconSize.BUTTON)
 
         self.button_selector.set_image(self.image_selector)
 
@@ -1182,13 +1208,19 @@ class ExportDialog(CommonWindow):
         dialog.set_select_multiple(False)
         dialog.set_create_folders(True)
 
-        path = expanduser(self.entry_selector.get_text())
+        name = self.entry_selector.get_text().strip()
 
-        if len(path) == 0:
-            dialog.set_current_folder(getenv("HOME", expanduser('~')))
+        if len(name) == 0:
+            path = Path(name).expanduser()
+
+            if not path.exists():
+                dialog.set_current_folder(str(Path.home()))
+
+            else:
+                dialog.set_filename(str(path))
 
         else:
-            dialog.set_filename(path)
+            dialog.set_current_folder(str(Path.home()))
 
         if dialog.run() == Gtk.ResponseType.OK:
             self.entry_selector.set_text(dialog.get_filename())
@@ -1200,13 +1232,16 @@ class ExportDialog(CommonWindow):
         """ User choose a file with FileChooser
         """
 
-        path = expanduser(self.entry_selector.get_text())
+        status = False
 
-        if len(path) > 0 and not isdir(path) and access(dirname(path), W_OK):
-            self.set_response_sensitive(Gtk.ResponseType.APPLY, True)
+        name = self.entry_selector.get_text().strip()
 
-        else:
-            self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
+        if len(name) > 0:
+            path = Path(name).expanduser()
+
+            status = not path.is_dir() and access(path.parent, W_OK)
+
+        self.set_response_sensitive(Gtk.ResponseType.APPLY, status)
 
 
     def __on_dnd_received_data(self, widget, context, x, y, data, info, time):
@@ -1242,7 +1277,7 @@ class ExportDialog(CommonWindow):
             result = urlparse(files[0])
 
             if result.scheme == "file":
-                path = expanduser(url2pathname(result.path))
+                path = Path(url2pathname(result.path)).expanduser()
 
                 try:
                     mimetype = magic_from_file(path, mime=True)
@@ -1252,8 +1287,8 @@ class ExportDialog(CommonWindow):
                         category, *filetype = mimetype.split('/')
 
                         # Only retrieve text files
-                        if category == "text" and exists(path):
-                            self.entry_selector.set_text(path)
+                        if category == "text" and path.exists():
+                            self.entry_selector.set_text(str(path))
 
                 except Exception as error:
                     self.logger.exception(error)

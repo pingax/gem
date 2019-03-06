@@ -14,25 +14,75 @@
 #  MA 02110-1301, USA.
 # ------------------------------------------------------------------------------
 
+# Datetime
+from datetime import datetime
+from datetime import timedelta
+
+# Filesystem
+from os import W_OK
+from os import X_OK
+from os import access
+from os import remove
+
+from pathlib import Path
+
+from copy import deepcopy
+
+from shutil import move as rename
+from shutil import copy2 as copy
+
 # GEM
-from gem.engine.api import *
 from gem.engine.utils import *
+from gem.engine.api import GEM
+from gem.engine.api import Game
+from gem.engine.api import Console
+from gem.engine.api import Emulator
 from gem.engine.lib.configuration import Configuration
 
-from gem.ui import *
 from gem.ui.data import *
 from gem.ui.utils import *
-
+from gem.ui.dialog.cover import CoverDialog
+from gem.ui.dialog.editor import EditorDialog
+from gem.ui.dialog.delete import DeleteDialog
+from gem.ui.dialog.rename import RenameDialog
+from gem.ui.dialog.viewer import ViewerDialog
+from gem.ui.dialog.message import MessageDialog
+from gem.ui.dialog.question import QuestionDialog
+from gem.ui.dialog.mednafen import MednafenDialog
+from gem.ui.dialog.duplicate import DuplicateDialog
+from gem.ui.dialog.parameter import ParametersDialog
+from gem.ui.dialog.dndconsole import DnDConsoleDialog
+from gem.ui.dialog.maintenance import MaintenanceDialog
+from gem.ui.preferences.interface import ConsolePreferences
+from gem.ui.preferences.interface import EmulatorPreferences
+from gem.ui.preferences.interface import PreferencesWindow
 from gem.ui.widgets.game import GameThread
 from gem.ui.widgets.script import ScriptThread
 from gem.ui.widgets.widgets import PreferencesItem
 from gem.ui.widgets.widgets import IconsGenerator
 
-from gem.ui.dialog import *
+# GObject
+try:
+    from gi import require_version
 
-from gem.ui.preferences.interface import ConsolePreferences
-from gem.ui.preferences.interface import EmulatorPreferences
-from gem.ui.preferences.interface import PreferencesWindow
+    require_version("Gtk", "3.0")
+
+    from gi.repository import Gtk
+    from gi.repository import GLib
+    from gi.repository import GObject
+    from gi.repository import Gdk
+    from gi.repository import GdkPixbuf
+    from gi.repository import Pango
+
+except ImportError as error:
+    from sys import exit
+
+    exit("Cannot found python3-gobject module: %s" % str(error))
+
+# Processus
+from subprocess import PIPE
+from subprocess import Popen
+from subprocess import STDOUT
 
 # Random
 from random import randint
@@ -44,9 +94,13 @@ from re import search
 from re import IGNORECASE
 
 # System
-from shlex import split as shlex_split
-from shutil import move as rename
 from platform import system
+
+from shlex import split as shlex_split
+
+# Thread
+from threading import enumerate as thread_enumerate
+from threading import main_thread as thread_main_thread
 
 # Translation
 from gettext import gettext as _
@@ -62,29 +116,40 @@ from urllib.request import url2pathname
 class MainWindow(Gtk.ApplicationWindow):
 
     __gsignals__ = {
-        "game-started": (SignalFlags.RUN_FIRST, None, [object]),
-        "game-terminate": (SignalFlags.RUN_LAST, None, [object]),
-        "script-terminate": (SignalFlags.RUN_LAST, None, [object]),
+        "game-started": (GObject.SignalFlags.RUN_FIRST, None, [object]),
+        "game-terminate": (GObject.SignalFlags.RUN_LAST, None, [object]),
+        "script-terminate": (GObject.SignalFlags.RUN_LAST, None, [object]),
     }
 
-    def __init__(self, api, cache):
+    def __init__(self, api, metadata, cache):
         """ Constructor
 
         Parameters
         ----------
         api : gem.engine.api.GEM
             GEM API instance
-        cache : str
+        metadata : gem.engine.lib.configuration.Configuration
+            GEM metadata informations
+        cache : pathlib.Path
             Cache folder path
 
         Raises
         ------
         TypeError
             if api type is not gem.engine.api.GEM
+            if metadata type is not gem.engine.lib.configuration.Configuration
+            if cache type is not pathlib.Path
         """
 
         if not type(api) is GEM:
             raise TypeError("Wrong type for api, expected gem.engine.api.GEM")
+
+        if not type(metadata) is Configuration:
+            raise TypeError("Wrong type for metadata, expected " \
+                "gem.engine.lib.configuration.Configuration")
+
+        if not isinstance(cache, Path):
+            raise TypeError("Wrong type for cache, expected pathlib.Path")
 
         Gtk.ApplicationWindow.__init__(self)
 
@@ -98,22 +163,24 @@ class MainWindow(Gtk.ApplicationWindow):
         # Quick access to API logger
         self.logger = api.logger
 
-        # Check development version
-        self.__version = self.check_version()
+        # Metadata informations
+        self.__metadata = metadata
 
         # Cache folder
-        if cache is not None:
-            self.__cache = expanduser(cache)
+        self.__cache = cache
 
-        else:
-            self.__cache = expanduser(path_join(xdg_cache_home, "gem"))
+        # Check development version
+        self.__version = self.check_version()
 
         # ------------------------------------
         #   Initialize variables
         # ------------------------------------
 
         # Generate a title from GEM informations
-        self.title = "%s - %s (%s)" % (GEM.Name, self.__version, GEM.CodeName)
+        self.title = "%s - %s (%s)" % (
+            self.__metadata.get("metadata", "name", fallback=str()),
+            self.__version,
+            self.__metadata.get("metadata", "code_name", fallback=str()))
 
         # Store thread id for game listing
         self.list_thread = int()
@@ -169,22 +236,22 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Initialize icons
         # ------------------------------------
 
-        self.icons = IconsGenerator(
-            savestate=Icons.Floppy,
-            screenshot=Icons.Photos,
-            parameter=Icons.Properties,
-            warning=Icons.Warning,
-            favorite=Icons.Favorite,
-            multiplayer=Icons.Users,
-            finish=Icons.Smile,
-            unfinish=Icons.Uncertain,
-            nostarred=Icons.NoStarred,
-            starred=Icons.Starred)
-
         # Generate symbolic icons class
-        for key, value in Icons.__dict__.items():
-            if not key.startswith("__") and not key.endswith("__"):
-                setattr(Icons.Symbolic, key, "%s-symbolic" % value)
+        for key, value in self.__metadata.items("icons"):
+            setattr(Icons, key.upper(), value)
+            setattr(Icons.Symbolic, key.upper(), "%s-symbolic" % value)
+
+        self.icons = IconsGenerator(
+            savestate=Icons.FLOPPY,
+            screenshot=Icons.PHOTOS,
+            parameter=Icons.PROPERTIES,
+            warning=Icons.WARNING,
+            favorite=Icons.FAVORITE,
+            multiplayer=Icons.USERS,
+            finish=Icons.SMILE,
+            unfinish=Icons.UNCERTAIN,
+            nostarred=Icons.NO_STARRED,
+            starred=Icons.STARRED)
 
         # ------------------------------------
         #   Shortcuts
@@ -224,7 +291,7 @@ class MainWindow(Gtk.ApplicationWindow):
         # ------------------------------------
 
         try:
-            self.main_loop = MainLoop()
+            self.main_loop = GLib.MainLoop()
             self.main_loop.run()
 
         except KeyboardInterrupt as error:
@@ -251,8 +318,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.set_title(self.title)
 
-        self.set_icon_name(GEM.Icon)
-        self.set_default_icon_name(Icons.Gaming)
+        self.set_icon_name(
+            self.__metadata.get("metadata", "icon", fallback=str()))
+        self.set_default_icon_name(Icons.GAMING)
 
         self.set_position(Gtk.WindowPosition.CENTER)
 
@@ -1099,7 +1167,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.scroll_games_placeholder.set_no_show_all(True)
 
         self.image_game_placeholder.set_from_icon_name(
-            Icons.Symbolic.Gaming, Gtk.IconSize.DIALOG)
+            Icons.Symbolic.GAMING, Gtk.IconSize.DIALOG)
         self.image_game_placeholder.set_pixel_size(256)
         self.image_game_placeholder.set_halign(Gtk.Align.CENTER)
         self.image_game_placeholder.set_valign(Gtk.Align.END)
@@ -1117,7 +1185,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.scroll_games_grid = Gtk.ScrolledWindow()
 
         self.model_games_grid = Gtk.ListStore(
-            Pixbuf, # Cover icon
+            GdkPixbuf.Pixbuf, # Cover icon
             str,    # Name
             object  # Game object
         )
@@ -1152,21 +1220,21 @@ class MainWindow(Gtk.ApplicationWindow):
         self.scroll_games_list = Gtk.ScrolledWindow()
 
         self.model_games_list = Gtk.ListStore(
-            Pixbuf, # Favorite icon
-            Pixbuf, # Multiplayer icon
-            Pixbuf, # Finish icon
-            str,    # Name
-            int,    # Played
-            str,    # Last play
-            str,    # Last time play
-            str,    # Time play
-            int,    # Score
-            str,    # Installed
-            Pixbuf, # Custom parameters
-            Pixbuf, # Screenshots
-            Pixbuf, # Save states
-            object, # Game object
-            Pixbuf  # Thumbnail
+            GdkPixbuf.Pixbuf,   # Favorite icon
+            GdkPixbuf.Pixbuf,   # Multiplayer icon
+            GdkPixbuf.Pixbuf,   # Finish icon
+            str,                # Name
+            int,                # Played
+            str,                # Last play
+            str,                # Last time play
+            str,                # Time play
+            int,                # Score
+            str,                # Installed
+            GdkPixbuf.Pixbuf,   # Custom parameters
+            GdkPixbuf.Pixbuf,   # Screenshots
+            GdkPixbuf.Pixbuf,   # Save states
+            object,             # Game object
+            GdkPixbuf.Pixbuf    # Thumbnail
         )
         self.treeview_games = Gtk.TreeView()
 
@@ -2403,16 +2471,16 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Store image references with associate icons
         self.__images_storage = {
-            self.image_headerbar_grid: Icons.Symbolic.Grid,
-            self.image_headerbar_list: Icons.Symbolic.List,
-            self.image_headerbar_menu: Icons.Symbolic.Menu,
-            self.image_headerbar_view: Icons.Symbolic.ViewMore,
-            self.image_sidebar_tags: Icons.Symbolic.Paperclip,
-            self.image_toolbar_fullscreen: Icons.Symbolic.Restore,
-            self.image_toolbar_notes: Icons.Symbolic.Editor,
-            self.image_toolbar_output: Icons.Symbolic.Terminal,
-            self.image_toolbar_parameters: Icons.Symbolic.Properties,
-            self.image_toolbar_screenshots: Icons.Symbolic.Camera
+            self.image_headerbar_grid: Icons.Symbolic.GRID,
+            self.image_headerbar_list: Icons.Symbolic.LIST,
+            self.image_headerbar_menu: Icons.Symbolic.MENU,
+            self.image_headerbar_view: Icons.Symbolic.VIEW_MORE,
+            self.image_sidebar_tags: Icons.Symbolic.PAPERCLIP,
+            self.image_toolbar_fullscreen: Icons.Symbolic.RESTORE,
+            self.image_toolbar_notes: Icons.Symbolic.EDITOR,
+            self.image_toolbar_output: Icons.Symbolic.TERMINAL,
+            self.image_toolbar_parameters: Icons.Symbolic.PROPERTIES,
+            self.image_toolbar_screenshots: Icons.Symbolic.CAMERA
         }
 
         # Store treeview columns references
@@ -3032,7 +3100,7 @@ class MainWindow(Gtk.ApplicationWindow):
             dialog = MessageDialog(self, _("Welcome !"),
                 _("Welcome and thanks for choosing GEM as emulators manager. "
                 "Start using GEM by droping some roms into interface.\n\n"
-                "Enjoy and have fun :D"), Icons.Symbolic.SmileBig, False)
+                "Enjoy and have fun :D"), Icons.Symbolic.SMILE_BIG, False)
 
             dialog.set_size_request(500, -1)
 
@@ -3059,13 +3127,13 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Remove games listing thread
         if not self.list_thread == 0:
-            source_remove(self.list_thread)
+            GLib.source_remove(self.list_thread)
 
         # Remove game and script threads
-        for thread in threading.enumerate().copy():
+        for thread in thread_enumerate().copy():
 
             # Avoid to remove the main thread
-            if thread is not threading.main_thread():
+            if thread is not thread_main_thread():
                 thread.proc.terminate()
                 thread.join()
 
@@ -3652,7 +3720,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 dialog = MessageDialog(self, "Someone wrote the KONAMI CODE !",
                     "Nice catch ! You have discover an easter-egg ! But, this "
                     "kind of code is usefull in a game, not in an emulators "
-                    "manager !", Icons.Symbolic.Monkey)
+                    "manager !", Icons.Symbolic.MONKEY)
 
                 dialog.set_size_request(500, -1)
 
@@ -3684,6 +3752,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.grid_sidebar_score.set_visible(False)
         self.grid_sidebar_informations.set_visible(False)
         self.frame_sidebar_screenshot.set_visible(False)
+        self.button_sidebar_tags.set_sensitive(False)
 
         # Remove tags list
         for widget in self.listbox_sidebar_tags.get_children():
@@ -3757,7 +3826,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 else:
                     shuffle(screenshots)
 
-                self.sidebar_image = screenshots[-1]
+                self.sidebar_image = Path(screenshots[-1])
 
             # Set statusbar icon for screenshot status
             self.image_statusbar_screenshots.set_from_pixbuf(pixbuf)
@@ -3789,14 +3858,14 @@ class MainWindow(Gtk.ApplicationWindow):
             if self.sidebar_image is not None:
                 pixbuf = None
 
-                if exists(self.sidebar_image):
+                if self.sidebar_image.exists():
 
                     height = 200
                     if self.__current_orientation == Gtk.Orientation.HORIZONTAL:
                         height = 250
 
-                    pixbuf = Pixbuf.new_from_file_at_scale(
-                        self.sidebar_image, 300, height, True)
+                    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                        str(self.sidebar_image), 300, height, True)
 
                 # Set sidebar screenshot
                 self.image_sidebar_screenshot.set_from_pixbuf(pixbuf)
@@ -3870,9 +3939,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     # Append star icons to sidebar
                     for child in children:
-                        icon = Icons.Symbolic.NoStarred
+                        icon = Icons.Symbolic.NO_STARRED
                         if game.score >= children.index(child) + 1:
-                            icon = Icons.Symbolic.Starred
+                            icon = Icons.Symbolic.STARRED
 
                         child.set_from_icon_name(
                             icon, Gtk.IconSize.LARGE_TOOLBAR)
@@ -3974,9 +4043,9 @@ class MainWindow(Gtk.ApplicationWindow):
             Show a popup dialog with specified message (Default: True)
         """
 
-        if icon == Icons.Error:
+        if icon == Icons.ERROR:
             self.logger.error(message)
-        elif icon == Icons.Warning:
+        elif icon == Icons.WARNING:
             self.logger.warning(message)
         else:
             self.logger.info(message)
@@ -4043,7 +4112,8 @@ class MainWindow(Gtk.ApplicationWindow):
         about.set_copyright(GEM.Copyleft)
         about.set_website(GEM.Website)
 
-        about.set_logo_icon_name(GEM.Icon)
+        about.set_logo_icon_name(
+            self.__metadata.get("metadata", "icon", fallback=str()))
 
         about.set_authors([
             "Lubert Aurélien (PacMiam)" ])
@@ -4106,7 +4176,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.set_sensitive(False)
 
                 # Get external viewer
-                viewer = self.config.get("viewer", "binary")
+                viewer = Path(self.config.get("viewer", "binary"))
 
                 if self.config.getboolean("viewer", "native", fallback=True):
                     try:
@@ -4125,7 +4195,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     dialog.destroy()
 
-                elif exists(viewer):
+                elif viewer.exists():
                     command = list()
 
                     # Append binaries
@@ -4145,7 +4215,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 else:
                     self.set_message(_("Cannot open screenshots viewer"),
-                        _("Cannot find <b>%s</b>") % viewer, Icons.Warning)
+                        _("Cannot find <b>%s</b>") % viewer.name, Icons.WARNING)
 
                 self.set_sensitive(True)
 
@@ -4187,9 +4257,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         path = self.api.get_local("gem.log")
 
-        game = self.selection["game"]
-
-        if path is not None and exists(expanduser(path)):
+        if path.exists():
             try:
                 size = self.config.get(
                     "windows", "log", fallback="800x600").split('x')
@@ -4199,8 +4267,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
             self.set_sensitive(False)
 
-            dialog = EditorDialog(self, _("GEM"),
-                expanduser(path), size, False, Icons.Symbolic.Terminal)
+            dialog = EditorDialog(self,
+                _("GEM"), path, size, Icons.Symbolic.TERMINAL, editable=False)
 
             dialog.run()
 
@@ -4225,7 +4293,7 @@ class MainWindow(Gtk.ApplicationWindow):
         if game is not None:
             path = self.api.get_local("notes", game.id + ".txt")
 
-            if path is not None and not expanduser(path) in self.notes.keys():
+            if path is not None and not str(path) in self.notes.keys():
                 try:
                     size = self.config.get(
                         "windows", "notes", fallback="800x600").split('x')
@@ -4233,23 +4301,23 @@ class MainWindow(Gtk.ApplicationWindow):
                 except ValueError as error:
                     size = (800, 600)
 
-                dialog = EditorDialog(self, game.name,
-                    expanduser(path), size, icon=Icons.Symbolic.Document)
+                dialog = EditorDialog(
+                    self, game.name, path, size, Icons.Symbolic.DOCUMENT)
 
                 # Allow to launch games with open notes
                 dialog.set_modal(False)
 
-                dialog.window.connect("response", self.__on_show_notes_response,
-                    dialog, game.name, expanduser(path))
+                dialog.window.connect("response",
+                    self.__on_show_notes_response, dialog, game.name, path)
 
                 dialog.show_all()
 
                 # Save dialogs to close it properly when gem terminate and avoid
                 # to reopen existing one
-                self.notes[expanduser(path)] = dialog
+                self.notes[str(path)] = dialog
 
-            elif expanduser(path) in self.notes.keys():
-                self.notes[expanduser(path)].grab_focus()
+            elif str(path) in self.notes.keys():
+                self.notes[str(path)].grab_focus()
 
 
     def __on_show_notes_response(self, widget, response, dialog, title, path):
@@ -4268,7 +4336,7 @@ class MainWindow(Gtk.ApplicationWindow):
             Dialog editor object
         title : str
             Dialog title, it's game name by default
-        path : str
+        path : pathlib.Path
             Notes path
         """
 
@@ -4278,13 +4346,14 @@ class MainWindow(Gtk.ApplicationWindow):
                 dialog.buffer_editor.get_end_iter(), True)
 
             if len(text_buffer) > 0:
-                with open(path, 'w') as pipe:
+
+                with path.open('w') as pipe:
                     pipe.write(text_buffer)
 
                 self.logger.info(_("Update note for %s") % title)
 
-            elif exists(path):
-                remove(path)
+            elif path.exists():
+                path.unlink()
 
                 self.logger.debug("Remove note for %s" % title)
 
@@ -4293,8 +4362,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
         dialog.destroy()
 
-        if path in self.notes.keys():
-            del self.notes[path]
+        if str(path) in self.notes.keys():
+            del self.notes[str(path)]
 
 
     def __on_show_console_editor(self, widget, *args):
@@ -4354,7 +4423,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 # Console favorite status icon
                 icon = None
                 if console.favorite:
-                    icon = Icons.Symbolic.Favorite
+                    icon = Icons.Symbolic.FAVORITE
 
                 self.__current_menu_row.image_status.set_from_icon_name(
                     icon, Gtk.IconSize.MENU)
@@ -4419,7 +4488,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.__current_menu_row.console.emulator = emulator
 
                 self.item_consoles_config.set_sensitive(
-                    emulator is not None and exists(emulator.configuration))
+                    emulator is not None and emulator.configuration.exists())
 
                 # ----------------------------------------
                 #   Reload games list
@@ -4461,7 +4530,7 @@ class MainWindow(Gtk.ApplicationWindow):
             if emulator.configuration is not None:
                 path = emulator.configuration
 
-                if path is not None and exists(expanduser(path)):
+                if path.exists():
                     try:
                         size = self.config.get(
                             "windows", "editor", fallback="800x600").split('x')
@@ -4473,10 +4542,11 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     dialog = EditorDialog(self,
                         _("Edit %s configuration") % (emulator.name),
-                        expanduser(path), size, icon=Icons.Symbolic.Document)
+                        path, size, Icons.Symbolic.DOCUMENT)
 
                     if dialog.run() == Gtk.ResponseType.APPLY:
-                        with open(path, 'w') as pipe:
+
+                        with path.open('w') as pipe:
                             pipe.write(dialog.buffer_editor.get_text(
                                 dialog.buffer_editor.get_start_iter(),
                                 dialog.buffer_editor.get_end_iter(), True))
@@ -4556,7 +4626,7 @@ class MainWindow(Gtk.ApplicationWindow):
         console = self.api.get_console(identifier)
 
         # Check if console ROM path exist
-        if exists(console.path):
+        if console.path.exists():
 
             # Reload games list
             console.set_games(self.api)
@@ -4581,7 +4651,7 @@ class MainWindow(Gtk.ApplicationWindow):
         ----------
         console : gem.engine.api.Console
             Console instance
-        icon : Gtk.Pixbuf
+        icon : GdkPixbuf.Pixbuf
             Console icon
 
         Returns
@@ -4604,7 +4674,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         if console.favorite:
             image_console_status = Gtk.Image.new_from_icon_name(
-                Icons.Symbolic.Favorite, Gtk.IconSize.MENU)
+                Icons.Symbolic.FAVORITE, Gtk.IconSize.MENU)
 
         else:
             image_console_status = Gtk.Image.new_from_pixbuf(
@@ -4683,10 +4753,10 @@ class MainWindow(Gtk.ApplicationWindow):
             # ------------------------------------
 
             if not self.list_thread == 0:
-                source_remove(self.list_thread)
+                GLib.source_remove(self.list_thread)
 
             loader = self.append_games(row.console)
-            self.list_thread = idle_add(loader.__next__)
+            self.list_thread = GLib.idle_add(loader.__next__)
 
 
     def __on_sort_consoles(self, first_row, second_row, *args):
@@ -4761,7 +4831,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 if self.__current_menu_row.console.favorite:
                     self.__current_menu_row.image_status.set_from_icon_name(
-                        Icons.Symbolic.Favorite, Gtk.IconSize.MENU)
+                        Icons.Symbolic.FAVORITE, Gtk.IconSize.MENU)
 
                 else:
                     self.__current_menu_row.image_status.set_from_icon_name(
@@ -4800,7 +4870,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.__current_menu_row = None
 
         # Gdk.EventButton - Mouse
-        if event.type == EventType.BUTTON_PRESS:
+        if event.type == Gdk.EventType.BUTTON_PRESS:
             if event.button == Gdk.BUTTON_SECONDARY:
                 row = widget.get_row_at_y(int(event.y))
 
@@ -4815,7 +4885,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
                         # Check emulator configurator
                         self.item_consoles_config.set_sensitive(
-                            configuration is not None and exists(configuration))
+                            configuration is not None and \
+                            configuration.exists())
 
                     self.item_consoles_reload.set_sensitive(
                         selected_row == row)
@@ -4830,7 +4901,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     status = True
 
         # Gdk.EventKey - Keyboard
-        elif event.type == EventType.KEY_RELEASE:
+        elif event.type == Gdk.EventType.KEY_RELEASE:
             if event.keyval == Gdk.KEY_Menu:
                 row = widget.get_selected_row()
 
@@ -4845,7 +4916,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
                         # Check emulator configurator
                         self.item_consoles_config.set_sensitive(
-                            configuration is not None and exists(configuration))
+                            configuration is not None and \
+                            configuration.exists())
 
                     self.item_consoles_reload.set_sensitive(
                         selected_row == row)
@@ -5032,7 +5104,7 @@ class MainWindow(Gtk.ApplicationWindow):
                         pass
 
                 # Check if rom file exists
-                if exists(game.filepath) and show:
+                if game.filepath.exists() and show:
 
                     # ------------------------------------
                     #   Grid mode
@@ -5118,22 +5190,18 @@ class MainWindow(Gtk.ApplicationWindow):
                         row_data[Columns.List.Installed] = \
                             string_from_date(game.installed)
 
-                    # Get global emulator
-                    rom_emulator = emulator
-
-                    # Set specified emulator is available
+                    # Medias
                     if game.emulator is not None:
-                        rom_emulator = game.emulator
 
-                    # Snap
-                    if len(rom_emulator.get_screenshots(game)) > 0:
-                        row_data[Columns.List.Snapshots] = \
-                            self.icons.get("screenshot")
+                        # Snap
+                        if len(game.emulator.get_screenshots(game)) > 0:
+                            row_data[Columns.List.Snapshots] = \
+                                self.icons.get("screenshot")
 
-                    # Save state
-                    if len(rom_emulator.get_savestates(game)) > 0:
-                        row_data[Columns.List.Save] = \
-                            self.icons.get("savestate")
+                        # Save state
+                        if len(game.emulator.get_savestates(game)) > 0:
+                            row_data[Columns.List.Save] = \
+                                self.icons.get("savestate")
 
                     # Thumbnail icon
                     icon = self.get_pixbuf_from_cache(
@@ -5229,9 +5297,9 @@ class MainWindow(Gtk.ApplicationWindow):
         """
 
         available_events = [
-            EventType.BUTTON_PRESS,
-            EventType._2BUTTON_PRESS,
-            EventType._3BUTTON_PRESS
+            Gdk.EventType.BUTTON_PRESS,
+            Gdk.EventType._2BUTTON_PRESS,
+            Gdk.EventType._3BUTTON_PRESS
         ]
 
         game = None
@@ -5243,7 +5311,7 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Keyboard
         # ----------------------------------------
 
-        if event.type == EventType.KEY_RELEASE:
+        if event.type == Gdk.EventType.KEY_RELEASE:
 
             if treeview == self.treeview_games:
                 model, treeiter = treeview.get_selection().get_selected()
@@ -5262,7 +5330,7 @@ class MainWindow(Gtk.ApplicationWindow):
         elif event.type in available_events and event.button in (1, 2, 3):
 
             # Get selection from cursor position
-            if event.type == EventType.BUTTON_PRESS:
+            if event.type == Gdk.EventType.BUTTON_PRESS:
                 selection = treeview.get_path_at_pos(int(event.x), int(event.y))
 
                 if selection is not None:
@@ -5287,7 +5355,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     treeiter = model.get_iter(items[0])
 
             # Mouse - Double click with left mouse button
-            if event.type == EventType._2BUTTON_PRESS and event.button == 1:
+            if event.type == Gdk.EventType._2BUTTON_PRESS and event.button == 1:
                 run_game = True
 
         # ----------------------------------------
@@ -5316,13 +5384,9 @@ class MainWindow(Gtk.ApplicationWindow):
             console = self.selection["console"]
 
             if console is not None:
+
                 if not same_game:
                     self.sensitive_interface(True)
-
-                # Get Game emulator
-                emulator = console.emulator
-                if game.emulator is not None:
-                    emulator = game.emulator
 
                 # ----------------------------------------
                 #   Manage widgets
@@ -5346,19 +5410,34 @@ class MainWindow(Gtk.ApplicationWindow):
                 # This is not the same selection, so we change widgets status
                 if not same_game:
 
-                    # Check extension and emulator for GBA game on mednafen
-                    if not game.extension.lower() == ".gba" or \
-                        not "mednafen" in emulator.binary or \
-                        not self.__mednafen_status:
-                        self.item_game_mednafen.set_sensitive(False)
-                        self.item_menubar_mednafen.set_sensitive(False)
+                    # Mednafen specific entries
+                    self.item_game_mednafen.set_sensitive(False)
+                    self.item_menubar_mednafen.set_sensitive(False)
+
+                    # Screenshots viewer widgets
+                    self.button_toolbar_screenshots.set_sensitive(False)
+                    self.item_game_screenshots.set_sensitive(False)
+                    self.item_menubar_game_screenshots.set_sensitive(False)
+
+                    screenshots = list()
+
+                    if game.emulator is not None:
+                        screenshots = game.emulator.get_screenshots(game)
+
+                        # Check extension and emulator for GBA game on mednafen
+                        if self.__mednafen_status and game.extension == ".gba":
+
+                            if "mednafen" in str(game.emulator.binary):
+                                self.item_game_mednafen.set_sensitive(True)
+                                self.item_menubar_mednafen.set_sensitive(True)
 
                     # Check screenshots
-                    if len(emulator.get_screenshots(game)) == 0:
+                    if len(screenshots) == 0:
                         self.button_toolbar_screenshots.set_sensitive(False)
                         self.item_game_screenshots.set_sensitive(False)
                         self.item_menubar_game_screenshots.set_sensitive(False)
 
+                    # Check game log file
                     if self.check_log() is None:
                         self.button_toolbar_output.set_sensitive(False)
                         self.item_game_output.set_sensitive(False)
@@ -5545,19 +5624,20 @@ class MainWindow(Gtk.ApplicationWindow):
                     if not tooltip_image == "none":
 
                         if tooltip_image in ["both", "cover"]:
-                            if game.cover is not None and exists(game.cover):
+
+                            if game.cover is not None and game.cover.exists():
                                 image = game.cover
 
                         if tooltip_image in ["both", "screenshot"]:
                             screenshots = sorted(emulator.get_screenshots(game))
 
                             if len(screenshots) > 0:
-                                image = screenshots[-1]
+                                image = Path(screenshots[-1])
 
-                        if image is not None and exists(image):
+                        if image is not None and image.exists():
                             # Resize pixbuf to have a 96 pixels height
-                            pixbuf = Pixbuf.new_from_file_at_scale(
-                                image, -1, 96, True)
+                            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                                str(image), -1, 96, True)
 
                             self.__current_tooltip_pixbuf = pixbuf
 
@@ -5930,7 +6010,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         path = self.api.get_local("ongamestarted")
 
-        if exists(path) and access(path, X_OK):
+        if path.exists() and access(path, X_OK):
             thread = ScriptThread(self, path, game)
 
             # Save thread references
@@ -5973,12 +6053,10 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Save game data
         # ----------------------------------------
 
-        emulator = thread.emulator
+        # Get the last occurence from database
+        game = self.api.get_game(thread.console.id, thread.game.id)
 
         if not thread.error:
-
-            # Get the last occurence from database
-            game = self.api.get_game(thread.console.id, thread.game.id)
 
             # ----------------------------------------
             #   Update data
@@ -6009,7 +6087,8 @@ class MainWindow(Gtk.ApplicationWindow):
                 string_from_time(game.play_time), game.filename)
 
             # Snaps
-            if len(emulator.get_screenshots(game)) > 0:
+            if game.emulator is not None and \
+                len(game.emulator.get_screenshots(game)) > 0:
                 self.set_game_data(Columns.List.Snapshots,
                     self.icons.get("screenshot"), game.filename)
                 self.button_toolbar_screenshots.set_sensitive(True)
@@ -6020,7 +6099,8 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.icons.get_translucent("screenshot"), game.filename)
 
             # Save state
-            if len(emulator.get_savestates(game)) > 0:
+            if game.emulator is not None and \
+                len(game.emulator.get_savestates(game)) > 0:
                 self.set_game_data(Columns.List.Save,
                     self.icons.get("savestate"), game.filename)
 
@@ -6052,12 +6132,14 @@ class MainWindow(Gtk.ApplicationWindow):
             self.item_menubar_database.set_sensitive(True)
             self.item_menubar_delete.set_sensitive(True)
 
-            # Check extension and emulator for GBA game on mednafen
-            if not game.extension.lower() == ".gba" or \
-                not "mednafen" in emulator.binary or \
-                not self.__mednafen_status:
-                self.item_game_mednafen.set_sensitive(True)
-                self.item_menubar_mednafen.set_sensitive(True)
+            if game.emulator is not None:
+
+                # Check extension and emulator for GBA game on mednafen
+                if self.__mednafen_status and game.extension == ".gba":
+
+                    if "mednafen" in str(game.emulator.binary):
+                        self.item_game_mednafen.set_sensitive(True)
+                        self.item_menubar_mednafen.set_sensitive(True)
 
             # Avoid to launch the game again when use Enter in game terminate
             # self.treeview_games.get_selection().unselect_all()
@@ -6073,7 +6155,6 @@ class MainWindow(Gtk.ApplicationWindow):
             del self.threads[game.filename]
 
         if len(self.threads) == 0:
-            self.widget_menu_preferences.set_sensitive(True)
             self.item_menubar_preferences.set_sensitive(True)
 
         # ----------------------------------------
@@ -6088,7 +6169,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         path = self.api.get_local("ongamestopped")
 
-        if exists(path) and access(path, X_OK):
+        if path.exists() and access(path, X_OK):
             thread = ScriptThread(self, path, game)
 
             # Save thread references
@@ -6329,7 +6410,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     self.set_message(_("Remove a game"),
                         _("This game was removed successfully"),
-                        Icons.Information)
+                        Icons.INFORMATION)
 
                 self.set_sensitive(True)
 
@@ -6362,13 +6443,12 @@ class MainWindow(Gtk.ApplicationWindow):
             dialog = DuplicateDialog(self, game, emulator)
 
             if dialog.run() == Gtk.ResponseType.APPLY:
-                try:
-                    self.logger.info(_("Duplicate %s") % game.name)
+                self.logger.info(_("Duplicate %s") % game.name)
 
+                try:
                     data = dialog.get_data()
 
-                    # Reload the games list
-                    if len(data["paths"]) > 0 or data["database"]:
+                    if data is not None:
 
                         # Duplicate game files
                         for original, path in data["paths"]:
@@ -6376,13 +6456,13 @@ class MainWindow(Gtk.ApplicationWindow):
 
                             copy(original, path)
 
-                        need_to_reload = True
+                            need_to_reload = True
 
-                    # Update game from database
-                    if data["database"]:
-                        self.api.update_game(game.copy(data["filepath"]))
+                        # Update game from database
+                        if data["database"]:
+                            self.api.update_game(game.copy(data["filepath"]))
 
-                        need_to_reload = True
+                            need_to_reload = True
 
                 except Exception as error:
                     self.logger.exception("An error occur during duplication")
@@ -6394,7 +6474,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 self.set_message(_("Duplicate a game"),
                     _("This game was duplicated successfully"),
-                    Icons.Information)
+                    Icons.INFORMATION)
 
             self.set_sensitive(True)
 
@@ -6544,9 +6624,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
         path = self.check_log()
 
-        game = self.selection["game"]
+        if path is not None and path.exists():
+            game = self.selection["game"]
 
-        if path is not None and exists(expanduser(path)):
             try:
                 size = self.config.get(
                     "windows", "log", fallback="800x600").split('x')
@@ -6556,8 +6636,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
             self.set_sensitive(False)
 
-            dialog = EditorDialog(self, game.name,
-                expanduser(path), size, False, Icons.Symbolic.Terminal)
+            dialog = EditorDialog(self,
+                game.name, path, size, Icons.Symbolic.TERMINAL, editable=False)
 
             dialog.run()
 
@@ -6590,8 +6670,10 @@ class MainWindow(Gtk.ApplicationWindow):
                 filepath = self.get_mednafen_memory_type(game)
 
                 # Check if a type file already exist in mednafen sav folder
-                if exists(filepath):
-                    with open(filepath, 'r') as pipe:
+                if filepath.exists():
+
+                    with filepath.open('r') as pipe:
+
                         for line in pipe.readlines():
                             data = line.split()
 
@@ -6613,12 +6695,13 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     # Write data into type file
                     if len(data) > 0:
-                        with open(filepath, 'w') as pipe:
+
+                        with filepath.open('w') as pipe:
                             pipe.write('\n'.join(data))
 
                     # Remove type file when no data are available
-                    elif exists(filepath):
-                        remove(filepath)
+                    elif filepath.exists():
+                        filepath.unlink()
 
                 self.set_sensitive(True)
 
@@ -6843,7 +6926,7 @@ class MainWindow(Gtk.ApplicationWindow):
         game = self.selection["game"]
 
         if game is not None:
-            self.clipboard.set_text(game.filepath, -1)
+            self.clipboard.set_text(str(game.filepath), -1)
 
 
     def __on_game_open(self, *args):
@@ -6858,7 +6941,7 @@ class MainWindow(Gtk.ApplicationWindow):
         game = self.selection["game"]
 
         if game is not None:
-            path = game.path[0]
+            path = str(game.filepath.parent)
 
             self.logger.debug("Open %s folder in files manager" % path)
 
@@ -6892,13 +6975,13 @@ class MainWindow(Gtk.ApplicationWindow):
                 path = dialog.file_image_selector.get_filename()
 
                 # Avoid to update the database with same contents
-                if not path == game.cover:
+                if not path == str(game.cover):
 
                     # Reset cover for current game
-                    if path is None:
-                        path = str()
+                    game.cover = None
 
-                    game.cover = path
+                    if path is not None:
+                        game.cover = Path(path).expanduser()
 
                     # Update game from database
                     self.api.update_game(game)
@@ -6912,18 +6995,18 @@ class MainWindow(Gtk.ApplicationWindow):
                         "games", "22x22", "%s.png" % game.id)
 
                     # A new icon is available so we regenerate icon cache
-                    if game.cover is not None and exists(game.cover):
+                    if game.cover is not None and game.cover.exists():
 
                         # ----------------------------------------
                         #   Large grid icon
                         # ----------------------------------------
 
                         try:
-                            large = Pixbuf.new_from_file_at_scale(
-                                expanduser(game.cover), 96, 96, True)
+                            large = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                                str(game.cover), 96, 96, True)
 
-                            large.savev(
-                                large_cache_path, "png", list(), list())
+                            large.savev(str(large_cache_path),
+                                "png", list(), list())
 
                         except GLib.Error as error:
                             self.logger.exception(
@@ -6934,11 +7017,11 @@ class MainWindow(Gtk.ApplicationWindow):
                         # ----------------------------------------
 
                         try:
-                            thumbnail = Pixbuf.new_from_file_at_scale(
-                                expanduser(game.cover), 22, 22, True)
+                            thumbnail = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                                str(game.cover), 22, 22, True)
 
-                            thumbnail.savev(
-                                thumbnail_cache_path, "png", list(), list())
+                            thumbnail.savev(str(thumbnail_cache_path),
+                                "png", list(), list())
 
                         except GLib.Error as error:
                             self.logger.exception(
@@ -6950,10 +7033,10 @@ class MainWindow(Gtk.ApplicationWindow):
 
                         thumbnail = self.__console_thumbnail
 
-                        if exists(large_cache_path):
+                        if large_cache_path.exists():
                             remove(large_cache_path)
 
-                        if exists(thumbnail_cache_path):
+                        if thumbnail_cache_path.exists():
                             remove(thumbnail_cache_path)
 
                     self.model_games_grid.set_value(
@@ -6961,6 +7044,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     self.model_games_list.set_value(
                         treeiter[1], Columns.List.Thumbnail, thumbnail)
+
+                    # Reset tooltip pixbuf
+                    self.__current_tooltip_pixbuf = None
 
             self.set_sensitive(True)
 
@@ -6995,56 +7081,47 @@ class MainWindow(Gtk.ApplicationWindow):
                 # ----------------------------------------
 
                 icon = console.icon
-                if not exists(icon):
+                if not icon.exists():
                     icon = self.api.get_local(
-                        "icons", "consoles", '.'.join([icon, Icons.Ext]))
+                        "icons", "consoles", '%s.png' % str(icon))
 
                 values = {
                     "%name%": game.name,
                     "%icon%": icon,
-                    "%path%": game.path[0],
+                    "%path%": str(game.filepath.parent),
                     "%command%": ' '.join(emulator.command(game))
                 }
 
                 # Put game path between quotes
                 values["%command%"] = values["%command%"].replace(
-                    game.filepath, "\"%s\"" % game.filepath)
+                    str(game.filepath), "\"%s\"" % str(game.filepath))
 
                 self.set_sensitive(False)
 
                 try:
                     # Read default template
-                    desktop = path_join("config", Documents.Desktop)
-
-                    with open(get_data(desktop), 'r') as pipe:
-                        template = pipe.readlines()
-
-                    content = str()
+                    template = get_data("config", Documents.Desktop).read_text()
 
                     # Replace custom variables
-                    for line in template:
-                        for key in values.keys():
-                            line = line.replace(key, values[key])
-
-                        content += line
+                    for key, value in values.items():
+                        template = template.replace(key, str(value))
 
                     # Check ~/.local/share/applications
-                    if not exists(Folders.Apps):
-                        mkdir(Folders.Apps)
+                    if not Folders.Apps.exists():
+                        Folders.Apps.mkdir(mode=0o755, parents=True)
 
                     # Write the new desktop file
-                    with open(path_join(Folders.Apps, name), 'w') as pipe:
-                        pipe.write(content)
+                    Folders.Apps.joinpath(name).write_text(template)
 
                     self.set_message(_("Generate menu entry"),
                         _("%s was generated successfully")  % name,
-                        Icons.Information)
+                        Icons.INFORMATION)
 
                 except OSError as error:
                     self.set_message(
                         _("Generate menu entry for %s") % game.name,
                         _("An error occur during generation, consult log for "
-                        "futher details."), Icons.Error)
+                        "futher details."), Icons.ERROR)
 
                 self.set_sensitive(True)
 
@@ -7071,7 +7148,7 @@ class MainWindow(Gtk.ApplicationWindow):
         treeiter = None
 
         # Gdk.EventButton - Mouse
-        if event.type == EventType.BUTTON_PRESS:
+        if event.type == Gdk.EventType.BUTTON_PRESS:
             if event.button == Gdk.BUTTON_SECONDARY:
                 selection = False
 
@@ -7103,7 +7180,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     return True
 
         # Gdk.EventKey - Keyboard
-        elif event.type == EventType.KEY_RELEASE:
+        elif event.type == Gdk.EventType.KEY_RELEASE:
             if event.keyval == Gdk.KEY_Menu:
 
                 if widget == self.treeview_games:
@@ -7145,7 +7222,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.logger.debug("Switch game launch to windowed mode")
 
             self.image_toolbar_fullscreen.set_from_icon_name(
-                Icons.Symbolic.Restore, Gtk.IconSize.SMALL_TOOLBAR)
+                Icons.Symbolic.RESTORE, Gtk.IconSize.SMALL_TOOLBAR)
             self.button_toolbar_fullscreen.get_style_context().remove_class(
                 "suggested-action")
 
@@ -7153,7 +7230,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.logger.debug("Switch game launch to fullscreen mode")
 
             self.image_toolbar_fullscreen.set_from_icon_name(
-                Icons.Symbolic.Fullscreen, Gtk.IconSize.SMALL_TOOLBAR)
+                Icons.Symbolic.FULLSCREEN, Gtk.IconSize.SMALL_TOOLBAR)
             self.button_toolbar_fullscreen.get_style_context().add_class(
                 "suggested-action")
 
@@ -7308,7 +7385,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.logger.debug("Received data from drag & drop")
 
-        signal_stop_emission_by_name(widget, "drag_data_received")
+        GObject.signal_stop_emission_by_name(widget, "drag_data_received")
 
         # Current acquisition not respect text/uri-list
         if not info == 1337:
@@ -7327,14 +7404,13 @@ class MainWindow(Gtk.ApplicationWindow):
             console = None
 
             if result.scheme == "file":
-                path = expanduser(url2pathname(result.path))
+                path = Path(url2pathname(result.path)).expanduser()
 
-                if exists(path):
+                if path is not None and path.exists():
                     self.logger.debug("Check %s" % path)
-                    filename, ext = splitext(basename(path))
 
                     # Lowercase extension
-                    ext = ext.lower()
+                    ext = ''.join(path.suffixes).lower()
 
                     # ----------------------------------------
                     #   Get right console for rom
@@ -7357,8 +7433,8 @@ class MainWindow(Gtk.ApplicationWindow):
                             if len(consoles_list) > 1:
                                 self.set_sensitive(False)
 
-                                dialog = DnDConsoleDialog(self, basename(path),
-                                    consoles_list, previous_console)
+                                dialog = DnDConsoleDialog(self,
+                                    path.name, consoles_list, previous_console)
 
                                 if dialog.run() == Gtk.ResponseType.APPLY:
                                     console = self.api.get_console(
@@ -7380,19 +7456,21 @@ class MainWindow(Gtk.ApplicationWindow):
             # ----------------------------------------
 
             if console is not None:
-                rom_path = expanduser(console.path)
+                rom_path = console.path
 
                 # ----------------------------------------
                 #   Install roms
                 # ----------------------------------------
 
-                if rom_path is not None and not dirname(path) == rom_path and \
-                    exists(rom_path) and access(rom_path, W_OK):
+                if not path.parent == rom_path and rom_path.exists() and \
+                    access(rom_path, W_OK):
                     move = True
 
+                    new_path = rom_path.joinpath(path.name)
+
                     # Check if this game already exists in roms folder
-                    if exists(path_join(rom_path, basename(path))):
-                        dialog = QuestionDialog(self, basename(path),
+                    if new_path.exists():
+                        dialog = QuestionDialog(self, path.name,
                             _("This rom already exists in %s. Do you want to "
                             "replace it ?") % rom_path)
 
@@ -7403,16 +7481,16 @@ class MainWindow(Gtk.ApplicationWindow):
                             self.logger.debug(
                                 "Move %s to %s" % (path, rom_path))
 
-                            remove(path_join(rom_path, basename(path)))
+                            remove(new_path)
 
                         dialog.destroy()
 
                     # The game can be moved in roms folder
                     if move:
-                        rename(path, rom_path)
+                        path.rename(rom_path)
 
                         self.logger.info(_("Drop %(rom)s to %(path)s") % {
-                            "rom": basename(path), "path": rom_path })
+                            "rom": path.name, "path": rom_path })
 
                         if console == self.selection["console"]:
                             need_to_reload = True
@@ -7424,22 +7502,22 @@ class MainWindow(Gtk.ApplicationWindow):
                             "gem", "hide_empty_console", fallback=False)
 
                         # Console path is not empty
-                        if hide and len(glob(path_join(rom_path, '*'))) == 1:
+                        if hide and len(rom_path.glob('*')) == 1:
                             need_to_reload = True
 
                 # ----------------------------------------
                 #   Errors
                 # ----------------------------------------
 
-                if dirname(path) == rom_path:
+                if path.parent == rom_path:
                     pass
 
-                elif not exists(rom_path):
-                    self.set_message(basename(path), _("Destination %s not "
+                elif not rom_path.exists():
+                    self.set_message(path.name, _("Destination %s not "
                         "exist. Canceling operation.") % rom_path)
 
                 elif not access(rom_path, W_OK):
-                    self.set_message(basename(path), _("Cannot write into %s. "
+                    self.set_message(path.name, _("Cannot write into %s. "
                         "Canceling operation.") % rom_path)
 
         # Reload console games
@@ -7467,13 +7545,13 @@ class MainWindow(Gtk.ApplicationWindow):
             widget.handler_unblock(signal)
 
 
-    def check_desktop(self, filename):
+    def check_desktop(self, path):
         """ Check user applications folder for specific desktop file
 
         Parameters
         ----------
-        filename : str
-            Application name
+        path : pathlib.Path
+            Application path
 
         Returns
         -------
@@ -7492,9 +7570,7 @@ class MainWindow(Gtk.ApplicationWindow):
             ~/.local/share/applications/
         """
 
-        name, extension = splitext(filename)
-
-        return exists(path_join(Folders.Apps, "%s.desktop" % name))
+        return Folders.Apps.joinpath("%s.desktop" % path.stem).exists()
 
 
     def check_log(self):
@@ -7511,7 +7587,7 @@ class MainWindow(Gtk.ApplicationWindow):
         if game is not None:
             log_path = self.api.get_local(game.log)
 
-            if exists(expanduser(log_path)):
+            if log_path.exists():
                 return log_path
 
         return None
@@ -7567,25 +7643,30 @@ class MainWindow(Gtk.ApplicationWindow):
             Application version
         """
 
+        version = self.__metadata.get("metadata", "version", fallback=str())
+
         if self.api.debug:
 
             if len(get_binary_path("git")) > 0:
-                proc = Popen(
-                    [ "git", "rev-parse", "--short", "HEAD" ],
-                    stdin=PIPE,
-                    stdout=PIPE,
-                    stderr=STDOUT,
-                    universal_newlines=True)
+                path = Path(".git")
 
-                output, error_output = proc.communicate()
+                if path.exists():
+                    proc = Popen(
+                        [ "git", "rev-parse", "--short", "HEAD" ],
+                        stdin=PIPE,
+                        stdout=PIPE,
+                        stderr=STDOUT,
+                        universal_newlines=True)
 
-                if output is not None:
-                    output = output.split('\n')[0]
+                    output, error_output = proc.communicate()
 
-                    if match(r'^[\d\w]+$', output) is not None:
-                        return "%s-%s" % (GEM.Version, output)
+                    if output is not None:
+                        output = output.split('\n')[0]
 
-        return GEM.Version
+                        if match(r'^[\d\w]+$', output) is not None:
+                            return "%s-%s" % (version, output)
+
+        return version
 
 
     def set_game_data(self, index, data, gamename):
@@ -7616,7 +7697,7 @@ class MainWindow(Gtk.ApplicationWindow):
             Cached icon path
         """
 
-        return expanduser(path_join(self.__cache, *args))
+        return self.__cache.joinpath(*args)
 
 
     def get_pixbuf_from_cache(self, key, size, identifier, path):
@@ -7630,7 +7711,7 @@ class MainWindow(Gtk.ApplicationWindow):
             Pixbuf size in pixels
         identifier : str
             Icon identifier
-        path : str or None
+        path : pathlib.Path
             Icon path
 
         Returns
@@ -7646,46 +7727,46 @@ class MainWindow(Gtk.ApplicationWindow):
             key, "%dx%d" % (size, size), "%s.png" % identifier)
 
         # Retrieve icon from cache folder
-        if exists(cache_path) and isfile(cache_path):
-            return Pixbuf.new_from_file(cache_path)
+        if cache_path.exists() and cache_path.is_file():
+            return GdkPixbuf.Pixbuf.new_from_file(str(cache_path))
 
         # Generate a new cache icon
         elif path is not None:
-            path = expanduser(path)
 
-            # Retrieve icon from sepecific collection
-            if not exists(path):
+            # Retrieve icon from specific collection
+            if not path.exists():
 
                 if key == "consoles":
-                    collection_path = expanduser(self.api.get_local(
-                        "icons", "%s.%s" % (path, Icons.Ext)))
+                    collection_path = self.api.get_local(
+                        "icons", "%s.png" % path)
 
                     # Generate a new cache icon
-                    if exists(collection_path) and isfile(collection_path):
+                    if collection_path.exists() and collection_path.is_file():
 
                         # Check the file mime-type to avoid non-image file
                         if magic_from_file(
                             collection_path, mime=True).startswith("image/"):
 
-                            icon = Pixbuf.new_from_file_at_scale(
-                                collection_path, size, size, True)
+                            icon = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                                str(collection_path), size, size, True)
 
                             need_save = True
 
                 elif key == "emulators":
 
-                    if self.icons.theme.has_icon(path):
+                    if self.icons.theme.has_icon(str(path)):
                         icon = self.icons.theme.load_icon(
-                            path, size, Gtk.IconLookupFlags.FORCE_SIZE)
+                            str(path), size, Gtk.IconLookupFlags.FORCE_SIZE)
 
                         need_save = True
 
             # Generate a new cache icon
-            elif exists(path) and isfile(path):
+            elif path.exists() and path.is_file():
 
                 # Check the file mime-type to avoid non-image file
                 if magic_from_file(path, mime=True).startswith("image/"):
-                    icon = Pixbuf.new_from_file_at_scale(path, size, size, True)
+                    icon = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                        str(path), size, size, True)
 
                     need_save = True
 
@@ -7695,10 +7776,10 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.logger.debug(
                         "Save generated icon to %s" % cache_path)
 
-                    if not exists(dirname(cache_path)):
-                        makedirs(dirname(cache_path))
+                    if not cache_path.parent.exists():
+                        cache_path.parent.mkdir(mode=0o755, parents=True)
 
-                    icon.savev(cache_path, "png", list(), list())
+                    icon.savev(str(cache_path), "png", list(), list())
 
                 except GLib.Error as error:
                     self.logger.exception(
@@ -7731,13 +7812,12 @@ class MainWindow(Gtk.ApplicationWindow):
 
         Returns
         -------
-        str
+        pathlib.Path
             Memory type file path
         """
 
         # FIXME: Maybe a better way to determine type file
-        return expanduser(
-            path_join('~', ".mednafen", "sav", game.filename + ".type"))
+        return Path.home().joinpath(".mednafen", "sav", game.filename + ".type")
 
 
     def emit(self, *args):
@@ -7747,4 +7827,4 @@ class MainWindow(Gtk.ApplicationWindow):
         MainThread
         """
 
-        idle_add(GObject.emit, self, *args)
+        GLib.idle_add(GObject.GObject.emit, self, *args)

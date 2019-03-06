@@ -15,12 +15,24 @@
 # ------------------------------------------------------------------------------
 
 # GEM
-from gem.engine.utils import *
-
-from gem.ui import *
-from gem.ui.data import *
-
+from gem.ui.data import Icons
+from gem.ui.utils import replace_for_markup
 from gem.ui.widgets.window import CommonWindow
+
+# GObject
+try:
+    from gi import require_version
+
+    require_version("Gtk", "3.0")
+
+    from gi.repository import Gtk
+    from gi.repository import GdkPixbuf
+    from gi.repository import Pango
+
+except ImportError as error:
+    from sys import exit
+
+    exit("Cannot found python3-gobject module: %s" % str(error))
 
 # Translation
 from gettext import gettext as _
@@ -47,7 +59,7 @@ class CoverDialog(CommonWindow):
             classic_theme = parent.use_classic_theme
 
         CommonWindow.__init__(
-            self, parent, _("Game cover"), Icons.Symbolic.Image, classic_theme)
+            self, parent, _("Game cover"), Icons.Symbolic.IMAGE, classic_theme)
 
         # ------------------------------------
         #   Initialize variables
@@ -151,7 +163,7 @@ class CoverDialog(CommonWindow):
         self.file_image_selector.set_hexpand(True)
 
         self.image_reset.set_from_icon_name(
-            Icons.Symbolic.Clear, Gtk.IconSize.BUTTON)
+            Icons.Symbolic.CLEAR, Gtk.IconSize.BUTTON)
 
         # ------------------------------------
         #   Image preview
@@ -215,8 +227,8 @@ class CoverDialog(CommonWindow):
         self.add_button(_("Cancel"), Gtk.ResponseType.CANCEL)
         self.add_button(_("Accept"), Gtk.ResponseType.APPLY, Gtk.Align.END)
 
-        if self.game.cover is not None and exists(self.game.cover):
-            self.file_image_selector.set_filename(self.game.cover)
+        if self.game.cover is not None and self.game.cover.exists():
+            self.file_image_selector.set_filename(str(self.game.cover))
 
         self.__update_preview()
 
@@ -238,10 +250,8 @@ class CoverDialog(CommonWindow):
         """
 
         try:
-            pixbuf = Pixbuf.new_from_file(path)
-
             self.image_preview.set_from_pixbuf(
-                Pixbuf.new_from_file_at_scale(path, 400, 236, True))
+                GdkPixbuf.Pixbuf.new_from_file_at_scale(path, 400, 236, True))
 
         except:
             self.__on_reset_cover()
@@ -253,5 +263,4 @@ class CoverDialog(CommonWindow):
 
         self.file_image_selector.unselect_all()
 
-        self.image_preview.set_from_icon_name(
-            Icons.Missing, Gtk.IconSize.DND)
+        self.image_preview.set_from_icon_name(Icons.MISSING, Gtk.IconSize.DND)

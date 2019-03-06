@@ -15,11 +15,22 @@
 # ------------------------------------------------------------------------------
 
 # GEM
-from gem.ui import *
-from gem.engine.utils import *
+from gem.engine.utils import generate_identifier
 
-# System
-from shlex import split as shlex_split
+# GObject
+try:
+    from gi.repository import GObject
+
+except ImportError as error:
+    from sys import exit
+
+    exit("Cannot found python3-gobject module: %s" % str(error))
+
+# Processus
+from subprocess import Popen
+
+# Threading
+from threading import Thread
 
 # Translation
 from gettext import gettext as _
@@ -28,10 +39,10 @@ from gettext import gettext as _
 #   Class
 # ------------------------------------------------------------------------------
 
-class ScriptThread(Thread, GObject):
+class ScriptThread(Thread, GObject.GObject):
 
     __gsignals__ = {
-        "script-terminate": (SignalFlags.RUN_LAST, None, [object]),
+        "script-terminate": (GObject.SignalFlags.RUN_LAST, None, [object]),
     }
 
     def __init__(self, parent, path, game):
@@ -48,7 +59,7 @@ class ScriptThread(Thread, GObject):
         """
 
         Thread.__init__(self)
-        GObject.__init__(self)
+        GObject.GObject.__init__(self)
 
         # ------------------------------------
         #   Initialize variables

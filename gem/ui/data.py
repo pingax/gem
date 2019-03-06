@@ -14,9 +14,8 @@
 #  MA 02110-1301, USA.
 # ------------------------------------------------------------------------------
 
-# GEM
-from gem.engine import *
-from gem.engine.lib import *
+# Filesystem
+from pathlib import Path
 
 # ------------------------------------------------------------------------------
 #   Modules - XDG
@@ -31,19 +30,19 @@ except ImportError as error:
     from os import environ
 
     if "XDG_DATA_HOME" in environ:
-        xdg_data_home = environ["XDG_DATA_HOME"]
+        xdg_data_home = Path(environ["XDG_DATA_HOME"]).expanduser()
     else:
-        xdg_data_home = expanduser("~/.local/share")
+        xdg_data_home = Path.home().joinpath(".local", "share")
 
     if "XDG_CACHE_HOME" in environ:
-        xdg_cache_home = environ["XDG_CACHE_HOME"]
+        xdg_cache_home = Path(environ["XDG_CACHE_HOME"]).expanduser()
     else:
-        xdg_cache_home = expanduser("~/.cache")
+        xdg_cache_home = Path.home().joinpath(".cache")
 
     if "XDG_CONFIG_HOME" in environ:
-        xdg_config_home = environ["XDG_CONFIG_HOME"]
+        xdg_config_home = Path(environ["XDG_CONFIG_HOME"]).expanduser()
     else:
-        xdg_config_home = expanduser("~/.config")
+        xdg_config_home = Path.home().joinpath(".config")
 
 # ------------------------------------------------------------------------------
 #   Class
@@ -53,108 +52,12 @@ class Documents:
     Desktop     = "template.desktop"
 
 class Folders:
-    Apps        = path_join(expanduser(xdg_data_home), "applications")
-    Cache       = path_join(expanduser(xdg_cache_home), "gem")
-    Local       = path_join(expanduser(xdg_data_home), "gem")
-    Config      = path_join(expanduser(xdg_config_home), "gem")
+    Apps        = Path(xdg_data_home, "applications").expanduser()
+    Cache       = Path(xdg_cache_home, "gem").expanduser()
+    Local       = Path(xdg_data_home, "gem").expanduser()
+    Config      = Path(xdg_config_home, "gem").expanduser()
 
 class Icons:
-    Ext         = "png"
-    # Actions
-    Quit        = "application-exit"
-    Properties  = "document-properties"
-    Edit        = "document-edit"
-    Open        = "document-open"
-    Save        = "document-save"
-    SaveAs      = "document-save-as"
-    Send        = "document-send"
-    Clear       = "edit-clear"
-    Copy        = "edit-copy"
-    Delete      = "edit-delete"
-    Find        = "edit-find"
-    Paste       = "edit-paste"
-    Undo        = "edit-undo"
-    Bottom      = "go-bottom"
-    Down        = "go-down"
-    First       = "go-first"
-    Home        = "go-home"
-    Jump        = "go-jump"
-    Last        = "go-last"
-    Next        = "go-next"
-    Previous    = "go-previous"
-    Top         = "go-top"
-    Up          = "go-up"
-    About       = "help-about"
-    Content     = "help-contents"
-    Faq         = "help-faq"
-    AddText     = "insert-text"
-    Add         = "list-add"
-    Remove      = "list-remove"
-    Paperclip   = "mail-attachment"
-    Launch      = "media-playback-start"
-    Menu        = "open-menu" # Not standard
-    Stop        = "process-stop"
-    Checkspell  = "tools-check-spelling"
-    Fullscreen  = "view-fullscreen"
-    Refresh     = "view-refresh"
-    Restore     = "view-restore"
-    ViewMore    = "view-more" # Not standard
-    Close       = "window-close"
-    ZoomFit     = "zoom-fit-best"
-    ZoomIn      = "zoom-in"
-    Zoom        = "zoom-original"
-    ZoomOut     = "zoom-out"
-    # Applications
-    Editor      = "accessories-text-editor"
-    Addon       = "application-x-addon" # Not standard
-    Keyboard    = "preferences-desktop-keyboard"
-    Terminal    = "utilities-terminal"
-    Monitor     = "utilities-system-monitor"
-    Help        = "system-help"
-    # Categories
-    Desktop     = "preferences-desktop"
-    Preferences = "preferences-other"
-    Other       = "applications-other"
-    System      = "preferences-system"
-    # Devices
-    Camera      = "camera-photo"
-    Floppy      = "media-floppy"
-    Gaming      = "input-gaming"
-    Video       = "video-display"
-    # Emblems
-    Document    = "emblem-documents"
-    Download    = "emblem-downloads"
-    Favorite    = "emblem-favorite"
-    Important   = "emblem-important"
-    Photos      = "emblem-photos"
-    Sync        = "emblem-synchronizing"
-    Users       = "system-users" # Not standard
-    # Faces
-    Monkey      = "face-monkey"
-    Sad         = "face-sad"
-    Smile       = "face-smile"
-    SmileBig    = "face-smile-big"
-    Uncertain   = "face-uncertain"
-    # Mimes
-    Text        = "text-x-generic"
-    Image       = "image-x-generic"
-    # Places
-    Folder      = "folder"
-    # Status
-    Error       = "dialog-error"
-    Warning     = "dialog-warning"
-    Question    = "dialog-question"
-    Information = "dialog-information"
-    Password    = "dialog-password"
-    Loading     = "image-loading"
-    Missing     = "image-missing"
-    NoStarred   = "non-starred" # Not standard
-    Starred     = "starred" # Not standard
-    # View
-    List        = "view-list" # Not standard
-    Grid        = "view-grid" # Not standard
-
-    # This class is filled with Icons values in interface initialization
     class Symbolic:
         pass
 

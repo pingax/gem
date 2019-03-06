@@ -14,11 +14,30 @@
 #  MA 02110-1301, USA.
 # ------------------------------------------------------------------------------
 
+# Datetime
+from datetime import datetime
+
 # GEM
-from gem.ui import *
-from gem.engine import *
-from gem.engine.api import GEM
-from gem.engine.utils import *
+from gem.engine.utils import generate_identifier
+
+# GObject
+try:
+    from gi.repository import GObject
+
+except ImportError as error:
+    from sys import exit
+
+    exit("Cannot found python3-gobject module: %s" % str(error))
+
+# Processus
+from subprocess import PIPE
+from subprocess import Popen
+
+# System
+from os import environ
+
+# Threading
+from threading import Thread
 
 # Translation
 from gettext import gettext as _
@@ -27,11 +46,11 @@ from gettext import gettext as _
 #   Class
 # ------------------------------------------------------------------------------
 
-class GameThread(Thread, GObject):
+class GameThread(Thread, GObject.GObject):
 
     __gsignals__ = {
-        "game-started": (SignalFlags.RUN_FIRST, None, [object]),
-        "game-terminate": (SignalFlags.RUN_LAST, None, [object]),
+        "game-started": (GObject.SignalFlags.RUN_FIRST, None, [object]),
+        "game-terminate": (GObject.SignalFlags.RUN_LAST, None, [object]),
     }
 
     def __init__(self, parent, console, emulator, game, command):
@@ -52,7 +71,7 @@ class GameThread(Thread, GObject):
         """
 
         Thread.__init__(self)
-        GObject.__init__(self)
+        GObject.GObject.__init__(self)
 
         # ------------------------------------
         #   Initialize variables

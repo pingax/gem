@@ -15,11 +15,23 @@
 # ------------------------------------------------------------------------------
 
 # GEM
-from gem.ui import *
-from gem.ui.data import *
-from gem.ui.utils import *
-
+from gem.ui.data import Icons
 from gem.ui.widgets.window import CommonWindow
+
+# GObject
+try:
+    from gi import require_version
+
+    require_version("Gtk", "3.0")
+
+    from gi.repository import Gtk
+    from gi.repository import GdkPixbuf
+    from gi.repository import Pango
+
+except ImportError as error:
+    from sys import exit
+
+    exit("Cannot found python3-gobject module: %s" % str(error))
 
 # Translation
 from gettext import gettext as _
@@ -50,7 +62,7 @@ class DnDConsoleDialog(CommonWindow):
             classic_theme = parent.use_classic_theme
 
         CommonWindow.__init__(self,
-            parent, _("Drag & Drop"), Icons.Symbolic.Gaming, classic_theme)
+            parent, _("Drag & Drop"), Icons.Symbolic.GAMING, classic_theme)
 
         # ------------------------------------
         #   Initialize variables
@@ -139,7 +151,7 @@ class DnDConsoleDialog(CommonWindow):
         #   Consoles
         # ------------------------------------
 
-        self.model_consoles = Gtk.ListStore(bool, Pixbuf, str)
+        self.model_consoles = Gtk.ListStore(bool, GdkPixbuf.Pixbuf, str)
         self.treeview_consoles = Gtk.TreeView()
 
         self.column_consoles = Gtk.TreeViewColumn()
@@ -252,9 +264,8 @@ class DnDConsoleDialog(CommonWindow):
 
             icon = console.icon
 
-            if not exists(expanduser(icon)):
-                icon = self.api.get_local(
-                    "icons", "consoles", "%s.%s" % (icon, Icons.Ext))
+            if not icon.exists():
+                icon = self.api.get_local("icons", "%s.png" % icon)
 
             # Get console icon
             icon = icon_from_data(icon, self.parent.empty)

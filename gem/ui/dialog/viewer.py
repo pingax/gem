@@ -15,10 +15,23 @@
 # ------------------------------------------------------------------------------
 
 # GEM
-from gem.ui import *
-from gem.ui.utils import *
-
+from gem.ui.data import Icons
 from gem.ui.widgets.window import CommonWindow
+
+# GObject
+try:
+    from gi import require_version
+
+    require_version("Gtk", "3.0")
+
+    from gi.repository import Gtk
+    from gi.repository import GdkPixbuf
+    from gi.repository import Pango
+
+except ImportError as error:
+    from sys import exit
+
+    exit("Cannot found python3-gobject module: %s" % str(error))
 
 # Translation
 from gettext import gettext as _
@@ -48,7 +61,7 @@ class ViewerDialog(CommonWindow):
         if parent is not None:
             classic_theme = parent.use_classic_theme
 
-        CommonWindow.__init__(self, parent, title, Icons.Image, classic_theme)
+        CommonWindow.__init__(self, parent, title, Icons.IMAGE, classic_theme)
 
         # ------------------------------------
         #   Initialize variables
@@ -160,12 +173,12 @@ class ViewerDialog(CommonWindow):
         self.grid_resize_buttons.set_orientation(Gtk.Orientation.HORIZONTAL)
 
         self.image_fit.set_from_icon_name(
-            Icons.Symbolic.ZoomFit, Gtk.IconSize.BUTTON)
+            Icons.Symbolic.ZOOM_FIT, Gtk.IconSize.BUTTON)
 
         self.button_fit.set_image(self.image_fit)
 
         self.image_original.set_from_icon_name(
-            Icons.Symbolic.Zoom, Gtk.IconSize.BUTTON)
+            Icons.Symbolic.ZOOM, Gtk.IconSize.BUTTON)
 
         self.button_original.set_image(self.image_original)
 
@@ -194,22 +207,22 @@ class ViewerDialog(CommonWindow):
         self.grid_move_buttons.set_orientation(Gtk.Orientation.HORIZONTAL)
 
         self.image_first.set_from_icon_name(
-            Icons.Symbolic.First, Gtk.IconSize.BUTTON)
+            Icons.Symbolic.FIRST, Gtk.IconSize.BUTTON)
 
         self.button_first.set_image(self.image_first)
 
         self.image_previous.set_from_icon_name(
-            Icons.Symbolic.Previous, Gtk.IconSize.BUTTON)
+            Icons.Symbolic.PREVIOUS, Gtk.IconSize.BUTTON)
 
         self.button_previous.set_image(self.image_previous)
 
         self.image_next.set_from_icon_name(
-            Icons.Symbolic.Next, Gtk.IconSize.BUTTON)
+            Icons.Symbolic.NEXT, Gtk.IconSize.BUTTON)
 
         self.button_next.set_image(self.image_next)
 
         self.image_last.set_from_icon_name(
-            Icons.Symbolic.Last, Gtk.IconSize.BUTTON)
+            Icons.Symbolic.LAST, Gtk.IconSize.BUTTON)
 
         self.button_last.set_image(self.image_last)
 
@@ -236,12 +249,12 @@ class ViewerDialog(CommonWindow):
         self.grid_zoom_buttons.set_orientation(Gtk.Orientation.HORIZONTAL)
 
         self.image_zoom_minus.set_from_icon_name(
-            Icons.Symbolic.ZoomOut, Gtk.IconSize.BUTTON)
+            Icons.Symbolic.ZOOM_OUT, Gtk.IconSize.BUTTON)
 
         self.button_zoom_minus.set_image(self.image_zoom_minus)
 
         self.image_zoom_plus.set_from_icon_name(
-            Icons.Symbolic.ZoomIn, Gtk.IconSize.BUTTON)
+            Icons.Symbolic.ZOOM_IN, Gtk.IconSize.BUTTON)
 
         self.button_zoom_plus.set_image(self.image_zoom_plus)
 
@@ -269,7 +282,7 @@ class ViewerDialog(CommonWindow):
 
         # Properties
         self.image_previous.set_from_icon_name(
-            Icons.Symbolic.Previous, Gtk.IconSize.BUTTON)
+            Icons.Symbolic.PREVIOUS, Gtk.IconSize.BUTTON)
 
         self.button_overlay_previous.get_style_context().add_class("osd")
         self.button_overlay_previous.set_image(self.image_previous)
@@ -282,7 +295,7 @@ class ViewerDialog(CommonWindow):
         self.button_overlay_previous.set_margin_top(6)
 
         self.image_next.set_from_icon_name(
-            Icons.Symbolic.Next, Gtk.IconSize.BUTTON)
+            Icons.Symbolic.NEXT, Gtk.IconSize.BUTTON)
 
         self.button_overlay_next.get_style_context().add_class("osd")
         self.button_overlay_next.set_image(self.image_next)
@@ -527,17 +540,18 @@ class ViewerDialog(CommonWindow):
         """
 
         # Get the current screenshot path
-        path = expanduser(self.screenshots[self.index])
+        path = self.screenshots[self.index].expanduser()
 
         # Avoid to recreate a pixbuf for the same file
-        if not path == self.current_path:
-            self.current_path = path
+        if not str(path) == self.current_path:
+            self.current_path = str(path)
 
             # Set headerbar subtitle with current screenshot path
             self.set_subtitle(self.current_path)
 
             # Generate a Pixbuf from current screenshot
-            self.current_pixbuf = Pixbuf.new_from_file(self.current_path)
+            self.current_pixbuf = GdkPixbuf.Pixbuf.new_from_file(
+                self.current_path)
 
             self.current_pixbuf_size = (
                 self.current_pixbuf.get_width(),
@@ -601,4 +615,4 @@ class ViewerDialog(CommonWindow):
                 self.adjustment_zoom.set_value(float(self.zoom_actual))
 
                 self.image.set_from_pixbuf(self.current_pixbuf.scale_simple(
-                    ratio_width, ratio_height, InterpType.TILES))
+                    ratio_width, ratio_height, GdkPixbuf.InterpType.TILES))

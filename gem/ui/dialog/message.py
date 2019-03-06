@@ -15,10 +15,21 @@
 # ------------------------------------------------------------------------------
 
 # GEM
-from gem.ui import *
-from gem.ui.data import *
-
 from gem.ui.widgets.window import CommonWindow
+
+# GObject
+try:
+    from gi import require_version
+
+    require_version("Gtk", "3.0")
+
+    from gi.repository import Gtk
+    from gi.repository import Pango
+
+except ImportError as error:
+    from sys import exit
+
+    exit("Cannot found python3-gobject module: %s" % str(error))
 
 # Translation
 from gettext import gettext as _
@@ -29,8 +40,7 @@ from gettext import gettext as _
 
 class MessageDialog(CommonWindow):
 
-    def __init__(self, parent, title, message, icon=Icons.Information,
-        center=True):
+    def __init__(self, parent, title, message, icon, center=True):
         """ Constructor
 
         Parameters
@@ -41,8 +51,8 @@ class MessageDialog(CommonWindow):
             Dialog title
         message : str
             Dialog message
-        icon : str, optional
-            Default icon name (Default: dialog-information)
+        icon : str
+            Default icon name
         center : bool, optional
             If False, use justify text insted of center (Default: True)
         """

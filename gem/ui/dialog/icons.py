@@ -14,14 +14,30 @@
 #  MA 02110-1301, USA.
 # ------------------------------------------------------------------------------
 
+# Filesystem
+from pathlib import Path
+
 # GEM
-from gem.ui import *
-from gem.ui.data import *
-from gem.ui.utils import *
-
+from gem.ui.data import Icons
+from gem.ui.utils import magic_from_file
 from gem.ui.widgets.window import CommonWindow
-
 from gem.ui.widgets.widgets import IconsGenerator
+
+# GObject
+try:
+    from gi import require_version
+
+    require_version("Gtk", "3.0")
+
+    from gi.repository import Gtk
+    from gi.repository import GLib
+    from gi.repository import GdkPixbuf
+    from gi.repository import Pango
+
+except ImportError as error:
+    from sys import exit
+
+    exit("Cannot found python3-gobject module: %s" % str(error))
 
 # Translation
 from gettext import gettext as _
@@ -47,7 +63,7 @@ class IconsDialog(CommonWindow):
             Icons folder
         """
 
-        CommonWindow.__init__(self, parent, title, Icons.Symbolic.Image,
+        CommonWindow.__init__(self, parent, title, Icons.Symbolic.IMAGE,
             parent.use_classic_theme)
 
         # ------------------------------------
@@ -134,14 +150,14 @@ class IconsDialog(CommonWindow):
         self.file_icons.set_hexpand(True)
         self.file_icons.set_vexpand(True)
         self.file_icons.set_filter(self.__file_patterns)
-        self.file_icons.set_current_folder(expanduser('~'))
+        self.file_icons.set_current_folder(str(Path.home()))
 
         # ------------------------------------
         #   Icons
         # ------------------------------------
 
         self.view_icons = Gtk.IconView()
-        self.model_icons = Gtk.ListStore(Pixbuf, str)
+        self.model_icons = Gtk.ListStore(GdkPixbuf.Pixbuf, str)
 
         self.scroll_icons = Gtk.ScrolledWindow()
 
@@ -209,7 +225,7 @@ class IconsDialog(CommonWindow):
 
         # Remove icons listing thread
         if not self.thread == 0:
-            source_remove(self.thread)
+            GLib.source_remove(self.thread)
 
         if response == Gtk.ResponseType.APPLY:
             self.save_interface()
@@ -265,18 +281,18 @@ class IconsDialog(CommonWindow):
                 self.icons_data = dict()
 
                 if not self.thread == 0:
-                    source_remove(self.thread)
+                    GLib.source_remove(self.thread)
 
-                self.thread = idle_add(self.append_icons(64).__next__)
+                self.thread = GLib.idle_add(self.append_icons(64).__next__)
 
             # Check the choosen path
-            if self.path is not None and exists(self.path):
+            if self.path is not None and self.path.exists():
 
                 if self.folder == "consoles":
                     self.frame_icons.show()
                     self.stack.set_visible_child(self.frame_icons)
 
-                self.file_icons.set_filename(self.path)
+                self.file_icons.set_filename(str(self.path))
 
                 self.__file_path = self.path
                 self.__file_active = True
@@ -316,33 +332,31 @@ class IconsDialog(CommonWindow):
         yield True
 
         # Retrieve files from icons collection
-        pattern = self.api.get_local("icons", "*.%s" % Icons.Ext)
+        collection_path = self.api.get_local("icons")
 
-        for path in sorted(glob(pattern)):
-            path = expanduser(path)
-
-            # Retrieve icon name for label
-            name = splitext(basename(path))[0]
+        for path in sorted(collection_path.glob("*.png")):
 
             # Retrieve an empty icon
             icon = self.icons.blank(size)
 
             # Generate an icon for found file
-            if exists(path) and isfile(path):
+            if path.exists() and path.is_file():
 
                 # Check the file mime-type to avoid non-image file
                 if magic_from_file(path, mime=True).startswith("image/"):
-                    icon = Pixbuf.new_from_file_at_scale(path, size, size, True)
+                    icon = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                        str(path), size, size, True)
 
-            self.icons_data[name] = self.model_icons.append([icon, name])
+            self.icons_data[path.stem] = \
+                self.model_icons.append([icon, path.stem])
 
             # Current icon match the choosen one
-            if self.path == name:
+            if str(self.path) == path.stem:
 
                 # Only select current icon if no selection is available
                 if len(self.view_icons.get_selected_items()) == 0:
                     self.view_icons.select_path(
-                        self.model_icons.get_path(self.icons_data[name]))
+                        self.model_icons.get_path(self.icons_data[path.stem]))
 
             yield True
 

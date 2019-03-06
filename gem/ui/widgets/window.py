@@ -15,8 +15,22 @@
 # ------------------------------------------------------------------------------
 
 # GEM
-from gem.ui import *
-from gem.ui.utils import *
+from gem.ui.data import Icons
+
+# GObject
+try:
+    from gi import require_version
+
+    require_version("Gtk", "3.0")
+
+    from gi.repository import Gtk
+    from gi.repository import Gdk
+    from gi.repository import Pango
+
+except ImportError as error:
+    from sys import exit
+
+    exit("Cannot found python3-gobject module: %s" % str(error))
 
 # Logging
 from logging import getLogger
@@ -174,7 +188,7 @@ class CommonWindow(object):
 
         # Properties
         self.image_help.set_from_icon_name(
-            Icons.Symbolic.Help, Gtk.IconSize.MENU)
+            Icons.Symbolic.HELP, Gtk.IconSize.MENU)
 
         self.button_help.set_image(self.image_help)
         self.button_help.set_relief(Gtk.ReliefStyle.NONE)
@@ -217,7 +231,7 @@ class CommonWindow(object):
         """
 
         dialog = HelpDialog(self.parent,
-            _("Help"), '\n\n'.join(self.help_data), Icons.Symbolic.Help)
+            _("Help"), '\n\n'.join(self.help_data), Icons.Symbolic.HELP)
 
         dialog.set_size(640, 480)
 
@@ -277,8 +291,8 @@ class CommonWindow(object):
             self.window.destroy()
 
 
-    def add_widget(self, widget, align=Gtk.Align.START,
-        expand=False, fill=False, padding=int()):
+    def add_widget(self,
+        widget, align=Gtk.Align.START, expand=False, fill=False, padding=int()):
         """ Add a widget to dialog headerbar
 
         Parameters

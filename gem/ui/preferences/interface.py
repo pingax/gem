@@ -15,22 +15,32 @@
 # ------------------------------------------------------------------------------
 
 # GEM
-from gem.engine import *
-from gem.engine.api import *
+from gem.engine.api import GEM
 from gem.engine.lib.configuration import Configuration
 
-from gem.ui import *
-from gem.ui.data import *
-from gem.ui.utils import *
-
+from gem.ui.data import Icons
+from gem.ui.utils import on_entry_clear
 from gem.ui.dialog.question import QuestionDialog
-
 from gem.ui.widgets.window import CommonWindow
 from gem.ui.widgets.widgets import PreferencesItem
-from gem.ui.widgets.widgets import IconsGenerator
-
 from gem.ui.preferences.console import ConsolePreferences
 from gem.ui.preferences.emulator import EmulatorPreferences
+
+# GObject
+try:
+    from gi import require_version
+
+    require_version("Gtk", "3.0")
+
+    from gi.repository import Gtk
+    from gi.repository import Gdk
+    from gi.repository import GdkPixbuf
+    from gi.repository import Pango
+
+except ImportError as error:
+    from sys import exit
+
+    exit("Cannot found python3-gobject module: %s" % str(error))
 
 # Translation
 from gettext import gettext as _
@@ -66,7 +76,7 @@ class PreferencesWindow(CommonWindow):
             raise TypeError("Wrong type for api, expected gem.engine.api.GEM")
 
         CommonWindow.__init__(self, parent, _("Preferences"),
-            Icons.Symbolic.Preferences, parent.use_classic_theme)
+            Icons.Symbolic.PREFERENCES, parent.use_classic_theme)
 
         # ------------------------------------
         #   Initialize variables
@@ -189,7 +199,7 @@ class PreferencesWindow(CommonWindow):
         #   Initialize configuration files
         # ------------------------------------
 
-        self.config = Configuration(expanduser(self.api.get_config("gem.conf")))
+        self.config = Configuration(self.api.get_config("gem.conf"))
 
         # ------------------------------------
         #   Initialize logger
@@ -494,9 +504,9 @@ class PreferencesWindow(CommonWindow):
             _("Parameters"))
 
         self.entry_general_viewer_options.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.PRIMARY, Icons.Symbolic.Terminal)
+            Gtk.EntryIconPosition.PRIMARY, Icons.Symbolic.TERMINAL)
         self.entry_general_viewer_options.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.CLEAR)
 
         # ------------------------------------
         #   Interface
@@ -903,7 +913,7 @@ class PreferencesWindow(CommonWindow):
 
         self.scroll_consoles_treeview = Gtk.ScrolledWindow()
 
-        self.model_consoles = Gtk.ListStore(Pixbuf, str, str, str)
+        self.model_consoles = Gtk.ListStore(GdkPixbuf.Pixbuf, str, str, str)
         self.treeview_consoles = Gtk.TreeView()
 
         self.column_consoles_name = Gtk.TreeViewColumn()
@@ -960,7 +970,7 @@ class PreferencesWindow(CommonWindow):
 
         self.image_consoles_add.set_margin_end(6)
         self.image_consoles_add.set_from_icon_name(
-            Icons.Symbolic.Add, Gtk.IconSize.BUTTON)
+            Icons.Symbolic.ADD, Gtk.IconSize.BUTTON)
 
         self.button_consoles_add.set_image(self.image_consoles_add)
         self.button_consoles_add.set_label(_("Add"))
@@ -969,7 +979,7 @@ class PreferencesWindow(CommonWindow):
 
         self.image_consoles_modify.set_margin_end(6)
         self.image_consoles_modify.set_from_icon_name(
-            Icons.Symbolic.Edit, Gtk.IconSize.BUTTON)
+            Icons.Symbolic.EDIT, Gtk.IconSize.BUTTON)
 
         self.button_consoles_modify.set_image(self.image_consoles_modify)
         self.button_consoles_modify.set_label(_("Modify"))
@@ -978,7 +988,7 @@ class PreferencesWindow(CommonWindow):
 
         self.image_consoles_remove.set_margin_end(6)
         self.image_consoles_remove.set_from_icon_name(
-            Icons.Symbolic.Remove, Gtk.IconSize.BUTTON)
+            Icons.Symbolic.REMOVE, Gtk.IconSize.BUTTON)
 
         self.button_consoles_remove.set_image(self.image_consoles_remove)
         self.button_consoles_remove.set_label(_("Remove"))
@@ -994,7 +1004,7 @@ class PreferencesWindow(CommonWindow):
 
         self.scroll_emulators_treeview = Gtk.ScrolledWindow()
 
-        self.model_emulators = Gtk.ListStore(Pixbuf, str, str, str)
+        self.model_emulators = Gtk.ListStore(GdkPixbuf.Pixbuf, str, str, str)
         self.treeview_emulators = Gtk.TreeView()
 
         self.column_emulators_name = Gtk.TreeViewColumn()
@@ -1051,7 +1061,7 @@ class PreferencesWindow(CommonWindow):
 
         self.image_emulators_add.set_margin_end(6)
         self.image_emulators_add.set_from_icon_name(
-            Icons.Symbolic.Add, Gtk.IconSize.BUTTON)
+            Icons.Symbolic.ADD, Gtk.IconSize.BUTTON)
 
         self.button_emulators_add.set_image(self.image_emulators_add)
         self.button_emulators_add.set_label(_("Add"))
@@ -1060,7 +1070,7 @@ class PreferencesWindow(CommonWindow):
 
         self.image_emulators_modify.set_margin_end(6)
         self.image_emulators_modify.set_from_icon_name(
-            Icons.Symbolic.Edit, Gtk.IconSize.BUTTON)
+            Icons.Symbolic.EDIT, Gtk.IconSize.BUTTON)
 
         self.button_emulators_modify.set_image(self.image_emulators_modify)
         self.button_emulators_modify.set_label(_("Modify"))
@@ -1069,7 +1079,7 @@ class PreferencesWindow(CommonWindow):
 
         self.image_emulators_remove.set_margin_end(6)
         self.image_emulators_remove.set_from_icon_name(
-            Icons.Symbolic.Remove, Gtk.IconSize.BUTTON)
+            Icons.Symbolic.REMOVE, Gtk.IconSize.BUTTON)
 
         self.button_emulators_remove.set_image(self.image_emulators_remove)
         self.button_emulators_remove.set_label(_("Remove"))
@@ -1822,17 +1832,13 @@ class PreferencesWindow(CommonWindow):
             if icon is None:
                 icon = self.icons.blank(48)
 
-            path = str()
-            if console.path is not None:
-                path = console.path
-
             check = str()
-            if not exists(expanduser(path)):
-                check = Icons.Symbolic.Warning
+            if not console.path.exists():
+                check = Icons.Symbolic.WARNING
 
             self.model_consoles.append([
                 icon, "<b>%s</b>\n<small>%s</small>" % (
-                console.name, path), check, console.id])
+                console.name, console.path), check, console.id])
 
 
     def on_load_emulators(self):
@@ -1853,7 +1859,7 @@ class PreferencesWindow(CommonWindow):
 
             check = str()
             if not emulator.exists:
-                check = Icons.Symbolic.Warning
+                check = Icons.Symbolic.WARNING
 
             self.model_emulators.append([
                 icon, "<b>%s</b>\n<small>%s</small>" % (
@@ -1950,7 +1956,7 @@ class PreferencesWindow(CommonWindow):
         edit = False
 
         # Keyboard
-        if event.type == EventType.KEY_RELEASE:
+        if event.type == Gdk.EventType.KEY_RELEASE:
             model, treeiter = treeview.get_selection().get_selected()
 
             if treeiter is not None:
@@ -1960,8 +1966,8 @@ class PreferencesWindow(CommonWindow):
                     edit = True
 
         # Mouse
-        elif (event.type in [EventType.BUTTON_PRESS, EventType._2BUTTON_PRESS]) \
-            and (event.button == 1 or event.button == 3):
+        elif event.type in [Gdk.EventType.BUTTON_PRESS,
+            Gdk.EventType._2BUTTON_PRESS] and event.button in (1, 3):
 
             selection = treeview.get_path_at_pos(int(event.x), int(event.y))
             if selection is not None:
@@ -1970,7 +1976,8 @@ class PreferencesWindow(CommonWindow):
                 treeiter = model.get_iter(selection[0])
                 self.selection[manager] = model.get_value(treeiter, 1)
 
-                if event.button == 1 and event.type == EventType._2BUTTON_PRESS:
+                if event.button == 1 and \
+                    event.type == Gdk.EventType._2BUTTON_PRESS:
                     edit = True
 
         if edit:
@@ -2128,8 +2135,8 @@ class PreferencesWindow(CommonWindow):
                         path = self.parent.get_icon_from_cache(
                             "consoles", size, "%s.png" % data.id)
 
-                        if exists(path):
-                            remove(path)
+                        if path.exists():
+                            path.unlink()
 
                 elif manager == Manager.EMULATOR:
                     self.api.delete_emulator(data.id)

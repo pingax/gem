@@ -14,17 +14,34 @@
 #  MA 02110-1301, USA.
 # ------------------------------------------------------------------------------
 
+# Filesystem
+from os import remove
+
+from pathlib import Path
+
 # GEM
-from gem.engine import *
-from gem.engine.utils import *
+from gem.engine.utils import get_binary_path
+from gem.engine.utils import generate_identifier
 
-from gem.ui import *
-from gem.ui.data import *
-from gem.ui.utils import *
-
+from gem.ui.data import Icons
+from gem.ui.utils import on_entry_clear
+from gem.ui.utils import magic_from_file
 from gem.ui.dialog.icons import IconsDialog
-
 from gem.ui.widgets.window import CommonWindow
+
+# GObject
+try:
+    from gi import require_version
+
+    require_version("Gtk", "3.0")
+
+    from gi.repository import Gtk
+    from gi.repository import GdkPixbuf
+
+except ImportError as error:
+    from sys import exit
+
+    exit("Cannot found python3-gobject module: %s" % str(error))
 
 # Translation
 from gettext import gettext as _
@@ -49,7 +66,7 @@ class EmulatorPreferences(CommonWindow):
         """
 
         CommonWindow.__init__(self, parent, _("Emulator"),
-            Icons.Symbolic.Properties, parent.use_classic_theme)
+            Icons.Symbolic.PROPERTIES, parent.use_classic_theme)
 
         # ------------------------------------
         #   Initialize variables
@@ -169,7 +186,7 @@ class EmulatorPreferences(CommonWindow):
 
         self.entry_name.set_hexpand(True)
         self.entry_name.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.CLEAR)
 
         self.label_icon.set_halign(Gtk.Align.END)
         self.label_icon.set_valign(Gtk.Align.CENTER)
@@ -180,7 +197,7 @@ class EmulatorPreferences(CommonWindow):
 
         self.entry_icon.set_hexpand(True)
         self.entry_icon.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.CLEAR)
 
         self.label_binary.set_halign(Gtk.Align.END)
         self.label_binary.set_valign(Gtk.Align.CENTER)
@@ -191,10 +208,10 @@ class EmulatorPreferences(CommonWindow):
 
         self.entry_binary.set_hexpand(True)
         self.entry_binary.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.CLEAR)
 
         self.image_binary.set_from_icon_name(
-            Icons.Symbolic.Open, Gtk.IconSize.MENU)
+            Icons.Symbolic.OPEN, Gtk.IconSize.MENU)
 
         self.button_emulator.set_size_request(64, 64)
         self.image_emulator.set_size_request(64, 64)
@@ -253,7 +270,7 @@ class EmulatorPreferences(CommonWindow):
         self.entry_launch.set_placeholder_text(
             _("Default arguments to add when launch emulator"))
         self.entry_launch.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.CLEAR)
 
         self.label_windowed.set_no_show_all(True)
         self.label_windowed.set_halign(Gtk.Align.END)
@@ -267,7 +284,7 @@ class EmulatorPreferences(CommonWindow):
         self.entry_windowed.set_placeholder_text(
             _("Argument which activate windowded mode"))
         self.entry_windowed.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.CLEAR)
 
         self.label_fullscreen.set_no_show_all(True)
         self.label_fullscreen.set_halign(Gtk.Align.END)
@@ -282,7 +299,7 @@ class EmulatorPreferences(CommonWindow):
         self.entry_fullscreen.set_placeholder_text(
             _("Argument which activate fullscreen mode"))
         self.entry_fullscreen.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.CLEAR)
 
         # ------------------------------------
         #   Emulator - Files pattern
@@ -320,7 +337,7 @@ class EmulatorPreferences(CommonWindow):
         self.entry_save.set_placeholder_text(
             _("Pattern to detect savestates files"))
         self.entry_save.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.CLEAR)
 
         self.label_screenshots.set_no_show_all(True)
         self.label_screenshots.set_halign(Gtk.Align.END)
@@ -335,7 +352,7 @@ class EmulatorPreferences(CommonWindow):
         self.entry_screenshots.set_placeholder_text(
             _("Pattern to detect screenshots files"))
         self.entry_screenshots.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.CLEAR)
 
         self.label_joker.set_use_markup(True)
         self.label_joker.set_no_show_all(True)
@@ -454,18 +471,17 @@ class EmulatorPreferences(CommonWindow):
             self.entry_name.set_text(self.emulator.name)
 
             # Binary
-            self.entry_binary.set_text(self.emulator.binary)
+            self.entry_binary.set_text(str(self.emulator.binary))
 
             # Configuration
             folder = self.emulator.configuration
-            if folder is not None and exists(folder):
-                self.file_configuration.set_filename(folder)
+            if folder.exists():
+                self.file_configuration.set_filename(str(folder))
 
             # Icon
             self.path = self.emulator.icon
 
-            if self.path is not None:
-                self.entry_icon.set_text(self.path)
+            self.entry_icon.set_text(str(self.path))
 
             icon = self.interface.get_pixbuf_from_cache(
                 "emulators", 64, self.emulator.id, self.emulator.icon)
@@ -523,7 +539,7 @@ class EmulatorPreferences(CommonWindow):
                     cache_path = self.interface.get_icon_from_cache(
                         "emulators", size, "%s.png" % self.emulator.id)
 
-                    if exists(cache_path):
+                    if cache_path.exists():
                         remove(cache_path)
 
             # Append a new emulator
@@ -550,50 +566,53 @@ class EmulatorPreferences(CommonWindow):
 
         self.section = self.entry_name.get_text()
 
-        identifier = None
-        if len(self.section) > 0:
-            identifier = generate_identifier(self.section)
-
-        binary = self.entry_binary.get_text()
-        if binary is None:
-            binary = str()
-
-        configuration = self.file_configuration.get_filename()
-        if configuration is None or not exists(configuration):
-            configuration = None
-
-        savestates = self.entry_save.get_text()
-        if len(savestates) == 0:
-            savestates = None
-
-        screenshots = self.entry_screenshots.get_text()
-        if len(screenshots) == 0:
-            screenshots = None
-
-        default = self.entry_launch.get_text()
-        if len(default) == 0:
-            default = None
-
-        windowed = self.entry_windowed.get_text()
-        if len(windowed) == 0:
-            windowed = None
-
-        fullscreen = self.entry_fullscreen.get_text()
-        if len(fullscreen) == 0:
-            fullscreen = None
-
         self.data = {
-            "id": identifier,
+            "id": None,
             "name": self.section,
-            "binary": binary,
-            "icon": expanduser(self.entry_icon.get_text()),
-            "configuration": configuration,
-            "savestates": savestates,
-            "screenshots": screenshots,
-            "default": default,
-            "windowed": windowed,
-            "fullscreen": fullscreen
+            "binary": None,
+            "icon": None,
+            "configuration": None,
+            "savestates": None,
+            "screenshots": None,
+            "default": None,
+            "windowed": None,
+            "fullscreen": None
         }
+
+        if len(self.section) > 0:
+            self.data["id"] = generate_identifier(self.section)
+
+        value = self.entry_binary.get_text().strip()
+        if len(value) > 0:
+            self.data["binary"] = Path(value).expanduser()
+
+        value = self.entry_icon.get_text().strip()
+        if len(value) > 0:
+            self.data["icon"] = Path(value).expanduser()
+
+        value = self.file_configuration.get_filename()
+        if len(value) > 0:
+            self.data["configuration"] = Path(value).expanduser()
+
+        value = self.entry_save.get_text().strip()
+        if len(value) > 0:
+            self.data["savestates"] = str(Path(value).expanduser())
+
+        value = self.entry_screenshots.get_text().strip()
+        if len(value) > 0:
+            self.data["screenshots"] = str(Path(value).expanduser())
+
+        value = self.entry_launch.get_text().strip()
+        if len(value) > 0:
+            self.data["default"] = value
+
+        value = self.entry_windowed.get_text().strip()
+        if len(value) > 0:
+            self.data["windowed"] = value
+
+        value = self.entry_fullscreen.get_text().strip()
+        if len(value) > 0:
+            self.data["fullscreen"] = value
 
 
     def __on_entry_update(self, widget):
@@ -628,7 +647,7 @@ class EmulatorPreferences(CommonWindow):
                 if self.emulator is not None and not self.emulator.id == name:
                     self.error = True
 
-                    icon = Icons.Error
+                    icon = Icons.ERROR
                     tooltip = _("This emulator already exist, please, "
                         "choose another name")
 
@@ -657,7 +676,7 @@ class EmulatorPreferences(CommonWindow):
         elif len(get_binary_path(binary_path)) == 0:
             self.error = True
 
-            icon = Icons.Error
+            icon = Icons.ERROR
             tooltip = _("This binary not exist, please, check the path")
 
         if widget == self.entry_binary:
@@ -681,7 +700,13 @@ class EmulatorPreferences(CommonWindow):
             Object which receive signal
         """
 
-        self.set_icon(self.image_emulator, widget.get_text())
+        value = widget.get_text()
+
+        self.path = None
+        if len(value) > 0:
+            self.path = Path(value).expanduser()
+
+        self.set_icon(self.image_emulator, self.path)
 
 
     def __on_file_set(self, widget):
@@ -721,13 +746,13 @@ class EmulatorPreferences(CommonWindow):
         dialog = IconsDialog(self, _("Choose an icon"), self.path, "emulators")
 
         if dialog.new_path is not None:
-            self.path = dialog.new_path
+            self.path = Path(dialog.new_path).expanduser()
 
             # Update icon thumbnail
             self.set_icon(self.image_emulator, self.path)
 
             # Update icon entry
-            self.entry_icon.set_text(self.path)
+            self.entry_icon.set_text(dialog.new_path)
 
         dialog.destroy()
 
@@ -769,22 +794,22 @@ class EmulatorPreferences(CommonWindow):
         # Retrieve an empty icon
         icon = self.icons.blank(size)
 
-        if len(path) > 0:
-            path = expanduser(path)
+        if path is not None:
 
             # Check icon from icons theme
-            if not exists(path):
+            if not path.exists():
 
                 # Retrieve icon from collection
-                if self.icons.theme.has_icon(path):
+                if self.icons.theme.has_icon(str(path)):
                     icon = self.icons.theme.load_icon(
-                        path, size, Gtk.IconLookupFlags.FORCE_SIZE)
+                        str(path), size, Gtk.IconLookupFlags.FORCE_SIZE)
 
             # Retrieve icon from file
-            elif isfile(path):
+            elif path.is_file():
 
                 # Check the file mime-type to avoid non-image file
                 if magic_from_file(path, mime=True).startswith("image/"):
-                    icon = Pixbuf.new_from_file_at_scale(path, size, size, True)
+                    icon = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                        str(path), size, size, True)
 
         widget.set_from_pixbuf(icon)

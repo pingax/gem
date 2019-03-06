@@ -15,13 +15,24 @@
 # ------------------------------------------------------------------------------
 
 # GEM
-from gem.engine.utils import *
-
-from gem.ui import *
-from gem.ui.data import *
-
+from gem.ui.data import Icons
+from gem.ui.utils import replace_for_markup
 from gem.ui.widgets.window import CommonWindow
 from gem.ui.widgets.widgets import PreferencesItem
+
+# GObject
+try:
+    from gi import require_version
+
+    require_version("Gtk", "3.0")
+
+    from gi.repository import Gtk
+    from gi.repository import Pango
+
+except ImportError as error:
+    from sys import exit
+
+    exit("Cannot found python3-gobject module: %s" % str(error))
 
 # Translation
 from gettext import gettext as _
@@ -50,7 +61,7 @@ class MaintenanceDialog(CommonWindow):
             classic_theme = parent.use_classic_theme
 
         CommonWindow.__init__(self,
-            parent, _("Maintenance"), Icons.Symbolic.System, classic_theme)
+            parent, _("Maintenance"), Icons.Symbolic.SYSTEM, classic_theme)
 
         # ------------------------------------
         #   Variables
@@ -260,7 +271,7 @@ class MaintenanceDialog(CommonWindow):
         if self.switch_log.get_active():
             path = self.parent.api.get_local(self.game.log)
 
-            if exists(path):
+            if path.exists():
                 data["paths"].append(path)
 
                 data["log"] = True
@@ -272,7 +283,7 @@ class MaintenanceDialog(CommonWindow):
         if self.switch_note.get_active():
             path = self.parent.api.get_local(self.game.note)
 
-            if exists(path):
+            if path.exists():
                 data["paths"].append(path)
 
         # ------------------------------------

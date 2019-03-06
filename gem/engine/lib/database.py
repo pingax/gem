@@ -21,9 +21,10 @@
 # Database
 import sqlite3
 
-# GEM
-from gem.engine.lib import *
+# Filesystem
+from pathlib import Path
 
+# GEM
 from gem.engine.lib.configuration import Configuration
 
 # Logging
@@ -34,54 +35,45 @@ from logging import Logger
 # ------------------------------------------------------------------------------
 
 class Database(object):
-    """ Manage a sqlite3 database
 
-    Attributes
-    ----------
-    path : str
-        Database file path
-    configuration : configuration.Configuration
-        Database schema configuration object
-    logger : logging.Logger
-        Logger object
-    sql_types : dict
-        Sqlite sql types correspondance with python types
-    """
-
-    def __init__(self, db_path, configuration_path, logger):
+    def __init__(self, db_path, configuration, logger):
         """ Constructor
 
         Parameters
         ----------
-        db_path : str
+        db_path : pathlib.Path
             Database filepath
-        configuration_path : str
-            Configuration file which contains database schema
+        configuration : gem.engine.lib.configuration.Configuration
+            Configuration file which contains database scheme
         logger : logging.Logger
             Logging object
 
         Raises
         ------
-        OSError
-            If the configuration path not exists
-        ValueError
+        TypeError
+            If scheme type is not gem.engine.lib.Configuration
             If logger type is not logging.Logger
         """
 
-        if not exists(expanduser(configuration_path)):
-            raise OSError(2, "Cannot find file", configuration_path)
+        if not isinstance(db_path, Path):
+            raise TypeError("Expected %s type for db_path, get %s" % (
+                "pathlib.Path", type(db_path)))
+
+        if type(configuration) is not Configuration:
+            raise TypeError("Expected %s type for configuration, get %s" % (
+                "gem.engine.lib.Configuration", type(configuration)))
 
         if type(logger) is not Logger:
-            raise ValueError(
-                "Expected logging.Logger type, get %s" % type(logger))
+            raise TypeError("Expected %s type for logger, get %s" % (
+                "logging.Logger", type(logger)))
 
         # ------------------------------------
         #   Variables
         # ------------------------------------
 
-        self.path = expanduser(db_path)
+        self.path = db_path.expanduser()
 
-        self.configuration = Configuration(expanduser(configuration_path))
+        self.configuration = configuration
 
         self.logger = logger
 
@@ -97,7 +89,7 @@ class Database(object):
         #   Intialization
         # ------------------------------------
 
-        if not exists(self.path):
+        if not self.path.exists():
             for table in self.configuration.sections():
                 self.create_table(table)
 
@@ -164,7 +156,7 @@ class Database(object):
 
         request = list()
 
-        database = sqlite3.connect(self.path)
+        database = sqlite3.connect(str(self.path))
         cursor = database.cursor()
 
         for option in self.configuration.items(table):
@@ -193,7 +185,7 @@ class Database(object):
             New table name
         """
 
-        database = sqlite3.connect(self.path)
+        database = sqlite3.connect(str(self.path))
         cursor = database.cursor()
 
         try:
@@ -215,7 +207,7 @@ class Database(object):
             Table name
         """
 
-        database = sqlite3.connect(self.path)
+        database = sqlite3.connect(str(self.path))
         cursor = database.cursor()
 
         try:
@@ -241,7 +233,7 @@ class Database(object):
             Column type
         """
 
-        database =  sqlite3.connect(self.path)
+        database =  sqlite3.connect(str(self.path))
         cursor = database.cursor()
 
         try:
@@ -272,7 +264,7 @@ class Database(object):
 
         columns = list()
 
-        database =  sqlite3.connect(self.path)
+        database =  sqlite3.connect(str(self.path))
         cursor = database.cursor()
 
         try:
@@ -305,7 +297,7 @@ class Database(object):
             Columns keys and values
         """
 
-        database = sqlite3.connect(self.path)
+        database = sqlite3.connect(str(self.path))
         cursor = database.cursor()
 
         try:
@@ -352,7 +344,7 @@ class Database(object):
             Request conditions
         """
 
-        database = sqlite3.connect(self.path)
+        database = sqlite3.connect(str(self.path))
         cursor = database.cursor()
 
         try:
@@ -401,7 +393,7 @@ class Database(object):
         if type(columns) is not list:
             columns = [columns]
 
-        database = sqlite3.connect(self.path)
+        database = sqlite3.connect(str(self.path))
         cursor = database.cursor()
 
         try:
@@ -448,7 +440,7 @@ class Database(object):
             Request conditions
         """
 
-        database =  sqlite3.connect(self.path)
+        database =  sqlite3.connect(str(self.path))
         cursor = database.cursor()
 
         try:
@@ -552,8 +544,7 @@ class Database(object):
             return False
 
         for table in tables:
-            if not self.get_columns(table) == \
-                self.configuration.options(table):
+            if not self.get_columns(table) == self.configuration.options(table):
                 return False
 
         return True

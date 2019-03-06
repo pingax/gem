@@ -17,9 +17,24 @@
 # Collections
 from collections import OrderedDict
 
-# GEM
-from gem.engine import *
+# Datetime
+from datetime import date
+from datetime import time
+from datetime import datetime
+from datetime import timedelta
 
+# Filesystem
+from copy import deepcopy
+
+from shutil import move
+from shutil import copy2 as copy
+
+from pathlib import Path
+
+from os.path import getctime
+from os.path import splitext
+
+# GEM
 from gem.engine.utils import get_data
 from gem.engine.utils import parse_timedelta
 from gem.engine.utils import get_binary_path
@@ -30,31 +45,16 @@ from gem.engine.lib.database import Database
 from gem.engine.lib.configuration import Configuration
 
 # Logging
+import logging
+
 from logging.config import fileConfig
 
 # System
+from os import getpid
+
+from sys import exit as sys_exit
+
 from shlex import split as shlex_split
-
-# ------------------------------------------------------------------------------
-#   Modules - XDG
-# ------------------------------------------------------------------------------
-
-try:
-    from xdg.BaseDirectory import xdg_data_home
-    from xdg.BaseDirectory import xdg_config_home
-
-except ImportError as error:
-    from os import environ
-
-    if "XDG_DATA_HOME" in environ:
-        xdg_data_home = environ["XDG_DATA_HOME"]
-    else:
-        xdg_data_home = expanduser("~/.local/share")
-
-    if "XDG_CONFIG_HOME" in environ:
-        xdg_config_home = environ["XDG_CONFIG_HOME"]
-    else:
-        xdg_config_home = expanduser("~/.config")
 
 # ------------------------------------------------------------------------------
 #   Class
@@ -62,17 +62,8 @@ except ImportError as error:
 
 class GEM(object):
 
-    # Informations
-    Name        = "Graphical Emulators Manager"
-    Description = "Manage your emulators easily and have fun"
     Version     = "1.0"
-    CodeName    = "Space Fox"
-    Website     = "https://gem.tuxfamily.org/"
-    Copyleft    = "Copyleft 2019 - Kawa Team"
-    Acronym     = "GEM"
-    Icon        = "gem"
 
-    # Files
     Log         = "gem.log"
     Logger      = "log.conf"
     Consoles    = "consoles.conf"
@@ -80,32 +71,31 @@ class GEM(object):
     Databases   = "databases.conf"
     Environment = "environment.conf"
 
-    # Paths
-    Local       = path_join(expanduser(xdg_data_home), "gem")
-    Config      = path_join(expanduser(xdg_config_home), "gem")
-
-    def __init__(self, config=None, local=None, debug=False):
+    def __init__(self, config, local, debug=False):
         """ Constructor
-
-        By default, GEM use paths defined with xdg:
-
-        Config → ~/.config
-        Local  → ~/.local/share
 
         Parameters
         ----------
-        config : str, optional
-            Default config folder (default: None)
-        local : str, optional
-            Default data folder (default: None)
+        config : pathlib.Path
+            Default config folder
+        local : pathlib.Path
+            Default data folder
         debug : bool, optional
             Debug mode status (default: False)
 
         Raises
         ------
         TypeError
+            if config type is not pathlib.Path or None
+            if local type is not pathlib.Path or None
             if debug type is not bool
         """
+
+        if not isinstance(config, Path):
+            raise TypeError("Wrong type for config, expected pathlib.Path")
+
+        if not isinstance(local, Path):
+            raise TypeError("Wrong type for local, expected pathlib.Path")
 
         if type(debug) is not bool:
             raise TypeError("Wrong type for debug, expected bool")
@@ -141,20 +131,13 @@ class GEM(object):
         )
 
         # API configuration path
-        if config is not None:
-            config = expanduser(config)
-        else:
-            config = GEM.Config
-
-        self.__config = config
+        self.__config = config.expanduser()
 
         # API local path
-        if local is not None:
-            local = expanduser(local)
-        else:
-            local = GEM.Local
+        self.__local = local.expanduser()
 
-        self.__local = local
+        # API roms folder path
+        self.__roms = self.__local.joinpath("roms")
 
         # Process identifier
         self.__pid = int()
@@ -163,9 +146,10 @@ class GEM(object):
         #   Initialize folders
         # ----------------------------
 
-        for folder in [ self.__config, self.__local, self.get_local("roms") ]:
-            if not exists(folder):
-                makedirs(folder, 0o755)
+        for folder in [ self.__config, self.__local, self.__roms ]:
+
+            if not folder.exists():
+                folder.mkdir(mode=0o755, parents=True)
 
         # ----------------------------
         #   Initialize objects
@@ -183,8 +167,8 @@ class GEM(object):
             # Initialize sqlite database
             self.__init_database()
 
-            self.logger.debug("Set local folder as %s" % self.__local)
-            self.logger.debug("Set config folder as %s" % self.__config)
+            self.logger.debug("Set local folder as %s" % str(self.__local))
+            self.logger.debug("Set config folder as %s" % str(self.__config))
 
 
     def __init_lock(self):
@@ -194,20 +178,24 @@ class GEM(object):
         instance simultaneous
         """
 
-        if exists(self.get_local(".lock")):
+        lock_path = self.get_local(".lock")
+
+        if lock_path.exists():
             self.__pid = int()
 
             # Read lock content
-            with open(self.get_local(".lock"), 'r') as pipe:
+            with lock_path.open('r') as pipe:
                 self.__pid = int(pipe.read())
 
+            proc_path = Path("/proc", str(self.__pid))
+
             # Lock PID still exists
-            if exists(path_join("/proc", str(self.__pid))):
-                path = path_join("/proc", str(self.__pid), "cmdline")
+            if proc_path.exists():
+                path = proc_path.joinpath("cmdline")
 
                 # Check process command line
-                if exists(path):
-                    with open(path, 'r') as pipe:
+                if path.exists():
+                    with path.open('r') as pipe:
                         content = pipe.read()
 
                     # Check if lock process is gem
@@ -217,7 +205,7 @@ class GEM(object):
         self.__pid = getpid()
 
         # Save current PID into lock file
-        with open(self.get_local(".lock"), 'w') as pipe:
+        with lock_path.open('w') as pipe:
             pipe.write(str(self.__pid))
 
         return False
@@ -233,11 +221,11 @@ class GEM(object):
         logging.log_path = self.get_local(GEM.Log)
 
         # Save older log file to ~/.local/share/gem/gem.log.old
-        if(exists(logging.log_path)):
+        if logging.log_path.exists():
             copy(logging.log_path, self.get_local(GEM.Log + ".old"))
 
         # Generate logger from log.conf
-        fileConfig(get_data(path_join("config", GEM.Logger)))
+        fileConfig(get_data("config", GEM.Logger))
 
         self.logger = logging.getLogger("gem")
 
@@ -253,9 +241,11 @@ class GEM(object):
         """
 
         try:
+            config = Configuration(get_data("config", GEM.Databases))
+
             # Check GEM database file
-            self.database = Database(self.get_local("gem.db"),
-                get_data(path_join("config", GEM.Databases)), self.logger)
+            self.database = Database(
+                self.get_local("gem.db"), config, self.logger)
 
             # Check current GEM version
             version = self.database.select("gem", "version")
@@ -270,8 +260,7 @@ class GEM(object):
                     self.logger.info("Update database to v.%s" % GEM.Version)
 
                 self.database.modify("gem",
-                    { "version": GEM.Version, "codename": GEM.CodeName },
-                    { "version": version })
+                    { "version": GEM.Version }, { "version": version })
 
             else:
                 self.logger.debug("Use GEM API v.%s" % GEM.Version)
@@ -306,29 +295,29 @@ class GEM(object):
         default one if not exists
         """
 
-        if not exists(self.__config):
-            self.logger.debug("Generate %s folder" % self.__config)
-            mkdir(self.__config)
+        if not self.__config.exists():
+            self.logger.debug("Generate %s folder" % str(self.__config))
+
+            self.__config.mkdir(mode=0o755, parents=True)
 
         # Check GEM configuration files
-        for path in [ GEM.Consoles, GEM.Emulators, GEM.Environment ]:
-            # Get configuration filename for storage
-            name, ext = splitext(path)
+        for filename in (GEM.Consoles, GEM.Emulators):
+            path = Path(self.get_config(filename))
 
             # Configuration file not exists
-            if not exists(self.get_config(path)):
-
-                # Check if a default configuration file exists
-                if exists(get_data(path_join("config", path))):
-                    self.logger.debug("Copy %s to %s" % (path, self.__config))
-
-                    copy(get_data(path_join("config", path)),
-                        self.get_config(path))
+            if not path.exists():
+                raise OSError(2, "Cannot found %s file" % path)
 
             self.logger.debug("Read %s configuration file" % path)
 
             # Store Configuration object
-            self.__configurations[name] = Configuration(self.get_config(path))
+            self.__configurations[path.stem] = Configuration(path)
+
+        path = Path(self.get_config(GEM.Environment))
+
+        self.logger.debug("Read %s configuration file" % path)
+
+        self.__configurations[path.stem] = Configuration(path)
 
 
     def __init_emulators(self):
@@ -340,58 +329,44 @@ class GEM(object):
 
         self.__data["emulators"] = dict()
 
-        data = self.__configurations["emulators"]
+        emulators = self.__configurations["emulators"]
 
-        for section in data.sections():
-            # Configuration
-            configuration = data.get(section, "configuration", fallback=None)
-            if configuration is not None:
-                # Empty string
-                if len(configuration) == 0:
-                    configuration = None
-                # Need to expanduser path
-                else:
-                    configuration = expanduser(configuration)
+        for emulator in emulators.sections():
 
-            # Savestates
-            savestates = data.get(section, "save", fallback=None)
-            if savestates is not None and len(savestates) == 0:
-                savestates = None
+            data = {
+                "binary": None,
+                "icon": None,
+                "configuration": None,
+                "savestates": None,
+                "screenshots": None,
+                "default": None,
+                "windowed": None,
+                "fullscreen": None
+            }
 
-            # Screenshots
-            screenshots = data.get(section, "snaps", fallback=None)
-            if screenshots is not None and len(screenshots) == 0:
-                screenshots = None
+            for option, default in data.items():
+                key = option
 
-            # Default
-            default = data.get(section, "default", fallback=None)
-            if default is not None and len(default) == 0:
-                default = None
+                if option == "savestates":
+                    key = "save"
 
-            # Windowed
-            windowed = data.get(section, "windowed", fallback=None)
-            if windowed is not None and len(windowed) == 0:
-                windowed = None
+                elif option == "screenshots":
+                    key = "snaps"
 
-            # Fullscreen
-            fullscreen = data.get(section, "fullscreen", fallback=None)
-            if fullscreen is not None and len(fullscreen) == 0:
-                fullscreen = None
+                value = emulators.get(emulator, key, fallback=None)
 
-            self.add_emulator({
-                "id": generate_identifier(section),
-                "name": section,
-                "binary": expanduser(data.get(
-                    section, "binary", fallback=str())),
-                "icon": data.get(
-                    section, "icon", fallback=str()),
-                "configuration": configuration,
-                "savestates": savestates,
-                "screenshots": screenshots,
-                "default": default,
-                "windowed": windowed,
-                "fullscreen": fullscreen
-            })
+                if value is not None and len(value) > 0:
+
+                    if key in ("binary", "icon", "configuration"):
+                        data[option] = Path(value).expanduser()
+
+                    else:
+                        data[option] = value
+
+            data["id"] = generate_identifier(emulator)
+            data["name"] = emulator
+
+            self.add_emulator(data)
 
         self.logger.debug(
             "%d emulator(s) has been founded" % len(self.emulators))
@@ -406,52 +381,69 @@ class GEM(object):
 
         self.__data["consoles"] = dict()
 
-        data = self.__configurations["consoles"]
+        consoles = self.__configurations["consoles"]
 
-        for section in data.sections():
-            emulator = data.get(section, "emulator", fallback=None)
+        for console in consoles.sections():
 
-            if emulator is not None:
+            data = {
+                "id": generate_identifier(console),
+                "name": console,
+                "favorite": consoles.getboolean(
+                    console, "favorite", fallback=False),
+                "recursive": consoles.getboolean(
+                    console, "recursive", fallback=False)
+            }
 
-                # Emulator exists in GEM storage
-                if emulator in self.__data["emulators"]:
-                    emulator = self.__data["emulators"][emulator]
-                else:
-                    emulator = None
+            # Console icon
+            value = consoles.get(console, "icon", fallback=str()).strip()
+            if len(value) > 0:
+                data["icon"] = Path(value).expanduser()
 
-            roms_path = expanduser(data.get(section, "roms", fallback=str()))
-            roms_path = roms_path.replace("<local>", self.get_local())
+            # Console files path
+            value = consoles.get(console, "roms", fallback=str()).strip()
+            if len(value) > 0:
+                value = value.replace("<local>", str(self.get_local()))
 
-            # Check consoles roms path folder
-            if not exists(roms_path):
+                data["path"] = Path(value).expanduser()
 
                 try:
-                    makedirs(roms_path)
+                    if not data["path"].exists():
+                        data["path"].mkdir(mode=0o755, parents=True)
 
-                except Exception as error:
-                    self.logger.exception("Cannot create %s folder" % roms_path)
+                except:
+                    self.logger.exception(
+                        "Cannot create %s folder" % data["path"])
 
-            # Check if roms_path exists and is a directory
-            if exists(roms_path) and isdir(roms_path):
-                self.add_console({
-                    "id": generate_identifier(section),
-                    "name": section,
-                    "path": roms_path,
-                    "icon": data.get(
-                        section, "icon", fallback=str()),
-                    "ignores": data.get(
-                        section, "ignores", fallback=str()).split(';'),
-                    "extensions": data.get(
-                        section, "exts", fallback=str()).split(';'),
-                    "recursive": data.getboolean(
-                        section, "recursive", fallback=False),
-                    "favorite": data.getboolean(
-                        section, "favorite", fallback=False),
-                    "emulator": emulator
-                })
+            # Console savestates pattern
+            value = consoles.get(console, "save", fallback=str()).strip()
+            if len(value) > 0:
+                data["savestates"] = str(Path(value).expanduser())
 
-        self.logger.debug(
-            "%d console(s) has been founded" % len(self.consoles))
+            # Console screenshots pattern
+            value = consoles.get(console, "snaps", fallback=str()).strip()
+            if len(value) > 0:
+                data["screenshots"] = str(Path(value).expanduser())
+
+            # Console file extensions
+            value = consoles.get(console, "exts", fallback=str()).strip()
+            if len(value) > 0:
+                data["extensions"] = list(set(value.split(';')))
+
+            # Console ignores files
+            value = consoles.get(console, "ignores", fallback=str()).strip()
+            if len(value) > 0:
+                data["ignores"] = list(set(value.split(';')))
+
+            # Console emulator instance
+            value = consoles.get(console, "emulator", fallback=str()).strip()
+            if len(value) > 0 and value in self.emulators:
+                data["emulator"] = self.get_emulator(value)
+
+            # Check if roms path exists and is a directory
+            if data["path"].exists() and data["path"].is_dir():
+                self.add_console(data)
+
+        self.logger.debug("%d console(s) has been founded" % len(self.consoles))
 
 
     def init(self):
@@ -640,12 +632,14 @@ class GEM(object):
         try:
             # Check GEM configuration files
             for path in files:
+
                 # Get configuration filename for storage
                 name, ext = splitext(path)
 
                 # Backup configuration file
-                if exists(self.get_config(path)):
+                if self.get_config(path).exists():
                     self.logger.debug("Backup %s file" % path)
+
                     move(self.get_config(path), self.get_config('~' + path))
 
                 # Create a new configuration object
@@ -712,7 +706,7 @@ class GEM(object):
             Optional path
         """
 
-        return path_join(self.__config, *args)
+        return self.__config.joinpath(*args).expanduser()
 
 
     def get_local(self, *args):
@@ -724,7 +718,7 @@ class GEM(object):
             Optional path
         """
 
-        return path_join(self.__local, *args)
+        return self.__local.joinpath(*args).expanduser()
 
 
     def is_locked(self):
@@ -743,8 +737,10 @@ class GEM(object):
         """ Remove lock file if present
         """
 
-        if exists(self.get_local(".lock")):
-            remove(self.get_local(".lock"))
+        lock_path = self.get_local(".lock")
+
+        if lock_path.exists():
+            lock_path.unlink()
 
 
     @property
@@ -858,8 +854,11 @@ class GEM(object):
         emulator = Emulator()
 
         for key, value in data.items():
-            if value is not None and len(value) == 0:
-                value = None
+
+            if value is not None:
+
+                if type(value) is str and len(value) == 0:
+                    value = None
 
             setattr(emulator, key, value)
 
@@ -1030,13 +1029,8 @@ class GEM(object):
         for key, value in data.items():
 
             # Avoid to have a list with an empty string
-            if type(value) is list:
-                if len(value) == 1 and len(value[0]) == 0:
-                    value = list()
-
-            elif type(value) is not Emulator and type(value) is not bool:
-                if value is not None and len(value) == 0:
-                    value = None
+            if type(value) is list and len(list(set(value))) == 0:
+                value = list()
 
             setattr(console, key, value)
 
@@ -1186,8 +1180,7 @@ class GEM(object):
         # Translate value as string for database
         for key, value in data.items():
 
-            # Strange case where type(None) is NoneType :D
-            if type(value) == type(None):
+            if value is None:
                 data[key] = str()
 
             elif type(value) is bool:
@@ -1202,7 +1195,7 @@ class GEM(object):
         # Update game in database
         self.logger.debug("Update %s database entry" % game.name)
 
-        self.database.modify("games", data, { "filename": game.path[1] })
+        self.database.modify("games", data, { "filename": game.filepath.name })
 
         # Update game environment variables
         self.logger.debug("Update %s environment variables" % game.name)
@@ -1235,12 +1228,12 @@ class GEM(object):
         if type(game) is not Game:
             raise TypeError("Wrong type for game, expected gem.engine.api.Game")
 
-        results = self.database.get("games", { "filename": game.path[1] })
+        results = self.database.get("games", { "filename": game.filepath.name })
 
         if results is not None and len(results) > 0:
             self.logger.info("Remove %s from database" % game.name)
 
-            self.database.remove("games", { "filename": game.path[1] })
+            self.database.remove("games", { "filename": game.filepath.name })
 
         # Update game environment variables
         self.logger.debug("Remove %s environment variables" % game.name)
@@ -1384,8 +1377,10 @@ class Emulator(GEMObject):
             if "<key>" in key and game.key is not None:
                 key = key.replace("<key>", game.key)
 
-            if not isdir(expanduser(key)):
-                return glob(expanduser(key).replace('[', '?').replace(']', '?'))
+            path = Path(key).expanduser()
+
+            if path.parent.is_dir():
+                return list(path.parent.glob(path.name))
 
         return list()
 
@@ -1483,19 +1478,17 @@ class Emulator(GEMObject):
             command = command.replace("<conf_path>", self.configuration)
 
         if "<rom_path>" in command:
-            command = command.replace("<rom_path>", game.path[0])
+            command = command.replace("<rom_path>", str(game.filepath.parent))
 
             use_filepath = False
 
         if "<rom_name>" in command:
-            name, extension = splitext(game.path[-1])
-
-            command = command.replace("<rom_name>", name)
+            command = command.replace("<rom_name>", str(game.filepath.stem))
 
             use_filepath = False
 
         if "<rom_file>" in command:
-            command = command.replace("<rom_file>", game.filepath)
+            command = command.replace("<rom_file>", str(game.filepath))
 
             use_filepath = False
 
@@ -1509,7 +1502,7 @@ class Emulator(GEMObject):
         command_data = list()
 
         # Append binaries
-        command_data.extend(shlex_split(self.binary))
+        command_data.extend(shlex_split(str(self.binary)))
 
         # Append arguments
         if len(command) > 0:
@@ -1517,7 +1510,7 @@ class Emulator(GEMObject):
 
         # Append game file
         if use_filepath:
-            command_data.append(game.filepath)
+            command_data.append(str(game.filepath))
 
         return command_data
 
@@ -1548,8 +1541,8 @@ class Console(GEMObject):
     attributes = {
         "id": str(),
         "name": str(),
-        "icon": str(),
-        "path": str(),
+        "icon": None,
+        "path": None,
         "ignores": list(),
         "extensions": list(),
         "games": list(),
@@ -1575,8 +1568,8 @@ class Console(GEMObject):
         """
 
         return (self.name, {
-            "icon": self.icon,
-            "roms": expanduser(self.path),
+            "icon": str(self.icon),
+            "roms": str(self.path),
             "exts": ';'.join(self.extensions),
             "ignores": ';'.join(self.ignores),
             "emulator": self.emulator,
@@ -1620,147 +1613,101 @@ class Console(GEMObject):
         # Check each extensions in games path
         for extension in set(self.extensions):
 
-            regex = "%s/*.%s"
-            if self.recursive:
-                regex = "%s/**/*.%s"
+            pattern = "*.%s" % generate_extension(extension)
 
-            files = set(glob(regex % (self.path, generate_extension(extension)),
-                recursive=self.recursive))
+            if self.recursive:
+                files = list(set(self.path.rglob(pattern)))
+
+            else:
+                files = list(set(self.path.glob(pattern)))
 
             # List available files
             for filename in sorted(files):
 
                 # Get data from database
-                data = database.get("games", { "filename": basename(filename) })
+                result = database.get("games", { "filename": filename.name })
 
                 # Generate Game object
                 game = Game.new(filename)
-
-                game_data = {
-                    "id": game.id,
-                    "name": game.name,
-                    "filepath": game.filepath,
-                    "environment": dict(),
-                    "installed": datetime.fromtimestamp(
-                        getctime(game.filepath)).date()
-                }
 
                 # Set game environment variables
                 if game.id in parent.environment.sections():
 
                     for option in parent.environment.options(game.id):
-                        game_data["environment"][option.upper()] = \
+                        game.environment[option.upper()] = \
                             parent.environment.get(
                             game.id, option, fallback=str())
 
+                # Set console emulator by default
+                game.emulator = self.emulator
+
                 # This game exists in database
-                if data is not None:
+                if result is not None:
+                    game.name = result.get("name", game.id)
 
-                    # Set game name
-                    name = game_data["name"]
-                    if len(data["name"]) > 0:
-                        name = data["name"]
+                    game.favorite = bool(result.get("favorite", False))
+                    game.multiplayer = bool(result.get("multiplayer", False))
+                    game.finish = bool(result.get("finish", False))
 
-                    # Set play time
-                    play_time = timedelta()
-                    if "play_time" in data and len(data["play_time"]) > 0:
-                        play_time = data["play_time"]
-                        microseconds = int()
+                    game.score = int(result.get("score", 0))
+                    game.played = int(result.get("play", 0))
 
-                        # Parse microseconds
-                        if '.' in play_time:
-                            play_time, microseconds = play_time.split('.')
+                    game.default = result.get("arguments", str())
 
-                        hours, minutes, seconds = play_time.split(':')
+                    value = result.get("tags", None)
+                    if value is not None and len(value) > 0:
+                        game.tags = list(set(value.split(';')))
 
-                        play_time = timedelta(
-                            hours=int(hours),
-                            minutes=int(minutes),
-                            seconds=int(seconds))
+                    game.key = result.get("key", None)
 
-                    # Set last play date
-                    last_launch_date = date(1, 1, 1)
-                    if "last_play" in data and len(data["last_play"]) > 0:
-                        last_launch_date = data["last_play"]
+                    value = result.get("emulator", None)
+                    if value is not None and len(value) > 0:
+                        game.emulator = parent.get_emulator(value)
 
-                        # Old GEM format
-                        if len(last_launch_date) > 10:
-                            day, month, year = \
-                                last_launch_date.split()[0].split('-')
+                    value = result.get("cover", None)
+                    if value is not None and len(value) > 0:
+                        game.cover = Path(value).expanduser()
 
-                        # ISO 8601 format
-                        else:
-                            year, month, day = last_launch_date.split('-')
+                    data = [
+                        ("play_time", "play_time", timedelta),
+                        ("last_launch_date", "last_play", date),
+                        ("last_launch_time", "last_play_time", timedelta)
+                    ]
 
-                        last_launch_date = date(
-                            int(year),
-                            int(month),
-                            int(day))
+                    for name, option, default in data:
+                        value = result[option]
 
-                    # Set last play time
-                    last_launch_time = timedelta()
-                    if "last_play_time" in data and \
-                        len(data["last_play_time"]) > 0:
-                        last_launch_time = data["last_play_time"]
-                        microseconds = int()
+                        if len(str(value).strip()) > 0:
 
-                        # Parse microseconds
-                        if '.' in last_launch_time:
-                            last_launch_time, microseconds = \
-                                last_launch_time.split('.')
+                            if default is date:
 
-                        hours, minutes, seconds = last_launch_time.split(':')
+                                # Old GEM format
+                                if len(value) > 10:
+                                    day, month, year = \
+                                        value.split()[0].split('-')
 
-                        last_launch_time = timedelta(
-                            hours=int(hours),
-                            minutes=int(minutes),
-                            seconds=int(seconds))
+                                # ISO 8601 format
+                                else:
+                                    year, month, day = value.split('-')
 
-                    # Set game emulator
-                    emulator = None
-                    if "emulator" in data and len(data["emulator"]) > 0 and \
-                        data["emulator"] in emulators:
-                        emulator = emulators[data["emulator"]]
+                                value = date(
+                                    int(year), int(month), int(day))
 
-                    # Set game arguments
-                    arguments = None
-                    if "arguments" in data and len(data["arguments"]) > 0:
-                        arguments = data["arguments"]
+                            elif default is timedelta:
 
-                    # Set savestates regex
-                    key = None
-                    if "key" in data and len(data["key"]) > 0:
-                        key = data["key"]
+                                # Parse microseconds
+                                microseconds = int()
+                                if '.' in value:
+                                    value, microseconds = value.split('.')
 
-                    # Set game tags
-                    tags = list()
-                    if "tags" in data and len(data["tags"]) > 0:
-                        tags = data["tags"].split(';')
+                                hours, minutes, seconds = value.split(':')
 
-                    # Set game cover image
-                    cover = None
-                    if "cover" in data and len(data["cover"]) > 0:
-                        cover = expanduser(data["cover"])
+                                value = timedelta(
+                                    hours=int(hours),
+                                    minutes=int(minutes),
+                                    seconds=int(seconds))
 
-                    game_data.update({
-                        "name": name,
-                        "favorite": bool(data["favorite"]),
-                        "multiplayer": bool(data["multiplayer"]),
-                        "finish": bool(data["finish"]),
-                        "score": int(data["score"]),
-                        "played": int(data["play"]),
-                        "play_time": play_time,
-                        "last_launch_date": last_launch_date,
-                        "last_launch_time": last_launch_time,
-                        "emulator": emulator,
-                        "default": arguments,
-                        "tags": tags,
-                        "key": key,
-                        "cover": cover
-                    })
-
-                for key, value in game_data.items():
-                    setattr(game, key, value)
+                            setattr(game, name, value)
 
                 # Remove useless keys
                 game.check_keys()
@@ -1811,7 +1758,7 @@ class Game(GEMObject):
 
     attributes = {
         "id": str(),
-        "filepath": str(),
+        "filepath": None,
         "name": str(),
         "favorite": bool(),
         "multiplayer": bool(),
@@ -1847,7 +1794,7 @@ class Game(GEMObject):
         """
 
         return (self.name, {
-            "filename": self.path[-1],
+            "filename": self.filepath.name,
             "name": self.name,
             "favorite": self.favorite,
             "multiplayer": self.multiplayer,
@@ -1876,11 +1823,13 @@ class Game(GEMObject):
 
         game = Game()
 
-        name = splitext(basename(path))[0]
-
-        game.id = generate_identifier(basename(path))
-        game.name = name
+        game.id = generate_identifier(path.name)
+        game.name = path.stem
         game.filepath = path
+
+        game.environment = dict()
+
+        game.installed = datetime.fromtimestamp(getctime(path)).date()
 
         return game
 
@@ -1901,12 +1850,12 @@ class Game(GEMObject):
 
         game = deepcopy(self)
 
-        name = splitext(basename(path))[0]
-
         # Set default game values
-        game.id = generate_identifier(name)
-        game.name = name
+        game.id = generate_identifier(path.name)
+        game.name = path.stem
         game.filepath = path
+
+        game.installed = datetime.fromtimestamp(getctime(path)).date()
 
         return game
 
@@ -1917,15 +1866,14 @@ class Game(GEMObject):
 
         # Get default data
         path = self.filepath
-        name = splitext(basename(path))[0]
 
         # Replace all data with default values
         for key, value in self.attributes.items():
             setattr(self, key, value)
 
         # Set default game values
-        self.id = generate_identifier(name)
-        self.name = name
+        self.id = generate_identifier(path.stem)
+        self.name = path.stem
         self.filepath = path
 
 
@@ -1954,13 +1902,10 @@ class Game(GEMObject):
         if self.filepath is None:
             raise TypeError("Wrong type for filepath, expected str")
 
-        if len(self.filepath) == 0:
+        if len(str(self.filepath)) == 0:
             raise ValueError("File path length is empty")
 
-        return (
-            dirname(expanduser(self.filepath)),
-            basename(expanduser(self.filepath))
-        )
+        return (self.filepath.parent.expanduser(), self.filepath.stem)
 
 
     @property
@@ -1976,7 +1921,7 @@ class Game(GEMObject):
         if self.filepath is None:
             raise TypeError("Wrong type for filepath, expected str")
 
-        return splitext(basename(expanduser(self.filepath)))[0]
+        return self.filepath.stem
 
 
     @property
@@ -1992,7 +1937,7 @@ class Game(GEMObject):
         if self.filepath is None:
             raise TypeError("Wrong type for filepath, expected str")
 
-        return splitext(basename(expanduser(self.filepath)))[-1]
+        return ''.join(self.filepath.suffixes).lower()
 
 
     @property
@@ -2005,7 +1950,7 @@ class Game(GEMObject):
             filepath
         """
 
-        return path_join("logs", self.path[-1] + ".log")
+        return Path("logs", self.filepath.stem + ".log")
 
 
     @property
@@ -2018,17 +1963,30 @@ class Game(GEMObject):
             filepath
         """
 
-        return path_join("notes", self.id + ".txt")
+        return Path("notes", self.id + ".txt")
 
 
 if __name__ == "__main__":
     """ Debug GEM API
     """
 
-    gem = GEM(debug=True)
-    gem.init()
+    root = Path("test")
 
-    gem.logger.info("Found %d consoles" % len(gem.consoles))
-    gem.logger.info("Found %d emulators" % len(gem.emulators))
-    gem.logger.info("Found %d games" % len(gem.get_games()))
+    config_path = root.joinpath("config")
 
+    if not config_path.exists():
+        config_path.mkdir(mode=0o755, parents=True)
+
+        for filename in (GEM.Consoles, GEM.Emulators):
+            copy(get_data("config", filename), config_path.joinpath(filename))
+
+    gem = GEM(config_path, root.joinpath("local"), debug=True)
+
+    if not gem.is_locked():
+        gem.init()
+
+        gem.logger.info("Found %d consoles" % len(gem.consoles))
+        gem.logger.info("Found %d emulators" % len(gem.emulators))
+        gem.logger.info("Found %d games" % len(gem.get_games()))
+
+        gem.free_lock()

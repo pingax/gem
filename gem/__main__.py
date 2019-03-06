@@ -14,26 +14,32 @@
 #  MA 02110-1301, USA.
 # ------------------------------------------------------------------------------
 
-# GEM
-from gem.engine import *
+# Filesystem
+from pathlib import Path
 
+from shutil import copy2 as copy
+
+# GEM
 from gem.engine.api import GEM
 from gem.engine.utils import get_data
 
-from gem.ui.data import Icons
+from gem.engine.lib.configuration import Configuration
+
 from gem.ui.data import Folders
 
 # Mimetypes
-try:
-    from magic import from_file as magic_from_file
-
-except ImportError as error:
-    from gem.ui.utils import magic_from_file
+from gem.ui.utils import magic_from_file
 
 # System
 from argparse import ArgumentParser
 
+from os import environ
+
+from sys import exit as sys_exit
+
 # Translation
+from gettext import textdomain
+from gettext import bindtextdomain
 from gettext import gettext as _
 
 # ------------------------------------------------------------------------------
@@ -44,52 +50,75 @@ def main():
     """ Main launcher
     """
 
-    # Generate default arguments
-    parser = ArgumentParser(
-        description=" - ".join([ GEM.Name, GEM.Description ]),
-        epilog=GEM.Copyleft, conflict_handler="resolve")
-
-    parser.add_argument("-v", "--version", action="version",
-        version="GEM %s (%s) - Licence GPLv3" % (GEM.Version, GEM.CodeName),
-        help="show the current version")
-    parser.add_argument(
-        "-d", "--debug", action="store_true", help="launch gem with debug flag")
-
-    parser_api = parser.add_argument_group("api arguments")
-    parser_api.add_argument(
-        "--cache", metavar="FOLDER", default=Folders.Cache, action="store",
-        help="set cache folder (default: ~/.cache/gem/)")
-    parser_api.add_argument(
-        "--config", metavar="FOLDER", default=Folders.Config, action="store",
-        help="set configuration folder (default: ~/.config/gem/)")
-    parser_api.add_argument(
-        "--local", metavar="FOLDER", default=Folders.Local, action="store",
-        help="set data folder (default: ~/.local/share/gem/)")
-
-    args = parser.parse_args()
-
-    # ------------------------------------
-    #   Initialize GEM API
-    # ------------------------------------
+    # ----------------------------------------
+    #   Initialize environment
+    # ----------------------------------------
 
     # Initialize localization
     bindtextdomain("gem", get_data("i18n"))
     textdomain("gem")
 
-    if args.cache is not None and not exists(args.cache):
-        makedirs(args.cache)
+    # Initialize metadata
+    metadata = Configuration(get_data("config", "metadata.conf"))
 
-    if args.config is not None and not exists(args.config):
-        makedirs(args.config)
+    # ----------------------------------------
+    #   Generate arguments
+    # ----------------------------------------
 
-    if args.local is not None and not exists(args.local):
-        makedirs(args.local)
+    parser = ArgumentParser(
+        description="%s - %s" % (
+            metadata.get("metadata", "name", fallback=str()),
+            metadata.get("metadata", "version", fallback=str())),
+        epilog=metadata.get("metadata", "copyleft", fallback=str()),
+        conflict_handler="resolve")
 
-    gem = GEM(config=args.config, local=args.local, debug=args.debug)
+    parser.add_argument("-v", "--version", action="version",
+        version="%s %s (%s) - %s" % (
+            metadata.get("metadata", "name", fallback=str()),
+            metadata.get("metadata", "version", fallback=str()),
+            metadata.get("metadata", "code_name", fallback=str()),
+            metadata.get("metadata", "license", fallback=str())),
+        help="show the current version")
+    parser.add_argument("-d", "--debug", action="store_true",
+        help="launch gem with debug flag")
 
-    # ------------------------------------
+    parser_api = parser.add_argument_group("api arguments")
+    parser_api.add_argument("--cache", action="store",
+        metavar="FOLDER",
+        default=Folders.Cache,
+        help="set cache folder (default: ~/.cache/gem/)")
+    parser_api.add_argument("--config", action="store",
+        metavar="FOLDER",
+        default=Folders.Config,
+        help="set configuration folder (default: ~/.config/gem/)")
+    parser_api.add_argument("--local", action="store",
+        metavar="FOLDER",
+        default=Folders.Local,
+        help="set data folder (default: ~/.local/share/gem/)")
+
+    arguments = parser.parse_args()
+
+    # ----------------------------------------
+    #   Initialize GEM API
+    # ----------------------------------------
+
+    cache_path = Path(arguments.cache).expanduser()
+    if not cache_path.exists():
+        cache_path.mkdir(mode=0o755, parents=True)
+
+    config_path = Path(arguments.config).expanduser()
+    if not config_path.exists():
+        config_path.mkdir(mode=0o755, parents=True)
+
+    local_path = Path(arguments.local).expanduser()
+    if not local_path.exists():
+        local_path.mkdir(mode=0o755, parents=True)
+
+    gem = GEM(config_path, local_path, arguments.debug)
+
+    # ----------------------------------------
     #   Check lock
-    # ------------------------------------
+    # ----------------------------------------
 
     if gem.is_locked():
 
@@ -115,23 +144,24 @@ def main():
         finally:
             sys_exit("GEM is already running with PID %d" % gem.pid)
 
-    # ------------------------------------
+    # ----------------------------------------
     #   Launch interface
-    # ------------------------------------
+    # ----------------------------------------
 
     try:
         # Default configuration files
-        for path in ("gem.conf", "consoles.conf", "emulators.conf"):
+        for filename in ("gem.conf", "consoles.conf", "emulators.conf"):
+            path = Path(gem.get_config(filename)).expanduser()
 
-            if not exists(gem.get_config(path)):
+            if not path.exists():
                 gem.logger.debug("Copy default %s" % path)
 
                 # Copy default configuration
-                copy(get_data("config", path), gem.get_config(path))
+                copy(get_data("config", filename), path)
 
-        # ------------------------------------
+        # ----------------------------------------
         #   Cache folders
-        # ------------------------------------
+        # ----------------------------------------
 
         icon_sizes = {
             "consoles": ("22x22", "24x24", "48x48", "64x64", "96x96"),
@@ -142,51 +172,58 @@ def main():
         for name, sizes in icon_sizes.items():
 
             for size in sizes:
-                path = expanduser(path_join(args.cache, name, size))
+                path = Path(arguments.cache, name, size).expanduser()
 
-                if not exists(path):
+                if not path.exists():
                     gem.logger.debug("Generate %s" % path)
 
-                    makedirs(path)
+                    path.mkdir(mode=0o755, parents=True)
 
-        # ------------------------------------
+        # ----------------------------------------
         #   GTK interface
-        # ------------------------------------
+        # ----------------------------------------
 
         # Check display settings
         if "DISPLAY" in environ and len(environ["DISPLAY"]) > 0:
 
             # Default folders
             for folder in ("logs", "notes"):
+                path = Path(gem.get_local(folder)).expanduser()
 
-                if not exists(gem.get_local(folder)):
-                    gem.logger.debug("Generate %s folder" % folder)
+                if not path.exists():
+                    gem.logger.debug("Generate %s folder" % path)
 
-                    makedirs(gem.get_local(folder))
+                    path.mkdir(mode=0o755, parents=True)
 
-            # ------------------------------------
+            # ----------------------------------------
             #   GEM version < 1.0
-            # ------------------------------------
+            # ----------------------------------------
 
             move_collection = False
 
             # Remove older icons collections folders
             for folder in ("consoles", "emulators"):
-                path = gem.get_local("icons", folder)
+                path = Path(gem.get_local("icons", folder)).expanduser()
 
-                if exists(path) and isdir(path):
-                    rmtree(path)
+                if path.exists() and path.is_dir():
+
+                    # Remove files content
+                    for filename in path.glob("*.png"):
+                        filename.unlink()
+
+                    # Remove folder
+                    path.rmdir()
 
                     move_collection = True
 
-            # ------------------------------------
+            # ----------------------------------------
             #   Consoles icons
-            # ------------------------------------
+            # ----------------------------------------
 
-            icons_path = expanduser(gem.get_local("icons"))
+            icons_path = Path(gem.get_local("icons")).expanduser()
 
-            if not exists(icons_path):
-                makedirs(icons_path)
+            if not icons_path.exists():
+                icons_path.mkdir(mode=0o755, parents=True)
 
                 move_collection = True
 
@@ -194,27 +231,31 @@ def main():
             if move_collection:
                 gem.logger.debug("Generate consoles icons folder")
 
-                for path in glob("%s/*.%s" % (get_data("icons"), Icons.Ext)):
+                path = Path(get_data("icons")).expanduser()
 
-                    # Check the file mime-type to avoid non-image file
-                    if isfile(path) and magic_from_file(
-                        path, mime=True).startswith("image/"):
+                for filename in path.glob("*.png"):
 
-                        copy(path, gem.get_local("icons", basename(path)))
+                    if filename.is_file():
 
-            # ------------------------------------
+                        # Check the file mime-type to avoid non-image file
+                        mime = magic_from_file(filename, mime=True)
+
+                        if mime.startswith("image/"):
+                            copy(filename, icons_path.joinpath(filename.name))
+
+            # ----------------------------------------
             #   Launch interface
-            # ------------------------------------
+            # ----------------------------------------
 
             gem.logger.debug("Start GEM with PID %s" % gem.pid)
 
             # Start splash
             from gem.ui.splash import Splash
-            Splash(gem)
+            Splash(gem, metadata)
 
             # Start interface
             from gem.ui.interface import MainWindow
-            MainWindow(gem, args.cache)
+            MainWindow(gem, metadata, cache_path)
 
             # Remove lock
             gem.free_lock()

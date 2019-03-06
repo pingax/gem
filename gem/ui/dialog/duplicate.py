@@ -15,13 +15,27 @@
 # ------------------------------------------------------------------------------
 
 # GEM
-from gem.engine.utils import *
+from gem.engine.utils import generate_identifier
 
-from gem.ui import *
-from gem.ui.data import *
-
+from gem.ui.data import Icons
+from gem.ui.utils import replace_for_markup
 from gem.ui.widgets.window import CommonWindow
 from gem.ui.widgets.widgets import PreferencesItem
+
+# GObject
+try:
+    from gi import require_version
+
+    require_version("Gtk", "3.0")
+
+    from gi.repository import Gtk
+    from gi.repository import GdkPixbuf
+    from gi.repository import Pango
+
+except ImportError as error:
+    from sys import exit
+
+    exit("Cannot found python3-gobject module: %s" % str(error))
 
 # Translation
 from gettext import gettext as _
@@ -48,7 +62,7 @@ class DuplicateDialog(CommonWindow):
             classic_theme = parent.use_classic_theme
 
         CommonWindow.__init__(self,
-            parent, _("Duplicate a game"), Icons.Symbolic.Copy, classic_theme)
+            parent, _("Duplicate a game"), Icons.Symbolic.COPY, classic_theme)
 
         # ------------------------------------
         #   Initialize variables
@@ -124,9 +138,9 @@ class DuplicateDialog(CommonWindow):
 
         self.entry_name.set_hexpand(True)
         self.entry_name.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.PRIMARY, Icons.Symbolic.Save)
+            Gtk.EntryIconPosition.PRIMARY, Icons.Symbolic.SAVE)
         self.entry_name.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Error)
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.ERROR)
 
         # ------------------------------------
         #   Optional data
@@ -254,93 +268,108 @@ class DuplicateDialog(CommonWindow):
             Data to duplicate
         """
 
-        # Retrieve the new file name
-        filename = self.entry_name.get_text()
+        # Retrieve specified name
+        name = self.entry_name.get_text().strip()
 
-        # Retrieve the new file path
-        filepath = path_join(self.game.path[0], filename + self.game.extension)
+        if len(name) > 0:
+            name += self.game.extension
 
-        data = {
-            "paths": list(),
-            "filepath": filepath,
-            "database": False
-        }
+            # Generate file path
+            filepath = self.game.filepath.parent.joinpath(name)
+            filename = filepath.stem
 
-        # ------------------------------------
-        #   Game file
-        # ------------------------------------
+            data = {
+                "paths": list(),
+                "filepath": filepath,
+                "database": False
+            }
 
-        data["paths"].append((self.game.filepath, filepath))
+            # ------------------------------------
+            #   Game file
+            # ------------------------------------
 
-        # ------------------------------------
-        #   Savestates
-        # ------------------------------------
+            data["paths"].append((self.game.filepath, filepath))
 
-        if self.switch_savestate.get_active():
-            for path in self.emulator.get_savestates(self.game):
-                data["paths"].append(
-                    (path, path.replace(self.game.filename, filename)))
+            # ------------------------------------
+            #   Savestates
+            # ------------------------------------
 
-        # ------------------------------------
-        #   Screenshots
-        # ------------------------------------
+            if self.switch_savestate.get_active():
 
-        if self.switch_screenshot.get_active():
-            for path in self.emulator.get_screenshots(self.game):
-                data["paths"].append(
-                    (path, path.replace(self.game.filename, filename)))
+                for path in self.emulator.get_savestates(self.game):
+                    new_path = path.parent.joinpath(
+                        filename + ''.join(path.suffixes))
 
-        # ------------------------------------
-        #   Notes
-        # ------------------------------------
+                    data["paths"].append((path, new_path))
 
-        if self.switch_note.get_active():
-            path = self.parent.api.get_local(self.game.note)
+            # ------------------------------------
+            #   Screenshots
+            # ------------------------------------
 
-            if exists(path):
-                data["paths"].append((path, self.parent.api.get_local(
-                    "notes", generate_identifier(filename) + ".txt")))
+            if self.switch_screenshot.get_active():
 
-        # ------------------------------------
-        #   Memory type
-        # ------------------------------------
+                for path in self.emulator.get_screenshots(self.game):
+                    new_path = path.parent.joinpath(
+                        filename + ''.join(path.suffixes))
 
-        if self.switch_memory.get_active():
-            path = self.parent.get_mednafen_memory_type(self.game)
+                    data["paths"].append((path, new_path))
 
-            if exists(path):
-                data["paths"].append(
-                    (path, path.replace(self.game.filename, filename)))
+            # ------------------------------------
+            #   Notes
+            # ------------------------------------
 
-        # ------------------------------------
-        #   Database
-        # ------------------------------------
+            if self.switch_note.get_active():
+                path = self.parent.api.get_local(self.game.note)
 
-        if self.switch_database.get_active():
-            data["database"] = True
+                if path.exists():
+                    data["paths"].append((path, self.parent.api.get_local(
+                        "notes", generate_identifier(filename) + ".txt")))
 
-        return data
+            # ------------------------------------
+            #   Memory type
+            # ------------------------------------
+
+            if self.switch_memory.get_active():
+                path = self.parent.get_mednafen_memory_type(self.game)
+
+                if path.exists():
+                    data["paths"].append(
+                        (path, path.replace(self.game.filename, filename)))
+
+            # ------------------------------------
+            #   Database
+            # ------------------------------------
+
+            if self.switch_database.get_active():
+                data["database"] = True
+
+            return data
+
+        return None
 
 
     def check_filename(self, *args):
         """ Check filename in game folder to detect if a file already exists
         """
 
-        # Retrieve the new file name
-        filename = self.entry_name.get_text()
+        icon = None
+        status = True
 
-        # Retrieve the new file path
-        filepath = path_join(self.game.path[0], filename + self.game.extension)
+        # Retrieve specified name
+        name = self.entry_name.get_text().strip()
 
-        # Check if the new filename path not exists
-        if exists(filepath) or len(filename) == 0:
-            self.entry_name.set_icon_from_icon_name(
-                Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Error)
+        if len(name) > 0:
+            name += self.game.extension
 
-            self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
+            # Generate file path
+            filepath = self.game.filepath.parent.joinpath(name)
 
-        else:
-            self.entry_name.set_icon_from_icon_name(
-                Gtk.EntryIconPosition.SECONDARY, None)
+            # Cannot replace an existing file
+            if filepath.exists():
+                icon = Icons.Symbolic.ERROR
+                status = False
 
-            self.set_response_sensitive(Gtk.ResponseType.APPLY, True)
+        self.entry_name.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.SECONDARY, icon)
+        self.set_response_sensitive(
+            Gtk.ResponseType.APPLY, status)

@@ -18,9 +18,25 @@
 from gem.engine.api import GEM
 from gem.engine.utils import get_data
 
-from gem.ui import *
+from gem.engine.lib.configuration import Configuration
 
 from gem.ui.widgets.widgets import IconsGenerator
+
+# GObject
+try:
+    from gi import require_version
+
+    require_version("Gtk", "3.0")
+
+    from gi.repository import Gtk
+    from gi.repository import Gdk
+    from gi.repository import GLib
+    from gi.repository import Pango
+
+except ImportError as error:
+    from sys import exit
+
+    exit("Cannot found python3-gobject module: %s" % str(error))
 
 # System
 from time import sleep
@@ -34,22 +50,30 @@ from gettext import gettext as _
 
 class Splash(Gtk.Window):
 
-    def __init__(self, api):
+    def __init__(self, api, metadata):
         """ Constructor
 
         Parameters
         ----------
-        api : gem.api.GEM
+        api : gem.engine.api.GEM
             GEM API instance
+        metadata : gem.engine.lib.configuration.Configuration
+            GEM metadata informations
 
         Raises
         ------
         TypeError
-            if api type is not gem.api.GEM
+            if api type is not gem.engine.api.GEM
+            if metadata type is not gem.engine.lib.configuration.Configuration
         """
 
         if not type(api) is GEM:
-            raise TypeError("Wrong type for api, expected gem.api.GEM")
+            raise TypeError("Wrong type for api, expected " \
+                "gem.engine.api.GEM")
+
+        if not type(metadata) is Configuration:
+            raise TypeError("Wrong type for metadata, expected " \
+                "gem.engine.lib.configuration.Configuration")
 
         Gtk.Window.__init__(self)
 
@@ -71,6 +95,9 @@ class Splash(Gtk.Window):
 
         # Quick access to API logger
         self.logger = api.logger
+
+        # Metadata informations
+        self.__metadata = metadata
 
         # ------------------------------------
         #   Initialize icons
@@ -100,7 +127,7 @@ class Splash(Gtk.Window):
         #   Main window
         # ------------------------------------
 
-        self.set_title("Graphical Emulators Manager")
+        self.set_title(self.__metadata.get("metadata", "name", fallback=str()))
 
         self.set_modal(True)
         self.set_can_focus(True)
@@ -136,9 +163,13 @@ class Splash(Gtk.Window):
         self.label_splash.set_line_wrap_mode(Pango.WrapMode.WORD)
         self.label_splash.set_markup(
             "<span weight='bold' size='x-large'>%s - %s</span>\n<i>%s</i>" % (
-            GEM.Name, GEM.Version, GEM.CodeName))
+            self.__metadata.get("metadata", "name", fallback=str()),
+            self.__metadata.get("metadata", "version", fallback=str()),
+            self.__metadata.get("metadata", "code_name", fallback=str())))
 
-        self.image_splash.set_from_icon_name(GEM.Icon, Gtk.IconSize.DND)
+        self.image_splash.set_from_icon_name(
+            self.__metadata.get("metadata", "icon", fallback=str()),
+            Gtk.IconSize.DND)
         self.image_splash.set_pixel_size(256)
 
         # ------------------------------------
@@ -186,13 +217,13 @@ class Splash(Gtk.Window):
         #   Check migration
         # ------------------------------------
 
-        idle_add(self.api.check_database, self)
+        GLib.idle_add(self.api.check_database, self)
 
         # ------------------------------------
         #   Main loop
         # ------------------------------------
 
-        self.main_loop = MainLoop()
+        self.main_loop = GLib.MainLoop()
         self.main_loop.run()
 
 

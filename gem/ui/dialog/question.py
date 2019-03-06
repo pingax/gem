@@ -15,10 +15,22 @@
 # ------------------------------------------------------------------------------
 
 # GEM
-from gem.ui import *
-from gem.ui.data import *
-
+from gem.ui.data import Icons
 from gem.ui.widgets.window import CommonWindow
+
+# GObject
+try:
+    from gi import require_version
+
+    require_version("Gtk", "3.0")
+
+    from gi.repository import Gtk
+    from gi.repository import Pango
+
+except ImportError as error:
+    from sys import exit
+
+    exit("Cannot found python3-gobject module: %s" % str(error))
 
 # Translation
 from gettext import gettext as _
@@ -47,7 +59,7 @@ class QuestionDialog(CommonWindow):
             classic_theme = parent.use_classic_theme
 
         CommonWindow.__init__(
-            self, parent, title, Icons.Symbolic.Question, classic_theme)
+            self, parent, title, Icons.Symbolic.QUESTION, classic_theme)
 
         # ------------------------------------
         #   Variables

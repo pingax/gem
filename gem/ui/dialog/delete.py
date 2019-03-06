@@ -15,13 +15,26 @@
 # ------------------------------------------------------------------------------
 
 # GEM
-from gem.engine.utils import *
-
-from gem.ui import *
-from gem.ui.data import *
-
+from gem.ui.data import Icons
+from gem.ui.data import Folders
+from gem.ui.utils import replace_for_markup
 from gem.ui.widgets.window import CommonWindow
 from gem.ui.widgets.widgets import PreferencesItem
+
+# GObject
+try:
+    from gi import require_version
+
+    require_version("Gtk", "3.0")
+
+    from gi.repository import Gtk
+    from gi.repository import GdkPixbuf
+    from gi.repository import Pango
+
+except ImportError as error:
+    from sys import exit
+
+    exit("Cannot found python3-gobject module: %s" % str(error))
 
 # Translation
 from gettext import gettext as _
@@ -50,7 +63,7 @@ class DeleteDialog(CommonWindow):
             classic_theme = parent.use_classic_theme
 
         CommonWindow.__init__(self,
-            parent, _("Remove a game"), Icons.Symbolic.Delete, classic_theme)
+            parent, _("Remove a game"), Icons.Symbolic.DELETE, classic_theme)
 
         # ------------------------------------
         #   Variables
@@ -211,10 +224,10 @@ class DeleteDialog(CommonWindow):
         self.listbox_options.add(self.widget_screenshots)
 
         # Check extension and emulator for GBA game on mednafen
-        if self.game.extension.lower() == ".gba" and \
-            "mednafen" in self.emulator.binary and \
-            self.parent.get_mednafen_status():
-            self.listbox_options.add(self.widget_memory)
+        if self.game.extension == ".gba" and self.parent.get_mednafen_status():
+
+            if "mednafen" in str(self.emulator.binary):
+                self.listbox_options.add(self.widget_memory)
 
         self.scroll_options.add(self.listbox_options)
 
@@ -285,9 +298,9 @@ class DeleteDialog(CommonWindow):
         # ------------------------------------
 
         if self.switch_desktop.get_active():
-            if self.parent.check_desktop(self.game.filename):
+            if self.parent.check_desktop(self.game.filepath):
                 data["paths"].append(
-                    path_join(Folders.Apps, "%s.desktop" % self.game.filename))
+                    Folders.Apps.joinpath("%s.desktop" % self.game.filename))
 
         # ------------------------------------
         #   Cache
@@ -299,7 +312,7 @@ class DeleteDialog(CommonWindow):
                 path = self.parent.get_icon_from_cache(
                     "games", size, "%s.png" % self.game.id)
 
-                if exists(path):
+                if path.exists():
                     data["paths"].append(path)
 
         # ------------------------------------
@@ -309,7 +322,7 @@ class DeleteDialog(CommonWindow):
         if self.switch_memory.get_active():
             path = self.parent.get_mednafen_memory_type(self.game)
 
-            if exists(path):
+            if path.exists():
                 data["paths"].append(path)
 
         # ------------------------------------

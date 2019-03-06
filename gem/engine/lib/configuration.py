@@ -14,21 +14,11 @@
 #  MA 02110-1301, USA.
 # ------------------------------------------------------------------------------
 
-# ------------------------------------------------------------------------------
-#   Modules
-# ------------------------------------------------------------------------------
-
-# GEM
-from gem.engine.lib import *
+# Filesystem
+from pathlib import Path
 
 # System
-from sys import version_info
-
-# Configuration
-if(version_info[0] >= 3):
-    from configparser import ConfigParser
-else:
-    from ConfigParser import SafeConfigParser
+from configparser import ConfigParser
 
 # ------------------------------------------------------------------------------
 #   Class
@@ -41,15 +31,28 @@ class Configuration(ConfigParser):
 
         Parameters
         ----------
-        filepath : str
+        filepath : pathlib.Path
             Configuration file path
+
+        Raises
+        ------
+        TypeError
+            If filepath instance is not pathlib.Path
         """
+
+        if not isinstance(filepath, Path):
+            raise TypeError("Expected %s type for filepath, get %s" % (
+                "pathlib.Path", type(filepath)))
+
+        # ------------------------------------
+        #   Variables
+        # ------------------------------------
 
         ConfigParser.__init__(self, kwargs)
 
-        self.path = expanduser(filepath)
+        self.path = filepath.expanduser()
 
-        if exists(self.path):
+        if self.path.exists():
             self.read(self.path)
 
 
@@ -78,7 +81,7 @@ class Configuration(ConfigParser):
         """ Read again the configuration file if exists
         """
 
-        if exists(self.path):
+        if self.path.exists():
             self.read(self.path)
 
 
@@ -199,7 +202,7 @@ class Configuration(ConfigParser):
         content
         """
 
-        with open(self.path, 'w') as pipe:
+        with self.path.open('w') as pipe:
             self.write(pipe)
 
 
@@ -217,10 +220,10 @@ class Configuration(ConfigParser):
             If the configuration filepath not exists
         """
 
-        if not exists(expanduser(secondary_path)):
-            raise OSError(2, "Cannot find file", secondary_path)
+        if not secondary_path.exists():
+            raise OSError(2, "Cannot find file", str(secondary_path))
 
-        config = Configuration(expanduser(secondary_path))
+        config = Configuration(secondary_path)
 
         for section in config.sections():
 

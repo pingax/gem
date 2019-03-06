@@ -15,13 +15,24 @@
 # ------------------------------------------------------------------------------
 
 # GEM
-from gem.engine.utils import *
-
-from gem.ui import *
-from gem.ui.data import *
-from gem.ui.utils import *
-
+from gem.ui.data import Icons
+from gem.ui.utils import on_entry_clear
+from gem.ui.utils import replace_for_markup
 from gem.ui.widgets.window import CommonWindow
+
+# GObject
+try:
+    from gi import require_version
+
+    require_version("Gtk", "3.0")
+
+    from gi.repository import Gtk
+    from gi.repository import Pango
+
+except ImportError as error:
+    from sys import exit
+
+    exit("Cannot found python3-gobject module: %s" % str(error))
 
 # Translation
 from gettext import gettext as _
@@ -48,7 +59,7 @@ class RenameDialog(CommonWindow):
             classic_theme = parent.use_classic_theme
 
         CommonWindow.__init__(self,
-            parent, _("Rename a game"), Icons.Symbolic.Editor, classic_theme)
+            parent, _("Rename a game"), Icons.Symbolic.EDITOR, classic_theme)
 
         # ------------------------------------
         #   Variables
@@ -103,7 +114,7 @@ class RenameDialog(CommonWindow):
         # Properties
         self.entry_name.set_placeholder_text("%s…" % _("New name"))
         self.entry_name.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.Clear)
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.CLEAR)
 
         # ------------------------------------
         #   Integrate widgets
@@ -154,8 +165,5 @@ class RenameDialog(CommonWindow):
         """ Check the name value to update button sensitivity
         """
 
-        if len(self.entry_name.get_text()) == 0:
-            self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
-
-        else:
-            self.set_response_sensitive(Gtk.ResponseType.APPLY, True)
+        self.set_response_sensitive(
+            Gtk.ResponseType.APPLY, len(self.entry_name.get_text().strip()) > 0)

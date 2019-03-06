@@ -13,17 +13,3 @@
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #  MA 02110-1301, USA.
 # ------------------------------------------------------------------------------
-
-# GEM
-from gem.ui.dialog.cover import CoverDialog
-from gem.ui.dialog.editor import EditorDialog
-from gem.ui.dialog.delete import DeleteDialog
-from gem.ui.dialog.rename import RenameDialog
-from gem.ui.dialog.viewer import ViewerDialog
-from gem.ui.dialog.message import MessageDialog
-from gem.ui.dialog.question import QuestionDialog
-from gem.ui.dialog.mednafen import MednafenDialog
-from gem.ui.dialog.duplicate import DuplicateDialog
-from gem.ui.dialog.parameter import ParametersDialog
-from gem.ui.dialog.dndconsole import DnDConsoleDialog
-from gem.ui.dialog.maintenance import MaintenanceDialog

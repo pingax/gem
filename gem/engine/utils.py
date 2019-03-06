@@ -14,29 +14,17 @@
 #  MA 02110-1301, USA.
 # ------------------------------------------------------------------------------
 
-# ------------------------------------------------------------------------------
-#   Modules
-# ------------------------------------------------------------------------------
+# Datetime
+from datetime import timedelta
 
-# GEM
-from gem.engine import *
+# Filesystem
+from pathlib import Path
 
 # Regex
 from re import sub
 
-# Translation
-from gettext import gettext as _
-
-# ------------------------------------------------------------------------------
-#   Modules - Packages
-# ------------------------------------------------------------------------------
-
-try:
-    from pkg_resources import resource_filename
-    from pkg_resources import DistributionNotFound
-
-except ImportError as error:
-    sys_exit("Import error with python3-setuptools module: %s" % str(error))
+# System
+from os import environ
 
 # ------------------------------------------------------------------------------
 #   Methods
@@ -63,115 +51,26 @@ def get_data(*path, egg="gem"):
         Path
     """
 
-    path = expanduser(path_join(*path))
+    path = Path(*path).expanduser()
 
     try:
-        data = resource_filename(egg, path)
+        # Only available for Python >= 3.7
+        from importlib.resources import path as resource_filename
 
-        if exists(expanduser(data)):
-            return data
+        data = resource_filename(egg, str(path)).expanduser()
 
-        return path
+    except ImportError:
+        from pkg_resources import resource_filename
 
-    except DistributionNotFound as error:
-        return path
+        data = Path(resource_filename(egg, str(path))).expanduser()
 
-    except KeyError as error:
-        return path
+    except Exception:
+        data = path
 
-    return None
+    if data.exists():
+        return data
 
-
-def string_from_date(date_object):
-    """ Convert a datetime to a pretty string
-
-    Get a pretty string from the interval between NOW() and the wanted date
-
-    Parameters
-    ----------
-    date_object : datetime.datetime
-        Date to compare with NOW()
-
-    Returns
-    -------
-    str or None
-        Convert value
-    """
-
-    if date_object is None:
-        return None
-
-    days = (date.today() - date_object).days
-
-    if days == 0:
-        return _("Today")
-    elif days == 1:
-        return _("Yesterday")
-    elif days < 30:
-        return _("%d days ago") % int(days)
-
-    months = int(days / 30)
-
-    if months == 1:
-        return _("Last month")
-    elif months < 12:
-        return _("%d months ago") % int(months)
-
-    years = int(months / 12)
-
-    if years < 2:
-        return _("Last year")
-
-    return _("%d years ago") % int(years)
-
-
-def string_from_time(time_object):
-    """ Convert a time to a pretty string
-
-    Get a pretty string from the interval between NOW() and the wanted date
-
-    Parameters
-    ----------
-    time_object : datetime.datetime
-        Date to compare with NOW()
-
-    Returns
-    -------
-    str or None
-        Convert value
-    """
-
-    if time_object is None:
-        return None
-
-    hours, minutes, seconds = int(), int(), int()
-
-    if type(time_object) is timedelta:
-        hours, seconds = divmod(time_object.seconds, 3600)
-
-        if seconds > 0:
-            minutes, seconds = divmod(seconds, 60)
-
-        hours += time_object.days * 24
-
-    if hours == 0:
-        if minutes == 0:
-            if seconds == 0:
-                return str()
-            elif seconds == 1:
-                return _("1 second")
-
-            return _("%d seconds") % seconds
-
-        elif minutes == 1:
-            return _("1 minute")
-
-        return _("%d minutes") % minutes
-
-    elif hours == 1:
-        return _("1 hour")
-
-    return _("%d hours") % hours
+    return path
 
 
 def parse_timedelta(delta):
@@ -206,32 +105,6 @@ def parse_timedelta(delta):
     return "{:02d}:{:02d}:{:02d}".format(hours, minutes, seconds)
 
 
-def replace_for_markup(text):
-    """ Replace some characters in text for markup compatibility
-
-    Parameters
-    ----------
-    text : str
-        Text to parser
-
-    Returns
-    -------
-    str
-        Replaced text
-    """
-
-    characters = {
-        '&': "&amp;",
-        '<': "&lt;",
-        '>': "&gt;",
-    }
-
-    for key, value in characters.items():
-        text = text.replace(key, value)
-
-    return text
-
-
 def get_binary_path(binary):
     """ Get a list of available binary paths from $PATH variable
 
@@ -256,18 +129,19 @@ def get_binary_path(binary):
 
     available = list()
 
-    if len(binary) == 0:
+    if binary is None or len(str(binary)) == 0:
         return available
 
-    if exists(expanduser(binary)):
-        available.append(binary)
-        binary = basename(binary)
+    binary = Path(binary).expanduser()
+
+    if binary.exists():
+        available.append(binary.name)
 
     for path in set(environ["PATH"].split(':')):
-        binary_path = expanduser(path_join(path, binary))
+        binary_path = Path(path, binary)
 
-        if exists(binary_path) and not binary_path in available:
-            available.append(binary_path)
+        if binary_path.exists() and not binary_path.name in available:
+            available.append(str(binary_path))
 
     return available
 
