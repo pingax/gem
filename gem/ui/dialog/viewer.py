@@ -403,8 +403,8 @@ class ViewerDialog(CommonWindow):
             Timestamp at which the data was received
         """
 
-        if exists(self.current_path):
-            data.set_uris(["file://%s" % self.current_path])
+        if self.current_path is not None and self.current_path.exists():
+            data.set_uris(["file://%s" % str(self.current_path)])
 
 
     def change_screenshot(self, widget=None, event=None):
@@ -544,15 +544,15 @@ class ViewerDialog(CommonWindow):
         path = self.screenshots[self.index].expanduser()
 
         # Avoid to recreate a pixbuf for the same file
-        if not str(path) == self.current_path:
-            self.current_path = str(path)
+        if not str(path) == str(self.current_path):
+            self.current_path = path
 
             # Set headerbar subtitle with current screenshot path
-            self.set_subtitle(self.current_path)
+            self.set_subtitle(str(self.current_path))
 
             # Generate a Pixbuf from current screenshot
             self.current_pixbuf = GdkPixbuf.Pixbuf.new_from_file(
-                self.current_path)
+                str(self.current_path))
 
             self.current_pixbuf_size = (
                 self.current_pixbuf.get_width(),
