@@ -4085,11 +4085,11 @@ class MainWindow(Gtk.ApplicationWindow):
 
         about.set_transient_for(self)
 
-        about.set_program_name(GEM.Name)
-        about.set_version("%s (%s)" % (self.__version, GEM.CodeName))
-        about.set_comments(GEM.Description)
-        about.set_copyright(GEM.Copyleft)
-        about.set_website(GEM.Website)
+        about.set_program_name(Metadata.NAME)
+        about.set_version("%s (%s)" % (self.__version, Metadata.CODE_NAME))
+        about.set_comments(Metadata.DESCRIPTION)
+        about.set_copyright(Metadata.COPYLEFT)
+        about.set_website(Metadata.WEBSITE)
 
         about.set_logo_icon_name(Metadata.ICON)
 
