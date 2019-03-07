@@ -48,46 +48,50 @@ except ImportError as error:
 #   Class
 # ------------------------------------------------------------------------------
 
-class Documents:
-    Desktop     = "template.desktop"
+class Metadata:
+        """ Store application informations
+        """
 
 class Folders:
-    Apps        = Path(xdg_data_home, "applications").expanduser()
-    Cache       = Path(xdg_cache_home, "gem").expanduser()
-    Local       = Path(xdg_data_home, "gem").expanduser()
-    Config      = Path(xdg_config_home, "gem").expanduser()
+    """ Store application paths
+    """
+
+    APPLICATIONS = Path(xdg_data_home, "applications").expanduser()
+
+    class Default:
+        """ Store default application paths
+        """
+
+        CACHE = Path(xdg_cache_home).expanduser()
+        CONFIG = Path(xdg_config_home).expanduser()
+        LOCAL = Path(xdg_data_home).expanduser()
 
 class Icons:
+    """ Store icons name
+    """
+
     class Symbolic:
-        pass
+        """ Store symbolic icons name
+
+        Store icon symbolic version which are available in GNOME icons theme
+        gnome-icon-theme-symbolic
+        """
 
 class Columns:
-
-    Order = "favorite:multiplayer:finish:name:play:play_time:last_play:" \
-        "score:installed:flags"
+    """ Store games views informations
+    """
 
     class Key:
-        List            = "list"
-        Grid            = "grid"
+        """ Store view flags name
+        """
+
+        List = "list"
+        Grid = "grid"
 
     class List:
-        Favorite        = 0
-        Multiplayer     = 1
-        Finish          = 2
-        Name            = 3
-        Played          = 4
-        LastPlay        = 5
-        LastTimePlay    = 6
-        TimePlay        = 7
-        Score           = 8
-        Installed       = 9
-        Except          = 10
-        Snapshots       = 11
-        Save            = 12
-        Object          = 13
-        Thumbnail       = 14
+        """ Store treeview model column index
+        """
 
     class Grid:
-        Icon            = 0
-        Name            = 1
-        Object          = 2
+        """ Store grid model column index
+        """

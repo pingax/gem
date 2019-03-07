@@ -19,6 +19,7 @@ from gem.engine.api import GEM
 from gem.engine.lib.configuration import Configuration
 
 from gem.ui.data import Icons
+from gem.ui.data import Folders
 from gem.ui.utils import on_entry_clear
 from gem.ui.dialog.question import QuestionDialog
 from gem.ui.widgets.window import CommonWindow
@@ -199,7 +200,7 @@ class PreferencesWindow(CommonWindow):
         #   Initialize configuration files
         # ------------------------------------
 
-        self.config = Configuration(self.api.get_config("gem.conf"))
+        self.config = Configuration(Folders.CONFIG.joinpath("gem.conf"))
 
         # ------------------------------------
         #   Initialize logger

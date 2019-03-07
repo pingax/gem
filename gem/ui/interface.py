@@ -121,15 +121,13 @@ class MainWindow(Gtk.ApplicationWindow):
         "script-terminate": (GObject.SignalFlags.RUN_LAST, None, [object]),
     }
 
-    def __init__(self, api, metadata, cache):
+    def __init__(self, api, cache):
         """ Constructor
 
         Parameters
         ----------
         api : gem.engine.api.GEM
             GEM API instance
-        metadata : gem.engine.lib.configuration.Configuration
-            GEM metadata informations
         cache : pathlib.Path
             Cache folder path
 
@@ -143,10 +141,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         if not type(api) is GEM:
             raise TypeError("Wrong type for api, expected gem.engine.api.GEM")
-
-        if not type(metadata) is Configuration:
-            raise TypeError("Wrong type for metadata, expected " \
-                "gem.engine.lib.configuration.Configuration")
 
         if not isinstance(cache, Path):
             raise TypeError("Wrong type for cache, expected pathlib.Path")
@@ -163,9 +157,6 @@ class MainWindow(Gtk.ApplicationWindow):
         # Quick access to API logger
         self.logger = api.logger
 
-        # Metadata informations
-        self.__metadata = metadata
-
         # Cache folder
         self.__cache = cache
 
@@ -178,17 +169,11 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Generate a title from GEM informations
         self.title = "%s - %s (%s)" % (
-            self.__metadata.get("metadata", "name", fallback=str()),
-            self.__version,
-            self.__metadata.get("metadata", "code_name", fallback=str()))
+            Metadata.NAME, self.__version, Metadata.CODE_NAME)
 
         # Store thread id for game listing
         self.list_thread = int()
 
-        # Store normal icons with icon name as key
-        self.icons = dict()
-        # Store alternative icons with icon name as key
-        self.alternative = dict()
         # Store started notes with note file path as key
         self.notes = dict()
         # Store script threads with basename game file without extension as key
@@ -235,11 +220,6 @@ class MainWindow(Gtk.ApplicationWindow):
         # ------------------------------------
         #   Initialize icons
         # ------------------------------------
-
-        # Generate symbolic icons class
-        for key, value in self.__metadata.items("icons"):
-            setattr(Icons, key.upper(), value)
-            setattr(Icons.Symbolic, key.upper(), "%s-symbolic" % value)
 
         self.icons = IconsGenerator(
             savestate=Icons.FLOPPY,
@@ -318,8 +298,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.set_title(self.title)
 
-        self.set_icon_name(
-            self.__metadata.get("metadata", "icon", fallback=str()))
+        self.set_icon_name(Metadata.ICON)
         self.set_default_icon_name(Icons.GAMING)
 
         self.set_position(Gtk.WindowPosition.CENTER)
@@ -1198,7 +1177,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.scroll_games_grid.set_no_show_all(True)
 
         self.sorted_games_grid.set_sort_column_id(
-            Columns.Grid.Name, Gtk.SortType.ASCENDING)
+            Columns.Grid.NAME, Gtk.SortType.ASCENDING)
 
         self.iconview_games.set_model(self.sorted_games_grid)
         self.iconview_games.set_selection_mode(Gtk.SelectionMode.SINGLE)
@@ -1274,23 +1253,23 @@ class MainWindow(Gtk.ApplicationWindow):
         # Properties
         self.scroll_games_list.set_no_show_all(True)
 
-        self.sorted_games_list.set_sort_func(Columns.List.Favorite,
-            self.__on_sort_games, Columns.List.Favorite)
-        self.sorted_games_list.set_sort_func(Columns.List.Multiplayer,
-            self.__on_sort_games, Columns.List.Multiplayer)
-        self.sorted_games_list.set_sort_func(Columns.List.Finish,
-            self.__on_sort_games, Columns.List.Finish)
-        self.sorted_games_list.set_sort_func(Columns.List.LastPlay,
-            self.__on_sort_games, Columns.List.LastPlay)
-        self.sorted_games_list.set_sort_func(Columns.List.TimePlay,
-            self.__on_sort_games, Columns.List.TimePlay)
-        self.sorted_games_list.set_sort_func(Columns.List.Score,
-            self.__on_sort_games, Columns.List.Score)
-        self.sorted_games_list.set_sort_func(Columns.List.Installed,
-            self.__on_sort_games, Columns.List.Installed)
+        self.sorted_games_list.set_sort_func(Columns.List.FAVORITE,
+            self.__on_sort_games, Columns.List.FAVORITE)
+        self.sorted_games_list.set_sort_func(Columns.List.MULTIPLAYER,
+            self.__on_sort_games, Columns.List.MULTIPLAYER)
+        self.sorted_games_list.set_sort_func(Columns.List.FINISH,
+            self.__on_sort_games, Columns.List.FINISH)
+        self.sorted_games_list.set_sort_func(Columns.List.LAST_PLAY,
+            self.__on_sort_games, Columns.List.LAST_PLAY)
+        self.sorted_games_list.set_sort_func(Columns.List.TIME_PLAY,
+            self.__on_sort_games, Columns.List.TIME_PLAY)
+        self.sorted_games_list.set_sort_func(Columns.List.SCORE,
+            self.__on_sort_games, Columns.List.SCORE)
+        self.sorted_games_list.set_sort_func(Columns.List.INSTALLED,
+            self.__on_sort_games, Columns.List.INSTALLED)
 
         self.treeview_games.set_model(self.sorted_games_list)
-        self.treeview_games.set_search_column(Columns.List.Name)
+        self.treeview_games.set_search_column(Columns.List.NAME)
         self.treeview_games.set_headers_clickable(True)
         self.treeview_games.set_headers_visible(True)
         self.treeview_games.set_show_expanders(False)
@@ -1312,7 +1291,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.column_game_favorite.set_sizing(Gtk.TreeViewColumnSizing.FIXED)
         self.column_game_favorite.pack_start(
             self.cell_game_favorite, False)
-        self.column_game_favorite.set_sort_column_id(Columns.List.Favorite)
+        self.column_game_favorite.set_sort_column_id(Columns.List.FAVORITE)
 
         self.column_game_multiplayer.set_resizable(False)
         self.column_game_multiplayer.set_reorderable(True)
@@ -1320,34 +1299,34 @@ class MainWindow(Gtk.ApplicationWindow):
         self.column_game_multiplayer.pack_start(
             self.cell_game_multiplayer, False)
         self.column_game_multiplayer.set_sort_column_id(
-            Columns.List.Multiplayer)
+            Columns.List.MULTIPLAYER)
 
         self.column_game_finish.set_resizable(False)
         self.column_game_finish.set_reorderable(True)
         self.column_game_finish.set_sizing(Gtk.TreeViewColumnSizing.FIXED)
         self.column_game_finish.pack_start(
             self.cell_game_finish, False)
-        self.column_game_finish.set_sort_column_id(Columns.List.Finish)
+        self.column_game_finish.set_sort_column_id(Columns.List.FINISH)
 
         self.column_game_name.set_expand(True)
         self.column_game_name.set_resizable(True)
         self.column_game_name.set_reorderable(True)
         self.column_game_name.set_min_width(100)
         self.column_game_name.set_fixed_width(300)
-        self.column_game_name.set_sort_column_id(Columns.List.Name)
+        self.column_game_name.set_sort_column_id(Columns.List.NAME)
         self.column_game_name.pack_start(
             self.cell_game_thumbnail, False)
         self.column_game_name.pack_start(
             self.cell_game_name, True)
 
         self.column_game_play.set_reorderable(True)
-        self.column_game_play.set_sort_column_id(Columns.List.Played)
+        self.column_game_play.set_sort_column_id(Columns.List.PLAYED)
         self.column_game_play.set_alignment(.5)
         self.column_game_play.pack_start(
             self.cell_game_play, False)
 
         self.column_game_last_play.set_reorderable(True)
-        self.column_game_last_play.set_sort_column_id(Columns.List.LastPlay)
+        self.column_game_last_play.set_sort_column_id(Columns.List.LAST_PLAY)
         self.column_game_last_play.set_alignment(.5)
         self.column_game_last_play.pack_start(
             self.cell_game_last_play, False)
@@ -1355,13 +1334,13 @@ class MainWindow(Gtk.ApplicationWindow):
             self.cell_game_last_play_time, False)
 
         self.column_game_play_time.set_reorderable(True)
-        self.column_game_play_time.set_sort_column_id(Columns.List.TimePlay)
+        self.column_game_play_time.set_sort_column_id(Columns.List.TIME_PLAY)
         self.column_game_play_time.set_alignment(.5)
         self.column_game_play_time.pack_start(
             self.cell_game_play_time, False)
 
         self.column_game_score.set_reorderable(True)
-        self.column_game_score.set_sort_column_id(Columns.List.Score)
+        self.column_game_score.set_sort_column_id(Columns.List.SCORE)
         self.column_game_score.set_alignment(.5)
         self.column_game_score.pack_start(
             self.cell_game_score_first, False)
@@ -1375,7 +1354,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.cell_game_score_fifth, False)
 
         self.column_game_installed.set_reorderable(True)
-        self.column_game_installed.set_sort_column_id(Columns.List.Installed)
+        self.column_game_installed.set_sort_column_id(Columns.List.INSTALLED)
         self.column_game_installed.set_alignment(.5)
         self.column_game_installed.pack_start(
             self.cell_game_installed, False)
@@ -1390,31 +1369,31 @@ class MainWindow(Gtk.ApplicationWindow):
             self.cell_game_save, False)
 
         self.column_game_favorite.add_attribute(
-            self.cell_game_favorite, "pixbuf", Columns.List.Favorite)
+            self.cell_game_favorite, "pixbuf", Columns.List.FAVORITE)
         self.column_game_multiplayer.add_attribute(
-            self.cell_game_multiplayer, "pixbuf", Columns.List.Multiplayer)
+            self.cell_game_multiplayer, "pixbuf", Columns.List.MULTIPLAYER)
         self.column_game_finish.add_attribute(
-            self.cell_game_finish, "pixbuf", Columns.List.Finish)
+            self.cell_game_finish, "pixbuf", Columns.List.FINISH)
         self.column_game_name.add_attribute(
-            self.cell_game_name, "text", Columns.List.Name)
+            self.cell_game_name, "text", Columns.List.NAME)
         self.column_game_name.add_attribute(
-            self.cell_game_thumbnail, "pixbuf", Columns.List.Thumbnail)
+            self.cell_game_thumbnail, "pixbuf", Columns.List.THUMBNAIL)
         self.column_game_play.add_attribute(
-            self.cell_game_play, "text", Columns.List.Played)
+            self.cell_game_play, "text", Columns.List.PLAYED)
         self.column_game_last_play.add_attribute(
-            self.cell_game_last_play, "text", Columns.List.LastPlay)
+            self.cell_game_last_play, "text", Columns.List.LAST_PLAY)
         self.column_game_last_play.add_attribute(
-            self.cell_game_last_play_time, "text", Columns.List.LastTimePlay)
+            self.cell_game_last_play_time, "text", Columns.List.LAST_TIME_PLAY)
         self.column_game_play_time.add_attribute(
-            self.cell_game_play_time, "text", Columns.List.TimePlay)
+            self.cell_game_play_time, "text", Columns.List.TIME_PLAY)
         self.column_game_installed.add_attribute(
-            self.cell_game_installed, "text", Columns.List.Installed)
+            self.cell_game_installed, "text", Columns.List.INSTALLED)
         self.column_game_flags.add_attribute(
-            self.cell_game_except, "pixbuf", Columns.List.Except)
+            self.cell_game_except, "pixbuf", Columns.List.PARAMETER)
         self.column_game_flags.add_attribute(
-            self.cell_game_snapshots, "pixbuf", Columns.List.Snapshots)
+            self.cell_game_snapshots, "pixbuf", Columns.List.SCREENSHOT)
         self.column_game_flags.add_attribute(
-            self.cell_game_save, "pixbuf", Columns.List.Save)
+            self.cell_game_save, "pixbuf", Columns.List.SAVESTATE)
 
         self.column_game_score.set_cell_data_func(
             self.cell_game_score_first, self.__on_append_game)
@@ -2927,7 +2906,7 @@ class MainWindow(Gtk.ApplicationWindow):
         # ------------------------------------
 
         custom_order = deepcopy(self.columns_order)
-        original_order = Columns.Order.split(':')
+        original_order = Columns.ORDER.split(':')
 
         # Avoid to check custom_order
         if not custom_order == original_order:
@@ -2949,14 +2928,14 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Treeview columns sorting
         # ------------------------------------
 
-        column, order = (Columns.List.Name, Gtk.SortType.ASCENDING)
+        column, order = (Columns.List.NAME, Gtk.SortType.ASCENDING)
 
         if self.load_sort_column_at_startup:
-            column = getattr(Columns.List, self.load_last_column, None)
+            column = getattr(Columns.List, self.load_last_column.upper(), None)
 
             # Cannot found a column, use the default one
             if column is None:
-                column = Columns.List.Name
+                column = Columns.List.NAME
 
             if self.load_sort_column_order == "desc":
                 order = Gtk.SortType.DESCENDING
@@ -3220,7 +3199,7 @@ class MainWindow(Gtk.ApplicationWindow):
         """
 
         if getattr(self, "config", None) is None:
-            self.config = Configuration(self.api.get_config("gem.conf"))
+            self.config = Configuration(Folders.CONFIG.joinpath("gem.conf"))
 
             # Get missing keys from config/gem.conf
             self.config.add_missing_data(get_data("config", "gem.conf"))
@@ -3244,7 +3223,7 @@ class MainWindow(Gtk.ApplicationWindow):
             "gem", "games_view_mode", fallback=Columns.Key.List)
 
         self.columns_order = self.config.get(
-            "columns", "order", fallback=Columns.Order).split(':')
+            "columns", "order", fallback=Columns.ORDER).split(':')
 
         self.load_last_column = self.config.get(
             "gem", "last_sort_column", fallback="Name")
@@ -3598,10 +3577,10 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Get game object from treeview
         if model == self.model_games_list:
-            game = model.get_value(row, Columns.List.Object)
+            game = model.get_value(row, Columns.List.OBJECT)
 
         elif model == self.model_games_grid:
-            game = model.get_value(row, Columns.Grid.Object)
+            game = model.get_value(row, Columns.Grid.OBJECT)
 
         try:
             text = self.entry_toolbar_filters.get_text()
@@ -4112,8 +4091,7 @@ class MainWindow(Gtk.ApplicationWindow):
         about.set_copyright(GEM.Copyleft)
         about.set_website(GEM.Website)
 
-        about.set_logo_icon_name(
-            self.__metadata.get("metadata", "icon", fallback=str()))
+        about.set_logo_icon_name(Metadata.ICON)
 
         about.set_authors([
             "Lubert Aurélien (PacMiam)" ])
@@ -4224,7 +4202,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 # ----------------------------------------
 
                 if len(emulator.get_screenshots(game)) == 0:
-                    self.set_game_data(Columns.List.Snapshots,
+                    self.set_game_data(Columns.List.SCREENSHOT,
                         self.icons.get_translucent("screenshot"), game.filename)
 
 
@@ -4255,7 +4233,7 @@ class MainWindow(Gtk.ApplicationWindow):
         This function show the gem log content in a non-editable dialog
         """
 
-        path = self.api.get_local("gem.log")
+        path = Folders.LOCAL.joinpath("gem.log")
 
         if path.exists():
             try:
@@ -4291,7 +4269,7 @@ class MainWindow(Gtk.ApplicationWindow):
         game = self.selection["game"]
 
         if game is not None:
-            path = self.api.get_local("notes", game.id + ".txt")
+            path = Folders.LOCAL.joinpath("notes", game.id + ".txt")
 
             if path is not None and not str(path) in self.notes.keys():
                 try:
@@ -4485,10 +4463,14 @@ class MainWindow(Gtk.ApplicationWindow):
                 #   Update console row
                 # ----------------------------------------
 
+                status = False
+
                 self.__current_menu_row.console.emulator = emulator
 
-                self.item_consoles_config.set_sensitive(
-                    emulator is not None and emulator.configuration.exists())
+                if emulator is not None and emulator.configuration is not None:
+                    status = emulator.configuration.exists()
+
+                self.item_consoles_config.set_sensitive(status)
 
                 # ----------------------------------------
                 #   Reload games list
@@ -5023,42 +5005,42 @@ class MainWindow(Gtk.ApplicationWindow):
             reverse = order == Gtk.SortType.DESCENDING
 
             # Name
-            if column == Columns.List.Name:
+            if column == Columns.List.NAME:
                 games.sort(key=lambda game: game.name.lower().replace(' ', ''),
                     reverse=reverse)
 
             # Favorite
-            elif column == Columns.List.Favorite:
+            elif column == Columns.List.FAVORITE:
                 games.sort(key=lambda game: game.favorite, reverse=reverse)
 
             # Multiplayer
-            elif column == Columns.List.Multiplayer:
+            elif column == Columns.List.MULTIPLAYER:
                 key = lambda game: game.multiplayer
                 games.sort(key=lambda game: game.multiplayer, reverse=reverse)
 
             # Finish
-            elif column == Columns.List.Finish:
+            elif column == Columns.List.FINISH:
                 games.sort(key=lambda game: game.finish, reverse=reverse)
 
             # Played
-            elif column == Columns.List.Played:
+            elif column == Columns.List.PLAYED:
                 games.sort(key=lambda game: game.played, reverse=reverse)
 
             # Last play
-            elif column == Columns.List.LastPlay:
+            elif column == Columns.List.LAST_PLAY:
                 games.sort(
                     key=lambda game: game.last_launch_date, reverse=reverse)
 
             # Play time
-            elif column == Columns.List.TimePlay:
+            elif column == Columns.List.TIME_PLAY:
                 games.sort(key=lambda game: game.play_time, reverse=reverse)
 
             # Score
-            elif column == Columns.List.Score:
+            elif column == Columns.List.SCORE:
                 games.sort(key=lambda game: game.score, reverse=reverse)
 
             # Installed
-            elif column == Columns.List.Installed:
+            elif column == Columns.List.INSTALLED:
                 games.sort(key=lambda game: game.installed, reverse=reverse)
 
             # ------------------------------------
@@ -5120,7 +5102,7 @@ class MainWindow(Gtk.ApplicationWindow):
                         "games", 96, game.id, game.cover)
 
                     if icon is not None:
-                        row_data[Columns.Grid.Icon] = icon
+                        row_data[Columns.Grid.THUMBNAIL] = icon
 
                     row_grid = self.model_games_grid.append(row_data)
 
@@ -5147,47 +5129,47 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     # Favorite
                     if game.favorite:
-                        row_data[Columns.List.Favorite] = \
+                        row_data[Columns.List.FAVORITE] = \
                             self.icons.get("favorite")
 
                     # Multiplayer
                     if game.multiplayer:
-                        row_data[Columns.List.Multiplayer] = \
+                        row_data[Columns.List.MULTIPLAYER] = \
                             self.icons.get("multiplayer")
 
                     # Finish
                     if game.finish:
-                        row_data[Columns.List.Finish] = \
+                        row_data[Columns.List.FINISH] = \
                             self.icons.get("finish")
 
                     # Last launch date
                     if not game.last_launch_date.strftime("%d%m%y") == "010101":
-                        row_data[Columns.List.LastPlay] = \
+                        row_data[Columns.List.LAST_PLAY] = \
                             string_from_date(game.last_launch_date)
 
                     # Last launch time
                     if not game.last_launch_time == timedelta():
-                        row_data[Columns.List.LastTimePlay] = \
+                        row_data[Columns.List.LAST_TIME_PLAY] = \
                             string_from_time(game.last_launch_time)
 
                     # Play time
                     if not game.play_time == timedelta():
-                        row_data[Columns.List.TimePlay] = \
+                        row_data[Columns.List.TIME_PLAY] = \
                             string_from_time(game.play_time)
 
                     # Parameters
                     if game.default is not None:
-                        row_data[Columns.List.Except] = \
+                        row_data[Columns.List.PARAMETER] = \
                             self.icons.get("parameter")
 
                     elif game.emulator is not None:
                         if not game.emulator.name == console.emulator.name:
-                            row_data[Columns.List.Except] = \
+                            row_data[Columns.List.PARAMETER] = \
                                 self.icons.get("parameter")
 
                     # Installed time
                     if game.installed is not None:
-                        row_data[Columns.List.Installed] = \
+                        row_data[Columns.List.INSTALLED] = \
                             string_from_date(game.installed)
 
                     # Medias
@@ -5195,12 +5177,12 @@ class MainWindow(Gtk.ApplicationWindow):
 
                         # Snap
                         if len(game.emulator.get_screenshots(game)) > 0:
-                            row_data[Columns.List.Snapshots] = \
+                            row_data[Columns.List.SCREENSHOT] = \
                                 self.icons.get("screenshot")
 
                         # Save state
                         if len(game.emulator.get_savestates(game)) > 0:
-                            row_data[Columns.List.Save] = \
+                            row_data[Columns.List.SAVESTATE] = \
                                 self.icons.get("savestate")
 
                     # Thumbnail icon
@@ -5208,7 +5190,7 @@ class MainWindow(Gtk.ApplicationWindow):
                         "games", 22, game.id, game.cover)
 
                     if icon is not None:
-                        row_data[Columns.List.Thumbnail] = icon
+                        row_data[Columns.List.THUMBNAIL] = icon
 
                     row_list = self.model_games_list.append(row_data)
 
@@ -5271,7 +5253,7 @@ class MainWindow(Gtk.ApplicationWindow):
         """
 
         if column.get_visible():
-            score = model.get_value(treeiter, Columns.List.Score)
+            score = model.get_value(treeiter, Columns.List.SCORE)
 
             for widget in self.__rating_score:
 
@@ -5365,9 +5347,9 @@ class MainWindow(Gtk.ApplicationWindow):
         # Get game data
         if type(treeiter) is Gtk.TreeIter:
 
-            column_id = Columns.List.Object
+            column_id = Columns.List.OBJECT
             if type(treeview) is Gtk.IconView:
-                column_id = Columns.Grid.Object
+                column_id = Columns.Grid.OBJECT
 
             game = model.get_value(treeiter, column_id)
 
@@ -5557,9 +5539,9 @@ class MainWindow(Gtk.ApplicationWindow):
                 model = treeview.get_model()
                 treeiter = model.get_iter(selection[0])
 
-                column_id = Columns.Grid.Object
+                column_id = Columns.Grid.OBJECT
                 if treeview == self.treeview_games:
-                    column_id = Columns.List.Object
+                    column_id = Columns.List.OBJECT
 
                 game = model.get_value(treeiter, column_id)
 
@@ -5690,49 +5672,49 @@ class MainWindow(Gtk.ApplicationWindow):
 
         order = Gtk.SortType.ASCENDING
 
-        data1 = model.get_value(row1, Columns.List.Object)
-        data2 = model.get_value(row2, Columns.List.Object)
+        data1 = model.get_value(row1, Columns.List.OBJECT)
+        data2 = model.get_value(row2, Columns.List.OBJECT)
 
         # Favorite
-        if column == Columns.List.Favorite:
+        if column == Columns.List.FAVORITE:
             first = data1.favorite
             second = data2.favorite
 
             order = self.column_game_favorite.get_sort_order()
 
         # Multiplayer
-        elif column == Columns.List.Multiplayer:
+        elif column == Columns.List.MULTIPLAYER:
             first = data1.multiplayer
             second = data2.multiplayer
 
             order = self.column_game_multiplayer.get_sort_order()
 
         # Finish
-        elif column == Columns.List.Finish:
+        elif column == Columns.List.FINISH:
             first = data1.finish
             second = data2.finish
 
             order = self.column_game_finish.get_sort_order()
 
         # Last play
-        elif column == Columns.List.LastPlay:
+        elif column == Columns.List.LAST_PLAY:
             first = data1.last_launch_date
             second = data2.last_launch_date
 
         # Play time
-        elif column == Columns.List.TimePlay:
+        elif column == Columns.List.TIME_PLAY:
             first = data1.play_time
             second = data2.play_time
 
         # Score
-        elif column == Columns.List.Score:
+        elif column == Columns.List.SCORE:
             first = data1.score
             second = data2.score
 
             order = self.column_game_score.get_sort_order()
 
         # Installed
-        elif column == Columns.List.Installed:
+        elif column == Columns.List.INSTALLED:
             first = data1.installed
             second = data2.installed
 
@@ -5865,7 +5847,7 @@ class MainWindow(Gtk.ApplicationWindow):
             model, treeiter = self.treeview_games.get_selection().get_selected()
 
             if treeiter is not None:
-                treeview_name = model.get_value(treeiter, Columns.List.Name)
+                treeview_name = model.get_value(treeiter, Columns.List.NAME)
 
                 if not treeview_name == name:
                     self.treeview_games.get_selection().unselect_iter(treeiter)
@@ -6008,7 +5990,7 @@ class MainWindow(Gtk.ApplicationWindow):
             Game object
         """
 
-        path = self.api.get_local("ongamestarted")
+        path = Folders.LOCAL.joinpath("ongamestarted")
 
         if path.exists() and access(path, X_OK):
             thread = ScriptThread(self, path, game)
@@ -6072,40 +6054,40 @@ class MainWindow(Gtk.ApplicationWindow):
             self.api.update_game(game)
 
             # Played
-            self.set_game_data(Columns.List.Played, game.played, game.filename)
+            self.set_game_data(Columns.List.PLAYED, game.played, game.filename)
 
             # Last played
-            self.set_game_data(Columns.List.LastPlay,
+            self.set_game_data(Columns.List.LAST_PLAY,
                 string_from_date(game.last_launch_date), game.filename)
 
             # Last time played
-            self.set_game_data(Columns.List.LastTimePlay,
+            self.set_game_data(Columns.List.LAST_TIME_PLAY,
                 string_from_time(game.last_launch_time), game.filename)
 
             # Play time
-            self.set_game_data(Columns.List.TimePlay,
+            self.set_game_data(Columns.List.TIME_PLAY,
                 string_from_time(game.play_time), game.filename)
 
             # Snaps
             if game.emulator is not None and \
                 len(game.emulator.get_screenshots(game)) > 0:
-                self.set_game_data(Columns.List.Snapshots,
+                self.set_game_data(Columns.List.SCREENSHOT,
                     self.icons.get("screenshot"), game.filename)
                 self.button_toolbar_screenshots.set_sensitive(True)
                 self.item_menubar_game_screenshots.set_sensitive(True)
 
             else:
-                self.set_game_data(Columns.List.Snapshots,
+                self.set_game_data(Columns.List.SCREENSHOT,
                     self.icons.get_translucent("screenshot"), game.filename)
 
             # Save state
             if game.emulator is not None and \
                 len(game.emulator.get_savestates(game)) > 0:
-                self.set_game_data(Columns.List.Save,
+                self.set_game_data(Columns.List.SAVESTATE,
                     self.icons.get("savestate"), game.filename)
 
             else:
-                self.set_game_data(Columns.List.Save,
+                self.set_game_data(Columns.List.SAVESTATE,
                     self.icons.get_translucent("savestate"), game.filename)
 
             self.set_informations()
@@ -6167,7 +6149,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
             del self.scripts[game.filename]
 
-        path = self.api.get_local("ongamestopped")
+        path = Folders.LOCAL.joinpath("ongamestopped")
 
         if path.exists() and access(path, X_OK):
             thread = ScriptThread(self, path, game)
@@ -6218,13 +6200,13 @@ class MainWindow(Gtk.ApplicationWindow):
                         self.game_path[game.filename][1])
 
                     # Update game name
-                    self.model_games_list[treepath][Columns.List.Name] = str(
+                    self.model_games_list[treepath][Columns.List.NAME] = str(
                         new_name)
-                    self.model_games_list[treepath][Columns.List.Object] = game
+                    self.model_games_list[treepath][Columns.List.OBJECT] = game
 
-                    self.model_games_grid[gridpath][Columns.Grid.Name] = str(
+                    self.model_games_grid[gridpath][Columns.Grid.NAME] = str(
                         new_name)
-                    self.model_games_grid[gridpath][Columns.Grid.Object] = game
+                    self.model_games_grid[gridpath][Columns.Grid.OBJECT] = game
 
                     # Update game from database
                     self.api.update_game(game)
@@ -6288,17 +6270,17 @@ class MainWindow(Gtk.ApplicationWindow):
                         # Clean game from database
                         if data["database"]:
                             game_data = {
-                                Columns.List.Favorite: \
+                                Columns.List.FAVORITE: \
                                     self.icons.get_translucent("favorite"),
-                                Columns.List.Name: game.filename,
-                                Columns.List.Played: None,
-                                Columns.List.LastPlay: None,
-                                Columns.List.TimePlay: None,
-                                Columns.List.LastTimePlay: None,
-                                Columns.List.Score: 0,
-                                Columns.List.Except: \
+                                Columns.List.NAME: game.filename,
+                                Columns.List.PLAYED: None,
+                                Columns.List.LAST_PLAY: None,
+                                Columns.List.TIME_PLAY: None,
+                                Columns.List.LAST_TIME_PLAY: None,
+                                Columns.List.SCORE: 0,
+                                Columns.List.PARAMETER: \
                                     self.icons.get_translucent("parameter"),
-                                Columns.List.Multiplayer: \
+                                Columns.List.MULTIPLAYER: \
                                     self.icons.get_translucent("multiplayer"),
                             }
 
@@ -6571,10 +6553,10 @@ class MainWindow(Gtk.ApplicationWindow):
                     custom = True
 
                 if custom:
-                    self.set_game_data(Columns.List.Except,
+                    self.set_game_data(Columns.List.PARAMETER,
                         self.icons.get("parameter"), game.filename)
                 else:
-                    self.set_game_data(Columns.List.Except,
+                    self.set_game_data(Columns.List.PARAMETER,
                         self.icons.get_translucent("parameter"), game.filename)
 
                 # ----------------------------------------
@@ -6587,14 +6569,14 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 # Screenshots
                 if len(new_emulator.get_screenshots(game)) > 0:
-                    self.set_game_data(Columns.List.Snapshots,
+                    self.set_game_data(Columns.List.SCREENSHOT,
                         self.icons.get("screenshot"), game.filename)
 
                     self.button_toolbar_screenshots.set_sensitive(True)
                     self.item_menubar_game_screenshots.set_sensitive(True)
 
                 else:
-                    self.set_game_data(Columns.List.Snapshots,
+                    self.set_game_data(Columns.List.SCREENSHOT,
                         self.icons.get_translucent("screenshot"), game.filename)
 
                     self.button_toolbar_screenshots.set_sensitive(False)
@@ -6602,11 +6584,11 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 # Savestates
                 if len(new_emulator.get_savestates(game)) > 0:
-                    self.set_game_data(Columns.List.Save,
+                    self.set_game_data(Columns.List.SAVESTATE,
                         self.icons.get("savestate"), game.filename)
 
                 else:
-                    self.set_game_data(Columns.List.Save,
+                    self.set_game_data(Columns.List.SAVESTATE,
                         self.icons.get_translucent("savestate"), game.filename)
 
                 self.set_informations()
@@ -6737,12 +6719,12 @@ class MainWindow(Gtk.ApplicationWindow):
                 game.favorite = False
 
             self.model_games_list.set_value(
-                treepath, Columns.List.Favorite, icon)
+                treepath, Columns.List.FAVORITE, icon)
             self.model_games_list.set_value(
-                treepath, Columns.List.Object, game)
+                treepath, Columns.List.OBJECT, game)
 
             self.model_games_grid.set_value(
-                gridpath, Columns.Grid.Object, game)
+                gridpath, Columns.Grid.OBJECT, game)
 
             # Update game from database
             self.api.update_game(game)
@@ -6790,12 +6772,12 @@ class MainWindow(Gtk.ApplicationWindow):
                 game.multiplayer = False
 
             self.model_games_list.set_value(
-                treepath, Columns.List.Multiplayer, icon)
+                treepath, Columns.List.MULTIPLAYER, icon)
             self.model_games_list.set_value(
-                treepath, Columns.List.Object, game)
+                treepath, Columns.List.OBJECT, game)
 
             self.model_games_grid.set_value(
-                gridpath, Columns.Grid.Object, game)
+                gridpath, Columns.Grid.OBJECT, game)
 
             # Update game from database
             self.api.update_game(game)
@@ -6843,12 +6825,12 @@ class MainWindow(Gtk.ApplicationWindow):
                 game.finish = False
 
             self.model_games_list.set_value(
-                treepath, Columns.List.Finish, icon)
+                treepath, Columns.List.FINISH, icon)
             self.model_games_list.set_value(
-                treepath, Columns.List.Object, game)
+                treepath, Columns.List.OBJECT, game)
 
             self.model_games_grid.set_value(
-                gridpath, Columns.Grid.Object, game)
+                gridpath, Columns.Grid.OBJECT, game)
 
             # Update game from database
             self.api.update_game(game)
@@ -6907,12 +6889,12 @@ class MainWindow(Gtk.ApplicationWindow):
             row, treepath, gridpath = self.game_path[game.filename]
 
             self.model_games_list.set_value(
-                treepath, Columns.List.Score, game.score)
+                treepath, Columns.List.SCORE, game.score)
             self.model_games_list.set_value(
-                treepath, Columns.List.Object, game)
+                treepath, Columns.List.OBJECT, game)
 
             self.model_games_grid.set_value(
-                gridpath, Columns.Grid.Object, game)
+                gridpath, Columns.Grid.OBJECT, game)
 
             self.api.update_game(game)
 
@@ -7040,10 +7022,10 @@ class MainWindow(Gtk.ApplicationWindow):
                             remove(thumbnail_cache_path)
 
                     self.model_games_grid.set_value(
-                        treeiter[2], Columns.Grid.Icon, large)
+                        treeiter[2], Columns.Grid.THUMBNAIL, large)
 
                     self.model_games_list.set_value(
-                        treeiter[1], Columns.List.Thumbnail, thumbnail)
+                        treeiter[1], Columns.List.THUMBNAIL, thumbnail)
 
                     # Reset tooltip pixbuf
                     self.__current_tooltip_pixbuf = None
@@ -7082,8 +7064,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 icon = console.icon
                 if not icon.exists():
-                    icon = self.api.get_local(
-                        "icons", "consoles", '%s.png' % str(icon))
+                    icon = Folders.LOCAL.joinpath("icons", '%s.png' % str(icon))
 
                 values = {
                     "%name%": game.name,
@@ -7100,18 +7081,19 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 try:
                     # Read default template
-                    template = get_data("config", Documents.Desktop).read_text()
+                    template = get_data(
+                        "config", "template.desktop").read_text()
 
                     # Replace custom variables
                     for key, value in values.items():
                         template = template.replace(key, str(value))
 
                     # Check ~/.local/share/applications
-                    if not Folders.Apps.exists():
-                        Folders.Apps.mkdir(mode=0o755, parents=True)
+                    if not Folders.APPLICATIONS.exists():
+                        Folders.APPLICATIONS.mkdir(mode=0o755, parents=True)
 
                     # Write the new desktop file
-                    Folders.Apps.joinpath(name).write_text(template)
+                    Folders.APPLICATIONS.joinpath(name).write_text(template)
 
                     self.set_message(_("Generate menu entry"),
                         _("%s was generated successfully")  % name,
@@ -7570,7 +7552,7 @@ class MainWindow(Gtk.ApplicationWindow):
             ~/.local/share/applications/
         """
 
-        return Folders.Apps.joinpath("%s.desktop" % path.stem).exists()
+        return Folders.APPLICATIONS.joinpath("%s.desktop" % path.stem).exists()
 
 
     def check_log(self):
@@ -7585,7 +7567,7 @@ class MainWindow(Gtk.ApplicationWindow):
         game = self.selection["game"]
 
         if game is not None:
-            log_path = self.api.get_local(game.log)
+            log_path = Folders.LOCAL.joinpath(game.log)
 
             if log_path.exists():
                 return log_path
@@ -7643,7 +7625,7 @@ class MainWindow(Gtk.ApplicationWindow):
             Application version
         """
 
-        version = self.__metadata.get("metadata", "version", fallback=str())
+        version = Metadata.VERSION
 
         if self.api.debug:
 
@@ -7737,7 +7719,7 @@ class MainWindow(Gtk.ApplicationWindow):
             if not path.exists():
 
                 if key == "consoles":
-                    collection_path = self.api.get_local(
+                    collection_path = Folders.LOCAL.joinpath(
                         "icons", "%s.png" % path)
 
                     # Generate a new cache icon

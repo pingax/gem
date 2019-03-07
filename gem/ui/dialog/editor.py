@@ -691,7 +691,7 @@ class EditorDialog(CommonWindow):
         if dialog.run() == Gtk.ResponseType.APPLY:
             filename = dialog.file_selector.get_filename()
 
-            if len(filename) > 0:
+            if filename is not None and len(filename) > 0:
                 path = Path(filename).expanduser()
 
                 if path.exists():
@@ -1002,10 +1002,10 @@ class ImportDialog(CommonWindow):
 
         status = False
 
-        name = self.file_selector.get_filename().strip()
+        name = self.file_selector.get_filename()
 
-        if len(name) > 0:
-            path = Path(name).expanduser()
+        if name is not None and len(name.strip()) > 0:
+            path = Path(name.strip()).expanduser()
 
             try:
                 mimetype = magic_from_file(path, mime=True)

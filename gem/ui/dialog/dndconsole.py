@@ -16,6 +16,7 @@
 
 # GEM
 from gem.ui.data import Icons
+from gem.ui.data import Folders
 from gem.ui.widgets.window import CommonWindow
 
 # GObject
@@ -265,7 +266,7 @@ class DnDConsoleDialog(CommonWindow):
             icon = console.icon
 
             if not icon.exists():
-                icon = self.api.get_local("icons", "%s.png" % icon)
+                icon = Folders.LOCAL.joinpath("icons", "%s.png" % icon)
 
             # Get console icon
             icon = icon_from_data(icon, self.parent.empty)

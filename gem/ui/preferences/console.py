@@ -23,6 +23,7 @@ from pathlib import Path
 from gem.engine.utils import generate_identifier
 
 from gem.ui.data import Icons
+from gem.ui.data import Folders
 from gem.ui.utils import on_entry_clear
 from gem.ui.utils import magic_from_file
 from gem.ui.dialog.icons import IconsDialog
@@ -493,7 +494,7 @@ class ConsolePreferences(CommonWindow):
 
             # Folder
             folder = self.console.path
-            if folder.exists():
+            if folder is not None and folder.exists():
                 self.file_folder.set_current_folder(str(folder))
 
             # Favorite status
@@ -597,7 +598,7 @@ class ConsolePreferences(CommonWindow):
             self.data["id"] = generate_identifier(self.section)
 
         value = self.file_folder.get_filename()
-        if len(value) > 0:
+        if value is not None and len(value) > 0:
             self.data["path"] = Path(value).expanduser()
 
         value = self.entry_icon.get_text().strip()
@@ -797,7 +798,8 @@ class ConsolePreferences(CommonWindow):
 
             # Check icon from icons theme
             if not path.exists():
-                collection_path = self.api.get_local("icons", "%s.png" % path)
+                collection_path = Folders.LOCAL.joinpath(
+                    "icons", "%s.png" % path)
 
                 # Retrieve icon from collection
                 if collection_path.exists() and collection_path.is_file():

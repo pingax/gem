@@ -475,7 +475,7 @@ class EmulatorPreferences(CommonWindow):
 
             # Configuration
             folder = self.emulator.configuration
-            if folder.exists():
+            if folder is not None and folder.exists():
                 self.file_configuration.set_filename(str(folder))
 
             # Icon
@@ -591,7 +591,7 @@ class EmulatorPreferences(CommonWindow):
             self.data["icon"] = Path(value).expanduser()
 
         value = self.file_configuration.get_filename()
-        if len(value) > 0:
+        if value is not None and len(value) > 0:
             self.data["configuration"] = Path(value).expanduser()
 
         value = self.entry_save.get_text().strip()

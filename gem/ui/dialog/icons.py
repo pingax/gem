@@ -19,6 +19,7 @@ from pathlib import Path
 
 # GEM
 from gem.ui.data import Icons
+from gem.ui.data import Folders
 from gem.ui.utils import magic_from_file
 from gem.ui.widgets.window import CommonWindow
 from gem.ui.widgets.widgets import IconsGenerator
@@ -332,7 +333,7 @@ class IconsDialog(CommonWindow):
         yield True
 
         # Retrieve files from icons collection
-        collection_path = self.api.get_local("icons")
+        collection_path = Folders.LOCAL.joinpath("icons")
 
         for path in sorted(collection_path.glob("*.png")):
 

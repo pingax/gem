@@ -1140,16 +1140,20 @@ class GEM(object):
             Tags list
         """
 
-        tags = list()
+        tags = self.database.select("games", "tags")
 
-        for tag in self.database.select("games", "tags"):
+        if tags is not None:
 
-            for element in tag.split(';'):
+            for tag in tags:
 
-                if len(element) > 0 and not element in tags:
-                    tags.append(element)
+                for element in tag.split(';'):
 
-        return sorted(tags)
+                    if len(element) > 0 and not element in tags:
+                        tags.append(element)
+
+            return sorted(tags)
+
+        return list()
 
 
     def update_game(self, game):

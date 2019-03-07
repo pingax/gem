@@ -17,9 +17,9 @@
 # GEM
 from gem.engine.api import GEM
 from gem.engine.utils import get_data
-
 from gem.engine.lib.configuration import Configuration
 
+from gem.ui.data import Metadata
 from gem.ui.widgets.widgets import IconsGenerator
 
 # GObject
@@ -50,15 +50,13 @@ from gettext import gettext as _
 
 class Splash(Gtk.Window):
 
-    def __init__(self, api, metadata):
+    def __init__(self, api):
         """ Constructor
 
         Parameters
         ----------
         api : gem.engine.api.GEM
             GEM API instance
-        metadata : gem.engine.lib.configuration.Configuration
-            GEM metadata informations
 
         Raises
         ------
@@ -70,10 +68,6 @@ class Splash(Gtk.Window):
         if not type(api) is GEM:
             raise TypeError("Wrong type for api, expected " \
                 "gem.engine.api.GEM")
-
-        if not type(metadata) is Configuration:
-            raise TypeError("Wrong type for metadata, expected " \
-                "gem.engine.lib.configuration.Configuration")
 
         Gtk.Window.__init__(self)
 
@@ -95,9 +89,6 @@ class Splash(Gtk.Window):
 
         # Quick access to API logger
         self.logger = api.logger
-
-        # Metadata informations
-        self.__metadata = metadata
 
         # ------------------------------------
         #   Initialize icons
@@ -127,7 +118,7 @@ class Splash(Gtk.Window):
         #   Main window
         # ------------------------------------
 
-        self.set_title(self.__metadata.get("metadata", "name", fallback=str()))
+        self.set_title(Metadata.NAME)
 
         self.set_modal(True)
         self.set_can_focus(True)
@@ -163,13 +154,11 @@ class Splash(Gtk.Window):
         self.label_splash.set_line_wrap_mode(Pango.WrapMode.WORD)
         self.label_splash.set_markup(
             "<span weight='bold' size='x-large'>%s - %s</span>\n<i>%s</i>" % (
-            self.__metadata.get("metadata", "name", fallback=str()),
-            self.__metadata.get("metadata", "version", fallback=str()),
-            self.__metadata.get("metadata", "code_name", fallback=str())))
+            Metadata.NAME,
+            Metadata.VERSION,
+            Metadata.CODE_NAME))
 
-        self.image_splash.set_from_icon_name(
-            self.__metadata.get("metadata", "icon", fallback=str()),
-            Gtk.IconSize.DND)
+        self.image_splash.set_from_icon_name(Metadata.ICON, Gtk.IconSize.DND)
         self.image_splash.set_pixel_size(256)
 
         # ------------------------------------

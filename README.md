@@ -96,7 +96,7 @@ It's possible to set the configuration folders with --cache, --config and
 --local arguments:
 
 ```
-$ python3 -m gem --cache ~/.cache --config ~/.config/gem --local ~/.local/gem
+$ python3 -m gem --cache ~/.cache --config ~/.config --local ~/.local/share
 ```
 
 Installation
