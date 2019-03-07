@@ -4132,17 +4132,9 @@ class MainWindow(Gtk.ApplicationWindow):
         console = self.selection["console"]
 
         if game is not None and console is not None:
-            # Get name and extension from game
-            gamename, ext = splitext(game.path[-1])
-
-            # Get rom specified emulator
-            emulator = console.emulator
-
-            if game.emulator is not None:
-                emulator = game.emulator
 
             # Check if rom has some screenshots
-            results = emulator.get_screenshots(game)
+            results = game.emulator.get_screenshots(game)
 
             # ----------------------------------------
             #   Show screenshots viewer
@@ -4201,7 +4193,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 #   Check screenshots
                 # ----------------------------------------
 
-                if len(emulator.get_screenshots(game)) == 0:
+                if len(game.emulator.get_screenshots(game)) == 0:
                     self.set_game_data(Columns.List.SCREENSHOT,
                         self.icons.get_translucent("screenshot"), game.filename)
 
@@ -5414,10 +5406,10 @@ class MainWindow(Gtk.ApplicationWindow):
                                 self.item_menubar_mednafen.set_sensitive(True)
 
                     # Check screenshots
-                    if len(screenshots) == 0:
-                        self.button_toolbar_screenshots.set_sensitive(False)
-                        self.item_game_screenshots.set_sensitive(False)
-                        self.item_menubar_game_screenshots.set_sensitive(False)
+                    if len(screenshots) > 0:
+                        self.button_toolbar_screenshots.set_sensitive(True)
+                        self.item_game_screenshots.set_sensitive(True)
+                        self.item_menubar_game_screenshots.set_sensitive(True)
 
                     # Check game log file
                     if self.check_log() is None:
