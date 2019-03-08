@@ -1,16 +1,14 @@
 GEM Changelog
 =============
 
-Version 1.0 - Space Fox
------------------------
+Version 0.10 - Forest Life
+--------------------------
 
 ### Data
 
 * Add emulators licenses file
-
 * Switch 'Nintendo SNES' emulator to mednafen from consoles.conf
 * Switch 'SEGA Megadrive' emulator to mednafen from consoles.conf
-
 * Remove consoles `old` folder
 * Remove emulators icons
 * Remove MAME console
@@ -25,9 +23,7 @@ Version 1.0 - Space Fox
 * Add favorite field to console object
 * Add `GEM.get_game_tags` function to API
 * Add dynamic files parameter to `write_data` function to write only some configuration file
-
 * Allow to set specific configuration paths in constructor parameters
-
 * Modify `GEM.add_emulator` to return the new emulator
 * Modify `GEM.add_console` to return the new console
 
@@ -35,7 +31,6 @@ Version 1.0 - Space Fox
 
 * New optional dependency → python3-magic
 * New logo
-
 * Add the statusbar for default theme and rewrite his contents
 * Add a tags selector to game properties dialog
 * Add more informations into game sidebar
@@ -46,7 +41,6 @@ Version 1.0 - Space Fox
 * Add a maintenance dialog to replace the clean database dialog
 * Add a cache folder to save games and consoles icons
 * Add a thumbnail next to game name in games treeview
-
 * Allow to reorder games treeview columns
 * Allow to drag the sidebar image to another application
 * Allow to duplicate a game and his data
@@ -54,11 +48,9 @@ Version 1.0 - Space Fox
 * Allow to import or export game note
 * Allow to configure console from console context menu in main interface
 * Allow to configure emulator from console context menu in main interface
-
 * Restore GTK+ menuitem behavior to main and game menus
 * Restore old dialog buttons behavior to both themes
 * Restore old renaming system based on dialog window
-
 * Fix wrong object set during drag and drop process
 * Fix missing global shortcuts in default theme
 * Fix game tooltip not update after game renaming
@@ -74,9 +66,7 @@ Version 1.0 - Space Fox
 ### Launcher
 
 * Add --cache argument to specify an icons cache folder (Default: $XDG_CACHE_HOME)
-
 * Move consoles icons from `icons/consoles` to `icons` in local folder ($XDG_DATA_HOME/gem)
-
 * Remove --create-folders argument
 
 Version 0.9.1 - Lavos (17 Feb, 2018)
