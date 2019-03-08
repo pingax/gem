@@ -249,6 +249,8 @@ class EditorDialog(CommonWindow):
         #   Editor
         # ------------------------------------
 
+        self.provider_editor = Gtk.CssProvider.new()
+
         scroll_editor = Gtk.ScrolledWindow()
 
         if self.editable:
@@ -413,6 +415,23 @@ class EditorDialog(CommonWindow):
 
         elif self.use_classic_theme:
             self.add_button(_("Close"), Gtk.ResponseType.CLOSE)
+
+        # Parsing font from configuration file
+        try:
+            font = self.parent.config.item("editor", "font", "Sans 12").split()
+
+            # Retrieve informations based on font pattern '<family font> <size>'
+            font_size = int(font[-1])
+            font_family = ' '.join(font[:-1])
+
+            self.provider_editor.load_from_data(
+                b"textview { font: %spt '%s' }" % (font_size, font_family))
+
+            self.text_editor.get_style_context().add_provider(
+                self.provider_editor, Gtk.STYLE_PROVIDER_PRIORITY_USER)
+
+        except:
+            self.logger.warning(_("Cannot parse editor font"))
 
         self.entry_path.set_text(str(self.path))
 

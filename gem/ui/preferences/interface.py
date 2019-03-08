@@ -14,6 +14,9 @@
 #  MA 02110-1301, USA.
 # ------------------------------------------------------------------------------
 
+# Filesystem
+from pathlib import Path
+
 # GEM
 from gem.engine.api import GEM
 from gem.engine.lib.configuration import Configuration
@@ -1744,13 +1747,20 @@ class PreferencesWindow(CommonWindow):
             from gi.repository.GtkSource import StyleSchemeManager
 
             for path in StyleSchemeManager().get_search_path():
-                for element in sorted(glob(path_join(path, "*.xml"))):
-                    filename, extension = splitext(basename(element))
+                scheme_path = Path(path).expanduser().resolve()
 
-                    self.model_general_colorscheme.append([filename])
+                for element in sorted(scheme_path.glob("*.xml")):
+                    self.model_general_colorscheme.append([element.stem])
+
+        except ImportError:
+            self.logger.warning(_("Cannot found GtkSource module"))
+
+            self.widget_editor_tab_width.set_visible(False)
+            self.widget_editor_colorscheme.set_visible(False)
+            self.widget_editor_lines_visible.set_visible(False)
 
         except Exception as error:
-            pass
+            self.logger.exception(_("Cannot retrieve style schemes"))
 
         # ------------------------------------
         #   Configuration file
