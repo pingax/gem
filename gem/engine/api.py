@@ -1649,6 +1649,9 @@ class Console(GEMObject):
                 if result is not None:
                     game.name = result.get("name", game.id)
 
+                    if len(game.name.strip()) == 0:
+                        game.name = game.filepath.stem
+
                     game.favorite = bool(result.get("favorite", False))
                     game.multiplayer = bool(result.get("multiplayer", False))
                     game.finish = bool(result.get("finish", False))
