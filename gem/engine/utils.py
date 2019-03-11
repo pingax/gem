@@ -151,8 +151,8 @@ def generate_identifier(name):
 
     Parameters
     ----------
-    name : str
-        String to parse into indentifier
+    name : pathlib.Path or str
+        Path to parse into indentifier
 
     Returns
     -------
@@ -161,14 +161,25 @@ def generate_identifier(name):
 
     Examples
     --------
-    >>> generate_identifier("Double Dragon III - The Sacred Stones (Europe)")
-    'double-dragon-iii-the-sacred-stones-europe'
+    >>> generate_identifier("Double Dragon II - The Sacred Stones (Europe).nes")
+    'double-dragon-ii-the-sacred-stones-europe-nes-25953832'
     """
+
+    inode = int()
+
+    if isinstance(name, Path):
+        # Retrieve file inode number
+        inode = name.stat().st_ino
+        # Retrieve file basename
+        name = name.name
 
     # Retrieve only alphanumeric element from filename
     name = sub(r"[^\w\d]+", ' ', name.lower())
     # Remove useless spaces and replace the others with a dash
     name = sub(r"[\s|_]+", '-', name.strip())
+
+    if inode > 0:
+        name = "%s-%d" % (name, inode)
 
     return name
 

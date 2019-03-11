@@ -17,12 +17,6 @@
 # Collections
 from collections import OrderedDict
 
-# Datetime
-from datetime import date
-from datetime import time
-from datetime import datetime
-from datetime import timedelta
-
 # Filesystem
 from copy import deepcopy
 
@@ -31,15 +25,15 @@ from shutil import copy2 as copy
 
 from pathlib import Path
 
-from os.path import getctime
 from os.path import splitext
 
 # GEM
 from gem.engine.utils import get_data
-from gem.engine.utils import parse_timedelta
-from gem.engine.utils import get_binary_path
-from gem.engine.utils import generate_extension
 from gem.engine.utils import generate_identifier
+
+from gem.engine.game import Game
+from gem.engine.console import Console
+from gem.engine.emulator import Emulator
 
 from gem.engine.lib.database import Database
 from gem.engine.lib.configuration import Configuration
@@ -115,8 +109,8 @@ class GEM(object):
 
         # Data list
         self.__data = dict(
-            consoles=list(),
-            emulators=list(),
+            consoles=dict(),
+            emulators=dict(),
             environment=list()
         )
 
@@ -327,46 +321,12 @@ class GEM(object):
         objects from data
         """
 
-        self.__data["emulators"] = dict()
+        self.__data["emulators"].clear()
 
         emulators = self.__configurations["emulators"]
 
-        for emulator in emulators.sections():
-
-            data = {
-                "binary": None,
-                "icon": None,
-                "configuration": None,
-                "savestates": None,
-                "screenshots": None,
-                "default": None,
-                "windowed": None,
-                "fullscreen": None
-            }
-
-            for option, default in data.items():
-                key = option
-
-                if option == "savestates":
-                    key = "save"
-
-                elif option == "screenshots":
-                    key = "snaps"
-
-                value = emulators.get(emulator, key, fallback=None)
-
-                if value is not None and len(value) > 0:
-
-                    if key in ("binary", "icon", "configuration"):
-                        data[option] = Path(value).expanduser()
-
-                    else:
-                        data[option] = value
-
-            data["id"] = generate_identifier(emulator)
-            data["name"] = emulator
-
-            self.add_emulator(data)
+        for section in emulators.sections():
+            self.add_emulator(section, emulators.items(section))
 
         self.logger.debug(
             "%d emulator(s) has been founded" % len(self.emulators))
@@ -379,69 +339,12 @@ class GEM(object):
         from data
         """
 
-        self.__data["consoles"] = dict()
+        self.__data["consoles"].clear()
 
         consoles = self.__configurations["consoles"]
 
-        for console in consoles.sections():
-
-            data = {
-                "id": generate_identifier(console),
-                "name": console,
-                "favorite": consoles.getboolean(
-                    console, "favorite", fallback=False),
-                "recursive": consoles.getboolean(
-                    console, "recursive", fallback=False)
-            }
-
-            # Console icon
-            value = consoles.get(console, "icon", fallback=str()).strip()
-            if len(value) > 0:
-                data["icon"] = Path(value).expanduser()
-
-            # Console files path
-            value = consoles.get(console, "roms", fallback=str()).strip()
-            if len(value) > 0:
-                value = value.replace("<local>", str(self.get_local()))
-
-                data["path"] = Path(value).expanduser()
-
-                try:
-                    if not data["path"].exists():
-                        data["path"].mkdir(mode=0o755, parents=True)
-
-                except:
-                    self.logger.exception(
-                        "Cannot create %s folder" % data["path"])
-
-            # Console savestates pattern
-            value = consoles.get(console, "save", fallback=str()).strip()
-            if len(value) > 0:
-                data["savestates"] = str(Path(value).expanduser())
-
-            # Console screenshots pattern
-            value = consoles.get(console, "snaps", fallback=str()).strip()
-            if len(value) > 0:
-                data["screenshots"] = str(Path(value).expanduser())
-
-            # Console file extensions
-            value = consoles.get(console, "exts", fallback=str()).strip()
-            if len(value) > 0:
-                data["extensions"] = list(set(value.split(';')))
-
-            # Console ignores files
-            value = consoles.get(console, "ignores", fallback=str()).strip()
-            if len(value) > 0:
-                data["ignores"] = list(set(value.split(';')))
-
-            # Console emulator instance
-            value = consoles.get(console, "emulator", fallback=str()).strip()
-            if len(value) > 0 and value in self.emulators:
-                data["emulator"] = self.get_emulator(value)
-
-            # Check if roms path exists and is a directory
-            if data["path"].exists() and data["path"].is_dir():
-                self.add_console(data)
+        for section in consoles.sections():
+            self.add_console(section, consoles.items(section))
 
         self.logger.debug("%d console(s) has been founded" % len(self.consoles))
 
@@ -583,29 +486,31 @@ class GEM(object):
 
         config = None
 
-        if type(data) is Console:
+        if isinstance(data, Console):
             config = self.__configurations["consoles"]
 
-        elif type(data) is Emulator:
+        elif isinstance(data, Emulator):
             config = self.__configurations["emulators"]
 
         if config is not None:
-            section, structure = data.as_dict()
+            structure = data.as_dict()
 
             for key, value in structure.items():
                 if value is None:
                     value = str()
 
                 if type(value) is bool:
+
                     if value:
                         value = "yes"
+
                     else:
                         value = "no"
 
                 if type(value) is Emulator:
                     value = value.id
 
-                config.modify(section, key, value)
+                config.modify(data.name, key, value)
 
             config.update()
 
@@ -640,14 +545,14 @@ class GEM(object):
                 if self.get_config(path).exists():
                     self.logger.debug("Backup %s file" % path)
 
-                    move(self.get_config(path), self.get_config('~' + path))
+                    copy(self.get_config(path), self.get_config('~' + path))
 
                 # Create a new configuration object
                 config = Configuration(self.get_config(path))
 
                 # Feed configuration with new data
                 for element in sorted(self.__data[name]):
-                    section, structure = self.__data[name][element].as_dict()
+                    structure = self.__data[name][element].as_dict()
 
                     for key, value in sorted(structure.items()):
                         if value is None:
@@ -662,7 +567,8 @@ class GEM(object):
                         if type(value) is Emulator:
                             value = value.id
 
-                        config.modify(section, key, value)
+                        config.modify(
+                            self.__data[name][element].name, key, value)
 
                 # Write new configuration file
                 self.logger.info("Write configuration into %s file" % path)
@@ -809,64 +715,38 @@ class GEM(object):
         return None
 
 
-    def add_emulator(self, data):
+    def add_emulator(self, name, informations):
         """ Add a new emulator
 
         Parameters
         ----------
-        data : dict
+        name : str
+            Emulator name
+        informations : dict
             Emulator information as dictionary
 
         Returns
         -------
-        gem.engine.api.Emulator
+        gem.engine.emulator.Emulator
             New emulator object
-
-        Raises
-        ------
-        TypeError
-            if data type is not dict
-        NameError
-            if id, name or binary not exist in data dictionary
-        ValueError
-            if identifier already exist in emulators dictionary
         """
 
-        if type(data) is not dict:
-            raise TypeError("Wrong type for data, expected dict")
+        data = dict(name=name)
 
-        if not "id" in data.keys():
-            raise NameError("Missing id key in data dictionary")
+        for option, value in informations:
+            convert_keys = dict(
+                save="savestates",
+                snaps="screenshots")
 
-        if not "name" in data.keys():
-            raise NameError("Missing name key in data dictionary")
-
-        if not "binary" in data.keys():
-            raise NameError("Missing binary key in data dictionary")
-
-        if data["id"] in self.__data["emulators"].keys():
-            raise ValueError("Emulator %s already exists" % data["id"])
-
-        # ----------------------------
-        #   Generate emulator
-        # ----------------------------
-
-        emulator = Emulator()
-
-        for key, value in data.items():
+            if option in convert_keys.keys():
+                option = convert_keys[option]
 
             if value is not None:
+                data[option] = value
 
-                if type(value) is str and len(value) == 0:
-                    value = None
+        emulator = Emulator(self, **data)
 
-            setattr(emulator, key, value)
-
-        # Remove useless keys
-        emulator.check_keys()
-
-        # Store the new emulator
-        self.__data["emulators"][data["id"]] = emulator
+        self.__data["emulators"][emulator.id] = emulator
 
         return emulator
 
@@ -985,63 +865,40 @@ class GEM(object):
         return None
 
 
-    def add_console(self, data):
+    def add_console(self, name, informations):
         """ Add a new console
 
         Parameters
         ----------
-        data : dict
+        name : str
+            Console name
+        informations : dict
             Console information as dictionary
 
         Returns
         -------
-        gem.engine.api.Console
+        gem.engine.console.Console
             New console object
-
-        Raises
-        ------
-        TypeError
-            if data type is not dict
-        NameError
-            if id or name not exist in data dictionary
-        ValueError
-            if identifier already exist in consoles dictionary
         """
 
-        if type(data) is not dict:
-            raise TypeError("Wrong type for data, expected dict")
+        data = dict(name=name)
 
-        if not "id" in data.keys():
-            raise NameError("Missing id key in data dictionary")
+        for option, value in informations:
+            convert_keys = dict(
+                roms="path",
+                exts="extensions",
+                save="savestates",
+                snaps="screenshots")
 
-        if not "name" in data.keys():
-            raise NameError("Missing name key in data dictionary")
+            if option in convert_keys.keys():
+                option = convert_keys[option]
 
-        if data["id"] in self.__data["consoles"].keys():
-            raise ValueError("Console %s already exists" % data["id"])
+            if value is not None:
+                data[option] = value
 
-        # ----------------------------
-        #   Generate console
-        # ----------------------------
+        console = Console(self, **data)
 
-        console = Console()
-
-        for key, value in data.items():
-
-            # Avoid to have a list with an empty string
-            if type(value) is list and len(list(set(value))) == 0:
-                value = list()
-
-            setattr(console, key, value)
-
-        # Remove useless keys
-        console.check_keys()
-
-        # Set consoles games
-        console.set_games(self)
-
-        # Store the new emulator
-        self.__data["consoles"][data["id"]] = console
+        self.__data["consoles"][console.id] = console
 
         return console
 
@@ -1091,7 +948,7 @@ class GEM(object):
         games = list()
 
         for identifier, console in self.consoles.items():
-            games.extend(list(console.games.values()))
+            games.extend(console.get_games())
 
         return games
 
@@ -1179,7 +1036,7 @@ class GEM(object):
             raise TypeError("Wrong type for game, expected gem.engine.api.Game")
 
         # Store game data
-        name, data = game.as_dict()
+        data = game.as_dict()
 
         # Translate value as string for database
         for key, value in data.items():
@@ -1199,7 +1056,7 @@ class GEM(object):
         # Update game in database
         self.logger.debug("Update %s database entry" % game.name)
 
-        self.database.modify("games", data, { "filename": game.filepath.name })
+        self.database.modify("games", data, { "filename": game.path.name })
 
         # Update game environment variables
         self.logger.debug("Update %s environment variables" % game.name)
@@ -1247,737 +1104,11 @@ class GEM(object):
         self.environment.update()
 
 
-class GEMObject(object):
-
-    def __init__(self):
-        """ Constructor
-        """
-
-        for key, value in self.attributes.items():
-            setattr(self, key, value)
-
-
-    def __str__(self):
-        """ Formated informations
-
-        Returns
-        -------
-        str
-            Formated string
-        """
-
-        data = self.__dict__
-
-        text = [ ":: %s ::" % self.name ]
-
-        for key in OrderedDict(sorted(data.items(), key=lambda t: t[0])):
-            if not key == "name" and not key[0] == '_':
-                value = data[key]
-
-                if type(value) is list:
-                    if len(value) > 0:
-                        value = ', '.join(value)
-
-                if type(value) is dict or type(value) is OrderedDict:
-                    value = list(value.keys())
-
-                if type(value) is Emulator:
-                    value = value.name
-
-                text.append("%s: %s" % (key, value))
-
-        return '\n'.join(text)
-
-
-    def check_keys(self):
-        """ Check every object attributes to eliminate useless keys
-        """
-
-        # Keys list to remove
-        keys = list()
-
-        # List object attributes
-        for key in self.__dict__.keys():
-            if not key in self.attributes.keys():
-                keys.append(key)
-
-        # Remove useless key
-        for key in keys:
-            delattr(self, key)
-
-
-class Emulator(GEMObject):
-
-    attributes = {
-        "id": str(),
-        "name": str(),
-        "icon": str(),
-        "binary": str(),
-        "configuration": None,
-        "savestates": None,
-        "screenshots": None,
-        "default": None,
-        "windowed": None,
-        "fullscreen": None
-    }
-
-    def __init__(self):
-        """ Constructor
-        """
-
-        super(Emulator, self).__init__()
-
-
-    @property
-    def exists(self):
-        """ Check if emulator binary exists in user system
-
-        Returns
-        -------
-        bool
-            return True if binary exist, False otherwise
-        """
-
-        if len(get_binary_path(self.binary)) > 0:
-            return True
-
-        return False
-
-
-    def __get_content(self, key, game):
-        """ Get content list for a specific game
-
-        Parameters
-        ----------
-        key : str
-            Game content path
-        game : gem.engine.api.Game
-            Game object
-
-        Returns
-        -------
-        list
-            return a list
-
-        Raises
-        ------
-        TypeError
-            if game type is not gem.engine.api.Game
-        """
-
-        if type(game) is not Game:
-            raise TypeError("Wrong type for game, expected gem.engine.api.Game")
-
-        if key is not None:
-            if "<rom_path>" in key:
-                key = key.replace("<rom_path>", game.path[0])
-
-            if "<lname>" in key:
-                key = key.replace("<lname>", game.filename.lower())
-
-            elif "<name>" in key:
-                key = key.replace("<name>", game.filename)
-
-            if "<key>" in key and game.key is not None:
-                key = key.replace("<key>", game.key)
-
-            path = Path(key).expanduser()
-
-            if path.parent.is_dir():
-                return list(path.parent.glob(path.name))
-
-        return list()
-
-
-    def get_screenshots(self, game):
-        """ Get screenshots list for a specific game
-
-        Parameters
-        ----------
-        game : gem.engine.api.Game
-            Game object
-
-        See Also
-        --------
-        gem.engine.api.Emulator.__get_content()
-        """
-
-        return self.__get_content(self.screenshots, game)
-
-
-    def get_savestates(self, game):
-        """ Get savestates list for a specific game
-
-        Parameters
-        ----------
-        game : gem.engine.api.Game
-            Game object
-
-        See Also
-        --------
-        gem.engine.api.Emulator.__get_content()
-        """
-
-        return self.__get_content(self.savestates, game)
-
-
-    def command(self, game, fullscreen=False):
-        """ Generate a launch command
-
-        Parameters
-        ----------
-        game : gem.engine.api.Game
-            Game object
-        fullscreen : bool, optional
-            Use fullscreen parameters (Default: False)
-
-        Returns
-        -------
-        list
-            Command launcher parameters list
-
-        Raises
-        ------
-        TypeError
-            if game type is not gem.engine.api.Game
-        """
-
-        if type(game) is not Game:
-            raise TypeError("Wrong type for game, expected gem.engine.api.Game")
-
-        # ----------------------------
-        #   Check emulator binary
-        # ----------------------------
-
-        if not self.exists:
-            raise OSError(2, "Emulator binary %s was not found" % self.binary)
-
-        command = str()
-
-        # ----------------------------
-        #   Set fullscreen mode
-        # ----------------------------
-
-        if fullscreen and self.fullscreen is not None:
-            command += " %s" % str(self.fullscreen)
-        elif not fullscreen and self.windowed is not None:
-            command += " %s" % str(self.windowed)
-
-        # ----------------------------
-        #   Default arguments
-        # ----------------------------
-
-        if game.default is not None:
-            command += " %s" % str(game.default)
-        elif self.default is not None:
-            command += " %s" % str(self.default)
-
-        # ----------------------------
-        #   Replace special parameters
-        # ----------------------------
-
-        use_filepath = True
-
-        if "<conf_path>" in command and self.configuration is not None:
-            command = command.replace("<conf_path>", self.configuration)
-
-        if "<rom_path>" in command:
-            command = command.replace("<rom_path>", str(game.filepath.parent))
-
-            use_filepath = False
-
-        if "<rom_name>" in command:
-            command = command.replace("<rom_name>", str(game.filepath.stem))
-
-            use_filepath = False
-
-        if "<rom_file>" in command:
-            command = command.replace("<rom_file>", str(game.filepath))
-
-            use_filepath = False
-
-        if "<key>" in command and game.key is not None:
-            command = command.replace("<key>", game.key)
-
-        # ----------------------------
-        #   Generate correct command
-        # ----------------------------
-
-        command_data = list()
-
-        # Append binaries
-        command_data.extend(shlex_split(str(self.binary)))
-
-        # Append arguments
-        if len(command) > 0:
-            command_data.extend(shlex_split(command))
-
-        # Append game file
-        if use_filepath:
-            command_data.append(str(game.filepath))
-
-        return command_data
-
-
-    def as_dict(self):
-        """ Return object as dictionary structure
-
-        Returns
-        -------
-        tuple
-            return name and data as tuple
-        """
-
-        return (self.name, {
-            "binary": self.binary,
-            "configuration": self.configuration,
-            "icon": self.icon,
-            "save": self.savestates,
-            "snaps": self.screenshots,
-            "default": self.default,
-            "windowed": self.windowed,
-            "fullscreen": self.fullscreen
-        })
-
-
-class Console(GEMObject):
-
-    attributes = {
-        "id": str(),
-        "name": str(),
-        "icon": None,
-        "path": None,
-        "ignores": list(),
-        "extensions": list(),
-        "games": list(),
-        "recursive": False,
-        "favorite": False,
-        "emulator": None
-    }
-
-    def __init__(self):
-        """ Constructor
-        """
-
-        super(Console, self).__init__()
-
-
-    def as_dict(self):
-        """ Return object as dictionary structure
-
-        Returns
-        -------
-        tuple
-            return name and data as tuple
-        """
-
-        return (self.name, {
-            "icon": str(self.icon),
-            "roms": str(self.path),
-            "exts": ';'.join(self.extensions),
-            "ignores": ';'.join(self.ignores),
-            "emulator": self.emulator,
-            "favorite": self.favorite,
-            "recursive": self.recursive
-        })
-
-
-    def set_games(self, parent):
-        """ Set games from console roms path
-
-        Parameters
-        ----------
-        parent : gem.engine.api.GEM
-            GEM API object
-
-        Raises
-        ------
-        TypeError
-            if database type is not gem.database.Database
-        """
-
-        # Get data from GEM
-        database = parent.database
-        emulators = parent.emulators
-
-        # ----------------------------
-        #   Check parameters
-        # ----------------------------
-
-        if type(database) is not Database:
-            raise TypeError(
-                "Wrong type for database, expected gem.database.Database")
-
-        # ----------------------------
-        #   Check games
-        # ----------------------------
-
-        self.games = OrderedDict()
-
-        # Check each extensions in games path
-        for extension in set(self.extensions):
-
-            pattern = "*.%s" % generate_extension(extension)
-
-            if self.recursive:
-                files = list(set(self.path.rglob(pattern)))
-
-            else:
-                files = list(set(self.path.glob(pattern)))
-
-            # List available files
-            for filename in sorted(files):
-
-                # Get data from database
-                result = database.get("games", { "filename": filename.name })
-
-                # Generate Game object
-                game = Game.new(filename)
-
-                # Set game environment variables
-                if game.id in parent.environment.sections():
-
-                    for option in parent.environment.options(game.id):
-                        game.environment[option.upper()] = \
-                            parent.environment.get(
-                            game.id, option, fallback=str())
-
-                # Set console emulator by default
-                game.emulator = self.emulator
-
-                # This game exists in database
-                if result is not None:
-                    game.name = result.get("name", game.id)
-
-                    if len(game.name.strip()) == 0:
-                        game.name = game.filepath.stem
-
-                    game.favorite = bool(result.get("favorite", False))
-                    game.multiplayer = bool(result.get("multiplayer", False))
-                    game.finish = bool(result.get("finish", False))
-
-                    game.score = int(result.get("score", 0))
-                    game.played = int(result.get("play", 0))
-
-                    game.default = result.get("arguments", str())
-
-                    value = result.get("tags", None)
-                    if value is not None and len(value) > 0:
-                        game.tags = list(set(value.split(';')))
-
-                    game.key = result.get("key", None)
-
-                    value = result.get("emulator", None)
-                    if value is not None and len(value) > 0:
-                        game.emulator = parent.get_emulator(value)
-
-                    value = result.get("cover", None)
-                    if value is not None and len(value) > 0:
-                        game.cover = Path(value).expanduser()
-
-                    data = [
-                        ("play_time", "play_time", timedelta),
-                        ("last_launch_date", "last_play", date),
-                        ("last_launch_time", "last_play_time", timedelta)
-                    ]
-
-                    for name, option, default in data:
-                        value = result[option]
-
-                        if len(str(value).strip()) > 0:
-
-                            if default is date:
-
-                                # Old GEM format
-                                if len(value) > 10:
-                                    day, month, year = \
-                                        value.split()[0].split('-')
-
-                                # ISO 8601 format
-                                else:
-                                    year, month, day = value.split('-')
-
-                                value = date(
-                                    int(year), int(month), int(day))
-
-                            elif default is timedelta:
-
-                                # Parse microseconds
-                                microseconds = int()
-                                if '.' in value:
-                                    value, microseconds = value.split('.')
-
-                                hours, minutes, seconds = value.split(':')
-
-                                value = timedelta(
-                                    hours=int(hours),
-                                    minutes=int(minutes),
-                                    seconds=int(seconds))
-
-                            setattr(game, name, value)
-
-                # Remove useless keys
-                game.check_keys()
-
-                self.games[game.id] = game
-
-
-    def get_game(self, identifier):
-        """ Return specific game from current console
-
-        Parameters
-        ----------
-        identifier : str
-            Game identifier
-
-        Returns
-        -------
-        gem.engine.api.Game or None
-            Game object
-
-        Examples
-        --------
-        >>> g = GEM()
-        >>> g.init()
-        >>> g.get_console("nintendo-nes").get_game("metroid-usa")
-        <gem.engine.api.Game object at 0x7f174a98e828>
-        """
-
-        if identifier in self.games.keys():
-            return self.games[identifier]
-
-        return None
-
-
-    def get_games(self):
-        """ List all games
-
-        Returns
-        -------
-        list
-            Games list
-        """
-
-        return list(self.games.values())
-
-
-class Game(GEMObject):
-
-    attributes = {
-        "id": str(),
-        "filepath": None,
-        "name": str(),
-        "favorite": bool(),
-        "multiplayer": bool(),
-        "finish": bool(),
-        "score": int(),
-        "played": int(),
-        "play_time": timedelta(),
-        "last_launch_time": timedelta(),
-        "last_launch_date": date(1, 1, 1),
-        "emulator": None,
-        "default": None,
-        "key": None,
-        "tags": list(),
-        "environment": dict(),
-        "cover": None,
-        "installed": None
-    }
-
-    def __init__(self):
-        """ Constructor
-        """
-
-        super(Game, self).__init__()
-
-
-    def as_dict(self):
-        """ Return object as dictionary structure
-
-        Returns
-        -------
-        tuple
-            return name and data as tuple
-        """
-
-        return (self.name, {
-            "filename": self.filepath.name,
-            "name": self.name,
-            "favorite": self.favorite,
-            "multiplayer": self.multiplayer,
-            "finish": self.finish,
-            "score": self.score,
-            "play": self.played,
-            "play_time": parse_timedelta(self.play_time),
-            "last_play_time": parse_timedelta(self.last_launch_time),
-            "last_play": self.last_launch_date,
-            "emulator": self.emulator,
-            "arguments": self.default,
-            "tags": ';'.join(self.tags),
-            "key": self.key,
-            "cover": self.cover
-        })
-
-    @staticmethod
-    def new(path):
-        """ Define a new Game object from game file path
-
-        Parameters
-        ----------
-        path : str
-            Game file path
-        """
-
-        game = Game()
-
-        game.id = generate_identifier(path.name)
-        game.name = path.stem
-        game.filepath = path
-
-        game.environment = dict()
-
-        game.installed = datetime.fromtimestamp(getctime(path)).date()
-
-        return game
-
-
-    def copy(self, path):
-        """ Copy game data into a new instance
-
-        Parameters
-        ----------
-        path : str
-            Game file path
-
-        Returns
-        -------
-        gem.engine.api.Game
-            Game object
-        """
-
-        game = deepcopy(self)
-
-        # Set default game values
-        game.id = generate_identifier(path.name)
-        game.name = path.stem
-        game.filepath = path
-
-        game.installed = datetime.fromtimestamp(getctime(path)).date()
-
-        return game
-
-
-    def reset(self):
-        """ Reset game data
-        """
-
-        # Get default data
-        path = self.filepath
-
-        # Replace all data with default values
-        for key, value in self.attributes.items():
-            setattr(self, key, value)
-
-        # Set default game values
-        self.id = generate_identifier(path.stem)
-        self.name = path.stem
-        self.filepath = path
-
-
-    @property
-    def path(self):
-        """ Return basename and dirname from filepath
-
-        Returns
-        -------
-        tuple
-            Tuple which contains dirname and basename
-
-        Raises
-        ------
-        ValueError
-            If the filepath is empty or None
-
-        Examples
-        --------
-        >>> g = GEM()
-        >>> g.init()
-        >>> g.get_console("nintendo-nes").get_game("Asterix").path
-        ("~/.local/share/gem/roms/nes", "asterix.nes")
-        """
-
-        if self.filepath is None:
-            raise TypeError("Wrong type for filepath, expected str")
-
-        if len(str(self.filepath)) == 0:
-            raise ValueError("File path length is empty")
-
-        return (self.filepath.parent.expanduser(), self.filepath.stem)
-
-
-    @property
-    def filename(self):
-        """ Return filename without extension from filepath
-
-        Returns
-        -------
-        str
-            filename
-        """
-
-        if self.filepath is None:
-            raise TypeError("Wrong type for filepath, expected str")
-
-        return self.filepath.stem
-
-
-    @property
-    def extension(self):
-        """ Return extension from filepath
-
-        Returns
-        -------
-        str
-            filename
-        """
-
-        if self.filepath is None:
-            raise TypeError("Wrong type for filepath, expected str")
-
-        return ''.join(self.filepath.suffixes).lower()
-
-
-    @property
-    def log(self):
-        """ Return relative log file path
-
-        Returns
-        -------
-        str
-            filepath
-        """
-
-        return Path("logs", self.filepath.stem + ".log")
-
-
-    @property
-    def note(self):
-        """ Return relative note file path
-
-        Returns
-        -------
-        str
-            filepath
-        """
-
-        return Path("notes", self.id + ".txt")
-
-
 if __name__ == "__main__":
     """ Debug GEM API
     """
 
-    root = Path("test")
+    root = Path("test", "gem")
 
     config_path = root.joinpath("config")
 
