@@ -53,21 +53,17 @@ class GameThread(Thread, GObject.GObject):
         "game-terminate": (GObject.SignalFlags.RUN_LAST, None, [object]),
     }
 
-    def __init__(self, parent, console, emulator, game, command):
+    def __init__(self, parent, game, fullscreen=False):
         """ Constructor
 
         Parameters
         ----------
         parent : gem.interface.Interface
             Main interface to access public variables
-        console : gem.api.Console
-            Console object
-        emulator : gem.api.Emulator
-            Emulator object
         game : gem.api.Game
             Game object
-        command : list
-            Command parameters list
+        fullscreen : bool
+            Fullscreen mode
         """
 
         Thread.__init__(self)
@@ -80,11 +76,10 @@ class GameThread(Thread, GObject.GObject):
         self.parent = parent
         self.logger = parent.logger
 
-        self.name = generate_identifier(game.name)
-        self.command = command
-        self.console = console
-        self.emulator = emulator
+        self.name = game.id
         self.game = game
+
+        self.fullscreen = fullscreen
 
         self.delta = None
         self.error = False
@@ -93,7 +88,7 @@ class GameThread(Thread, GObject.GObject):
         #   Generate data
         # ------------------------------------
 
-        self.path = parent.api.get_local(game.log)
+        self.path = parent.api.get_local("logs", game.id + ".log")
 
 
     def run(self):
@@ -111,7 +106,9 @@ class GameThread(Thread, GObject.GObject):
         self.logger.info(_("Launch %s") % self.game.name)
 
         try:
-            self.logger.debug("Command: %s" % ' '.join(self.command))
+            command = self.game.command(self.fullscreen)
+
+            self.logger.debug("Command: %s" % ' '.join(command))
 
             # ------------------------------------
             #   Check environment
@@ -133,7 +130,7 @@ class GameThread(Thread, GObject.GObject):
             # Logging process output
             with open(self.path, 'w') as pipe:
                 self.proc = Popen(
-                    self.command,
+                    command,
                     stdin=PIPE,
                     stdout=pipe,
                     stderr=pipe,

@@ -46,17 +46,15 @@ from gettext import gettext as _
 
 class DeleteDialog(CommonWindow):
 
-    def __init__(self, parent, game, emulator):
+    def __init__(self, parent, game):
         """ Constructor
 
         Parameters
         ----------
         parent : Gtk.Window
             Parent object
-        game : gem.api.Game
+        game : gem.engine.game.Game
             Game object
-        emulator : gem.api.Emulator
-            Emulator object
         """
 
         classic_theme = False
@@ -71,7 +69,6 @@ class DeleteDialog(CommonWindow):
         # ------------------------------------
 
         self.game = game
-        self.emulator = emulator
 
         # ------------------------------------
         #   Prepare interface
@@ -227,7 +224,7 @@ class DeleteDialog(CommonWindow):
         # Check extension and emulator for GBA game on mednafen
         if self.game.extension == ".gba" and self.parent.get_mednafen_status():
 
-            if "mednafen" in str(self.emulator.binary):
+            if "mednafen" in str(self.game.emulator.binary):
                 self.listbox_options.add(self.widget_memory)
 
         self.scroll_options.add(self.listbox_options)
@@ -285,14 +282,14 @@ class DeleteDialog(CommonWindow):
         # ------------------------------------
 
         if self.switch_savestate.get_active():
-            data["paths"].extend(self.emulator.get_savestates(self.game))
+            data["paths"].extend(self.game.savestates)
 
         # ------------------------------------
         #   Screenshots
         # ------------------------------------
 
         if self.switch_screenshots.get_active():
-            data["paths"].extend(self.emulator.get_screenshots(self.game))
+            data["paths"].extend(self.game.screenshots)
 
         # ------------------------------------
         #   Desktop

@@ -34,9 +34,9 @@ from shutil import copy2 as copy
 # GEM
 from gem.engine.utils import *
 from gem.engine.api import GEM
-from gem.engine.api import Game
-from gem.engine.api import Console
-from gem.engine.api import Emulator
+from gem.engine.game import Game
+from gem.engine.console import Console
+from gem.engine.emulator import Emulator
 from gem.engine.lib.configuration import Configuration
 
 from gem.ui.data import *
@@ -3073,8 +3073,10 @@ class MainWindow(Gtk.ApplicationWindow):
 
             # Load the first console to avoid mini combobox
             if load_console_startup and self.selection["console"] is None:
-                self.listbox_consoles.select_row(
-                    list(self.consoles_iter.values())[0])
+                consoles = list(self.consoles_iter.values())
+
+                if len(consoles) > 0:
+                    self.listbox_consoles.select_row(consoles[0])
 
             dialog = MessageDialog(self, _("Welcome !"),
                 _("Welcome and thanks for choosing GEM as emulators manager. "
@@ -3758,12 +3760,6 @@ class MainWindow(Gtk.ApplicationWindow):
             self.label_sidebar_title.set_markup("<span weight='bold' "
                 "size='large'>%s</span>" % replace_for_markup(game.name))
 
-            # Get rom specified emulator
-            emulator = console.emulator
-
-            if game.emulator is not None:
-                emulator = game.emulator
-
             # ----------------------------------------
             #   Show game tags
             # ----------------------------------------
@@ -3789,7 +3785,7 @@ class MainWindow(Gtk.ApplicationWindow):
             # ----------------------------------------
 
             # Retrieve game screenshots from emulator screenshots path
-            screenshots = emulator.get_screenshots(game)
+            screenshots = game.screenshots
 
             pixbuf = self.icons.get_translucent("screenshot")
 
@@ -3811,12 +3807,12 @@ class MainWindow(Gtk.ApplicationWindow):
             self.image_statusbar_screenshots.set_from_pixbuf(pixbuf)
 
             # Game emulator
-            if emulator is not None:
+            if game.emulator is not None:
 
                 # Game savestates
                 pixbuf = self.icons.get_translucent("savestate")
 
-                if len(emulator.get_savestates(game)) > 0:
+                if len(game.savestates) > 0:
                     pixbuf = self.icons.get("savestate")
 
                 self.image_statusbar_savestates.set_from_pixbuf(pixbuf)
@@ -3893,8 +3889,8 @@ class MainWindow(Gtk.ApplicationWindow):
                 },
                 {
                     "widget": self.label_sidebar_emulator_value,
-                    "condition": emulator is not None,
-                    "markup": emulator.name
+                    "condition": game.emulator is not None,
+                    "markup": game.emulator.name
                 }
             ]
 
@@ -3934,7 +3930,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         Parameters
         ----------
-        game : gem.engine.api.Game
+        game : gem.engine.game.Game
             Game object
         console : gem.api.Console
             Console object
@@ -3990,9 +3986,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         if game is not None:
             self.label_statusbar_game.set_text(game.name)
-
-            if game.emulator is not None:
-                emulator = game.emulator
 
             texts.append(game.name)
 
@@ -4133,14 +4126,11 @@ class MainWindow(Gtk.ApplicationWindow):
 
         if game is not None and console is not None:
 
-            # Check if rom has some screenshots
-            results = game.emulator.get_screenshots(game)
-
             # ----------------------------------------
             #   Show screenshots viewer
             # ----------------------------------------
 
-            if len(results) > 0:
+            if len(game.screenshots) > 0:
                 title = "%s (%s)" % (game.name, console.name)
 
                 self.set_sensitive(False)
@@ -4156,7 +4146,8 @@ class MainWindow(Gtk.ApplicationWindow):
                     except ValueError as error:
                         size = (800, 600)
 
-                    dialog = ViewerDialog(self, title, size, sorted(results))
+                    dialog = ViewerDialog(
+                        self, title, size, sorted(game.screenshots))
                     dialog.run()
 
                     self.config.modify(
@@ -4178,7 +4169,7 @@ class MainWindow(Gtk.ApplicationWindow):
                         command.extend(shlex_split(args))
 
                     # Append game file
-                    command.extend(sorted(results))
+                    command.extend(sorted(game.screenshots))
 
                     process = Popen(command)
                     process.wait()
@@ -4193,9 +4184,9 @@ class MainWindow(Gtk.ApplicationWindow):
                 #   Check screenshots
                 # ----------------------------------------
 
-                if len(game.emulator.get_screenshots(game)) == 0:
+                if len(game.screenshots) == 0:
                     self.set_game_data(Columns.List.SCREENSHOT,
-                        self.icons.get_translucent("screenshot"), game.filename)
+                        self.icons.get_translucent("screenshot"), game.id)
 
 
     def __on_show_preferences(self, *args):
@@ -4352,70 +4343,84 @@ class MainWindow(Gtk.ApplicationWindow):
         if self.__current_menu_row is not None:
             console = self.__current_menu_row.console
 
-            dialog = ConsolePreferences(self, console, True)
+            previous_id = console.id
+            previous_path = console.path
+
+            dialog = ConsolePreferences(
+                self, console, self.api.consoles, self.api.emulators)
 
             if dialog.run() == Gtk.ResponseType.APPLY:
                 self.logger.debug("Save %s modifications" % console.name)
 
-                identifier = dialog.save()
+                data = dialog.save()
 
-                if not console.id == identifier:
+                if data is not None:
+                    self.api.delete_console(previous_id)
+
                     # Remove previous console storage
-                    del self.consoles_iter[console.id]
+                    del self.consoles_iter[previous_id]
 
                     # Store row with the new identifier
-                    self.consoles_iter[identifier] = self.__current_menu_row
+                    self.consoles_iter[data["id"]] = self.__current_menu_row
 
-                # Write console data
-                self.api.write_data(GEM.Consoles)
+                    console = self.api.add_console(data["name"], data.items())
 
-                # Retrieve a new console instance from database
-                console = self.api.get_console(identifier)
+                    # Write console data
+                    self.api.write_data(GEM.Consoles)
 
-                # ----------------------------------------
-                #   Update console row
-                # ----------------------------------------
+                    # Remove thumbnails from cache
+                    for size in ("22x22", "24x24", "48x48", "64x64", "96x96"):
+                        cache_path = self.get_icon_from_cache(
+                            "consoles", size, console.id + ".png")
 
-                self.__current_menu_row.console = console
+                        if cache_path.exists():
+                            remove(cache_path)
 
-                # Console name
-                self.__current_menu_row.label.set_text(console.name)
+                    # ----------------------------------------
+                    #   Update console row
+                    # ----------------------------------------
 
-                # Console icon
-                icon = self.get_pixbuf_from_cache(
-                    "consoles", 24, console.id, console.icon)
+                    self.__current_menu_row.console = console
 
-                if icon is None:
-                    icon = self.icons.blank(24)
+                    # Console name
+                    self.__current_menu_row.label.set_text(console.name)
 
-                self.__current_menu_row.image_icon.set_from_pixbuf(icon)
+                    # Console icon
+                    icon = self.get_pixbuf_from_cache(
+                        "consoles", 24, console.id, console.icon)
 
-                # Console favorite status icon
-                icon = None
-                if console.favorite:
-                    icon = Icons.Symbolic.FAVORITE
+                    if icon is None:
+                        icon = self.icons.blank(24)
 
-                self.__current_menu_row.image_status.set_from_icon_name(
-                    icon, Gtk.IconSize.MENU)
+                    self.__current_menu_row.image_icon.set_from_pixbuf(icon)
 
-                # Console flag selectors
-                self.item_consoles_favorite.set_active(console.favorite)
-                self.item_consoles_recursive.set_active(console.recursive)
+                    # Console favorite status icon
+                    icon = None
+                    if console.favorite:
+                        icon = Icons.Symbolic.FAVORITE
 
-                # ----------------------------------------
-                #   Refilter consoles list
-                # ----------------------------------------
+                    self.__current_menu_row.image_status.set_from_icon_name(
+                        icon, Gtk.IconSize.MENU)
 
-                self.__on_update_consoles()
+                    # Console flag selectors
+                    self.item_consoles_favorite.set_active(console.favorite)
+                    self.item_consoles_recursive.set_active(console.recursive)
 
-                # ----------------------------------------
-                #   Reload games list
-                # ----------------------------------------
+                    # ----------------------------------------
+                    #   Refilter consoles list
+                    # ----------------------------------------
 
-                if selected_row == self.__current_menu_row:
-                    self.selection["console"] = self.__current_menu_row.console
+                    self.__on_update_consoles()
 
-                    self.__on_reload_games()
+                    # ----------------------------------------
+                    #   Reload games list
+                    # ----------------------------------------
+
+                    if selected_row == self.__current_menu_row:
+                        self.selection["console"] = \
+                            self.__current_menu_row.console
+
+                        self.__on_reload_games()
 
             dialog.destroy()
 
@@ -4438,52 +4443,70 @@ class MainWindow(Gtk.ApplicationWindow):
         if self.__current_menu_row is not None:
             emulator = self.__current_menu_row.console.emulator
 
-            dialog = EmulatorPreferences(self, emulator, True)
+            previous_id = emulator.id
+
+            dialog = EmulatorPreferences(self, emulator, self.api.emulators)
 
             if dialog.run() == Gtk.ResponseType.APPLY:
                 self.logger.debug("Save %s modifications" % emulator.name)
 
-                identifier = dialog.save()
+                data = dialog.save()
 
-                # Write console data
-                self.api.write_data(GEM.Emulators)
+                if data is not None:
+                    self.api.delete_emulator(previous_id)
 
-                # Retrieve a new emulator instance from database
-                emulator = self.api.get_emulator(identifier)
+                    emulator = self.api.add_emulator(data["name"], data.items())
 
-                # ----------------------------------------
-                #   Update console row
-                # ----------------------------------------
+                    # Rename emulator identifier in consoles and games
+                    if not emulator.id == previous_id:
+                        self.api.rename_emulator(previous_id, emulator.id)
 
-                status = False
+                    # Write console data
+                    self.api.write_data(GEM.Emulators)
 
-                self.__current_menu_row.console.emulator = emulator
+                    # Remove thumbnails from cache
+                    for size in ("22x22", "48x48", "64x64"):
+                        cache_path = self.get_icon_from_cache(
+                            "emulators", size, emulator.id + ".png")
 
-                if emulator is not None and emulator.configuration is not None:
-                    status = emulator.configuration.exists()
+                        if cache_path.exists():
+                            remove(cache_path)
 
-                self.item_consoles_config.set_sensitive(status)
+                    # ----------------------------------------
+                    #   Update console row
+                    # ----------------------------------------
 
-                # ----------------------------------------
-                #   Reload games list
-                # ----------------------------------------
+                    status = False
 
-                same_emulator = False
+                    self.__current_menu_row.console.emulator = emulator
 
-                if selected_row is not None:
-                    identifier = selected_row.console.emulator.id
+                    if emulator is not None and \
+                        emulator.configuration is not None:
+                        status = emulator.configuration.exists()
 
-                    # Reload games list if selected console has the same
-                    # emulator to avoid missing references
-                    same_emulator = identifier == emulator.id
+                    self.item_consoles_config.set_sensitive(status)
 
-                if selected_row == self.__current_menu_row:
-                    self.selection["console"] = self.__current_menu_row.console
+                    # ----------------------------------------
+                    #   Reload games list
+                    # ----------------------------------------
 
-                    self.__on_reload_games()
+                    same_emulator = False
 
-                elif same_emulator:
-                    self.__on_reload_games()
+                    if selected_row is not None:
+                        identifier = selected_row.console.emulator.id
+
+                        # Reload games list if selected console has the same
+                        # emulator to avoid missing references
+                        same_emulator = identifier == emulator.id
+
+                    if selected_row == self.__current_menu_row:
+                        self.selection["console"] = \
+                            self.__current_menu_row.console
+
+                        self.__on_reload_games()
+
+                    elif same_emulator:
+                        self.__on_reload_games()
 
             dialog.destroy()
 
@@ -4603,9 +4626,9 @@ class MainWindow(Gtk.ApplicationWindow):
         if console.path.exists():
 
             # Reload games list
-            console.set_games(self.api)
+            console.init_games()
 
-            if not self.hide_empty_console or len(console.games) > 0:
+            if not self.hide_empty_console or len(console.get_games()) > 0:
 
                 icon = self.get_pixbuf_from_cache(
                     "consoles", 24, console.id, console.icon)
@@ -4623,7 +4646,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         Parameters
         ----------
-        console : gem.engine.api.Console
+        console : gem.engine.console.Console
             Console instance
         icon : GdkPixbuf.Pixbuf
             Console icon
@@ -4919,13 +4942,13 @@ class MainWindow(Gtk.ApplicationWindow):
 
         Parameters
         ----------
-        console : gem.engine.api.Console
+        console : gem.engine.console.Console
             Console object
 
         Raises
         ------
         TypeError
-            if console type is not gem.engine.api.Console
+            if console type is not gem.engine.console.Console
 
         Notes
         -----
@@ -4934,7 +4957,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         if type(console) is not Console:
             raise TypeError(
-                "Wrong type for console, expected gem.engine.api.Console")
+                "Wrong type for console, expected gem.engine.console.Console")
 
         # Get current thread id
         current_thread_id = self.list_thread
@@ -4985,9 +5008,7 @@ class MainWindow(Gtk.ApplicationWindow):
             #   Prepare games
             # ------------------------------------
 
-            console.set_games(self.api)
-
-            emulator = self.api.get_emulator(console.emulator.id)
+            console.init_games()
 
             games = console.get_games()
 
@@ -5074,11 +5095,12 @@ class MainWindow(Gtk.ApplicationWindow):
                         if match(element, game.name, IGNORECASE) is not None:
                             show = False
                             break
-                    except:
+
+                    except Exception as error:
                         pass
 
                 # Check if rom file exists
-                if game.filepath.exists() and show:
+                if game.path.exists() and show:
 
                     # ------------------------------------
                     #   Grid mode
@@ -5150,32 +5172,28 @@ class MainWindow(Gtk.ApplicationWindow):
                             string_from_time(game.play_time)
 
                     # Parameters
-                    if game.default is not None:
+                    if len(game.default) > 0:
                         row_data[Columns.List.PARAMETER] = \
                             self.icons.get("parameter")
 
-                    elif game.emulator is not None:
-                        if not game.emulator.name == console.emulator.name:
-                            row_data[Columns.List.PARAMETER] = \
-                                self.icons.get("parameter")
+                    elif not game.emulator.name == console.emulator.name:
+                        row_data[Columns.List.PARAMETER] = \
+                            self.icons.get("parameter")
 
                     # Installed time
                     if game.installed is not None:
                         row_data[Columns.List.INSTALLED] = \
                             string_from_date(game.installed)
 
-                    # Medias
-                    if game.emulator is not None:
+                    # Snap
+                    if len(game.screenshots) > 0:
+                        row_data[Columns.List.SCREENSHOT] = \
+                            self.icons.get("screenshot")
 
-                        # Snap
-                        if len(game.emulator.get_screenshots(game)) > 0:
-                            row_data[Columns.List.SCREENSHOT] = \
-                                self.icons.get("screenshot")
-
-                        # Save state
-                        if len(game.emulator.get_savestates(game)) > 0:
-                            row_data[Columns.List.SAVESTATE] = \
-                                self.icons.get("savestate")
+                    # Save state
+                    if len(game.savestates) > 0:
+                        row_data[Columns.List.SAVESTATE] = \
+                            self.icons.get("savestate")
 
                     # Thumbnail icon
                     icon = self.get_pixbuf_from_cache(
@@ -5191,7 +5209,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     # ------------------------------------
 
                     # Store both Gtk.TreeIter under game filename key
-                    self.game_path[game.filename] = [game, row_list, row_grid]
+                    self.game_path[game.id] = [game, row_list, row_grid]
 
                     self.set_informations_headerbar()
 
@@ -5367,7 +5385,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 # ----------------------------------------
 
                 # This game is currently running
-                if game.filename in self.threads:
+                if game.id in self.threads:
                     self.__on_game_launch_button_update(False)
                     self.button_toolbar_launch.set_sensitive(True)
 
@@ -5393,10 +5411,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.item_game_screenshots.set_sensitive(False)
                     self.item_menubar_game_screenshots.set_sensitive(False)
 
-                    screenshots = list()
-
                     if game.emulator is not None:
-                        screenshots = game.emulator.get_screenshots(game)
 
                         # Check extension and emulator for GBA game on mednafen
                         if self.__mednafen_status and game.extension == ".gba":
@@ -5406,7 +5421,7 @@ class MainWindow(Gtk.ApplicationWindow):
                                 self.item_menubar_mednafen.set_sensitive(True)
 
                     # Check screenshots
-                    if len(screenshots) > 0:
+                    if len(game.screenshots) > 0:
                         self.button_toolbar_screenshots.set_sensitive(True)
                         self.item_game_screenshots.set_sensitive(True)
                         self.item_menubar_game_screenshots.set_sensitive(True)
@@ -5435,7 +5450,7 @@ class MainWindow(Gtk.ApplicationWindow):
                         game.finish)
 
                     # Retrieve path from storage cache
-                    treeiter, griditer = self.game_path[game.filename][1:]
+                    treeiter, griditer = self.game_path[game.id][1:]
 
                     # Update selection in grid view
                     if type(treeview) is Gtk.TreeView:
@@ -5586,11 +5601,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     image = None
 
-                    # Get Game emulator
-                    emulator = console.emulator
-                    if game.emulator is not None:
-                        emulator = game.emulator
-
                     # Retrieve user choice for tooltip image
                     tooltip_image = self.config.get(
                         "gem", "tooltip_image_type", fallback="screenshot")
@@ -5603,10 +5613,9 @@ class MainWindow(Gtk.ApplicationWindow):
                                 image = game.cover
 
                         if tooltip_image in ["both", "screenshot"]:
-                            screenshots = sorted(emulator.get_screenshots(game))
 
-                            if len(screenshots) > 0:
-                                image = Path(screenshots[-1])
+                            if len(game.screenshots) > 0:
+                                image = Path(game.screenshots[-1])
 
                         if image is not None and image.exists():
                             # Resize pixbuf to have a 96 pixels height
@@ -5911,9 +5920,9 @@ class MainWindow(Gtk.ApplicationWindow):
         if not self.check_selection():
             return False
 
-        if game.filename in self.threads:
+        if game.id in self.threads:
             if widget is not None and type(widget) is Gtk.Button:
-                self.threads[game.filename].proc.terminate()
+                self.threads[game.id].proc.terminate()
 
             return False
 
@@ -5923,38 +5932,21 @@ class MainWindow(Gtk.ApplicationWindow):
 
         console = self.selection["console"]
 
-        if console is not None:
-            emulator = console.emulator
+        if console is not None and game.emulator is not None:
 
-            if game.emulator is not None:
-                emulator = game.emulator
-
-            if emulator is not None and emulator.id in self.api.emulators:
+            if game.emulator.id in self.api.emulators:
                 self.logger.info(_("Initialize %s") % game.name)
 
                 # ----------------------------------------
-                #   Generate correct command
+                #   Run game
                 # ----------------------------------------
 
                 try:
-                    command = emulator.command(game,
-                        self.button_toolbar_fullscreen.get_active())
-
-                except FileNotFoundError as error:
-                    self.set_message(_("Cannot launch game"),
-                        _("%s binary cannot be found") % emulator.name)
-                    return False
-
-                if len(command) > 0:
-
-                    # ----------------------------------------
-                    #   Run game
-                    # ----------------------------------------
-
-                    thread = GameThread(self, console, emulator, game, command)
+                    thread = GameThread(self, game,
+                        fullscreen=self.button_toolbar_fullscreen.get_active())
 
                     # Save thread references
-                    self.threads[game.filename] = thread
+                    self.threads[game.id] = thread
 
                     # Launch thread
                     thread.start()
@@ -5968,6 +5960,12 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     return True
 
+                except FileNotFoundError as error:
+                    self.set_message(_("Cannot launch game"),
+                        _("%s binary cannot be found") % game.emulator.name)
+
+                    return False
+
         return False
 
 
@@ -5978,7 +5976,7 @@ class MainWindow(Gtk.ApplicationWindow):
         ----------
         widget : Gtk.Widget
             Object which receive signal
-        game : gem.engine.api.Game
+        game : gem.engine.game.Game
             Game object
         """
 
@@ -5988,7 +5986,7 @@ class MainWindow(Gtk.ApplicationWindow):
             thread = ScriptThread(self, path, game)
 
             # Save thread references
-            self.scripts[game.filename] = thread
+            self.scripts[game.id] = thread
 
             # Launch thread
             thread.start()
@@ -6006,10 +6004,10 @@ class MainWindow(Gtk.ApplicationWindow):
         """
 
         # Remove this script from threads list
-        if thread.game.filename in self.scripts:
+        if thread.game.id in self.scripts:
             self.logger.debug("Remove %s from scripts cache" % thread.game.name)
 
-            del self.scripts[thread.game.filename]
+            del self.scripts[thread.game.id]
 
 
     def __on_game_terminate(self, widget, thread):
@@ -6028,7 +6026,7 @@ class MainWindow(Gtk.ApplicationWindow):
         # ----------------------------------------
 
         # Get the last occurence from database
-        game = self.api.get_game(thread.console.id, thread.game.id)
+        game = thread.game
 
         if not thread.error:
 
@@ -6046,41 +6044,39 @@ class MainWindow(Gtk.ApplicationWindow):
             self.api.update_game(game)
 
             # Played
-            self.set_game_data(Columns.List.PLAYED, game.played, game.filename)
+            self.set_game_data(Columns.List.PLAYED, game.played, game.id)
 
             # Last played
             self.set_game_data(Columns.List.LAST_PLAY,
-                string_from_date(game.last_launch_date), game.filename)
+                string_from_date(game.last_launch_date), game.id)
 
             # Last time played
             self.set_game_data(Columns.List.LAST_TIME_PLAY,
-                string_from_time(game.last_launch_time), game.filename)
+                string_from_time(game.last_launch_time), game.id)
 
             # Play time
             self.set_game_data(Columns.List.TIME_PLAY,
-                string_from_time(game.play_time), game.filename)
+                string_from_time(game.play_time), game.id)
 
             # Snaps
-            if game.emulator is not None and \
-                len(game.emulator.get_screenshots(game)) > 0:
+            if game.emulator is not None and len(game.screenshots) > 0:
                 self.set_game_data(Columns.List.SCREENSHOT,
-                    self.icons.get("screenshot"), game.filename)
+                    self.icons.get("screenshot"), game.id)
                 self.button_toolbar_screenshots.set_sensitive(True)
                 self.item_menubar_game_screenshots.set_sensitive(True)
 
             else:
                 self.set_game_data(Columns.List.SCREENSHOT,
-                    self.icons.get_translucent("screenshot"), game.filename)
+                    self.icons.get_translucent("screenshot"), game.id)
 
             # Save state
-            if game.emulator is not None and \
-                len(game.emulator.get_savestates(game)) > 0:
+            if game.emulator is not None and len(game.savestates) > 0:
                 self.set_game_data(Columns.List.SAVESTATE,
-                    self.icons.get("savestate"), game.filename)
+                    self.icons.get("savestate"), game.id)
 
             else:
                 self.set_game_data(Columns.List.SAVESTATE,
-                    self.icons.get_translucent("savestate"), game.filename)
+                    self.icons.get_translucent("savestate"), game.id)
 
             self.set_informations()
 
@@ -6106,6 +6102,8 @@ class MainWindow(Gtk.ApplicationWindow):
             self.item_menubar_database.set_sensitive(True)
             self.item_menubar_delete.set_sensitive(True)
 
+            self.__current_tooltip = None
+
             if game.emulator is not None:
 
                 # Check extension and emulator for GBA game on mednafen
@@ -6123,10 +6121,10 @@ class MainWindow(Gtk.ApplicationWindow):
         # ----------------------------------------
 
         # Remove this game from threads list
-        if game.filename in self.threads:
+        if game.id in self.threads:
             self.logger.debug("Remove %s from process cache" % game.name)
 
-            del self.threads[game.filename]
+            del self.threads[game.id]
 
         if len(self.threads) == 0:
             self.item_menubar_preferences.set_sensitive(True)
@@ -6136,10 +6134,10 @@ class MainWindow(Gtk.ApplicationWindow):
         # ----------------------------------------
 
         # Remove this script from threads list
-        if game.filename in self.scripts:
+        if game.id in self.scripts:
             self.logger.debug("Remove %s from scripts cache" % game.name)
 
-            del self.scripts[game.filename]
+            del self.scripts[game.id]
 
         path = Folders.LOCAL.joinpath("ongamestopped")
 
@@ -6147,7 +6145,7 @@ class MainWindow(Gtk.ApplicationWindow):
             thread = ScriptThread(self, path, game)
 
             # Save thread references
-            self.scripts[game.filename] = thread
+            self.scripts[game.id] = thread
 
             # Launch thread
             thread.start()
@@ -6169,7 +6167,7 @@ class MainWindow(Gtk.ApplicationWindow):
         game = self.selection["game"]
 
         if game is not None:
-            treeiter = self.game_path[game.filename][1]
+            treeiter = self.game_path[game.id][1]
 
             self.set_sensitive(False)
 
@@ -6186,10 +6184,10 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     game.name = new_name
 
-                    row, treepath, gridpath = self.game_path[game.filename]
+                    row, treepath, gridpath = self.game_path[game.id]
 
                     treepath = self.model_games_list.get_path(
-                        self.game_path[game.filename][1])
+                        self.game_path[game.id][1])
 
                     # Update game name
                     self.model_games_list[treepath][Columns.List.NAME] = str(
@@ -6225,12 +6223,8 @@ class MainWindow(Gtk.ApplicationWindow):
         if game is not None and console is not None:
 
             # Avoid trying to remove an executed game
-            if not game.filename in self.threads:
-                treeiter = self.game_path[game.filename][1]
-
-                emulator = console.emulator
-                if game.emulator is not None:
-                    emulator = game.emulator
+            if not game.id in self.threads:
+                treeiter = self.game_path[game.id][1]
 
                 need_to_reload = False
 
@@ -6240,7 +6234,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 self.set_sensitive(False)
 
-                dialog = MaintenanceDialog(self, game, emulator)
+                dialog = MaintenanceDialog(self, game)
 
                 if dialog.run() == Gtk.ResponseType.APPLY:
                     try:
@@ -6334,12 +6328,8 @@ class MainWindow(Gtk.ApplicationWindow):
         if game is not None and console is not None:
 
             # Avoid trying to remove an executed game
-            if not game.filename in self.threads:
-                treeiter = self.game_path[game.filename][1]
-
-                emulator = console.emulator
-                if game.emulator is not None:
-                    emulator = game.emulator
+            if not game.id in self.threads:
+                treeiter = self.game_path[game.id][1]
 
                 need_to_reload = False
 
@@ -6349,7 +6339,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 self.set_sensitive(False)
 
-                dialog = DeleteDialog(self, game, emulator)
+                dialog = DeleteDialog(self, game)
 
                 if dialog.run() == Gtk.ResponseType.YES:
                     try:
@@ -6401,11 +6391,6 @@ class MainWindow(Gtk.ApplicationWindow):
         if game is not None:
             console = self.selection["console"]
 
-            # Get Game emulator
-            emulator = console.emulator
-            if game.emulator is not None:
-                emulator = game.emulator
-
             need_to_reload = False
 
             # ----------------------------------------
@@ -6414,7 +6399,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
             self.set_sensitive(False)
 
-            dialog = DuplicateDialog(self, game, emulator)
+            dialog = DuplicateDialog(self, game)
 
             if dialog.run() == Gtk.ResponseType.APPLY:
                 self.logger.info(_("Duplicate %s") % game.name)
@@ -6461,35 +6446,9 @@ class MainWindow(Gtk.ApplicationWindow):
         """
 
         game = self.selection["game"]
+        console = self.selection["console"]
 
-        if game is not None:
-            console = self.selection["console"]
-
-            parameters = None
-
-            emulator = {
-                "rom": None,
-                "console": None,
-                "parameters": None }
-
-            # Current console default emulator
-            if console is not None and console.emulator is not None:
-                emulator["console"] = console.emulator
-
-                if console.emulator.default is not None:
-                    parameters = console.emulator.default
-
-            # ----------------------------------------
-            #   Generate data
-            # ----------------------------------------
-
-            if game.emulator is not None and \
-                not game.emulator == emulator["console"]:
-                emulator["rom"] = game.emulator
-
-            if game.default is not None and \
-                not game.default == parameters:
-                emulator["parameters"] = game.default
+        if game is not None and console is not None:
 
             # ----------------------------------------
             #   Dialog
@@ -6497,7 +6456,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
             self.set_sensitive(False)
 
-            dialog = ParametersDialog(self, game, emulator)
+            dialog = ParametersDialog(self, game)
 
             if dialog.run() == Gtk.ResponseType.APPLY:
                 self.logger.info(_("Update %s parameters") % game.name)
@@ -6505,20 +6464,15 @@ class MainWindow(Gtk.ApplicationWindow):
                 game.emulator = self.api.get_emulator(
                     dialog.combo.get_active_id())
 
-                game.default = dialog.entry_arguments.get_text()
-                if len(game.default) == 0:
-                    game.default = None
+                game.default = dialog.entry_arguments.get_text().strip()
 
-                game.key = dialog.entry_key.get_text()
-                if len(game.key) == 0:
-                    game.key = None
+                game.key = dialog.entry_key.get_text().strip()
 
                 game.tags.clear()
                 for tag in dialog.entry_tags.get_text().split(","):
                     game.tags.append(tag.strip())
 
-                game.environment = dict()
-
+                game.environment.clear()
                 for row in dialog.store_environment:
                     key = dialog.store_environment.get_value(row.iter, 0)
 
@@ -6537,51 +6491,46 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 custom = False
 
-                if game.emulator is not None and \
-                    not game.emulator.name == console.emulator.name:
+                if not game.emulator.name == console.emulator.name:
                     custom = True
 
-                elif game.default is not None:
+                elif len(game.default) > 0:
                     custom = True
 
                 if custom:
                     self.set_game_data(Columns.List.PARAMETER,
-                        self.icons.get("parameter"), game.filename)
+                        self.icons.get("parameter"), game.id)
                 else:
                     self.set_game_data(Columns.List.PARAMETER,
-                        self.icons.get_translucent("parameter"), game.filename)
+                        self.icons.get_translucent("parameter"), game.id)
 
                 # ----------------------------------------
                 #   Update icons
                 # ----------------------------------------
 
-                new_emulator = emulator["console"]
-                if game.emulator is not None:
-                    new_emulator = game.emulator
-
                 # Screenshots
-                if len(new_emulator.get_screenshots(game)) > 0:
+                if len(game.screenshots) > 0:
                     self.set_game_data(Columns.List.SCREENSHOT,
-                        self.icons.get("screenshot"), game.filename)
+                        self.icons.get("screenshot"), game.id)
 
                     self.button_toolbar_screenshots.set_sensitive(True)
                     self.item_menubar_game_screenshots.set_sensitive(True)
 
                 else:
                     self.set_game_data(Columns.List.SCREENSHOT,
-                        self.icons.get_translucent("screenshot"), game.filename)
+                        self.icons.get_translucent("screenshot"), game.id)
 
                     self.button_toolbar_screenshots.set_sensitive(False)
                     self.item_menubar_game_screenshots.set_sensitive(False)
 
                 # Savestates
-                if len(new_emulator.get_savestates(game)) > 0:
+                if len(game.savestates) > 0:
                     self.set_game_data(Columns.List.SAVESTATE,
-                        self.icons.get("savestate"), game.filename)
+                        self.icons.get("savestate"), game.id)
 
                 else:
                     self.set_game_data(Columns.List.SAVESTATE,
-                        self.icons.get_translucent("savestate"), game.filename)
+                        self.icons.get_translucent("savestate"), game.id)
 
                 self.set_informations()
 
@@ -6694,7 +6643,7 @@ class MainWindow(Gtk.ApplicationWindow):
         game = self.selection["game"]
 
         if game is not None:
-            row, treepath, gridpath = self.game_path[game.filename]
+            row, treepath, gridpath = self.game_path[game.id]
 
             if not game.favorite:
                 self.logger.debug("Mark %s as favorite" % game.name)
@@ -6747,7 +6696,7 @@ class MainWindow(Gtk.ApplicationWindow):
         game = self.selection["game"]
 
         if game is not None:
-            row, treepath, gridpath = self.game_path[game.filename]
+            row, treepath, gridpath = self.game_path[game.id]
 
             if not game.multiplayer:
                 self.logger.debug("Mark %s as multiplayers" % game.name)
@@ -6800,7 +6749,7 @@ class MainWindow(Gtk.ApplicationWindow):
         game = self.selection["game"]
 
         if game is not None:
-            row, treepath, gridpath = self.game_path[game.filename]
+            row, treepath, gridpath = self.game_path[game.id]
 
             if not game.finish:
                 self.logger.debug("Mark %s as finish" % game.name)
@@ -6878,7 +6827,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 modification = True
 
         if modification:
-            row, treepath, gridpath = self.game_path[game.filename]
+            row, treepath, gridpath = self.game_path[game.id]
 
             self.model_games_list.set_value(
                 treepath, Columns.List.SCORE, game.score)
@@ -6960,13 +6909,13 @@ class MainWindow(Gtk.ApplicationWindow):
                     # Update game from database
                     self.api.update_game(game)
 
-                    treeiter = self.game_path[game.filename]
+                    treeiter = self.game_path[game.id]
 
                     large_cache_path = self.get_icon_from_cache(
-                        "games", "96x96", "%s.png" % game.id)
+                        "games", "96x96", game.id + ".png")
 
                     thumbnail_cache_path = self.get_icon_from_cache(
-                        "games", "22x22", "%s.png" % game.id)
+                        "games", "22x22", game.id + ".png")
 
                     # A new icon is available so we regenerate icon cache
                     if game.cover is not None and game.cover.exists():
@@ -7041,14 +6990,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
         if treeiter is not None and game is not None and console is not None:
 
-            # Check emulator
-            emulator = console.emulator
-
-            if game.emulator is not None:
-                emulator = game.emulator
-
-            if emulator is not None and emulator.id in self.api.emulators:
-                name = "%s.desktop" % game.filename
+            if game.emulator.id in self.api.emulators:
+                name = "%s.desktop" % game.path.stem
 
                 # ----------------------------------------
                 #   Fill template
@@ -7061,13 +7004,13 @@ class MainWindow(Gtk.ApplicationWindow):
                 values = {
                     "%name%": game.name,
                     "%icon%": icon,
-                    "%path%": str(game.filepath.parent),
-                    "%command%": ' '.join(emulator.command(game))
+                    "%path%": str(game.path.parent),
+                    "%command%": ' '.join(game.command())
                 }
 
                 # Put game path between quotes
                 values["%command%"] = values["%command%"].replace(
-                    str(game.filepath), "\"%s\"" % str(game.filepath))
+                    str(game.path), "\"%s\"" % str(game.path))
 
                 self.set_sensitive(False)
 
@@ -7496,7 +7439,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Reload console games
         for console in consoles_to_reload.values():
-            console.set_games(self.api)
+            console.init_games()
 
         # Reload interface when games list was modified
         if need_to_reload:
@@ -7559,7 +7502,7 @@ class MainWindow(Gtk.ApplicationWindow):
         game = self.selection["game"]
 
         if game is not None:
-            log_path = Folders.LOCAL.joinpath(game.log)
+            log_path = Folders.LOCAL.joinpath("logs", game.id + ".log")
 
             if log_path.exists():
                 return log_path
@@ -7643,7 +7586,7 @@ class MainWindow(Gtk.ApplicationWindow):
         return version
 
 
-    def set_game_data(self, index, data, gamename):
+    def set_game_data(self, index, data, identifier):
         """ Update game informations in games treeview
 
         Parameters
@@ -7652,11 +7595,11 @@ class MainWindow(Gtk.ApplicationWindow):
             Column index
         data : object
             Value to set
-        gamename : str
-            Game basename without extension
+        identifier : str
+            Game identifier
         """
 
-        treeiter = self.game_path.get(gamename, None)
+        treeiter = self.game_path.get(identifier, None)
 
         if treeiter is not None:
             self.model_games_list[treeiter[1]][index] = data
@@ -7698,7 +7641,7 @@ class MainWindow(Gtk.ApplicationWindow):
         need_save = False
 
         cache_path = self.get_icon_from_cache(
-            key, "%dx%d" % (size, size), "%s.png" % identifier)
+            key, "%dx%d" % (size, size), identifier + ".png")
 
         # Retrieve icon from cache folder
         if cache_path.exists() and cache_path.is_file():
@@ -7781,7 +7724,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         Parameters
         ----------
-        game : gem.engine.api.Game
+        game : gem.engine.game.Game
             Game object
 
         Returns
@@ -7791,7 +7734,8 @@ class MainWindow(Gtk.ApplicationWindow):
         """
 
         # FIXME: Maybe a better way to determine type file
-        return Path.home().joinpath(".mednafen", "sav", game.filename + ".type")
+        return Path.home().joinpath(
+            ".mednafen", "sav", game.path.stem + ".type")
 
 
     def emit(self, *args):

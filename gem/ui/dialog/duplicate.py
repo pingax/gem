@@ -46,14 +46,14 @@ from gettext import gettext as _
 
 class DuplicateDialog(CommonWindow):
 
-    def __init__(self, parent, game, emulator):
+    def __init__(self, parent, game):
         """ Constructor
 
         Parameters
         ----------
         parent : Gtk.Window
             Parent object
-        game : gem.api.Game
+        game : gem.engine.game.Game
             Game object instance
         """
 
@@ -69,7 +69,6 @@ class DuplicateDialog(CommonWindow):
         # ------------------------------------
 
         self.game = game
-        self.emulator = emulator
 
         # ------------------------------------
         #   Prepare interface
@@ -221,10 +220,10 @@ class DuplicateDialog(CommonWindow):
         self.listbox_options.add(self.widget_note)
 
         # Check extension and emulator for GBA game on mednafen
-        if self.game.extension.lower() == ".gba" and \
-            "mednafen" in self.emulator.binary and \
-            self.parent.get_mednafen_status():
-            self.listbox_options.add(self.widget_memory)
+        if self.game.extension == ".gba" and self.parent.get_mednafen_status():
+
+            if "mednafen" in str(self.game.emulator.binary):
+                self.listbox_options.add(self.widget_memory)
 
         self.scroll_options.add(self.listbox_options)
 
@@ -296,7 +295,7 @@ class DuplicateDialog(CommonWindow):
 
             if self.switch_savestate.get_active():
 
-                for path in self.emulator.get_savestates(self.game):
+                for path in self.game.savestates:
                     new_path = path.parent.joinpath(
                         filename + ''.join(path.suffixes))
 
@@ -308,7 +307,7 @@ class DuplicateDialog(CommonWindow):
 
             if self.switch_screenshot.get_active():
 
-                for path in self.emulator.get_screenshots(self.game):
+                for path in self.game.screenshots:
                     new_path = path.parent.joinpath(
                         filename + ''.join(path.suffixes))
 

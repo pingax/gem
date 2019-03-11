@@ -53,17 +53,17 @@ from gettext import gettext as _
 
 class ConsolePreferences(CommonWindow):
 
-    def __init__(self, parent, console, modify):
+    def __init__(self, parent, console, consoles, emulators):
         """ Constructor
 
         Parameters
         ----------
         parent : Gtk.Window
             Parent object (Default: None)
-        console : gem.engine.api.Console
+        console : gem.engine.console.Console
             Console object
-        modify : bool
-            Use edit mode instead of append mode
+        emulators : list
+            Emulator objects storage
         """
 
         CommonWindow.__init__(self, parent, _("Console"),
@@ -78,6 +78,11 @@ class ConsolePreferences(CommonWindow):
         # Console object
         self.console = console
 
+        # Consoles storage
+        self.consoles = consoles
+        # Emulators storage
+        self.emulators = emulators
+
         # GEM config
         self.config = parent.config
 
@@ -86,8 +91,6 @@ class ConsolePreferences(CommonWindow):
         self.error = False
         self.file_error = False
         self.emulator_error = False
-
-        self.modify = modify
 
         if getattr(parent, "interface", None) is not None:
             self.interface = parent.interface
@@ -470,7 +473,7 @@ class ConsolePreferences(CommonWindow):
 
         emulators_rows = dict()
 
-        for emulator in self.api.emulators.values():
+        for emulator in self.emulators.values():
 
             if emulator.exists:
 
@@ -489,7 +492,7 @@ class ConsolePreferences(CommonWindow):
         #   Init data
         # ------------------------------------
 
-        if self.modify:
+        if len(self.console.id) > 0:
             self.entry_name.set_text(self.console.name)
 
             # Folder
@@ -544,27 +547,42 @@ class ConsolePreferences(CommonWindow):
         """ Save modification
         """
 
-        self.__on_save_data()
+        self.section = self.entry_name.get_text().strip()
 
-        if self.data is not None:
+        if len(self.section) == 0:
+            return None
 
-            if self.modify:
-                same_icon = self.console.icon == self.data["icon"]
+        data = {
+            "id": generate_identifier(self.section),
+            "name": self.section
+        }
 
-                self.api.delete_console(self.console.id)
+        value = self.file_folder.get_filename()
+        if value is not None and len(value) > 0:
+            data["path"] = Path(value).expanduser()
 
-            # Remove thumbnails from cache
-            if self.console is not None and not same_icon:
-                for size in ("22x22", "24x24", "48x48", "64x64", "96x96"):
-                    cache_path = self.interface.get_icon_from_cache(
-                        "consoles", size, "%s.png" % self.console.id)
+        value = self.entry_icon.get_text().strip()
+        if len(value) > 0:
+            data["icon"] = Path(value).expanduser()
 
-                    if cache_path.exists():
-                        remove(cache_path)
+        value = self.entry_extensions.get_text().strip()
+        if len(value) > 0:
+            data["extensions"] = value.split()
 
-            # Append a new console
-            self.console = self.api.add_console(self.data)
+        data["ignores"] = list()
+        for row in self.model_ignores:
+            data = self.model_ignores.get_value(row.iter, 0)
 
+            if data is not None and len(data) > 0:
+                data["ignores"].append(data)
+
+        data["favorite"] = self.switch_favorite.get_active()
+        data["recursive"] = self.switch_recursive.get_active()
+
+        data["emulator"] = self.api.get_emulator(
+            self.combo_emulators.get_active_id())
+
+        # Avanced view status
         status = self.config.getboolean("advanced", "console", fallback=False)
 
         if not self.check_advanced.get_active() == status:
@@ -572,48 +590,7 @@ class ConsolePreferences(CommonWindow):
                 "advanced", "console", self.check_advanced.get_active())
             self.config.update()
 
-        return self.console.id
-
-
-    def __on_save_data(self):
-        """ Return all the data from interface
-        """
-
-        self.section = self.entry_name.get_text()
-
-        self.data = {
-            "id": None,
-            "name": self.section,
-            "path": self.console.path,
-            "icon": None,
-            "ignores": list(),
-            "extensions": list(),
-            "favorite": self.switch_favorite.get_active(),
-            "recursive": self.switch_recursive.get_active(),
-            "emulator": self.api.get_emulator(
-                self.combo_emulators.get_active_id())
-        }
-
-        if len(self.section) > 0:
-            self.data["id"] = generate_identifier(self.section)
-
-        value = self.file_folder.get_filename()
-        if value is not None and len(value) > 0:
-            self.data["path"] = Path(value).expanduser()
-
-        value = self.entry_icon.get_text().strip()
-        if len(value) > 0:
-            self.data["icon"] = Path(value).expanduser()
-
-        value = self.entry_extensions.get_text().strip()
-        if len(value) > 0:
-            self.data["extensions"] = value.split()
-
-        for row in self.model_ignores:
-            data = self.model_ignores.get_value(row.iter, 0)
-
-            if data is not None and len(data) > 0:
-                self.data["ignores"].append(data)
+        return data
 
 
     def __on_entry_update(self, widget):
@@ -642,7 +619,7 @@ class ConsolePreferences(CommonWindow):
             name = generate_identifier(name)
 
             # Check if current console exists in database
-            if name in self.api.consoles:
+            if name in self.consoles:
 
                 # Avoid to use a name which already exists in database
                 if self.console is not None and not self.console.id == name:

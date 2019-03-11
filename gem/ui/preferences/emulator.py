@@ -52,14 +52,14 @@ from gettext import gettext as _
 
 class EmulatorPreferences(CommonWindow):
 
-    def __init__(self, parent, emulator, modify):
+    def __init__(self, parent, emulator, emulators):
         """ Constructor
 
         Parameters
         ----------
         parent : Gtk.Window
             Parent object
-        emulator : gem.engine.api.Emulator
+        emulator : gem.engine.emulator.Emulator
             Emulator object
         modify : bool
             Use edit mode instead of append mode
@@ -77,14 +77,15 @@ class EmulatorPreferences(CommonWindow):
         # Emulator object
         self.emulator = emulator
 
+        # Consoles storage
+        self.emulators = emulators
+
         # GEM config
         self.config = parent.config
 
         self.path = None
 
         self.error = False
-
-        self.modify = modify
 
         if getattr(parent, "interface", None) is not None:
             self.interface = parent.interface
@@ -467,7 +468,7 @@ class EmulatorPreferences(CommonWindow):
         #   Init data
         # ------------------------------------
 
-        if self.modify:
+        if len(self.emulator.id) > 0:
             self.entry_name.set_text(self.emulator.name)
 
             # Binary
@@ -493,9 +494,9 @@ class EmulatorPreferences(CommonWindow):
 
             # Regex
             if self.emulator.savestates is not None:
-                self.entry_save.set_text(self.emulator.savestates)
+                self.entry_save.set_text(str(self.emulator.savestates))
             if self.emulator.screenshots is not None:
-                self.entry_screenshots.set_text(self.emulator.screenshots)
+                self.entry_screenshots.set_text(str(self.emulator.screenshots))
 
             # Arguments
             if self.emulator.default is not None:
@@ -521,35 +522,49 @@ class EmulatorPreferences(CommonWindow):
         """ Save modification
         """
 
-        self.__on_save_data()
+        self.section = self.entry_name.get_text().strip()
 
-        if self.data is not None:
+        if len(self.section) == 0:
+            return None
 
-            if self.modify:
-                same_icon = self.emulator.icon == self.data["icon"]
+        data = {
+            "id": generate_identifier(self.section),
+            "name": self.section
+        }
 
-                # Store identifier for rename function
-                previous_identifier = self.emulator.id
+        value = self.entry_binary.get_text().strip()
+        if len(value) > 0:
+            data["binary"] = Path(value).expanduser()
 
-                self.api.delete_emulator(self.emulator.id)
+        value = self.entry_icon.get_text().strip()
+        if len(value) > 0:
+            data["icon"] = Path(value).expanduser()
 
-            # Remove thumbnails from cache
-            if self.emulator is not None and not same_icon:
-                for size in ("22x22", "48x48", "64x64"):
-                    cache_path = self.interface.get_icon_from_cache(
-                        "emulators", size, "%s.png" % self.emulator.id)
+        value = self.file_configuration.get_filename()
+        if value is not None and len(value) > 0:
+            data["configuration"] = Path(value).expanduser()
 
-                    if cache_path.exists():
-                        remove(cache_path)
+        value = self.entry_save.get_text().strip()
+        if len(value) > 0:
+            data["savestates"] = str(Path(value).expanduser())
 
-            # Append a new emulator
-            self.emulator = self.api.add_emulator(self.data)
+        value = self.entry_screenshots.get_text().strip()
+        if len(value) > 0:
+            data["screenshots"] = str(Path(value).expanduser())
 
-            # This emulator has been renamed
-            if self.modify and not self.data["id"] == previous_identifier:
-                self.api.rename_emulator(
-                    previous_identifier, self.data["id"])
+        value = self.entry_launch.get_text().strip()
+        if len(value) > 0:
+            data["default"] = value
 
+        value = self.entry_windowed.get_text().strip()
+        if len(value) > 0:
+            data["windowed"] = value
+
+        value = self.entry_fullscreen.get_text().strip()
+        if len(value) > 0:
+            data["fullscreen"] = value
+
+        # Avanced view status
         status = self.config.getboolean("advanced", "emulator", fallback=False)
 
         if not self.check_advanced.get_active() == status:
@@ -557,62 +572,7 @@ class EmulatorPreferences(CommonWindow):
                 "advanced", "emulator", self.check_advanced.get_active())
             self.config.update()
 
-        return self.emulator.id
-
-
-    def __on_save_data(self):
-        """ Return all the data from interface
-        """
-
-        self.section = self.entry_name.get_text()
-
-        self.data = {
-            "id": None,
-            "name": self.section,
-            "binary": None,
-            "icon": None,
-            "configuration": None,
-            "savestates": None,
-            "screenshots": None,
-            "default": None,
-            "windowed": None,
-            "fullscreen": None
-        }
-
-        if len(self.section) > 0:
-            self.data["id"] = generate_identifier(self.section)
-
-        value = self.entry_binary.get_text().strip()
-        if len(value) > 0:
-            self.data["binary"] = Path(value).expanduser()
-
-        value = self.entry_icon.get_text().strip()
-        if len(value) > 0:
-            self.data["icon"] = Path(value).expanduser()
-
-        value = self.file_configuration.get_filename()
-        if value is not None and len(value) > 0:
-            self.data["configuration"] = Path(value).expanduser()
-
-        value = self.entry_save.get_text().strip()
-        if len(value) > 0:
-            self.data["savestates"] = str(Path(value).expanduser())
-
-        value = self.entry_screenshots.get_text().strip()
-        if len(value) > 0:
-            self.data["screenshots"] = str(Path(value).expanduser())
-
-        value = self.entry_launch.get_text().strip()
-        if len(value) > 0:
-            self.data["default"] = value
-
-        value = self.entry_windowed.get_text().strip()
-        if len(value) > 0:
-            self.data["windowed"] = value
-
-        value = self.entry_fullscreen.get_text().strip()
-        if len(value) > 0:
-            self.data["fullscreen"] = value
+        return data
 
 
     def __on_entry_update(self, widget):
@@ -641,7 +601,7 @@ class EmulatorPreferences(CommonWindow):
             name = generate_identifier(name)
 
             # Check if current emulator exists in database
-            if name in self.api.emulators:
+            if name in self.emulators:
 
                 # Avoid to use a name which already exists in database
                 if self.emulator is not None and not self.emulator.id == name:

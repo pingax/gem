@@ -48,17 +48,15 @@ from gettext import gettext as _
 
 class ParametersDialog(CommonWindow):
 
-    def __init__(self, parent, game, emulator):
+    def __init__(self, parent, game):
         """ Constructor
 
         Parameters
         ----------
         parent : Gtk.Window
             Parent object
-        game : gem.api.Game
+        game : gem.engine.game.Game
             Game object
-        emulator : dict
-            Emulator data
         """
 
         classic_theme = False
@@ -78,7 +76,6 @@ class ParametersDialog(CommonWindow):
         self.icons = parent.icons
 
         self.game = game
-        self.emulator = emulator
 
         self.help_data = {
             "order": [
@@ -545,19 +542,14 @@ class ParametersDialog(CommonWindow):
 
                 row = self.model.append([icon, emulator.name])
 
-                if self.emulator["rom"] is not None:
-                    if emulator.name == self.emulator["rom"].name:
-                        self.combo.set_active_iter(row)
-
-                elif self.emulator["console"] is not None:
-                    if emulator.name == self.emulator["console"].name:
-                        self.combo.set_active_iter(row)
+                if emulator.name == self.game.emulator.name:
+                    self.combo.set_active_iter(row)
 
         self.combo.set_wrap_width(int(len(self.model) / 6))
 
         # Emulator parameters
-        if self.emulator["parameters"] is not None:
-            self.entry_arguments.set_text(self.emulator["parameters"])
+        if len(self.game.default) > 0:
+            self.entry_arguments.set_text(self.game.default)
 
         # Game ID
         if self.game.key is not None:

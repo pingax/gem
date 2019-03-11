@@ -19,6 +19,8 @@ from pathlib import Path
 
 # GEM
 from gem.engine.api import GEM
+from gem.engine.console import Console
+from gem.engine.emulator import Emulator
 from gem.engine.lib.configuration import Configuration
 
 from gem.ui.data import Icons
@@ -194,9 +196,15 @@ class PreferencesWindow(CommonWindow):
             _("Hide"): "none"
         }
 
-        self.selection = {
-            "console": None,
-            "emulator": None
+        self.selection = None
+
+        self.consoles = {
+            "rows": dict(),
+            "objects": dict()
+        }
+        self.emulators = {
+            "rows": dict(),
+            "objects": dict()
         }
 
         # ------------------------------------
@@ -917,7 +925,12 @@ class PreferencesWindow(CommonWindow):
 
         self.scroll_consoles_treeview = Gtk.ScrolledWindow()
 
-        self.model_consoles = Gtk.ListStore(GdkPixbuf.Pixbuf, str, str, str)
+        self.model_consoles = Gtk.ListStore(
+            GdkPixbuf.Pixbuf,   # Console icon
+            str,                # Console name
+            str,                # Console path status
+            object              # Console object
+        )
         self.treeview_consoles = Gtk.TreeView()
 
         self.column_consoles_name = Gtk.TreeViewColumn()
@@ -1008,7 +1021,12 @@ class PreferencesWindow(CommonWindow):
 
         self.scroll_emulators_treeview = Gtk.ScrolledWindow()
 
-        self.model_emulators = Gtk.ListStore(GdkPixbuf.Pixbuf, str, str, str)
+        self.model_emulators = Gtk.ListStore(
+            GdkPixbuf.Pixbuf,   # Emulator icon
+            str,                # Emulator name
+            str,                # Emulator binary status
+            object              # Emulator object
+        )
         self.treeview_emulators = Gtk.TreeView()
 
         self.column_emulators_name = Gtk.TreeViewColumn()
@@ -1353,32 +1371,32 @@ class PreferencesWindow(CommonWindow):
         # ------------------------------------
 
         self.treeview_consoles.connect(
-            "button-press-event", self.__on_selected_treeview, Manager.CONSOLE)
+            "button-press-event", self.__on_selected_treeview)
         self.treeview_consoles.connect(
-            "key-release-event", self.__on_selected_treeview, Manager.CONSOLE)
+            "key-release-event", self.__on_selected_treeview)
 
         self.button_consoles_add.connect(
-            "clicked", self.__on_modify_item, Manager.CONSOLE, False)
+            "clicked", self.__on_append_item)
         self.button_consoles_modify.connect(
-            "clicked", self.__on_modify_item, Manager.CONSOLE, True)
+            "clicked", self.__on_modify_item)
         self.button_consoles_remove.connect(
-            "clicked", self.__on_remove_item, Manager.CONSOLE)
+            "clicked", self.__on_remove_item)
 
         # ------------------------------------
         #   Emulators
         # ------------------------------------
 
         self.treeview_emulators.connect(
-            "button-press-event", self.__on_selected_treeview, Manager.EMULATOR)
+            "button-press-event", self.__on_selected_treeview)
         self.treeview_emulators.connect(
-            "key-release-event", self.__on_selected_treeview, Manager.EMULATOR)
+            "key-release-event", self.__on_selected_treeview)
 
         self.button_emulators_add.connect(
-            "clicked", self.__on_modify_item, Manager.EMULATOR, False)
+            "clicked", self.__on_append_item)
         self.button_emulators_modify.connect(
-            "clicked", self.__on_modify_item, Manager.EMULATOR, True)
+            "clicked", self.__on_modify_item)
         self.button_emulators_remove.connect(
-            "clicked", self.__on_remove_item, Manager.EMULATOR)
+            "clicked", self.__on_remove_item)
 
 
     def __start_interface(self):
@@ -1831,50 +1849,63 @@ class PreferencesWindow(CommonWindow):
         """ Load consoles into treeview
         """
 
+        self.consoles["rows"].clear()
+        self.consoles["objects"].clear()
+
         self.model_consoles.clear()
 
-        self.selection["console"] = None
-
         for console in self.api.consoles.values():
+            self.consoles["rows"][console.id] = self.model_consoles.append(
+                self.__on_generate_row(console))
 
-            icon = self.parent.get_pixbuf_from_cache(
-                "consoles", 48, console.id, console.icon)
-
-            if icon is None:
-                icon = self.icons.blank(48)
-
-            check = str()
-            if not console.path.exists():
-                check = Icons.Symbolic.WARNING
-
-            self.model_consoles.append([
-                icon, "<b>%s</b>\n<small>%s</small>" % (
-                console.name, console.path), check, console.id])
+            self.consoles["objects"][console.id] = console
 
 
     def on_load_emulators(self):
         """ Load emulators into treeview
         """
 
+        self.emulators["rows"].clear()
+        self.emulators["objects"].clear()
+
         self.model_emulators.clear()
 
-        self.selection["emulator"] = None
-
         for emulator in self.api.emulators.values():
+            self.emulators["rows"][emulator.id] = self.model_emulators.append(
+                self.__on_generate_row(emulator))
 
-            icon = self.parent.get_pixbuf_from_cache(
-                "emulators", 48, emulator.id, emulator.icon)
+            self.emulators["objects"][emulator.id] = emulator
 
-            if icon is None:
-                icon = self.icons.blank(48)
 
-            check = str()
-            if not emulator.exists:
-                check = Icons.Symbolic.WARNING
+    def __on_generate_row(self, data):
+        """ Generate consoles data from an object
 
-            self.model_emulators.append([
-                icon, "<b>%s</b>\n<small>%s</small>" % (
-                emulator.name, emulator.binary), check, emulator.id])
+        Parameters
+        ----------
+        data : object
+            Console or Emulator instance
+        """
+
+        if isinstance(data, Console):
+            folder = "consoles"
+
+            path = data.path.expanduser().resolve()
+
+        elif isinstance(data, Emulator):
+            folder = "emulators"
+
+            path = data.binary.expanduser().resolve()
+
+        icon = self.parent.get_pixbuf_from_cache(folder, 48, data.id, data.icon)
+        if icon is None:
+            icon = self.icons.blank(48)
+
+        status = str()
+        if not path.exists():
+            status = Icons.Symbolic.WARNING
+
+        return (icon, "<b>%s</b>\n<small>%s</small>" % (data.name, path),
+            status, data)
 
 
     def __edit_keys(self, widget, path, key, mods, hwcode):
@@ -1949,7 +1980,7 @@ class PreferencesWindow(CommonWindow):
         return results
 
 
-    def __on_selected_treeview(self, treeview, event, manager):
+    def __on_selected_treeview(self, treeview, event):
         """ Select a console in consoles treeview
 
         Parameters
@@ -1958,41 +1989,21 @@ class PreferencesWindow(CommonWindow):
             Object which receive signal
         event : Gdk.EventButton or Gdk.EventKey
             Event which triggered this signal
-        manager : preferences.Manager
-            Treeview widget which receive signal
         """
 
-        self.selection[manager] = None
+        model, treeiter = treeview.get_selection().get_selected()
 
-        edit = False
+        if treeiter is not None:
 
-        # Keyboard
-        if event.type == Gdk.EventType.KEY_RELEASE:
-            model, treeiter = treeview.get_selection().get_selected()
+            # Keyboard
+            if event.type == Gdk.EventType.KEY_RELEASE and \
+                event.keyval == Gdk.KEY_Return:
+                self.__on_modify_item(treeview)
 
-            if treeiter is not None:
-                self.selection[manager] = model.get_value(treeiter, 1)
-
-                if event.keyval == Gdk.KEY_Return:
-                    edit = True
-
-        # Mouse
-        elif event.type in [Gdk.EventType.BUTTON_PRESS,
-            Gdk.EventType._2BUTTON_PRESS] and event.button in (1, 3):
-
-            selection = treeview.get_path_at_pos(int(event.x), int(event.y))
-            if selection is not None:
-                model = treeview.get_model()
-
-                treeiter = model.get_iter(selection[0])
-                self.selection[manager] = model.get_value(treeiter, 1)
-
-                if event.button == 1 and \
-                    event.type == Gdk.EventType._2BUTTON_PRESS:
-                    edit = True
-
-        if edit:
-            self.__on_modify_item(None, manager, True)
+            # Mouse
+            elif event.type == Gdk.EventType._2BUTTON_PRESS and \
+                event.button == 1:
+                self.__on_modify_item(treeview)
 
 
     def __on_check_native_viewer(self, widget=None, state=None):
@@ -2030,136 +2041,140 @@ class PreferencesWindow(CommonWindow):
         self.widget_sidebar_ellipsize.set_sensitive(status)
 
 
-    def __on_modify_item(self, widget, manager, modification):
-        """ Append or modify an item in the treeview
+    def __on_append_item(self, widget, *args):
+        """ Append an item in the treeview
 
         Parameters
         ----------
         widget : Gtk.Widget
             Object which receive signal
-        manager : preferences.Manager
-            Treeview widget which receive signal
-        modification : bool
-            Use edit mode instead of append mode
         """
 
-        dialog = None
+        if widget == self.button_consoles_add:
+            dialog = ConsolePreferences(
+                self, self.consoles["objects"], self.emulators["objects"])
 
-        self.selection = {
-            "console": None,
-            "emulator": None }
+            storage = self.consoles
+            model = self.model_consoles
 
-        # Select current treeview
-        if manager == Manager.CONSOLE:
+        elif widget == self.button_emulators_add:
+            dialog = EmulatorPreferences(
+                self, self.emulators["objects"])
+
+            storage = self.emulators
+            model = self.model_emulators
+
+        if dialog.run() == Gtk.ResponseType.APPLY:
+            data = dialog.save()
+
+            if data is not None:
+
+                if widget == self.button_consoles_add:
+                    element = Console.new(data)
+
+                elif widget == self.button_emulators_add:
+                    element = Emulator.new(data)
+
+                storage["objects"][element.id] = element
+
+                storage["rows"][element.id] = model.append(
+                    self.__on_generate_row(element))
+
+        dialog.destroy()
+
+
+    def __on_modify_item(self, widget, *args):
+        """ Modify an item in the treeview
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        if widget in (self.button_consoles_modify, self.treeview_consoles):
             treeview = self.treeview_consoles
-        elif manager == Manager.EMULATOR:
+
+        elif widget in (self.button_emulators_modify, self.treeview_emulators):
             treeview = self.treeview_emulators
 
         model, treeiter = treeview.get_selection().get_selected()
 
-        identifier = None
         if treeiter is not None:
-            identifier = model.get_value(treeiter, 3)
+            element = model.get_value(treeiter, 3)
 
-        if modification and identifier is None:
-            return False
+            previous_id = element.id
 
-        if manager == Manager.CONSOLE:
-            console = self.api.get_console(identifier)
+            # ----------------------------------------
+            #   Launch dialog
+            # ----------------------------------------
 
-            if modification:
-                self.selection["console"] = console
+            if isinstance(element, Console):
+                dialog = ConsolePreferences(self, element,
+                    self.consoles["objects"], self.emulators["objects"])
 
-            dialog = ConsolePreferences(self, console, modification)
-
-        elif manager == Manager.EMULATOR:
-            emulator = self.api.get_emulator(identifier)
-
-            if modification:
-                self.selection["emulator"] = emulator
-
-            dialog = EmulatorPreferences(self, emulator, modification)
-
-        if dialog is not None:
+            elif isinstance(element, Emulator):
+                dialog = EmulatorPreferences(
+                    self, element, self.emulators["objects"])
 
             if dialog.run() == Gtk.ResponseType.APPLY:
-                dialog.save()
+                data = dialog.save()
 
-                if manager == Manager.CONSOLE:
-                    self.on_load_consoles()
+                if data is not None:
 
-                elif manager == Manager.EMULATOR:
-                    self.on_load_emulators()
+                    if isinstance(element, Console):
+                        storage = self.consoles
+
+                    elif isinstance(element, Emulator):
+                        storage = self.emulators
+
+                    for key, value in data.items():
+                        setattr(element, key, value)
+
+                    row = self.__on_generate_row(element)
+
+                    if not previous_id == element.id:
+                        storage["objects"][element.id] = \
+                            storage["objects"][previous_id]
+                        storage["rows"][element.id] = \
+                            storage["rows"][previous_id]
+
+                        del storage["objects"][previous_id]
+                        del storage["rows"][previous_id]
+
+                    for item in row:
+                        model.set_value(
+                            storage["rows"][element.id], row.index(item), item)
 
             dialog.destroy()
 
         return True
 
 
-    def __on_remove_item(self, widget, manager):
+    def __on_remove_item(self, widget):
         """ Remove an item in the treeview
 
         Parameters
         ----------
         widget : Gtk.Widget
             Object which receive signal
-        manager : preferences.Manager
-            Treeview widget which receive signal
         """
 
-        data = None
-        identifier = None
-
-        # Select current treeview
-        if manager == Manager.CONSOLE:
+        if widget == self.button_consoles_remove:
             treeview = self.treeview_consoles
-        elif manager == Manager.EMULATOR:
+
+        elif widget == self.button_emulators_remove:
             treeview = self.treeview_emulators
 
         model, treeiter = treeview.get_selection().get_selected()
+
         if treeiter is not None:
-            identifier = model.get_value(treeiter, 3)
+            element = model.get_value(treeiter, 3)
 
-        # ----------------------------
-        #   Game selected
-        # ----------------------------
-
-        need_reload = False
-
-        # Get correct data from identifier
-        if identifier is not None:
-            if manager == Manager.CONSOLE:
-                data = self.api.get_console(identifier)
-            elif manager == Manager.EMULATOR:
-                data = self.api.get_emulator(identifier)
-
-        if data is not None:
-            dialog = QuestionDialog(self, data.name,
+            dialog = QuestionDialog(self, element.name,
                 _("Would you really want to remove this entry ?"))
 
             if dialog.run() == Gtk.ResponseType.YES:
-
-                if manager == Manager.CONSOLE:
-                    self.api.delete_console(data.id)
-
-                    for size in ("24x24", "48x48"):
-                        path = self.parent.get_icon_from_cache(
-                            "consoles", size, "%s.png" % data.id)
-
-                        if path.exists():
-                            path.unlink()
-
-                elif manager == Manager.EMULATOR:
-                    self.api.delete_emulator(data.id)
-
                 model.remove(treeiter)
 
-                need_reload = True
-
             dialog.destroy()
-
-        if need_reload:
-            if manager == Manager.CONSOLE:
-                self.on_load_consoles()
-            elif manager == Manager.EMULATOR:
-                self.on_load_emulators()
