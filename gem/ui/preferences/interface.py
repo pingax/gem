@@ -1759,10 +1759,14 @@ class PreferencesWindow(CommonWindow):
         #   Editor
         # ------------------------------------
 
+        visible_widget = False
+
         try:
-            require_version("GtkSource", "3.0")
+            require_version("GtkSource", "4")
 
             from gi.repository.GtkSource import StyleSchemeManager
+
+            visible_widget = True
 
             for path in StyleSchemeManager().get_search_path():
                 scheme_path = Path(path).expanduser().resolve()
@@ -1770,15 +1774,21 @@ class PreferencesWindow(CommonWindow):
                 for element in sorted(scheme_path.glob("*.xml")):
                     self.model_general_colorscheme.append([element.stem])
 
+        # Causing by require_version
+        except ValueError:
+            self.logger.warning(_("Cannot found GtkSource module"))
+
+        # Causing by importing GtkSource
         except ImportError:
             self.logger.warning(_("Cannot found GtkSource module"))
 
-            self.widget_editor_tab_width.set_visible(False)
-            self.widget_editor_colorscheme.set_visible(False)
-            self.widget_editor_lines_visible.set_visible(False)
-
         except Exception as error:
             self.logger.exception(_("Cannot retrieve style schemes"))
+
+        if not visible_widget:
+            self.listbox_general_editor.remove(self.widget_editor_tab_width)
+            self.listbox_general_editor.remove(self.widget_editor_colorscheme)
+            self.listbox_general_editor.remove(self.widget_editor_font)
 
         # ------------------------------------
         #   Configuration file

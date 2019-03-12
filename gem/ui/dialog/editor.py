@@ -255,7 +255,7 @@ class EditorDialog(CommonWindow):
 
         if self.editable:
             try:
-                require_version("GtkSource", "3.0")
+                require_version("GtkSource", "4")
 
                 from gi.repository import GtkSource
 
