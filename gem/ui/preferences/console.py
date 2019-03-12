@@ -492,7 +492,7 @@ class ConsolePreferences(CommonWindow):
         #   Init data
         # ------------------------------------
 
-        if len(self.console.id) > 0:
+        if self.console is not None and len(self.console.id) > 0:
             self.entry_name.set_text(self.console.name)
 
             # Folder

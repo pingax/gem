@@ -2062,14 +2062,14 @@ class PreferencesWindow(CommonWindow):
 
         if widget == self.button_consoles_add:
             dialog = ConsolePreferences(
-                self, self.consoles["objects"], self.emulators["objects"])
+                self, None, self.consoles["objects"], self.emulators["objects"])
 
             storage = self.consoles
             model = self.model_consoles
 
         elif widget == self.button_emulators_add:
             dialog = EmulatorPreferences(
-                self, self.emulators["objects"])
+                self, None, self.emulators["objects"])
 
             storage = self.emulators
             model = self.model_emulators
@@ -2080,10 +2080,10 @@ class PreferencesWindow(CommonWindow):
             if data is not None:
 
                 if widget == self.button_consoles_add:
-                    element = Console.new(data)
+                    element = Console(self.api, **data)
 
                 elif widget == self.button_emulators_add:
-                    element = Emulator.new(data)
+                    element = Emulator(self.api, **data)
 
                 storage["objects"][element.id] = element
 
