@@ -260,7 +260,7 @@ class ConsolePreferences(CommonWindow):
 
         self.label_default = Gtk.Label()
 
-        self.model_emulators = Gtk.ListStore(GdkPixbuf.Pixbuf, str)
+        self.model_emulators = Gtk.ListStore(GdkPixbuf.Pixbuf, str, str)
         self.combo_emulators = Gtk.ComboBox()
 
         cell_emulators_icon = Gtk.CellRendererPixbuf()
@@ -286,7 +286,7 @@ class ConsolePreferences(CommonWindow):
 
         self.combo_emulators.set_hexpand(True)
         self.combo_emulators.set_model(self.model_emulators)
-        self.combo_emulators.set_id_column(1)
+        self.combo_emulators.set_id_column(2)
         self.combo_emulators.pack_start(cell_emulators_icon, False)
         self.combo_emulators.add_attribute(cell_emulators_icon, "pixbuf", 0)
         self.combo_emulators.pack_start(cell_emulators_name, True)
@@ -446,6 +446,7 @@ class ConsolePreferences(CommonWindow):
 
         self.file_folder.connect("file-set", self.__on_entry_update)
 
+        self.entry_extensions.connect("changed", self.__on_entry_update)
         self.entry_extensions.connect("icon-press", on_entry_clear)
 
         self.button_console.connect("clicked", self.__on_select_icon)
@@ -484,7 +485,7 @@ class ConsolePreferences(CommonWindow):
                     icon = self.icons.blank(22)
 
                 emulators_rows[emulator.id] = self.model_emulators.append(
-                    [icon, emulator.name])
+                    [icon, emulator.name, emulator.id])
 
         self.combo_emulators.set_wrap_width(int(len(self.model_emulators) / 6))
 
@@ -512,15 +513,16 @@ class ConsolePreferences(CommonWindow):
             # Icon
             self.path = self.console.icon
 
-            self.entry_icon.set_text(str(self.path))
+            if self.path is not None:
+                self.entry_icon.set_text(str(self.path))
 
-            icon = self.interface.get_pixbuf_from_cache(
-                "consoles", 64, self.console.id, self.console.icon)
+                icon = self.interface.get_pixbuf_from_cache(
+                    "consoles", 64, self.console.id, self.console.icon)
 
-            if icon is None:
-                icon = self.icons.blank(64)
+                if icon is None:
+                    icon = self.icons.blank(64)
 
-            self.image_console.set_from_pixbuf(icon)
+                self.image_console.set_from_pixbuf(icon)
 
             # Ignores
             for ignore in self.console.ignores:
@@ -529,9 +531,9 @@ class ConsolePreferences(CommonWindow):
             # Emulator
             emulator = self.console.emulator
             if emulator is not None and emulator.id in emulators_rows:
-                self.combo_emulators.set_active_id(emulator.name)
+                self.combo_emulators.set_active_id(emulator.id)
 
-            self.set_response_sensitive(Gtk.ResponseType.APPLY, True)
+            self.__on_entry_update()
 
         # ------------------------------------
         #   Advanded mode
@@ -593,12 +595,12 @@ class ConsolePreferences(CommonWindow):
         return data
 
 
-    def __on_entry_update(self, widget):
+    def __on_entry_update(self, widget=None):
         """ Update dialog response sensitive status
 
         Parameters
         ----------
-        widget : Gtk.Widget
+        widget : Gtk.Widget, optional
             Object which receive signal
         """
 
@@ -643,6 +645,22 @@ class ConsolePreferences(CommonWindow):
         path = self.file_folder.get_filename()
 
         if path is None or not Path(path).expanduser().exists():
+            self.error = True
+
+        # ------------------------------------
+        #   Console roms extensions
+        # ------------------------------------
+
+        extensions = self.entry_extensions.get_text().strip()
+
+        if len(extensions) == 0:
+            self.error = True
+
+        # ------------------------------------
+        #   Console emulator
+        # ------------------------------------
+
+        if self.combo_emulators.get_active_id() is None:
             self.error = True
 
         # ------------------------------------

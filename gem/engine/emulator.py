@@ -77,7 +77,12 @@ class Emulator(object):
             setattr(self, key, value)
 
             if key_type is Path and type(value) is str:
-                setattr(self, key, Path(value).expanduser())
+
+                path = Path(value).expanduser()
+                if len(value) == 0:
+                    path = None
+
+                setattr(self, key, path)
 
         setattr(self, "id", generate_identifier(self.name))
 

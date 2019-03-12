@@ -1686,8 +1686,26 @@ class PreferencesWindow(CommonWindow):
         """ Load configuration files and fill widgets
         """
 
+        # Remove consoles
+        for console in self.api.get_consoles():
+            if not console.id in self.consoles["objects"].keys():
+                self.api.delete_console(console.id)
+
+        # Update consoles
+        for console in self.consoles["objects"].values():
+            self.api.update_console(console)
+
+        # Remove emulators
+        for emulator in self.api.get_emulators():
+            if not emulator.id in self.emulators["objects"].keys():
+                self.api.delete_emulator(emulator.id)
+
+        # Update emulators
+        for emulator in self.emulators["objects"].values():
+            self.api.update_emulator(emulator)
+
         # Write emulators and consoles data
-        self.api.write_data(GEM.Consoles, GEM.Emulators, GEM.Environment)
+        self.api.write_data(GEM.Consoles, GEM.Emulators)
 
         for row, data in self.widgets.items():
             widget = row.get_widget()
@@ -2082,6 +2100,14 @@ class PreferencesWindow(CommonWindow):
                 if widget == self.button_consoles_add:
                     element = Console(self.api, **data)
 
+                    # Specified emulator not exists for the moment
+                    if element.emulator is None:
+                        identifier = dialog.combo_emulators.get_active_id()
+
+                        if identifier in self.emulators["objects"]:
+                            element.emulator = \
+                                self.emulators["objects"][identifier]
+
                 elif widget == self.button_emulators_add:
                     element = Emulator(self.api, **data)
 
@@ -2173,8 +2199,12 @@ class PreferencesWindow(CommonWindow):
         if widget == self.button_consoles_remove:
             treeview = self.treeview_consoles
 
+            storage = self.consoles
+
         elif widget == self.button_emulators_remove:
             treeview = self.treeview_emulators
+
+            storage = self.emulators
 
         model, treeiter = treeview.get_selection().get_selected()
 
@@ -2185,6 +2215,9 @@ class PreferencesWindow(CommonWindow):
                 _("Would you really want to remove this entry ?"))
 
             if dialog.run() == Gtk.ResponseType.YES:
+                del storage["objects"][element.id]
+                del storage["rows"][element.id]
+
                 model.remove(treeiter)
 
             dialog.destroy()

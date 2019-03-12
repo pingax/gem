@@ -482,15 +482,16 @@ class EmulatorPreferences(CommonWindow):
             # Icon
             self.path = self.emulator.icon
 
-            self.entry_icon.set_text(str(self.path))
+            if self.path is not None:
+                self.entry_icon.set_text(str(self.path))
 
-            icon = self.interface.get_pixbuf_from_cache(
-                "emulators", 64, self.emulator.id, self.emulator.icon)
+                icon = self.interface.get_pixbuf_from_cache(
+                    "emulators", 64, self.emulator.id, self.emulator.icon)
 
-            if icon is None:
-                icon = self.icons.blank(64)
+                if icon is None:
+                    icon = self.icons.blank(64)
 
-            self.image_emulator.set_from_pixbuf(icon)
+                self.image_emulator.set_from_pixbuf(icon)
 
             # Regex
             if self.emulator.savestates is not None:

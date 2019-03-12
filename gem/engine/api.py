@@ -547,6 +547,8 @@ class GEM(object):
 
                     copy(self.get_config(path), self.get_config('~' + path))
 
+                    self.get_config(path).unlink()
+
                 # Create a new configuration object
                 config = Configuration(self.get_config(path))
 
@@ -564,7 +566,7 @@ class GEM(object):
                             else:
                                 value = "no"
 
-                        if type(value) is Emulator:
+                        elif type(value) is Emulator:
                             value = value.id
 
                         config.modify(
@@ -751,6 +753,19 @@ class GEM(object):
         return emulator
 
 
+    def update_emulator(self, emulator):
+        """ Update a specific emulator
+
+        Parameters
+        ----------
+        emulator : gem.engine.emulator.Emulator
+            Emulator instance
+        """
+
+        if emulator is not None:
+            self.__data["emulators"][emulator.id] = emulator
+
+
     def delete_emulator(self, emulator):
         """ Delete a specific emulator
 
@@ -901,6 +916,19 @@ class GEM(object):
         self.__data["consoles"][console.id] = console
 
         return console
+
+
+    def update_console(self, console):
+        """ Update a specific console
+
+        Parameters
+        ----------
+        console : gem.engine.console.Console
+            Console instance
+        """
+
+        if console is not None:
+            self.__data["consoles"][console.id] = console
 
 
     def delete_console(self, console):

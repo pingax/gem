@@ -89,7 +89,11 @@ class Console(object):
             if key_type is Path and type(value) is str:
                 value = value.replace("<local>", str(self.__parent.get_local()))
 
-                setattr(self, key, Path(value).expanduser())
+                path = Path(value).expanduser()
+                if len(value) == 0:
+                    path = None
+
+                setattr(self, key, path)
 
             elif key_type is Emulator and type(value) is str:
                 setattr(self, key, self.__parent.get_emulator(value))
