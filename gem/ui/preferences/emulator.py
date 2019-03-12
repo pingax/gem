@@ -468,7 +468,7 @@ class EmulatorPreferences(CommonWindow):
         #   Init data
         # ------------------------------------
 
-        if len(self.emulator.id) > 0:
+        if self.emulator is not None and len(self.emulator.id) > 0:
             self.entry_name.set_text(self.emulator.name)
 
             # Binary

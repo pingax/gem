@@ -221,11 +221,14 @@ class DeleteDialog(CommonWindow):
         self.listbox_options.add(self.widget_savestate)
         self.listbox_options.add(self.widget_screenshots)
 
-        # Check extension and emulator for GBA game on mednafen
-        if self.game.extension == ".gba" and self.parent.get_mednafen_status():
+        if self.game.emulator is not None:
 
-            if "mednafen" in str(self.game.emulator.binary):
-                self.listbox_options.add(self.widget_memory)
+            # Check extension and emulator for GBA game on mednafen
+            if self.parent.get_mednafen_status() and \
+                self.game.extension == ".gba":
+
+                if "mednafen" in str(self.game.emulator.binary):
+                    self.listbox_options.add(self.widget_memory)
 
         self.scroll_options.add(self.listbox_options)
 

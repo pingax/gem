@@ -1903,8 +1903,8 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Games
         # ------------------------------------
 
-        self.grid_games.pack_start(self.grid_infobar, False, False, 0)
         self.grid_games.pack_start(self.grid_game_toolbar, False, False, 0)
+        self.grid_games.pack_start(self.infobar, False, False, 0)
         self.grid_games.pack_start(self.grid_games_views, True, True, 0)
 
         self.vpaned_games.pack1(self.hpaned_games, True, True)
@@ -2975,7 +2975,9 @@ class MainWindow(Gtk.ApplicationWindow):
         self.grid_consoles_menu.show_all()
         self.grid_game_filters_popover.show_all()
 
-        self.infobar.get_content_area().show_all()
+        self.infobar.show_all()
+        self.grid_infobar.show_all()
+        self.label_infobar.show_all()
 
         self.grid_sidebar.show_all()
         self.scroll_sidebar.show_all()
@@ -3314,7 +3316,8 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Widgets
         # ------------------------------------
 
-        self.set_infobar()
+        self.infobar.set_visible(False)
+
         self.sensitive_interface()
 
         # Show window buttons into headerbar
@@ -3820,8 +3823,8 @@ class MainWindow(Gtk.ApplicationWindow):
                 # Game custom parameters
                 pixbuf = self.icons.get_translucent("parameter")
 
-                if game.default is not None or (game.emulator is not None and \
-                    not game.emulator.name == console.emulator.name):
+                if len(game.default) > 0 or \
+                    not game.emulator == console.emulator:
                     pixbuf = self.icons.get("parameter")
 
                 self.image_statusbar_properties.set_from_pixbuf(pixbuf)
@@ -3890,7 +3893,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 {
                     "widget": self.label_sidebar_emulator_value,
                     "condition": game.emulator is not None,
-                    "markup": game.emulator.name
+                    "markup": getattr(game.emulator, "name", None)
                 }
             ]
 
@@ -3902,7 +3905,9 @@ class MainWindow(Gtk.ApplicationWindow):
                     data["widget"].set_tooltip_text(str())
 
                     if data["condition"]:
-                        data["widget"].set_markup(data["markup"])
+
+                        if data["markup"] is not None:
+                            data["widget"].set_markup(data["markup"])
 
                         # Set tooltip for current widget
                         if "tooltip" in data:
@@ -4027,45 +4032,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
             dialog.run()
             dialog.destroy()
-
-
-    def set_infobar(self,
-        text=str(), log=str(), message_type=Gtk.MessageType.INFO):
-        """ Set infobar content
-
-        This function set the infobar widget to inform user for specific things
-
-        Parameters
-        ----------
-        text : str, optional
-            Message text (Default: None)
-        text : str, optional
-            Logger text (Default: None)
-        message_type : Gtk.MessageType, optional
-            Message type (Default: Gtk.MessageType.INFO)
-        """
-
-        if len(log) == 0 and len(text) > 0:
-            log = text
-
-        # Set a logger message
-        if len(log) > 0:
-            if message_type is Gtk.MessageType.ERROR:
-                self.logger.error(log)
-            elif message_type is Gtk.MessageType.WARNING:
-                self.logger.warning(log)
-
-        self.infobar.set_message_type(message_type)
-
-        # Set infobar visibility
-        if len(text) > 0:
-            if len(self.grid_infobar.get_children()) == 0:
-                self.grid_infobar.pack_start(self.infobar, True, True, 0)
-
-        elif len(self.grid_infobar.get_children()) > 0:
-            self.grid_infobar.remove(self.infobar)
-
-        self.label_infobar.set_markup(text)
 
 
     def __on_show_about(self, *args):
@@ -4717,7 +4683,8 @@ class MainWindow(Gtk.ApplicationWindow):
             self.selection["game"] = None
             self.selection["console"] = row.console
 
-            self.set_infobar()
+            self.infobar.set_visible(False)
+
             self.set_informations_headerbar()
 
             self.logger.debug("Select %s console" % row.console.name)
@@ -4968,17 +4935,27 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Check errors
         # ------------------------------------
 
+        self.infobar.set_visible(False)
+
         if console.emulator is None:
-            self.set_infobar(
-                _("There is no default emulator set for this console"),
-                _("Cannot find emulator for %s") % console.name,
-                Gtk.MessageType.WARNING)
+            self.logger.warning(
+                _("Cannot find emulator for %s") % console.name)
+
+            self.infobar.set_visible(True)
+
+            self.infobar.set_message_type(Gtk.MessageType.WARNING)
+            self.label_infobar.set_markup(
+                _("There is no default emulator set for this console"))
 
         elif not console.emulator.exists:
-            self.set_infobar(_("<b>%s</b> cannot been found on your "
-                "system") % console.emulator.name,
-                _("%s emulator not exist") % console.emulator.name,
-                Gtk.MessageType.ERROR)
+            self.logger.warning(
+                _("%s emulator not exist") % console.emulator.name)
+
+            self.infobar.set_visible(True)
+
+            self.infobar.set_message_type(Gtk.MessageType.ERROR)
+            self.label_infobar.set_markup(_("<b>%s</b> cannot been found on "
+                "your system") % console.emulator.name)
 
         # ------------------------------------
         #   Load data
@@ -4994,242 +4971,241 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.set_informations()
 
-        if console.emulator is not None:
-            self.selection["console"] = console
+        # ------------------------------------
+        #   Refresh treeview
+        # ------------------------------------
 
-            # ------------------------------------
-            #   Refresh treeview
-            # ------------------------------------
+        self.treeview_games.set_enable_search(False)
+        self.treeview_games.freeze_child_notify()
 
-            self.treeview_games.set_enable_search(False)
-            self.treeview_games.freeze_child_notify()
+        # ------------------------------------
+        #   Prepare games
+        # ------------------------------------
 
-            # ------------------------------------
-            #   Prepare games
-            # ------------------------------------
+        self.selection["console"] = console
 
-            console.init_games()
+        console.init_games()
 
-            games = console.get_games()
+        games = console.get_games()
 
-            column, order = self.sorted_games_list.get_sort_column_id()
+        column, order = self.sorted_games_list.get_sort_column_id()
 
-            # Retrieve reverse value from column order
-            reverse = order == Gtk.SortType.DESCENDING
+        # Retrieve reverse value from column order
+        reverse = order == Gtk.SortType.DESCENDING
 
-            # Name
-            if column == Columns.List.NAME:
-                games.sort(key=lambda game: game.name.lower().replace(' ', ''),
-                    reverse=reverse)
+        # Name
+        if column == Columns.List.NAME:
+            games.sort(key=lambda game: game.name.lower().replace(' ', ''),
+                reverse=reverse)
 
-            # Favorite
-            elif column == Columns.List.FAVORITE:
-                games.sort(key=lambda game: game.favorite, reverse=reverse)
+        # Favorite
+        elif column == Columns.List.FAVORITE:
+            games.sort(key=lambda game: game.favorite, reverse=reverse)
 
-            # Multiplayer
-            elif column == Columns.List.MULTIPLAYER:
-                key = lambda game: game.multiplayer
-                games.sort(key=lambda game: game.multiplayer, reverse=reverse)
+        # Multiplayer
+        elif column == Columns.List.MULTIPLAYER:
+            key = lambda game: game.multiplayer
+            games.sort(key=lambda game: game.multiplayer, reverse=reverse)
 
-            # Finish
-            elif column == Columns.List.FINISH:
-                games.sort(key=lambda game: game.finish, reverse=reverse)
+        # Finish
+        elif column == Columns.List.FINISH:
+            games.sort(key=lambda game: game.finish, reverse=reverse)
 
-            # Played
-            elif column == Columns.List.PLAYED:
-                games.sort(key=lambda game: game.played, reverse=reverse)
+        # Played
+        elif column == Columns.List.PLAYED:
+            games.sort(key=lambda game: game.played, reverse=reverse)
 
-            # Last play
-            elif column == Columns.List.LAST_PLAY:
-                games.sort(
-                    key=lambda game: game.last_launch_date, reverse=reverse)
+        # Last play
+        elif column == Columns.List.LAST_PLAY:
+            games.sort(
+                key=lambda game: game.last_launch_date, reverse=reverse)
 
-            # Play time
-            elif column == Columns.List.TIME_PLAY:
-                games.sort(key=lambda game: game.play_time, reverse=reverse)
+        # Play time
+        elif column == Columns.List.TIME_PLAY:
+            games.sort(key=lambda game: game.play_time, reverse=reverse)
 
-            # Score
-            elif column == Columns.List.SCORE:
-                games.sort(key=lambda game: game.score, reverse=reverse)
+        # Score
+        elif column == Columns.List.SCORE:
+            games.sort(key=lambda game: game.score, reverse=reverse)
 
-            # Installed
-            elif column == Columns.List.INSTALLED:
-                games.sort(key=lambda game: game.installed, reverse=reverse)
+        # Installed
+        elif column == Columns.List.INSTALLED:
+            games.sort(key=lambda game: game.installed, reverse=reverse)
 
-            # ------------------------------------
-            #   Load games
-            # ------------------------------------
+        # ------------------------------------
+        #   Load games
+        # ------------------------------------
 
-            if len(games) > 0:
-                self.scroll_sidebar.set_visible(self.config.getboolean(
-                    "gem", "show_sidebar", fallback=True))
+        if len(games) > 0:
+            self.scroll_sidebar.set_visible(self.config.getboolean(
+                "gem", "show_sidebar", fallback=True))
 
-                if self.button_headerbar_list.get_active():
-                    self.scroll_games_list.set_visible(True)
-                    self.treeview_games.show_all()
+            if self.button_headerbar_list.get_active():
+                self.scroll_games_list.set_visible(True)
+                self.treeview_games.show_all()
 
-                if self.button_headerbar_grid.get_active():
-                    self.scroll_games_grid.set_visible(True)
-                    self.iconview_games.show_all()
+            if self.button_headerbar_grid.get_active():
+                self.scroll_games_grid.set_visible(True)
+                self.iconview_games.show_all()
 
-                self.scroll_games_placeholder.set_visible(False)
+            self.scroll_games_placeholder.set_visible(False)
 
-            else:
-                self.scroll_sidebar.set_visible(False)
+        else:
+            self.scroll_sidebar.set_visible(False)
 
-            yield True
+        yield True
 
-            # Start a timer for debug purpose
-            started = datetime.now()
+        # Start a timer for debug purpose
+        started = datetime.now()
 
-            for game in games:
+        for game in games:
 
-                # Another thread has been called by user, close this one
-                if not current_thread_id == self.list_thread:
-                    yield False
+            # Another thread has been called by user, close this one
+            if not current_thread_id == self.list_thread:
+                yield False
 
-                # Hide games which match ignores regex
-                show = True
-                for element in console.ignores:
-                    try:
-                        if match(element, game.name, IGNORECASE) is not None:
-                            show = False
-                            break
+            # Hide games which match ignores regex
+            show = True
+            for element in console.ignores:
+                try:
+                    if match(element, game.name, IGNORECASE) is not None:
+                        show = False
+                        break
 
-                    except Exception as error:
-                        pass
+                except Exception as error:
+                    pass
 
-                # Check if rom file exists
-                if game.path.exists() and show:
+            # Check if rom file exists
+            if game.path.exists() and show:
 
-                    # ------------------------------------
-                    #   Grid mode
-                    # ------------------------------------
+                # ------------------------------------
+                #   Grid mode
+                # ------------------------------------
 
-                    row_data = [
-                        self.__console_icon,
-                        game.name,
-                        game ]
+                row_data = [
+                    self.__console_icon,
+                    game.name,
+                    game ]
 
-                    # Large icon
-                    icon = self.get_pixbuf_from_cache(
-                        "games", 96, game.id, game.cover)
+                # Large icon
+                icon = self.get_pixbuf_from_cache(
+                    "games", 96, game.id, game.cover)
 
-                    if icon is not None:
-                        row_data[Columns.Grid.THUMBNAIL] = icon
+                if icon is not None:
+                    row_data[Columns.Grid.THUMBNAIL] = icon
 
-                    row_grid = self.model_games_grid.append(row_data)
+                row_grid = self.model_games_grid.append(row_data)
 
-                    # ------------------------------------
-                    #   List mode
-                    # ------------------------------------
+                # ------------------------------------
+                #   List mode
+                # ------------------------------------
 
-                    row_data = [
-                        self.icons.get_translucent("favorite"),
-                        self.icons.get_translucent("multiplayer"),
-                        self.icons.get_translucent("unfinish"),
-                        game.name,
-                        game.played,
-                        str(),          # Last launch date
-                        str(),          # Last launch time
-                        str(),          # Total play time
-                        game.score,
-                        str(),          # Installed date
-                        self.icons.get_translucent("parameter"),
-                        self.icons.get_translucent("screenshot"),
-                        self.icons.get_translucent("savestate"),
-                        game,
-                        self.__console_thumbnail ]
+                row_data = [
+                    self.icons.get_translucent("favorite"),
+                    self.icons.get_translucent("multiplayer"),
+                    self.icons.get_translucent("unfinish"),
+                    game.name,
+                    game.played,
+                    str(),          # Last launch date
+                    str(),          # Last launch time
+                    str(),          # Total play time
+                    game.score,
+                    str(),          # Installed date
+                    self.icons.get_translucent("parameter"),
+                    self.icons.get_translucent("screenshot"),
+                    self.icons.get_translucent("savestate"),
+                    game,
+                    self.__console_thumbnail ]
 
-                    # Favorite
-                    if game.favorite:
-                        row_data[Columns.List.FAVORITE] = \
-                            self.icons.get("favorite")
+                # Favorite
+                if game.favorite:
+                    row_data[Columns.List.FAVORITE] = \
+                        self.icons.get("favorite")
 
-                    # Multiplayer
-                    if game.multiplayer:
-                        row_data[Columns.List.MULTIPLAYER] = \
-                            self.icons.get("multiplayer")
+                # Multiplayer
+                if game.multiplayer:
+                    row_data[Columns.List.MULTIPLAYER] = \
+                        self.icons.get("multiplayer")
 
-                    # Finish
-                    if game.finish:
-                        row_data[Columns.List.FINISH] = \
-                            self.icons.get("finish")
+                # Finish
+                if game.finish:
+                    row_data[Columns.List.FINISH] = \
+                        self.icons.get("finish")
 
-                    # Last launch date
-                    if not game.last_launch_date.strftime("%d%m%y") == "010101":
-                        row_data[Columns.List.LAST_PLAY] = \
-                            string_from_date(game.last_launch_date)
+                # Last launch date
+                if not game.last_launch_date.strftime("%d%m%y") == "010101":
+                    row_data[Columns.List.LAST_PLAY] = \
+                        string_from_date(game.last_launch_date)
 
-                    # Last launch time
-                    if not game.last_launch_time == timedelta():
-                        row_data[Columns.List.LAST_TIME_PLAY] = \
-                            string_from_time(game.last_launch_time)
+                # Last launch time
+                if not game.last_launch_time == timedelta():
+                    row_data[Columns.List.LAST_TIME_PLAY] = \
+                        string_from_time(game.last_launch_time)
 
-                    # Play time
-                    if not game.play_time == timedelta():
-                        row_data[Columns.List.TIME_PLAY] = \
-                            string_from_time(game.play_time)
+                # Play time
+                if not game.play_time == timedelta():
+                    row_data[Columns.List.TIME_PLAY] = \
+                        string_from_time(game.play_time)
 
-                    # Parameters
-                    if len(game.default) > 0:
-                        row_data[Columns.List.PARAMETER] = \
-                            self.icons.get("parameter")
+                # Parameters
+                if len(game.default) > 0:
+                    row_data[Columns.List.PARAMETER] = \
+                        self.icons.get("parameter")
 
-                    elif not game.emulator.name == console.emulator.name:
-                        row_data[Columns.List.PARAMETER] = \
-                            self.icons.get("parameter")
+                elif not game.emulator == console.emulator:
+                    row_data[Columns.List.PARAMETER] = \
+                        self.icons.get("parameter")
 
-                    # Installed time
-                    if game.installed is not None:
-                        row_data[Columns.List.INSTALLED] = \
-                            string_from_date(game.installed)
+                # Installed time
+                if game.installed is not None:
+                    row_data[Columns.List.INSTALLED] = \
+                        string_from_date(game.installed)
 
-                    # Snap
-                    if len(game.screenshots) > 0:
-                        row_data[Columns.List.SCREENSHOT] = \
-                            self.icons.get("screenshot")
+                # Snap
+                if len(game.screenshots) > 0:
+                    row_data[Columns.List.SCREENSHOT] = \
+                        self.icons.get("screenshot")
 
-                    # Save state
-                    if len(game.savestates) > 0:
-                        row_data[Columns.List.SAVESTATE] = \
-                            self.icons.get("savestate")
+                # Save state
+                if len(game.savestates) > 0:
+                    row_data[Columns.List.SAVESTATE] = \
+                        self.icons.get("savestate")
 
-                    # Thumbnail icon
-                    icon = self.get_pixbuf_from_cache(
-                        "games", 22, game.id, game.cover)
+                # Thumbnail icon
+                icon = self.get_pixbuf_from_cache(
+                    "games", 22, game.id, game.cover)
 
-                    if icon is not None:
-                        row_data[Columns.List.THUMBNAIL] = icon
+                if icon is not None:
+                    row_data[Columns.List.THUMBNAIL] = icon
 
-                    row_list = self.model_games_list.append(row_data)
+                row_list = self.model_games_list.append(row_data)
 
-                    # ------------------------------------
-                    #   Refesh view
-                    # ------------------------------------
+                # ------------------------------------
+                #   Refesh view
+                # ------------------------------------
 
-                    # Store both Gtk.TreeIter under game filename key
-                    self.game_path[game.id] = [game, row_list, row_grid]
+                # Store both Gtk.TreeIter under game filename key
+                self.game_path[game.id] = [game, row_list, row_grid]
 
-                    self.set_informations_headerbar()
+                self.set_informations_headerbar()
 
-                    self.treeview_games.thaw_child_notify()
-                    yield True
-                    self.treeview_games.freeze_child_notify()
+                self.treeview_games.thaw_child_notify()
+                yield True
+                self.treeview_games.freeze_child_notify()
 
-            # Restore options for packages treeviews
-            self.treeview_games.set_enable_search(True)
-            self.treeview_games.thaw_child_notify()
+        # Restore options for packages treeviews
+        self.treeview_games.set_enable_search(True)
+        self.treeview_games.thaw_child_notify()
 
-            self.set_informations_headerbar()
+        self.set_informations_headerbar()
 
-            # ------------------------------------
-            #   Timer - Debug
-            # ------------------------------------
+        # ------------------------------------
+        #   Timer - Debug
+        # ------------------------------------
 
-            self.logger.debug("Append %d games for %s in %s second(s)" % (
-                len(console.get_games()), console.name,
-                (datetime.now() - started).total_seconds()))
+        self.logger.debug("Append %d games for %s in %s second(s)" % (
+            len(console.get_games()), console.name,
+            (datetime.now() - started).total_seconds()))
 
         # ------------------------------------
         #   Cannot read games path
@@ -5914,7 +5890,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         game = self.selection["game"]
 
-        if game is None:
+        if game is None or game.emulator is None:
             return False
 
         if not self.check_selection():
@@ -6059,7 +6035,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 string_from_time(game.play_time), game.id)
 
             # Snaps
-            if game.emulator is not None and len(game.screenshots) > 0:
+            if len(game.screenshots) > 0:
                 self.set_game_data(Columns.List.SCREENSHOT,
                     self.icons.get("screenshot"), game.id)
                 self.button_toolbar_screenshots.set_sensitive(True)
@@ -6070,7 +6046,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.icons.get_translucent("screenshot"), game.id)
 
             # Save state
-            if game.emulator is not None and len(game.savestates) > 0:
+            if len(game.savestates) > 0:
                 self.set_game_data(Columns.List.SAVESTATE,
                     self.icons.get("savestate"), game.id)
 
@@ -6491,7 +6467,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 custom = False
 
-                if not game.emulator.name == console.emulator.name:
+                if not game.emulator == console.emulator:
                     custom = True
 
                 elif len(game.default) > 0:
@@ -6585,10 +6561,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
             if game is not None and console is not None:
                 content = dict()
-
-                emulator = console.emulator
-                if game.emulator is not None:
-                    emulator = game.emulator
 
                 filepath = self.get_mednafen_memory_type(game)
 
@@ -6990,7 +6962,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
         if treeiter is not None and game is not None and console is not None:
 
-            if game.emulator.id in self.api.emulators:
+            if game.emulator is not None and \
+                game.emulator.id in self.api.emulators:
                 name = "%s.desktop" % game.path.stem
 
                 # ----------------------------------------

@@ -542,7 +542,8 @@ class ParametersDialog(CommonWindow):
 
                 row = self.model.append([icon, emulator.name])
 
-                if emulator.name == self.game.emulator.name:
+                if self.game.emulator is not None and \
+                    emulator.name == self.game.emulator.name:
                     self.combo.set_active_iter(row)
 
         self.combo.set_wrap_width(int(len(self.model) / 6))
