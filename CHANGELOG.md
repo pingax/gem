@@ -22,6 +22,8 @@ Version 0.10 - Forest Life
 * Add installed date field to game object
 * Add favorite field to console object
 * Add `GEM.get_game_tags` function to API
+* Add `GEM.update_console` function to API
+* Add `GEM.update_emulator` function to API
 * Add dynamic files parameter to `write_data` function to write only some configuration file
 * Allow to set specific configuration paths in constructor parameters
 * Modify `GEM.add_emulator` to return the new emulator
@@ -48,6 +50,7 @@ Version 0.10 - Forest Life
 * Allow to import or export game note
 * Allow to configure console from console context menu in main interface
 * Allow to configure emulator from console context menu in main interface
+* Avoid to save consoles and emulators before apply changes in preferences
 * Restore GTK+ menuitem behavior to main and game menus
 * Restore old dialog buttons behavior to both themes
 * Restore old renaming system based on dialog window

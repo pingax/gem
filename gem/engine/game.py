@@ -146,10 +146,13 @@ class Game(object):
                 if key in self.attributes.keys():
                     key_type, default = self.attributes[key]
 
-                    setattr(self, key, value)
-
                     if key_type is Path and type(value) is str:
-                        setattr(self, key, Path(value).expanduser().resolve())
+
+                        path = Path(value).expanduser().resolve()
+                        if len(value) == 0:
+                            path = None
+
+                        setattr(self, key, path)
 
                     elif key_type is Emulator and type(value) is str:
                         setattr(self, key, self.__parent.get_emulator(value))
@@ -167,13 +170,14 @@ class Game(object):
                         pass
 
                     elif key_type is date:
+                        day, month, year = 1, 1, 1
 
                         # Old GEM format
                         if len(value) > 10:
                             day, month, year = value.split()[0].split('-')
 
                         # ISO 8601 format
-                        else:
+                        elif len(value) > 0:
                             year, month, day = value.split('-')
 
                         setattr(self, key,
@@ -189,6 +193,9 @@ class Game(object):
                                 hours=int(hours),
                                 minutes=int(minutes),
                                 seconds=int(seconds)))
+
+                    elif key_type is str and len(value) > 0:
+                        setattr(self, key, value)
 
 
     def __get_content(self, pattern):
