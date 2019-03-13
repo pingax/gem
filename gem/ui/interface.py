@@ -7598,7 +7598,8 @@ class MainWindow(Gtk.ApplicationWindow):
         return self.__cache.joinpath(*args)
 
 
-    def get_pixbuf_from_cache(self, key, size, identifier, path):
+    def get_pixbuf_from_cache(
+        self, key, size, identifier, path, use_cache=True):
         """ Retrieve an icon from cache or generate it
 
         Parameters
@@ -7611,6 +7612,8 @@ class MainWindow(Gtk.ApplicationWindow):
             Icon identifier
         path : pathlib.Path
             Icon path
+        use_cache : bool, optional
+            Use cache directory and save new generated icons into cache
 
         Returns
         -------
@@ -7625,7 +7628,7 @@ class MainWindow(Gtk.ApplicationWindow):
             key, "%dx%d" % (size, size), identifier + ".png")
 
         # Retrieve icon from cache folder
-        if cache_path.exists() and cache_path.is_file():
+        if use_cache and cache_path.exists() and cache_path.is_file():
             return GdkPixbuf.Pixbuf.new_from_file(str(cache_path))
 
         # Generate a new cache icon
@@ -7669,7 +7672,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     need_save = True
 
             # Save generated icon to cache
-            if need_save:
+            if use_cache and need_save:
                 try:
                     self.logger.debug(
                         "Save generated icon to %s" % cache_path)

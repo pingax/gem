@@ -1924,7 +1924,8 @@ class PreferencesWindow(CommonWindow):
 
             path = data.binary.expanduser().resolve()
 
-        icon = self.parent.get_pixbuf_from_cache(folder, 48, data.id, data.icon)
+        icon = self.parent.get_pixbuf_from_cache(
+            folder, 48, data.id, data.icon, use_cache=False)
         if icon is None:
             icon = self.icons.blank(48)
 

@@ -478,8 +478,8 @@ class ConsolePreferences(CommonWindow):
 
             if emulator.exists:
 
-                icon = self.interface.get_pixbuf_from_cache(
-                    "emulators", 22, emulator.id, emulator.icon)
+                icon = self.interface.get_pixbuf_from_cache("emulators",
+                    22, emulator.id, emulator.icon, use_cache=False)
 
                 if icon is None:
                     icon = self.icons.blank(22)
