@@ -3475,10 +3475,14 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Load console games
         if selected_row is not None:
+            self.scroll_sidebar.set_visible(self.show_sidebar)
+
             self.__on_selected_console(None, selected_row, True)
 
         # Manage default widgets visibility when no console selected
         else:
+            self.scroll_sidebar.set_visible(False)
+
             self.set_informations()
 
         self.__unblock_signals()
