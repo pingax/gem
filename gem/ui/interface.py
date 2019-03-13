@@ -4557,7 +4557,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.__on_update_consoles()
 
         if len(self.listbox_consoles) > 0:
-            self.scroll_consoles.set_visible(True)
             self.scroll_sidebar.set_visible(self.show_sidebar)
 
             self.logger.debug(
@@ -4566,7 +4565,6 @@ class MainWindow(Gtk.ApplicationWindow):
         # Show games placeholder when no console available
         else:
             self.scroll_games_placeholder.set_visible(True)
-            self.scroll_consoles.set_visible(False)
             self.scroll_sidebar.set_visible(False)
 
 
@@ -4588,21 +4586,24 @@ class MainWindow(Gtk.ApplicationWindow):
 
         console = self.api.get_console(identifier)
 
-        # Check if console ROM path exist
+        # Load games list if the game directory exists
         if console.path.exists():
 
-            # Reload games list
-            console.init_games()
+            try:
+                console.init_games()
 
-            if not self.hide_empty_console or len(console.get_games()) > 0:
+            except OSError as error:
+                self.logger.warning(error)
 
-                icon = self.get_pixbuf_from_cache(
-                    "consoles", 24, console.id, console.icon)
+        if not self.hide_empty_console or len(console.get_games()) > 0:
 
-                if icon is None:
-                    icon = self.icons.blank(24)
+            icon = self.get_pixbuf_from_cache(
+                "consoles", 24, console.id, console.icon)
 
-                return (console, icon)
+            if icon is None:
+                icon = self.icons.blank(24)
+
+            return (console, icon)
 
         return None
 
@@ -4984,7 +4985,14 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.selection["console"] = console
 
-        console.init_games()
+        # Load games list if the game directory exists
+        if console.path.exists():
+
+            try:
+                console.init_games()
+
+            except OSError as error:
+                self.logger.warning(error)
 
         games = console.get_games()
 
