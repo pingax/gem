@@ -604,22 +604,19 @@ class ParametersDialog(CommonWindow):
             Object which receive signal (Default: None)
         """
 
-        default = _("No default value")
-
         emulator = self.interface.api.get_emulator(self.combo.get_active_id())
 
+        self.entry_arguments.set_placeholder_text(_("No default value"))
+        self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
+
         if emulator is not None:
-            if emulator.default is not None:
-                default = emulator.default
 
-        # Allow to validate dialog if selected emulator binary exist
-        if emulator is not None and emulator.exists:
-            self.set_response_sensitive(Gtk.ResponseType.APPLY, True)
+            if len(emulator.default) > 0:
+                self.entry_arguments.set_placeholder_text(emulator.default)
 
-        else:
-            self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
-
-        self.entry_arguments.set_placeholder_text(default)
+            # Allow to validate dialog if selected emulator binary exist
+            if emulator.exists:
+                self.set_response_sensitive(Gtk.ResponseType.APPLY, True)
 
 
     def __on_edited_cell(self, widget, path, text):
