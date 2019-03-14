@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-03-14 16:39+0100\n"
+"PO-Revision-Date: 2019-03-14 17:05+0100\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -619,6 +619,11 @@ msgstr "Modifier"
 #, python-format
 msgid "Edit %s configuration"
 msgstr "Modifier la configuration de %s"
+
+#
+# File: gem/interface.py, line: 300
+msgid "Edit a game file"
+msgstr "Modifier le fichier du jeu"
 
 #
 # File: gem/preferences.py, line: 336
@@ -2008,6 +2013,11 @@ msgstr "Modifier la _console"
 # File: gem/configuration.py, line: 301
 msgid "_Edit emulator"
 msgstr "Modifier l'_émulateur"
+
+#
+# File: gem/interface.py, line: 300
+msgid "_Edit game file"
+msgstr "_Modifier le fichier du jeu"
 
 #
 # File: gem/gtk/interface.py, line: 792

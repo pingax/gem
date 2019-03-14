@@ -159,6 +159,8 @@ class PreferencesWindow(CommonWindow):
                     _("Set a game cover"), "<Control>I"],
                 "exceptions": [
                     _("Set specific arguments for a game"), "F12"],
+                "edit-file": [
+                    _("Edit a game file"), "<Control>M"],
                 "open": [
                     _("Open selected game directory"), "<Control>O"],
                 "copy": [

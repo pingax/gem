@@ -618,6 +618,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.item_menubar_rename = Gtk.MenuItem()
         self.item_menubar_duplicate = Gtk.MenuItem()
+        self.item_menubar_edit_file = Gtk.MenuItem()
         self.item_menubar_copy = Gtk.MenuItem()
         self.item_menubar_open = Gtk.MenuItem()
         self.item_menubar_cover = Gtk.MenuItem()
@@ -635,6 +636,10 @@ class MainWindow(Gtk.ApplicationWindow):
         self.item_menubar_duplicate.set_label(
             "%s…" % _("_Duplicate"))
         self.item_menubar_duplicate.set_use_underline(True)
+
+        self.item_menubar_edit_file.set_label(
+            _("_Edit game file"))
+        self.item_menubar_edit_file.set_use_underline(True)
 
         self.item_menubar_copy.set_label(
             _("_Copy path"))
@@ -1531,6 +1536,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.item_game_rename = Gtk.MenuItem()
         self.item_game_duplicate = Gtk.MenuItem()
+        self.item_game_edit_file = Gtk.MenuItem()
         self.item_game_copy = Gtk.MenuItem()
         self.item_game_open = Gtk.MenuItem()
         self.item_game_cover = Gtk.MenuItem()
@@ -1550,6 +1556,10 @@ class MainWindow(Gtk.ApplicationWindow):
         self.item_game_duplicate.set_label(
             "%s…" % _("_Duplicate"))
         self.item_game_duplicate.set_use_underline(True)
+
+        self.item_game_edit_file.set_label(
+            _("_Edit game file"))
+        self.item_game_edit_file.set_use_underline(True)
 
         self.item_game_copy.set_label(
             _("_Copy path"))
@@ -1803,6 +1813,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menu_menubar_edit.append(self.item_menubar_duplicate)
         self.menu_menubar_edit.append(Gtk.SeparatorMenuItem())
         self.menu_menubar_edit.append(self.item_menubar_mednafen)
+        self.menu_menubar_edit.append(Gtk.SeparatorMenuItem())
+        self.menu_menubar_edit.append(self.item_menubar_edit_file)
         self.menu_menubar_edit.append(Gtk.SeparatorMenuItem())
         self.menu_menubar_edit.append(self.item_menubar_copy)
         self.menu_menubar_edit.append(self.item_menubar_open)
@@ -2087,6 +2099,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menu_game_edit.append(Gtk.SeparatorMenuItem())
         self.menu_game_edit.append(self.item_game_duplicate)
         self.menu_game_edit.append(Gtk.SeparatorMenuItem())
+        self.menu_game_edit.append(self.item_game_edit_file)
+        self.menu_game_edit.append(Gtk.SeparatorMenuItem())
         self.menu_game_edit.append(self.item_game_copy)
         self.menu_game_edit.append(self.item_game_open)
         self.menu_game_edit.append(Gtk.SeparatorMenuItem())
@@ -2231,6 +2245,8 @@ class MainWindow(Gtk.ApplicationWindow):
             "activate", self.__on_game_renamed)
         self.item_menubar_duplicate.connect(
             "activate", self.__on_game_duplicate)
+        self.item_menubar_edit_file.connect(
+            "activate", self.__on_game_edit_file)
         self.item_menubar_copy.connect(
             "activate", self.__on_game_copy)
         self.item_menubar_open.connect(
@@ -2391,6 +2407,8 @@ class MainWindow(Gtk.ApplicationWindow):
             "activate", self.__on_game_duplicate)
         self.item_game_properties.connect(
             "activate", self.__on_game_parameters)
+        self.item_game_edit_file.connect(
+            "activate", self.__on_game_edit_file)
         self.item_game_copy.connect(
             "activate", self.__on_game_copy)
         self.item_game_open.connect(
@@ -2579,6 +2597,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.item_menubar_delete,
             self.item_menubar_desktop,
             self.item_menubar_duplicate,
+            self.item_menubar_edit_file,
             self.item_menubar_game_favorite,
             self.item_menubar_game_finish,
             self.item_menubar_game_launch,
@@ -2604,6 +2623,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.item_game_database,
             self.item_game_desktop,
             self.item_game_duplicate,
+            self.item_game_edit_file,
             self.item_game_favorite,
             self.item_game_finish,
             self.item_game_maintenance,
@@ -2633,6 +2653,14 @@ class MainWindow(Gtk.ApplicationWindow):
         """
 
         shortcuts = [
+            {
+                "path": "<GEM>/game/edit",
+                "widgets": [
+                    self.item_game_edit_file,
+                    self.item_menubar_edit_file
+                ],
+                "keys": self.config.item("keys", "edit-file", "<Control>M")
+            },
             {
                 "path": "<GEM>/game/open",
                 "widgets": [
@@ -5578,6 +5606,12 @@ class MainWindow(Gtk.ApplicationWindow):
                 # This is not the same selection, so we change widgets status
                 if not same_game:
 
+                    # Game editable file
+                    if not magic_from_file(
+                        game.path, mime=True).startswith("text/"):
+                        self.item_game_edit_file.set_sensitive(False)
+                        self.item_menubar_edit_file.set_sensitive(False)
+
                     # Mednafen specific entries
                     self.item_game_mednafen.set_sensitive(False)
                     self.item_menubar_mednafen.set_sensitive(False)
@@ -7014,6 +7048,44 @@ class MainWindow(Gtk.ApplicationWindow):
             self.set_informations()
 
 
+    def __on_game_edit_file(self, *args):
+        """ Edit game file
+
+        This function check if the game file mime type is text/
+        """
+
+        game = self.selection["game"]
+
+        if game is not None:
+
+            if magic_from_file(game.path, mime=True).startswith("text/"):
+
+                try:
+                    size = self.config.get(
+                        "windows", "game", fallback="800x600").split('x')
+
+                except ValueError as error:
+                    size = (800, 600)
+
+                self.set_sensitive(False)
+
+                dialog = EditorDialog(self,
+                    game.name, game.path, size, Icons.Symbolic.EDIT)
+
+                if dialog.run() == Gtk.ResponseType.APPLY:
+                    game.path.write_text(dialog.buffer_editor.get_text(
+                        dialog.buffer_editor.get_start_iter(),
+                        dialog.buffer_editor.get_end_iter(), True))
+
+                self.config.modify(
+                    "windows", "game", "%dx%d" % dialog.get_size())
+                self.config.update()
+
+                self.set_sensitive(True)
+
+                dialog.destroy()
+
+
     def __on_game_copy(self, *args):
         """ Copy path folder which contains selected game to clipboard
         """
@@ -7021,7 +7093,7 @@ class MainWindow(Gtk.ApplicationWindow):
         game = self.selection["game"]
 
         if game is not None:
-            self.clipboard.set_text(str(game.filepath), -1)
+            self.clipboard.set_text(str(game.path), -1)
 
 
     def __on_game_open(self, *args):
@@ -7036,7 +7108,7 @@ class MainWindow(Gtk.ApplicationWindow):
         game = self.selection["game"]
 
         if game is not None:
-            path = str(game.filepath.parent)
+            path = str(game.path.parent)
 
             self.logger.debug("Open %s folder in files manager" % path)
 

@@ -656,6 +656,12 @@ msgid "Edit %s configuration"
 msgstr "Actualizar el archivo de configuración de %s"
 
 #
+# File: gem/preferences.py, line: 1602
+#, fuzzy
+msgid "Edit a game file"
+msgstr "Actualizar el archivo de configuración de %s"
+
+#
 # File: gem/preferences.py, line: 429
 msgid "Editor"
 msgstr "Editor"
@@ -2122,6 +2128,12 @@ msgstr "Actualizar el archivo de configuración de %s"
 #, fuzzy
 msgid "_Edit emulator"
 msgstr "Emulador"
+
+#
+# File: gem/preferences.py, line: 1602
+#, fuzzy
+msgid "_Edit game file"
+msgstr "Actualizar el archivo de configuración de %s"
 
 #
 # File: gem/interface.py, line: 381
