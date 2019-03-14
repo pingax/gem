@@ -66,6 +66,13 @@ msgid "%s emulator not exist"
 msgstr "El emulador %s no existe"
 
 #
+# File: gem/ui/interface.py, line: 4436
+# File: gem/ui/interface.py, line: 4548
+#, python-format
+msgid "%s has been correctly added to your configuration."
+msgstr ""
+
+#
 # File: gem/preferences.py, line: 268
 #, fuzzy, python-format
 msgid "%s maintenance"
@@ -109,12 +116,6 @@ msgid "<b>%s</b> cannot been found on your system"
 msgstr ""
 
 #
-# File: gem/main.py, line: 148
-#, fuzzy
-msgid "A GEM instance already exists"
-msgstr "GEM ya está ejecutandose con el PID %s"
-
-#
 # File: gem/gtk/preferences.py, line: 1784
 msgid ""
 "A console represent a games library. You can specify a default emulator "
@@ -151,6 +152,21 @@ msgstr "Acción"
 # File: gem/gtk/preferences.py, line: 850
 msgid "Add"
 msgstr "Añadir"
+
+#
+# File: gem/preferences.py, line: 1602
+#, fuzzy
+msgid "Add _console"
+msgstr "Actualizar el archivo de configuración de %s"
+
+#
+# File: gem/interface.py, line: 1257
+# File: gem/preferences.py, line: 547
+# File: gem/preferences.py, line: 1362
+# File: gem/windows.py, line: 794
+#, fuzzy
+msgid "Add _emulator"
+msgstr "Editar emulador"
 
 #
 # File: gem/ui/preferences/interface.py, line: 960
@@ -206,6 +222,12 @@ msgstr ""
 #, fuzzy, python-format
 msgid "An exception error occur: %s"
 msgstr "MemoryError: %s"
+
+#
+# File: gem/main.py, line: 148
+#, fuzzy
+msgid "An instance already exists"
+msgstr "GEM ya está ejecutandose con el PID %s"
 
 #
 # File: gem/ui/preferences/interface.py, line: 556
@@ -307,6 +329,12 @@ msgid "Cannot find emulator for %s"
 msgstr "No puedo encontrar el emulador para %s"
 
 #
+# File: gem/ui/preferences/interface.py, line: 1797
+# File: gem/ui/preferences/interface.py, line: 1801
+msgid "Cannot found GtkSource module"
+msgstr ""
+
+#
 # File: gem/main.py, line: 240
 msgid "Cannot launch GEM without display"
 msgstr "No puedo ejecutar GEM sin una sesión gráfica"
@@ -324,6 +352,11 @@ msgid "Cannot open screenshots viewer"
 msgstr "No puedo abrir el archivo %s"
 
 #
+# File: gem/ui/dialog/editor.py, line: 434
+msgid "Cannot parse editor font"
+msgstr ""
+
+#
 # File: gem/interface.py, line: 1892
 #, python-format
 msgid "Cannot resize main window: %s"
@@ -334,6 +367,11 @@ msgstr "No puedo cambiar el tamaño de la ventana principal: %s"
 #, python-format
 msgid "Cannot resize preferences window: %s"
 msgstr "No puedo cambiar el tamaño de la ventana de las preferencias: %s"
+
+#
+# File: gem/ui/preferences/interface.py, line: 1804
+msgid "Cannot retrieve style schemes"
+msgstr ""
 
 #
 # File: gem/interface.py, line: 2161
@@ -1162,6 +1200,21 @@ msgstr ""
 # File: gem/preferences.py, line: 1563
 msgid "Name"
 msgstr "Nombre"
+
+#
+# File: gem/preferences.py, line: 1602
+#, fuzzy
+msgid "New console"
+msgstr "Actualizar el archivo de configuración de %s"
+
+#
+# File: gem/interface.py, line: 1257
+# File: gem/preferences.py, line: 547
+# File: gem/preferences.py, line: 1362
+# File: gem/windows.py, line: 794
+#, fuzzy
+msgid "New emulator"
+msgstr "Editar emulador"
 
 #
 # File: gem/interface.py, line: 406
@@ -2089,6 +2142,12 @@ msgstr "_Generar una entrada de menú"
 # File: gem/gtk/interface.py, line: 424
 msgid "_Help"
 msgstr "_Ayuda"
+
+#
+# File: gem/preferences.py, line: 1602
+#, fuzzy
+msgid "_Hide empty console"
+msgstr "Actualizar el archivo de configuración de %s"
 
 #
 # File: gem/ui/interface.py, line: 1292

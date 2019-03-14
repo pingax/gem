@@ -2237,6 +2237,11 @@ class MainWindow(Gtk.ApplicationWindow):
         self.entry_toolbar_consoles_filters.connect(
             "changed", self.__on_update_consoles)
 
+        self.item_toolbar_add_console.connect(
+            "activate", self.__on_show_console_editor)
+        self.item_toolbar_add_emulator.connect(
+            "activate", self.__on_show_emulator_editor)
+
         self.signal_console_hide_empty = \
             self.item_toolbar_hide_empty_console.connect(
             "activate", self.__on_change_console_option)
@@ -4362,21 +4367,28 @@ class MainWindow(Gtk.ApplicationWindow):
 
         selected_row = self.listbox_consoles.get_selected_row()
 
-        if self.__current_menu_row is not None:
+        if widget == self.item_toolbar_add_console:
+            console = None
+
+        elif self.__current_menu_row is not None:
             console = self.__current_menu_row.console
 
             previous_id = console.id
             previous_path = console.path
 
-            dialog = ConsolePreferences(
-                self, console, self.api.consoles, self.api.emulators)
+        dialog = ConsolePreferences(
+            self, console, self.api.consoles, self.api.emulators)
 
-            if dialog.run() == Gtk.ResponseType.APPLY:
+        if dialog.run() == Gtk.ResponseType.APPLY:
+
+            if console is not None:
                 self.logger.debug("Save %s modifications" % console.name)
 
-                data = dialog.save()
+            data = dialog.save()
 
-                if data is not None:
+            if data is not None:
+
+                if console is not None:
                     self.api.delete_console(previous_id)
 
                     # Remove previous console storage
@@ -4385,22 +4397,47 @@ class MainWindow(Gtk.ApplicationWindow):
                     # Store row with the new identifier
                     self.consoles_iter[data["id"]] = self.__current_menu_row
 
-                    console = self.api.add_console(data["name"], data.items())
+                console = self.api.add_console(data["name"], data.items())
 
-                    # Write console data
-                    self.api.write_data(GEM.Consoles)
+                # Write console data
+                self.api.write_data(GEM.Consoles)
 
-                    # Remove thumbnails from cache
-                    for size in ("22x22", "24x24", "48x48", "64x64", "96x96"):
-                        cache_path = self.get_icon_from_cache(
-                            "consoles", size, console.id + ".png")
+                # Load games list if the game directory exists
+                if console.path.exists():
 
-                        if cache_path.exists():
-                            remove(cache_path)
+                    try:
+                        console.init_games()
 
-                    # ----------------------------------------
-                    #   Update console row
-                    # ----------------------------------------
+                    except OSError as error:
+                        self.logger.warning(error)
+
+                # Remove thumbnails from cache
+                for size in ("22x22", "24x24", "48x48", "64x64", "96x96"):
+                    cache_path = self.get_icon_from_cache(
+                        "consoles", size, console.id + ".png")
+
+                    if cache_path.exists():
+                        remove(cache_path)
+
+                # ----------------------------------------
+                #   Update console row
+                # ----------------------------------------
+
+                if widget == self.item_toolbar_add_console:
+
+                    console_data = self.__on_generate_console_row(console)
+
+                    if console_data is not None:
+                        row = self.__on_append_console_row(*console_data)
+
+                        # Store console iter
+                        self.consoles_iter[row.console.id] = row
+
+                    self.set_message(_("New console"), _("%s has been "
+                        "correctly added to your configuration.") % \
+                        console.name, Icons.Symbolic.INFORMATION)
+
+                else:
 
                     self.__current_menu_row.console = console
 
@@ -4428,23 +4465,22 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.item_consoles_favorite.set_active(console.favorite)
                     self.item_consoles_recursive.set_active(console.recursive)
 
-                    # ----------------------------------------
-                    #   Refilter consoles list
-                    # ----------------------------------------
+                # ----------------------------------------
+                #   Refilter consoles list
+                # ----------------------------------------
 
-                    self.__on_update_consoles()
+                self.__on_update_consoles()
 
-                    # ----------------------------------------
-                    #   Reload games list
-                    # ----------------------------------------
+                # ----------------------------------------
+                #   Reload games list
+                # ----------------------------------------
 
-                    if selected_row == self.__current_menu_row:
-                        self.selection["console"] = \
-                            self.__current_menu_row.console
+                if selected_row == self.__current_menu_row:
+                    self.selection["console"] = self.__current_menu_row.console
 
-                        self.__on_reload_games()
+                    self.__on_reload_games()
 
-            dialog.destroy()
+        dialog.destroy()
 
         self.__unblock_signals()
 
@@ -4462,41 +4498,58 @@ class MainWindow(Gtk.ApplicationWindow):
 
         selected_row = self.listbox_consoles.get_selected_row()
 
-        if self.__current_menu_row is not None:
+        if widget == self.item_toolbar_add_emulator:
+            emulator = None
+
+        elif self.__current_menu_row is not None:
             emulator = self.__current_menu_row.console.emulator
 
             previous_id = emulator.id
 
-            dialog = EmulatorPreferences(self, emulator, self.api.emulators)
+        dialog = EmulatorPreferences(self, emulator, self.api.emulators)
 
-            if dialog.run() == Gtk.ResponseType.APPLY:
+        if dialog.run() == Gtk.ResponseType.APPLY:
+
+            if emulator is not None:
                 self.logger.debug("Save %s modifications" % emulator.name)
 
-                data = dialog.save()
+            data = dialog.save()
 
-                if data is not None:
+            if data is not None:
+
+                if emulator is not None:
                     self.api.delete_emulator(previous_id)
 
-                    emulator = self.api.add_emulator(data["name"], data.items())
+                emulator = self.api.add_emulator(data["name"], data.items())
+
+                if not widget == self.item_toolbar_add_emulator:
 
                     # Rename emulator identifier in consoles and games
                     if not emulator.id == previous_id:
                         self.api.rename_emulator(previous_id, emulator.id)
 
-                    # Write console data
-                    self.api.write_data(GEM.Emulators)
+                # Write console data
+                self.api.write_data(GEM.Emulators)
 
-                    # Remove thumbnails from cache
-                    for size in ("22x22", "48x48", "64x64"):
-                        cache_path = self.get_icon_from_cache(
-                            "emulators", size, emulator.id + ".png")
+                # Remove thumbnails from cache
+                for size in ("22x22", "48x48", "64x64"):
+                    cache_path = self.get_icon_from_cache(
+                        "emulators", size, emulator.id + ".png")
 
-                        if cache_path.exists():
-                            remove(cache_path)
+                    if cache_path.exists():
+                        remove(cache_path)
 
-                    # ----------------------------------------
-                    #   Update console row
-                    # ----------------------------------------
+                # ----------------------------------------
+                #   Update console row
+                # ----------------------------------------
+
+                if widget == self.item_toolbar_add_emulator:
+
+                    self.set_message(_("New emulator"), _("%s has been "
+                        "correctly added to your configuration.") % \
+                        emulator.name, Icons.Symbolic.INFORMATION)
+
+                else:
 
                     status = False
 
@@ -4530,7 +4583,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     elif same_emulator:
                         self.__on_reload_games()
 
-            dialog.destroy()
+        dialog.destroy()
 
         self.__unblock_signals()
 
@@ -4624,13 +4677,13 @@ class MainWindow(Gtk.ApplicationWindow):
             self.scroll_sidebar.set_visible(False)
 
 
-    def __on_generate_console_row(self, identifier):
+    def __on_generate_console_row(self, console):
         """ Generate console row data from a specific console
 
         Parameters
         ----------
-        identifier : str
-            Console identifier
+        console : gem.engine.console.Console or str
+            Console instance or identifier
 
         Returns
         -------
@@ -4640,7 +4693,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
         need_save = False
 
-        console = self.api.get_console(identifier)
+        if not isinstance(console, Console):
+            console = self.api.get_console(console)
 
         # Load games list if the game directory exists
         if console.path.exists():

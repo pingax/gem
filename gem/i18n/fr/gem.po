@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-03-04 17:58+0100\n"
+"PO-Revision-Date: 2019-03-14 13:59+0100\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -66,6 +66,13 @@ msgid "%s emulator not exist"
 msgstr "L'émulateur %s n'existe pas"
 
 #
+# File: gem/ui/interface.py, line: 4436
+# File: gem/ui/interface.py, line: 4548
+#, python-format
+msgid "%s has been correctly added to your configuration."
+msgstr "%s a été correctement ajouté à votre configuration."
+
+#
 # File: gem/ui/interface.py, line: 680
 # File: gem/ui/interface.py, line: 1556
 #, python-format
@@ -110,11 +117,6 @@ msgid "<b>%s</b> cannot been found on your system"
 msgstr "<b>%s</b> n'a pas été trouvé sur votre système"
 
 #
-# File: gem/__main__.py, line: 94
-msgid "A GEM instance already exists"
-msgstr "Une instance de GEM existe déjà"
-
-#
 # File: gem/gtk/preferences.py, line: 1784
 msgid ""
 "A console represent a games library. You can specify a default emulator "
@@ -153,6 +155,17 @@ msgstr "Actions"
 # File: gem/preferences.py, line: 820
 msgid "Add"
 msgstr "Ajouter"
+
+#
+# File: gem/ui/preferences/interface.py, line: 960
+msgid "Add _console"
+msgstr "Ajouter une _console"
+
+#
+# File: gem/configuration.py, line: 144
+# File: gem/configuration.py, line: 301
+msgid "Add _emulator"
+msgstr "Ajouter un _émulateur"
 
 #
 # File: gem/ui/preferences/interface.py, line: 960
@@ -204,6 +217,11 @@ msgstr ""
 #, python-format
 msgid "An exception error occur: %s"
 msgstr "Une exception est survenue: %s"
+
+#
+# File: gem/__main__.py, line: 94
+msgid "An instance already exists"
+msgstr "Une instance existe déjà"
 
 #
 # File: gem/gtk/preferences.py, line: 802
@@ -303,6 +321,12 @@ msgid "Cannot find emulator for %s"
 msgstr "Impossible de trouver l'émulateur pour %s"
 
 #
+# File: gem/ui/preferences/interface.py, line: 1797
+# File: gem/ui/preferences/interface.py, line: 1801
+msgid "Cannot found GtkSource module"
+msgstr "Impossible de trouver le module GtkSource"
+
+#
 # File: gem/main.py, line: 240
 msgid "Cannot launch GEM without display"
 msgstr "Impossible de lancer GEM sans affichage"
@@ -318,6 +342,11 @@ msgid "Cannot open screenshots viewer"
 msgstr "Impossible d'ouvrir le visualiseur de captures d'écran"
 
 #
+# File: gem/ui/dialog/editor.py, line: 434
+msgid "Cannot parse editor font"
+msgstr "Impossible d'analyser la police d'écriture de l'éditeur"
+
+#
 # File: gem/interface.py, line: 942
 #, python-format
 msgid "Cannot resize main window: %s"
@@ -328,6 +357,11 @@ msgstr "Impossible de redimensionner la fenêtre principale: %s"
 #, python-format
 msgid "Cannot resize preferences window: %s"
 msgstr "Impossible de redimensionner la fenêtre des préférences: %s"
+
+#
+# File: gem/ui/preferences/interface.py, line: 1804
+msgid "Cannot retrieve style schemes"
+msgstr "Impossible de récupérer les schémas de style"
 
 #
 # File: gem/interface.py, line: 2054
@@ -1108,6 +1142,17 @@ msgstr "N/A"
 # File: src/window.py, line: 368
 msgid "Name"
 msgstr "Nom"
+
+#
+# File: gem/ui/preferences/interface.py, line: 960
+msgid "New console"
+msgstr "Nouvelle console"
+
+#
+# File: gem/configuration.py, line: 144
+# File: gem/configuration.py, line: 301
+msgid "New emulator"
+msgstr "Nouvel émulateur"
 
 #
 # File: gem/preferences.py, line: 2003
@@ -1982,6 +2027,11 @@ msgstr "_Générer une entrée de menu"
 # File: gem/windows.py, line: 238
 msgid "_Help"
 msgstr "_Aide"
+
+#
+# File: gem/ui/preferences/interface.py, line: 389
+msgid "_Hide empty console"
+msgstr "_Cacher les consoles vides"
 
 #
 # File: gem/ui/interface.py, line: 1292

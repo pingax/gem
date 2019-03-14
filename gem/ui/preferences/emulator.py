@@ -604,10 +604,14 @@ class EmulatorPreferences(CommonWindow):
             # Check if current emulator exists in database
             if name in self.emulators:
 
-                # Avoid to use a name which already exists in database
-                if self.emulator is not None and not self.emulator.id == name:
+                if self.emulator is None:
                     self.error = True
 
+                # Avoid to use a name which already exists in database
+                elif not self.emulator.id == name:
+                    self.error = True
+
+                if self.error:
                     icon = Icons.ERROR
                     tooltip = _("This emulator already exist, please, "
                         "choose another name")
@@ -615,10 +619,9 @@ class EmulatorPreferences(CommonWindow):
         else:
             self.error = True
 
-        if widget == self.entry_name:
-            self.entry_name.set_icon_from_icon_name(
-                Gtk.EntryIconPosition.PRIMARY, icon)
-            self.entry_name.set_tooltip_text(tooltip)
+        self.entry_name.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.PRIMARY, icon)
+        self.entry_name.set_tooltip_text(tooltip)
 
         # ------------------------------------
         #   Emulator binary

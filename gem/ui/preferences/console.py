@@ -621,12 +621,16 @@ class ConsolePreferences(CommonWindow):
             name = generate_identifier(name)
 
             # Check if current console exists in database
-            if name in self.consoles:
+            if name in self.consoles.keys():
 
-                # Avoid to use a name which already exists in database
-                if self.console is not None and not self.console.id == name:
+                if self.console is None:
                     self.error = True
 
+                # Avoid to use a name which already exists in database
+                elif not self.console.id == name:
+                    self.error = True
+
+                if self.error:
                     icon = Icons.ERROR
                     tooltip = _("This console already exist, please, "
                         "choose another name")
