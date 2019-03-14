@@ -49,7 +49,9 @@ Version 0.10 - Forest Life
 * Allow to sort games list treeview
 * Allow to import or export game note
 * Allow to configure console from console context menu in main interface
+* Allow to remove a console from console context menu in main interface
 * Allow to configure emulator from console context menu in main interface
+* Allow to add an emulator or a console from console main menu in main interface
 * Avoid to save consoles and emulators before apply changes in preferences
 * Restore GTK+ menuitem behavior to main and game menus
 * Restore old dialog buttons behavior to both themes

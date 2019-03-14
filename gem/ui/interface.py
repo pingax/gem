@@ -3024,6 +3024,23 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.set_position(Gtk.WindowPosition.CENTER)
 
+        # ------------------------------------
+        #   Sidebars position
+        # ------------------------------------
+
+        if self.sidebar_console_position is not None and \
+            self.sidebar_console_position > -1:
+            self.hpaned_consoles.set_position(self.sidebar_console_position)
+
+        if self.sidebar_game_position is not None and \
+            self.sidebar_game_position > -1:
+
+            if self.sidebar_orientation == "horizontal":
+                self.hpaned_games.set_position(self.sidebar_game_position)
+
+            else:
+                self.vpaned_games.set_position(self.sidebar_game_position)
+
 
     def __show_interface(self):
         """ Show main interface widgets
@@ -3256,6 +3273,22 @@ class MainWindow(Gtk.ApplicationWindow):
         # ------------------------------------
 
         self.config.modify("windows", "main", "%dx%d" % self.get_size())
+
+        # ------------------------------------
+        #   Sidebars position
+        # ------------------------------------
+
+        self.config.modify("gem", "sidebar_console_position",
+            self.hpaned_consoles.get_position())
+
+        if self.sidebar_orientation == "horizontal":
+            position = self.hpaned_games.get_position()
+
+        else:
+            position = self.vpaned_games.get_position()
+
+        self.config.modify("gem", "sidebar_game_position", position)
+
         self.config.update()
 
         self.main_loop.quit()
@@ -3333,6 +3366,12 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.sidebar_orientation = self.config.get(
             "gem", "sidebar_orientation", fallback="vertical")
+
+        self.sidebar_console_position = self.config.getint(
+            "gem", "sidebar_console_position", fallback=None)
+
+        self.sidebar_game_position = self.config.getint(
+            "gem", "sidebar_game_position", fallback=None)
 
         self.treeview_lines = self.config.item(
             "gem", "games_treeview_lines", "none")
@@ -3439,9 +3478,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
             self.hpaned_games.pack2(self.scroll_sidebar, False, True)
 
-            self.hpaned_games.set_position(
-                self.vpaned_games.get_allocated_width() - 350)
-
             self.scroll_sidebar.set_min_content_width(350)
             self.scroll_sidebar.set_min_content_height(-1)
 
@@ -3471,11 +3507,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
             self.vpaned_games.pack2(self.scroll_sidebar, False, True)
 
-            self.vpaned_games.set_position(
-                self.vpaned_games.get_allocated_height() - 280)
-
             self.scroll_sidebar.set_min_content_width(-1)
-            self.scroll_sidebar.set_min_content_height(200)
+            self.scroll_sidebar.set_min_content_height(260)
 
             self.__current_orientation = Gtk.Orientation.VERTICAL
 
