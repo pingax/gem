@@ -2096,7 +2096,7 @@ msgstr "_Editar"
 #
 # File: gem/preferences.py, line: 1602
 #, fuzzy
-msgid "_Edit configuration"
+msgid "_Edit configuration file"
 msgstr "Actualizar el archivo de configuración de %s"
 
 #
@@ -2214,6 +2214,12 @@ msgstr ""
 #, fuzzy
 msgid "_Reload games list"
 msgstr "Lista de juegos"
+
+#
+# File: gem/preferences.py, line: 1602
+#, fuzzy
+msgid "_Remove console"
+msgstr "Actualizar el archivo de configuración de %s"
 
 #
 # File: gem/interface.py, line: 776

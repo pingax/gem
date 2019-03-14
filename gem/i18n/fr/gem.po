@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-03-14 13:59+0100\n"
+"PO-Revision-Date: 2019-03-14 14:11+0100\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -1984,8 +1984,8 @@ msgstr "_Modifier"
 
 #
 # File: gem/interface.py, line: 300
-msgid "_Edit configuration"
-msgstr "_Modifier la configuration"
+msgid "_Edit configuration file"
+msgstr "_Modifier le fichier de configuration"
 
 #
 # File: gem/interface.py, line: 300
@@ -2094,6 +2094,11 @@ msgstr "_Récursive"
 # File: gem/interface.py, line: 220
 msgid "_Reload games list"
 msgstr "_Recharger la liste de jeux"
+
+#
+# File: gem/gtk/preferences.py, line: 477
+msgid "_Remove console"
+msgstr "_Supprimer la console"
 
 #
 # File: src/window.py, line: 446

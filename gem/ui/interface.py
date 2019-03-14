@@ -778,6 +778,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menu_consoles = Gtk.Menu()
 
         self.item_consoles_console = Gtk.MenuItem()
+        self.item_consoles_remove = Gtk.MenuItem()
 
         self.item_consoles_emulator = Gtk.MenuItem()
         self.item_consoles_config = Gtk.MenuItem()
@@ -792,12 +793,16 @@ class MainWindow(Gtk.ApplicationWindow):
             _("_Edit console"))
         self.item_consoles_console.set_use_underline(True)
 
+        self.item_consoles_remove.set_label(
+            _("_Remove console"))
+        self.item_consoles_remove.set_use_underline(True)
+
         self.item_consoles_emulator.set_label(
             _("_Edit emulator"))
         self.item_consoles_emulator.set_use_underline(True)
 
         self.item_consoles_config.set_label(
-            _("_Edit configuration"))
+            _("_Edit configuration file"))
         self.item_consoles_config.set_use_underline(True)
 
         self.item_consoles_reload.set_label(
@@ -1834,6 +1839,7 @@ class MainWindow(Gtk.ApplicationWindow):
         # ------------------------------------
 
         self.menu_consoles.append(self.item_consoles_console)
+        self.menu_consoles.append(self.item_consoles_remove)
         self.menu_consoles.append(Gtk.SeparatorMenuItem())
         self.menu_consoles.append(self.item_consoles_emulator)
         self.menu_consoles.append(self.item_consoles_config)
@@ -2261,6 +2267,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.item_consoles_console.connect(
             "activate", self.__on_show_console_editor)
+        self.item_consoles_remove.connect(
+            "activate", self.__on_remove_console)
 
         self.item_consoles_emulator.connect(
             "activate", self.__on_show_emulator_editor)
@@ -4633,6 +4641,52 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.set_sensitive(True)
 
                     dialog.destroy()
+
+
+    def __on_remove_console(self, *args):
+        """ Remove a console from user configuration
+        """
+
+        self.__block_signals()
+
+        selected_row = self.listbox_consoles.get_selected_row()
+
+        if self.__current_menu_row is not None:
+            console = self.__current_menu_row.console
+
+            dialog = QuestionDialog(self, _("Remove a console"),
+                _("Are you sure you want to remove <b>%s</b> ?") % console.name)
+
+            if dialog.run() == Gtk.ResponseType.YES:
+
+                # Remove console
+                self.api.delete_console(console.id)
+
+                # Write consoles data
+                self.api.write_data(GEM.Consoles)
+
+                # Remove row from listbox
+                self.listbox_consoles.remove(self.__current_menu_row)
+
+                # Remove the current selected console
+                if selected_row == self.__current_menu_row:
+                    self.selection["console"] = None
+
+                    self.infobar.set_visible(False)
+                    self.scroll_sidebar.set_visible(False)
+                    self.scroll_games_list.set_visible(False)
+                    self.scroll_games_grid.set_visible(False)
+
+                    self.scroll_games_placeholder.set_visible(True)
+
+                    self.model_games_list.clear()
+                    self.model_games_grid.clear()
+
+                    self.set_informations()
+
+            dialog.destroy()
+
+        self.__unblock_signals()
 
 
     def append_consoles(self):
