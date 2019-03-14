@@ -241,6 +241,12 @@ msgid "Apply"
 msgstr ""
 
 #
+# File: gem/preferences.py, line: 1196
+#, fuzzy, python-format
+msgid "Are you sure you want to remove <b>%s</b> ?"
+msgstr "¿Quiere borrar esta entrada?"
+
+#
 # File: gem/interface.py, line: 451
 #, fuzzy
 msgid "Argument which activate fullscreen mode"
@@ -1404,6 +1410,12 @@ msgid "Remove %s"
 msgstr "Borrar"
 
 #
+# File: gem/preferences.py, line: 1602
+#, fuzzy
+msgid "Remove a console"
+msgstr "Actualizar el archivo de configuración de %s"
+
+#
 # File: gem/preferences.py, line: 86
 #, fuzzy
 msgid "Remove a game"
@@ -2248,6 +2260,12 @@ msgstr ""
 #, fuzzy
 msgid "_Screenshots"
 msgstr "Mostrar las _capturas de pantalla"
+
+#
+# File: gem/preferences.py, line: 431
+#, fuzzy
+msgid "_Sidebar"
+msgstr "Mostrar los números de línea"
 
 #
 # File: gem/gtk/interface.py, line: 422

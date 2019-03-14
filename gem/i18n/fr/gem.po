@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-03-14 14:11+0100\n"
+"PO-Revision-Date: 2019-03-14 16:39+0100\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -233,6 +233,12 @@ msgstr "Apparence"
 # File: gem/gtk/windows.py, line: 1214
 msgid "Apply"
 msgstr "Appliquer"
+
+#
+# File: src/window.py, line: 940
+#, python-format
+msgid "Are you sure you want to remove <b>%s</b> ?"
+msgstr "Voulez-vous vraiment supprimer <b>%s</b> ?"
 
 #
 # File: gem/interface.py, line: 290
@@ -1319,6 +1325,11 @@ msgid "Remove %s"
 msgstr "Supprime %s"
 
 #
+# File: gem/gtk/preferences.py, line: 477
+msgid "Remove a console"
+msgstr "Supprimer la console"
+
+#
 # File: src/window.py, line: 451
 msgid "Remove a game"
 msgstr "Supprimer un jeu"
@@ -2124,6 +2135,11 @@ msgstr "_Score"
 # File: gem/preferences.py, line: 335
 msgid "_Screenshots"
 msgstr "_Captures d'écran"
+
+#
+# File: gem/preferences.py, line: 338
+msgid "_Sidebar"
+msgstr "_Barre latérale"
 
 #
 # File: gem/interface.py, line: 475

@@ -475,6 +475,14 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.menu_menubar_view = Gtk.Menu()
 
+        self.menu_menubar_sidebar = Gtk.Menu()
+        self.item_menubar_sidebar = Gtk.MenuItem()
+
+        self.item_menubar_sidebar_status = Gtk.CheckMenuItem()
+
+        self.item_menubar_sidebar_right = Gtk.RadioMenuItem()
+        self.item_menubar_sidebar_bottom = Gtk.RadioMenuItem()
+
         self.menu_menubar_columns = Gtk.Menu()
         self.item_menubar_columns = Gtk.MenuItem()
 
@@ -489,13 +497,28 @@ class MainWindow(Gtk.ApplicationWindow):
         self.item_menubar_columns_flags = Gtk.CheckMenuItem()
 
         self.item_menubar_dark_theme = Gtk.CheckMenuItem()
-        self.item_menubar_sidebar = Gtk.CheckMenuItem()
         self.item_menubar_statusbar = Gtk.CheckMenuItem()
 
         self.item_menubar_list = Gtk.RadioMenuItem()
         self.item_menubar_grid = Gtk.RadioMenuItem()
 
         # Properties
+        self.item_menubar_sidebar.set_label(
+            _("_Sidebar"))
+        self.item_menubar_sidebar.set_use_underline(True)
+
+        self.item_menubar_sidebar_status.set_label(
+            _("Show _sidebar"))
+        self.item_menubar_sidebar_status.set_use_underline(True)
+
+        self.item_menubar_sidebar_right.set_label(
+            _("Right"))
+
+        self.item_menubar_sidebar_bottom.set_label(
+            _("Bottom"))
+        self.item_menubar_sidebar_bottom.join_group(
+            self.item_menubar_sidebar_right)
+
         self.item_menubar_columns.set_label(
             _("_Columns visibility"))
         self.item_menubar_columns.set_use_underline(True)
@@ -522,10 +545,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.item_menubar_dark_theme.set_label(
             _("Use _dark theme"))
         self.item_menubar_dark_theme.set_use_underline(True)
-
-        self.item_menubar_sidebar.set_label(
-            _("Show _sidebar"))
-        self.item_menubar_sidebar.set_use_underline(True)
 
         self.item_menubar_statusbar.set_label(
             _("Show _statusbar"))
@@ -1718,14 +1737,21 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menu_menubar_main.append(self.item_menubar_quit)
 
         # Menu - View items
+        self.menu_menubar_view.append(self.item_menubar_sidebar)
         self.menu_menubar_view.append(self.item_menubar_columns)
         self.menu_menubar_view.append(Gtk.SeparatorMenuItem())
         self.menu_menubar_view.append(self.item_menubar_dark_theme)
-        self.menu_menubar_view.append(self.item_menubar_sidebar)
         self.menu_menubar_view.append(self.item_menubar_statusbar)
         self.menu_menubar_view.append(Gtk.SeparatorMenuItem())
         self.menu_menubar_view.append(self.item_menubar_list)
         self.menu_menubar_view.append(self.item_menubar_grid)
+
+        self.item_menubar_sidebar.set_submenu(self.menu_menubar_sidebar)
+
+        self.menu_menubar_sidebar.append(self.item_menubar_sidebar_status)
+        self.menu_menubar_sidebar.append(Gtk.SeparatorMenuItem())
+        self.menu_menubar_sidebar.append(self.item_menubar_sidebar_right)
+        self.menu_menubar_sidebar.append(self.item_menubar_sidebar_bottom)
 
         self.item_menubar_columns.set_submenu(self.menu_menubar_columns)
 
@@ -2138,10 +2164,15 @@ class MainWindow(Gtk.ApplicationWindow):
         self.item_menubar_quit.connect(
             "activate", self.__stop_interface)
 
+        self.signal_menu_sidebar = self.item_menubar_sidebar_status.connect(
+            "toggled", self.__on_activate_sidebar)
+        self.item_menubar_sidebar_right.connect(
+            "toggled", self.__on_move_sidebar)
+        self.item_menubar_sidebar_bottom.connect(
+            "toggled", self.__on_move_sidebar)
+
         self.signal_menu_dark_theme = self.item_menubar_dark_theme.connect(
             "toggled", self.__on_activate_dark_theme)
-        self.signal_menu_sidebar = self.item_menubar_sidebar.connect(
-            "toggled", self.__on_activate_sidebar)
         self.signal_menu_statusbar = self.item_menubar_statusbar.connect(
             "toggled", self.__on_activate_statusbar)
 
@@ -2494,7 +2525,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.signal_menu_game_multiplayer,
             self.item_menubar_grid: self.signal_menu_grid,
             self.item_menubar_list: self.signal_menu_list,
-            self.item_menubar_sidebar: self.signal_menu_sidebar,
+            self.item_menubar_sidebar_status: self.signal_menu_sidebar,
             self.item_menubar_statusbar: self.signal_menu_statusbar,
             # Toolbar
             self.button_toolbar_fullscreen: self.signal_toolbar_fullscreen,
@@ -2798,7 +2829,7 @@ class MainWindow(Gtk.ApplicationWindow):
             {
                 "path": "<GEM>/sidebar",
                 "widgets": [
-                    self.item_menubar_sidebar
+                    self.item_menubar_sidebar_status
                 ],
                 "keys": self.config.item("keys", "sidebar", "F9"),
                 "function": self.__on_activate_sidebar
@@ -3426,7 +3457,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.headerbar.set_show_close_button(self.show_headerbar_buttons)
 
         # Show sidebar visibility buttons
-        self.item_menubar_sidebar.set_active(self.show_sidebar)
+        self.item_menubar_sidebar_status.set_active(self.show_sidebar)
 
         # Show statusbar visibility buttons
         self.item_menubar_statusbar.set_active(self.show_statusbar)
@@ -3437,8 +3468,6 @@ class MainWindow(Gtk.ApplicationWindow):
         # ------------------------------------
         #   Sidebar
         # ------------------------------------
-
-        self.sidebar_image = None
 
         if self.use_ellipsize_title:
             self.label_sidebar_title.set_line_wrap(False)
@@ -3453,64 +3482,13 @@ class MainWindow(Gtk.ApplicationWindow):
             self.label_sidebar_title.set_line_wrap_mode(
                 Pango.WrapMode.WORD_CHAR)
 
-        # Right-side sidebar
-        if self.sidebar_orientation == "horizontal" and \
-            not self.__current_orientation == Gtk.Orientation.HORIZONTAL:
+        self.__on_move_sidebar(init_interface=init_interface)
 
-            self.label_sidebar_title.set_justify(Gtk.Justification.CENTER)
-            self.label_sidebar_title.set_halign(Gtk.Align.CENTER)
-            self.label_sidebar_title.set_xalign(0.5)
+        if self.__current_orientation == Gtk.Orientation.VERTICAL:
+            self.item_menubar_sidebar_bottom.set_active(True)
 
-            # Change game screenshot and score placement
-            self.grid_sidebar.remove(self.grid_sidebar_content)
-            self.grid_sidebar.attach(self.grid_sidebar_content, 0, 1, 1, 1)
-
-            self.grid_sidebar_content.set_orientation(Gtk.Orientation.VERTICAL)
-            self.grid_sidebar_content.set_margin_bottom(12)
-
-            self.grid_sidebar_informations.set_halign(Gtk.Align.FILL)
-            self.grid_sidebar_informations.set_column_homogeneous(True)
-            self.grid_sidebar_informations.set_orientation(
-                Gtk.Orientation.VERTICAL)
-
-            if not init_interface:
-                self.vpaned_games.remove(self.scroll_sidebar)
-
-            self.hpaned_games.pack2(self.scroll_sidebar, False, True)
-
-            self.scroll_sidebar.set_min_content_width(350)
-            self.scroll_sidebar.set_min_content_height(-1)
-
-            self.__current_orientation = Gtk.Orientation.HORIZONTAL
-
-        # Bottom-side sidebar
-        elif self.sidebar_orientation == "vertical" and \
-            not self.__current_orientation == Gtk.Orientation.VERTICAL:
-
-            self.label_sidebar_title.set_justify(Gtk.Justification.LEFT)
-            self.label_sidebar_title.set_halign(Gtk.Align.START)
-            self.label_sidebar_title.set_xalign(0.0)
-
-            # Change game screenshot and score placement
-            self.grid_sidebar.remove(self.grid_sidebar_content)
-            self.grid_sidebar.attach(self.grid_sidebar_content, 1, 0, 1, 3)
-
-            self.grid_sidebar_content.set_margin_bottom(0)
-
-            self.grid_sidebar_informations.set_halign(Gtk.Align.START)
-            self.grid_sidebar_informations.set_column_homogeneous(False)
-            self.grid_sidebar_informations.set_orientation(
-                Gtk.Orientation.HORIZONTAL)
-
-            if not init_interface:
-                self.hpaned_games.remove(self.scroll_sidebar)
-
-            self.vpaned_games.pack2(self.scroll_sidebar, False, True)
-
-            self.scroll_sidebar.set_min_content_width(-1)
-            self.scroll_sidebar.set_min_content_height(260)
-
-            self.__current_orientation = Gtk.Orientation.VERTICAL
+        else:
+            self.item_menubar_sidebar_right.set_active(True)
 
         # ------------------------------------
         #   Treeview
@@ -7405,9 +7383,96 @@ class MainWindow(Gtk.ApplicationWindow):
         self.config.modify("gem", "show_sidebar", sidebar_status)
         self.config.update()
 
-        self.item_menubar_sidebar.set_active(sidebar_status)
+        self.item_menubar_sidebar_status.set_active(sidebar_status)
 
         self.__unblock_signals()
+
+
+    def __on_move_sidebar(self, widget=None, init_interface=False):
+        """ Move sidebar based on user configuration value
+
+        Parameters
+        ----------
+        widget : Gtk.Widget, optional
+            Object which receive signal
+        init_interface : bool, optional
+            Interface first initialization (Default: False)
+        """
+
+        self.sidebar_image = None
+
+        if widget is not None:
+            status = self.item_menubar_sidebar_right.get_active()
+
+            self.sidebar_orientation = "vertical"
+            if status:
+                self.sidebar_orientation = "horizontal"
+
+            self.config.modify(
+                "gem", "sidebar_orientation", self.sidebar_orientation)
+            self.config.update()
+
+        # Right-side sidebar
+        if self.sidebar_orientation == "horizontal" and \
+            not self.__current_orientation == Gtk.Orientation.HORIZONTAL:
+
+            self.label_sidebar_title.set_justify(Gtk.Justification.CENTER)
+            self.label_sidebar_title.set_halign(Gtk.Align.CENTER)
+            self.label_sidebar_title.set_xalign(0.5)
+
+            # Change game screenshot and score placement
+            self.grid_sidebar.remove(self.grid_sidebar_content)
+            self.grid_sidebar.attach(self.grid_sidebar_content, 0, 1, 1, 1)
+
+            self.grid_sidebar_content.set_orientation(Gtk.Orientation.VERTICAL)
+            self.grid_sidebar_content.set_margin_bottom(12)
+
+            self.grid_sidebar_informations.set_halign(Gtk.Align.FILL)
+            self.grid_sidebar_informations.set_column_homogeneous(True)
+            self.grid_sidebar_informations.set_orientation(
+                Gtk.Orientation.VERTICAL)
+
+            if not init_interface:
+                self.vpaned_games.remove(self.scroll_sidebar)
+
+            self.hpaned_games.pack2(self.scroll_sidebar, False, True)
+
+            self.scroll_sidebar.set_min_content_width(350)
+            self.scroll_sidebar.set_min_content_height(-1)
+
+            self.__current_orientation = Gtk.Orientation.HORIZONTAL
+
+        # Bottom-side sidebar
+        elif self.sidebar_orientation == "vertical" and \
+            not self.__current_orientation == Gtk.Orientation.VERTICAL:
+
+            self.label_sidebar_title.set_justify(Gtk.Justification.LEFT)
+            self.label_sidebar_title.set_halign(Gtk.Align.START)
+            self.label_sidebar_title.set_xalign(0.0)
+
+            # Change game screenshot and score placement
+            self.grid_sidebar.remove(self.grid_sidebar_content)
+            self.grid_sidebar.attach(self.grid_sidebar_content, 1, 0, 1, 3)
+
+            self.grid_sidebar_content.set_margin_bottom(0)
+
+            self.grid_sidebar_informations.set_halign(Gtk.Align.START)
+            self.grid_sidebar_informations.set_column_homogeneous(False)
+            self.grid_sidebar_informations.set_orientation(
+                Gtk.Orientation.HORIZONTAL)
+
+            if not init_interface:
+                self.hpaned_games.remove(self.scroll_sidebar)
+
+            self.vpaned_games.pack2(self.scroll_sidebar, False, True)
+
+            self.scroll_sidebar.set_min_content_width(-1)
+            self.scroll_sidebar.set_min_content_height(260)
+
+            self.__current_orientation = Gtk.Orientation.VERTICAL
+
+        if widget is not None:
+            self.set_informations()
 
 
     def __on_activate_statusbar(self, widget, status=False, *args):
