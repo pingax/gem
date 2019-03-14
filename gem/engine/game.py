@@ -164,7 +164,9 @@ class Game(object):
                         setattr(self, key, bool(value))
 
                     elif key_type is list and type(value) is str:
-                        setattr(self, key, value.split(';'))
+
+                        if len(value) > 0:
+                            setattr(self, key, value.split(';'))
 
                     elif key_type is dict:
                         pass

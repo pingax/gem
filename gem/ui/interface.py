@@ -324,7 +324,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.grid_game_view_mode = Gtk.Box()
 
         self.grid_consoles = Gtk.Box.new(Gtk.Orientation.VERTICAL, 0)
-        self.grid_consoles_toolbar = Gtk.Box()
+        self.grid_consoles_toolbar = Gtk.Box.new(Gtk.Orientation.HORIZONTAL, 0)
         self.grid_consoles_menu = Gtk.Box.new(Gtk.Orientation.VERTICAL, 6)
 
         self.grid_game_toolbar = Gtk.Box.new(Gtk.Orientation.HORIZONTAL, 8)
@@ -354,6 +354,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.grid_consoles_menu.set_halign(Gtk.Align.FILL)
 
         self.grid_consoles_toolbar.set_border_width(4)
+        Gtk.StyleContext.add_class(
+            self.grid_consoles_toolbar.get_style_context(), "linked")
 
         self.grid_game_toolbar.set_border_width(4)
 
@@ -367,7 +369,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         Gtk.StyleContext.add_class(
             self.grid_game_filters.get_style_context(), "linked")
-        self.grid_game_filters.set_halign(Gtk.Align.END)
         self.grid_game_filters.set_spacing(-1)
 
         self.grid_game_filters_popover.set_border_width(6)
@@ -409,12 +410,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.image_headerbar_view = Gtk.Image()
         self.button_headerbar_view = Gtk.MenuButton()
 
-        self.button_headerbar_grid = Gtk.ToggleButton()
-        self.button_headerbar_list = Gtk.ToggleButton()
-
-        self.image_headerbar_grid = Gtk.Image()
-        self.image_headerbar_list = Gtk.Image()
-
         # Properties
         self.headerbar.set_title(self.title)
         self.headerbar.set_subtitle(str())
@@ -424,9 +419,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.button_headerbar_view.set_tooltip_text(_("Display menu"))
         self.button_headerbar_view.set_use_popover(False)
-
-        self.button_headerbar_grid.set_tooltip_text(_("Grid icons"))
-        self.button_headerbar_list.set_tooltip_text(_("List view"))
 
         # ------------------------------------
         #   Menubar
@@ -729,10 +721,37 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.entry_toolbar_consoles_filters = Gtk.SearchEntry()
 
+        self.image_toolbar_consoles_add = Gtk.Image()
+        self.button_toolbar_consoles_add = Gtk.MenuButton()
+
         # Properties
         self.entry_toolbar_consoles_filters.set_hexpand(True)
         self.entry_toolbar_consoles_filters.set_placeholder_text(
             "%s…" % _("Filter"))
+
+        # ------------------------------------
+        #   Menu - Consoles toolbar
+        # ------------------------------------
+
+        self.menu_toolbar_consoles = Gtk.Menu()
+
+        self.item_toolbar_add_console = Gtk.MenuItem()
+        self.item_toolbar_add_emulator = Gtk.MenuItem()
+
+        self.item_toolbar_hide_empty_console = Gtk.CheckMenuItem()
+
+        # Properties
+        self.item_toolbar_add_console.set_label(
+            _("Add _console"))
+        self.item_toolbar_add_console.set_use_underline(True)
+
+        self.item_toolbar_add_emulator.set_label(
+            _("Add _emulator"))
+        self.item_toolbar_add_emulator.set_use_underline(True)
+
+        self.item_toolbar_hide_empty_console.set_label(
+            _("_Hide empty console"))
+        self.item_toolbar_hide_empty_console.set_use_underline(True)
 
         # ------------------------------------
         #   Sidebar - Consoles
@@ -806,11 +825,18 @@ class MainWindow(Gtk.ApplicationWindow):
         self.button_toolbar_output = Gtk.Button()
         self.button_toolbar_notes = Gtk.Button()
 
+        self.button_toolbar_grid = Gtk.ToggleButton()
+        self.button_toolbar_list = Gtk.ToggleButton()
+
+        self.separator_toolbar = Gtk.SeparatorToolItem()
+
         self.image_toolbar_fullscreen = Gtk.Image()
         self.image_toolbar_parameters = Gtk.Image()
         self.image_toolbar_screenshots = Gtk.Image()
         self.image_toolbar_output = Gtk.Image()
         self.image_toolbar_notes = Gtk.Image()
+        self.image_toolbar_grid = Gtk.Image()
+        self.image_toolbar_list = Gtk.Image()
 
         # Properties
         self.button_toolbar_launch.set_label(_("Play"))
@@ -831,6 +857,12 @@ class MainWindow(Gtk.ApplicationWindow):
             _("Show selected game output log"))
         self.button_toolbar_notes.set_tooltip_text(
             _("Show selected game notes"))
+
+        self.separator_toolbar.set_expand(True)
+        self.separator_toolbar.set_draw(False)
+
+        self.button_toolbar_grid.set_tooltip_text(_("Grid icons"))
+        self.button_toolbar_list.set_tooltip_text(_("List view"))
 
         # ------------------------------------
         #   Toolbar - Game tags
@@ -1659,20 +1691,10 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.headerbar.pack_start(self.button_headerbar_main)
         self.headerbar.pack_start(self.button_headerbar_view)
-        self.headerbar.pack_end(self.grid_game_view_mode)
 
         # Headerbar main menu
         self.button_headerbar_main.add(self.image_headerbar_menu)
         self.button_headerbar_view.add(self.image_headerbar_view)
-
-        # Headerbar games list view mode
-        self.grid_game_view_mode.pack_start(
-            self.button_headerbar_list, True, True, 0)
-        self.grid_game_view_mode.pack_start(
-            self.button_headerbar_grid, True, True, 0)
-
-        self.button_headerbar_grid.add(self.image_headerbar_grid)
-        self.button_headerbar_list.add(self.image_headerbar_list)
 
         # ------------------------------------
         #   Menubar
@@ -1780,6 +1802,17 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.grid_consoles_toolbar.pack_start(
             self.entry_toolbar_consoles_filters, True, True, 0)
+        self.grid_consoles_toolbar.pack_start(
+            self.button_toolbar_consoles_add, False, False, 0)
+
+        self.button_toolbar_consoles_add.add(self.image_toolbar_consoles_add)
+
+        self.button_toolbar_consoles_add.set_popup(self.menu_toolbar_consoles)
+
+        self.menu_toolbar_consoles.append(self.item_toolbar_add_console)
+        self.menu_toolbar_consoles.append(self.item_toolbar_add_emulator)
+        self.menu_toolbar_consoles.append(Gtk.SeparatorMenuItem())
+        self.menu_toolbar_consoles.append(self.item_toolbar_hide_empty_console)
 
         self.grid_consoles.pack_start(
             self.grid_consoles_toolbar, False, False, 0)
@@ -1821,7 +1854,11 @@ class MainWindow(Gtk.ApplicationWindow):
         self.grid_game_toolbar.pack_start(
             self.grid_game_options, False, False, 0)
         self.grid_game_toolbar.pack_start(
-            self.grid_game_filters, True, True, 0)
+            self.separator_toolbar, True, True, 0)
+        self.grid_game_toolbar.pack_start(
+            self.grid_game_view_mode, False, False, 0)
+        self.grid_game_toolbar.pack_start(
+            self.grid_game_filters, False, False, 0)
 
         self.button_toolbar_parameters.add(self.image_toolbar_parameters)
         self.button_toolbar_screenshots.add(self.image_toolbar_screenshots)
@@ -1854,6 +1891,15 @@ class MainWindow(Gtk.ApplicationWindow):
         self.scroll_sidebar_tags.add(self.frame_sidebar_tags)
 
         self.frame_sidebar_tags.add(self.listbox_sidebar_tags)
+
+        # Toolbar - Games view modes
+        self.grid_game_view_mode.pack_start(
+            self.button_toolbar_list, True, True, 0)
+        self.grid_game_view_mode.pack_start(
+            self.button_toolbar_grid, True, True, 0)
+
+        self.button_toolbar_grid.add(self.image_toolbar_grid)
+        self.button_toolbar_list.add(self.image_toolbar_list)
 
         # Toolbar - Filters menu
         self.button_toolbar_filters.set_popover(self.popover_toolbar_filters)
@@ -2076,15 +2122,6 @@ class MainWindow(Gtk.ApplicationWindow):
             "drag-data-received", self.__on_dnd_received_data)
 
         # ------------------------------------
-        #   Headerbar
-        # ------------------------------------
-
-        self.signal_headerbar_list = self.button_headerbar_list.connect(
-            "toggled", self.__on_switch_games_view)
-        self.signal_headerbar_grid = self.button_headerbar_grid.connect(
-            "toggled", self.__on_switch_games_view)
-
-        # ------------------------------------
         #   Menubar
         # ------------------------------------
 
@@ -2200,6 +2237,10 @@ class MainWindow(Gtk.ApplicationWindow):
         self.entry_toolbar_consoles_filters.connect(
             "changed", self.__on_update_consoles)
 
+        self.signal_console_hide_empty = \
+            self.item_toolbar_hide_empty_console.connect(
+            "activate", self.__on_change_console_option)
+
         # ------------------------------------
         #   Sidebar - Consoles
         # ------------------------------------
@@ -2250,6 +2291,11 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.listbox_sidebar_tags.connect(
             "row-activated", self.__on_filter_tag)
+
+        self.signal_headerbar_list = self.button_toolbar_list.connect(
+            "toggled", self.__on_switch_games_view)
+        self.signal_headerbar_grid = self.button_toolbar_grid.connect(
+            "toggled", self.__on_switch_games_view)
 
         self.entry_toolbar_filters.connect(
             "changed", self.filters_update)
@@ -2415,8 +2461,8 @@ class MainWindow(Gtk.ApplicationWindow):
         # Define signals per toggle buttons
         self.__signals_storage = {
             # Headerbar
-            self.button_headerbar_grid: self.signal_headerbar_grid,
-            self.button_headerbar_list: self.signal_headerbar_list,
+            self.button_toolbar_grid: self.signal_headerbar_grid,
+            self.button_toolbar_list: self.signal_headerbar_list,
             # Menubar
             self.item_menubar_columns_favorite: self.signal_menu_favorite,
             self.item_menubar_columns_finish: self.signal_menu_finish,
@@ -2439,6 +2485,8 @@ class MainWindow(Gtk.ApplicationWindow):
             self.item_menubar_statusbar: self.signal_menu_statusbar,
             # Toolbar
             self.button_toolbar_fullscreen: self.signal_toolbar_fullscreen,
+            self.item_toolbar_hide_empty_console:
+                self.signal_console_hide_empty,
             # Console menu
             self.item_consoles_favorite: self.signal_console_favorite,
             self.item_consoles_recursive: self.signal_console_recursive,
@@ -2450,12 +2498,13 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Store image references with associate icons
         self.__images_storage = {
-            self.image_headerbar_grid: Icons.Symbolic.GRID,
-            self.image_headerbar_list: Icons.Symbolic.LIST,
             self.image_headerbar_menu: Icons.Symbolic.MENU,
             self.image_headerbar_view: Icons.Symbolic.VIEW_MORE,
             self.image_sidebar_tags: Icons.Symbolic.PAPERCLIP,
+            self.image_toolbar_consoles_add: Icons.Symbolic.VIEW_MORE,
             self.image_toolbar_fullscreen: Icons.Symbolic.RESTORE,
+            self.image_toolbar_grid: Icons.Symbolic.GRID,
+            self.image_toolbar_list: Icons.Symbolic.LIST,
             self.image_toolbar_notes: Icons.Symbolic.EDITOR,
             self.image_toolbar_output: Icons.Symbolic.TERMINAL,
             self.image_toolbar_parameters: Icons.Symbolic.PROPERTIES,
@@ -2871,11 +2920,11 @@ class MainWindow(Gtk.ApplicationWindow):
         # ------------------------------------
 
         if self.view_mode == Columns.Key.Grid:
-            self.button_headerbar_grid.set_active(True)
+            self.button_toolbar_grid.set_active(True)
             self.item_menubar_grid.set_active(True)
 
         else:
-            self.button_headerbar_list.set_active(True)
+            self.button_toolbar_list.set_active(True)
             self.item_menubar_list.set_active(True)
 
         # ------------------------------------
@@ -2997,6 +3046,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menu_menubar_view.show_all()
         self.menu_menubar_edit.show_all()
         self.menu_menubar_help.show_all()
+        self.menu_toolbar_consoles.show_all()
         self.menu_consoles.show_all()
         self.menu_game.show_all()
 
@@ -3182,10 +3232,10 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Games view mode
         # ------------------------------------
 
-        if self.button_headerbar_list.get_active():
+        if self.button_toolbar_list.get_active():
             self.config.modify("gem", "games_view_mode", Columns.Key.List)
 
-        elif self.button_headerbar_grid.get_active():
+        elif self.button_toolbar_grid.get_active():
             self.config.modify("gem", "games_view_mode", Columns.Key.Grid)
 
         # ------------------------------------
@@ -3448,6 +3498,8 @@ class MainWindow(Gtk.ApplicationWindow):
         # ------------------------------------
         #   Console
         # ------------------------------------
+
+        self.item_toolbar_hide_empty_console.set_active(self.hide_empty_console)
 
         self.append_consoles()
 
@@ -4599,17 +4651,13 @@ class MainWindow(Gtk.ApplicationWindow):
             except OSError as error:
                 self.logger.warning(error)
 
-        if not self.hide_empty_console or len(console.get_games()) > 0:
+        icon = self.get_pixbuf_from_cache(
+            "consoles", 24, console.id, console.icon)
 
-            icon = self.get_pixbuf_from_cache(
-                "consoles", 24, console.id, console.icon)
+        if icon is None:
+            icon = self.icons.blank(24)
 
-            if icon is None:
-                icon = self.icons.blank(24)
-
-            return (console, icon)
-
-        return None
+        return (console, icon)
 
 
     def __on_append_console_row(self, console, icon):
@@ -4760,6 +4808,9 @@ class MainWindow(Gtk.ApplicationWindow):
             filter_text = \
                 self.entry_toolbar_consoles_filters.get_text().strip().lower()
 
+            if self.hide_empty_console and len(row.console.get_games()) == 0:
+                return False
+
             if len(filter_text) == 0:
                 return True
 
@@ -4786,7 +4837,23 @@ class MainWindow(Gtk.ApplicationWindow):
             Object which receive signal
         """
 
-        if self.__current_menu_row is not None:
+        self.__block_signals()
+
+        if widget == self.item_toolbar_hide_empty_console:
+
+            self.hide_empty_console = not self.config.getboolean(
+                "gem", "hide_empty_console", fallback=False)
+
+            self.config.modify(
+                "gem", "hide_empty_console", self.hide_empty_console)
+            self.config.update()
+
+            self.item_toolbar_hide_empty_console.set_active(
+                self.hide_empty_console)
+
+            self.__on_update_consoles()
+
+        elif self.__current_menu_row is not None:
 
             if widget == self.item_consoles_recursive:
                 self.__current_menu_row.console.recursive = \
@@ -4809,6 +4876,8 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.api.write_object(self.__current_menu_row.console)
 
                 self.__on_update_consoles()
+
+        self.__unblock_signals()
 
 
     def __on_console_menu_show(self, widget, event):
@@ -5052,11 +5121,11 @@ class MainWindow(Gtk.ApplicationWindow):
             self.scroll_sidebar.set_visible(self.config.getboolean(
                 "gem", "show_sidebar", fallback=True))
 
-            if self.button_headerbar_list.get_active():
+            if self.button_toolbar_list.get_active():
                 self.scroll_games_list.set_visible(True)
                 self.treeview_games.show_all()
 
-            if self.button_headerbar_grid.get_active():
+            if self.button_toolbar_grid.get_active():
                 self.scroll_games_grid.set_visible(True)
                 self.iconview_games.show_all()
 
@@ -5760,27 +5829,27 @@ class MainWindow(Gtk.ApplicationWindow):
 
         status = widget.get_active()
 
-        if widget == self.button_headerbar_list:
-            self.button_headerbar_grid.set_active(not status)
+        if widget == self.button_toolbar_list:
+            self.button_toolbar_grid.set_active(not status)
 
             self.item_menubar_list.set_active(status)
 
-        elif widget == self.button_headerbar_grid:
-            self.button_headerbar_list.set_active(not status)
+        elif widget == self.button_toolbar_grid:
+            self.button_toolbar_list.set_active(not status)
 
             self.item_menubar_grid.set_active(status)
 
         elif widget == self.item_menubar_list:
-            self.button_headerbar_list.set_active(status)
+            self.button_toolbar_list.set_active(status)
 
         elif widget == self.item_menubar_grid:
-            self.button_headerbar_grid.set_active(status)
+            self.button_toolbar_grid.set_active(status)
 
         if not self.scroll_games_placeholder.get_visible():
             self.scroll_games_list.set_visible(
-                self.button_headerbar_list.get_active())
+                self.button_toolbar_list.get_active())
             self.scroll_games_grid.set_visible(
-                self.button_headerbar_grid.get_active())
+                self.button_toolbar_grid.get_active())
 
             if self.scroll_games_list.get_visible():
                 self.treeview_games.show_all()
