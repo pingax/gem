@@ -70,6 +70,7 @@ try:
     from gi.repository import Gtk
     from gi.repository import GLib
     from gi.repository import GObject
+    from gi.repository import Gio
     from gi.repository import Gdk
     from gi.repository import GdkPixbuf
     from gi.repository import Pango
@@ -7101,28 +7102,23 @@ class MainWindow(Gtk.ApplicationWindow):
 
         This function open the folder which contains game with the default
         files manager
-
-        Based on http://stackoverflow.com/a/6631329
         """
 
         game = self.selection["game"]
 
-        if game is not None:
-            path = str(game.path.parent)
+        if game is not None and game.path.parent.exists():
+            self.logger.debug(
+                "Open %s folder in files manager" % game.path.parent)
 
-            self.logger.debug("Open %s folder in files manager" % path)
+            try:
+                instance = Gio.AppInfo.create_from_commandline(
+                    "xdg-open", None, Gio.AppInfoCreateFlags.NONE)
 
-            if system() == "Windows":
-                from os import startfile
-                startfile(path)
+                status = instance.launch_uris(
+                    ["file://%s" % game.path.parent], None)
 
-            elif system() == "Darwin":
-                Popen(["open", path], stdout=PIPE, stdin=PIPE,
-                    stderr=STDOUT, universal_newlines=True)
-
-            else:
-                Popen(["xdg-open", path], stdout=PIPE, stdin=PIPE,
-                    stderr=STDOUT, universal_newlines=True)
+            except GLib.Error:
+                self.logger.exception("Cannot open files manager")
 
 
     def __on_game_cover(self, *args):
