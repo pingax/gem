@@ -149,6 +149,7 @@ class EmulatorPreferences(CommonWindow):
         self.grid_preferences = Gtk.Grid()
 
         self.grid_binary = Gtk.Box()
+        self.grid_configuration = Gtk.Box()
 
         # Properties
         self.grid_preferences.set_row_spacing(6)
@@ -157,6 +158,9 @@ class EmulatorPreferences(CommonWindow):
 
         Gtk.StyleContext.add_class(
             self.grid_binary.get_style_context(), "linked")
+
+        Gtk.StyleContext.add_class(
+            self.grid_configuration.get_style_context(), "linked")
 
         # ------------------------------------
         #   Emulator
@@ -222,8 +226,10 @@ class EmulatorPreferences(CommonWindow):
         # ------------------------------------
 
         self.label_configuration = Gtk.Label()
+        self.entry_configuration = Gtk.Entry()
 
-        self.file_configuration = Gtk.FileChooserButton()
+        self.button_configuration = Gtk.Button()
+        self.image_configuration = Gtk.Image()
 
         # Properties
         self.label_configuration.set_halign(Gtk.Align.END)
@@ -232,7 +238,12 @@ class EmulatorPreferences(CommonWindow):
         self.label_configuration.set_text(
             _("Configuration file"))
 
-        self.file_configuration.set_hexpand(True)
+        self.entry_configuration.set_hexpand(True)
+        self.entry_configuration.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.CLEAR)
+
+        self.image_configuration.set_from_icon_name(
+            Icons.Symbolic.OPEN, Gtk.IconSize.MENU)
 
         # ------------------------------------
         #   Emulator - Arguments
@@ -395,7 +406,7 @@ class EmulatorPreferences(CommonWindow):
         self.grid_preferences.attach(self.button_emulator, 2, 0, 1, 2)
 
         self.grid_preferences.attach(self.label_configuration, 0, 3, 1, 1)
-        self.grid_preferences.attach(self.file_configuration, 1, 3, 2, 1)
+        self.grid_preferences.attach(self.grid_configuration, 1, 3, 2, 1)
 
         self.grid_preferences.attach(self.label_arguments, 0, 4, 3, 1)
 
@@ -416,15 +427,22 @@ class EmulatorPreferences(CommonWindow):
 
         self.grid_preferences.attach(self.label_joker, 0, 11, 3, 1)
 
-        # Emulator options
-        self.button_binary.set_image(self.image_binary)
-
         # Emulator icon
         self.button_emulator.set_image(self.image_emulator)
 
         # Emulator binary
+        self.button_binary.set_image(self.image_binary)
+
         self.grid_binary.pack_start(self.entry_binary, True, True, 0)
         self.grid_binary.pack_start(self.button_binary, False, False, 0)
+
+        # Emulator configuration
+        self.button_configuration.set_image(self.image_configuration)
+
+        self.grid_configuration.pack_start(
+            self.entry_configuration, True, True, 0)
+        self.grid_configuration.pack_start(
+            self.button_configuration, False, False, 0)
 
 
     def __init_signals(self):
@@ -440,6 +458,8 @@ class EmulatorPreferences(CommonWindow):
         self.entry_binary.connect("changed", self.__on_entry_update)
         self.entry_binary.connect("icon-press", on_entry_clear)
 
+        self.entry_configuration.connect("icon-press", on_entry_clear)
+
         self.entry_launch.connect("icon-press", on_entry_clear)
         self.entry_windowed.connect("icon-press", on_entry_clear)
         self.entry_fullscreen.connect("icon-press", on_entry_clear)
@@ -448,6 +468,7 @@ class EmulatorPreferences(CommonWindow):
         self.entry_screenshots.connect("icon-press", on_entry_clear)
 
         self.button_emulator.connect("clicked", self.__on_select_icon)
+        self.button_configuration.connect("clicked", self.__on_file_set)
         self.button_binary.connect("clicked", self.__on_file_set)
 
         self.check_advanced.connect("toggled", self.__on_check_advanced_mode)
@@ -477,7 +498,7 @@ class EmulatorPreferences(CommonWindow):
             # Configuration
             folder = self.emulator.configuration
             if folder is not None and folder.exists():
-                self.file_configuration.set_filename(str(folder))
+                self.entry_configuration.set_text(str(folder))
 
             # Icon
             self.path = self.emulator.icon
@@ -541,8 +562,8 @@ class EmulatorPreferences(CommonWindow):
         if len(value) > 0:
             data["icon"] = Path(value).expanduser()
 
-        value = self.file_configuration.get_filename()
-        if value is not None and len(value) > 0:
+        value = self.entry_configuration.get_text().strip()
+        if len(value) > 0:
             data["configuration"] = Path(value).expanduser()
 
         value = self.entry_save.get_text().strip()
@@ -682,18 +703,50 @@ class EmulatorPreferences(CommonWindow):
             Object which receive signal
         """
 
+        if widget == self.button_binary:
+            title = _("Select a binary")
+
+            filename = self.entry_binary.get_text().strip()
+
+        elif widget == self.button_configuration:
+            title = _("Select a configuration file")
+
+            filename = self.entry_configuration.get_text().strip()
+
+        path = None
+        if len(filename) > 0:
+            path = Path(filename).expanduser()
+
+            if widget == self.button_binary and not path.exists():
+                paths = get_binary_path(filename)
+
+                if len(paths) > 0:
+                    path = Path(paths[0]).expanduser()
+
+        # ------------------------------------
+        #   Open dialog
+        # ------------------------------------
+
         dialog = Gtk.FileChooserDialog(
-            title=_("Select a binary"),
+            title=title,
             action=Gtk.FileChooserAction.OPEN,
-            transient_for=self.interface.window,
+            transient_for=self.interface,
             use_header_bar=not self.use_classic_theme)
 
         dialog.add_buttons(
             Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
             Gtk.STOCK_OPEN, Gtk.ResponseType.OK)
 
+        if path is not None:
+            dialog.set_filename(str(path))
+
         if dialog.run() == Gtk.ResponseType.OK:
-            self.entry_binary.set_text(dialog.get_filename())
+
+            if widget == self.button_binary:
+                self.entry_binary.set_text(dialog.get_filename())
+
+            elif widget == self.button_configuration:
+                self.entry_configuration.set_text(dialog.get_filename())
 
         dialog.destroy()
 
