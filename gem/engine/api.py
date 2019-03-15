@@ -1025,18 +1025,15 @@ class GEM(object):
             Tags list
         """
 
-        tags = self.database.select("games", "tags")
+        result = self.database.select("games", "tags")
 
-        if tags is not None:
+        if result is not None:
+            tags = list()
 
-            for tag in tags:
+            for tag in result:
+                tags.extend(tag.split(';'))
 
-                for element in tag.split(';'):
-
-                    if len(element) > 0 and not element in tags:
-                        tags.append(element)
-
-            return sorted(tags)
+            return sorted(list(set(tags)))
 
         return list()
 
