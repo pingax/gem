@@ -901,31 +901,13 @@ class MainWindow(Gtk.ApplicationWindow):
         self.image_sidebar_tags = Gtk.Image()
         self.button_sidebar_tags = Gtk.MenuButton()
 
-        self.popover_sidebar_tags = Gtk.Popover()
-
-        self.scroll_sidebar_tags = Gtk.ScrolledWindow()
-        self.frame_sidebar_tags = Gtk.Frame()
-
-        self.listbox_sidebar_tags = Gtk.ListBox()
+        self.menu_sidebar_tags = Gtk.Menu()
 
         # Properties
         self.button_sidebar_tags.set_halign(Gtk.Align.END)
         self.button_sidebar_tags.set_valign(Gtk.Align.CENTER)
         self.button_sidebar_tags.set_tooltip_text(_("Tags"))
-        self.button_sidebar_tags.set_use_popover(True)
-
-        self.popover_sidebar_tags.set_modal(True)
-
-        self.scroll_sidebar_tags.set_size_request(150, -1)
-        self.scroll_sidebar_tags.set_max_content_height(200)
-        self.scroll_sidebar_tags.set_propagate_natural_height(True)
-        self.scroll_sidebar_tags.set_border_width(6)
-        self.scroll_sidebar_tags.set_policy(
-            Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-
-        self.listbox_sidebar_tags.set_selection_mode(Gtk.SelectionMode.NONE)
-        self.listbox_sidebar_tags.set_valign(Gtk.Align.FILL)
-        self.listbox_sidebar_tags.set_vexpand(True)
+        self.button_sidebar_tags.set_popup(self.menu_sidebar_tags)
 
         # ------------------------------------
         #   Toolbar - Game filter
@@ -1899,6 +1881,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.grid_game_toolbar.pack_start(
             self.grid_game_options, False, False, 0)
         self.grid_game_toolbar.pack_start(
+            self.button_sidebar_tags, False, False, 0)
+        self.grid_game_toolbar.pack_start(
             self.separator_toolbar, True, True, 0)
         self.grid_game_toolbar.pack_start(
             self.grid_game_view_mode, False, False, 0)
@@ -1916,8 +1900,6 @@ class MainWindow(Gtk.ApplicationWindow):
             self.button_toolbar_output, False, False, 0)
         self.grid_game_options.pack_start(
             self.button_toolbar_notes, False, False, 0)
-        self.grid_game_options.pack_start(
-            self.button_sidebar_tags, False, False, 0)
 
         # Toolbar - Game launch
         self.grid_game_launch.pack_start(
@@ -1929,13 +1911,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Toolbar - Tags
         self.button_sidebar_tags.add(self.image_sidebar_tags)
-        self.button_sidebar_tags.set_popover(self.popover_sidebar_tags)
-
-        self.popover_sidebar_tags.add(self.scroll_sidebar_tags)
-
-        self.scroll_sidebar_tags.add(self.frame_sidebar_tags)
-
-        self.frame_sidebar_tags.add(self.listbox_sidebar_tags)
 
         # Toolbar - Games view modes
         self.grid_game_view_mode.pack_start(
@@ -2349,9 +2324,6 @@ class MainWindow(Gtk.ApplicationWindow):
             "clicked", self.__on_show_notes)
         self.button_toolbar_parameters.connect(
             "clicked", self.__on_game_parameters)
-
-        self.listbox_sidebar_tags.connect(
-            "row-activated", self.__on_filter_tag)
 
         self.signal_headerbar_list = self.button_toolbar_list.connect(
             "toggled", self.__on_switch_games_view)
@@ -3120,7 +3092,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.grid_sidebar.show_all()
         self.scroll_sidebar.show_all()
-        self.scroll_sidebar_tags.show_all()
         self.scroll_sidebar_informations.show_all()
 
         self.grid_games_placeholder.show_all()
@@ -3766,7 +3737,7 @@ class MainWindow(Gtk.ApplicationWindow):
         return found
 
 
-    def __on_filter_tag(self, widget, row):
+    def __on_filter_tag(self, widget):
         """ Refilter games list with a new tag
 
         Parameters
@@ -3778,15 +3749,8 @@ class MainWindow(Gtk.ApplicationWindow):
         """
 
         text = str()
-
-        if len(row.get_children()) > 0:
-            box = row.get_children()[0]
-
-            if len(box.get_children()) > 0:
-                label = box.get_children()[0].get_label()
-
-                if not self.entry_toolbar_filters.get_text() == label:
-                    text = label
+        if not self.entry_toolbar_filters.get_text() == widget.get_label():
+            text = widget.get_label()
 
         self.entry_toolbar_filters.set_text(text)
 
@@ -3848,8 +3812,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.button_sidebar_tags.set_sensitive(False)
 
         # Remove tags list
-        for widget in self.listbox_sidebar_tags.get_children():
-            self.listbox_sidebar_tags.remove(widget)
+        for widget in self.menu_sidebar_tags.get_children():
+            self.menu_sidebar_tags.remove(widget)
 
         self.label_sidebar_title.set_text(str())
 
@@ -3880,17 +3844,13 @@ class MainWindow(Gtk.ApplicationWindow):
 
             # Append game tags
             for tag in sorted(game.tags):
-                label = Gtk.Label.new(tag)
-                label.set_halign(Gtk.Align.FILL)
+                item = Gtk.MenuItem.new_with_label(tag)
 
-                box = Gtk.Box.new(Gtk.Orientation.HORIZONTAL, 6)
-                box.pack_start(label, True, True, 0)
+                item.connect("activate", self.__on_filter_tag)
 
-                row = Gtk.ListBoxRow()
-                row.add(box)
-                row.show_all()
+                self.menu_sidebar_tags.append(item)
 
-                self.listbox_sidebar_tags.add(row)
+            self.menu_sidebar_tags.show_all()
 
             # ----------------------------------------
             #   Statusbar flags
