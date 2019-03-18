@@ -1252,6 +1252,12 @@ msgid "No"
 msgstr "Ninguno"
 
 #
+# File: gem/interface.py, line: 910
+#, fuzzy
+msgid "No console available"
+msgstr "1 juego disponible"
+
+#
 # File: gem/preferences.py, line: 1662
 #, fuzzy
 msgid "No data"

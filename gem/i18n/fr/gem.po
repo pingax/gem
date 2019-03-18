@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-03-18 10:55+0100\n"
+"PO-Revision-Date: 2019-03-18 13:05+0100\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -1186,6 +1186,11 @@ msgstr ""
 # File: gem/preferences.py, line: 97
 msgid "No"
 msgstr "Non"
+
+#
+# File: gem/interface.py, line: 532
+msgid "No console available"
+msgstr "Aucune console disponible"
 
 #
 # File: gem/interface.py, line: 1286

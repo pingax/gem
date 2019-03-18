@@ -838,6 +838,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.scroll_consoles = Gtk.ScrolledWindow()
         self.listbox_consoles = Gtk.ListBox()
 
+        self.label_consoles = Gtk.Label()
+
         # Properties
         self.hpaned_consoles.set_orientation(Gtk.Orientation.HORIZONTAL)
         self.hpaned_consoles.set_position(280)
@@ -846,6 +848,13 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.listbox_consoles.set_filter_func(self.__on_filter_consoles)
         self.listbox_consoles.set_sort_func(self.__on_sort_consoles)
+        self.listbox_consoles.set_placeholder(self.label_consoles)
+
+        self.label_consoles.set_text(_("No console available"))
+        self.label_consoles.set_single_line_mode(False)
+        self.label_consoles.set_line_wrap(True)
+        self.label_consoles.set_justify(Gtk.Justification.CENTER)
+        self.label_consoles.get_style_context().add_class("dim-label")
 
         # ------------------------------------
         #   Menu - Consoles
@@ -3166,6 +3175,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.scroll_sidebar_informations.show_all()
 
         self.grid_games_placeholder.show_all()
+        self.label_consoles.show_all()
 
         # Manage window template
         if self.use_classic_theme:
@@ -3178,7 +3188,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menu_menubar_view.show_all()
         self.menu_menubar_edit.show_all()
         self.menu_menubar_help.show_all()
-        self.menu_menubar_games_display.show_all()
         self.menu_toolbar_consoles.show_all()
         self.menu_consoles.show_all()
         self.menu_game.show_all()
