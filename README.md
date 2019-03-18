@@ -54,7 +54,9 @@ $ eopkg install gem
 
 ### Icons
 
-* Consoles: [Evan-Amos](https://commons.wikimedia.org/wiki/User:Evan-Amos)
+Consoles icons come from [Evan-Amos](https://commons.wikimedia.org/wiki/User:Evan-Amos)
+gallery and are available under [Public Domain](https://en.wikipedia.org/wiki/Public_domain)
+license.
 
 Dependencies
 ------------

@@ -4228,16 +4228,10 @@ class MainWindow(Gtk.ApplicationWindow):
 
         about.set_logo_icon_name(Metadata.ICON)
 
-        about.set_authors([
-            "Lubert Aurélien (PacMiam)" ])
-        about.set_artists([
-            "Tango projects - GPLv3",
-            "Gelide projects - GPLv3",
-            "Evan-Amos - CC-by-SA 3.0" ])
-        about.set_translator_credits(
-            _("translator-credits"))
-        about.set_license_type(
-            Gtk.License.GPL_3_0)
+        about.set_authors(["Lubert Aurélien (PacMiam)"])
+        about.set_artists(["Evan-Amos %s - Public Domain" % Metadata.EVAN_AMOS])
+        about.set_translator_credits(_("translator-credits"))
+        about.set_license_type(Gtk.License.GPL_3_0)
 
         # Strange case... With an headerbar, the AboutDialog got some useless
         # buttons whitout any reasons. To avoid this, I remove any widget from
