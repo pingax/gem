@@ -278,7 +278,7 @@ class DeleteDialog(CommonWindow):
         #   Game file
         # ------------------------------------
 
-        data["paths"].append(self.game.filepath)
+        data["paths"].append(self.game.path)
 
         # ------------------------------------
         #   Savestates
@@ -299,9 +299,9 @@ class DeleteDialog(CommonWindow):
         # ------------------------------------
 
         if self.switch_desktop.get_active():
-            if self.parent.check_desktop(self.game.filepath):
+            if self.parent.check_desktop(self.game.path):
                 data["paths"].append(Folders.APPLICATIONS.joinpath(
-                    "%s.desktop" % self.game.filename))
+                    "%s.desktop" % self.game.path.stem))
 
         # ------------------------------------
         #   Cache

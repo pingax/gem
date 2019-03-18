@@ -18,6 +18,7 @@
 from gem.engine.utils import generate_identifier
 
 from gem.ui.data import Icons
+from gem.ui.data import Folders
 from gem.ui.utils import replace_for_markup
 from gem.ui.widgets.window import CommonWindow
 from gem.ui.widgets.widgets import PreferencesItem
@@ -256,7 +257,7 @@ class DuplicateDialog(CommonWindow):
         self.add_button(_("Cancel"), Gtk.ResponseType.CANCEL)
         self.add_button(_("Accept"), Gtk.ResponseType.APPLY, Gtk.Align.END)
 
-        self.entry_name.set_text(self.game.filename)
+        self.entry_name.set_text(self.game.path.stem)
 
         self.check_filename()
 
@@ -277,7 +278,7 @@ class DuplicateDialog(CommonWindow):
             name += self.game.extension
 
             # Generate file path
-            filepath = self.game.filepath.parent.joinpath(name)
+            filepath = self.game.path.parent.joinpath(name)
             filename = filepath.stem
 
             data = {
@@ -290,7 +291,7 @@ class DuplicateDialog(CommonWindow):
             #   Game file
             # ------------------------------------
 
-            data["paths"].append((self.game.filepath, filepath))
+            data["paths"].append((self.game.path, filepath))
 
             # ------------------------------------
             #   Savestates
@@ -321,7 +322,7 @@ class DuplicateDialog(CommonWindow):
             # ------------------------------------
 
             if self.switch_note.get_active():
-                path = self.parent.api.get_local(self.game.note)
+                path = Folders.LOCAL.joinpath("notes", self.game.id + ".txt")
 
                 if path.exists():
                     data["paths"].append((path, self.parent.api.get_local(
@@ -336,7 +337,7 @@ class DuplicateDialog(CommonWindow):
 
                 if path.exists():
                     data["paths"].append(
-                        (path, path.replace(self.game.filename, filename)))
+                        (path, path.replace(self.game.path.stem, filename)))
 
             # ------------------------------------
             #   Database
@@ -364,7 +365,7 @@ class DuplicateDialog(CommonWindow):
             name += self.game.extension
 
             # Generate file path
-            filepath = self.game.filepath.parent.joinpath(name)
+            filepath = self.game.path.parent.joinpath(name)
 
             # Cannot replace an existing file
             if filepath.exists():

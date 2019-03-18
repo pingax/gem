@@ -6534,7 +6534,7 @@ class MainWindow(Gtk.ApplicationWindow):
                             game_data = {
                                 Columns.List.FAVORITE: \
                                     self.icons.get_translucent("favorite"),
-                                Columns.List.NAME: game.filename,
+                                Columns.List.NAME: game.path.stem,
                                 Columns.List.PLAYED: None,
                                 Columns.List.LAST_PLAY: None,
                                 Columns.List.TIME_PLAY: None,

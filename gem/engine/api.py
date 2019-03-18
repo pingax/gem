@@ -1114,12 +1114,12 @@ class GEM(object):
         if type(game) is not Game:
             raise TypeError("Wrong type for game, expected gem.engine.api.Game")
 
-        results = self.database.get("games", { "filename": game.filepath.name })
+        results = self.database.get("games", { "filename": game.path.name })
 
         if results is not None and len(results) > 0:
             self.logger.info("Remove %s from database" % game.name)
 
-            self.database.remove("games", { "filename": game.filepath.name })
+            self.database.remove("games", { "filename": game.path.name })
 
         # Update game environment variables
         self.logger.debug("Remove %s environment variables" % game.name)
