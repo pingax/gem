@@ -781,10 +781,12 @@ class MainWindow(Gtk.ApplicationWindow):
         # Properties
         self.item_menubar_website.set_label(
             _("_Website"))
+        self.item_menubar_website.set_tooltip_text(Metadata.WEBSITE)
         self.item_menubar_website.set_use_underline(True)
 
         self.item_menubar_bug_tracker.set_label(
             _("_Report problem"))
+        self.item_menubar_bug_tracker.set_tooltip_text(Metadata.BUG_TRACKER)
         self.item_menubar_bug_tracker.set_use_underline(True)
 
         self.item_menubar_about.set_label(
