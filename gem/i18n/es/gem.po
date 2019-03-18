@@ -673,11 +673,6 @@ msgid "Editor font"
 msgstr "Editor"
 
 #
-# File: gem/gtk/windows.py, line: 1012
-msgid "Empty"
-msgstr ""
-
-#
 # File: gem/preferences.py, line: 280
 msgid "Emulator"
 msgstr "Emulador"
@@ -1537,6 +1532,12 @@ msgid "Select a binary"
 msgstr "Seleccionar un binario"
 
 #
+# File: gem/preferences.py, line: 1602
+#, fuzzy
+msgid "Select a configuration file"
+msgstr "Actualizar el archivo de configuración de %s"
+
+#
 # File: gem/preferences.py, line: 86
 #, fuzzy
 msgid "Set a game cover"
@@ -2158,6 +2159,12 @@ msgid "_Game"
 msgstr "_Juego"
 
 #
+# File: gem/preferences.py, line: 328
+#, fuzzy
+msgid "_Games lists"
+msgstr "Lista de juegos"
+
+#
 # File: gem/interface.py, line: 460
 msgid "_Generate a menu entry"
 msgstr "_Generar una entrada de menú"
@@ -2257,6 +2264,11 @@ msgid "_Rename"
 msgstr "_Renombrar"
 
 #
+# File: gem/ui/interface.py, line: 787
+msgid "_Report problem"
+msgstr ""
+
+#
 # File: gem/preferences.py, line: 86
 #, fuzzy
 msgid "_Reset data"
@@ -2280,9 +2292,20 @@ msgid "_Sidebar"
 msgstr "Mostrar los números de línea"
 
 #
+# File: gem/preferences.py, line: 431
+#, fuzzy
+msgid "_Statusbar"
+msgstr "Mostrar los números de línea"
+
+#
 # File: gem/gtk/interface.py, line: 422
 msgid "_Tools"
 msgstr "_Herramientas"
+
+#
+# File: gem/ui/interface.py, line: 783
+msgid "_Website"
+msgstr ""
 
 #
 # File: gem/preferences.py, line: 280

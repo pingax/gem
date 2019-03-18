@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-03-14 17:05+0100\n"
+"PO-Revision-Date: 2019-03-18 10:55+0100\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -634,11 +634,6 @@ msgstr "Éditeur"
 # File: gem/preferences.py, line: 336
 msgid "Editor font"
 msgstr "Police d'écriture de l'éditeur"
-
-#
-# File: gem/gtk/windows.py, line: 1012
-msgid "Empty"
-msgstr "Vide"
 
 #
 # File: gem/configuration.py, line: 144
@@ -1448,6 +1443,11 @@ msgid "Select a binary"
 msgstr "Choisir un binaire"
 
 #
+# File: gem/interface.py, line: 300
+msgid "Select a configuration file"
+msgstr "Modifier le fichier de configuration"
+
+#
 # File: src/window.py, line: 451
 msgid "Set a game cover"
 msgstr "Définir la couverture du jeu"
@@ -2040,6 +2040,11 @@ msgid "_Game"
 msgstr "_Jeu"
 
 #
+# File: gem/interface.py, line: 220
+msgid "_Games lists"
+msgstr "Listes de _jeux"
+
+#
 # File: gem/interface.py, line: 400
 msgid "_Generate a menu entry"
 msgstr "_Générer une entrée de menu"
@@ -2132,6 +2137,11 @@ msgid "_Rename"
 msgstr "_Renommer"
 
 #
+# File: gem/ui/interface.py, line: 787
+msgid "_Report problem"
+msgstr "_Reporter un problème"
+
+#
 # File: src/window.py, line: 451
 msgid "_Reset data"
 msgstr "_Remise à zéro des données"
@@ -2152,9 +2162,19 @@ msgid "_Sidebar"
 msgstr "_Barre latérale"
 
 #
+# File: gem/preferences.py, line: 338
+msgid "_Statusbar"
+msgstr "_Barre de statut"
+
+#
 # File: gem/interface.py, line: 475
 msgid "_Tools"
 msgstr "_Outils"
+
+#
+# File: gem/ui/interface.py, line: 783
+msgid "_Website"
+msgstr "_Site internet"
 
 #
 # File: gem/interface.py, line: 926

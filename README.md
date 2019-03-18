@@ -64,6 +64,7 @@ Dependencies
 * python3 >= 3.6
 * python3-gobject
 * python3-setuptools
+* xdg-utils
 
 ### Optional
 

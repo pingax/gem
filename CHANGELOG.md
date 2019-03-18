@@ -31,6 +31,7 @@ Version 0.10 - Forest Life
 
 ### GTK+ interface
 
+* New dependency → xdg-utils
 * New optional dependency → python3-magic
 * New logo
 * Add the statusbar for default theme and rewrite his contents
