@@ -968,7 +968,8 @@ class MainWindow(Gtk.ApplicationWindow):
         # Properties
         self.button_sidebar_tags.set_halign(Gtk.Align.END)
         self.button_sidebar_tags.set_valign(Gtk.Align.CENTER)
-        self.button_sidebar_tags.set_tooltip_text(_("Tags"))
+        self.button_sidebar_tags.set_tooltip_text(
+            _("Show selected game tags"))
         self.button_sidebar_tags.set_popup(self.menu_sidebar_tags)
 
         # ------------------------------------
@@ -984,7 +985,8 @@ class MainWindow(Gtk.ApplicationWindow):
         # Properties
         self.entry_toolbar_filters.set_placeholder_text("%s…" % _("Filter"))
 
-        self.button_toolbar_filters.set_tooltip_text(_("Filters"))
+        self.button_toolbar_filters.set_tooltip_text(
+            _("Advanced filters"))
         self.button_toolbar_filters.set_use_popover(True)
 
         self.popover_toolbar_filters.set_modal(True)
@@ -3905,8 +3907,11 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Reset statusbar flags icons
         self.image_statusbar_properties.set_from_pixbuf(self.icons.blank())
+        self.image_statusbar_properties.set_tooltip_text(str())
         self.image_statusbar_savestates.set_from_pixbuf(self.icons.blank())
+        self.image_statusbar_savestates.set_tooltip_text(str())
         self.image_statusbar_screenshots.set_from_pixbuf(self.icons.blank())
+        self.image_statusbar_screenshots.set_tooltip_text(str())
 
         # ----------------------------------------
         #   Set game informations
@@ -3958,6 +3963,13 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 self.sidebar_image = Path(screenshots[-1])
 
+                text = _("%d screenshots")
+                if len(screenshots) == 1:
+                    text = _("%d screenshot")
+
+                self.image_statusbar_screenshots.set_tooltip_text(
+                    text % len(screenshots))
+
             # Set statusbar icon for screenshot status
             self.image_statusbar_screenshots.set_from_pixbuf(pixbuf)
 
@@ -3970,6 +3982,13 @@ class MainWindow(Gtk.ApplicationWindow):
                 if len(game.savestates) > 0:
                     pixbuf = self.icons.get("savestate")
 
+                    text = _("%d savestates")
+                    if len(game.savestates) == 1:
+                        text = _("%d savestate")
+
+                    self.image_statusbar_savestates.set_tooltip_text(
+                        text % len(game.savestates))
+
                 self.image_statusbar_savestates.set_from_pixbuf(pixbuf)
 
                 # Game custom parameters
@@ -3978,6 +3997,14 @@ class MainWindow(Gtk.ApplicationWindow):
                 if len(game.default) > 0 or \
                     not game.emulator == console.emulator:
                     pixbuf = self.icons.get("parameter")
+
+                    if len(game.default) > 0:
+                        self.image_statusbar_properties.set_tooltip_text(
+                            _("Use alternative arguments"))
+
+                    elif game.emulator == console.emulator:
+                        self.image_statusbar_properties.set_tooltip_text(
+                            _("Use alternative emulator"))
 
                 self.image_statusbar_properties.set_from_pixbuf(pixbuf)
 
@@ -4904,6 +4931,14 @@ class MainWindow(Gtk.ApplicationWindow):
         else:
             image_console_status = Gtk.Image.new_from_pixbuf(
                 self.icons.blank(22))
+
+        if len(console.get_games()) > 0:
+
+            text = _("%d games")
+            if len(console.get_games()) == 1:
+                text = _("%d game")
+
+            row_console.set_tooltip_text(text % len(console.get_games()))
 
         grid_console.pack_start(image_console, False, False, 0)
         grid_console.pack_start(label_console, True, True, 0)

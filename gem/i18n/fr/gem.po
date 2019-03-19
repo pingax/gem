@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-03-18 13:05+0100\n"
+"PO-Revision-Date: 2019-03-19 17:07+0100\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -16,6 +16,18 @@ msgstr ""
 #, python-format
 msgid "%d days ago"
 msgstr "Il y a %d jours"
+
+#
+# File: gem/ui/interface.py, line: 4941
+#, python-format
+msgid "%d game"
+msgstr "%d jeu"
+
+#
+# File: gem/interface.py, line: 532
+#, python-format
+msgid "%d games"
+msgstr "%d jeux"
 
 #
 # File: gem/interface.py, line: 532
@@ -40,6 +52,30 @@ msgstr "%d minutes"
 #, python-format
 msgid "%d months ago"
 msgstr "Il y a %d mois"
+
+#
+# File: gem/gtk/interface.py, line: 802
+#, python-format
+msgid "%d savestate"
+msgstr "%d sauvegarde d'état"
+
+#
+# File: gem/gtk/interface.py, line: 802
+#, python-format
+msgid "%d savestates"
+msgstr "%d sauvegardes d'état"
+
+#
+# File: gem/preferences.py, line: 335
+#, python-format
+msgid "%d screenshot"
+msgstr "%d capture d'écran"
+
+#
+# File: gem/preferences.py, line: 335
+#, python-format
+msgid "%d screenshots"
+msgstr "%d captures d'écran"
 
 #
 # File: gem/utils.py, line: 322
@@ -183,6 +219,12 @@ msgstr "Ajouter un nouvel émulateur"
 msgid "Add an ellipsis to title when there is not enough space"
 msgstr ""
 "Ajouter des points de suspenssion au titre quand il n'y a pas assez d'espace"
+
+#
+# File: gem/ui/preferences/console.py, line: 338
+# File: gem/ui/preferences/emulator.py, line: 337
+msgid "Advanced filters"
+msgstr "Filtres avancés"
 
 #
 # File: gem/ui/preferences/console.py, line: 338
@@ -781,11 +823,6 @@ msgstr "Motifs des fichiers"
 # File: src/window.py, line: 306
 msgid "Filter"
 msgstr "Filtre"
-
-#
-# File: src/window.py, line: 306
-msgid "Filters"
-msgstr "Filtres"
 
 #
 # File: gem/gtk/interface.py, line: 796
@@ -1609,6 +1646,11 @@ msgid "Show selected game screenshots"
 msgstr "Afficher les captures d'écran du jeu sélectionné"
 
 #
+# File: src/window.py, line: 441
+msgid "Show selected game tags"
+msgstr "Afficher les étiquettes du jeu sélectionné"
+
+#
 # File: gem/preferences.py, line: 338
 msgid "Show sidebar"
 msgstr "Montrer la barre latérale"
@@ -1866,6 +1908,16 @@ msgstr ""
 # File: gem/ui/preferences/interface.py, line: 675
 msgid "Use a random game screenshot instead of latest"
 msgstr "Utiliser une capture d'écran aléatoire du jeu au lieu de la dernière"
+
+#
+# File: gem/interface.py, line: 1286
+msgid "Use alternative arguments"
+msgstr "Utilisation d'arguments alternatifs"
+
+#
+# File: gem/interface.py, line: 300
+msgid "Use alternative emulator"
+msgstr "Utilisation d'un émulateur alternatif"
 
 #
 # File: gem/preferences.py, line: 1050

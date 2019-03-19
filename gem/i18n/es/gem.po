@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.4\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-03-04 17:58+0100\n"
+"PO-Revision-Date: 2019-03-19 17:07+0100\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -16,6 +16,18 @@ msgstr ""
 #, python-format
 msgid "%d days ago"
 msgstr "hace %d días"
+
+#
+# File: gem/ui/interface.py, line: 4941
+#, python-format
+msgid "%d game"
+msgstr ""
+
+#
+# File: gem/interface.py, line: 532
+#, fuzzy, python-format
+msgid "%d games"
+msgstr "%d juegos disponibles"
 
 #
 # File: gem/interface.py, line: 532
@@ -40,6 +52,30 @@ msgstr "%d minutos"
 #, python-format
 msgid "%d months ago"
 msgstr "hace %d meses"
+
+#
+# File: gem/ui/interface.py, line: 3989
+#, python-format
+msgid "%d savestate"
+msgstr ""
+
+#
+# File: gem/configuration.py, line: 71
+#, fuzzy, python-format
+msgid "%d savestates"
+msgstr "No puedo abrir el archivo %s"
+
+#
+# File: gem/interface.py, line: 2006
+#, fuzzy, python-format
+msgid "%d screenshot"
+msgstr "Mostrar las _capturas de pantalla"
+
+#
+# File: gem/interface.py, line: 2006
+#, fuzzy, python-format
+msgid "%d screenshots"
+msgstr "Mostrar las _capturas de pantalla"
 
 #
 # File: gem/utils.py, line: 322
@@ -185,6 +221,11 @@ msgstr "Editar emulador"
 #
 # File: gem/ui/preferences/interface.py, line: 657
 msgid "Add an ellipsis to title when there is not enough space"
+msgstr ""
+
+#
+# File: gem/ui/interface.py, line: 989
+msgid "Advanced filters"
 msgstr ""
 
 #
@@ -822,12 +863,6 @@ msgstr ""
 # File: gem/interface.py, line: 522
 #, fuzzy
 msgid "Filter"
-msgstr "Filtro"
-
-#
-# File: gem/interface.py, line: 522
-#, fuzzy
-msgid "Filters"
 msgstr "Filtro"
 
 #
@@ -1714,6 +1749,12 @@ msgid "Show selected game screenshots"
 msgstr "Mostrar las capturas de pantalla seleccionadas del juego"
 
 #
+# File: gem/interface.py, line: 455
+#, fuzzy
+msgid "Show selected game tags"
+msgstr "Mostrar las notas del juego seleccionado"
+
+#
 # File: gem/preferences.py, line: 431
 #, fuzzy
 msgid "Show sidebar"
@@ -1976,6 +2017,18 @@ msgstr ""
 # File: gem/ui/preferences/interface.py, line: 675
 msgid "Use a random game screenshot instead of latest"
 msgstr ""
+
+#
+# File: gem/preferences.py, line: 1662
+#, fuzzy
+msgid "Use alternative arguments"
+msgstr "Opciones del emulador"
+
+#
+# File: gem/preferences.py, line: 1013
+#, fuzzy
+msgid "Use alternative emulator"
+msgstr "Establecer el emulador por defecto"
 
 #
 # File: gem/preferences.py, line: 1348
