@@ -155,6 +155,9 @@ class MaintenanceDialog(CommonWindow):
         self.widget_screenshots = PreferencesItem()
         self.switch_screenshots = Gtk.Switch()
 
+        self.widget_cache = PreferencesItem()
+        self.switch_cache = Gtk.Switch()
+
         self.widget_environment = PreferencesItem()
         self.switch_environment = Gtk.Switch()
 
@@ -202,6 +205,12 @@ class MaintenanceDialog(CommonWindow):
         self.widget_screenshots.set_description_label(
             _("Delete screenshots files"))
 
+        self.widget_cache.set_widget(self.switch_cache)
+        self.widget_cache.set_option_label(
+            _("Icons cache"))
+        self.widget_cache.set_description_label(
+            _("Delete generated icons from cache"))
+
         self.widget_environment.set_widget(self.switch_environment)
         self.widget_environment.set_option_label(
             _("Environment variables"))
@@ -213,6 +222,7 @@ class MaintenanceDialog(CommonWindow):
         # ------------------------------------
 
         self.listbox_options.add(self.widget_database)
+        self.listbox_options.add(self.widget_cache)
         self.listbox_options.add(self.widget_log)
         self.listbox_options.add(self.widget_note)
         self.listbox_options.add(self.widget_savestate)
@@ -296,6 +306,19 @@ class MaintenanceDialog(CommonWindow):
 
         if self.switch_screenshots.get_active():
             data["paths"].extend(self.game.screenshots)
+
+        # ------------------------------------
+        #   Cache
+        # ------------------------------------
+
+        if self.switch_cache.get_active():
+
+            for size in ("22x22", "96x96"):
+                path = self.parent.get_icon_from_cache(
+                    "games", size, "%s.png" % self.game.id)
+
+                if path.exists():
+                    data["paths"].append(path)
 
         # ------------------------------------
         #   Environment
