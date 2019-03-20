@@ -17,6 +17,7 @@
 # Filesystem
 from pathlib import Path
 
+from shutil import rmtree
 from shutil import copy2 as copy
 
 # GEM
@@ -204,6 +205,10 @@ def main():
         default=Folders.Default.LOCAL,
         help="set data folder (default: ~/.local/share/)")
 
+    parser_maintenance = parser.add_argument_group("maintenance arguments")
+    parser_maintenance.add_argument("--clean-cache", action="store_true",
+        help="clean icons cache directory")
+
     arguments = parser.parse_args()
 
     # ----------------------------------------
@@ -224,6 +229,15 @@ def main():
         Path(arguments.local, "gem").expanduser().resolve())
     if not Folders.LOCAL.exists():
         Folders.LOCAL.mkdir(mode=0o755, parents=True)
+
+    # ----------------------------------------
+    #   Maintenance
+    # ----------------------------------------
+
+    if Folders.CACHE.exists() and arguments.clean_cache:
+        rmtree(Folders.CACHE)
+
+        Folders.CACHE.mkdir(mode=0o755, parents=True)
 
     # ----------------------------------------
     #   Launch interface
