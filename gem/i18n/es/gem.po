@@ -438,6 +438,18 @@ msgid "Clean game data from database"
 msgstr "Borrar los datos del juego de la base de datos"
 
 #
+# File: gem/preferences.py, line: 85
+#, fuzzy
+msgid "Clean icons _cache"
+msgstr "Borrar los datos del juego de la base de datos"
+
+#
+# File: gem/preferences.py, line: 85
+#, fuzzy
+msgid "Clean icons cache"
+msgstr "Borrar los datos del juego de la base de datos"
+
+#
 # File: gem/interface.py, line: 1614
 #, fuzzy
 msgid "Close"
@@ -1005,6 +1017,11 @@ msgstr ""
 #
 # File: gem/ui/dialog/delete.py, line: 193
 msgid "Icons cache"
+msgstr ""
+
+#
+# File: gem/ui/interface.py, line: 4458
+msgid "Icons cache directory has been succesfully cleaned."
 msgstr ""
 
 #
@@ -2090,6 +2107,12 @@ msgstr ""
 # File: gem/preferences.py, line: 1670
 msgid "Windowed"
 msgstr "Modo ventana"
+
+#
+# File: gem/preferences.py, line: 1196
+#, fuzzy
+msgid "Would you really want to clean icons cache directory ?"
+msgstr "¿Quiere borrar esta entrada?"
 
 #
 # File: gem/preferences.py, line: 1196

@@ -15,6 +15,9 @@
 # ------------------------------------------------------------------------------
 
 # GEM
+from gem.ui.data import Icons
+from gem.ui.data import Folders
+from gem.ui.utils import replace_for_markup
 from gem.ui.widgets.window import CommonWindow
 
 # GObject
@@ -38,38 +41,23 @@ from gettext import gettext as _
 #   Class
 # ------------------------------------------------------------------------------
 
-class MessageDialog(CommonWindow):
+class CleanCacheDialog(CommonWindow):
 
-    def __init__(self, parent, title, message, icon, center=True):
+    def __init__(self, parent):
         """ Constructor
 
         Parameters
         ----------
         parent : Gtk.Window
             Parent object
-        title : str
-            Dialog title
-        message : str
-            Dialog message
-        icon : str
-            Default icon name
-        center : bool, optional
-            If False, use justify text insted of center (Default: True)
         """
 
         classic_theme = False
         if parent is not None:
             classic_theme = parent.use_classic_theme
 
-        CommonWindow.__init__(self, parent, title, icon, classic_theme)
-
-        # ------------------------------------
-        #   Initialize variables
-        # ------------------------------------
-
-        self.message = message
-
-        self.center = center
+        CommonWindow.__init__(self, parent,
+            _("Clean icons cache"), Icons.Symbolic.FOLDER, classic_theme)
 
         # ------------------------------------
         #   Prepare interface
@@ -86,39 +74,51 @@ class MessageDialog(CommonWindow):
         """ Initialize interface widgets
         """
 
-        self.set_size(480, -1)
+        self.set_size(640, -1)
 
         self.set_spacing(6)
 
         self.set_resizable(True)
 
         # ------------------------------------
-        #   Message
+        #   Title
         # ------------------------------------
 
-        text = Gtk.Label()
+        self.label_title = Gtk.Label()
 
         # Properties
-        text.set_line_wrap(True)
-        text.set_use_markup(True)
-        text.set_markup(self.message)
-        text.set_line_wrap_mode(Pango.WrapMode.WORD)
+        self.label_title.set_markup(
+            "<span weight='bold' size='large'>%s</span>" % \
+            _("Would you really want to clean icons cache directory ?"))
+        self.label_title.set_use_markup(True)
+        self.label_title.set_halign(Gtk.Align.CENTER)
+        self.label_title.set_ellipsize(Pango.EllipsizeMode.END)
 
-        if(self.center):
-            text.set_justify(Gtk.Justification.CENTER)
+        # ------------------------------------
+        #   Description
+        # ------------------------------------
 
-        else:
-            text.set_justify(Gtk.Justification.FILL)
+        self.label_description = Gtk.Label()
+
+        # Properties
+        self.label_description.set_text(str(Folders.CACHE))
+        self.label_description.set_line_wrap(True)
+        self.label_description.set_max_width_chars(8)
+        self.label_description.set_single_line_mode(False)
+        self.label_description.set_justify(Gtk.Justification.FILL)
+        self.label_description.set_line_wrap_mode(Pango.WrapMode.WORD)
 
         # ------------------------------------
         #   Integrate widgets
         # ------------------------------------
 
-        self.pack_start(text, True, True)
+        self.pack_start(self.label_title, False, False)
+        self.pack_start(self.label_description, False, False)
 
 
     def __start_interface(self):
         """ Load data and start interface
         """
 
-        self.add_button(_("Close"), Gtk.ResponseType.CLOSE, Gtk.Align.END)
+        self.add_button(_("No"), Gtk.ResponseType.NO)
+        self.add_button(_("Yes"), Gtk.ResponseType.YES, Gtk.Align.END)

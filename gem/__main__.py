@@ -67,6 +67,9 @@ def init_environment():
         setattr(Icons, key.upper(), value)
         setattr(Icons.Symbolic, key.upper(), "%s-symbolic" % value)
 
+    for key, value in metadata.items("icon-sizes"):
+        setattr(Icons.Size, key.upper(), value.split())
+
     # Retrieve columns informations
     setattr(Columns, "ORDER",
         metadata.get("misc", "columns_order", fallback=str()))
@@ -88,12 +91,6 @@ def init_configuration(gem):
     """
 
     move_collection = False
-
-    icon_sizes = {
-        "consoles": ("22x22", "24x24", "48x48", "64x64", "96x96"),
-        "emulators": ("22x22", "48x48", "64x64"),
-        "games": ("22x22", "96x96")
-    }
 
     # ----------------------------------------
     #   Configuration
@@ -124,10 +121,11 @@ def init_configuration(gem):
     #   Cache
     # ----------------------------------------
 
-    for name, sizes in icon_sizes.items():
+    for name in ("consoles", "emulators", "games"):
+        sizes = getattr(Icons.Size, name.upper(), list())
 
         for size in sizes:
-            path = Folders.CACHE.joinpath(name, size)
+            path = Folders.CACHE.joinpath(name, "%sx%s" % (size, size))
 
             if not path.exists():
                 gem.logger.debug("Generate %s" % path)

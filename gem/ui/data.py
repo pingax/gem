@@ -70,6 +70,10 @@ class Icons:
     """ Store icons name
     """
 
+    class Size:
+        """ Store icons cache subdirectories
+        """
+
     class Symbolic:
         """ Store symbolic icons name
 

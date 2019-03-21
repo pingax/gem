@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-03-19 17:07+0100\n"
+"PO-Revision-Date: 2019-03-21 10:09+0100\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -426,6 +426,16 @@ msgstr "Choisir une icône"
 # File: src/window.py, line: 446
 msgid "Clean game data from database"
 msgstr "Nettoyer les données du jeu de la base de données"
+
+#
+# File: gem/gtk/preferences.py, line: 725
+msgid "Clean icons _cache"
+msgstr "Nettoyer le _cache des icônes"
+
+#
+# File: gem/gtk/preferences.py, line: 725
+msgid "Clean icons cache"
+msgstr "Nettoyer le cache des icônes"
 
 #
 # File: gem/interface.py, line: 1614
@@ -957,6 +967,11 @@ msgstr "Icône"
 # File: gem/gtk/preferences.py, line: 725
 msgid "Icons cache"
 msgstr "Cache des icônes"
+
+#
+# File: gem/ui/interface.py, line: 4458
+msgid "Icons cache directory has been succesfully cleaned."
+msgstr "Le dossier de cache des icônes a été nettoyé avec succès."
 
 #
 # File: gem/gtk/preferences.py, line: 725
@@ -1977,6 +1992,11 @@ msgstr "Taille en espace du caractère de tabulation"
 # File: gem/preferences.py, line: 1274
 msgid "Windowed"
 msgstr "Fenêtré"
+
+#
+# File: src/window.py, line: 940
+msgid "Would you really want to clean icons cache directory ?"
+msgstr "Voulez-vous vraiment nattoyer le dossier de cache des icônes ?"
 
 #
 # File: src/window.py, line: 940

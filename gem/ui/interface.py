@@ -28,6 +28,7 @@ from pathlib import Path
 
 from copy import deepcopy
 
+from shutil import rmtree
 from shutil import move as rename
 from shutil import copy2 as copy
 
@@ -41,6 +42,7 @@ from gem.engine.lib.configuration import Configuration
 
 from gem.ui.data import *
 from gem.ui.utils import *
+from gem.ui.dialog.cache import CleanCacheDialog
 from gem.ui.dialog.cover import CoverDialog
 from gem.ui.dialog.editor import EditorDialog
 from gem.ui.dialog.delete import DeleteDialog
@@ -465,6 +467,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.item_menubar_preferences = Gtk.MenuItem()
         self.item_menubar_log = Gtk.MenuItem()
+        self.item_menubar_clean_cache = Gtk.MenuItem()
 
         self.item_menubar_quit = Gtk.MenuItem()
 
@@ -476,6 +479,10 @@ class MainWindow(Gtk.ApplicationWindow):
         self.item_menubar_log.set_label(
             "%s…" % _("_Log"))
         self.item_menubar_log.set_use_underline(True)
+
+        self.item_menubar_clean_cache.set_label(
+            "%s…" % _("Clean icons _cache"))
+        self.item_menubar_clean_cache.set_use_underline(True)
 
         self.item_menubar_quit.set_label(
             _("_Quit"))
@@ -1791,6 +1798,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menu_menubar_main.append(self.item_menubar_preferences)
         self.menu_menubar_main.append(self.item_menubar_log)
         self.menu_menubar_main.append(Gtk.SeparatorMenuItem())
+        self.menu_menubar_main.append(self.item_menubar_clean_cache)
+        self.menu_menubar_main.append(Gtk.SeparatorMenuItem())
         self.menu_menubar_main.append(self.item_menubar_quit)
 
         # Menu - View items
@@ -2225,6 +2234,8 @@ class MainWindow(Gtk.ApplicationWindow):
             "activate", self.__on_show_preferences)
         self.item_menubar_log.connect(
             "activate", self.__on_show_log)
+        self.item_menubar_clean_cache.connect(
+            "activate", self.__on_show_clean_cache)
         self.item_menubar_quit.connect(
             "activate", self.__stop_interface)
 
@@ -3024,11 +3035,11 @@ class MainWindow(Gtk.ApplicationWindow):
             self.button_headerbar_main.set_popup(self.menu_menubar_main)
             self.button_headerbar_view.set_popup(self.menu_menubar_view)
 
-            self.menu_menubar_main.insert(self.item_menubar_website, 3)
-            self.menu_menubar_main.insert(self.item_menubar_bug_tracker, 4)
-            self.menu_menubar_main.insert(Gtk.SeparatorMenuItem(), 5)
-            self.menu_menubar_main.insert(self.item_menubar_about, 6)
+            self.menu_menubar_main.insert(self.item_menubar_website, 5)
+            self.menu_menubar_main.insert(self.item_menubar_bug_tracker, 6)
             self.menu_menubar_main.insert(Gtk.SeparatorMenuItem(), 7)
+            self.menu_menubar_main.insert(self.item_menubar_about, 8)
+            self.menu_menubar_main.insert(Gtk.SeparatorMenuItem(), 9)
 
         # ------------------------------------
         #   Toolbar icons
@@ -4402,6 +4413,52 @@ class MainWindow(Gtk.ApplicationWindow):
             self.set_sensitive(True)
 
             dialog.destroy()
+
+
+    def __on_show_clean_cache(self, *args):
+        """ Clean icons cache directory
+
+        This function show a dialog to ask if the icons cache directory need to
+        be cleaned
+        """
+
+        if Folders.CACHE.exists():
+            self.set_sensitive(False)
+
+            success = False
+
+            dialog = CleanCacheDialog(self)
+
+            if dialog.run() == Gtk.ResponseType.YES:
+
+                # Remove cache directory
+                rmtree(Folders.CACHE)
+
+                # Generate directories
+                Folders.CACHE.mkdir(mode=0o755, parents=True)
+
+                for name in ("consoles", "emulators", "games"):
+                    sizes = getattr(Icons.Size, name.upper(), list())
+
+                    for size in sizes:
+                        path = Folders.CACHE.joinpath(
+                            name, "%sx%s" % (size, size))
+
+                        if not path.exists():
+                            self.logger.debug("Generate %s" % path)
+
+                            path.mkdir(mode=0o755, parents=True)
+
+                success = True
+
+            dialog.destroy()
+
+            if success:
+                self.set_message(_("Clean icons cache"),
+                    _("Icons cache directory has been succesfully cleaned."),
+                    Icons.INFORMATION)
+
+            self.set_sensitive(True)
 
 
     def __on_show_notes(self, *args):
