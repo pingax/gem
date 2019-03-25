@@ -704,6 +704,9 @@ class CommonWindow(object):
         elif type(widget) == Gtk.Entry:
             widget.grab_focus()
 
+        elif type(widget) == Gtk.MenuButton:
+            widget.clicked()
+
         elif type(widget) == Gtk.FileChooserButton:
             widget.activate()
 

@@ -28,7 +28,7 @@ from gem.ui.utils import replace_for_markup
 from gem.ui.utils import on_activate_listboxrow
 from gem.ui.dialog.question import QuestionDialog
 from gem.ui.widgets.window import CommonWindow
-from gem.ui.widgets.widgets import PreferencesItem
+from gem.ui.widgets.widgets import ListBoxItem
 
 # GObject
 try:
@@ -196,7 +196,7 @@ class EditorDialog(CommonWindow):
         self.frame_menu_options = Gtk.Frame()
         self.listbox_menu_options = Gtk.ListBox()
 
-        self.widget_line = PreferencesItem()
+        self.widget_line = ListBoxItem()
         self.switch_line = Gtk.Switch()
 
         # Properties
@@ -214,11 +214,11 @@ class EditorDialog(CommonWindow):
         self.frame_menu_actions = Gtk.Frame()
         self.listbox_menu_actions = Gtk.ListBox()
 
-        self.widget_import = PreferencesItem()
+        self.widget_import = ListBoxItem()
         self.image_import = Gtk.Image()
         self.button_import = Gtk.Button()
 
-        self.widget_export = PreferencesItem()
+        self.widget_export = ListBoxItem()
         self.image_export = Gtk.Image()
         self.button_export = Gtk.Button()
 
@@ -950,7 +950,7 @@ class ImportDialog(CommonWindow):
         self.scroll_options = Gtk.ScrolledWindow()
         self.listbox_options = Gtk.ListBox()
 
-        self.widget_replace = PreferencesItem()
+        self.widget_replace = ListBoxItem()
         self.switch_replace = Gtk.Switch()
 
         # Properties

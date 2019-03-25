@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-03-21 10:09+0100\n"
+"PO-Revision-Date: 2019-03-25 14:31+0100\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -293,6 +293,11 @@ msgid "Argument which activate windowded mode"
 msgstr "Argument utilisé pour activer le mode fenêtré"
 
 #
+# File: gem/ui/dialog/dndconsole.py, line: 351
+msgid "Automatic selection"
+msgstr "Sélection automatique"
+
+#
 # File: gem/ui/dialog/maintenance.py, line: 155
 msgid "Available actions"
 msgstr "Actions disponibles"
@@ -306,12 +311,6 @@ msgstr "Temps de jeu moyen"
 # File: gem/gtk/mednafen.py, line: 84
 msgid "Backup Memory Type"
 msgstr "Type de mémoire de secours"
-
-#
-# File: gem/gtk/windows.py, line: 2031
-msgid "Be careful, this option cannot be undo during the process."
-msgstr ""
-"Faites attention, cette option ne peut pas être annulée pendant la procédure."
 
 #
 # File: gem/preferences.py, line: 142
@@ -412,12 +411,6 @@ msgid "Cannot retrieve style schemes"
 msgstr "Impossible de récupérer les schémas de style"
 
 #
-# File: gem/interface.py, line: 2054
-#, python-format
-msgid "Cannot write into %s. Canceling operation."
-msgstr "Impossible d'écrire dans %s. Annulation de l'opération."
-
-#
 # File: gem/preferences.py, line: 102
 msgid "Choose an icon"
 msgstr "Choisir une icône"
@@ -477,6 +470,11 @@ msgid "Consoles"
 msgstr "Consoles"
 
 #
+# File: gem/ui/dialog/dndconsole.py, line: 162
+msgid "Copy files"
+msgstr "Copier les fichiers"
+
+#
 # File: src/window.py, line: 279
 msgid "Copy selected game path"
 msgstr "Copier le chemin du jeu sélectionné"
@@ -485,6 +483,11 @@ msgstr "Copier le chemin du jeu sélectionné"
 # File: gem/gtk/windows.py, line: 2623
 msgid "Cover image"
 msgstr "Image de couverture"
+
+#
+# File: gem/ui/dialog/dndconsole.py, line: 176
+msgid "Create consoles games subdirectory if missing"
+msgstr "Créer le sous-dossier des jeux des consoles s'il est manquant"
 
 #
 # File: gem/ui/dialog/delete.py, line: 164
@@ -569,12 +572,6 @@ msgid "Description"
 msgstr "Description"
 
 #
-# File: gem/interface.py, line: 2054
-#, python-format
-msgid "Destination %s not exist. Canceling operation."
-msgstr "La destination %s n'existe pas. Annulation de l'opération."
-
-#
 # File: gem/gtk/preferences.py, line: 182
 msgid "Dialog"
 msgstr "Comme les boîtes de dialogue"
@@ -620,10 +617,9 @@ msgid "Drag and Drop"
 msgstr "Comme les icônes de glisser-déposer"
 
 #
-# File: gem/interface.py, line: 2017
-#, python-format
-msgid "Drop %(rom)s to %(path)s"
-msgstr "Déplace %(rom)s vers %(path)s"
+# File: gem/interface.py, line: 532
+msgid "Drop games"
+msgstr "Jeux reçus"
 
 #
 # File: gem/ui/interface.py, line: 5042
@@ -928,6 +924,11 @@ msgid "Generate menu entry for %s"
 msgstr "Générer une entrée de menu pour %s"
 
 #
+# File: gem/interface.py, line: 400
+msgid "Generate subdirectory"
+msgstr "Générer un sous-dossier"
+
+#
 # File: gem/gtk/widgets.py, line: 212
 msgid "Get some help about this dialog"
 msgstr "Obtenir de l'aide à propos de cette fenêtre"
@@ -1018,11 +1019,6 @@ msgid ""
 msgstr ""
 "Il est possible de cacher des fichiers spécifiques de la liste de jeux à "
 "l'aide d'expressions régulières."
-
-#
-# File: gem/gtk/windows.py, line: 2023
-msgid "Keep this selection for every games in queue"
-msgstr "Conserver cette sélection pour chaque jeu de la file d'attente"
 
 #
 # File: gem/gtk/windows.py, line: 1069
@@ -1121,6 +1117,11 @@ msgstr "Menu principal"
 # File: gem/ui/interface.py, line: 1556
 msgid "Maintenance"
 msgstr "Maintenance"
+
+#
+# File: gem/ui/dialog/dndconsole.py, line: 164
+msgid "Make copy of dropped files instead of moving them"
+msgstr "Faire une copie des jeux reçu plutôt que de les déplacer"
 
 #
 # File: src/window.py, line: 436
@@ -1243,6 +1244,11 @@ msgstr "Non"
 # File: gem/interface.py, line: 532
 msgid "No console available"
 msgstr "Aucune console disponible"
+
+#
+# File: gem/ui/dialog/dndconsole.py, line: 528
+msgid "No corresponding console"
+msgstr "Aucune console correspondante"
 
 #
 # File: gem/interface.py, line: 1286
@@ -1423,6 +1429,16 @@ msgid "Replace current buffer"
 msgstr "Remplacer l'actuel tampon de texte"
 
 #
+# File: gem/ui/dialog/dndconsole.py, line: 170
+msgid "Replace existing files on disk"
+msgstr "Remplacer les fichiers existant sur le disque"
+
+#
+# File: gem/gtk/interface.py, line: 802
+msgid "Replace files"
+msgstr "Replacer les fichiers"
+
+#
 # File: gem/gtk/interface.py, line: 802
 msgid "Reset filters"
 msgstr "Réinitialisation"
@@ -1503,6 +1519,11 @@ msgstr "Choisir un binaire"
 # File: gem/interface.py, line: 300
 msgid "Select a configuration file"
 msgstr "Modifier le fichier de configuration"
+
+#
+# File: gem/interface.py, line: 602
+msgid "Select this console for every rows"
+msgstr "Sélectionner la console pour toutes les lignes"
 
 #
 # File: src/window.py, line: 451
@@ -1754,15 +1775,6 @@ msgid "The following actions are irreversible, becareful !"
 msgstr "Les actions suivantes sont irréversibles, faites attention !"
 
 #
-# File: gem/gtk/windows.py, line: 1954
-msgid ""
-"The following game can be installed on multiple consoles. Select the console "
-"where to install this game:"
-msgstr ""
-"Le jeu suivant peut être installé sur plusieurs consoles. Sélectionnez la "
-"console sur laquelle installer ce jeu:"
-
-#
 # File: gem/ui/interface.glade, line: 960
 msgid ""
 "The following game going to be removed from your harddrive. This action is "
@@ -1823,12 +1835,6 @@ msgid ""
 msgstr ""
 "Ces paramètres sont utilisés dans les champs de texte « Options par défaut "
 "», « Sauvegarde » et « Captures d'écran »."
-
-#
-# File: gem/preferences.py, line: 1020
-#, python-format
-msgid "This rom already exists in %s. Do you want to replace it ?"
-msgstr "Cette ROM existe déjà dans %s. Voulez-vous la remplacer ?"
 
 #
 # File: gem/preferences.py, line: 1998

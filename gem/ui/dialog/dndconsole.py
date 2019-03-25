@@ -18,6 +18,8 @@
 from gem.ui.data import Icons
 from gem.ui.data import Folders
 from gem.ui.widgets.window import CommonWindow
+from gem.ui.widgets.widgets import ListBoxItem
+from gem.ui.widgets.widgets import ScrolledListBox
 
 # GObject
 try:
@@ -41,21 +43,17 @@ from gettext import gettext as _
 #   Class
 # ------------------------------------------------------------------------------
 
-class DnDConsoleDialog(CommonWindow):
+class DNDConsoleDialog(CommonWindow):
 
-    def __init__(self, parent, filename, consoles, previous=None):
+    def __init__(self, parent, filepaths):
         """ Constructor
 
         Parameters
         ----------
         parent : Gtk.Window
             Parent object
-        filename : str
-            File name
-        consoles : list
-            Consoles list
-        previous : str or None, optional
-            Previous selected console (Default: None)
+        filepaths : dict
+            Filepaths storage with corresponding consoles
         """
 
         classic_theme = False
@@ -65,22 +63,19 @@ class DnDConsoleDialog(CommonWindow):
         CommonWindow.__init__(self,
             parent, _("Drag & Drop"), Icons.Symbolic.GAMING, classic_theme)
 
-        # ------------------------------------
+        # ----------------------------------------
         #   Initialize variables
-        # ------------------------------------
-
-        self.current = None
+        # ----------------------------------------
 
         self.api = parent.api
 
-        self.filename = filename
+        self.filepaths = filepaths
 
-        self.consoles = consoles
-        self.previous = previous
+        self.__notebook_pages = dict()
 
-        # ------------------------------------
+        # ----------------------------------------
         #   Prepare interface
-        # ------------------------------------
+        # ----------------------------------------
 
         # Init widgets
         self.__init_widgets()
@@ -96,152 +91,116 @@ class DnDConsoleDialog(CommonWindow):
         """ Initialize interface widgets
         """
 
-        self.set_size(640, 480)
+        self.set_size(800, 600)
 
         self.set_spacing(0)
 
-        # ------------------------------------
-        #   Grids
-        # ------------------------------------
+        self.set_resizable(True)
 
-        grid = Gtk.Box()
+        # ----------------------------------------
+        #   Grid
+        # ----------------------------------------
 
-        grid_checkbutton = Gtk.Box()
+        self.grid.set_spacing(6)
 
-        # Properties
-        grid.set_spacing(6)
-        grid.set_homogeneous(False)
-        grid.set_orientation(Gtk.Orientation.VERTICAL)
+        # ----------------------------------------
+        #   Games
+        # ----------------------------------------
 
-        grid_checkbutton.set_spacing(12)
-        grid_checkbutton.set_margin_top(12)
-        grid_checkbutton.set_homogeneous(False)
-        grid_checkbutton.set_orientation(Gtk.Orientation.HORIZONTAL)
+        self.label_games = Gtk.Label()
 
-        # ------------------------------------
-        #   Scroll
-        # ------------------------------------
+        self.notebook_games = Gtk.Notebook()
 
-        self.scroll_consoles = Gtk.ScrolledWindow()
-        self.view_consoles = Gtk.Viewport()
-
-        # ------------------------------------
-        #   Description
-        # ------------------------------------
-
-        self.label_description = Gtk.Label()
-        self.label_game = Gtk.Label()
+        self.frame_games = ScrolledListBox()
+        self.frame_error = ScrolledListBox()
 
         # Properties
-        self.label_description.set_label(_("The following game can be "
-            "installed on multiple consoles. Select the console where to "
-            "install this game:"))
-        self.label_description.set_line_wrap(True)
-        self.label_description.set_max_width_chars(8)
-        self.label_description.set_single_line_mode(False)
-        self.label_description.set_justify(Gtk.Justification.FILL)
-        self.label_description.set_line_wrap_mode(Pango.WrapMode.WORD)
+        self.label_games.set_markup(
+            "<b>%s</b>" % _("Drop games"))
+        self.label_games.set_hexpand(True)
+        self.label_games.set_use_markup(True)
+        self.label_games.set_single_line_mode(True)
+        self.label_games.set_halign(Gtk.Align.CENTER)
+        self.label_games.set_ellipsize(Pango.EllipsizeMode.END)
 
-        self.label_game.set_label(self.filename)
-        self.label_game.set_margin_bottom(12)
-        self.label_game.set_single_line_mode(True)
-        self.label_game.set_ellipsize(Pango.EllipsizeMode.END)
-        self.label_game.get_style_context().add_class("dim-label")
+        # ----------------------------------------
+        #   Options
+        # ----------------------------------------
 
-        # ------------------------------------
-        #   Consoles
-        # ------------------------------------
+        self.label_options = Gtk.Label()
 
-        self.model_consoles = Gtk.ListStore(bool, GdkPixbuf.Pixbuf, str)
-        self.treeview_consoles = Gtk.TreeView()
+        self.frame_options = Gtk.Frame()
+        self.scroll_options = Gtk.ScrolledWindow()
+        self.listbox_options = Gtk.ListBox()
 
-        self.column_consoles = Gtk.TreeViewColumn()
+        self.widget_copy = ListBoxItem()
+        self.switch_copy = Gtk.Switch()
 
-        self.cell_consoles_status = Gtk.CellRendererToggle()
-        self.cell_consoles_icon = Gtk.CellRendererPixbuf()
-        self.cell_consoles_name = Gtk.CellRendererText()
+        self.widget_replace = ListBoxItem()
+        self.switch_replace = Gtk.Switch()
 
-        # Properties
-        self.model_consoles.set_sort_column_id(2, Gtk.SortType.ASCENDING)
-
-        self.treeview_consoles.set_model(self.model_consoles)
-        self.treeview_consoles.set_headers_visible(False)
-
-        self.column_consoles.set_expand(True)
-        self.column_consoles.pack_start(self.cell_consoles_status, False)
-        self.column_consoles.pack_start(self.cell_consoles_icon, False)
-        self.column_consoles.pack_start(self.cell_consoles_name, True)
-
-        self.column_consoles.add_attribute(
-            self.cell_consoles_status, "active", 0)
-        self.column_consoles.add_attribute(
-            self.cell_consoles_icon, "pixbuf", 1)
-        self.column_consoles.add_attribute(
-            self.cell_consoles_name, "text", 2)
-
-        self.cell_consoles_status.set_padding(6, 6)
-        self.cell_consoles_status.set_activatable(True)
-        self.cell_consoles_status.set_radio(True)
-
-        self.cell_consoles_icon.set_padding(6, 6)
-        self.cell_consoles_icon.set_alignment(0, .5)
-
-        self.cell_consoles_name.set_padding(6, 6)
-        self.cell_consoles_name.set_alignment(0, .5)
-
-        self.treeview_consoles.append_column(self.column_consoles)
-
-        # ------------------------------------
-        #   CheckButton
-        # ------------------------------------
-
-        self.switch = Gtk.Switch()
-
-        self.label_checkbutton = Gtk.Label()
-        self.label_explanation = Gtk.Label()
+        self.widget_create = ListBoxItem()
+        self.switch_create = Gtk.Switch()
 
         # Properties
-        self.label_checkbutton.set_label(
-            _("Keep this selection for every games in queue"))
-        self.label_checkbutton.set_line_wrap(True)
-        self.label_checkbutton.set_single_line_mode(False)
-        self.label_checkbutton.set_halign(Gtk.Align.START)
-        self.label_checkbutton.set_justify(Gtk.Justification.FILL)
-        self.label_checkbutton.set_line_wrap_mode(Pango.WrapMode.WORD)
+        self.label_options.set_markup(
+            "<b>%s</b>" % _("Available actions"))
+        self.label_options.set_margin_top(12)
+        self.label_options.set_hexpand(True)
+        self.label_options.set_use_markup(True)
+        self.label_options.set_single_line_mode(True)
+        self.label_options.set_halign(Gtk.Align.CENTER)
+        self.label_options.set_ellipsize(Pango.EllipsizeMode.END)
 
-        self.label_explanation.set_label(
-            _("Be careful, this option cannot be undo during the process."))
-        self.label_explanation.set_line_wrap(True)
-        self.label_explanation.set_single_line_mode(False)
-        self.label_explanation.set_halign(Gtk.Align.START)
-        self.label_explanation.set_justify(Gtk.Justification.FILL)
-        self.label_explanation.set_line_wrap_mode(Pango.WrapMode.WORD)
-        self.label_explanation.get_style_context().add_class("dim-label")
+        self.scroll_options.set_propagate_natural_height(True)
 
-        # ------------------------------------
+        self.listbox_options.set_activate_on_single_click(True)
+        self.listbox_options.set_selection_mode(Gtk.SelectionMode.NONE)
+
+        self.widget_copy.set_widget(self.switch_copy)
+        self.widget_copy.set_option_label(
+            _("Copy files"))
+        self.widget_copy.set_description_label(
+            _("Make copy of dropped files instead of moving them"))
+
+        self.widget_replace.set_widget(self.switch_replace)
+        self.widget_replace.set_option_label(
+            _("Replace files"))
+        self.widget_replace.set_description_label(
+            _("Replace existing files on disk"))
+
+        self.widget_create.set_widget(self.switch_create)
+        self.widget_create.set_option_label(
+            _("Generate subdirectory"))
+        self.widget_create.set_description_label(
+            _("Create consoles games subdirectory if missing"))
+
+        # ----------------------------------------
         #   Integrate widgets
-        # ------------------------------------
+        # ----------------------------------------
 
-        self.scroll_consoles.add(self.view_consoles)
-        self.view_consoles.add(self.treeview_consoles)
+        self.listbox_options.add(self.widget_copy)
+        self.listbox_options.add(self.widget_replace)
+        self.listbox_options.add(self.widget_create)
 
-        grid.pack_start(self.label_description, False, False, 0)
-        grid.pack_start(self.label_game, False, False, 0)
-        grid.pack_start(self.scroll_consoles, True, True, 0)
-        grid.pack_start(grid_checkbutton, False, False, 0)
-        grid.pack_start(self.label_explanation, False, False, 0)
+        self.scroll_options.add(self.listbox_options)
+        self.frame_options.add(self.scroll_options)
 
-        grid_checkbutton.pack_start(self.label_checkbutton, True, True, 0)
-        grid_checkbutton.pack_start(self.switch, False, False, 0)
-
-        self.pack_start(grid, True, True)
+        self.grid.pack_start(self.label_games, False, False, 0)
+        self.grid.pack_start(self.notebook_games, True, True, 0)
+        self.grid.pack_start(self.label_options, False, False, 0)
+        self.grid.pack_start(self.frame_options, False, False, 0)
 
 
     def __init_signals(self):
         """ Initialize widgets signals
         """
 
-        self.cell_consoles_status.connect("toggled", self.on_cell_toggled)
+        self.frame_games.listbox.connect(
+            "row-activated", self.on_activate_listboxrow)
+
+        self.listbox_options.connect(
+            "row-activated", self.on_activate_listboxrow)
 
 
     def __start_interface(self):
@@ -253,44 +212,389 @@ class DnDConsoleDialog(CommonWindow):
 
         self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
 
-        self.window.show_all()
+        # ----------------------------------------
+        #   Retrieve data
+        # ----------------------------------------
+
+        self.__notebook_pages.clear()
+
+        for path, consoles in self.filepaths.items():
+            row = DNDGameRow(self.parent, path, consoles)
+
+            if len(consoles) == 0:
+                self.frame_error.listbox.add(row)
+
+            elif len(consoles) == 1:
+                self.frame_games.listbox.add(row)
+
+            else:
+                extension = ''.join(path.suffixes).lower()
+
+                # Generate a tab for the new extension
+                if not extension in self.__notebook_pages.keys():
+                    self.__notebook_pages[extension] = \
+                        DNDSelector(self, consoles)
+
+                self.__notebook_pages[extension].listbox_manual.add(row)
+
+                row.set_console(self.__notebook_pages[extension].get_console())
+
+        # ----------------------------------------
+        #   Show notebook tabs
+        # ----------------------------------------
+
+        if len(self.frame_games.listbox) > 0:
+            self.notebook_games.append_page(
+                self.frame_games, Gtk.Image.new_from_icon_name(
+                Icons.Symbolic.OK, Gtk.IconSize.MENU))
+
+            self.set_response_sensitive(Gtk.ResponseType.APPLY, True)
+
+        for label, widget in self.__notebook_pages.items():
+            self.notebook_games.append_page(widget, Gtk.Label.new(label))
+
+            self.set_response_sensitive(Gtk.ResponseType.APPLY, True)
+
+        if len(self.frame_error.listbox) > 0:
+            self.notebook_games.append_page(
+                self.frame_error, Gtk.Image.new_from_icon_name(
+                Icons.Symbolic.ERROR, Gtk.IconSize.MENU))
+
+
+    def get_data(self):
+        """ Retrieve validate dropped files
+
+        Returns
+        -------
+        dict
+            Validate files as dict structure
+        """
+
+        data = dict()
+
+        for row in self.frame_games.listbox:
+            data[row.path] = row.console
+
+        for widget in self.__notebook_pages.values():
+            for row in widget.listbox_manual:
+                data[row.path] = row.console
+
+        return data
+
+
+    def get_options(self):
+        """ Retrieve options values
+
+        Returns
+        -------
+        dict
+            Options values as dict structure
+        """
+
+        return {
+            "copy": self.switch_copy.get_active(),
+            "replace": self.switch_replace.get_active(),
+            "create": self.switch_create.get_active()
+        }
+
+
+class DNDSelector(Gtk.Box):
+
+    def __init__(self, parent, consoles):
+        """ Constructor
+
+        Parameters
+        ----------
+        parent : gem.ui.dialog.DNDConsoleDialog
+            Parent instance
+        consoles : list
+            Consoles data list
+        """
+
+        Gtk.Box.__init__(self, orientation=Gtk.Orientation.VERTICAL)
+
+        # ----------------------------------------
+        #   Variables
+        # ----------------------------------------
+
+        self.dialog = parent
+
+        self.consoles = consoles
+
+        # ----------------------------------------
+        #   Prepare interface
+        # ----------------------------------------
+
+        # Init widgets
+        self.__init_widgets()
+
+        # Init packing
+        self.__init_packing()
+
+        # Init signals
+        self.__init_signals()
+
+        # Start interface
+        self.__start_interface()
+
+
+    def __init_widgets(self):
+        """ Initialize interface widgets
+        """
+
+        # ----------------------------------------
+        #   Automatic selection
+        # ----------------------------------------
+
+        self.frame_automatic_description = ScrolledListBox()
+        self.item_automatic_description = ListBoxItem.new(
+            _("Automatic selection"))
+
+        self.store_consoles = Gtk.ListStore(GdkPixbuf.Pixbuf, str, object)
+        self.combo_consoles = Gtk.ComboBox()
+        self.cell_consoles_icon = Gtk.CellRendererPixbuf()
+        self.cell_consoles_text = Gtk.CellRendererText()
+
+        # Properties
+        self.item_automatic_description.set_widget(self.combo_consoles)
+        self.item_automatic_description.set_description_label(
+            _("Select this console for every rows"))
+
+        self.combo_consoles.set_id_column(1)
+        self.combo_consoles.set_hexpand(True)
+        self.combo_consoles.set_halign(Gtk.Align.FILL)
+        self.combo_consoles.set_model(self.store_consoles)
+        self.combo_consoles.pack_start(self.cell_consoles_icon, False)
+        self.combo_consoles.pack_start(self.cell_consoles_text, True)
+        self.combo_consoles.add_attribute(self.cell_consoles_icon, "pixbuf", 0)
+        self.combo_consoles.add_attribute(self.cell_consoles_text, "text", 1)
+
+        # ----------------------------------------
+        #   Manual selection
+        # ----------------------------------------
+
+        self.scroll_manual = Gtk.ScrolledWindow()
+        self.listbox_manual = Gtk.ListBox()
+
+        # Properties
+        self.scroll_manual.set_propagate_natural_height(True)
+
+        self.listbox_manual.set_activate_on_single_click(True)
+        self.listbox_manual.set_selection_mode(Gtk.SelectionMode.NONE)
+
+
+    def __init_packing(self):
+        """ Initialize widgets packing in main window
+        """
+
+        self.frame_automatic_description.listbox.add(
+            self.item_automatic_description)
+
+        self.scroll_manual.add(self.listbox_manual)
+
+        self.pack_start(self.frame_automatic_description, False, False, 0)
+        self.pack_start(Gtk.Separator(), False, False, 0)
+        self.pack_start(self.scroll_manual, True, True, 0)
+
+
+    def __init_signals(self):
+        """ Initialize widgets signals
+        """
+
+        self.frame_automatic_description.listbox.connect(
+            "row-activated", self.dialog.on_activate_listboxrow)
+
+        self.combo_consoles.connect(
+            "changed", self.__on_select_console)
+
+        self.listbox_manual.connect(
+            "row-activated", self.dialog.on_activate_listboxrow)
+
+
+    def __start_interface(self):
+        """ Load data and start interface
+        """
 
         for console in self.consoles:
-            status = False
-            if self.previous is not None and self.previous.name == console.name:
-                status = True
 
-                self.current = console
-                self.set_response_sensitive(Gtk.ResponseType.APPLY, True)
+            icon = self.dialog.parent.get_pixbuf_from_cache(
+                "consoles", 24, console.id, console.icon)
 
-            icon = console.icon
+            if icon is None:
+                icon = self.dialog.parent.icons.blank(24)
 
-            if not icon.exists():
-                icon = Folders.LOCAL.joinpath("icons", "%s.png" % icon)
+            self.store_consoles.append([icon, console.name, console])
 
-            # Get console icon
-            icon = icon_from_data(icon, self.parent.empty)
-
-            self.model_consoles.append([status, icon, console.name])
+        self.combo_consoles.set_active(0)
 
 
-    def on_cell_toggled(self, widget, path):
-        """ Toggled a radio cell in treeview
+    def __on_select_console(self, widget, *args):
+        """ Change every consoles based on combobox selection
 
         Parameters
         ----------
         widget : Gtk.Widget
             Object which receive signal
-        path : Gtk.TreePath
-            Path to be activated
         """
 
-        self.set_response_sensitive(Gtk.ResponseType.APPLY, True)
+        console = self.get_console()
 
-        selected_path = Gtk.TreePath(path)
+        for row in self.listbox_manual:
+            row.set_console(console)
 
-        treeiter = self.model_consoles.get_iter(selected_path)
-        self.current = self.model_consoles.get_value(treeiter, 2)
 
-        for row in self.model_consoles:
-            row[0] = (row.path == selected_path)
+    def get_console(self):
+        """ Retrieve current selected console
+
+        Returns
+        -------
+        gem.engine.console.Console
+            Console instance
+        """
+
+        return self.store_consoles.get_value(
+            self.combo_consoles.get_active_iter(), 2)
+
+
+class DNDGameRow(ListBoxItem):
+
+    def __init__(self, parent, path, consoles):
+        """ Constructor
+
+        Parameters
+        ----------
+        parent : Gtk.Window
+            Parent object
+        path : pathlib.Path
+            Game filepath
+        consoles : list
+            Consoles instances list
+        """
+
+        ListBoxItem.__init__(self)
+
+        # ----------------------------------------
+        #   Initialize variables
+        # ----------------------------------------
+
+        self.parent = parent
+
+        self.path = path
+        self.consoles = consoles
+
+        self.console = None
+
+        # ----------------------------------------
+        #   Prepare interface
+        # ----------------------------------------
+
+        # Init widgets
+        self.__init_widgets()
+
+        # Start interface
+        self.__start_interface()
+
+
+    def __init_widgets(self):
+        """ Initialize interface widgets
+        """
+
+        # ----------------------------------------
+        #   Console icon
+        # ----------------------------------------
+
+        self.image_console = Gtk.Image()
+
+        # ----------------------------------------
+        #   Console selector
+        # ----------------------------------------
+
+        self.menu_console = Gtk.Menu()
+
+        self.button_console = Gtk.MenuButton()
+
+        # Properties
+        self.button_console.set_popup(self.menu_console)
+
+
+    def __start_interface(self):
+        """ Load data and start interface
+        """
+
+        self.set_option_label(self.path.name)
+
+        # No console available
+        if len(self.consoles) == 0:
+            self.set_description_label(_("No corresponding console"))
+
+        # One console available
+        elif len(self.consoles) == 1:
+            self.console = self.consoles[0]
+
+            self.set_description_label(str(self.console.path))
+
+            self.set_icon(self.console)
+
+            self.set_widget(self.image_console)
+
+        # Multi-consoles availables
+        else:
+            self.set_widget(self.button_console)
+
+            self.button_console.set_image(self.image_console)
+
+            for console in self.consoles:
+                item = Gtk.MenuItem.new_with_label(console.name)
+                item.connect("activate", self.__on_select_console)
+
+                setattr(item, "console", console)
+
+                self.menu_console.append(item)
+
+            self.menu_console.show_all()
+
+
+    def __on_select_console(self, widget, *args):
+        """ Select a specific console for current row
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        self.set_console(widget.console)
+
+
+    def set_icon(self, console):
+        """ Update icon image based on console data
+
+        Parameters
+        ----------
+        console : gem.engine.console.Console
+            Console instance
+        """
+
+        icon = self.parent.get_pixbuf_from_cache(
+            "consoles", 24, console.id, console.icon)
+
+        if icon is None:
+            icon = self.parent.icons.blank(24)
+
+        self.image_console.set_from_pixbuf(icon)
+
+
+    def set_console(self, console):
+        """ Set selected console
+
+        Paremeters
+        ----------
+        console : gem.engine.console.Console
+            Console instance
+        """
+
+        self.console = console
+
+        self.set_icon(console)
+
+        self.set_description_label(str(console.path))

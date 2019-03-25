@@ -20,7 +20,7 @@ from gem.ui.data import Folders
 from gem.ui.data import Metadata
 from gem.ui.utils import replace_for_markup
 from gem.ui.widgets.window import CommonWindow
-from gem.ui.widgets.widgets import PreferencesItem
+from gem.ui.widgets.widgets import ListBoxItem
 
 # GObject
 try:
@@ -143,22 +143,22 @@ class DeleteDialog(CommonWindow):
         self.scroll_options = Gtk.ScrolledWindow()
         self.listbox_options = Gtk.ListBox()
 
-        self.widget_database = PreferencesItem()
+        self.widget_database = ListBoxItem()
         self.switch_database = Gtk.Switch()
 
-        self.widget_desktop = PreferencesItem()
+        self.widget_desktop = ListBoxItem()
         self.switch_desktop = Gtk.Switch()
 
-        self.widget_savestate = PreferencesItem()
+        self.widget_savestate = ListBoxItem()
         self.switch_savestate = Gtk.Switch()
 
-        self.widget_screenshots = PreferencesItem()
+        self.widget_screenshots = ListBoxItem()
         self.switch_screenshots = Gtk.Switch()
 
-        self.widget_cache = PreferencesItem()
+        self.widget_cache = ListBoxItem()
         self.switch_cache = Gtk.Switch()
 
-        self.widget_memory = PreferencesItem()
+        self.widget_memory = ListBoxItem()
         self.switch_memory = Gtk.Switch()
 
         # Properties

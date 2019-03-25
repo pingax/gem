@@ -225,7 +225,7 @@ def on_activate_listboxrow(listbox, row):
         ----------
         listbox : Gtk.ListBox
             Object which receive signal
-        row : gem.widgets.widgets.PreferencesItem
+        row : gem.widgets.widgets.ListBoxItem
             Activated row
         """
 

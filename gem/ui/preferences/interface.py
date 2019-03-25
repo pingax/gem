@@ -28,7 +28,7 @@ from gem.ui.data import Folders
 from gem.ui.utils import on_entry_clear
 from gem.ui.dialog.question import QuestionDialog
 from gem.ui.widgets.window import CommonWindow
-from gem.ui.widgets.widgets import PreferencesItem
+from gem.ui.widgets.widgets import ListBoxItem
 from gem.ui.preferences.console import ConsolePreferences
 from gem.ui.preferences.emulator import EmulatorPreferences
 
@@ -345,13 +345,13 @@ class PreferencesWindow(CommonWindow):
         self.frame_general_behavior = Gtk.Frame()
         self.listbox_general_behavior = Gtk.ListBox()
 
-        self.widget_behavior_last_console = PreferencesItem()
+        self.widget_behavior_last_console = ListBoxItem()
         self.switch_general_behavior_last_console = Gtk.Switch()
 
-        self.widget_behavior_last_column = PreferencesItem()
+        self.widget_behavior_last_column = ListBoxItem()
         self.switch_general_behavior_last_column = Gtk.Switch()
 
-        self.widget_behavior_hide_consoles = PreferencesItem()
+        self.widget_behavior_hide_consoles = ListBoxItem()
         self.switch_general_behavior_hide_consoles = Gtk.Switch()
 
         # Properties
@@ -397,18 +397,18 @@ class PreferencesWindow(CommonWindow):
         self.frame_general_editor = Gtk.Frame()
         self.listbox_general_editor = Gtk.ListBox()
 
-        self.widget_editor_lines_visible = PreferencesItem()
+        self.widget_editor_lines_visible = ListBoxItem()
         self.switch_general_editor_lines_visible = Gtk.Switch()
 
-        self.widget_editor_tab_width = PreferencesItem()
+        self.widget_editor_tab_width = ListBoxItem()
         self.spin_general_editor_tab_width = Gtk.SpinButton()
 
-        self.widget_editor_colorscheme = PreferencesItem()
+        self.widget_editor_colorscheme = ListBoxItem()
         self.model_general_colorscheme = Gtk.ListStore(str)
         self.combo_general_colorscheme = Gtk.ComboBox()
         self.cell_general_colorscheme = Gtk.CellRendererText()
 
-        self.widget_editor_font = PreferencesItem()
+        self.widget_editor_font = ListBoxItem()
         self.font_general_editor_font = Gtk.FontButton()
 
         # Properties
@@ -478,13 +478,13 @@ class PreferencesWindow(CommonWindow):
         self.frame_general_viewer = Gtk.Frame()
         self.listbox_general_viewer = Gtk.ListBox()
 
-        self.widget_viewer_alternative_viewer = PreferencesItem()
+        self.widget_viewer_alternative_viewer = ListBoxItem()
         self.switch_general_viewer_alternative_viewer = Gtk.Switch()
 
-        self.widget_viewer_binary = PreferencesItem()
+        self.widget_viewer_binary = ListBoxItem()
         self.file_general_viewer_binary = Gtk.FileChooserButton()
 
-        self.widget_viewer_options = PreferencesItem()
+        self.widget_viewer_options = ListBoxItem()
         self.entry_general_viewer_options = Gtk.Entry()
 
         # Properties
@@ -538,10 +538,10 @@ class PreferencesWindow(CommonWindow):
         self.frame_interface_appearance = Gtk.Frame()
         self.listbox_interface_appearance = Gtk.ListBox()
 
-        self.widget_appearance_classic_theme = PreferencesItem()
+        self.widget_appearance_classic_theme = ListBoxItem()
         self.switch_interface_appearance_classic_theme = Gtk.Switch()
 
-        self.widget_appearance_header_button = PreferencesItem()
+        self.widget_appearance_header_button = ListBoxItem()
         self.switch_interface_appearance_header_buttons = Gtk.Switch()
 
         # Properties
@@ -580,7 +580,7 @@ class PreferencesWindow(CommonWindow):
         self.frame_interface_toolbar = Gtk.Frame()
         self.listbox_interface_toolbar = Gtk.ListBox()
 
-        self.widget_toolbar_size = PreferencesItem()
+        self.widget_toolbar_size = ListBoxItem()
         self.model_interface_toolbar_size = Gtk.ListStore(str, str)
         self.combo_interface_toolbar_size = Gtk.ComboBox()
         self.cell_interface_toolbar_size = Gtk.CellRendererText()
@@ -621,18 +621,18 @@ class PreferencesWindow(CommonWindow):
         self.frame_interface_sidebar = Gtk.Frame()
         self.listbox_interface_sidebar = Gtk.ListBox()
 
-        self.widget_sidebar_visible = PreferencesItem()
+        self.widget_sidebar_visible = ListBoxItem()
         self.switch_interface_sidebar_visible = Gtk.Switch()
 
-        self.widget_sidebar_position = PreferencesItem()
+        self.widget_sidebar_position = ListBoxItem()
         self.model_interface_sidebar_position = Gtk.ListStore(str, str)
         self.combo_interface_sidebar_position = Gtk.ComboBox()
         self.cell_interface_sidebar_position = Gtk.CellRendererText()
 
-        self.widget_sidebar_random_screenshot = PreferencesItem()
+        self.widget_sidebar_random_screenshot = ListBoxItem()
         self.switch_interface_random_screenshot = Gtk.Switch()
 
-        self.widget_sidebar_ellipsize = PreferencesItem()
+        self.widget_sidebar_ellipsize = ListBoxItem()
         self.switch_interface_ellipsize = Gtk.Switch()
 
         # Properties
@@ -698,17 +698,17 @@ class PreferencesWindow(CommonWindow):
         self.frame_games_view = Gtk.Frame()
         self.listbox_games_view = Gtk.ListBox()
 
-        self.widget_view_grid_lines = PreferencesItem()
+        self.widget_view_grid_lines = ListBoxItem()
         self.model_games_view_grid_lines = Gtk.ListStore(str, str)
         self.combo_games_view_grid_lines = Gtk.ComboBox()
         self.cell_games_view_grid_lines = Gtk.CellRendererText()
 
-        self.widget_view_tooltip_icon = PreferencesItem()
+        self.widget_view_tooltip_icon = ListBoxItem()
         self.model_games_view_tooltip_icon = Gtk.ListStore(str, str)
         self.combo_games_view_tooltip_icon = Gtk.ComboBox()
         self.cell_games_view_tooltip_icon = Gtk.CellRendererText()
 
-        self.widget_view_icons = PreferencesItem()
+        self.widget_view_icons = ListBoxItem()
         self.switch_games_view_icons = Gtk.Switch()
 
         # Properties
@@ -770,31 +770,31 @@ class PreferencesWindow(CommonWindow):
         self.frame_games_column = Gtk.Frame()
         self.listbox_games_column = Gtk.ListBox()
 
-        self.widget_column_favorite = PreferencesItem()
+        self.widget_column_favorite = ListBoxItem()
         self.switch_games_column_favorite = Gtk.Switch()
 
-        self.widget_column_multiplayer = PreferencesItem()
+        self.widget_column_multiplayer = ListBoxItem()
         self.switch_games_column_multiplayer = Gtk.Switch()
 
-        self.widget_column_finish = PreferencesItem()
+        self.widget_column_finish = ListBoxItem()
         self.switch_games_column_finish = Gtk.Switch()
 
-        self.widget_column_play = PreferencesItem()
+        self.widget_column_play = ListBoxItem()
         self.switch_games_column_play = Gtk.Switch()
 
-        self.widget_column_last_launch = PreferencesItem()
+        self.widget_column_last_launch = ListBoxItem()
         self.switch_games_column_last_launch = Gtk.Switch()
 
-        self.widget_column_play_time = PreferencesItem()
+        self.widget_column_play_time = ListBoxItem()
         self.switch_games_column_play_time = Gtk.Switch()
 
-        self.widget_column_score = PreferencesItem()
+        self.widget_column_score = ListBoxItem()
         self.switch_games_column_score = Gtk.Switch()
 
-        self.widget_column_installed = PreferencesItem()
+        self.widget_column_installed = ListBoxItem()
         self.switch_games_column_installed = Gtk.Switch()
 
-        self.widget_column_flags = PreferencesItem()
+        self.widget_column_flags = ListBoxItem()
         self.switch_games_column_flags = Gtk.Switch()
 
         # Properties

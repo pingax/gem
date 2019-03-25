@@ -17,7 +17,6 @@
 # GEM
 from gem.ui.data import Icons
 from gem.ui.data import Folders
-from gem.ui.utils import replace_for_markup
 from gem.ui.widgets.window import CommonWindow
 
 # GObject

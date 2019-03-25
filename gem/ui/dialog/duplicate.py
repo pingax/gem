@@ -21,7 +21,7 @@ from gem.ui.data import Icons
 from gem.ui.data import Folders
 from gem.ui.utils import replace_for_markup
 from gem.ui.widgets.window import CommonWindow
-from gem.ui.widgets.widgets import PreferencesItem
+from gem.ui.widgets.widgets import ListBoxItem
 
 # GObject
 try:
@@ -152,19 +152,19 @@ class DuplicateDialog(CommonWindow):
         self.scroll_options = Gtk.ScrolledWindow()
         self.listbox_options = Gtk.ListBox()
 
-        self.widget_database = PreferencesItem()
+        self.widget_database = ListBoxItem()
         self.switch_database = Gtk.Switch()
 
-        self.widget_savestate = PreferencesItem()
+        self.widget_savestate = ListBoxItem()
         self.switch_savestate = Gtk.Switch()
 
-        self.widget_screenshot = PreferencesItem()
+        self.widget_screenshot = ListBoxItem()
         self.switch_screenshot = Gtk.Switch()
 
-        self.widget_note = PreferencesItem()
+        self.widget_note = ListBoxItem()
         self.switch_note = Gtk.Switch()
 
-        self.widget_memory = PreferencesItem()
+        self.widget_memory = ListBoxItem()
         self.switch_memory = Gtk.Switch()
 
         # Properties

@@ -53,14 +53,14 @@ from gem.ui.dialog.question import QuestionDialog
 from gem.ui.dialog.mednafen import MednafenDialog
 from gem.ui.dialog.duplicate import DuplicateDialog
 from gem.ui.dialog.parameter import ParametersDialog
-from gem.ui.dialog.dndconsole import DnDConsoleDialog
+from gem.ui.dialog.dndconsole import DNDConsoleDialog
 from gem.ui.dialog.maintenance import MaintenanceDialog
 from gem.ui.preferences.interface import ConsolePreferences
 from gem.ui.preferences.interface import EmulatorPreferences
 from gem.ui.preferences.interface import PreferencesWindow
 from gem.ui.widgets.game import GameThread
 from gem.ui.widgets.script import ScriptThread
-from gem.ui.widgets.widgets import PreferencesItem
+from gem.ui.widgets.widgets import ListBoxItem
 from gem.ui.widgets.widgets import IconsGenerator
 
 # GObject
@@ -308,10 +308,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.add_accel_group(self.shortcuts_group)
 
-        self.drag_dest_set(
-            Gtk.DestDefaults.MOTION | Gtk.DestDefaults.DROP, self.targets,
-            Gdk.DragAction.COPY)
-
         # ------------------------------------
         #   Clipboard
         # ------------------------------------
@@ -387,6 +383,10 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.grid_game_filters_popover.set_border_width(6)
         self.grid_game_filters_popover.set_orientation(Gtk.Orientation.VERTICAL)
+
+        self.grid_games_views.drag_dest_set(
+            Gtk.DestDefaults.MOTION | Gtk.DestDefaults.DROP, self.targets,
+            Gdk.DragAction.COPY)
 
         self.grid_games_placeholder.set_border_width(18)
 
@@ -1005,28 +1005,28 @@ class MainWindow(Gtk.ApplicationWindow):
         self.frame_filters_favorite = Gtk.Frame()
         self.listbox_filters_favorite = Gtk.ListBox()
 
-        self.widget_filters_favorite = PreferencesItem()
+        self.widget_filters_favorite = ListBoxItem()
         self.check_filter_favorite = Gtk.Switch()
 
-        self.widget_filters_unfavorite = PreferencesItem()
+        self.widget_filters_unfavorite = ListBoxItem()
         self.check_filter_unfavorite = Gtk.Switch()
 
         self.frame_filters_multiplayer = Gtk.Frame()
         self.listbox_filters_multiplayer = Gtk.ListBox()
 
-        self.widget_filters_multiplayer = PreferencesItem()
+        self.widget_filters_multiplayer = ListBoxItem()
         self.check_filter_multiplayer = Gtk.Switch()
 
-        self.widget_filters_singleplayer = PreferencesItem()
+        self.widget_filters_singleplayer = ListBoxItem()
         self.check_filter_singleplayer = Gtk.Switch()
 
         self.frame_filters_finish = Gtk.Frame()
         self.listbox_filters_finish = Gtk.ListBox()
 
-        self.widget_filters_finish = PreferencesItem()
+        self.widget_filters_finish = ListBoxItem()
         self.check_filter_finish = Gtk.Switch()
 
-        self.widget_filters_unfinish = PreferencesItem()
+        self.widget_filters_unfinish = ListBoxItem()
         self.check_filter_unfinish = Gtk.Switch()
 
         self.item_filter_reset = Gtk.Button()
@@ -1511,7 +1511,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.cell_game_save, "pixbuf", Columns.List.SAVESTATE)
 
         self.column_game_score.set_cell_data_func(
-            self.cell_game_score_first, self.__on_append_game)
+            self.cell_game_score_first, self.__on_update_game_columns)
 
         self.cell_game_favorite.set_alignment(.5, .5)
         self.cell_game_multiplayer.set_alignment(.5, .5)
@@ -2223,9 +2223,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.connect(
             "key-press-event", self.__on_manage_keys)
 
-        self.connect(
-            "drag-data-received", self.__on_dnd_received_data)
-
         # ------------------------------------
         #   Menubar
         # ------------------------------------
@@ -2508,6 +2505,13 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.view_sidebar_screenshot.connect(
             "drag-data-get", self.__on_dnd_send_data)
+
+        # ------------------------------------
+        #   Placeholder - Games
+        # ------------------------------------
+
+        self.grid_games_views.connect(
+            "drag-data-received", self.__on_dnd_received_data)
 
         # ------------------------------------
         #   Treeview - Games
@@ -5446,129 +5450,7 @@ class MainWindow(Gtk.ApplicationWindow):
             if not current_thread_id == self.list_thread:
                 yield False
 
-            # Hide games which match ignores regex
-            show = True
-            for element in console.ignores:
-                try:
-                    if match(element, game.name, IGNORECASE) is not None:
-                        show = False
-                        break
-
-                except Exception as error:
-                    pass
-
-            # Check if rom file exists
-            if game.path.exists() and show:
-
-                # ------------------------------------
-                #   Grid mode
-                # ------------------------------------
-
-                row_data = [
-                    self.__console_icon,
-                    game.name,
-                    game ]
-
-                # Large icon
-                icon = self.get_pixbuf_from_cache(
-                    "games", 96, game.id, game.cover)
-
-                if icon is not None:
-                    row_data[Columns.Grid.THUMBNAIL] = icon
-
-                row_grid = self.model_games_grid.append(row_data)
-
-                # ------------------------------------
-                #   List mode
-                # ------------------------------------
-
-                row_data = [
-                    self.icons.get_translucent("favorite"),
-                    self.icons.get_translucent("multiplayer"),
-                    self.icons.get_translucent("unfinish"),
-                    game.name,
-                    game.played,
-                    str(),          # Last launch date
-                    str(),          # Last launch time
-                    str(),          # Total play time
-                    game.score,
-                    str(),          # Installed date
-                    self.icons.get_translucent("parameter"),
-                    self.icons.get_translucent("screenshot"),
-                    self.icons.get_translucent("savestate"),
-                    game,
-                    self.__console_thumbnail ]
-
-                # Favorite
-                if game.favorite:
-                    row_data[Columns.List.FAVORITE] = \
-                        self.icons.get("favorite")
-
-                # Multiplayer
-                if game.multiplayer:
-                    row_data[Columns.List.MULTIPLAYER] = \
-                        self.icons.get("multiplayer")
-
-                # Finish
-                if game.finish:
-                    row_data[Columns.List.FINISH] = \
-                        self.icons.get("finish")
-
-                # Last launch date
-                if not game.last_launch_date.strftime("%d%m%y") == "010101":
-                    row_data[Columns.List.LAST_PLAY] = \
-                        string_from_date(game.last_launch_date)
-
-                # Last launch time
-                if not game.last_launch_time == timedelta():
-                    row_data[Columns.List.LAST_TIME_PLAY] = \
-                        string_from_time(game.last_launch_time)
-
-                # Play time
-                if not game.play_time == timedelta():
-                    row_data[Columns.List.TIME_PLAY] = \
-                        string_from_time(game.play_time)
-
-                # Parameters
-                if len(game.default) > 0:
-                    row_data[Columns.List.PARAMETER] = \
-                        self.icons.get("parameter")
-
-                elif not game.emulator == console.emulator:
-                    row_data[Columns.List.PARAMETER] = \
-                        self.icons.get("parameter")
-
-                # Installed time
-                if game.installed is not None:
-                    row_data[Columns.List.INSTALLED] = \
-                        string_from_date(game.installed)
-
-                # Snap
-                if len(game.screenshots) > 0:
-                    row_data[Columns.List.SCREENSHOT] = \
-                        self.icons.get("screenshot")
-
-                # Save state
-                if len(game.savestates) > 0:
-                    row_data[Columns.List.SAVESTATE] = \
-                        self.icons.get("savestate")
-
-                # Thumbnail icon
-                icon = self.get_pixbuf_from_cache(
-                    "games", 22, game.id, game.cover)
-
-                if icon is not None:
-                    row_data[Columns.List.THUMBNAIL] = icon
-
-                row_list = self.model_games_list.append(row_data)
-
-                # ------------------------------------
-                #   Refesh view
-                # ------------------------------------
-
-                # Store both Gtk.TreeIter under game filename key
-                self.game_path[game.id] = [game, row_list, row_grid]
-
+            if self.__on_append_game(console, game):
                 self.set_informations_headerbar()
 
                 self.treeview_games.thaw_child_notify()
@@ -5605,7 +5487,146 @@ class MainWindow(Gtk.ApplicationWindow):
         yield False
 
 
-    def __on_append_game(self, column, cell, model, treeiter, *args):
+    def __on_append_game(self, console, game):
+        """ Append a new game to current views
+
+        Parameters
+        ----------
+        console : gem.engine.console.Console
+            Console instance
+        game : gem.engine.game.Game
+            Game instance
+        """
+
+        # Hide games which match ignores regex
+        show = True
+        for element in console.ignores:
+            try:
+                if match(element, game.name, IGNORECASE) is not None:
+                    show = False
+                    break
+
+            except Exception as error:
+                pass
+
+        # Check if rom file exists
+        if game.path.exists() and show:
+
+            # ------------------------------------
+            #   Grid mode
+            # ------------------------------------
+
+            row_data = [
+                self.__console_icon,
+                game.name,
+                game ]
+
+            # Large icon
+            icon = self.get_pixbuf_from_cache(
+                "games", 96, game.id, game.cover)
+
+            if icon is not None:
+                row_data[Columns.Grid.THUMBNAIL] = icon
+
+            row_grid = self.model_games_grid.append(row_data)
+
+            # ------------------------------------
+            #   List mode
+            # ------------------------------------
+
+            row_data = [
+                self.icons.get_translucent("favorite"),
+                self.icons.get_translucent("multiplayer"),
+                self.icons.get_translucent("unfinish"),
+                game.name,
+                game.played,
+                str(),          # Last launch date
+                str(),          # Last launch time
+                str(),          # Total play time
+                game.score,
+                str(),          # Installed date
+                self.icons.get_translucent("parameter"),
+                self.icons.get_translucent("screenshot"),
+                self.icons.get_translucent("savestate"),
+                game,
+                self.__console_thumbnail ]
+
+            # Favorite
+            if game.favorite:
+                row_data[Columns.List.FAVORITE] = \
+                    self.icons.get("favorite")
+
+            # Multiplayer
+            if game.multiplayer:
+                row_data[Columns.List.MULTIPLAYER] = \
+                    self.icons.get("multiplayer")
+
+            # Finish
+            if game.finish:
+                row_data[Columns.List.FINISH] = \
+                    self.icons.get("finish")
+
+            # Last launch date
+            if not game.last_launch_date.strftime("%d%m%y") == "010101":
+                row_data[Columns.List.LAST_PLAY] = \
+                    string_from_date(game.last_launch_date)
+
+            # Last launch time
+            if not game.last_launch_time == timedelta():
+                row_data[Columns.List.LAST_TIME_PLAY] = \
+                    string_from_time(game.last_launch_time)
+
+            # Play time
+            if not game.play_time == timedelta():
+                row_data[Columns.List.TIME_PLAY] = \
+                    string_from_time(game.play_time)
+
+            # Parameters
+            if len(game.default) > 0:
+                row_data[Columns.List.PARAMETER] = \
+                    self.icons.get("parameter")
+
+            elif not game.emulator == console.emulator:
+                row_data[Columns.List.PARAMETER] = \
+                    self.icons.get("parameter")
+
+            # Installed time
+            if game.installed is not None:
+                row_data[Columns.List.INSTALLED] = \
+                    string_from_date(game.installed)
+
+            # Snap
+            if len(game.screenshots) > 0:
+                row_data[Columns.List.SCREENSHOT] = \
+                    self.icons.get("screenshot")
+
+            # Save state
+            if len(game.savestates) > 0:
+                row_data[Columns.List.SAVESTATE] = \
+                    self.icons.get("savestate")
+
+            # Thumbnail icon
+            icon = self.get_pixbuf_from_cache(
+                "games", 22, game.id, game.cover)
+
+            if icon is not None:
+                row_data[Columns.List.THUMBNAIL] = icon
+
+            row_list = self.model_games_list.append(row_data)
+
+            # ------------------------------------
+            #   Refesh view
+            # ------------------------------------
+
+            # Store both Gtk.TreeIter under game filename key
+            self.game_path[game.id] = [game, row_list, row_grid]
+
+            return True
+
+        return False
+
+
+    def __on_update_game_columns(self, column, cell, model, treeiter, *args):
         """ Manage specific columns behavior during games adding
 
         Parameters
@@ -7786,142 +7807,114 @@ class MainWindow(Gtk.ApplicationWindow):
         if not info == 1337:
             return
 
-        previous_console = None
+        # ----------------------------------------
+        #   Check received URIs
+        # ----------------------------------------
 
-        keep_console = False
-        need_to_reload = False
-
-        consoles_to_reload = dict()
+        filepaths = dict()
 
         for uri in data.get_uris():
             result = urlparse(uri)
-
-            console = None
 
             if result.scheme == "file":
                 path = Path(url2pathname(result.path)).expanduser()
 
                 if path is not None and path.exists():
-                    self.logger.debug("Check %s" % path)
+                    filepaths[path] = list()
 
-                    # Lowercase extension
-                    ext = ''.join(path.suffixes).lower()
+        # ----------------------------------------
+        #   Retrieve consoles for every file
+        # ----------------------------------------
 
-                    # ----------------------------------------
-                    #   Get right console for rom
-                    # ----------------------------------------
+        consoles = self.api.get_consoles()
 
-                    if not keep_console:
+        for path in filepaths:
+            self.logger.debug("Receive %s" % path.name)
 
-                        consoles_list = list()
-                        for console in self.api.get_consoles():
-                            extensions = console.extensions
+            # Lowercase extension
+            extension = ''.join(path.suffixes).lower()
+            if len(extension) > 0 and extension[0] == '.':
+                extension = extension[1:]
 
-                            if extensions is not None and ext[1:] in extensions:
-                                consoles_list.append(console)
+            # Check consoles which
+            for console in consoles:
+                if extension in console.extensions:
+                    filepaths[path].append(console)
 
-                        console = None
+            # Move favorite console on first position
+            filepaths[path].sort(key=lambda console: console.favorite)
 
-                        if len(consoles_list) > 0:
-                            console = consoles_list[0]
+        # ----------------------------------------
+        #   Drag and drop dialog
+        # ----------------------------------------
 
-                            if len(consoles_list) > 1:
-                                self.set_sensitive(False)
+        if len(filepaths) > 0:
+            self.set_sensitive(False)
 
-                                dialog = DnDConsoleDialog(self,
-                                    path.name, consoles_list, previous_console)
+            dialog = DNDConsoleDialog(self, filepaths)
 
-                                if dialog.run() == Gtk.ResponseType.APPLY:
-                                    console = self.api.get_console(
-                                        dialog.current)
+            if dialog.run() == Gtk.ResponseType.APPLY:
 
-                                    keep_console = dialog.switch.get_active()
+                # Retrieve validate files
+                data = dialog.get_data()
 
-                                    previous_console = console
+                # Retrieve user options
+                options = dialog.get_options()
 
-                                else:
-                                    console = None
+                # Manage files
+                for path, console in data.items():
 
-                                dialog.destroy()
+                    # Destination path
+                    new_path = console.path.joinpath(path.name).expanduser()
 
-                                self.set_sensitive(True)
+                    # Check consoles games subdirectory
+                    if not new_path.parent.exists():
 
-            # ----------------------------------------
-            #   Check console
-            # ----------------------------------------
+                        if options["create"]:
+                            new_path.parent.mkdir(mode=0o755, parents=True)
 
-            if console is not None:
-                rom_path = console.path
+                        else:
+                            self.logger.warning(
+                                "%s directory not exists" % new_path.parent)
 
-                # ----------------------------------------
-                #   Install roms
-                # ----------------------------------------
-
-                if not path.parent == rom_path and rom_path.exists() and \
-                    access(rom_path, W_OK):
-                    move = True
-
-                    new_path = rom_path.joinpath(path.name)
-
-                    # Check if this game already exists in roms folder
+                    # Replace an existing file
                     if new_path.exists():
-                        dialog = QuestionDialog(self, path.name,
-                            _("This rom already exists in %s. Do you want to "
-                            "replace it ?") % rom_path)
+                        if new_path.is_file() and options["replace"]:
+                            new_path.unlink()
 
-                        move = False
-                        if dialog.run() == Gtk.ResponseType.YES:
-                            move = True
+                    # Move or copy file to the correct location
+                    if new_path.parent.exists() and new_path.parent.is_dir():
+                        copy(path, new_path.parent)
 
-                            self.logger.debug(
-                                "Move %s to %s" % (path, rom_path))
+                        if not options["copy"]:
+                            path.unlink()
 
-                            remove(new_path)
+                    # This file is owned by current selected console
+                    if self.selection["console"] is not None and \
+                        console.id == self.selection["console"].id:
 
-                        dialog.destroy()
+                        # Generate new game instance
+                        game = Game(self.api, new_path)
 
-                    # The game can be moved in roms folder
-                    if move:
-                        path.rename(rom_path)
+                        if game.emulator is None:
+                            game.emulator = console.emulator
 
-                        self.logger.info(_("Drop %(rom)s to %(path)s") % {
-                            "rom": path.name, "path": rom_path })
+                        # Remove an old entry in views
+                        if game.id in self.game_path:
+                            game, row_list, row_grid = self.game_path[game.id]
 
-                        if console == self.selection["console"]:
-                            need_to_reload = True
+                            self.model_games_list.remove(row_list)
+                            self.model_games_grid.remove(row_grid)
 
-                        if not console.id in consoles_to_reload:
-                            consoles_to_reload[console.id] = console
+                            del self.game_path[game.id]
 
-                        hide = self.config.getboolean(
-                            "gem", "hide_empty_console", fallback=False)
+                        # Add a new item to views
+                        if self.__on_append_game(console, game):
+                            self.set_informations_headerbar()
 
-                        # Console path is not empty
-                        if hide and len(rom_path.glob('*')) == 1:
-                            need_to_reload = True
+            dialog.destroy()
 
-                # ----------------------------------------
-                #   Errors
-                # ----------------------------------------
-
-                if path.parent == rom_path:
-                    pass
-
-                elif not rom_path.exists():
-                    self.set_message(path.name, _("Destination %s not "
-                        "exist. Canceling operation.") % rom_path)
-
-                elif not access(rom_path, W_OK):
-                    self.set_message(path.name, _("Cannot write into %s. "
-                        "Canceling operation.") % rom_path)
-
-        # Reload console games
-        for console in consoles_to_reload.values():
-            console.init_games()
-
-        # Reload interface when games list was modified
-        if need_to_reload:
-            self.load_interface()
+            self.set_sensitive(True)
 
 
     def __block_signals(self):

@@ -18,7 +18,7 @@
 from gem.ui.data import Icons
 from gem.ui.utils import replace_for_markup
 from gem.ui.widgets.window import CommonWindow
-from gem.ui.widgets.widgets import PreferencesItem
+from gem.ui.widgets.widgets import ListBoxItem
 
 # GObject
 try:
@@ -140,25 +140,25 @@ class MaintenanceDialog(CommonWindow):
         self.scroll_options = Gtk.ScrolledWindow()
         self.listbox_options = Gtk.ListBox()
 
-        self.widget_database = PreferencesItem()
+        self.widget_database = ListBoxItem()
         self.switch_database = Gtk.Switch()
 
-        self.widget_log = PreferencesItem()
+        self.widget_log = ListBoxItem()
         self.switch_log = Gtk.Switch()
 
-        self.widget_note = PreferencesItem()
+        self.widget_note = ListBoxItem()
         self.switch_note = Gtk.Switch()
 
-        self.widget_savestate = PreferencesItem()
+        self.widget_savestate = ListBoxItem()
         self.switch_savestate = Gtk.Switch()
 
-        self.widget_screenshots = PreferencesItem()
+        self.widget_screenshots = ListBoxItem()
         self.switch_screenshots = Gtk.Switch()
 
-        self.widget_cache = PreferencesItem()
+        self.widget_cache = ListBoxItem()
         self.switch_cache = Gtk.Switch()
 
-        self.widget_environment = PreferencesItem()
+        self.widget_environment = ListBoxItem()
         self.switch_environment = Gtk.Switch()
 
         # Properties

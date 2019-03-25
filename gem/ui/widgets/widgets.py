@@ -41,7 +41,7 @@ from gettext import gettext as _
 #   Class
 # ------------------------------------------------------------------------------
 
-class PreferencesItem(Gtk.ListBoxRow):
+class ListBoxItem(Gtk.ListBoxRow):
 
     def __init__(self):
         """ Constructor
@@ -123,6 +123,22 @@ class PreferencesItem(Gtk.ListBoxRow):
         self.grid_labels.pack_start(self.label_description, True, True, 0)
 
 
+    @staticmethod
+    def new(text):
+        """ Generate a new ListBoxItem with a specific label
+
+        Parameters
+        ----------
+        text : str
+            Label text
+        """
+
+        row = ListBoxItem()
+        row.set_option_label(text)
+
+        return row
+
+
     def set_option_label(self, text):
         """ Set the option label text
 
@@ -185,21 +201,22 @@ class PreferencesItem(Gtk.ListBoxRow):
         if widget is not None:
             widget.set_valign(Gtk.Align.CENTER)
 
-            if not type(widget) in [Gtk.Switch, Gtk.Button, Gtk.SpinButton]:
-                widget.set_halign(Gtk.Align.FILL)
-                widget.set_hexpand(True)
-
-                self.grid.set_homogeneous(True)
-
-                self.grid.pack_start(widget, True, True, 0)
-
-            else:
+            if type(widget) in (Gtk.Switch, Gtk.Button, Gtk.SpinButton,
+                Gtk.Image, Gtk.MenuButton):
                 widget.set_halign(Gtk.Align.END)
                 widget.set_hexpand(False)
 
                 self.grid.set_homogeneous(False)
 
                 self.grid.pack_start(widget, False, False, 0)
+
+            else:
+                widget.set_halign(Gtk.Align.FILL)
+                widget.set_hexpand(True)
+
+                self.grid.set_homogeneous(True)
+
+                self.grid.pack_start(widget, True, True, 0)
 
         self.__widget = widget
 
@@ -214,6 +231,49 @@ class PreferencesItem(Gtk.ListBoxRow):
         """
 
         return self.__widget
+
+
+class ScrolledListBox(Gtk.ScrolledWindow):
+
+    def __init__(self):
+        """ Constructor
+        """
+
+        Gtk.ScrolledWindow.__init__(self)
+
+        # ----------------------------------------
+        #   Prepare interface
+        # ----------------------------------------
+
+        # Init widgets
+        self.__init_widgets()
+
+        # Init packing
+        self.__init_packing()
+
+
+    def __init_widgets(self):
+        """ Initialize interface widgets
+        """
+
+        self.set_propagate_natural_height(True)
+
+        # ----------------------------------------
+        #   Games list
+        # ----------------------------------------
+
+        self.listbox = Gtk.ListBox()
+
+        # Properties
+        self.listbox.set_activate_on_single_click(True)
+        self.listbox.set_selection_mode(Gtk.SelectionMode.NONE)
+
+
+    def __init_packing(self):
+        """ Initialize widgets packing in main window
+        """
+
+        self.add(self.listbox)
 
 
 class IconsGenerator(object):
