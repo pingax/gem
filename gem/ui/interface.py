@@ -4993,13 +4993,13 @@ class MainWindow(Gtk.ApplicationWindow):
             image_console_status = Gtk.Image.new_from_pixbuf(
                 self.icons.blank(22))
 
-        if len(console.get_games()) > 0:
+        text = _("No game")
+        if len(console.get_games()) == 1:
+            text = _("1 game")
+        elif len(console.get_games()) > 1:
+            text = _("%d games") % len(console.get_games())
 
-            text = _("%d games")
-            if len(console.get_games()) == 1:
-                text = _("%d game")
-
-            row_console.set_tooltip_text(text % len(console.get_games()))
+        row_console.set_tooltip_text(text)
 
         grid_console.pack_start(image_console, False, False, 0)
         grid_console.pack_start(label_console, True, True, 0)
@@ -6716,6 +6716,8 @@ class MainWindow(Gtk.ApplicationWindow):
             if not game.id in self.threads:
                 treeiter = self.game_path[game.id][1]
 
+                identifier = game.id
+
                 need_to_reload = False
 
                 # ----------------------------------------
@@ -6727,9 +6729,9 @@ class MainWindow(Gtk.ApplicationWindow):
                 dialog = DeleteDialog(self, game)
 
                 if dialog.run() == Gtk.ResponseType.YES:
-                    try:
-                        self.logger.info(_("Remove %s") % game.name)
+                    self.logger.info(_("Remove %s") % game.name)
 
+                    try:
                         data = dialog.get_data()
 
                         # Reload the games list
@@ -6749,13 +6751,38 @@ class MainWindow(Gtk.ApplicationWindow):
 
                             need_to_reload = True
 
+                        # Remove game from console storage
+                        console.delete_game(game)
+
+                        # Update console tooltip
+                        if console.id in self.consoles_iter:
+                            row = self.consoles_iter[console.id]
+
+                            text = _("No game")
+                            if len(console.get_games()) == 1:
+                                text = _("1 game")
+                            elif len(console.get_games()) > 1:
+                                text = _("%d games") % len(console.get_games())
+
+                            row.set_tooltip_text(text)
+
                     except Exception as error:
                         self.logger.exception("An error occur during removing")
 
                 dialog.destroy()
 
                 if need_to_reload:
-                    self.__on_reload_games()
+
+                    # Remove an old entry in views
+                    if identifier in self.game_path:
+                        self.model_games_list.remove(
+                            self.game_path[identifier][1])
+                        self.model_games_grid.remove(
+                            self.game_path[identifier][2])
+
+                        del self.game_path[identifier]
+
+                    self.set_informations_headerbar()
 
                     self.set_message(_("Remove a game"),
                         _("This game was removed successfully"),
@@ -7889,28 +7916,39 @@ class MainWindow(Gtk.ApplicationWindow):
                         if not options["copy"]:
                             path.unlink()
 
-                    # This file is owned by current selected console
-                    if self.selection["console"] is not None and \
-                        console.id == self.selection["console"].id:
+                        # Add a new game to console storage if not exists
+                        game = console.get_game(generate_identifier(new_path))
+                        if game is None:
+                            game = console.add_game(new_path)
 
-                        # Generate new game instance
-                        game = Game(self.api, new_path)
+                        # Update console tooltip
+                        if console.id in self.consoles_iter:
+                            row = self.consoles_iter[console.id]
 
-                        if game.emulator is None:
-                            game.emulator = console.emulator
+                            text = _("No game")
+                            if len(console.get_games()) == 1:
+                                text = _("1 game")
+                            elif len(console.get_games()) > 1:
+                                text = _("%d games") % len(console.get_games())
 
-                        # Remove an old entry in views
-                        if game.id in self.game_path:
-                            game, row_list, row_grid = self.game_path[game.id]
+                            row.set_tooltip_text(text)
 
-                            self.model_games_list.remove(row_list)
-                            self.model_games_grid.remove(row_grid)
+                        # This file is owned by current selected console
+                        if self.selection["console"] is not None and \
+                            console.id == self.selection["console"].id:
 
-                            del self.game_path[game.id]
+                            # Remove an old entry in views
+                            if game.id in self.game_path:
+                                self.model_games_list.remove(
+                                    self.game_path[game.id][1])
+                                self.model_games_grid.remove(
+                                    self.game_path[game.id][2])
 
-                        # Add a new item to views
-                        if self.__on_append_game(console, game):
-                            self.set_informations_headerbar()
+                                del self.game_path[game.id]
+
+                            # Add a new item to views
+                            if self.__on_append_game(console, game):
+                                self.set_informations_headerbar()
 
             dialog.destroy()
 

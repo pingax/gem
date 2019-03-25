@@ -18,12 +18,6 @@ msgid "%d days ago"
 msgstr "hace %d días"
 
 #
-# File: gem/ui/interface.py, line: 4941
-#, python-format
-msgid "%d game"
-msgstr ""
-
-#
 # File: gem/interface.py, line: 532
 #, fuzzy, python-format
 msgid "%d games"
@@ -124,6 +118,12 @@ msgstr "%s ha sido creado con éxito"
 # File: gem/gtk/preferences.py, line: 2612
 msgid "* can be used as joker"
 msgstr ""
+
+#
+# File: gem/interface.py, line: 532
+#, fuzzy
+msgid "1 game"
+msgstr "%d juegos disponibles"
 
 #
 # File: gem/interface.py, line: 910
@@ -1329,6 +1329,12 @@ msgstr "Establecer las opciones por defecto"
 #, fuzzy
 msgid "No default value"
 msgstr "Establecer las opciones por defecto"
+
+#
+# File: gem/interface.py, line: 532
+#, fuzzy
+msgid "No game"
+msgstr "%d juegos disponibles"
 
 #
 # File: gem/preferences.py, line: 97

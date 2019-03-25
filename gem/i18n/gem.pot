@@ -4,11 +4,8 @@ msgid   "%d days ago"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 5000
-#, python-format
-msgid   "%d game"
-msgstr  ""
-#
-# File: gem/ui/interface.py, line: 4998
+# File: gem/ui/interface.py, line: 6765
+# File: gem/ui/interface.py, line: 7932
 #, python-format
 msgid   "%d games"
 msgstr  ""
@@ -84,13 +81,19 @@ msgstr  ""
 msgid   "%s maintenance"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 7446
+# File: gem/ui/interface.py, line: 7473
 #, python-format
 msgid   "%s was generated successfully"
 msgstr  ""
 #
 # File: gem/ui/preferences/emulator.py, line: 376
 msgid   "* can be used as joker"
+msgstr  ""
+#
+# File: gem/ui/interface.py, line: 4998
+# File: gem/ui/interface.py, line: 6763
+# File: gem/ui/interface.py, line: 7930
+msgid   "1 game"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 4162
@@ -189,7 +192,7 @@ msgstr  ""
 msgid   "Alternative emulator"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 7452
+# File: gem/ui/interface.py, line: 7479
 msgid   "An error occur during generation, consult log for futher details."
 msgstr  ""
 #
@@ -523,12 +526,12 @@ msgstr  ""
 msgid   "Drop games"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 6790
+# File: gem/ui/interface.py, line: 6817
 #, python-format
 msgid   "Duplicate %s"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 6819
+# File: gem/ui/interface.py, line: 6846
 # File: gem/ui/dialog/duplicate.py, line: 66
 # File: gem/ui/preferences/interface.py, line: 157
 msgid   "Duplicate a game"
@@ -768,11 +771,11 @@ msgstr  ""
 msgid   "Generate desktop entry for a game"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 7445
+# File: gem/ui/interface.py, line: 7472
 msgid   "Generate menu entry"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 7451
+# File: gem/ui/interface.py, line: 7478
 #, python-format
 msgid   "Generate menu entry for %s"
 msgstr  ""
@@ -1060,6 +1063,12 @@ msgstr  ""
 msgid   "No default value"
 msgstr  ""
 #
+# File: gem/ui/interface.py, line: 4996
+# File: gem/ui/interface.py, line: 6761
+# File: gem/ui/interface.py, line: 7928
+msgid   "No game"
+msgstr  ""
+#
 # File: gem/ui/preferences/interface.py, line: 174
 msgid   "None"
 msgstr  ""
@@ -1170,7 +1179,7 @@ msgstr  ""
 msgid   "Remove"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 6731
+# File: gem/ui/interface.py, line: 6732
 #, python-format
 msgid   "Remove %s"
 msgstr  ""
@@ -1179,7 +1188,7 @@ msgstr  ""
 msgid   "Remove a console"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 6760
+# File: gem/ui/interface.py, line: 6787
 # File: gem/ui/dialog/delete.py, line: 65
 msgid   "Remove a game"
 msgstr  ""
@@ -1525,11 +1534,11 @@ msgstr  ""
 msgid   "This emulator already exist, please, choose another name"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 6820
+# File: gem/ui/interface.py, line: 6847
 msgid   "This game was duplicated successfully"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 6761
+# File: gem/ui/interface.py, line: 6788
 msgid   "This game was removed successfully"
 msgstr  ""
 #
@@ -1572,7 +1581,7 @@ msgstr  ""
 msgid   "Update %s configuration file"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 6847
+# File: gem/ui/interface.py, line: 6874
 #, python-format
 msgid   "Update %s parameters"
 msgstr  ""

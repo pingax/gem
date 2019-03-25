@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-03-25 14:31+0100\n"
+"PO-Revision-Date: 2019-03-25 16:38+0100\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -16,12 +16,6 @@ msgstr ""
 #, python-format
 msgid "%d days ago"
 msgstr "Il y a %d jours"
-
-#
-# File: gem/ui/interface.py, line: 4941
-#, python-format
-msgid "%d game"
-msgstr "%d jeu"
 
 #
 # File: gem/interface.py, line: 532
@@ -125,6 +119,11 @@ msgstr "%s à été généré avec succès"
 # File: gem/gtk/preferences.py, line: 2612
 msgid "* can be used as joker"
 msgstr "* peut être utilisé comme joker"
+
+#
+# File: gem/ui/interface.py, line: 4941
+msgid "1 game"
+msgstr "1 jeu"
 
 #
 # File: gem/interface.py, line: 532
@@ -1259,6 +1258,11 @@ msgstr "Pas de donnée"
 # File: gem/interface.py, line: 1286
 msgid "No default value"
 msgstr "Pas de valeurs par défaut"
+
+#
+# File: gem/ui/interface.py, line: 4941
+msgid "No game"
+msgstr "Aucun jeu"
 
 #
 # File: gem/preferences.py, line: 97

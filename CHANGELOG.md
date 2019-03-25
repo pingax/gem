@@ -24,6 +24,8 @@ Version 0.10 - Forest Life
 * Add `GEM.get_game_tags` function to API
 * Add `GEM.update_console` function to API
 * Add `GEM.update_emulator` function to API
+* Add `Console.add_game` function to API
+* Add `Console.delete_game` function to API
 * Add dynamic files parameter to `write_data` function to write only some configuration file
 * Allow to set specific configuration paths in constructor parameters
 * Modify `GEM.add_emulator` to return the new emulator
@@ -59,6 +61,7 @@ Version 0.10 - Forest Life
 * Restore GTK+ menuitem behavior to main and game menus
 * Restore old dialog buttons behavior to both themes
 * Restore old renaming system based on dialog window
+* Improve drag & drop system
 * Fix wrong object set during drag and drop process
 * Fix missing global shortcuts in default theme
 * Fix game tooltip not update after game renaming

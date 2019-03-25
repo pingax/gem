@@ -171,12 +171,44 @@ class Console(object):
 
                 # Retrieve files from games directory
                 for filename in sorted(files):
-                    game = Game(self.__parent, filename)
+                    self.add_game(filename)
 
-                    if game.emulator is None:
-                        game.emulator = self.emulator
 
-                    self.__games.append(game)
+    def add_game(self, filename):
+        """ Add a new game
+
+        Parameters
+        ----------
+        filename : pathlib.Path
+            Game filepath
+
+        Returns
+        -------
+        gem.engine.game.Game
+            Game instance
+        """
+
+        game = Game(self.__parent, filename)
+
+        if game.emulator is None:
+            game.emulator = self.emulator
+
+        self.__games.append(game)
+
+        return game
+
+
+    def delete_game(self, game):
+        """ Remove a game from console storage
+
+        Parameters
+        ----------
+        game : gem.engine.game.Game
+            Game instance
+        """
+
+        if game in self.__games:
+            self.__games.remove(game)
 
 
     def get_games(self):
