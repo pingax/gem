@@ -24,6 +24,8 @@ from os import X_OK
 from os import access
 from os import remove
 
+from os.path import getctime
+
 from pathlib import Path
 
 from copy import deepcopy
@@ -7793,7 +7795,7 @@ class MainWindow(Gtk.ApplicationWindow):
         if type(widget) is Gtk.TreeView or type(widget) is Gtk.IconView:
 
             if self.selection["game"] is not None:
-                data.set_uris(["file://%s" % self.selection["game"].filepath])
+                data.set_uris(["file://%s" % self.selection["game"].path])
 
         elif type(widget) is Gtk.Viewport:
 
@@ -7916,10 +7918,16 @@ class MainWindow(Gtk.ApplicationWindow):
                         if not options["copy"]:
                             path.unlink()
 
-                        # Add a new game to console storage if not exists
                         game = console.get_game(generate_identifier(new_path))
+
+                        # Add a new game to console storage if not exists
                         if game is None:
                             game = console.add_game(new_path)
+
+                        # Update installed time
+                        else:
+                            game.installed = datetime.fromtimestamp(
+                                getctime(new_path)).date()
 
                         # Update console tooltip
                         if console.id in self.consoles_iter:
@@ -7949,6 +7957,9 @@ class MainWindow(Gtk.ApplicationWindow):
                             # Add a new item to views
                             if self.__on_append_game(console, game):
                                 self.set_informations_headerbar()
+
+                # Update consoles filters
+                self.__on_update_consoles()
 
             dialog.destroy()
 
