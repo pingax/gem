@@ -7803,7 +7803,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 data.set_uris(["file://%s" % self.sidebar_image])
 
 
-    def __on_dnd_received_data(self, widget, context, x, y, data, info, time):
+    def __on_dnd_received_data(self, widget, context, x, y, data, info, delta):
         """ Manage drag & drop acquisition
 
         This function receive drag files and install them into the correct
@@ -7824,17 +7824,21 @@ class MainWindow(Gtk.ApplicationWindow):
             Received data
         info : int
             Info that has been registered with the target in the Gtk.TargetList
-        time : int
+        delta : int
             Timestamp at which the data was received
         """
-
-        self.logger.debug("Received data from drag & drop")
 
         GObject.signal_stop_emission_by_name(widget, "drag_data_received")
 
         # Current acquisition not respect text/uri-list
         if not info == 1337:
             return
+
+        # Avoid to read data dropped from main interface
+        if Gtk.drag_get_source_widget(context) is not None:
+            return
+
+        self.logger.debug("Received data from drag & drop")
 
         # ----------------------------------------
         #   Check received URIs
