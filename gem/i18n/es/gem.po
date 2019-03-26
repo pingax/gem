@@ -2183,10 +2183,15 @@ msgid "_Columns visibility"
 msgstr ""
 
 #
+# File: gem/ui/interface.py, line: 908
+msgid "_Copy games directory path to clipboard"
+msgstr ""
+
+#
 # File: gem/interface.py, line: 401
 # File: gem/interface.py, line: 761
 #, fuzzy
-msgid "_Copy path"
+msgid "_Copy path to clipboard"
 msgstr "_Copiar la ruta del juego"
 
 #
@@ -2312,6 +2317,12 @@ msgstr "Marcar como _mutijugador"
 # File: gem/interface.py, line: 384
 msgid "_Notes"
 msgstr "_Notas"
+
+#
+# File: gem/preferences.py, line: 91
+#, fuzzy
+msgid "_Open games directory"
+msgstr "Abrir carpeta del juego seleccionado"
 
 #
 # File: gem/interface.py, line: 406

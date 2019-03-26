@@ -693,7 +693,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.item_menubar_edit_file.set_use_underline(True)
 
         self.item_menubar_copy.set_label(
-            _("_Copy path"))
+            _("_Copy path to clipboard"))
         self.item_menubar_copy.set_use_underline(True)
 
         self.item_menubar_open.set_label(
@@ -879,6 +879,9 @@ class MainWindow(Gtk.ApplicationWindow):
         self.item_consoles_emulator = Gtk.MenuItem()
         self.item_consoles_config = Gtk.MenuItem()
 
+        self.item_consoles_copy = Gtk.MenuItem()
+        self.item_consoles_open = Gtk.MenuItem()
+
         self.item_consoles_reload = Gtk.MenuItem()
 
         self.item_consoles_favorite = Gtk.CheckMenuItem()
@@ -900,6 +903,14 @@ class MainWindow(Gtk.ApplicationWindow):
         self.item_consoles_config.set_label(
             _("_Edit configuration file"))
         self.item_consoles_config.set_use_underline(True)
+
+        self.item_consoles_copy.set_label(
+            _("_Copy games directory path to clipboard"))
+        self.item_consoles_copy.set_use_underline(True)
+
+        self.item_consoles_open.set_label(
+            _("_Open games directory"))
+        self.item_consoles_open.set_use_underline(True)
 
         self.item_consoles_reload.set_label(
             _("_Reload games list"))
@@ -1618,7 +1629,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.item_game_edit_file.set_use_underline(True)
 
         self.item_game_copy.set_label(
-            _("_Copy path"))
+            _("_Copy path to clipboard"))
         self.item_game_copy.set_use_underline(True)
 
         self.item_game_open.set_label(
@@ -1949,6 +1960,9 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menu_consoles.append(Gtk.SeparatorMenuItem())
         self.menu_consoles.append(self.item_consoles_emulator)
         self.menu_consoles.append(self.item_consoles_config)
+        self.menu_consoles.append(Gtk.SeparatorMenuItem())
+        self.menu_consoles.append(self.item_consoles_copy)
+        self.menu_consoles.append(self.item_consoles_open)
         self.menu_consoles.append(Gtk.SeparatorMenuItem())
         self.menu_consoles.append(self.item_consoles_reload)
         self.menu_consoles.append(Gtk.SeparatorMenuItem())
@@ -2308,9 +2322,9 @@ class MainWindow(Gtk.ApplicationWindow):
         self.item_menubar_edit_file.connect(
             "activate", self.__on_game_edit_file)
         self.item_menubar_copy.connect(
-            "activate", self.__on_game_copy)
+            "activate", self.__on_copy_path_to_clipboard)
         self.item_menubar_open.connect(
-            "activate", self.__on_game_open)
+            "activate", self.__on_open_directory)
         self.item_menubar_desktop.connect(
             "activate", self.__on_game_generate_desktop)
         self.item_menubar_cover.connect(
@@ -2385,6 +2399,11 @@ class MainWindow(Gtk.ApplicationWindow):
             "activate", self.__on_show_emulator_editor)
         self.item_consoles_config.connect(
             "activate", self.__on_show_emulator_config)
+
+        self.item_consoles_copy.connect(
+            "activate", self.__on_copy_path_to_clipboard)
+        self.item_consoles_open.connect(
+            "activate", self.__on_open_directory)
 
         self.item_consoles_reload.connect(
             "activate", self.__on_reload_games)
@@ -2471,9 +2490,9 @@ class MainWindow(Gtk.ApplicationWindow):
         self.item_game_edit_file.connect(
             "activate", self.__on_game_edit_file)
         self.item_game_copy.connect(
-            "activate", self.__on_game_copy)
+            "activate", self.__on_copy_path_to_clipboard)
         self.item_game_open.connect(
-            "activate", self.__on_game_open)
+            "activate", self.__on_open_directory)
         self.item_game_cover.connect(
             "activate", self.__on_game_cover)
         self.item_game_desktop.connect(
@@ -5233,6 +5252,12 @@ class MainWindow(Gtk.ApplicationWindow):
                             configuration is not None and \
                             configuration.exists())
 
+                    # Check console paths
+                    self.item_consoles_copy.set_sensitive(
+                        row.console.path.exists())
+                    self.item_consoles_open.set_sensitive(
+                        row.console.path.exists())
+
                     self.item_consoles_reload.set_sensitive(
                         selected_row == row)
 
@@ -7300,27 +7325,6 @@ class MainWindow(Gtk.ApplicationWindow):
             self.clipboard.set_text(str(game.path), -1)
 
 
-    def __on_game_open(self, *args):
-        """ Open game directory
-
-        This function open the folder which contains game with the default
-        files manager
-        """
-
-        game = self.selection["game"]
-
-        if game is not None and game.path.parent.exists():
-            self.logger.debug(
-                "Open '%s' directory in files manager" % game.path.parent)
-
-            try:
-                status = self.__xdg_open_instance.launch_uris(
-                    ["file://%s" % game.path.parent], None)
-
-            except GLib.Error:
-                self.logger.exception("Cannot open files manager")
-
-
     def __on_game_cover(self, *args):
         """ Set a new cover for selected game
         """
@@ -7770,6 +7774,64 @@ class MainWindow(Gtk.ApplicationWindow):
         self.item_menubar_statusbar_status.set_active(statusbar_status)
 
         self.__unblock_signals()
+
+
+    def __on_copy_path_to_clipboard(self, widget):
+        """ Copy path to clipboard
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            object which received the signal
+        """
+
+        path = None
+
+        if widget in (self.item_menubar_copy, self.item_game_copy):
+            game = self.selection["game"]
+
+            if game is not None and game.path.parent.exists():
+                path = game.path
+
+        elif widget == self.item_consoles_copy:
+
+            if self.__current_menu_row is not None:
+                path = self.__current_menu_row.console.path
+
+        if path is not None:
+            self.clipboard.set_text(str(path), -1)
+
+
+    def __on_open_directory(self, widget):
+        """ Open directory into files manager
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            object which received the signal
+        """
+
+        path = None
+
+        if widget in (self.item_menubar_open, self.item_game_open):
+            game = self.selection["game"]
+
+            if game is not None and game.path.parent.exists():
+                path = game.path.parent
+
+        elif widget == self.item_consoles_open:
+
+            if self.__current_menu_row is not None:
+                path = self.__current_menu_row.console.path
+
+        if path is not None and path.exists():
+            self.logger.debug("Open '%s' directory in files manager" % path)
+
+            try:
+                self.__xdg_open_instance.launch_uris(["file://%s" % path], None)
+
+            except GLib.Error:
+                self.logger.exception("Cannot open files manager")
 
 
     def __on_dnd_send_data(self, widget, context, data, info, time):

@@ -54,6 +54,8 @@ Version 0.10 - Forest Life
 * Allow to remove a console from console context menu in main interface
 * Allow to configure emulator from console context menu in main interface
 * Allow to add an emulator or a console from console main menu in main interface
+* Allow to open games directory path from console main menu in main interface
+* Allow to copy games directory path from console main menu in main interface
 * Allow to restore sidebars position during startup
 * Allow to change sidebar position from main menu in main interface
 * Allow to edit game file when the mime type is `text/*`

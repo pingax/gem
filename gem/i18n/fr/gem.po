@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-03-25 16:38+0100\n"
+"PO-Revision-Date: 2019-03-26 11:55+0100\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -2059,9 +2059,14 @@ msgid "_Columns visibility"
 msgstr "Visibilité des colonnes"
 
 #
+# File: gem/ui/interface.py, line: 908
+msgid "_Copy games directory path to clipboard"
+msgstr "_Copier le chemin du dossier des jeux dans le presse-papier"
+
+#
 # File: gem/interface.py, line: 660
-msgid "_Copy path"
-msgstr "_Copier le chemin"
+msgid "_Copy path to clipboard"
+msgstr "_Copier le chemin dans le presse-papier"
 
 #
 # File: gem/ui/interface.py, line: 1296
@@ -2177,6 +2182,11 @@ msgstr "_Multi-joueurs"
 # File: gem/gtk/interface.py, line: 1182
 msgid "_Notes"
 msgstr "_Notes"
+
+#
+# File: src/window.py, line: 272
+msgid "_Open games directory"
+msgstr "_Ouvrir le dossier des jeux"
 
 #
 # File: gem/interface.py, line: 665
