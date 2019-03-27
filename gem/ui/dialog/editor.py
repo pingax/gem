@@ -269,7 +269,7 @@ class EditorDialog(CommonWindow):
                 self.text_editor.set_insert_spaces_instead_of_tabs(True)
 
                 self.buffer_editor.set_language(
-                    self.language_editor.guess_language(self.path))
+                    self.language_editor.guess_language(str(self.path)))
 
                 if self.parent is not None:
                     self.text_editor.set_tab_width(self.parent.config.getint(
