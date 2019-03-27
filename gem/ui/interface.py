@@ -5253,10 +5253,11 @@ class MainWindow(Gtk.ApplicationWindow):
                             configuration.exists())
 
                     # Check console paths
-                    self.item_consoles_copy.set_sensitive(
-                        row.console.path.exists())
-                    self.item_consoles_open.set_sensitive(
-                        row.console.path.exists())
+                    if row.console.path is not None:
+                        self.item_consoles_copy.set_sensitive(
+                            row.console.path.exists())
+                        self.item_consoles_open.set_sensitive(
+                            row.console.path.exists())
 
                     self.item_consoles_reload.set_sensitive(
                         selected_row == row)

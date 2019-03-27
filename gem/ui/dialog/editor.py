@@ -424,8 +424,9 @@ class EditorDialog(CommonWindow):
             font_size = int(font[-1])
             font_family = ' '.join(font[:-1])
 
-            self.provider_editor.load_from_data(
-                b"textview { font: %spt '%s' }" % (font_size, font_family))
+            self.provider_editor.load_from_data(bytes(
+                "textview { font: %spt '%s' }" % (font_size, font_family),
+                "UTF-8"))
 
             self.text_editor.get_style_context().add_provider(
                 self.provider_editor, Gtk.STYLE_PROVIDER_PRIORITY_USER)
