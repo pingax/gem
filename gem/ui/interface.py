@@ -5730,16 +5730,25 @@ class MainWindow(Gtk.ApplicationWindow):
 
             # Get selection from cursor position
             if event.type == Gdk.EventType.BUTTON_PRESS:
-                selection = treeview.get_path_at_pos(int(event.x), int(event.y))
 
-                if selection is not None:
-                    model = treeview.get_model()
+                # Avoid to click on treeview header
+                if treeview == self.iconview_games or \
+                    event.window == treeview.get_bin_window():
+                    selection = treeview.get_path_at_pos(
+                        int(event.x), int(event.y))
 
-                    if treeview == self.treeview_games:
-                        treeiter = model.get_iter(selection[0])
+                    if selection is not None:
+                        model = treeview.get_model()
 
-                    elif treeview == self.iconview_games:
-                        treeiter = model.get_iter(selection)
+                        if treeview == self.treeview_games:
+                            treeiter = model.get_iter(selection[0])
+
+                        elif treeview == self.iconview_games:
+                            treeiter = model.get_iter(selection)
+
+                # Avoid to lose selection when right-click on header
+                elif treeview == self.treeview_games:
+                    model, treeiter = treeview.get_selection().get_selected()
 
             # Get selection from TreeView
             elif treeview == self.treeview_games:
@@ -7519,12 +7528,15 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 # List view
                 if widget == self.treeview_games:
-                    treeiter = widget.get_path_at_pos(x, y)
 
-                    if treeiter is not None:
-                        widget.set_cursor(treeiter[0], treeiter[1], False)
+                    # Avoid to click on treeview header
+                    if event.window == widget.get_bin_window():
+                        treeiter = widget.get_path_at_pos(x, y)
 
-                        selection = True
+                        if treeiter is not None:
+                            widget.set_cursor(treeiter[0], treeiter[1], False)
+
+                            selection = True
 
                 # Grid icons view
                 if widget == self.iconview_games:
