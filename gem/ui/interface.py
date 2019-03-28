@@ -3169,7 +3169,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.resize(int(width), int(height))
 
         except ValueError as error:
-            self.logger.error(_("Cannot resize main window: %s") % str(error))
+            self.logger.error("Cannot resize main window: %s" % str(error))
 
         self.set_geometry_hints(self, self.window_size,
             Gdk.WindowHints.MIN_SIZE | Gdk.WindowHints.BASE_SIZE)
@@ -3262,7 +3262,7 @@ class MainWindow(Gtk.ApplicationWindow):
         """ Load data and start interface
         """
 
-        self.logger.debug("Use GTK+ library v.%d.%d.%d" % (
+        self.logger.info("Use GTK+ library v.%d.%d.%d" % (
             Gtk.get_major_version(),
             Gtk.get_minor_version(),
             Gtk.get_micro_version()))
@@ -3334,7 +3334,7 @@ class MainWindow(Gtk.ApplicationWindow):
         """ Save data and stop interface
         """
 
-        self.logger.info(_("Close interface"))
+        self.logger.info("Close interface")
 
         # ------------------------------------
         #   Threads
@@ -3377,7 +3377,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.config.modify("gem", "last_console", row.console.id)
 
                 self.logger.info(
-                    _("Save %s console for next startup") % row.console.id)
+                    "Save %s console for next startup" % row.console.id)
 
         # ------------------------------------
         #   Last sorted column
@@ -4556,7 +4556,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 with path.open('w') as pipe:
                     pipe.write(text_buffer)
 
-                self.logger.info(_("Update note for %s") % title)
+                self.logger.info("Update note for %s" % title)
 
             elif path.exists():
                 path.unlink()
@@ -4842,7 +4842,7 @@ class MainWindow(Gtk.ApplicationWindow):
                                 dialog.buffer_editor.get_end_iter(), True))
 
                         self.logger.info(
-                            _("Update %s configuration file") % emulator.name)
+                            "Update %s configuration file" % emulator.name)
 
                     self.config.modify(
                         "windows", "editor", "%dx%d" % dialog.get_size())
@@ -5346,7 +5346,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         if console.emulator is None:
             self.logger.warning(
-                _("Cannot find emulator for %s") % console.name)
+                "Cannot find emulator for %s" % console.name)
 
             self.infobar.set_visible(True)
 
@@ -5356,7 +5356,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         elif not console.emulator.exists:
             self.logger.warning(
-                _("%s emulator not exist") % console.emulator.name)
+                "%s emulator not exist" % console.emulator.name)
 
             self.infobar.set_visible(True)
 
@@ -5418,7 +5418,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Multiplayer
         elif column == Columns.List.MULTIPLAYER:
-            key = lambda game: game.multiplayer
             games.sort(key=lambda game: game.multiplayer, reverse=reverse)
 
         # Finish
@@ -5495,16 +5494,20 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Timer - Debug
         # ------------------------------------
 
-        self.logger.debug("Append %d games for %s in %s second(s)" % (
-            len(console.get_games()), console.name,
-            (datetime.now() - started).total_seconds()))
+        delta = (datetime.now() - started).total_seconds()
 
-        # ------------------------------------
-        #   Cannot read games path
-        # ------------------------------------
+        if len(console.get_games()) == 0:
+            text = "No game available for %s" % console.name
 
-        if not access(console.path, W_OK):
-            pass
+        elif len(console.get_games()) == 1:
+            text = "Append 1 game for %s in %s second(s)" % (
+                console.name, delta)
+
+        elif len(console.get_games()) >= 2:
+            text = "Append %d games for %s in %s second(s)" % (
+                len(console.get_games()), console.name, delta)
+
+        self.logger.debug(text)
 
         # ------------------------------------
         #   Close thread
@@ -6357,7 +6360,7 @@ class MainWindow(Gtk.ApplicationWindow):
         if console is not None and game.emulator is not None:
 
             if game.emulator.id in self.api.emulators:
-                self.logger.info(_("Initialize %s") % game.name)
+                self.logger.info("Initialize %s" % game.name)
 
                 # ----------------------------------------
                 #   Run game
@@ -6601,7 +6604,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 # Check if game name has been changed
                 if not new_name == game.name:
-                    self.logger.info(_("Rename %(old)s to %(new)s") % {
+                    self.logger.info("Rename %(old)s to %(new)s" % {
                         "old": game.name, "new": dialog.get_name() })
 
                     game.name = new_name
@@ -6660,7 +6663,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 if dialog.run() == Gtk.ResponseType.APPLY:
                     try:
-                        self.logger.info(_("%s maintenance") % game.name)
+                        self.logger.info("%s maintenance" % game.name)
 
                         data = dialog.get_data()
 
@@ -6766,7 +6769,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 dialog = DeleteDialog(self, game)
 
                 if dialog.run() == Gtk.ResponseType.YES:
-                    self.logger.info(_("Remove %s") % game.name)
+                    self.logger.info("Remove %s" % game.name)
 
                     try:
                         data = dialog.get_data()
@@ -6851,7 +6854,7 @@ class MainWindow(Gtk.ApplicationWindow):
             dialog = DuplicateDialog(self, game)
 
             if dialog.run() == Gtk.ResponseType.APPLY:
-                self.logger.info(_("Duplicate %s") % game.name)
+                self.logger.info("Duplicate %s" % game.name)
 
                 try:
                     data = dialog.get_data()
@@ -6908,7 +6911,7 @@ class MainWindow(Gtk.ApplicationWindow):
             dialog = ParametersDialog(self, game)
 
             if dialog.run() == Gtk.ResponseType.APPLY:
-                self.logger.info(_("Update %s parameters") % game.name)
+                self.logger.info("Update %s parameters" % game.name)
 
                 game.emulator = self.api.get_emulator(
                     dialog.combo.get_active_id())

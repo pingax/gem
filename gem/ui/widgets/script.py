@@ -89,16 +89,16 @@ class ScriptThread(Thread, GObject.GObject):
             self.proc.terminate()
 
         except OSError as error:
-            self.logger.error(_("Cannot access to script: %s") % str(error))
+            self.logger.error("Cannot access to script: %s" % str(error))
 
         except MemoryError as error:
-            self.logger.error(_("A memory error occur: %s") % str(error))
+            self.logger.error("A memory error occur: %s" % str(error))
 
         except KeyboardInterrupt as error:
-            self.logger.info(_("Terminate by keyboard interrupt"))
+            self.logger.info("Terminate by keyboard interrupt")
 
         except Exception as error:
-            self.logger.info(_("An exception error occur: %s") % str(error))
+            self.logger.info("An exception error occur: %s" % str(error))
 
         # Call game-terminate signal on main window
         self.parent.emit("script-terminate", self)

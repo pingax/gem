@@ -1646,7 +1646,7 @@ class PreferencesWindow(CommonWindow):
 
         except ValueError as error:
             self.logger.error(
-                _("Cannot resize preferences window: %s") % str(error))
+                "Cannot resize preferences window: %s" % str(error))
 
         self.window.set_geometry_hints(self.window, window_size,
             Gdk.WindowHints.MIN_SIZE | Gdk.WindowHints.BASE_SIZE)
@@ -1796,14 +1796,14 @@ class PreferencesWindow(CommonWindow):
 
         # Causing by require_version
         except ValueError:
-            self.logger.warning(_("Cannot found GtkSource module"))
+            self.logger.warning("Cannot found GtkSource module")
 
         # Causing by importing GtkSource
         except ImportError:
-            self.logger.warning(_("Cannot found GtkSource module"))
+            self.logger.warning("Cannot found GtkSource module")
 
         except Exception as error:
-            self.logger.exception(_("Cannot retrieve style schemes"))
+            self.logger.exception("Cannot retrieve style schemes")
 
         if not visible_widget:
             self.listbox_general_editor.remove(self.widget_editor_tab_width)

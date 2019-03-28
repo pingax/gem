@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.4\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-03-25 14:31+0100\n"
+"PO-Revision-Date: 2019-03-28 10:17+0100\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -90,23 +90,11 @@ msgid "%s binary cannot be found"
 msgstr ""
 
 #
-# File: gem/interface.py, line: 1354
-#, python-format
-msgid "%s emulator not exist"
-msgstr "El emulador %s no existe"
-
-#
 # File: gem/ui/interface.py, line: 4436
 # File: gem/ui/interface.py, line: 4548
 #, python-format
 msgid "%s has been correctly added to your configuration."
 msgstr ""
-
-#
-# File: gem/preferences.py, line: 268
-#, fuzzy, python-format
-msgid "%s maintenance"
-msgstr "Cerrar interfaz"
 
 #
 # File: gem/interface.py, line: 2106
@@ -158,12 +146,6 @@ msgid ""
 "which is used by this console and extensions which is readable by this "
 "emulator."
 msgstr ""
-
-#
-# File: gem/interface.py, line: 2044
-#, fuzzy, python-format
-msgid "A memory error occur: %s"
-msgstr "MemoryError: %s"
 
 #
 # File: gem/gtk/preferences.py, line: 1509
@@ -259,12 +241,6 @@ msgstr ""
 "detalles."
 
 #
-# File: gem/interface.py, line: 2044
-#, fuzzy, python-format
-msgid "An exception error occur: %s"
-msgstr "MemoryError: %s"
-
-#
 # File: gem/main.py, line: 148
 #, fuzzy
 msgid "An instance already exists"
@@ -352,39 +328,10 @@ msgid "Cancel"
 msgstr "Cancelar"
 
 #
-# File: gem/main.py, line: 128
-#, fuzzy, python-format
-msgid "Cannot access to game: %s"
-msgstr "No puedo abrir la interfaz: %s"
-
-#
-# File: gem/main.py, line: 128
-#, fuzzy, python-format
-msgid "Cannot access to script: %s"
-msgstr "No puedo abrir la interfaz: %s"
-
-#
 # File: gem/interface.py, line: 2033
 #, fuzzy, python-format
 msgid "Cannot find <b>%s</b>"
 msgstr "¡No puedo encontrar el visor <b>%s</b>!"
-
-#
-# File: gem/interface.py, line: 1347
-#, python-format
-msgid "Cannot find emulator for %s"
-msgstr "No puedo encontrar el emulador para %s"
-
-#
-# File: gem/ui/preferences/interface.py, line: 1797
-# File: gem/ui/preferences/interface.py, line: 1801
-msgid "Cannot found GtkSource module"
-msgstr ""
-
-#
-# File: gem/main.py, line: 240
-msgid "Cannot launch GEM without display"
-msgstr "No puedo ejecutar GEM sin una sesión gráfica"
 
 #
 # File: gem/main.py, line: 128
@@ -397,28 +344,6 @@ msgstr "No puedo abrir la interfaz: %s"
 #, fuzzy
 msgid "Cannot open screenshots viewer"
 msgstr "No puedo abrir el archivo %s"
-
-#
-# File: gem/ui/dialog/editor.py, line: 434
-msgid "Cannot parse editor font"
-msgstr ""
-
-#
-# File: gem/interface.py, line: 1892
-#, python-format
-msgid "Cannot resize main window: %s"
-msgstr "No puedo cambiar el tamaño de la ventana principal: %s"
-
-#
-# File: gem/preferences.py, line: 275
-#, python-format
-msgid "Cannot resize preferences window: %s"
-msgstr "No puedo cambiar el tamaño de la ventana de las preferencias: %s"
-
-#
-# File: gem/ui/preferences/interface.py, line: 1804
-msgid "Cannot retrieve style schemes"
-msgstr ""
 
 #
 # File: gem/windows.py, line: 1122
@@ -448,17 +373,6 @@ msgstr "Borrar los datos del juego de la base de datos"
 #, fuzzy
 msgid "Close"
 msgstr "Cerrar %s"
-
-#
-# File: gem/interface.py, line: 1614
-#, python-format
-msgid "Close %s"
-msgstr "Cerrar %s"
-
-#
-# File: gem/preferences.py, line: 268
-msgid "Close interface"
-msgstr "Cerrar interfaz"
 
 #
 # File: gem/preferences.py, line: 434
@@ -652,12 +566,6 @@ msgstr ""
 #, fuzzy
 msgid "Drop games"
 msgstr "%d juegos disponibles"
-
-#
-# File: gem/ui/interface.py, line: 5042
-#, python-format
-msgid "Duplicate %s"
-msgstr ""
 
 #
 # File: gem/preferences.py, line: 86
@@ -1051,12 +959,6 @@ msgid "Increase selected game score"
 msgstr "Abrir carpeta del juego seleccionado"
 
 #
-# File: gem/interface.py, line: 1411
-#, python-format
-msgid "Initialize %s"
-msgstr "Empezar %s"
-
-#
 # File: gem/interface.py, line: 664
 msgid "Installed"
 msgstr "Instalado"
@@ -1111,12 +1013,6 @@ msgstr "Lanzar"
 
 #
 # File: gem/preferences.py, line: 84
-#, python-format
-msgid "Launch %s"
-msgstr "Lanzar %s"
-
-#
-# File: gem/preferences.py, line: 84
 msgid "Launch a game"
 msgstr "Lanzar un juego"
 
@@ -1156,12 +1052,6 @@ msgstr ""
 # File: gem/ui/dialog/maintenance.py, line: 175
 msgid "Log"
 msgstr ""
-
-#
-# File: gem/interface.py, line: 1505
-#, python-format
-msgid "Log to %s"
-msgstr "Guardar historial en %s"
 
 #
 # File: gem/ui/interface.py, line: 397
@@ -1477,13 +1367,6 @@ msgid "Remove"
 msgstr "Borrar"
 
 #
-# File: gem/interface.py, line: 1736
-# File: gem/preferences.py, line: 1195
-#, fuzzy, python-format
-msgid "Remove %s"
-msgstr "Borrar"
-
-#
 # File: gem/preferences.py, line: 1602
 #, fuzzy
 msgid "Remove a console"
@@ -1510,12 +1393,6 @@ msgstr ""
 #, fuzzy
 msgid "Remove selected emulator"
 msgstr "Establecer el emulador por defecto"
-
-#
-# File: gem/preferences.py, line: 1159
-#, python-format
-msgid "Rename %(old)s to %(new)s"
-msgstr "Renombrar %(old)s en %(new)s"
 
 #
 # File: gem/preferences.py, line: 86
@@ -1571,12 +1448,6 @@ msgstr ""
 # File: gem/preferences.py, line: 1627
 msgid "Save"
 msgstr "Guardar"
-
-#
-# File: gem/interface.py, line: 602
-#, fuzzy, python-format
-msgid "Save %s console for next startup"
-msgstr "Guardar %s para el próximo arranque"
 
 #
 # File: gem/ui/dialog/delete.py, line: 176
@@ -1887,11 +1758,6 @@ msgid "Tags are split by commas."
 msgstr ""
 
 #
-# File: gem/interface.py, line: 1501
-msgid "Terminate by keyboard interrupt"
-msgstr "Finalizado por interrupción del teclado"
-
-#
 # File: gem/ui/dialog/maintenance.py, line: 118
 msgid "The following actions are irreversible, becareful !"
 msgstr ""
@@ -1996,24 +1862,6 @@ msgstr ""
 # File: gem/gtk/interface.py, line: 797
 msgid "Unfinish"
 msgstr ""
-
-#
-# File: gem/preferences.py, line: 1602
-#, python-format
-msgid "Update %s configuration file"
-msgstr "Actualizar el archivo de configuración de %s"
-
-#
-# File: gem/preferences.py, line: 1602
-#, fuzzy, python-format
-msgid "Update %s parameters"
-msgstr "Actualizar las notas %s"
-
-#
-# File: gem/preferences.py, line: 1602
-#, fuzzy, python-format
-msgid "Update note for %s"
-msgstr "Actualizar las notas %s"
 
 #
 # File: gem/interface.py, line: 406

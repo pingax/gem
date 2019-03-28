@@ -432,7 +432,7 @@ class EditorDialog(CommonWindow):
                 self.provider_editor, Gtk.STYLE_PROVIDER_PRIORITY_USER)
 
         except:
-            self.logger.warning(_("Cannot parse editor font"))
+            self.logger.warning("Cannot parse editor font")
 
         self.entry_path.set_text(str(self.path))
 

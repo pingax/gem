@@ -252,7 +252,7 @@ def main():
                 # Initialize main configuration files
                 init_configuration(gem)
 
-                gem.logger.debug("Start GEM with PID %s" % gem.pid)
+                gem.logger.info("Start GEM with PID %s" % gem.pid)
 
                 # Start splash
                 from gem.ui.splash import Splash
@@ -266,7 +266,7 @@ def main():
                 gem.free_lock()
 
             else:
-                gem.logger.critical(_("Cannot launch GEM without display"))
+                gem.logger.critical("Cannot launch GEM without display")
 
         else:
             try:
@@ -291,10 +291,10 @@ def main():
                 dialog.destroy()
 
             except Exception as error:
-                pass
+                gem.logger.critical("Cannot start dialog instance")
 
             finally:
-                sys_exit(_("GEM is already running with PID %d") % gem.pid)
+                sys_exit("GEM is already running with PID %d" % gem.pid)
 
     except ImportError as error:
         gem.logger.exception("Cannot import modules: %s" % str(error))

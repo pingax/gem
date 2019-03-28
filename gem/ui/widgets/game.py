@@ -103,7 +103,7 @@ class GameThread(Thread, GObject.GObject):
 
         started = datetime.now()
 
-        self.logger.info(_("Launch %s") % self.game.name)
+        self.logger.info("Launch %s" % self.game.name)
 
         try:
             command = self.game.command(self.fullscreen)
@@ -125,7 +125,7 @@ class GameThread(Thread, GObject.GObject):
             #   Start process
             # ------------------------------------
 
-            self.logger.info(_("Log to %s") % self.path)
+            self.logger.info("Log to %s" % self.path)
 
             # Logging process output
             with open(self.path, 'w') as pipe:
@@ -140,7 +140,7 @@ class GameThread(Thread, GObject.GObject):
 
                 self.proc.communicate()
 
-            self.logger.info(_("Close %s") % self.game.name)
+            self.logger.info("Close %s" % self.game.name)
 
             self.proc.terminate()
 
@@ -151,18 +151,18 @@ class GameThread(Thread, GObject.GObject):
             self.delta = (datetime.now() - started)
 
         except OSError as error:
-            self.logger.error(_("Cannot access to game: %s") % str(error))
+            self.logger.error("Cannot access to game: %s" % str(error))
             self.error = True
 
         except MemoryError as error:
-            self.logger.error(_("A memory error occur: %s") % str(error))
+            self.logger.error("A memory error occur: %s" % str(error))
             self.error = True
 
         except KeyboardInterrupt as error:
-            self.logger.info(_("Terminate by keyboard interrupt"))
+            self.logger.info("Terminate by keyboard interrupt")
 
         except Exception as error:
-            self.logger.info(_("An exception error occur: %s") % str(error))
+            self.logger.info("An exception error occur: %s" % str(error))
             self.error = True
 
         # Call game-terminate signal on main window
