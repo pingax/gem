@@ -21,6 +21,7 @@ from os import access
 from pathlib import Path
 
 # GEM
+from gem.engine.utils import generate_extension
 from gem.engine.utils import generate_identifier
 
 from gem.engine.game import Game
@@ -161,7 +162,7 @@ class Console(object):
             self.__games.clear()
 
             for extension in self.extensions:
-                pattern = "*.%s" % extension
+                pattern = "*.%s" % generate_extension(extension)
 
                 if self.recursive:
                     files = self.path.rglob(pattern)

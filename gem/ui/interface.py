@@ -1753,6 +1753,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.image_statusbar_screenshots = Gtk.Image()
         self.image_statusbar_savestates = Gtk.Image()
 
+        self.progress_statusbar = Gtk.ProgressBar()
+
         # Properties
         self.statusbar.set_no_show_all(True)
 
@@ -1775,6 +1777,9 @@ class MainWindow(Gtk.ApplicationWindow):
         self.image_statusbar_properties.set_from_pixbuf(self.icons.blank())
         self.image_statusbar_screenshots.set_from_pixbuf(self.icons.blank())
         self.image_statusbar_savestates.set_from_pixbuf(self.icons.blank())
+
+        self.progress_statusbar.set_no_show_all(True)
+        self.progress_statusbar.set_show_text(True)
 
 
     def __init_packing(self):
@@ -2212,6 +2217,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.grid_statusbar.pack_start(
             self.label_statusbar_game, True, True, 0)
 
+        self.grid_statusbar.pack_end(
+            self.progress_statusbar, False, False, 0)
         self.grid_statusbar.pack_end(
             self.image_statusbar_savestates, False, False, 0)
         self.grid_statusbar.pack_end(
@@ -5463,6 +5470,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
             self.scroll_games_placeholder.set_visible(False)
 
+            self.progress_statusbar.show()
+
         else:
             self.scroll_sidebar.set_visible(False)
 
@@ -5471,7 +5480,9 @@ class MainWindow(Gtk.ApplicationWindow):
         # Start a timer for debug purpose
         started = datetime.now()
 
+        index = int()
         for game in games:
+            index += 1
 
             # Another thread has been called by user, close this one
             if not current_thread_id == self.list_thread:
@@ -5480,6 +5491,9 @@ class MainWindow(Gtk.ApplicationWindow):
             if self.__on_append_game(console, game):
                 self.set_informations_headerbar()
 
+                self.progress_statusbar.set_text("%d/%d" % (index, len(games)))
+                self.progress_statusbar.set_fraction(index / len(games))
+
                 self.treeview_games.thaw_child_notify()
                 yield True
                 self.treeview_games.freeze_child_notify()
@@ -5487,6 +5501,8 @@ class MainWindow(Gtk.ApplicationWindow):
         # Restore options for packages treeviews
         self.treeview_games.set_enable_search(True)
         self.treeview_games.thaw_child_notify()
+
+        self.progress_statusbar.hide()
 
         self.set_informations_headerbar()
 
@@ -7965,6 +7981,7 @@ class MainWindow(Gtk.ApplicationWindow):
             dialog = DNDConsoleDialog(self, filepaths)
 
             if dialog.run() == Gtk.ResponseType.APPLY:
+                index = int()
 
                 # Retrieve validate files
                 data = dialog.get_data()
@@ -7975,8 +7992,12 @@ class MainWindow(Gtk.ApplicationWindow):
                 # Manage files
                 for path, console in data.items():
 
+                    # Lowercase extension
+                    extension = ''.join(path.suffixes).lower()
+
                     # Destination path
-                    new_path = console.path.joinpath(path.name).expanduser()
+                    new_path = console.path.joinpath(
+                        ''.join([path.stem, extension])).expanduser()
 
                     # Check consoles games subdirectory
                     if not new_path.parent.exists():
@@ -7995,7 +8016,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     # Move or copy file to the correct location
                     if new_path.parent.exists() and new_path.parent.is_dir():
-                        copy(path, new_path.parent)
+                        index += 1
+
+                        copy(path, new_path)
 
                         if not options["copy"]:
                             path.unlink()
@@ -8039,6 +8062,16 @@ class MainWindow(Gtk.ApplicationWindow):
                             # Add a new item to views
                             if self.__on_append_game(console, game):
                                 self.set_informations_headerbar()
+
+                # Show an informative dialog
+                if index > 0:
+                    text = _("1 game has been added")
+
+                    if index > 1:
+                        text = _("%d games has been added") % index
+
+                    self.set_message(_("Games installation"), text,
+                        Icons.Symbolic.INFORMATION)
 
                 # Update consoles filters
                 self.__on_update_consoles()
