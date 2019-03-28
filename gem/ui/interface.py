@@ -8015,7 +8015,8 @@ class MainWindow(Gtk.ApplicationWindow):
                             new_path.unlink()
 
                     # Move or copy file to the correct location
-                    if new_path.parent.exists() and new_path.parent.is_dir():
+                    if new_path.parent.exists() and new_path.parent.is_dir() and \
+                        not new_path.exists():
                         index += 1
 
                         copy(path, new_path)
@@ -8064,14 +8065,16 @@ class MainWindow(Gtk.ApplicationWindow):
                                 self.set_informations_headerbar()
 
                 # Show an informative dialog
-                if index > 0:
+                text = _("No game has been added")
+
+                if index == 1:
                     text = _("1 game has been added")
 
-                    if index > 1:
-                        text = _("%d games has been added") % index
+                elif index > 2:
+                    text = _("%d games has been added") % index
 
-                    self.set_message(_("Games installation"), text,
-                        Icons.Symbolic.INFORMATION)
+                self.set_message(_("Games installation"), text,
+                    Icons.Symbolic.INFORMATION)
 
                 # Update consoles filters
                 self.__on_update_consoles()

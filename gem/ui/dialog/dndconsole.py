@@ -212,6 +212,9 @@ class DNDConsoleDialog(CommonWindow):
 
         self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
 
+        self.switch_copy.set_active(True)
+        self.switch_create.set_active(True)
+
         # ----------------------------------------
         #   Retrieve data
         # ----------------------------------------
