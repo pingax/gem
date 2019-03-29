@@ -7978,110 +7978,152 @@ class MainWindow(Gtk.ApplicationWindow):
         if len(filepaths) > 0:
             self.set_sensitive(False)
 
+            data = None
+            options = None
+
             dialog = DNDConsoleDialog(self, filepaths)
 
             if dialog.run() == Gtk.ResponseType.APPLY:
-                index = int()
-
                 # Retrieve validate files
                 data = dialog.get_data()
 
                 # Retrieve user options
                 options = dialog.get_options()
 
-                # Manage files
-                for path, console in data.items():
-
-                    # Lowercase extension
-                    extension = ''.join(path.suffixes).lower()
-
-                    # Destination path
-                    new_path = console.path.joinpath(
-                        ''.join([path.stem, extension])).expanduser()
-
-                    # Check consoles games subdirectory
-                    if not new_path.parent.exists():
-
-                        if options["create"]:
-                            new_path.parent.mkdir(mode=0o755, parents=True)
-
-                        else:
-                            self.logger.warning(
-                                "%s directory not exists" % new_path.parent)
-
-                    # Replace an existing file
-                    if new_path.exists():
-                        if new_path.is_file() and options["replace"]:
-                            new_path.unlink()
-
-                    # Move or copy file to the correct location
-                    if new_path.parent.exists() and new_path.parent.is_dir() and \
-                        not new_path.exists():
-                        index += 1
-
-                        copy(path, new_path)
-
-                        if not options["copy"]:
-                            path.unlink()
-
-                        game = console.get_game(generate_identifier(new_path))
-
-                        # Add a new game to console storage if not exists
-                        if game is None:
-                            game = console.add_game(new_path)
-
-                        # Update installed time
-                        else:
-                            game.installed = datetime.fromtimestamp(
-                                getctime(new_path)).date()
-
-                        # Update console tooltip
-                        if console.id in self.consoles_iter:
-                            row = self.consoles_iter[console.id]
-
-                            text = _("No game")
-                            if len(console.get_games()) == 1:
-                                text = _("1 game")
-                            elif len(console.get_games()) > 1:
-                                text = _("%d games") % len(console.get_games())
-
-                            row.set_tooltip_text(text)
-
-                        # This file is owned by current selected console
-                        if self.selection["console"] is not None and \
-                            console.id == self.selection["console"].id:
-
-                            # Remove an old entry in views
-                            if game.id in self.game_path:
-                                self.model_games_list.remove(
-                                    self.game_path[game.id][1])
-                                self.model_games_grid.remove(
-                                    self.game_path[game.id][2])
-
-                                del self.game_path[game.id]
-
-                            # Add a new item to views
-                            if self.__on_append_game(console, game):
-                                self.set_informations_headerbar()
-
-                # Show an informative dialog
-                text = _("No game has been added")
-
-                if index == 1:
-                    text = _("1 game has been added")
-
-                elif index > 2:
-                    text = _("%d games has been added") % index
-
-                self.set_message(_("Games installation"), text,
-                    Icons.Symbolic.INFORMATION)
-
-                # Update consoles filters
-                self.__on_update_consoles()
-
             dialog.destroy()
 
-            self.set_sensitive(True)
+            # Manage validate files
+            if data is not None and options is not None:
+                GLib.idle_add(
+                    self.__on_dnd_install_data(data, options).__next__)
+
+            else:
+                self.set_sensitive(True)
+
+
+    def __on_dnd_install_data(self, data, options):
+        """ Install received file in user system
+
+        Parameters
+        ----------
+        data : dict
+            Received files
+        option : dict
+            User options from DND dialog
+
+        Notes
+        -----
+        Using yield to show a progressbar whitout freeze
+        """
+
+        self.progress_statusbar.set_text(None)
+        self.progress_statusbar.show()
+
+        yield True
+
+        validate_index = int()
+        progress_index = int()
+
+        # Manage files
+        for path, console in data.items():
+            progress_index += 1
+
+            self.progress_statusbar.set_fraction(progress_index / len(data))
+
+            yield True
+
+            # Lowercase extension
+            extension = ''.join(path.suffixes).lower()
+
+            # Destination path
+            new_path = console.path.joinpath(
+                ''.join([path.stem, extension])).expanduser()
+
+            # Check consoles games subdirectory
+            if not new_path.parent.exists():
+
+                if options["create"]:
+                    new_path.parent.mkdir(mode=0o755, parents=True)
+
+                else:
+                    self.logger.warning(
+                        "%s directory not exists" % new_path.parent)
+
+            # Replace an existing file
+            if new_path.exists():
+                if new_path.is_file() and options["replace"]:
+                    new_path.unlink()
+
+            # Move or copy file to the correct location
+            if new_path.parent.exists() and new_path.parent.is_dir() and \
+                not new_path.exists():
+                validate_index += 1
+
+                copy(path, new_path)
+
+                if not options["copy"]:
+                    path.unlink()
+
+                game = console.get_game(generate_identifier(new_path))
+
+                # Add a new game to console storage if not exists
+                if game is None:
+                    game = console.add_game(new_path)
+
+                # Update installed time
+                else:
+                    game.installed = datetime.fromtimestamp(
+                        getctime(new_path)).date()
+
+                # Update console tooltip
+                if console.id in self.consoles_iter:
+                    row = self.consoles_iter[console.id]
+
+                    text = _("No game")
+                    if len(console.get_games()) == 1:
+                        text = _("1 game")
+                    elif len(console.get_games()) > 1:
+                        text = _("%d games") % len(console.get_games())
+
+                    row.set_tooltip_text(text)
+
+                # This file is owned by current selected console
+                if self.selection["console"] is not None and \
+                    console.id == self.selection["console"].id:
+
+                    # Remove an old entry in views
+                    if game.id in self.game_path:
+                        self.model_games_list.remove(
+                            self.game_path[game.id][1])
+                        self.model_games_grid.remove(
+                            self.game_path[game.id][2])
+
+                        del self.game_path[game.id]
+
+                    # Add a new item to views
+                    if self.__on_append_game(console, game):
+                        self.set_informations_headerbar()
+
+        # Show an informative dialog
+        text = _("No game has been added")
+
+        if validate_index == 1:
+            text = _("1 game has been added")
+
+        elif validate_index > 2:
+            text = _("%d games has been added") % validate_index
+
+        self.set_message(_("Games installation"), text,
+            Icons.Symbolic.INFORMATION)
+
+        # Update consoles filters
+        self.__on_update_consoles()
+
+        self.set_sensitive(True)
+
+        self.progress_statusbar.hide()
+
+        yield False
 
 
     def __block_signals(self):
