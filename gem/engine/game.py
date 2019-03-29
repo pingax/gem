@@ -113,9 +113,9 @@ class Game(object):
             environment = self.__parent.environment
 
             if self.id in environment.keys():
-                for option in environment.options(game.id):
+                for option in environment.options(self.id):
                     self.environment[option.upper()] = environment.get(
-                        game.id, option, fallback=str())
+                        self.id, option, fallback=str())
 
 
     def __init_from_database(self):
