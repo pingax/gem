@@ -3750,8 +3750,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.check_selection()
 
-        self.set_informations_headerbar(
-            self.selection["game"], self.selection["console"])
+        self.set_informations_headerbar(self.__on_retrieve_selected_game(),
+            self.__on_retrieve_selected_console())
 
 
     def filters_reset(self, widget=None, events=None):
@@ -3922,156 +3922,267 @@ class MainWindow(Gtk.ApplicationWindow):
         """ Update headerbar title and subtitle
         """
 
+        self.__block_signals()
+
         self.sidebar_image = None
 
-        game = self.selection["game"]
-        console = self.selection["console"]
+        game = self.__on_retrieve_selected_game()
+        console = self.__on_retrieve_selected_console()
 
-        # ----------------------------------------
-        #   Reset widgets
-        # ----------------------------------------
-
+        # Update headerbar and statusbar informations
         self.set_informations_headerbar(game, console)
 
-        # Hide sidebar widgets
-        self.grid_sidebar_score.set_visible(False)
-        self.grid_sidebar_informations.set_visible(False)
-        self.frame_sidebar_screenshot.set_visible(False)
-        self.button_sidebar_tags.set_sensitive(False)
+        # ----------------------------------------
+        #   Toolbar
+        # ----------------------------------------
 
         # Remove tags list
         for widget in self.menu_sidebar_tags.get_children():
             self.menu_sidebar_tags.remove(widget)
 
-        self.label_sidebar_title.set_text(str())
+        # ----------------------------------------
+        #   Sidebar
+        # ----------------------------------------
 
-        # Reset sidebar screenshot
+        # Hide sidebar widgets
+        self.grid_sidebar_score.set_visible(False)
+        self.grid_sidebar_informations.set_visible(False)
+        self.frame_sidebar_screenshot.set_visible(False)
+
+        # Reset sidebar informations
+        self.label_sidebar_title.set_text(str())
         self.image_sidebar_screenshot.set_from_pixbuf(None)
 
-        # Reset statusbar flags icons
-        self.image_statusbar_properties.set_from_pixbuf(self.icons.blank())
+        # ----------------------------------------
+        #   Statusbar
+        # ----------------------------------------
+
+        self.image_statusbar_properties.set_from_pixbuf(None)
+        self.image_statusbar_savestates.set_from_pixbuf(None)
+        self.image_statusbar_screenshots.set_from_pixbuf(None)
         self.image_statusbar_properties.set_tooltip_text(str())
-        self.image_statusbar_savestates.set_from_pixbuf(self.icons.blank())
         self.image_statusbar_savestates.set_tooltip_text(str())
-        self.image_statusbar_screenshots.set_from_pixbuf(self.icons.blank())
         self.image_statusbar_screenshots.set_tooltip_text(str())
 
         # ----------------------------------------
-        #   Set game informations
+        #   Update informations
         # ----------------------------------------
 
-        if game is not None and console is not None:
+        if game is not None:
+
+            # ----------------------------------------
+            #   Widgets
+            # ----------------------------------------
+
+            self.__on_game_launch_button_update(not game.id in self.threads)
+
+            self.button_toolbar_launch.set_sensitive(True)
+
+            # This game is not running
+            if not game.id in self.threads:
+                self.item_menubar_game_launch.set_sensitive(True)
+                self.item_menubar_database.set_sensitive(True)
+                self.item_menubar_delete.set_sensitive(True)
+
+                self.item_game_launch.set_sensitive(True)
+                self.item_game_database.set_sensitive(True)
+                self.item_game_remove.set_sensitive(True)
+
+            # Menus
+            self.item_menubar_copy.set_sensitive(True)
+            self.item_menubar_cover.set_sensitive(True)
+            self.item_menubar_desktop.set_sensitive(True)
+            self.item_menubar_duplicate.set_sensitive(True)
+            self.item_menubar_edit_file.set_sensitive(True)
+            self.item_menubar_game_favorite.set_sensitive(True)
+            self.item_menubar_game_finish.set_sensitive(True)
+            self.item_menubar_game_multiplayer.set_sensitive(True)
+            self.item_menubar_game_notes.set_sensitive(True)
+            self.item_menubar_game_properties.set_sensitive(True)
+            self.item_menubar_maintenance.set_sensitive(True)
+            self.item_menubar_open.set_sensitive(True)
+            self.item_menubar_rename.set_sensitive(True)
+            self.item_menubar_score.set_sensitive(True)
+
+            # Game menu
+            self.item_game_copy.set_sensitive(True)
+            self.item_game_cover.set_sensitive(True)
+            self.item_game_desktop.set_sensitive(True)
+            self.item_game_duplicate.set_sensitive(True)
+            self.item_game_edit_file.set_sensitive(True)
+            self.item_game_favorite.set_sensitive(True)
+            self.item_game_finish.set_sensitive(True)
+            self.item_game_maintenance.set_sensitive(True)
+            self.item_game_multiplayer.set_sensitive(True)
+            self.item_game_notes.set_sensitive(True)
+            self.item_game_open.set_sensitive(True)
+            self.item_game_rename.set_sensitive(True)
+
+            # Toolbar
+            self.button_toolbar_notes.set_sensitive(True)
+            self.button_toolbar_parameters.set_sensitive(True)
+
+            # ----------------------------------------
+            #   Sidebar
+            # ----------------------------------------
+
             self.grid_sidebar_score.set_visible(True)
             self.grid_sidebar_informations.set_visible(True)
 
-            self.label_sidebar_title.set_markup("<span weight='bold' "
-                "size='large'>%s</span>" % replace_for_markup(game.name))
+            self.label_sidebar_title.set_markup(
+                "<span weight='bold' size='large'>%s</span>" % \
+                replace_for_markup(game.name))
 
             # ----------------------------------------
-            #   Show game tags
+            #   Game special menu entries
             # ----------------------------------------
 
-            self.button_sidebar_tags.set_sensitive(len(game.tags) > 0)
+            # Game editable file
+            if magic_from_file(game.path, mime=True).startswith("text/"):
+                self.item_game_edit_file.set_sensitive(True)
+                self.item_menubar_edit_file.set_sensitive(True)
 
-            # Append game tags
-            for tag in sorted(game.tags):
-                item = Gtk.MenuItem.new_with_label(tag)
+            if game.emulator is not None:
 
-                item.connect("activate", self.__on_filter_tag)
+                # Check extension and emulator for GBA game on mednafen
+                if self.__mednafen_status and game.extension == ".gba":
 
-                self.menu_sidebar_tags.append(item)
-
-            self.menu_sidebar_tags.show_all()
+                    if "mednafen" in str(game.emulator.binary):
+                        self.item_game_mednafen.set_sensitive(True)
+                        self.item_menubar_mednafen.set_sensitive(True)
 
             # ----------------------------------------
-            #   Statusbar flags
+            #   Game flags
             # ----------------------------------------
 
-            # Retrieve game screenshots from emulator screenshots path
-            screenshots = game.screenshots
+            self.item_menubar_game_favorite.set_active(game.favorite)
+            self.item_menubar_game_multiplayer.set_active(game.multiplayer)
+            self.item_menubar_game_finish.set_active(game.finish)
+
+            self.item_game_favorite.set_active(game.favorite)
+            self.item_game_multiplayer.set_active(game.multiplayer)
+            self.item_game_finish.set_active(game.finish)
+
+            # ----------------------------------------
+            #   Game screenshots
+            # ----------------------------------------
 
             pixbuf = self.icons.get_translucent("screenshot")
 
-            # Check if rom has some screenshots
-            if len(screenshots) > 0:
+            # Check screenshots
+            if len(game.screenshots) > 0:
                 pixbuf = self.icons.get("screenshot")
+
+                self.button_toolbar_screenshots.set_sensitive(True)
+                self.item_game_screenshots.set_sensitive(True)
+                self.item_menubar_game_screenshots.set_sensitive(True)
+
+                text = _("1 screenshot")
+                if len(game.screenshots) > 1:
+                    text = _("%d screenshots") % len(game.screenshots)
+
+                self.image_statusbar_screenshots.set_tooltip_text(text)
 
                 # Ordered game screenshots
                 if not self.use_random_screenshot:
-                    screenshots = sorted(screenshots)
+                    screenshots = sorted(game.screenshots)
 
                 # Get a random file from game screenshots
                 else:
+                    screenshots = game.screenshots
+
                     shuffle(screenshots)
 
                 self.sidebar_image = Path(screenshots[-1])
 
-                text = _("%d screenshots")
-                if len(screenshots) == 1:
-                    text = _("%d screenshot")
-
-                self.image_statusbar_screenshots.set_tooltip_text(
-                    text % len(screenshots))
-
-            # Set statusbar icon for screenshot status
-            self.image_statusbar_screenshots.set_from_pixbuf(pixbuf)
-
-            # Game emulator
-            if game.emulator is not None:
-
-                # Game savestates
-                pixbuf = self.icons.get_translucent("savestate")
-
-                if len(game.savestates) > 0:
-                    pixbuf = self.icons.get("savestate")
-
-                    text = _("%d savestates")
-                    if len(game.savestates) == 1:
-                        text = _("%d savestate")
-
-                    self.image_statusbar_savestates.set_tooltip_text(
-                        text % len(game.savestates))
-
-                self.image_statusbar_savestates.set_from_pixbuf(pixbuf)
-
-                # Game custom parameters
-                pixbuf = self.icons.get_translucent("parameter")
-
-                if len(game.default) > 0 or \
-                    not game.emulator == console.emulator:
-                    pixbuf = self.icons.get("parameter")
-
-                    if len(game.default) > 0:
-                        self.image_statusbar_properties.set_tooltip_text(
-                            _("Use alternative arguments"))
-
-                    elif game.emulator == console.emulator:
-                        self.image_statusbar_properties.set_tooltip_text(
-                            _("Use alternative emulator"))
-
-                self.image_statusbar_properties.set_from_pixbuf(pixbuf)
-
-            # ----------------------------------------
-            #   Sidebar screenshot
-            # ----------------------------------------
-
-            if self.sidebar_image is not None:
-                pixbuf = None
-
+                # Update sidebar screenshot
                 if self.sidebar_image.exists():
 
                     height = 200
                     if self.__current_orientation == Gtk.Orientation.HORIZONTAL:
                         height = 250
 
-                    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
-                        str(self.sidebar_image), 300, height, True)
+                    # Set sidebar screenshot
+                    self.image_sidebar_screenshot.set_from_pixbuf(
+                        GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                        str(self.sidebar_image), 300, height, True))
 
-                # Set sidebar screenshot
-                self.image_sidebar_screenshot.set_from_pixbuf(pixbuf)
+                    self.frame_sidebar_screenshot.set_visible(True)
+                    self.frame_sidebar_screenshot.show_all()
 
-                self.frame_sidebar_screenshot.set_visible(True)
-                self.frame_sidebar_screenshot.show_all()
+            else:
+                self.image_statusbar_screenshots.set_tooltip_text(
+                    _("No screenshot"))
+
+            # Set statusbar icon for screenshot status
+            self.image_statusbar_screenshots.set_from_pixbuf(pixbuf)
+
+            # ----------------------------------------
+            #   Game log
+            # ----------------------------------------
+
+            # Check game log file
+            if self.check_log() is not None:
+                self.button_toolbar_output.set_sensitive(True)
+                self.item_game_output.set_sensitive(True)
+                self.item_menubar_game_output.set_sensitive(True)
+
+            # ----------------------------------------
+            #   Game tags
+            # ----------------------------------------
+
+            if len(game.tags) > 0:
+                self.button_sidebar_tags.set_sensitive(True)
+
+                # Append game tags
+                for tag in sorted(game.tags):
+                    item = Gtk.MenuItem.new_with_label(tag)
+                    item.connect("activate", self.__on_filter_tag)
+
+                    self.menu_sidebar_tags.append(item)
+
+                self.menu_sidebar_tags.show_all()
+
+            # ----------------------------------------
+            #   Game savestates
+            # ----------------------------------------
+
+            pixbuf = self.icons.get_translucent("savestate")
+
+            if len(game.savestates) > 0:
+                pixbuf = self.icons.get("savestate")
+
+                text = _("1 savestate")
+                if len(game.savestates) > 1:
+                    text = _("%d savestates") % len(game.savestates)
+
+                self.image_statusbar_savestates.set_tooltip_text(text)
+
+            else:
+                self.image_statusbar_savestates.set_tooltip_text(
+                    _("No savestate"))
+
+            self.image_statusbar_savestates.set_from_pixbuf(pixbuf)
+
+            # ----------------------------------------
+            #   Game custom parameters
+            # ----------------------------------------
+
+            # Game custom parameters
+            pixbuf = self.icons.get_translucent("parameter")
+
+            if len(game.default) > 0 or not game.emulator == console.emulator:
+                pixbuf = self.icons.get("parameter")
+
+                if len(game.default) > 0:
+                    self.image_statusbar_properties.set_tooltip_text(
+                        _("Use alternative arguments"))
+
+                elif game.emulator == console.emulator:
+                    self.image_statusbar_properties.set_tooltip_text(
+                        _("Use alternative emulator"))
+
+            self.image_statusbar_properties.set_from_pixbuf(pixbuf)
 
             # ----------------------------------------
             #   Sidebar informations
@@ -4151,6 +4262,8 @@ class MainWindow(Gtk.ApplicationWindow):
                     # Show game score as tooltip
                     data["widget"].set_tooltip_text("%d/5" % game.score)
 
+        self.__unblock_signals()
+
 
     def set_informations_headerbar(self, game=None, console=None):
         """ Update headerbar and statusbar informations from games list
@@ -4164,10 +4277,10 @@ class MainWindow(Gtk.ApplicationWindow):
         """
 
         if game is None:
-            game = self.selection["game"]
+            game = self.__on_retrieve_selected_game()
 
         if console is None:
-            console = self.selection["console"]
+            console = self.__on_retrieve_selected_console()
 
         emulator = None
         if console is not None:
@@ -4327,8 +4440,8 @@ class MainWindow(Gtk.ApplicationWindow):
         configuration file
         """
 
-        game = self.selection["game"]
-        console = self.selection["console"]
+        game = self.__on_retrieve_selected_game()
+        console = self.__on_retrieve_selected_console()
 
         if game is not None and console is not None:
 
@@ -4501,7 +4614,7 @@ class MainWindow(Gtk.ApplicationWindow):
         open
         """
 
-        game = self.selection["game"]
+        game = self.__on_retrieve_selected_game()
 
         if game is not None:
             path = Folders.LOCAL.joinpath("notes", game.id + ".txt")
@@ -5109,6 +5222,23 @@ class MainWindow(Gtk.ApplicationWindow):
             self.list_thread = GLib.idle_add(loader.__next__)
 
 
+    def __on_retrieve_selected_console(self):
+        """ Retrieve console object instance from current selection
+
+        Returns
+        -------
+        gem.engine.console.Console or None
+            Console instance when a selection exists, None otherwise
+        """
+
+        row = self.listbox_consoles.get_selected_row()
+
+        if row is not None:
+            return getattr(row, "console", None)
+
+        return None
+
+
     def __on_sort_consoles(self, first_row, second_row, *args):
         """ Sort consoles to reorganize them
 
@@ -5714,239 +5844,63 @@ class MainWindow(Gtk.ApplicationWindow):
             Event which triggered this signal
         """
 
-        available_events = [
-            Gdk.EventType.BUTTON_PRESS,
-            Gdk.EventType._2BUTTON_PRESS,
-            Gdk.EventType._3BUTTON_PRESS
-        ]
-
-        game = None
-        treeiter = None
+        # ----------------------------------------
+        #   Mouse events
+        # ----------------------------------------
 
         run_game = False
 
-        # ----------------------------------------
-        #   Keyboard
-        # ----------------------------------------
+        # Set selection from cursor position
+        if event.type == Gdk.EventType.BUTTON_PRESS:
+            selection = treeview.get_path_at_pos(int(event.x), int(event.y))
 
-        if event.type == Gdk.EventType.KEY_RELEASE:
+            if selection is not None:
 
-            if treeview == self.treeview_games:
-                model, treeiter = treeview.get_selection().get_selected()
-
-            elif treeview == self.iconview_games:
-                model = treeview.get_model()
-                items = treeview.get_selected_items()
-
-                if len(items) >= 1:
-                    treeiter = model.get_iter(items[0])
-
-        # ----------------------------------------
-        #   Mouse
-        # ----------------------------------------
-
-        elif event.type in available_events and event.button in (1, 2, 3):
-
-            # Get selection from cursor position
-            if event.type == Gdk.EventType.BUTTON_PRESS:
+                if treeview == self.iconview_games:
+                    self.iconview_games.select_path(selection)
 
                 # Avoid to click on treeview header
-                if treeview == self.iconview_games or \
-                    event.window == treeview.get_bin_window():
-                    selection = treeview.get_path_at_pos(
-                        int(event.x), int(event.y))
+                elif event.window == treeview.get_bin_window():
+                    self.treeview_games.set_cursor(selection[0], None, False)
 
-                    if selection is not None:
-                        model = treeview.get_model()
+        # Mouse - Double click with left mouse button
+        if event.type == Gdk.EventType._2BUTTON_PRESS and event.button == 1:
 
-                        if treeview == self.treeview_games:
-                            treeiter = model.get_iter(selection[0])
-
-                        elif treeview == self.iconview_games:
-                            treeiter = model.get_iter(selection)
-
-                # Avoid to lose selection when right-click on header
-                elif treeview == self.treeview_games:
-                    model, treeiter = treeview.get_selection().get_selected()
-
-            # Get selection from TreeView
-            elif treeview == self.treeview_games:
-                model, treeiter = treeview.get_selection().get_selected()
-
-            # Get selection from IconView
-            elif treeview == self.iconview_games:
-                model = treeview.get_model()
-                items = treeview.get_selected_items()
-
-                if len(items) >= 1:
-                    treeiter = model.get_iter(items[0])
-
-            # Mouse - Double click with left mouse button
-            if event.type == Gdk.EventType._2BUTTON_PRESS and event.button == 1:
+            if treeview == self.iconview_games:
                 run_game = True
 
-        # ----------------------------------------
-        #   Retrieve selection
-        # ----------------------------------------
-
-        # Get game data
-        if type(treeiter) is Gtk.TreeIter:
-
-            column_id = Columns.List.OBJECT
-            if type(treeview) is Gtk.IconView:
-                column_id = Columns.Grid.OBJECT
-
-            game = model.get_value(treeiter, column_id)
+            # Avoid to click on treeview header
+            elif event.window == treeview.get_bin_window():
+                run_game = True
 
         # ----------------------------------------
         #   Game selected
         # ----------------------------------------
 
-        # Check if the selected game has already been showed
-        same_game = (self.selection["game"] == game)
-
-        self.selection["game"] = game
-
-        if game is not None:
-            console = self.selection["console"]
-
-            if console is not None:
-
-                if not same_game:
-                    self.sensitive_interface(True)
-
-                # ----------------------------------------
-                #   Manage widgets
-                # ----------------------------------------
-
-                # This game is currently running
-                if game.id in self.threads:
-                    self.__on_game_launch_button_update(False)
-                    self.button_toolbar_launch.set_sensitive(True)
-
-                    self.item_game_launch.set_sensitive(False)
-                    self.item_game_database.set_sensitive(False)
-                    self.item_game_remove.set_sensitive(False)
-                    self.item_game_mednafen.set_sensitive(False)
-
-                    self.item_menubar_game_launch.set_sensitive(False)
-                    self.item_menubar_database.set_sensitive(False)
-                    self.item_menubar_delete.set_sensitive(False)
-                    self.item_menubar_mednafen.set_sensitive(False)
-
-                # This is not the same selection, so we change widgets status
-                if not same_game:
-
-                    # Game editable file
-                    if not magic_from_file(
-                        game.path, mime=True).startswith("text/"):
-                        self.item_game_edit_file.set_sensitive(False)
-                        self.item_menubar_edit_file.set_sensitive(False)
-
-                    # Mednafen specific entries
-                    self.item_game_mednafen.set_sensitive(False)
-                    self.item_menubar_mednafen.set_sensitive(False)
-
-                    # Screenshots viewer widgets
-                    self.button_toolbar_screenshots.set_sensitive(False)
-                    self.item_game_screenshots.set_sensitive(False)
-                    self.item_menubar_game_screenshots.set_sensitive(False)
-
-                    if game.emulator is not None:
-
-                        # Check extension and emulator for GBA game on mednafen
-                        if self.__mednafen_status and game.extension == ".gba":
-
-                            if "mednafen" in str(game.emulator.binary):
-                                self.item_game_mednafen.set_sensitive(True)
-                                self.item_menubar_mednafen.set_sensitive(True)
-
-                    # Check screenshots
-                    if len(game.screenshots) > 0:
-                        self.button_toolbar_screenshots.set_sensitive(True)
-                        self.item_game_screenshots.set_sensitive(True)
-                        self.item_menubar_game_screenshots.set_sensitive(True)
-
-                    # Check game log file
-                    if self.check_log() is None:
-                        self.button_toolbar_output.set_sensitive(False)
-                        self.item_game_output.set_sensitive(False)
-                        self.item_menubar_game_output.set_sensitive(False)
-
-                    # Block signals
-                    self.__block_signals()
-
-                    self.item_menubar_game_favorite.set_active(
-                        game.favorite)
-                    self.item_menubar_game_multiplayer.set_active(
-                        game.multiplayer)
-                    self.item_menubar_game_finish.set_active(
-                        game.finish)
-
-                    self.item_game_favorite.set_active(
-                        game.favorite)
-                    self.item_game_multiplayer.set_active(
-                        game.multiplayer)
-                    self.item_game_finish.set_active(
-                        game.finish)
-
-                    # Retrieve path from storage cache
-                    treeiter, griditer = self.game_path[game.id][1:]
-
-                    # Update selection in grid view
-                    if type(treeview) is Gtk.TreeView:
-                        subiter = \
-                            self.sorted_games_grid.convert_child_iter_to_iter(
-                            self.filter_games_grid.convert_child_iter_to_iter(
-                            griditer)[1])[1]
-
-                        path = self.sorted_games_grid.get_path(subiter)
-
-                        if path is not None:
-                            self.iconview_games.select_path(path)
-                            self.iconview_games.scroll_to_path(
-                                path, True, 0.5, 0.5)
-
-                        else:
-                            self.iconview_games.unselect_all()
-
-                    # Update selection in list view
-                    elif type(treeview) is Gtk.IconView:
-                        subiter = \
-                            self.sorted_games_list.convert_child_iter_to_iter(
-                            self.filter_games_list.convert_child_iter_to_iter(
-                            treeiter)[1])[1]
-
-                        path = self.sorted_games_list.get_path(subiter)
-
-                        if path is not None:
-                            self.treeview_games.set_cursor(path, None, False)
-                            self.treeview_games.scroll_to_cell(
-                                path, None, True, 0.5, 0.5)
-
-                        else:
-                            self.treeview_games.get_selection().unselect_all()
-
-                    self.__unblock_signals()
-
-                # The user has do a specific action to launch current game
-                if run_game:
-                    self.__on_game_launch()
+        # Current selected game
+        game = self.__on_retrieve_selected_game()
 
         # No game has been choosen (when the user click in the empty view area)
-        else:
+        if game is None:
+            # Unselect both games views
             self.treeview_games.get_selection().unselect_all()
             self.iconview_games.unselect_all()
 
-            self.selection["game"] = None
+        # A new game has been selected
+        elif not self.selection["game"] == game:
+            # Synchronize selection between both games views
+            self.__on_synchronize_game_selection(treeview, game)
 
-            self.__on_game_launch_button_update(True)
-
+            # Update game informations and widgets
             self.sensitive_interface()
-
-        # Update sidebar when this is another selection
-        if not same_game:
             self.set_informations()
+
+        # Store game instance
+        self.selection["game"] = game
+
+        # The user has do a specific action to launch current game
+        if run_game:
+            self.__on_game_launch()
 
 
     def __on_selected_game_tooltip(self, treeview, x, y, keyboard, tooltip):
@@ -6080,6 +6034,82 @@ class MainWindow(Gtk.ApplicationWindow):
                     return True
 
         return False
+
+
+    def __on_retrieve_selected_game(self):
+        """ Retrieve game object instance from current selection
+
+        Returns
+        -------
+        gem.engine.game.Game or None
+            Game instance when a selection exists, None otherwise
+        """
+
+        # Grid view
+        if self.button_toolbar_grid.get_active():
+            model = self.iconview_games.get_model()
+            items = self.iconview_games.get_selected_items()
+
+            if len(items) >= 1:
+                treeiter = model.get_iter(items[0])
+
+                if treeiter is not None:
+                    return model.get_value(treeiter, Columns.Grid.OBJECT)
+
+        # List view
+        elif self.button_toolbar_list.get_active():
+            selection = self.treeview_games.get_selection()
+
+            if selection is not None:
+                model, treeiter = selection.get_selected()
+
+                if treeiter is not None:
+                    return model.get_value(treeiter, Columns.List.OBJECT)
+
+        return None
+
+
+    def __on_synchronize_game_selection(self, view, game):
+        """ Synchronize grid and list views selection
+
+        Parameters
+        ----------
+        view : Gtk.Widget
+            Games view currently selected
+        game : gem.engine.game.Game
+            Game instance
+        """
+
+        if game is not None and game.id in self.game_path:
+
+            if view == self.treeview_games:
+                viewiter = self.sorted_games_grid.convert_child_iter_to_iter(
+                    self.filter_games_grid.convert_child_iter_to_iter(
+                    self.game_path[game.id][2])[1])[1]
+
+                path = self.sorted_games_grid.get_path(viewiter)
+
+                if path is not None:
+                    self.iconview_games.select_path(path)
+                    self.iconview_games.scroll_to_path(path, True, 0.5, 0.5)
+
+                else:
+                    self.iconview_games.unselect_all()
+
+            elif view == self.iconview_games:
+                viewiter = self.sorted_games_list.convert_child_iter_to_iter(
+                    self.filter_games_list.convert_child_iter_to_iter(
+                    self.game_path[game.id][1])[1])[1]
+
+                path = self.sorted_games_list.get_path(viewiter)
+
+                if path is not None:
+                    self.treeview_games.set_cursor(path, None, False)
+                    self.treeview_games.scroll_to_cell(
+                        path, None, True, 0.5, 0.5)
+
+                else:
+                    self.treeview_games.get_selection().unselect_all()
 
 
     def __on_reload_games(self, *args):
@@ -6353,7 +6383,7 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Check selection
         # ----------------------------------------
 
-        game = self.selection["game"]
+        game = self.__on_retrieve_selected_game()
 
         if game is None or game.emulator is None:
             return False
@@ -6371,7 +6401,7 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Check emulator
         # ----------------------------------------
 
-        console = self.selection["console"]
+        console = self.__on_retrieve_selected_console()
 
         if console is not None and game.emulator is not None:
 
@@ -6526,7 +6556,7 @@ class MainWindow(Gtk.ApplicationWindow):
         # ----------------------------------------
 
         # Get current selected file
-        select_game = self.selection["game"]
+        select_game = self.__on_retrieve_selected_game()
 
         # Check if current selected file is the same as thread file
         if select_game is not None and select_game.id == game.id:
@@ -6605,7 +6635,7 @@ class MainWindow(Gtk.ApplicationWindow):
             new name
         """
 
-        game = self.selection["game"]
+        game = self.__on_retrieve_selected_game()
 
         if game is not None:
             treeiter = self.game_path[game.id][1]
@@ -6627,8 +6657,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     row, treepath, gridpath = self.game_path[game.id]
 
-                    treepath = self.model_games_list.get_path(
-                        self.game_path[game.id][1])
+                    treepath = self.model_games_list.get_path(treepath)
 
                     # Update game name
                     self.model_games_list[treepath][Columns.List.NAME] = str(
@@ -6658,8 +6687,8 @@ class MainWindow(Gtk.ApplicationWindow):
         """ Set some maintenance for selected game
         """
 
-        game = self.selection["game"]
-        console = self.selection["console"]
+        game = self.__on_retrieve_selected_game()
+        console = self.__on_retrieve_selected_console()
 
         if game is not None and console is not None:
 
@@ -6763,8 +6792,8 @@ class MainWindow(Gtk.ApplicationWindow):
         savestates and game file.
         """
 
-        game = self.selection["game"]
-        console = self.selection["console"]
+        game = self.__on_retrieve_selected_game()
+        console = self.__on_retrieve_selected_console()
 
         if game is not None and console is not None:
 
@@ -6854,10 +6883,10 @@ class MainWindow(Gtk.ApplicationWindow):
         data
         """
 
-        game = self.selection["game"]
+        game = self.__on_retrieve_selected_game()
 
         if game is not None:
-            console = self.selection["console"]
+            console = self.__on_retrieve_selected_console()
 
             need_to_reload = False
 
@@ -6913,8 +6942,8 @@ class MainWindow(Gtk.ApplicationWindow):
         emulator arguments for the selected game
         """
 
-        game = self.selection["game"]
-        console = self.selection["console"]
+        game = self.__on_retrieve_selected_game()
+        console = self.__on_retrieve_selected_console()
 
         if game is not None and console is not None:
 
@@ -6973,7 +7002,7 @@ class MainWindow(Gtk.ApplicationWindow):
                         self.icons.get_translucent("parameter"), game.id)
 
                 # ----------------------------------------
-                #   Update icons
+                #   Update views
                 # ----------------------------------------
 
                 # Screenshots
@@ -7000,6 +7029,14 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.set_game_data(Columns.List.SAVESTATE,
                         self.icons.get_translucent("savestate"), game.id)
 
+                # Objects
+                row, treepath, gridpath = self.game_path[game.id]
+
+                treepath = self.model_games_list.get_path(treepath)
+
+                self.model_games_list[treepath][Columns.List.OBJECT] = game
+                self.model_games_grid[gridpath][Columns.Grid.OBJECT] = game
+
                 self.set_informations()
 
             self.set_sensitive(True)
@@ -7016,7 +7053,7 @@ class MainWindow(Gtk.ApplicationWindow):
         path = self.check_log()
 
         if path is not None and path.exists():
-            game = self.selection["game"]
+            game = self.__on_retrieve_selected_game()
 
             try:
                 size = self.config.get(
@@ -7048,8 +7085,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
         if self.item_game_mednafen.get_sensitive():
 
-            game = self.selection["game"]
-            console = self.selection["console"]
+            game = self.__on_retrieve_selected_game()
+            console = self.__on_retrieve_selected_console()
 
             if game is not None and console is not None:
                 content = dict()
@@ -7104,7 +7141,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.__block_signals()
 
-        game = self.selection["game"]
+        game = self.__on_retrieve_selected_game()
 
         if game is not None:
             row, treepath, gridpath = self.game_path[game.id]
@@ -7157,7 +7194,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.__block_signals()
 
-        game = self.selection["game"]
+        game = self.__on_retrieve_selected_game()
 
         if game is not None:
             row, treepath, gridpath = self.game_path[game.id]
@@ -7210,7 +7247,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.__block_signals()
 
-        game = self.selection["game"]
+        game = self.__on_retrieve_selected_game()
 
         if game is not None:
             row, treepath, gridpath = self.game_path[game.id]
@@ -7265,7 +7302,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         modification = False
 
-        game = self.selection["game"]
+        game = self.__on_retrieve_selected_game()
 
         if game is not None:
 
@@ -7312,7 +7349,7 @@ class MainWindow(Gtk.ApplicationWindow):
         This function check if the game file mime type is text/
         """
 
-        game = self.selection["game"]
+        game = self.__on_retrieve_selected_game()
 
         if game is not None:
 
@@ -7348,7 +7385,7 @@ class MainWindow(Gtk.ApplicationWindow):
         """ Copy path folder which contains selected game to clipboard
         """
 
-        game = self.selection["game"]
+        game = self.__on_retrieve_selected_game()
 
         if game is not None:
             self.clipboard.set_text(str(game.path), -1)
@@ -7358,7 +7395,7 @@ class MainWindow(Gtk.ApplicationWindow):
         """ Set a new cover for selected game
         """
 
-        game = self.selection["game"]
+        game = self.__on_retrieve_selected_game()
 
         if game is not None:
             self.set_sensitive(False)
@@ -7458,8 +7495,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
         model, treeiter = self.treeview_games.get_selection().get_selected()
 
-        game = self.selection["game"]
-        console = self.selection["console"]
+        game = self.__on_retrieve_selected_game()
+        console = self.__on_retrieve_selected_console()
 
         if treeiter is not None and game is not None and console is not None:
 
@@ -7820,7 +7857,7 @@ class MainWindow(Gtk.ApplicationWindow):
         path = None
 
         if widget in (self.item_menubar_copy, self.item_game_copy):
-            game = self.selection["game"]
+            game = self.__on_retrieve_selected_game()
 
             if game is not None and game.path.parent.exists():
                 path = game.path
@@ -7846,7 +7883,7 @@ class MainWindow(Gtk.ApplicationWindow):
         path = None
 
         if widget in (self.item_menubar_open, self.item_game_open):
-            game = self.selection["game"]
+            game = self.__on_retrieve_selected_game()
 
             if game is not None and game.path.parent.exists():
                 path = game.path.parent
@@ -7887,9 +7924,10 @@ class MainWindow(Gtk.ApplicationWindow):
         """
 
         if type(widget) is Gtk.TreeView or type(widget) is Gtk.IconView:
+            game = self.__on_retrieve_selected_game()
 
-            if self.selection["game"] is not None:
-                data.set_uris(["file://%s" % self.selection["game"].path])
+            if game is not None:
+                data.set_uris(["file://%s" % game.path])
 
         elif type(widget) is Gtk.Viewport:
 
@@ -8179,7 +8217,7 @@ class MainWindow(Gtk.ApplicationWindow):
             Output file path
         """
 
-        game = self.selection["game"]
+        game = self.__on_retrieve_selected_game()
 
         if game is not None:
             log_path = Folders.LOCAL.joinpath("logs", game.id + ".log")

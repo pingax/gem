@@ -38,15 +38,15 @@ from re import compile as re_compile
 class Console(object):
 
     attributes = {
-        "id": (str, str()),
-        "name": (str, str()),
-        "icon": (Path, None),
-        "path": (Path, None),
-        "emulator": (Emulator, None),
-        "ignores": (list, list()),
-        "extensions": (list, list()),
-        "favorite": (bool, False),
-        "recursive": (bool, False)
+        "id": str,
+        "name": str,
+        "icon": Path,
+        "path": Path,
+        "emulator": Emulator,
+        "ignores": list,
+        "extensions": list,
+        "favorite": bool,
+        "recursive": bool
     }
 
 
@@ -79,11 +79,19 @@ class Console(object):
         """ Initialize object attributes
         """
 
-        for key, (key_type, default) in self.attributes.items():
+        for key, key_type in self.attributes.items():
 
-            value = default
             if key in kwargs.keys():
                 value = kwargs[key]
+
+            elif key_type is Emulator or key_type is Path:
+                value = None
+
+            elif key_type is bool:
+                value = False
+
+            else:
+                value = key_type()
 
             setattr(self, key, value)
 
@@ -108,7 +116,7 @@ class Console(object):
                     setattr(self, key, False)
 
             elif key_type is list and type(value) is str:
-                setattr(self, key, default)
+                setattr(self, key, key_type())
 
                 if len(value.strip()) > 0:
                     setattr(self, key, list(set(value.strip().split(';'))))

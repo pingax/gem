@@ -43,23 +43,23 @@ from shlex import split as shlex_split
 class Game(object):
 
     attributes = {
-        "id": (str, str()),
-        "name": (str, str()),
-        "key": (str, str()),
-        "default": (str, str()),
-        "cover": (Path, None),
-        "emulator": (Emulator, None),
-        "score": (int, 0),
-        "played": (int, 0),
-        "play_time": (timedelta, timedelta()),
-        "last_launch_time": (timedelta, timedelta()),
-        "last_launch_date": (date, date(1, 1, 1)),
-        "installed": (date, None),
-        "tags": (list, list()),
-        "environment": (dict, dict()),
-        "favorite": (bool, False),
-        "multiplayer": (bool, False),
-        "finish": (bool, False)
+        "id": str,
+        "name": str,
+        "key": str,
+        "default": str,
+        "cover": Path,
+        "emulator": Emulator,
+        "score": int,
+        "played": int,
+        "play_time": timedelta,
+        "last_launch_time": timedelta,
+        "last_launch_date": date,
+        "installed": date,
+        "tags": list,
+        "environment": dict,
+        "favorite": bool,
+        "multiplayer": bool,
+        "finish": bool
     }
 
 
@@ -98,8 +98,22 @@ class Game(object):
         """ Initialize object attributes
         """
 
-        for key, (key_type, default) in self.attributes.items():
-            setattr(self, key, default)
+        for key, key_type in self.attributes.items():
+
+            if key_type is Emulator or key_type is Path:
+                setattr(self, key, None)
+
+            elif key_type is date and key == "installed":
+                setattr(self, key, None)
+
+            elif key_type is date:
+                setattr(self, key, date(1, 1, 1))
+
+            elif key_type is bool:
+                setattr(self, key, False)
+
+            else:
+                setattr(self, key, key_type())
 
         setattr(self, "id", generate_identifier(self.__path))
 
@@ -144,7 +158,7 @@ class Game(object):
                     key = convert_keys[key]
 
                 if key in self.attributes.keys():
-                    key_type, default = self.attributes[key]
+                    key_type = self.attributes[key]
 
                     if key_type is Path and type(value) is str:
 

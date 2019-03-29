@@ -28,16 +28,16 @@ from gem.engine.utils import generate_identifier
 class Emulator(object):
 
     attributes = {
-        "id": (str, str()),
-        "name": (str, str()),
-        "default": (str, str()),
-        "windowed": (str, str()),
-        "fullscreen": (str, str()),
-        "icon": (Path, None),
-        "binary": (Path, None),
-        "configuration": (Path, None),
-        "savestates": (Path, None),
-        "screenshots": (Path, None)
+        "id": str,
+        "name": str,
+        "default": str,
+        "windowed": str,
+        "fullscreen": str,
+        "icon": Path,
+        "binary": Path,
+        "configuration": Path,
+        "savestates": Path,
+        "screenshots": Path
     }
 
 
@@ -68,11 +68,16 @@ class Emulator(object):
         """ Initialize object attributes
         """
 
-        for key, (key_type, default) in self.attributes.items():
+        for key, key_type in self.attributes.items():
 
-            value = default
             if key in kwargs.keys():
                 value = kwargs[key]
+
+            elif key_type is Path:
+                value = None
+
+            else:
+                value = key_type()
 
             setattr(self, key, value)
 
