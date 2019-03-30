@@ -1808,7 +1808,7 @@ class PreferencesWindow(CommonWindow):
         if not visible_widget:
             self.listbox_general_editor.remove(self.widget_editor_tab_width)
             self.listbox_general_editor.remove(self.widget_editor_colorscheme)
-            self.listbox_general_editor.remove(self.widget_editor_font)
+            self.listbox_general_editor.remove(self.widget_editor_lines_visible)
 
         # ------------------------------------
         #   Configuration file
