@@ -5863,6 +5863,11 @@ class MainWindow(Gtk.ApplicationWindow):
                 elif event.window == treeview.get_bin_window():
                     self.treeview_games.set_cursor(selection[0], None, False)
 
+            # Remove view selections
+            else:
+                self.iconview_games.unselect_all()
+                self.treeview_games.get_selection().unselect_all()
+
         # Mouse - Double click with left mouse button
         if event.type == Gdk.EventType._2BUTTON_PRESS and event.button == 1:
 
@@ -5885,6 +5890,10 @@ class MainWindow(Gtk.ApplicationWindow):
             # Unselect both games views
             self.treeview_games.get_selection().unselect_all()
             self.iconview_games.unselect_all()
+
+            # Reset sidebar widgets and menus entries
+            self.sensitive_interface()
+            self.set_informations()
 
         # A new game has been selected
         elif not self.selection["game"] == game:
