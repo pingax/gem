@@ -4844,6 +4844,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
             previous_id = emulator.id
 
+            # Retrieve the correct emulator instance from api
+            emulator = self.api.get_emulator(previous_id)
+
         dialog = EmulatorPreferences(self, emulator, self.api.emulators)
 
         if dialog.run() == Gtk.ResponseType.APPLY:
