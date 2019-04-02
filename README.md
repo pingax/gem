@@ -5,7 +5,7 @@ GEM (Graphical Emulators Manager) is a GTK+ Graphical User Interface (GUI) for
 GNU/Linux which allows you to easily manage your emulators. This software aims
 to stay the simplest.
 
-![GEM main interface](https://gem.tuxfamily.org/data/medias/preview.tb.png)
+![GEM main interface](preview.jpg)
 
 More informations on [GEM website](https://gem.tuxfamily.org/).
 
@@ -15,6 +15,10 @@ Licenses
 GEM is available under [GPLv3 license](https://www.gnu.org/licenses/gpl-3.0.html).
 
 GEM logo is available under [Free Art License](http://artlibre.org/licence/lal/en/).
+
+Consoles icons come from [Evan-Amos](https://commons.wikimedia.org/wiki/User:Evan-Amos)
+gallery and are available under [Public Domain](https://en.wikipedia.org/wiki/Public_domain)
+license.
 
 More informations about available emulators licenses [here](docs/LICENSE.emulators.md).
 
@@ -50,13 +54,7 @@ Thanks to Devil505 !
 $ eopkg install gem
 ```
 
-[Informations](https://dev.solus-project.com/source/gem/)
-
-### Icons
-
-Consoles icons come from [Evan-Amos](https://commons.wikimedia.org/wiki/User:Evan-Amos)
-gallery and are available under [Public Domain](https://en.wikipedia.org/wiki/Public_domain)
-license.
+[Informations](https://dev.getsol.us/source/gem/)
 
 Dependencies
 ------------
