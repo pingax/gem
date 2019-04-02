@@ -295,6 +295,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.window_size = Gdk.Geometry()
 
+        self.window_display = Gdk.Display.get_default()
+
         # Properties
         self.window_size.min_width = 800
         self.window_size.min_height = 600
@@ -5092,6 +5094,10 @@ class MainWindow(Gtk.ApplicationWindow):
             except OSError as error:
                 self.logger.warning(error)
 
+        else:
+            self.logger.warning(
+                "Cannot found games directory for %s" % console.name)
+
         icon = self.get_pixbuf_from_cache(
             "consoles", 24, console.id, console.icon)
 
@@ -8072,6 +8078,10 @@ class MainWindow(Gtk.ApplicationWindow):
         Using yield to show a progressbar whitout freeze
         """
 
+        # Update mouse cursor
+        self.get_window().set_cursor(
+            Gdk.Cursor.new_from_name(self.window_display, "wait"))
+
         self.progress_statusbar.set_text(None)
         self.progress_statusbar.show()
 
@@ -8160,6 +8170,9 @@ class MainWindow(Gtk.ApplicationWindow):
                     if self.__on_append_game(console, game):
                         self.set_informations_headerbar()
 
+                        self.scroll_sidebar.set_visible(self.config.getboolean(
+                            "gem", "show_sidebar", fallback=True))
+
                         # Grid view
                         if self.button_toolbar_grid.get_active():
                             self.scroll_games_grid.set_visible(True)
@@ -8171,6 +8184,10 @@ class MainWindow(Gtk.ApplicationWindow):
                             self.treeview_games.show_all()
 
                         self.scroll_games_placeholder.set_visible(False)
+
+        # Reset mouse cursor
+        self.get_window().set_cursor(
+            Gdk.Cursor.new_from_name(self.window_display, "default"))
 
         # Show an informative dialog
         text = _("No game has been added")

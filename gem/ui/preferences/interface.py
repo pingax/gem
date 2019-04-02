@@ -802,7 +802,7 @@ class PreferencesWindow(CommonWindow):
         self.label_games_column.set_use_markup(True)
         self.label_games_column.set_halign(Gtk.Align.CENTER)
         self.label_games_column.set_markup(
-            "<b>%s</b>" % _("Columns"))
+            "<b>%s</b>" % _("Columns visibility"))
 
         self.frame_games_column.set_margin_bottom(12)
 

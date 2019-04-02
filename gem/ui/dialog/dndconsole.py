@@ -221,7 +221,7 @@ class DNDConsoleDialog(CommonWindow):
 
         self.__notebook_pages.clear()
 
-        for path, consoles in self.filepaths.items():
+        for path, consoles in sorted(self.filepaths.items()):
             row = DNDGameRow(self.parent, path, consoles)
 
             if len(consoles) == 0:

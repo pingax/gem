@@ -30,6 +30,12 @@ msgid "%d games available"
 msgstr "%d juegos disponibles"
 
 #
+# File: gem/ui/interface.py, line: 8186
+#, python-format
+msgid "%d games has been added"
+msgstr ""
+
+#
 # File: gem/utils.py, line: 332
 #, python-format
 msgid "%d hours"
@@ -48,22 +54,10 @@ msgid "%d months ago"
 msgstr "hace %d meses"
 
 #
-# File: gem/ui/interface.py, line: 3989
-#, python-format
-msgid "%d savestate"
-msgstr ""
-
-#
 # File: gem/configuration.py, line: 71
 #, fuzzy, python-format
 msgid "%d savestates"
 msgstr "No puedo abrir el archivo %s"
-
-#
-# File: gem/interface.py, line: 2006
-#, fuzzy, python-format
-msgid "%d screenshot"
-msgstr "Mostrar las _capturas de pantalla"
 
 #
 # File: gem/interface.py, line: 2006
@@ -119,6 +113,11 @@ msgid "1 game available"
 msgstr "1 juego disponible"
 
 #
+# File: gem/ui/interface.py, line: 8183
+msgid "1 game has been added"
+msgstr ""
+
+#
 # File: gem/utils.py, line: 360
 msgid "1 hour"
 msgstr "1 hora"
@@ -127,6 +126,18 @@ msgstr "1 hora"
 # File: gem/interface.py, line: 2130
 msgid "1 minute"
 msgstr "1 minuto"
+
+#
+# File: gem/configuration.py, line: 71
+#, fuzzy
+msgid "1 savestate"
+msgstr "No puedo abrir el archivo %s"
+
+#
+# File: gem/interface.py, line: 2006
+#, fuzzy
+msgid "1 screenshot"
+msgstr "Mostrar las _capturas de pantalla"
 
 #
 # File: gem/utils.py, line: 350
@@ -381,8 +392,8 @@ msgid "Color scheme"
 msgstr "Esquema de color"
 
 #
-# File: gem/ui/preferences/interface.py, line: 791
-msgid "Columns"
+# File: gem/ui/preferences/interface.py, line: 805
+msgid "Columns visibility"
 msgstr ""
 
 #
@@ -856,6 +867,12 @@ msgid "Games folder"
 msgstr "Lista de juegos"
 
 #
+# File: gem/preferences.py, line: 328
+#, fuzzy
+msgid "Games installation"
+msgstr "Lista de juegos"
+
+#
 # File: gem/preferences.py, line: 301
 msgid "General"
 msgstr "General"
@@ -1225,6 +1242,23 @@ msgstr "Establecer las opciones por defecto"
 #, fuzzy
 msgid "No game"
 msgstr "%d juegos disponibles"
+
+#
+# File: gem/ui/interface.py, line: 8180
+msgid "No game has been added"
+msgstr ""
+
+#
+# File: gem/configuration.py, line: 71
+#, fuzzy
+msgid "No savestate"
+msgstr "No puedo abrir el archivo %s"
+
+#
+# File: gem/interface.py, line: 2006
+#, fuzzy
+msgid "No screenshot"
+msgstr "Mostrar las _capturas de pantalla"
 
 #
 # File: gem/preferences.py, line: 97

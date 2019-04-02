@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-03-28 10:17+0100\n"
+"PO-Revision-Date: 2019-04-02 10:12+0200\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -30,6 +30,12 @@ msgid "%d games available"
 msgstr "%d jeux disponibles"
 
 #
+# File: gem/ui/interface.py, line: 8186
+#, python-format
+msgid "%d games has been added"
+msgstr "%d jeux ont été ajoutés"
+
+#
 # File: gem/utils.py, line: 332
 #, python-format
 msgid "%d hours"
@@ -50,20 +56,8 @@ msgstr "Il y a %d mois"
 #
 # File: gem/gtk/interface.py, line: 802
 #, python-format
-msgid "%d savestate"
-msgstr "%d sauvegarde d'état"
-
-#
-# File: gem/gtk/interface.py, line: 802
-#, python-format
 msgid "%d savestates"
 msgstr "%d sauvegardes d'état"
-
-#
-# File: gem/preferences.py, line: 335
-#, python-format
-msgid "%d screenshot"
-msgstr "%d capture d'écran"
 
 #
 # File: gem/preferences.py, line: 335
@@ -118,6 +112,11 @@ msgid "1 game available"
 msgstr "1 jeu disponible"
 
 #
+# File: gem/ui/interface.py, line: 8183
+msgid "1 game has been added"
+msgstr "1 jeu à été ajouté"
+
+#
 # File: gem/utils.py, line: 330
 msgid "1 hour"
 msgstr "1 heure"
@@ -126,6 +125,16 @@ msgstr "1 heure"
 # File: gem/utils.py, line: 325
 msgid "1 minute"
 msgstr "1 minute"
+
+#
+# File: gem/gtk/interface.py, line: 802
+msgid "1 savestate"
+msgstr "1 sauvegarde d'état"
+
+#
+# File: gem/preferences.py, line: 335
+msgid "1 screenshot"
+msgstr "1 capture d'écran"
 
 #
 # File: gem/utils.py, line: 320
@@ -364,9 +373,9 @@ msgid "Color scheme"
 msgstr "Thème de couleurs"
 
 #
-# File: gem/ui/preferences/interface.py, line: 791
-msgid "Columns"
-msgstr "Colonnes"
+# File: gem/ui/interface.py, line: 564
+msgid "Columns visibility"
+msgstr "Visibilité des colonnes"
 
 #
 # File: gem/interface.py, line: 300
@@ -804,6 +813,11 @@ msgid "Games folder"
 msgstr "Dossier des jeux"
 
 #
+# File: gem/interface.py, line: 220
+msgid "Games installation"
+msgstr "Installation de jeux"
+
+#
 # File: gem/preferences.py, line: 302
 msgid "General"
 msgstr "Général"
@@ -1152,6 +1166,21 @@ msgstr "Pas de valeurs par défaut"
 # File: gem/ui/interface.py, line: 4941
 msgid "No game"
 msgstr "Aucun jeu"
+
+#
+# File: gem/ui/interface.py, line: 8180
+msgid "No game has been added"
+msgstr "Aucun jeu n'a été ajouté"
+
+#
+# File: gem/gtk/interface.py, line: 802
+msgid "No savestate"
+msgstr "Aucune sauvegarde d'état"
+
+#
+# File: gem/preferences.py, line: 335
+msgid "No screenshot"
+msgstr "Aucune capture d'écran"
 
 #
 # File: gem/preferences.py, line: 97
