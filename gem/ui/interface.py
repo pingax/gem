@@ -8157,6 +8157,18 @@ class MainWindow(Gtk.ApplicationWindow):
                     if self.__on_append_game(console, game):
                         self.set_informations_headerbar()
 
+                        # Grid view
+                        if self.button_toolbar_grid.get_active():
+                            self.scroll_games_grid.set_visible(True)
+                            self.iconview_games.show_all()
+
+                        # List view
+                        elif self.button_toolbar_list.get_active():
+                            self.scroll_games_list.set_visible(True)
+                            self.treeview_games.show_all()
+
+                        self.scroll_games_placeholder.set_visible(False)
+
         # Show an informative dialog
         text = _("No game has been added")
 
