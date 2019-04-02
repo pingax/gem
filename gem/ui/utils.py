@@ -38,6 +38,7 @@ from subprocess import Popen
 from subprocess import STDOUT
 
 # Regex
+from re import escape as re_escape
 from re import findall as re_findall
 
 # Translation
@@ -394,7 +395,8 @@ def magic_from_file(filename, mime=False):
 
         output, error_output = pipe.communicate()
 
-    result = re_findall(r"^%s\:\s+(.*)$" % str(filename), output[:-1])
+    result = re_findall(
+        r"^%s\:\s+(.*)$" % re_escape(str(filename)), output[:-1])
 
     if len(result) > 0:
         return result[0]

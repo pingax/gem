@@ -310,6 +310,8 @@ class Game(object):
         for key in self.attributes.keys():
             setattr(game, key, getattr(self, key, None))
 
+        game.name = filename.stem
+
         return game
 
 
@@ -343,7 +345,14 @@ class Game(object):
             filename
         """
 
-        return ''.join(self.__path.suffixes).lower()
+        extension = str()
+
+        # Only retrieve extensions and not part of the name
+        for subextension in self.__path.suffixes:
+            if not subextension in self.__path.stem:
+                extension += subextension.lower()
+
+        return extension
 
 
     @property

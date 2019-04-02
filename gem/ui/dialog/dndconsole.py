@@ -231,7 +231,12 @@ class DNDConsoleDialog(CommonWindow):
                 self.frame_games.listbox.add(row)
 
             else:
-                extension = ''.join(path.suffixes).lower()
+                extension = str()
+
+                # Only retrieve extensions and not part of the name
+                for subextension in path.suffixes:
+                    if not subextension in path.stem:
+                        extension += subextension.lower()
 
                 # Generate a tab for the new extension
                 if not extension in self.__notebook_pages.keys():

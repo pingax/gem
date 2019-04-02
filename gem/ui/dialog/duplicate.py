@@ -14,6 +14,9 @@
 #  MA 02110-1301, USA.
 # ------------------------------------------------------------------------------
 
+# Filesystem
+from pathlib import Path
+
 # GEM
 from gem.engine.utils import generate_identifier
 
@@ -300,8 +303,8 @@ class DuplicateDialog(CommonWindow):
             if self.switch_savestate.get_active():
 
                 for path in self.game.savestates:
-                    new_path = path.parent.joinpath(
-                        filename + ''.join(path.suffixes))
+                    new_path = Path(
+                        str(path).replace(self.game.path.stem, filename))
 
                     data["paths"].append((path, new_path))
 
@@ -312,8 +315,8 @@ class DuplicateDialog(CommonWindow):
             if self.switch_screenshot.get_active():
 
                 for path in self.game.screenshots:
-                    new_path = path.parent.joinpath(
-                        filename + ''.join(path.suffixes))
+                    new_path = Path(
+                        str(path).replace(self.game.path.stem, filename))
 
                     data["paths"].append((path, new_path))
 
