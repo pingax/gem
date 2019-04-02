@@ -6923,21 +6923,20 @@ class MainWindow(Gtk.ApplicationWindow):
                     data = dialog.get_data()
 
                     if data is not None:
-                        print(data)
 
                         # Duplicate game files
-                        # for original, path in data["paths"]:
-                            # self.logger.debug("Copy %s" % original)
+                        for original, path in data["paths"]:
+                            self.logger.debug("Copy %s" % original)
 
-                            # copy(original, path)
+                            copy(original, path)
 
-                            # need_to_reload = True
+                            need_to_reload = True
 
                         # Update game from database
-                        # if data["database"]:
-                            # self.api.update_game(game.copy(data["filepath"]))
+                        if data["database"]:
+                            self.api.update_game(game.copy(data["filepath"]))
 
-                            # need_to_reload = True
+                            need_to_reload = True
 
                 except Exception as error:
                     self.logger.exception("An error occur during duplication")
