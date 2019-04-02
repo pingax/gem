@@ -94,9 +94,9 @@ class GEM(object):
         if type(debug) is not bool:
             raise TypeError("Wrong type for debug, expected bool")
 
-        # ----------------------------
+        # ----------------------------------------
         #   Variables
-        # ----------------------------
+        # ----------------------------------------
 
         # Debug mode
         self.debug = debug
@@ -136,18 +136,18 @@ class GEM(object):
         # Process identifier
         self.__pid = int()
 
-        # ----------------------------
+        # ----------------------------------------
         #   Initialize folders
-        # ----------------------------
+        # ----------------------------------------
 
         for folder in [ self.__config, self.__local, self.__roms ]:
 
             if not folder.exists():
                 folder.mkdir(mode=0o755, parents=True)
 
-        # ----------------------------
+        # ----------------------------------------
         #   Initialize objects
-        # ----------------------------
+        # ----------------------------------------
 
         # Initialize lock file
         self.__lock = self.__init_lock()
@@ -380,83 +380,77 @@ class GEM(object):
         if self.__need_migration:
             self.logger.info("Backup database")
 
+            # Database backup
             copy(self.get_local("gem.db"), self.get_local("save.gem.db"))
 
+            # Remove previous database
+            self.get_local("gem.db").unlink()
+
+            # ----------------------------------------
+            #   Initialize new database
+            # ----------------------------------------
+
             try:
+                config = Configuration(get_data("config", GEM.Databases))
+
+                previous_database = Database(
+                    self.get_local("save.gem.db"), config, self.logger)
+
+                new_database = Database(
+                    self.get_local("gem.db"), config, self.logger)
+
+                new_database.insert("gem", { "version": GEM.Version })
+
+                # ----------------------------------------
+                #   Migrate data from previous database
+                # ----------------------------------------
+
                 self.logger.info("Start database migration")
 
-                # Get current table columns
-                previous_columns = self.database.get_columns("games")
-                # Get current table rows
-                previous_data = self.database.select("games", ['*'])
+                # ----------------------------------------
+                #   Migrate game by game
+                # ----------------------------------------
 
-                # ----------------------------
-                #   Backup database tables
-                # ----------------------------
+                games = previous_database.select("games", ['*'])
 
-                self.database.rename_table("games", "_%s" % "games")
-                self.database.create_table("games")
+                if games is not None:
 
-                # ----------------------------
-                #   Check columns
-                # ----------------------------
-
-                # Columns data
-                data = dict()
-                # Columns template for deepcopy
-                template = dict()
-
-                # Check previous table for new columns
-                for column in previous_columns:
-                    if column in self.database.get_columns("games"):
-                        data[column] = previous_columns.index(column)
-
-                # Set columns template
-                for column in self.database.get_columns("games"):
-                    template[column] = str()
-
-                # ----------------------------
-                #   Migrate database
-                # ----------------------------
-
-                if previous_data is not None:
-                    counter = int()
+                    # Get current table columns
+                    columns_name = previous_database.get_columns("games")
 
                     if updater is not None:
-                        updater.init(len(previous_data))
+                        updater.init(len(games))
 
-                    # Check each row from previous database
-                    for row in previous_data:
+                    counter = int()
+                    for row in games:
                         counter += 1
 
-                        # Copy default template
-                        columns = deepcopy(template)
+                        row_data = dict()
 
-                        # Check each column from row
-                        for column in list(columns.keys()):
+                        index = int()
+                        for element in row:
+                            column = columns_name[index]
 
-                            # There is data for this row column
-                            if column in data:
-                                columns[column] = row[data[column]]
+                            row_data[columns_name[index]] = element
 
-                            # No data for this row column
-                            else:
-                                columns[column] = None
+                            index += 1
 
-                        # Insert row in new database
-                        self.database.insert("games", columns)
+                        new_database.insert("games", row_data)
 
                         if updater is not None:
                             updater.update(counter)
 
-                # ----------------------------
+                # ----------------------------------------
                 #   Remove backup
-                # ----------------------------
-
-                self.database.remove_table("_%s" % "games")
+                # ----------------------------------------
 
                 self.logger.info("Migration complete")
                 self.__need_migration = False
+
+                del previous_database
+                del self.database
+
+                setattr(self, "database", new_database)
 
             except Exception as error:
                 self.logger.exception(
@@ -465,6 +459,9 @@ class GEM(object):
                 self.logger.info("Restore database backup")
 
                 copy(self.get_local("save.gem.db"), self.get_local("gem.db"))
+
+            # Remove backup
+            self.get_local("save.gem.db").unlink()
 
         if updater is not None:
             updater.close()
@@ -530,9 +527,9 @@ class GEM(object):
 
         self.logger.debug("Store GEM data into disk")
 
-        # ----------------------------
+        # ----------------------------------------
         #   Configuration files
-        # ----------------------------
+        # ----------------------------------------
 
         try:
             # Check GEM configuration files
@@ -581,9 +578,9 @@ class GEM(object):
 
             return False
 
-        # ----------------------------
+        # ----------------------------------------
         #   Database file
-        # ----------------------------
+        # ----------------------------------------
 
         try:
             for previous, emulator in self.__rename.items():

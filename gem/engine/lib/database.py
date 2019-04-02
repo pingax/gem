@@ -540,7 +540,7 @@ class Database(object):
         if not type(tables) is list:
             tables = [tables]
 
-        if not tables == self.configuration.sections():
+        if not sorted(tables) == sorted(self.configuration.sections()):
             return False
 
         for table in tables:
