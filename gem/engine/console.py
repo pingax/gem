@@ -119,7 +119,10 @@ class Console(object):
                 setattr(self, key, key_type())
 
                 if len(value.strip()) > 0:
-                    setattr(self, key, list(set(value.strip().split(';'))))
+                    value = list(set(value.strip().split(';')))
+                    value.sort()
+
+                    setattr(self, key, value)
 
         setattr(self, "id", generate_identifier(self.name))
 

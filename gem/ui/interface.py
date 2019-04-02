@@ -8006,7 +8006,13 @@ class MainWindow(Gtk.ApplicationWindow):
             self.logger.debug("Receive %s" % path.name)
 
             # Lowercase extension
-            extension = ''.join(path.suffixes).lower()
+            extension = str()
+            # Only retrieve extensions and not part of the name
+            for subextension in path.suffixes:
+                if not subextension in path.stem:
+                    extension += subextension.lower()
+
+            # Remove the first dot to match console extensions system
             if len(extension) > 0 and extension[0] == '.':
                 extension = extension[1:]
 

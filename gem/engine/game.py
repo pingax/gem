@@ -180,7 +180,10 @@ class Game(object):
                     elif key_type is list and type(value) is str:
 
                         if len(value) > 0:
-                            setattr(self, key, value.split(';'))
+                            value = list(set(value.strip().split(';')))
+                            value.sort()
+
+                            setattr(self, key, value)
 
                     elif key_type is dict:
                         pass
