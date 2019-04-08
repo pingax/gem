@@ -6583,9 +6583,16 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Get current selected file
         select_game = self.__on_retrieve_selected_game()
+        # Get current selected console
+        select_console = self.__on_retrieve_selected_console()
+
+        if select_console is None:
+            self.logger.debug("Restore widgets status for %s" % game.name)
+
+            self.sensitive_interface()
 
         # Check if current selected file is the same as thread file
-        if select_game is not None and select_game.id == game.id:
+        elif select_game is not None and select_game.id == game.id:
             self.logger.debug("Restore widgets status for %s" % game.name)
 
             self.__on_game_launch_button_update(True)
