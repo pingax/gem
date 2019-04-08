@@ -3959,9 +3959,9 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Statusbar
         # ----------------------------------------
 
-        self.image_statusbar_properties.set_from_pixbuf(None)
-        self.image_statusbar_savestates.set_from_pixbuf(None)
-        self.image_statusbar_screenshots.set_from_pixbuf(None)
+        self.image_statusbar_properties.set_from_pixbuf(self.icons.blank(24))
+        self.image_statusbar_savestates.set_from_pixbuf(self.icons.blank(24))
+        self.image_statusbar_screenshots.set_from_pixbuf(self.icons.blank(24))
         self.image_statusbar_properties.set_tooltip_text(str())
         self.image_statusbar_savestates.set_tooltip_text(str())
         self.image_statusbar_screenshots.set_tooltip_text(str())
