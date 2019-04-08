@@ -6900,7 +6900,13 @@ class MainWindow(Gtk.ApplicationWindow):
 
                         del self.game_path[identifier]
 
-                    self.set_informations_headerbar()
+                    # Remove view selections
+                    self.iconview_games.unselect_all()
+                    self.treeview_games.get_selection().unselect_all()
+
+                    self.sensitive_interface()
+
+                    self.set_informations()
 
                     self.set_message(_("Remove a game"),
                         _("This game was removed successfully"),
