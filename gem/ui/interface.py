@@ -4801,6 +4801,14 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.__current_menu_row.image_status.set_from_icon_name(
                         icon, Gtk.IconSize.MENU)
 
+                    text = _("No game")
+                    if len(console.get_games()) == 1:
+                        text = _("1 game")
+                    elif len(console.get_games()) > 1:
+                        text = _("%d games") % len(console.get_games())
+
+                    self.__current_menu_row.set_tooltip_text(text)
+
                     # Console flag selectors
                     self.item_consoles_favorite.set_active(console.favorite)
                     self.item_consoles_recursive.set_active(console.recursive)
