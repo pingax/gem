@@ -573,10 +573,10 @@ class ConsolePreferences(CommonWindow):
 
         data["ignores"] = list()
         for row in self.model_ignores:
-            data = self.model_ignores.get_value(row.iter, 0)
+            element = self.model_ignores.get_value(row.iter, 0)
 
-            if data is not None and len(data) > 0:
-                data["ignores"].append(data)
+            if element is not None and len(element) > 0:
+                data["ignores"].append(element)
 
         data["favorite"] = self.switch_favorite.get_active()
         data["recursive"] = self.switch_recursive.get_active()
