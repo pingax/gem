@@ -4459,6 +4459,10 @@ class MainWindow(Gtk.ApplicationWindow):
                 # Get external viewer
                 viewer = Path(self.config.get("viewer", "binary"))
 
+                # ----------------------------------------
+                #   Native viewer
+                # ----------------------------------------
+
                 if self.config.getboolean("viewer", "native", fallback=True):
                     try:
                         size = self.config.get(
@@ -4477,23 +4481,39 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     dialog.destroy()
 
+                # ----------------------------------------
+                #   External viewer
+                # ----------------------------------------
+
                 elif viewer.exists():
-                    command = list()
 
-                    # Append binaries
-                    command.extend(shlex_split(viewer))
+                    # Retrieve viewer binary
+                    command = shlex_split(str(viewer))
 
-                    # Append arguments
-                    args = self.config.item("viewer", "options")
+                    # Add arguments if available
+                    parameters = self.config.item("viewer", "options")
+                    if parameters is not None:
+                        command.append(parameters)
 
-                    if args is not None:
-                        command.extend(shlex_split(args))
+                    # Add game screenshot files
+                    for path in sorted(game.screenshots):
+                        command.append(str(path))
 
-                    # Append game file
-                    command.extend(sorted(game.screenshots))
+                    # Launch external viewer
+                    try:
+                        instance = Gio.AppInfo.create_from_commandline(
+                            ' '.join(command), None,
+                            Gio.AppInfoCreateFlags.SUPPORTS_URIS)
 
-                    process = Popen(command)
-                    process.wait()
+                        instance.launch(None, None)
+
+                    except GLib.Error:
+                        self.logger.exception(
+                            "Cannot generate %s instance" % str(viewer))
+
+                # ----------------------------------------
+                #   No available viewer
+                # ----------------------------------------
 
                 else:
                     self.set_message(_("Cannot open screenshots viewer"),
