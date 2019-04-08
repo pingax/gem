@@ -454,3 +454,11 @@ class Game(object):
             return arguments
 
         return None
+
+
+    def update_installation_date(self):
+        """ Reload installation date from game file
+        """
+
+        setattr(self, "installed",
+            datetime.fromtimestamp(getctime(self.__path)).date())

@@ -7390,6 +7390,11 @@ class MainWindow(Gtk.ApplicationWindow):
                         dialog.buffer_editor.get_start_iter(),
                         dialog.buffer_editor.get_end_iter(), True))
 
+                    game.update_installation_date()
+
+                    self.set_game_data(Columns.List.INSTALLED,
+                        string_from_date(game.installed), game.id)
+
                 self.config.modify(
                     "windows", "game", "%dx%d" % dialog.get_size())
                 self.config.update()
