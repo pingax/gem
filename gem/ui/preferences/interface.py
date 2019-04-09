@@ -156,7 +156,7 @@ class PreferencesWindow(CommonWindow):
                 "duplicate": [
                     _("Duplicate a game"), "<Control>U"],
                 "cover": [
-                    _("Set a game cover"), "<Control>I"],
+                    _("Set a game thumbnail"), "<Control>I"],
                 "exceptions": [
                     _("Set specific arguments for a game"), "F12"],
                 "edit-file": [
@@ -192,9 +192,9 @@ class PreferencesWindow(CommonWindow):
         }
 
         self.tooltips = {
-            _("Show screenshot or cover"): "both",
-            _("Show screenshot only"): "screenshot",
-            _("Show cover only"): "cover",
+            _("Display screenshot or thumbnail"): "both",
+            _("Display screenshot only"): "screenshot",
+            _("Display thumbnail only"): "cover",
             _("Hide"): "none"
         }
 
@@ -372,21 +372,21 @@ class PreferencesWindow(CommonWindow):
         self.widget_behavior_last_console.set_option_label(
             _("Restore last console"))
         self.widget_behavior_last_console.set_description_label(
-            _("Restore the last selected console when application is opened"))
+            _("Restore the last selected console on starting"))
 
         self.widget_behavior_last_column.set_widget(
             self.switch_general_behavior_last_column)
         self.widget_behavior_last_column.set_option_label(
             _("Restore sorted column"))
         self.widget_behavior_last_column.set_description_label(
-            _("Restore the last sorted column when application is opened"))
+            _("Restore the last sorted column on starting"))
 
         self.widget_behavior_hide_consoles.set_widget(
             self.switch_general_behavior_hide_consoles)
         self.widget_behavior_hide_consoles.set_option_label(
-            _("Disable empty consoles"))
+            _("Hide empty consoles"))
         self.widget_behavior_hide_consoles.set_description_label(
-            _("Disable consoles without games"))
+            _("Hide consoles without games"))
 
         # ------------------------------------
         #   General - Editor
@@ -462,7 +462,7 @@ class PreferencesWindow(CommonWindow):
         self.widget_editor_font.set_widget(
             self.font_general_editor_font)
         self.widget_editor_font.set_option_label(
-            _("Editor font"))
+            _("Font"))
 
         # HACK: Set an ellipsize mode for the label inside FontButton
         for child in self.font_general_editor_font.get_child():
@@ -560,7 +560,7 @@ class PreferencesWindow(CommonWindow):
         self.widget_appearance_classic_theme.set_widget(
             self.switch_interface_appearance_classic_theme)
         self.widget_appearance_classic_theme.set_option_label(
-            _("Enable classic theme"))
+            _("Switch to classic theme"))
         self.widget_appearance_classic_theme.set_description_label(
             _("Use a GTK+2 like appearance (Restart application is needed)"))
 
@@ -569,7 +569,7 @@ class PreferencesWindow(CommonWindow):
         self.widget_appearance_header_button.set_option_label(
             _("Enable close buttons"))
         self.widget_appearance_header_button.set_description_label(
-            _("Enable close buttons in headerbar"))
+            _("Display headerbar close buttons"))
 
         # ------------------------------------
         #   Interface - Toolbar
@@ -602,7 +602,7 @@ class PreferencesWindow(CommonWindow):
         self.widget_toolbar_size.set_option_label(
             _("Icons size"))
         self.widget_toolbar_size.set_description_label(
-            _("The size of icons in toolbar"))
+            _("Set the toolbar icons size"))
 
         self.combo_interface_toolbar_size.set_model(
             self.model_interface_toolbar_size)
@@ -651,7 +651,7 @@ class PreferencesWindow(CommonWindow):
         self.widget_sidebar_visible.set_option_label(
             _("Enable sidebar"))
         self.widget_sidebar_visible.set_description_label(
-            _("Enable sidebar next to games view"))
+            _("Display a sidebar next to games view"))
 
         self.widget_sidebar_position.set_widget(
             self.combo_interface_sidebar_position)
@@ -729,7 +729,7 @@ class PreferencesWindow(CommonWindow):
         self.widget_view_grid_lines.set_option_label(
             _("Grid lines"))
         self.widget_view_grid_lines.set_description_label(
-            _("Display lines in games list view"))
+            _("Display background lines in games list view"))
 
         self.combo_games_view_grid_lines.set_model(
             self.model_games_view_grid_lines)
@@ -744,7 +744,7 @@ class PreferencesWindow(CommonWindow):
         self.widget_view_tooltip_icon.set_option_label(
             _("Tooltip image"))
         self.widget_view_tooltip_icon.set_description_label(
-            _("Display a specific image in game tooltip"))
+            _("Display an image in game tooltip"))
 
         self.combo_games_view_tooltip_icon.set_model(
             self.model_games_view_tooltip_icon)
@@ -828,12 +828,12 @@ class PreferencesWindow(CommonWindow):
         self.widget_column_play.set_widget(
             self.switch_games_column_play)
         self.widget_column_play.set_option_label(
-            _("Launch"))
+            _("Launch number"))
 
         self.widget_column_last_launch.set_widget(
             self.switch_games_column_last_launch)
         self.widget_column_last_launch.set_option_label(
-            _("Last launch"))
+            _("Last launch date"))
 
         self.widget_column_play_time.set_widget(
             self.switch_games_column_play_time)
@@ -848,12 +848,12 @@ class PreferencesWindow(CommonWindow):
         self.widget_column_installed.set_widget(
             self.switch_games_column_installed)
         self.widget_column_installed.set_option_label(
-            _("Installed"))
+            _("Installed date"))
 
         self.widget_column_flags.set_widget(
             self.switch_games_column_flags)
         self.widget_column_flags.set_option_label(
-            _("Flags"))
+            _("Emulator flags"))
 
         # ------------------------------------
         #   Shortcuts
@@ -1346,6 +1346,9 @@ class PreferencesWindow(CommonWindow):
             "row-activated", self.on_activate_listboxrow)
         self.listbox_interface_sidebar.connect(
             "row-activated", self.on_activate_listboxrow)
+
+        self.switch_interface_appearance_classic_theme.connect(
+            "state-set", self.__on_check_classic_theme)
 
         self.switch_interface_sidebar_visible.connect(
             "state-set", self.__on_check_sidebar)
@@ -2035,6 +2038,22 @@ class PreferencesWindow(CommonWindow):
             elif event.type == Gdk.EventType._2BUTTON_PRESS and \
                 event.button == 1:
                 self.__on_modify_item(treeview)
+
+
+    def __on_check_classic_theme(self, widget=None, state=None):
+        """ Update native viewer widget from checkbutton state
+
+        Parameters
+        ----------
+        widget : Gtk.Widget, optional
+            Object which receive signal (Default: None)
+        state : bool or None, optional
+            New status for current widget (Default: None)
+        """
+
+        status = self.switch_interface_appearance_classic_theme.get_active()
+
+        self.widget_appearance_header_button.set_sensitive(not status)
 
 
     def __on_check_native_viewer(self, widget=None, state=None):

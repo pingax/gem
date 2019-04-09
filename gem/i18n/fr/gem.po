@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-04-02 10:12+0200\n"
+"PO-Revision-Date: 2019-04-09 11:32+0200\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -254,6 +254,16 @@ msgid "Appearance"
 msgstr "Apparence"
 
 #
+# File: gem/preferences.py, line: 91
+msgid "Application _log"
+msgstr "_Journal de l'application"
+
+#
+# File: gem/preferences.py, line: 91
+msgid "Application log"
+msgstr "Journal de l'application"
+
+#
 # File: gem/gtk/windows.py, line: 860
 # File: gem/gtk/windows.py, line: 1214
 msgid "Apply"
@@ -498,29 +508,44 @@ msgid "Dialog"
 msgstr "Comme les boîtes de dialogue"
 
 #
-# File: gem/ui/preferences/interface.py, line: 462
-msgid "Disable consoles without games"
-msgstr "Désactiver les consoles sans jeux"
-
-#
-# File: gem/ui/preferences/interface.py, line: 389
-msgid "Disable empty consoles"
-msgstr "Désactiver les consoles vides"
+# File: gem/ui/preferences/interface.py, line: 653
+msgid "Display a sidebar next to games view"
+msgstr "Afficher la barre latérale à côté de la vue des jeux"
 
 #
 # File: gem/ui/preferences/interface.py, line: 739
-msgid "Display a specific image in game tooltip"
-msgstr "Afficher une image spécifique dans l'infobulle de jeu"
+msgid "Display an image in game tooltip"
+msgstr "Afficher une image dans l'infobulle de jeu"
 
 #
 # File: gem/ui/preferences/interface.py, line: 724
-msgid "Display lines in games list view"
-msgstr "Afficher des lignes dans la liste de jeux"
+msgid "Display background lines in games list view"
+msgstr "Afficher des lignes de fond dans la liste de jeux"
+
+#
+# File: gem/ui/preferences/interface.py, line: 572
+msgid "Display headerbar close buttons"
+msgstr "Afficher les boutons de fermeture de la barre d'en-tête"
 
 #
 # File: src/window.py, line: 375
 msgid "Display menu"
 msgstr "Menu d'affichage"
+
+#
+# File: src/window.py, line: 441
+msgid "Display screenshot only"
+msgstr "Afficher uniquement une capture d'écran"
+
+#
+# File: src/window.py, line: 441
+msgid "Display screenshot or thumbnail"
+msgstr "Afficher une capture d'écran ou la miniature"
+
+#
+# File: gem/ui/preferences/interface.py, line: 197
+msgid "Display thumbnail only"
+msgstr "Afficher uniquement la miniature"
 
 #
 # File: gem/ui/preferences/interface.py, line: 754
@@ -594,11 +619,6 @@ msgid "Editor"
 msgstr "Éditeur"
 
 #
-# File: gem/preferences.py, line: 336
-msgid "Editor font"
-msgstr "Police d'écriture de l'éditeur"
-
-#
 # File: gem/configuration.py, line: 144
 # File: gem/configuration.py, line: 301
 msgid "Emulator"
@@ -621,6 +641,12 @@ msgstr ""
 #
 # File: gem/configuration.py, line: 144
 # File: gem/configuration.py, line: 301
+msgid "Emulator flags"
+msgstr "Drapeaux de l'émulateur"
+
+#
+# File: gem/configuration.py, line: 144
+# File: gem/configuration.py, line: 301
 msgid "Emulators"
 msgstr "Émulateurs"
 
@@ -630,19 +656,9 @@ msgid "Enable alternative application"
 msgstr "Activer une application alternative"
 
 #
-# File: gem/gtk/preferences.py, line: 648
-msgid "Enable classic theme"
-msgstr "Activer le thème classique"
-
-#
 # File: gem/ui/preferences/interface.py, line: 572
 msgid "Enable close buttons"
 msgstr "Activer les boutons de fermeture"
-
-#
-# File: gem/preferences.py, line: 257
-msgid "Enable close buttons in headerbar"
-msgstr "Activer les boutons de fenêtre dans la barre de titre"
 
 #
 # File: gem/gtk/preferences.py, line: 648
@@ -658,11 +674,6 @@ msgstr "Activer l'affichage aléatoire de la capture d'écran"
 # File: gem/preferences.py, line: 338
 msgid "Enable sidebar"
 msgstr "Activer la barre latérale"
-
-#
-# File: gem/ui/preferences/interface.py, line: 653
-msgid "Enable sidebar next to games view"
-msgstr "Activer la barre latérale à côté de la vue des jeux"
 
 #
 # File: gem/preferences.py, line: 283
@@ -762,6 +773,11 @@ msgid "Flash memory"
 msgstr "Mémoire flash"
 
 #
+# File: gem/ui/preferences/interface.py, line: 465
+msgid "Font"
+msgstr "Police d'écriture"
+
+#
 # File: gem/preferences.py, line: 1279
 msgid "Fullscreen"
 msgstr "Plein écran"
@@ -770,11 +786,6 @@ msgstr "Plein écran"
 # File: gem/preferences.py, line: 1279
 msgid "Fullscreen mode"
 msgstr "Plein écran"
-
-#
-# File: gem/interface.py, line: 937
-msgid "GEM"
-msgstr "GEM"
 
 #
 # File: gem/__main__.py, line: 96
@@ -786,6 +797,11 @@ msgstr "GEM est déjà lancé avec l'identificateur de processus %d"
 # File: gem/preferences.py, line: 113
 msgid "Game"
 msgstr "Jeu"
+
+#
+# File: gem/interface.py, line: 220
+msgid "Game _log"
+msgstr "Journal du jeu"
 
 #
 # File: gem/interface.py, line: 220
@@ -874,6 +890,16 @@ msgid "Hide"
 msgstr "Cacher"
 
 #
+# File: gem/ui/preferences/interface.py, line: 462
+msgid "Hide consoles without games"
+msgstr "Cacher les consoles sans jeux"
+
+#
+# File: gem/ui/preferences/interface.py, line: 389
+msgid "Hide empty consoles"
+msgstr "Cacher les consoles vides"
+
+#
 # File: gem/preferences.py, line: 98
 msgid "Horizontal"
 msgstr "Horizontales"
@@ -921,6 +947,11 @@ msgid "Installed"
 msgstr "Installé"
 
 #
+# File: gem/interface.py, line: 646
+msgid "Installed date"
+msgstr "Date d'installation"
+
+#
 # File: gem/preferences.py, line: 277
 msgid "Interface"
 msgstr "Interface"
@@ -950,6 +981,11 @@ msgid "Last launch"
 msgstr "Dernier lancement"
 
 #
+# File: src/window.py, line: 380
+msgid "Last launch date"
+msgstr "Date de dernier lancement"
+
+#
 # File: gem/interface.py, line: 1336
 msgid "Last month"
 msgstr "Le mois dernier"
@@ -973,6 +1009,11 @@ msgstr "Parties"
 # File: src/window.py, line: 431
 msgid "Launch a game"
 msgstr "Lancer un jeu"
+
+#
+# File: gem/preferences.py, line: 338
+msgid "Launch number"
+msgstr "Nombre de lancement"
 
 #
 # File: src/window.py, line: 431
@@ -1365,16 +1406,13 @@ msgstr "Restaurer la dernière colonne triée"
 
 #
 # File: gem/gtk/preferences.py, line: 477
-msgid "Restore the last selected console when application is opened"
-msgstr ""
-"Restaurer la dernière console sélectionnée lors de l'ouverture de "
-"l'application"
+msgid "Restore the last selected console on starting"
+msgstr "Restaurer la dernière console sélectionnée lors du lancement"
 
 #
 # File: gem/ui/preferences/interface.py, line: 384
-msgid "Restore the last sorted column when application is opened"
-msgstr ""
-"Restaurer la dernière colonne triée lors de l'ouverture de l'application"
+msgid "Restore the last sorted column on starting"
+msgstr "Restaurer la dernière colonne triée lors du lancement"
 
 #
 # File: gem/gtk/preferences.py, line: 173
@@ -1430,9 +1468,9 @@ msgid "Select this console for every rows"
 msgstr "Sélectionner la console pour toutes les lignes"
 
 #
-# File: src/window.py, line: 451
-msgid "Set a game cover"
-msgstr "Définir la couverture du jeu"
+# File: gem/ui/interface.py, line: 1463
+msgid "Set a game thumbnail"
+msgstr "Définir la miniature du jeu"
 
 #
 # File: gem/interface.py, line: 336
@@ -1526,6 +1564,11 @@ msgid "Set specific arguments for a game"
 msgstr "Définir un argument spécifique pour un jeu"
 
 #
+# File: gem/ui/preferences/interface.py, line: 605
+msgid "Set the toolbar icons size"
+msgstr "Définir la taille des icônes de la barre d'outils"
+
+#
 # File: gem/preferences.py, line: 338
 msgid "Shortcut"
 msgstr "Raccourci"
@@ -1551,34 +1594,19 @@ msgid "Show a game screenshots"
 msgstr "Afficher les captures d'écran d'un jeu"
 
 #
-# File: gem/ui/preferences/interface.py, line: 170
-msgid "Show cover only"
-msgstr "Montrer uniquement la couverture"
-
-#
 # File: gem/ui/preferences/interface.py, line: 434
 msgid "Show line number at beginning of each line"
 msgstr "Afficher le numéro de ligne au début de chaque ligne"
 
 #
 # File: src/window.py, line: 441
-msgid "Show screenshot only"
-msgstr "Afficher uniquement les captures d'écran"
-
-#
-# File: gem/preferences.py, line: 335
-msgid "Show screenshot or cover"
-msgstr "Afficher les captures d'écran ou la couverture"
+msgid "Show selected game log"
+msgstr "Afficher le journal du jeu sélectionné"
 
 #
 # File: src/window.py, line: 441
 msgid "Show selected game notes"
 msgstr "Afficher les notes du jeu sélectionné"
-
-#
-# File: src/window.py, line: 441
-msgid "Show selected game output log"
-msgstr "Afficher le journal de sortie du jeu sélectionné"
 
 #
 # File: src/window.py, line: 441
@@ -1653,6 +1681,11 @@ msgid "Switch between fullscreen modes"
 msgstr "Alterner le mode plein écran"
 
 #
+# File: gem/gtk/preferences.py, line: 648
+msgid "Switch to classic theme"
+msgstr "Passer sur le thème classique"
+
+#
 # File: gem/ui/preferences/interface.py, line: 447
 msgid "Tab width"
 msgstr "Taille des tabulations"
@@ -1681,11 +1714,6 @@ msgid ""
 msgstr ""
 "Le jeu suivant va être supprimé de votre disque dur. Cette action est "
 "irréversible !"
-
-#
-# File: gem/ui/preferences/interface.py, line: 607
-msgid "The size of icons in toolbar"
-msgstr "La taille des icônes dans la barre d'outils"
 
 #
 # File: gem/gtk/interface.py, line: 3018
@@ -2025,7 +2053,7 @@ msgstr "_Aide"
 
 #
 # File: gem/ui/preferences/interface.py, line: 389
-msgid "_Hide empty console"
+msgid "_Hide empty consoles"
 msgstr "_Cacher les consoles vides"
 
 #
@@ -2037,11 +2065,6 @@ msgstr "_Augmenter le score"
 # File: src/window.py, line: 431
 msgid "_Launch"
 msgstr "_Lancer"
-
-#
-# File: gem/gtk/interface.py, line: 550
-msgid "_Log"
-msgstr "_Journal"
 
 #
 # File: gem/ui/interface.py, line: 680

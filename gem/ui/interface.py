@@ -481,7 +481,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.item_menubar_preferences.set_use_underline(True)
 
         self.item_menubar_log.set_label(
-            "%s…" % _("_Log"))
+            "%s…" % _("Application _log"))
         self.item_menubar_log.set_use_underline(True)
 
         self.item_menubar_clean_cache.set_label(
@@ -558,17 +558,17 @@ class MainWindow(Gtk.ApplicationWindow):
         self.item_menubar_columns_finish.set_label(
             _("Finish"))
         self.item_menubar_columns_play.set_label(
-            _("Launch"))
+            _("Launch number"))
         self.item_menubar_columns_play_time.set_label(
             _("Play time"))
         self.item_menubar_columns_last_play.set_label(
-            _("Last launch"))
+            _("Last launch date"))
         self.item_menubar_columns_score.set_label(
             _("Score"))
         self.item_menubar_columns_installed.set_label(
-            _("Installed"))
+            _("Installed date"))
         self.item_menubar_columns_flags.set_label(
-            _("Flags"))
+            _("Emulator flags"))
 
         self.item_menubar_list.set_label(
             _("List view"))
@@ -839,7 +839,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.item_toolbar_add_emulator.set_use_underline(True)
 
         self.item_toolbar_hide_empty_console.set_label(
-            _("_Hide empty console"))
+            _("_Hide empty consoles"))
         self.item_toolbar_hide_empty_console.set_use_underline(True)
 
         # ------------------------------------
@@ -968,7 +968,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.button_toolbar_screenshots.set_tooltip_text(
             _("Show selected game screenshots"))
         self.button_toolbar_output.set_tooltip_text(
-            _("Show selected game output log"))
+            _("Show selected game log"))
         self.button_toolbar_notes.set_tooltip_text(
             _("Show selected game notes"))
 
@@ -1727,7 +1727,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.item_game_screenshots.set_label("%s…" % _("_Screenshots"))
         self.item_game_screenshots.set_use_underline(True)
 
-        self.item_game_output.set_label("%s…" % _("Output _log"))
+        self.item_game_output.set_label("%s…" % _("Game _log"))
         self.item_game_output.set_use_underline(True)
 
         self.item_game_notes.set_label("%s…" % _("_Notes"))
@@ -4569,8 +4569,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
             self.set_sensitive(False)
 
-            dialog = EditorDialog(self,
-                _("GEM"), path, size, Icons.Symbolic.TERMINAL, editable=False)
+            dialog = EditorDialog(self, _("Application log"),
+                path, size, Icons.Symbolic.TERMINAL, editable=False)
 
             dialog.run()
 
