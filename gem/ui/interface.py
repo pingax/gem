@@ -7780,8 +7780,9 @@ class MainWindow(Gtk.ApplicationWindow):
         sidebar_status = not self.config.getboolean(
             "gem", "show_sidebar", fallback=True)
 
-        if sidebar_status:
+        if sidebar_status and not self.scroll_games_placeholder.get_visible():
             self.scroll_sidebar.show()
+
         else:
             self.scroll_sidebar.hide()
 
