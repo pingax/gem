@@ -9,7 +9,7 @@ from os.path import dirname
 
 setup(
     name = "gem",
-    version = "1.0",
+    version = "0.10-rc3",
     author = "PacMiam",
     author_email = "pacmiam@tuxfamily.org",
     description = "Graphical Emulators Manager",
