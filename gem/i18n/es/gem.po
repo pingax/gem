@@ -2,15 +2,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.4\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-04-09 11:31+0200\n"
-"Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
+"PO-Revision-Date: 2019-04-15 11:03+0200\n"
+"Last-Translator: José Luis LOPEZ CASTILLO <darknekros@gmail.com>\n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Geany / PoHelper 1.34\n"
+"X-Generator: Poedit 2.0.6\n"
 
 # File: gem/interface.py, line: 2123
 #, python-format
@@ -19,9 +19,9 @@ msgstr "hace %d días"
 
 #
 # File: gem/interface.py, line: 532
-#, fuzzy, python-format
+#, python-format
 msgid "%d games"
-msgstr "%d juegos disponibles"
+msgstr "%d juegos"
 
 #
 # File: gem/interface.py, line: 532
@@ -33,7 +33,7 @@ msgstr "%d juegos disponibles"
 # File: gem/ui/interface.py, line: 8186
 #, python-format
 msgid "%d games has been added"
-msgstr ""
+msgstr "%d juegos añadidos"
 
 #
 # File: gem/utils.py, line: 332
@@ -55,15 +55,15 @@ msgstr "hace %d meses"
 
 #
 # File: gem/configuration.py, line: 71
-#, fuzzy, python-format
+#, python-format
 msgid "%d savestates"
-msgstr "No puedo abrir el archivo %s"
+msgstr "%d estados guardados"
 
 #
 # File: gem/interface.py, line: 2006
-#, fuzzy, python-format
+#, python-format
 msgid "%d screenshots"
-msgstr "Mostrar las _capturas de pantalla"
+msgstr "%d capturas de pantalla"
 
 #
 # File: gem/utils.py, line: 322
@@ -81,14 +81,14 @@ msgstr "hace %d años"
 # File: gem/gtk/interface.py, line: 3476
 #, python-format
 msgid "%s binary cannot be found"
-msgstr ""
+msgstr "binarion %s no encontrado"
 
 #
 # File: gem/ui/interface.py, line: 4436
 # File: gem/ui/interface.py, line: 4548
 #, python-format
 msgid "%s has been correctly added to your configuration."
-msgstr ""
+msgstr "%s ha sido añadido con éxito a tu configuración."
 
 #
 # File: gem/interface.py, line: 2106
@@ -99,13 +99,12 @@ msgstr "%s ha sido creado con éxito"
 #
 # File: gem/gtk/preferences.py, line: 2612
 msgid "* can be used as joker"
-msgstr ""
+msgstr "* puede ser usado como comodín"
 
 #
 # File: gem/interface.py, line: 532
-#, fuzzy
 msgid "1 game"
-msgstr "%d juegos disponibles"
+msgstr "1 juego"
 
 #
 # File: gem/interface.py, line: 910
@@ -115,7 +114,7 @@ msgstr "1 juego disponible"
 #
 # File: gem/ui/interface.py, line: 8183
 msgid "1 game has been added"
-msgstr ""
+msgstr "1 juego ha sido añadido"
 
 #
 # File: gem/utils.py, line: 360
@@ -129,15 +128,13 @@ msgstr "1 minuto"
 
 #
 # File: gem/configuration.py, line: 71
-#, fuzzy
 msgid "1 savestate"
-msgstr "No puedo abrir el archivo %s"
+msgstr "1 estado guardado"
 
 #
 # File: gem/interface.py, line: 2006
-#, fuzzy
 msgid "1 screenshot"
-msgstr "Mostrar las _capturas de pantalla"
+msgstr "1 captura de pantalla"
 
 #
 # File: gem/utils.py, line: 350
@@ -148,7 +145,7 @@ msgstr "1 segundo"
 # File: gem/gtk/interface.py, line: 3023
 #, python-format
 msgid "<b>%s</b> cannot been found on your system"
-msgstr ""
+msgstr "no se encuentra <b>%s</b> en tu sistema"
 
 #
 # File: gem/gtk/preferences.py, line: 1784
@@ -157,6 +154,9 @@ msgid ""
 "which is used by this console and extensions which is readable by this "
 "emulator."
 msgstr ""
+"Una consola representa una librería de juegos. Puedes especificar un "
+"emulador por defecto que será usado por esta consola y sus extensiones los "
+"cuales son leídos por este emulador."
 
 #
 # File: gem/gtk/preferences.py, line: 1509
@@ -168,7 +168,7 @@ msgstr ""
 # File: gem/gtk/windows.py, line: 2631
 # File: gem/gtk/windows.py, line: 2674
 msgid "Accept"
-msgstr ""
+msgstr "Aceptar"
 
 #
 # File: gem/preferences.py, line: 476
@@ -184,54 +184,50 @@ msgstr "Añadir"
 
 #
 # File: gem/preferences.py, line: 1602
-#, fuzzy
 msgid "Add _console"
-msgstr "Actualizar el archivo de configuración de %s"
+msgstr "Añadir _consola"
 
 #
 # File: gem/interface.py, line: 1257
 # File: gem/preferences.py, line: 547
 # File: gem/preferences.py, line: 1362
 # File: gem/windows.py, line: 794
-#, fuzzy
 msgid "Add _emulator"
-msgstr "Editar emulador"
+msgstr "Añadir _emulador"
 
 #
 # File: gem/ui/preferences/interface.py, line: 960
 msgid "Add a new console"
-msgstr ""
+msgstr "Añadir una nueva consola"
 
 #
 # File: gem/interface.py, line: 1257
 # File: gem/preferences.py, line: 547
 # File: gem/preferences.py, line: 1362
 # File: gem/windows.py, line: 794
-#, fuzzy
 msgid "Add a new emulator"
-msgstr "Editar emulador"
+msgstr "Añadir un nuevo emulador"
 
 #
 # File: gem/ui/preferences/interface.py, line: 657
 msgid "Add an ellipsis to title when there is not enough space"
-msgstr ""
+msgstr "Añadir puntos suspensivos al título cuando no hay suficiente espacio"
 
 #
 # File: gem/ui/interface.py, line: 989
 msgid "Advanced filters"
-msgstr ""
+msgstr "Filtros avanzados"
 
 #
 # File: gem/ui/preferences/console.py, line: 338
 # File: gem/ui/preferences/emulator.py, line: 337
 msgid "Advanced mode"
-msgstr ""
+msgstr "Modo avanzado"
 
 #
 # File: gem/configuration.py, line: 71
-#, fuzzy
 msgid "Allow to use an alternative screenshots viewer"
-msgstr "No puedo abrir el archivo %s"
+msgstr "Permitir usar un visualizador de capturas de pantalla alternativo"
 
 #
 # File: gem/interface.py, line: 451
@@ -240,9 +236,8 @@ msgstr "Alternar el modo pantalla completa del juego"
 
 #
 # File: gem/preferences.py, line: 1013
-#, fuzzy
 msgid "Alternative emulator"
-msgstr "Establecer el emulador por defecto"
+msgstr "Emulador alternativo"
 
 #
 # File: gem/interface.py, line: 2112
@@ -253,70 +248,65 @@ msgstr ""
 
 #
 # File: gem/main.py, line: 148
-#, fuzzy
 msgid "An instance already exists"
-msgstr "GEM ya está ejecutandose con el PID %s"
+msgstr "Una instancia ya existe"
 
 #
 # File: gem/ui/preferences/interface.py, line: 556
 msgid "Appearance"
-msgstr ""
+msgstr "Apariencia"
 
 #
 # File: gem/preferences.py, line: 94
-#, fuzzy
 msgid "Application _log"
-msgstr "Salir de la aplicación"
+msgstr "_Registro de la aplicación"
 
 #
 # File: gem/preferences.py, line: 94
-#, fuzzy
 msgid "Application log"
-msgstr "Salir de la aplicación"
+msgstr "Registro de la aplicación"
 
 #
 # File: gem/gtk/windows.py, line: 860
 # File: gem/gtk/windows.py, line: 1214
 msgid "Apply"
-msgstr ""
+msgstr "Aplicar"
 
 #
 # File: gem/preferences.py, line: 1196
-#, fuzzy, python-format
+#, python-format
 msgid "Are you sure you want to remove <b>%s</b> ?"
-msgstr "¿Quiere borrar esta entrada?"
+msgstr "¿Estás seguro que quieres borrar <b>%s</b> ?"
 
 #
 # File: gem/interface.py, line: 451
-#, fuzzy
 msgid "Argument which activate fullscreen mode"
-msgstr "Activar el modo pantalla completa del juego"
+msgstr "Opción que activará el modo pantalla completa"
 
 #
 # File: gem/gtk/preferences.py, line: 2572
 msgid "Argument which activate windowded mode"
-msgstr ""
+msgstr "Opción que activará el modo ventana"
 
 #
 # File: gem/ui/dialog/dndconsole.py, line: 351
 msgid "Automatic selection"
-msgstr ""
+msgstr "Selección automática"
 
 #
 # File: gem/ui/dialog/maintenance.py, line: 155
 msgid "Available actions"
-msgstr ""
+msgstr "Acciones disponibles"
 
 #
 # File: gem/interface.py, line: 642
-#, fuzzy
 msgid "Average play time"
-msgstr "Tiempo jugado"
+msgstr "Tiempo promedio jugado"
 
 #
 # File: gem/gtk/mednafen.py, line: 84
 msgid "Backup Memory Type"
-msgstr ""
+msgstr "Tipo de Copia de Seguridad de la Memoria"
 
 #
 # File: gem/preferences.py, line: 142
@@ -338,12 +328,12 @@ msgstr "Ambos"
 #
 # File: gem/gtk/preferences.py, line: 174
 msgid "Bottom"
-msgstr ""
+msgstr "Inferior"
 
 #
 # File: gem/gtk/preferences.py, line: 180
 msgid "Button"
-msgstr ""
+msgstr "Superior"
 
 #
 # File: gem/gtk/preferences.py, line: 879
@@ -352,21 +342,19 @@ msgstr "Cancelar"
 
 #
 # File: gem/interface.py, line: 2033
-#, fuzzy, python-format
+#, python-format
 msgid "Cannot find <b>%s</b>"
-msgstr "¡No puedo encontrar el visor <b>%s</b>!"
+msgstr "No puedo encontrar <b>%s</b>"
 
 #
 # File: gem/main.py, line: 128
-#, fuzzy
 msgid "Cannot launch game"
-msgstr "No puedo abrir la interfaz: %s"
+msgstr "No puedo lanzar el juego"
 
 #
 # File: gem/configuration.py, line: 71
-#, fuzzy
 msgid "Cannot open screenshots viewer"
-msgstr "No puedo abrir el archivo %s"
+msgstr "No puedo abrir el visor de capturas de pantalla"
 
 #
 # File: gem/windows.py, line: 1122
@@ -375,38 +363,33 @@ msgstr "Elegir un icono"
 
 #
 # File: gem/preferences.py, line: 85
-#, fuzzy
 msgid "Clean game data from database"
 msgstr "Borrar los datos del juego de la base de datos"
 
 #
 # File: gem/preferences.py, line: 85
-#, fuzzy
 msgid "Clean icons _cache"
-msgstr "Borrar los datos del juego de la base de datos"
+msgstr "Borrar iconos de la _caché"
 
 #
 # File: gem/preferences.py, line: 85
-#, fuzzy
 msgid "Clean icons cache"
-msgstr "Borrar los datos del juego de la base de datos"
+msgstr "Borrar iconos de la caché"
 
 #
 # File: gem/interface.py, line: 1614
-#, fuzzy
 msgid "Close"
-msgstr "Cerrar %s"
+msgstr "Cerrar"
 
 #
 # File: gem/preferences.py, line: 434
-#, fuzzy
 msgid "Color scheme"
 msgstr "Esquema de color"
 
 #
 # File: gem/ui/preferences/interface.py, line: 805
 msgid "Columns visibility"
-msgstr ""
+msgstr "Visibilidad de las columnas"
 
 #
 # File: gem/preferences.py, line: 1602
@@ -426,7 +409,7 @@ msgstr "Consolas"
 #
 # File: gem/ui/dialog/dndconsole.py, line: 162
 msgid "Copy files"
-msgstr ""
+msgstr "Copiar archivos"
 
 #
 # File: gem/preferences.py, line: 92
@@ -436,40 +419,38 @@ msgstr "Copiar la ruta del juego seleccionado"
 #
 # File: gem/gtk/windows.py, line: 2623
 msgid "Cover image"
-msgstr ""
+msgstr "Imagen de portada"
 
 #
 # File: gem/ui/dialog/dndconsole.py, line: 176
 msgid "Create consoles games subdirectory if missing"
-msgstr ""
+msgstr "Crear los subdirectorios de los juegos de consola si no están"
 
 #
 # File: gem/ui/dialog/delete.py, line: 164
 # File: gem/ui/dialog/duplicate.py, line: 172
 msgid "Database"
-msgstr ""
+msgstr "Base de datos"
 
 #
 # File: gem/ui/interface.py, line: 673
 msgid "Decrease score"
-msgstr ""
+msgstr "Reducir la puntuación"
 
 #
 # File: gem/preferences.py, line: 91
-#, fuzzy
 msgid "Decrease selected game score"
-msgstr "Abrir carpeta del juego seleccionado"
+msgstr "Reducir la puntuación del juego seleccionado"
 
 #
 # File: gem/gtk/preferences.py, line: 2563
 msgid "Default arguments to add when launch emulator"
-msgstr ""
+msgstr "Opciones por defecto a añadir cuando se lanza el emulador"
 
 #
 # File: gem/preferences.py, line: 1013
-#, fuzzy
 msgid "Default emulator"
-msgstr "Establecer el emulador por defecto"
+msgstr "Emulador por defecto"
 
 #
 # File: gem/preferences.py, line: 399
@@ -480,55 +461,47 @@ msgstr "Opciones por defecto"
 #
 # File: gem/ui/dialog/maintenance.py, line: 201
 msgid "Delete custom game environment variables"
-msgstr ""
+msgstr "Borrar las variables de entorno personalizadas del juego"
 
 #
 # File: gem/interface.py, line: 776
-#, fuzzy
 msgid "Delete desktop file"
-msgstr "Borrar partidas guardadas del juego"
+msgstr "Borrar archivos del escritorio"
 
 #
 # File: gem/interface.py, line: 460
-#, fuzzy
 msgid "Delete flash memory file"
-msgstr "Generar una copia de seguridad del archivo de memoria"
+msgstr "Borrar archivo de la memoria flash"
 
 #
 # File: gem/preferences.py, line: 85
-#, fuzzy
 msgid "Delete game data from database"
 msgstr "Borrar los datos del juego de la base de datos"
 
 #
 # File: gem/preferences.py, line: 86
-#, fuzzy
 msgid "Delete game log file"
-msgstr "Renombrar un juego"
+msgstr "Borrar el fichero del registro del juego"
 
 #
 # File: gem/preferences.py, line: 86
-#, fuzzy
 msgid "Delete game note file"
-msgstr "Renombrar un juego"
+msgstr "Borrar el archivo de la nota del juego"
 
 #
 # File: gem/preferences.py, line: 85
-#, fuzzy
 msgid "Delete generated icons from cache"
-msgstr "Borrar los datos del juego de la base de datos"
+msgstr "Borrar iconos generados de la caché"
 
 #
 # File: gem/configuration.py, line: 71
-#, fuzzy
 msgid "Delete savestates files"
-msgstr "No puedo abrir el archivo %s"
+msgstr "Borrar los estados de guardado"
 
 #
 # File: gem/configuration.py, line: 71
-#, fuzzy
 msgid "Delete screenshots files"
-msgstr "No puedo abrir el archivo %s"
+msgstr "Borrar las capturas de pantalla"
 
 #
 # File: gem/gtk/preferences.py, line: 2093
@@ -541,107 +514,97 @@ msgstr "Descripción"
 #
 # File: gem/gtk/preferences.py, line: 182
 msgid "Dialog"
-msgstr ""
+msgstr "Diálogo"
 
 #
 # File: gem/ui/preferences/interface.py, line: 654
 msgid "Display a sidebar next to games view"
-msgstr ""
+msgstr "Mostrar una barra lateral al lado de la vista de juegos"
 
 #
 # File: gem/ui/preferences/interface.py, line: 747
 msgid "Display an image in game tooltip"
-msgstr ""
+msgstr "Mostrar una imagen en la descripción emergente del juego"
 
 #
 # File: gem/ui/preferences/interface.py, line: 732
 msgid "Display background lines in games list view"
-msgstr ""
+msgstr "Mostrar las lineas de fondo en la lista de juegos"
 
 #
 # File: gem/ui/preferences/interface.py, line: 572
 msgid "Display headerbar close buttons"
-msgstr ""
+msgstr "Mostrar los iconos de cerrar en la barra principal"
 
 #
 # File: gem/interface.py, line: 642
-#, fuzzy
 msgid "Display menu"
-msgstr "Tiempo jugado"
+msgstr "Mostrar el menú"
 
 #
 # File: gem/preferences.py, line: 89
-#, fuzzy
 msgid "Display screenshot only"
-msgstr "Mostrar las capturas de pantalla del juego"
+msgstr "Mostrar solo capturas de pantalla"
 
 #
 # File: gem/preferences.py, line: 89
-#, fuzzy
 msgid "Display screenshot or thumbnail"
-msgstr "Mostrar las capturas de pantalla del juego"
+msgstr "Mostrar captura de pantalla o miniatura"
 
 #
 # File: gem/ui/preferences/interface.py, line: 197
 msgid "Display thumbnail only"
-msgstr ""
+msgstr "Mostrar solo la miniatura"
 
 #
 # File: gem/ui/preferences/interface.py, line: 754
 msgid "Display translucent icons in games views instead of empty ones"
-msgstr ""
+msgstr "Mostrar iconos traslúcidos en la vista de juegos en vez de los vacíos"
 
 #
 # File: gem/gtk/windows.py, line: 1885
 msgid "Drag & Drop"
-msgstr ""
+msgstr "Arrastrar y Soltar"
 
 #
 # File: gem/gtk/preferences.py, line: 181
 msgid "Drag and Drop"
-msgstr ""
+msgstr "Arrastrar y Soltar"
 
 #
 # File: gem/interface.py, line: 532
-#, fuzzy
 msgid "Drop games"
-msgstr "%d juegos disponibles"
+msgstr "Soltar juegos"
 
 #
 # File: gem/preferences.py, line: 86
-#, fuzzy
 msgid "Duplicate a game"
-msgstr "Renombrar un juego"
+msgstr "Duplicar un juego"
 
 #
 # File: gem/preferences.py, line: 86
-#, fuzzy
 msgid "Duplicate flash memory file"
-msgstr "Renombrar un juego"
+msgstr "Duplicar la memoria flash"
 
 #
 # File: gem/preferences.py, line: 85
-#, fuzzy
 msgid "Duplicate game data from database"
-msgstr "Borrar los datos del juego de la base de datos"
+msgstr "Duplicar los datos del juego desde la base de datos"
 
 #
 # File: gem/preferences.py, line: 86
-#, fuzzy
 msgid "Duplicate game note file"
-msgstr "Renombrar un juego"
+msgstr "Duplicar la nota del juego"
 
 #
 # File: gem/configuration.py, line: 71
-#, fuzzy
 msgid "Duplicate savestates files"
-msgstr "No puedo abrir el archivo %s"
+msgstr "Duplicar los estados de las partidas guardadas"
 
 #
 # File: gem/configuration.py, line: 71
-#, fuzzy
 msgid "Duplicate screenshots files"
-msgstr "No puedo abrir el archivo %s"
+msgstr "Duplicar las capturas de pantalla"
 
 #
 # File: gem/preferences.py, line: 429
@@ -650,15 +613,14 @@ msgstr "Editar"
 
 #
 # File: gem/preferences.py, line: 1602
-#, fuzzy, python-format
+#, python-format
 msgid "Edit %s configuration"
-msgstr "Actualizar el archivo de configuración de %s"
+msgstr "Editar la configuración de %s"
 
 #
 # File: gem/preferences.py, line: 1602
-#, fuzzy
 msgid "Edit a game file"
-msgstr "Actualizar el archivo de configuración de %s"
+msgstr "Editar un juego"
 
 #
 # File: gem/preferences.py, line: 429
@@ -686,9 +648,8 @@ msgstr ""
 
 #
 # File: gem/preferences.py, line: 280
-#, fuzzy
 msgid "Emulator flags"
-msgstr "Emuladores"
+msgstr "Opciones del emulador"
 
 #
 # File: gem/preferences.py, line: 280
@@ -697,74 +658,69 @@ msgstr "Emuladores"
 
 #
 # File: gem/preferences.py, line: 393
-#, fuzzy
 msgid "Enable alternative application"
-msgstr "Usar el visor nativo"
+msgstr "Activar aplicación alternativa"
 
 #
 # File: gem/ui/preferences/interface.py, line: 572
 msgid "Enable close buttons"
-msgstr ""
+msgstr "Activar botones de cerrar"
 
 #
 # File: gem/ui/preferences/interface.py, line: 655
 msgid "Enable ellipsize title mode"
-msgstr ""
+msgstr "Activar el modo de título acortado"
 
 #
 # File: gem/interface.py, line: 2006
-#, fuzzy
 msgid "Enable randomize screenshot"
-msgstr "Borrar capturas de pantalla del juego"
+msgstr "Activar captura de pantalla aleatoria"
 
 #
 # File: gem/preferences.py, line: 431
-#, fuzzy
 msgid "Enable sidebar"
-msgstr "Mostrar los números de línea"
+msgstr "Activar la barra lateral"
 
 #
 # File: gem/preferences.py, line: 283
-#, fuzzy
 msgid "Enable translucent icons"
-msgstr "Usar iconos translúcidos en la lista de los juegos"
+msgstr "Activar iconos traslúcidos"
 
 #
 # File: gem/gtk/windows.py, line: 1057
 msgid "Environment"
-msgstr ""
+msgstr "Entorno"
 
 #
 # File: gem/ui/dialog/maintenance.py, line: 199
 msgid "Environment variables"
-msgstr ""
+msgstr "Variables de entorno"
 
 #
 # File: gem/ui/preferences/interface.py, line: 581
 msgid "Executable"
-msgstr ""
+msgstr "Ejecutable"
 
 #
 # File: gem/ui/dialog/editor.py, line: 703
 msgid "Existing file"
-msgstr ""
+msgstr "Archivo existente"
 
 #
 # File: gem/ui/dialog/editor.py, line: 207
 # File: gem/ui/dialog/editor.py, line: 997
 msgid "Export"
-msgstr ""
+msgstr "Exportar"
 
 #
 # File: gem/ui/dialog/editor.py, line: 1145
 msgid "Export As"
-msgstr ""
+msgstr "Exportar como"
 
 #
 # File: gem/preferences.py, line: 1342
-#, fuzzy
 msgid "Extensions"
-msgstr "Extensiones de las ROM"
+msgstr "Extensiones"
 
 #
 # File: gem/gtk/preferences.py, line: 1792
@@ -772,45 +728,45 @@ msgid ""
 "Extensions are split by spaces and must not having the first dot (using \"nes"
 "\" than \".nes\")."
 msgstr ""
+"Las extensiones se separan por espacios y no tienen que tener un punto al "
+"principio (usar \"nes\" en vez de \".nes\")."
 
 #
 # File: gem/gtk/preferences.py, line: 1780
 # File: gem/gtk/preferences.py, line: 1790
 msgid "Extensions examples"
-msgstr ""
+msgstr "Ejemplos de extensiones"
 
 #
 # File: gem/gtk/interface.py, line: 792
 msgid "Favorite"
-msgstr ""
+msgstr "Favorito"
 
 #
 # File: gem/gtk/preferences.py, line: 3458
 msgid "File"
-msgstr ""
+msgstr "Archivo"
 
 #
 # File: gem/interface.py, line: 401
 # File: gem/interface.py, line: 761
-#, fuzzy
 msgid "Filepath"
-msgstr "_Copiar la ruta del juego"
+msgstr "Ruta del archivo"
 
 #
 # File: gem/gtk/preferences.py, line: 2588
 msgid "Files patterns"
-msgstr ""
+msgstr "Patrones de archivos"
 
 #
 # File: gem/interface.py, line: 522
-#, fuzzy
 msgid "Filter"
 msgstr "Filtro"
 
 #
 # File: gem/gtk/interface.py, line: 796
 msgid "Finish"
-msgstr ""
+msgstr "Terminar"
 
 #
 # File: gem/interface.py, line: 672
@@ -821,12 +777,12 @@ msgstr "Notificaciones"
 # File: gem/ui/dialog/delete.py, line: 188
 # File: gem/ui/dialog/duplicate.py, line: 196
 msgid "Flash memory"
-msgstr ""
+msgstr "Memoria flash"
 
 #
 # File: gem/ui/preferences/interface.py, line: 465
 msgid "Font"
-msgstr ""
+msgstr "Fuente"
 
 #
 # File: gem/preferences.py, line: 1675
@@ -835,15 +791,14 @@ msgstr "Pantalla completa"
 
 #
 # File: gem/preferences.py, line: 1675
-#, fuzzy
 msgid "Fullscreen mode"
 msgstr "Pantalla completa"
 
 #
 # File: gem/main.py, line: 148
-#, fuzzy, python-format
+#, python-format
 msgid "GEM is already running with PID %d"
-msgstr "GEM ya está ejecutandose con el PID %s"
+msgstr "GEM ya se está ejecutando con el PID %d"
 
 #
 # File: gem/preferences.py, line: 113
@@ -852,44 +807,38 @@ msgstr "Juego"
 
 #
 # File: gem/preferences.py, line: 328
-#, fuzzy
 msgid "Game _log"
-msgstr "Lista de juegos"
+msgstr "_Historial del juego"
 
 #
 # File: gem/preferences.py, line: 328
-#, fuzzy
 msgid "Game cover"
-msgstr "Lista de juegos"
+msgstr "Cubierta del juego"
 
 #
 # File: gem/gtk/windows.py, line: 943
 msgid "Game properties"
-msgstr ""
+msgstr "Propiedades del juego"
 
 #
 # File: gem/preferences.py, line: 113
-#, fuzzy
 msgid "GameID"
-msgstr "Juego"
+msgstr "ID del juego"
 
 #
 # File: gem/preferences.py, line: 113
-#, fuzzy
 msgid "Games"
-msgstr "Juego"
+msgstr "Juegos"
 
 #
 # File: gem/preferences.py, line: 328
-#, fuzzy
 msgid "Games folder"
-msgstr "Lista de juegos"
+msgstr "Carpeta de juegos"
 
 #
 # File: gem/preferences.py, line: 328
-#, fuzzy
 msgid "Games installation"
-msgstr "Lista de juegos"
+msgstr "Instalación de los juegos"
 
 #
 # File: gem/preferences.py, line: 301
@@ -899,7 +848,7 @@ msgstr "General"
 #
 # File: gem/interface.py, line: 460
 msgid "Generate a backup memory file"
-msgstr "Generar una copia de seguridad del archivo de memoria"
+msgstr "Crear una copia de seguridad del archivo de memoria"
 
 #
 # File: gem/preferences.py, line: 90
@@ -908,9 +857,8 @@ msgstr "Crear un acceso directo en el escritorio para un juego"
 
 #
 # File: gem/interface.py, line: 460
-#, fuzzy
 msgid "Generate menu entry"
-msgstr "_Generar una entrada de menú"
+msgstr "Crear entrada en el menú"
 
 #
 # File: gem/interface.py, line: 460
@@ -920,26 +868,23 @@ msgstr "Crear una entrada en el menú para %s"
 
 #
 # File: gem/interface.py, line: 460
-#, fuzzy
 msgid "Generate subdirectory"
-msgstr "_Generar una entrada de menú"
+msgstr "Crear subdirectorio"
 
 #
 # File: gem/gtk/widgets.py, line: 212
 msgid "Get some help about this dialog"
-msgstr ""
+msgstr "Obtener ayuda sobre este mensaje"
 
 #
 # File: gem/preferences.py, line: 431
-#, fuzzy
 msgid "Grid icons"
-msgstr "Mostrar los números de línea"
+msgstr "Iconos en rejilla"
 
 #
 # File: gem/preferences.py, line: 431
-#, fuzzy
 msgid "Grid lines"
-msgstr "Mostrar los números de línea"
+msgstr "Líneas en rejilla"
 
 #
 # File: gem/gtk/windows.py, line: 247
@@ -949,18 +894,17 @@ msgstr "Ayuda"
 #
 # File: gem/ui/preferences/interface.py, line: 171
 msgid "Hide"
-msgstr ""
+msgstr "Ocultar"
 
 #
 # File: gem/ui/preferences/interface.py, line: 389
 msgid "Hide consoles without games"
-msgstr ""
+msgstr "Ocultar consolas sin juegos"
 
 #
 # File: gem/preferences.py, line: 1602
-#, fuzzy
 msgid "Hide empty consoles"
-msgstr "Actualizar el archivo de configuración de %s"
+msgstr "Ocultar consolas vacías"
 
 #
 # File: gem/preferences.py, line: 98
@@ -971,39 +915,38 @@ msgstr "Horizontal"
 # File: gem/ui/preferences/console.py, line: 191
 # File: gem/ui/preferences/emulator.py, line: 174
 msgid "Icon"
-msgstr ""
+msgstr "Icono"
 
 #
 # File: gem/ui/dialog/delete.py, line: 193
 msgid "Icons cache"
-msgstr ""
+msgstr "Caché de iconos"
 
 #
 # File: gem/ui/interface.py, line: 4458
 msgid "Icons cache directory has been succesfully cleaned."
-msgstr ""
+msgstr "El directorio de la caché de los iconos ha sido limpiado con éxito."
 
 #
 # File: gem/ui/preferences/interface.py, line: 679
 msgid "Icons size"
-msgstr ""
+msgstr "Tamaño de los iconos"
 
 #
 # File: gem/ui/dialog/editor.py, line: 196
 # File: gem/ui/dialog/editor.py, line: 794
 msgid "Import"
-msgstr ""
+msgstr "Importar"
 
 #
 # File: gem/ui/interface.py, line: 669
 msgid "Increase score"
-msgstr ""
+msgstr "Incrementar la puntuación"
 
 #
 # File: gem/preferences.py, line: 91
-#, fuzzy
 msgid "Increase selected game score"
-msgstr "Abrir carpeta del juego seleccionado"
+msgstr "Incrementar la puntuación del juego seleccionado"
 
 #
 # File: gem/interface.py, line: 664
@@ -1012,9 +955,8 @@ msgstr "Instalado"
 
 #
 # File: gem/interface.py, line: 664
-#, fuzzy
 msgid "Installed date"
-msgstr "Instalado"
+msgstr "Fecha de instalación"
 
 #
 # File: gem/preferences.py, line: 268
@@ -1027,16 +969,18 @@ msgid ""
 "It's possible to hide specific files from the games list with regular "
 "expressions."
 msgstr ""
+"Es posible esconder ciertos archivos de la lista de juegos con expresiones "
+"regulares."
 
 #
 # File: gem/gtk/windows.py, line: 1069
 msgid "Key"
-msgstr ""
+msgstr "Leyenda"
 
 #
 # File: gem/gtk/preferences.py, line: 179
 msgid "Large Toolbar"
-msgstr ""
+msgstr "Barra de herramientas grande"
 
 #
 # File: gem/interface.py, line: 2128
@@ -1045,9 +989,8 @@ msgstr "Último lanzamiento"
 
 #
 # File: gem/interface.py, line: 2128
-#, fuzzy
 msgid "Last launch date"
-msgstr "Último lanzamiento"
+msgstr "Fecha de la última partida"
 
 #
 # File: gem/interface.py, line: 2128
@@ -1056,9 +999,8 @@ msgstr "Último mes"
 
 #
 # File: gem/interface.py, line: 642
-#, fuzzy
 msgid "Last play time"
-msgstr "Tiempo jugado"
+msgstr "Último tiempo de juego"
 
 #
 # File: gem/interface.py, line: 2135
@@ -1077,61 +1019,58 @@ msgstr "Lanzar un juego"
 
 #
 # File: gem/preferences.py, line: 431
-#, fuzzy
 msgid "Launch number"
-msgstr "Mostrar los números de línea"
+msgstr "Número de lanzamiento"
 
 #
 # File: gem/interface.py, line: 448
 msgid "Launch selected game"
-msgstr "Lanzar el juego seleccionado"
+msgstr "Lanzar juego seleccionado"
 
 #
 # File: gem/gtk/preferences.py, line: 3454
 msgid "Library"
-msgstr ""
+msgstr "Libreria"
 
 #
 # File: gem/windows.py, line: 319
-#, fuzzy
 msgid "Line break"
-msgstr "Salto de línea automàtico"
+msgstr "Salto de línea"
 
 #
 # File: gem/preferences.py, line: 431
-#, fuzzy
 msgid "Line numbers"
-msgstr "Mostrar los números de línea"
+msgstr "Números de línea"
 
 #
 # File: gem/ui/preferences/interface.py, line: 714
 msgid "List view"
-msgstr ""
+msgstr "Vista de la lista"
 
 #
 # File: gem/ui/dialog/editor.py, line: 403
 msgid "Loading"
-msgstr ""
+msgstr "Cargando"
 
 #
 # File: gem/ui/dialog/maintenance.py, line: 175
 msgid "Log"
-msgstr ""
+msgstr "Historial"
 
 #
 # File: gem/ui/interface.py, line: 397
 msgid "Main menu"
-msgstr ""
+msgstr "Menú principal"
 
 #
 # File: gem/ui/dialog/maintenance.py, line: 53
 msgid "Maintenance"
-msgstr ""
+msgstr "Mantenimiento"
 
 #
 # File: gem/ui/dialog/dndconsole.py, line: 164
 msgid "Make copy of dropped files instead of moving them"
-msgstr ""
+msgstr "Hacer una copia de los archivos arrastrados en vez de moverlos"
 
 #
 # File: gem/preferences.py, line: 87
@@ -1140,9 +1079,8 @@ msgstr "Marcar el juego como favorito"
 
 #
 # File: gem/preferences.py, line: 87
-#, fuzzy
 msgid "Mark a game as finish"
-msgstr "Marcar el juego como favorito"
+msgstr "Marcar un juego como acabado"
 
 #
 # File: gem/preferences.py, line: 88
@@ -1157,13 +1095,12 @@ msgstr "Documentación Mednafen GBA"
 #
 # File: gem/gtk/preferences.py, line: 177
 msgid "Menu"
-msgstr ""
+msgstr "Menú"
 
 #
 # File: gem/interface.py, line: 460
-#, fuzzy
 msgid "Menu entry"
-msgstr "_Generar una entrada de menú"
+msgstr "Entrada del menú"
 
 #
 # File: gem/interface.py, line: 139
@@ -1180,16 +1117,15 @@ msgstr "Modificar"
 #
 # File: gem/ui/preferences/interface.py, line: 969
 msgid "Modify selected console"
-msgstr ""
+msgstr "Modificar consola seleccionada"
 
 #
 # File: gem/interface.py, line: 1257
 # File: gem/preferences.py, line: 547
 # File: gem/preferences.py, line: 1362
 # File: gem/windows.py, line: 794
-#, fuzzy
 msgid "Modify selected emulator"
-msgstr "Editar emulador"
+msgstr "Modificar emulador seleccionado"
 
 #
 # File: gem/gtk/preferences.py, line: 1879
@@ -1197,18 +1133,20 @@ msgid ""
 "Most of the time, extensions are common between differents emulators and "
 "represent the console acronym name (example: Nintendo NES -> nes)."
 msgstr ""
+"Muy a menudo, las extensiones son comunes entre diferentes emuladores y "
+"representan el acrónimo del nombre de la consola (ejemplo: Nintendo NES -> "
+"nes)."
 
 #
 # File: gem/interface.py, line: 386
 # File: gem/interface.py, line: 746
-#, fuzzy
 msgid "Multiplayer"
-msgstr "Marcar como _mutijugador"
+msgstr "Mutijugador"
 
 #
 # File: gem/gtk/interface.py, line: 2783
 msgid "N/A"
-msgstr ""
+msgstr "N/D"
 
 #
 # File: gem/interface.py, line: 635
@@ -1221,32 +1159,28 @@ msgstr "Nombre"
 
 #
 # File: gem/preferences.py, line: 1602
-#, fuzzy
 msgid "New console"
-msgstr "Actualizar el archivo de configuración de %s"
+msgstr "Nueva consola"
 
 #
 # File: gem/interface.py, line: 1257
 # File: gem/preferences.py, line: 547
 # File: gem/preferences.py, line: 1362
 # File: gem/windows.py, line: 794
-#, fuzzy
 msgid "New emulator"
-msgstr "Editar emulador"
+msgstr "Nuevo emulador"
 
 #
 # File: gem/interface.py, line: 406
 # File: gem/interface.py, line: 766
-#, fuzzy
 msgid "New filename"
-msgstr "Usar el nombre del archivo de la ROM"
+msgstr "Nuevo nombre de archivo"
 
 #
 # File: gem/interface.py, line: 406
 # File: gem/interface.py, line: 766
-#, fuzzy
 msgid "New name"
-msgstr "Usar el nombre del archivo de la ROM"
+msgstr "Nuevo nombre"
 
 #
 # File: gem/gtk/windows.py, line: 791
@@ -1255,58 +1189,55 @@ msgid ""
 "a GameID. This GameID is only used with some emulators like Dolphin-emu. For "
 "more informations, consult emulators documentation."
 msgstr ""
+"Los títulos de la consola Nintendo se identifican con un nombre de 6 "
+"caracteres conocido como GameID. Este GameID es solo usado con algunos "
+"emuladores como el Dolphin-emu. Para más información, consulta la "
+"documentación del emulador."
 
 #
 # File: gem/preferences.py, line: 97
-#, fuzzy
 msgid "No"
-msgstr "Ninguno"
+msgstr "No"
 
 #
 # File: gem/interface.py, line: 910
-#, fuzzy
 msgid "No console available"
-msgstr "1 juego disponible"
+msgstr "Consola no disponible"
 
 #
 # File: gem/ui/dialog/dndconsole.py, line: 528
 msgid "No corresponding console"
-msgstr ""
+msgstr "Sin consola correspondiente"
 
 #
 # File: gem/preferences.py, line: 1662
-#, fuzzy
 msgid "No data"
-msgstr "Establecer las opciones por defecto"
+msgstr "Sin datos"
 
 #
 # File: gem/preferences.py, line: 1662
-#, fuzzy
 msgid "No default value"
-msgstr "Establecer las opciones por defecto"
+msgstr "Sin valor por defecto"
 
 #
 # File: gem/interface.py, line: 532
-#, fuzzy
 msgid "No game"
-msgstr "%d juegos disponibles"
+msgstr "Sin juego"
 
 #
 # File: gem/ui/interface.py, line: 8180
 msgid "No game has been added"
-msgstr ""
+msgstr "Ningún juego ha sido añadido"
 
 #
 # File: gem/configuration.py, line: 71
-#, fuzzy
 msgid "No savestate"
-msgstr "No puedo abrir el archivo %s"
+msgstr "Sin estado de partida salvada"
 
 #
 # File: gem/interface.py, line: 2006
-#, fuzzy
 msgid "No screenshot"
-msgstr "Mostrar las _capturas de pantalla"
+msgstr "Sin captura de pantalla"
 
 #
 # File: gem/preferences.py, line: 97
@@ -1315,27 +1246,23 @@ msgstr "Ninguno"
 
 #
 # File: gem/interface.py, line: 384
-#, fuzzy
 msgid "Note"
-msgstr "_Notas"
+msgstr "Nota"
 
 #
 # File: gem/preferences.py, line: 86
-#, fuzzy
 msgid "Open a game log"
-msgstr "Abrir el historial del juego"
+msgstr "Abrir el historial de un juego"
 
 #
 # File: gem/preferences.py, line: 86
-#, fuzzy
 msgid "Open a game maintenance dialog"
-msgstr "Abrir el historial del juego"
+msgstr "Abrir el diálogo de mantenimiento de un juego"
 
 #
 # File: gem/preferences.py, line: 86
-#, fuzzy
 msgid "Open a game notes"
-msgstr "Abrir las notas del juego"
+msgstr "Abrir las notas de un juego"
 
 #
 # File: gem/preferences.py, line: 100
@@ -1354,27 +1281,23 @@ msgstr "Abrir carpeta del juego seleccionado"
 
 #
 # File: gem/preferences.py, line: 1662
-#, fuzzy
 msgid "Optional data to duplicate"
-msgstr "Establecer las opciones por defecto"
+msgstr "Datos opcionales para duplicar"
 
 #
 # File: gem/preferences.py, line: 1662
-#, fuzzy
 msgid "Optional data to remove"
-msgstr "Establecer las opciones por defecto"
+msgstr "Datos opcionales para borrar"
 
 #
 # File: gem/preferences.py, line: 476
-#, fuzzy
 msgid "Options"
-msgstr "Acción"
+msgstr "Opciones"
 
 #
 # File: gem/interface.py, line: 572
-#, fuzzy
 msgid "Output _log"
-msgstr "Mostrar el _registro de salida"
+msgstr "_Registro de salida"
 
 #
 # File: gem/interface.py, line: 396
@@ -1385,21 +1308,18 @@ msgstr "Parámetros"
 
 #
 # File: gem/configuration.py, line: 71
-#, fuzzy
 msgid "Pattern to detect savestates files"
-msgstr "No puedo abrir el archivo %s"
+msgstr "Patrón para detectar estados de guardado"
 
 #
 # File: gem/configuration.py, line: 71
-#, fuzzy
 msgid "Pattern to detect screenshots files"
-msgstr "No puedo abrir el archivo %s"
+msgstr "Patrón para detectar capturas de pantalla"
 
 #
 # File: gem/interface.py, line: 642
-#, fuzzy
 msgid "Play"
-msgstr "Tiempo jugado"
+msgstr "Jugar"
 
 #
 # File: gem/interface.py, line: 642
@@ -1411,9 +1331,8 @@ msgstr "Tiempo jugado"
 # File: gem/gtk/preferences.py, line: 2096
 # File: gem/gtk/windows.py, line: 777
 # File: gem/gtk/windows.py, line: 780
-#, fuzzy
 msgid "Position"
-msgstr "Descripción"
+msgstr "Posición"
 
 #
 # File: gem/interface.py, line: 463
@@ -1424,7 +1343,7 @@ msgstr "Preferencias"
 #
 # File: gem/ui/dialog/cover.py, line: 160
 msgid "Preview"
-msgstr ""
+msgstr "Vista previa"
 
 #
 # File: gem/preferences.py, line: 94
@@ -1434,13 +1353,12 @@ msgstr "Salir de la aplicación"
 #
 # File: gem/gtk/preferences.py, line: 2294
 msgid "Recursive"
-msgstr ""
+msgstr "Repetir"
 
 #
 # File: gem/preferences.py, line: 1624
-#, fuzzy
 msgid "Regular expressions for ignored files"
-msgstr "Expresiones regulares para los archivos"
+msgstr "Expresiones regulares para los archivos ignorados"
 
 #
 # File: gem/interface.py, line: 1736
@@ -1450,15 +1368,13 @@ msgstr "Borrar"
 
 #
 # File: gem/preferences.py, line: 1602
-#, fuzzy
 msgid "Remove a console"
-msgstr "Actualizar el archivo de configuración de %s"
+msgstr "Borrar una consola"
 
 #
 # File: gem/preferences.py, line: 86
-#, fuzzy
 msgid "Remove a game"
-msgstr "Renombrar un juego"
+msgstr "Borrar un juego"
 
 #
 # File: gem/interface.py, line: 776
@@ -1468,13 +1384,12 @@ msgstr "Borrar un juego del disco"
 #
 # File: gem/ui/preferences/interface.py, line: 978
 msgid "Remove selected console"
-msgstr ""
+msgstr "Borrar la consola seleccionada"
 
 #
 # File: gem/preferences.py, line: 1013
-#, fuzzy
 msgid "Remove selected emulator"
-msgstr "Establecer el emulador por defecto"
+msgstr "Borrar el emulador seleccionado"
 
 #
 # File: gem/preferences.py, line: 86
@@ -1484,47 +1399,47 @@ msgstr "Renombrar un juego"
 #
 # File: gem/ui/dialog/editor.py, line: 911
 msgid "Replace current buffer"
-msgstr ""
+msgstr "Remplazar el búfer actual"
 
 #
 # File: gem/ui/dialog/dndconsole.py, line: 170
 msgid "Replace existing files on disk"
-msgstr ""
+msgstr "Remplazar los archivos existentes del disco"
 
 #
 # File: gem/ui/dialog/dndconsole.py, line: 168
 msgid "Replace files"
-msgstr ""
+msgstr "Remplazar archivos"
 
 #
 # File: gem/gtk/interface.py, line: 802
 msgid "Reset filters"
-msgstr ""
+msgstr "Reiniciar los filtros"
 
 #
 # File: gem/ui/preferences/interface.py, line: 375
 msgid "Restore last console"
-msgstr ""
+msgstr "Restaurar la última consola"
 
 #
 # File: gem/ui/preferences/interface.py, line: 382
 msgid "Restore sorted column"
-msgstr ""
+msgstr "Restaurar la columna ordenada"
 
 #
 # File: gem/ui/preferences/interface.py, line: 375
 msgid "Restore the last selected console on starting"
-msgstr ""
+msgstr "Restaurar la última consola al inicio"
 
 #
 # File: gem/ui/preferences/interface.py, line: 382
 msgid "Restore the last sorted column on starting"
-msgstr ""
+msgstr "Restaurar la última columna ordenada al inicio"
 
 #
 # File: gem/gtk/preferences.py, line: 173
 msgid "Right"
-msgstr ""
+msgstr "Derecha"
 
 #
 # File: gem/preferences.py, line: 1627
@@ -1535,7 +1450,7 @@ msgstr "Guardar"
 # File: gem/ui/dialog/delete.py, line: 176
 # File: gem/ui/dialog/duplicate.py, line: 178
 msgid "Savestates"
-msgstr ""
+msgstr "Estados guardados"
 
 #
 # File: gem/ui/interface.py, line: 665
@@ -1543,19 +1458,17 @@ msgstr ""
 # File: gem/ui/preferences/interface.py, line: 104
 # File: gem/ui/preferences/interface.py, line: 859
 msgid "Score"
-msgstr ""
+msgstr "Puntuación"
 
 #
 # File: gem/interface.py, line: 2006
-#, fuzzy
 msgid "Screenshots"
-msgstr "Mostrar las _capturas de pantalla"
+msgstr "Capturas de pantalla"
 
 #
 # File: gem/interface.py, line: 2006
-#, fuzzy
 msgid "Screenshots viewer"
-msgstr "Mostrar las _capturas de pantalla"
+msgstr "Visor de capturas de pantalla"
 
 #
 # File: gem/windows.py, line: 385
@@ -1569,21 +1482,18 @@ msgstr "Seleccionar un binario"
 
 #
 # File: gem/preferences.py, line: 1602
-#, fuzzy
 msgid "Select a configuration file"
-msgstr "Actualizar el archivo de configuración de %s"
+msgstr "Seleccionar un archivo de configuración"
 
 #
 # File: gem/interface.py, line: 602
-#, fuzzy
 msgid "Select this console for every rows"
-msgstr "Guardar %s para el próximo arranque"
+msgstr "Seleccionar esta consola para cada fila"
 
 #
 # File: gem/preferences.py, line: 86
-#, fuzzy
 msgid "Set a game thumbnail"
-msgstr "Abrir las notas del juego"
+msgstr "Seleccionar una miniatura para el juego"
 
 #
 # File: gem/interface.py, line: 396
@@ -1595,89 +1505,83 @@ msgstr "Crear parametros personalizados"
 #
 # File: gem/ui/interface.py, line: 624
 msgid "Set game _thumbnail"
-msgstr ""
+msgstr "Crear la _miniatura del juego"
 
 #
 # File: gem/ui/interface.py, line: 1463
 msgid "Set game thumbnail"
-msgstr ""
+msgstr "Crear la miniatura del juego"
 
 #
 # File: gem/ui/interface.py, line: 677
 # File: gem/ui/interface.py, line: 1300
 msgid "Set score as 0"
-msgstr ""
+msgstr "Fijar la puntuación a 0"
 
 #
 # File: gem/ui/interface.py, line: 681
 # File: gem/ui/interface.py, line: 1304
 msgid "Set score as 1"
-msgstr ""
+msgstr "Fijar la puntuación a 1"
 
 #
 # File: gem/ui/interface.py, line: 685
 # File: gem/ui/interface.py, line: 1308
 msgid "Set score as 2"
-msgstr ""
+msgstr "Fijar la puntuación a 2"
 
 #
 # File: gem/ui/interface.py, line: 689
 # File: gem/ui/interface.py, line: 1312
 msgid "Set score as 3"
-msgstr ""
+msgstr "Fijar la puntuación a 3"
 
 #
 # File: gem/ui/interface.py, line: 693
 # File: gem/ui/interface.py, line: 1316
 msgid "Set score as 4"
-msgstr ""
+msgstr "Fijar la puntuación a 4"
 
 #
 # File: gem/ui/interface.py, line: 697
 # File: gem/ui/interface.py, line: 1320
 msgid "Set score as 5"
-msgstr ""
+msgstr "Fijar la puntuación a 6"
 
 #
 # File: gem/interface.py, line: 455
-#, fuzzy
 msgid "Set selected game score as 0"
-msgstr "Mostrar las notas del juego seleccionado"
+msgstr "Fijar la nota del juego seleccionado a 0"
 
 #
 # File: gem/interface.py, line: 455
-#, fuzzy
 msgid "Set selected game score as 1"
-msgstr "Mostrar las notas del juego seleccionado"
+msgstr "Fijar la nota del juego seleccionado a 1"
 
 #
 # File: gem/interface.py, line: 455
-#, fuzzy
 msgid "Set selected game score as 2"
-msgstr "Mostrar las notas del juego seleccionado"
+msgstr "Fijar la nota del juego seleccionado a 2"
 
 #
 # File: gem/interface.py, line: 455
-#, fuzzy
 msgid "Set selected game score as 3"
-msgstr "Mostrar las notas del juego seleccionado"
+msgstr "Fijar la nota del juego seleccionado a 3"
 
 #
 # File: gem/interface.py, line: 455
-#, fuzzy
 msgid "Set selected game score as 4"
-msgstr "Mostrar las notas del juego seleccionado"
+msgstr "Fijar la nota del juego seleccionado a 4"
 
 #
 # File: gem/interface.py, line: 455
-#, fuzzy
 msgid "Set selected game score as 5"
-msgstr "Mostrar las notas del juego seleccionado"
+msgstr "Fijar la nota del juego seleccionado a 5"
 
 #
 # File: gem/ui/preferences/interface.py, line: 660
 msgid "Set sidebar position as for games view"
-msgstr ""
+msgstr "Posicionar la barra lateral como la vista de juegos"
 
 #
 # File: gem/preferences.py, line: 90
@@ -1687,7 +1591,7 @@ msgstr "Establecer opciones específicas de un juego"
 #
 # File: gem/ui/preferences/interface.py, line: 605
 msgid "Set the toolbar icons size"
-msgstr ""
+msgstr "Establecer el tamaño de los iconos de la barra de herramientas"
 
 #
 # File: gem/preferences.py, line: 485
@@ -1701,32 +1605,28 @@ msgstr "Enlaces"
 
 #
 # File: gem/preferences.py, line: 431
-#, fuzzy
 msgid "Show _sidebar"
-msgstr "Mostrar los números de línea"
+msgstr "Mostrar la barra _lateral"
 
 #
 # File: gem/preferences.py, line: 431
-#, fuzzy
 msgid "Show _statusbar"
-msgstr "Mostrar los números de línea"
+msgstr "Mostrar la barra de _estado"
 
 #
 # File: gem/preferences.py, line: 89
-#, fuzzy
 msgid "Show a game screenshots"
-msgstr "Mostrar las capturas de pantalla del juego"
+msgstr "Mostrar las capturas de pantalla de un juego"
 
 #
 # File: gem/ui/preferences/interface.py, line: 434
 msgid "Show line number at beginning of each line"
-msgstr ""
+msgstr "Mostrar el número de línea al principio de cada una"
 
 #
 # File: gem/interface.py, line: 455
-#, fuzzy
 msgid "Show selected game log"
-msgstr "Mostrar las notas del juego seleccionado"
+msgstr "Mostrar el historial del juego seleccionado"
 
 #
 # File: gem/interface.py, line: 455
@@ -1740,37 +1640,33 @@ msgstr "Mostrar las capturas de pantalla seleccionadas del juego"
 
 #
 # File: gem/interface.py, line: 455
-#, fuzzy
 msgid "Show selected game tags"
-msgstr "Mostrar las notas del juego seleccionado"
+msgstr "Mostrar las etiquetas del juego seleccionado"
 
 #
 # File: gem/preferences.py, line: 431
-#, fuzzy
 msgid "Show sidebar"
-msgstr "Mostrar los números de línea"
+msgstr "Mostrar la barra lateral"
 
 #
 # File: gem/preferences.py, line: 431
-#, fuzzy
 msgid "Show statusbar"
-msgstr "Mostrar los números de línea"
+msgstr "Mostrar la barra de estado"
 
 #
 # File: gem/preferences.py, line: 431
-#, fuzzy
 msgid "Sidebar"
-msgstr "Mostrar los números de línea"
+msgstr "Barra lateral"
 
 #
 # File: gem/gtk/interface.py, line: 795
 msgid "Singleplayer"
-msgstr ""
+msgstr "Un jugador"
 
 #
 # File: gem/gtk/preferences.py, line: 178
 msgid "Small Toolbar"
-msgstr ""
+msgstr "Barra de herramientas pequeña"
 
 #
 # File: gem/interface.py, line: 453
@@ -1787,69 +1683,66 @@ msgstr "Escoge un tipo de _memoria"
 #
 # File: gem/gtk/interface.py, line: 949
 msgid "Start to play by drag & drop some ROM files into interface"
-msgstr ""
+msgstr "Empieza a jugar arrastrando y soltando algunas ROM en la aplicación"
 
 #
 # File: gem/gtk/windows.py, line: 1052
 msgid "Statistic"
-msgstr ""
+msgstr "Estadística"
 
 #
 # File: gem/gtk/interface.py, line: 3661
 # File: gem/gtk/interface.py, line: 3663
 msgid "Stop"
-msgstr ""
+msgstr "Parar"
 
 #
 # File: gem/preferences.py, line: 92
-#, fuzzy
 msgid "Stop selected game"
-msgstr "Copiar la ruta del juego seleccionado"
+msgstr "Parar el juego seleccionado"
 
 #
 # File: gem/interface.py, line: 451
-#, fuzzy
 msgid "Switch between fullscreen modes"
-msgstr "Alternar el modo pantalla completa del juego"
+msgstr "Cambiar entre los modos pantalla"
 
 #
 # File: gem/ui/preferences/interface.py, line: 563
 msgid "Switch to classic theme"
-msgstr ""
+msgstr "Cambiar al tema clásico"
 
 #
 # File: gem/ui/preferences/interface.py, line: 447
 msgid "Tab width"
-msgstr ""
+msgstr "Ancho del tabulador"
 
 #
 # File: gem/gtk/interface.py, line: 185
 # File: gem/gtk/windows.py, line: 960
 msgid "Tags"
-msgstr ""
+msgstr "Etiquetas"
 
 #
 # File: gem/ui/dialog/parameter.py, line: 82
 msgid "Tags are split by commas."
-msgstr ""
+msgstr "Las etiquetas se separan con comas."
 
 #
 # File: gem/ui/dialog/maintenance.py, line: 118
 msgid "The following actions are irreversible, becareful !"
-msgstr ""
+msgstr "Las siguientes acciones son irreversibles, ¡ten cuidado!"
 
 #
 # File: gem/ui/interface.glade, line: 960
-#, fuzzy
 msgid ""
 "The following game going to be removed from your harddrive. This action is "
 "irreversible !"
-msgstr "Este juego va a ser borrado de tu disco y esta acción es irreversible."
+msgstr "Este juego va a ser borrado de tu disco. ¡Esta acción es irreversible!"
 
 #
 # File: gem/gtk/interface.py, line: 3018
 msgid "There is no default emulator set for this console"
-msgstr ""
+msgstr "No hay un emulador por defecto asignado a esta consola"
 
 #
 # File: gem/preferences.py, line: 1418
@@ -1867,6 +1760,8 @@ msgid ""
 "This dialog allow you to specify specific backup memory type for the "
 "following game:"
 msgstr ""
+"Este dialogo te permite especificar el tipo de memoria de guardado para el "
+"juego siguiente:"
 
 #
 # File: gem/preferences.py, line: 1752
@@ -1875,9 +1770,8 @@ msgstr "Este emulador ya existe, por favor escoja otro nombre"
 
 #
 # File: gem/interface.py, line: 1218
-#, fuzzy
 msgid "This game was duplicated successfully"
-msgstr "El juego fue borrado con éxito"
+msgstr "El juego fue duplicado con éxito"
 
 #
 # File: gem/interface.py, line: 1218
@@ -1909,30 +1803,28 @@ msgstr "Hoy"
 
 #
 # File: gem/gtk/interface.py, line: 422
-#, fuzzy
 msgid "Toolbar"
-msgstr "_Herramientas"
+msgstr "Barra de herramientas"
 
 #
 # File: gem/ui/preferences/interface.py, line: 737
 msgid "Tooltip image"
-msgstr ""
+msgstr "Imagen de la descripción emergente"
 
 #
 # File: gem/interface.py, line: 642
-#, fuzzy
 msgid "Total play time"
-msgstr "Tiempo jugado"
+msgstr "Tiempo jugado total"
 
 #
 # File: gem/gtk/interface.py, line: 793
 msgid "Unfavorite"
-msgstr ""
+msgstr "Sin favorito"
 
 #
 # File: gem/gtk/interface.py, line: 797
 msgid "Unfinish"
-msgstr ""
+msgstr "Sin terminar"
 
 #
 # File: gem/interface.py, line: 406
@@ -1965,30 +1857,27 @@ msgstr "Usar el tema _oscuro"
 #
 # File: gem/ui/preferences/interface.py, line: 567
 msgid "Use a GTK+2 like appearance (Restart application is needed)"
-msgstr ""
+msgstr "Usar una apariencia GTK+2 (se necesita reiniciar la aplicación)"
 
 #
 # File: gem/ui/preferences/interface.py, line: 675
 msgid "Use a random game screenshot instead of latest"
-msgstr ""
+msgstr "Usar una captura de pantalla aleatoria en vez de la última"
 
 #
 # File: gem/preferences.py, line: 1662
-#, fuzzy
 msgid "Use alternative arguments"
-msgstr "Opciones del emulador"
+msgstr "Usar opciones alternativas"
 
 #
 # File: gem/preferences.py, line: 1013
-#, fuzzy
 msgid "Use alternative emulator"
-msgstr "Establecer el emulador por defecto"
+msgstr "Usar un emulador alternativo"
 
 #
 # File: gem/preferences.py, line: 1348
-#, fuzzy
 msgid "Use comma to separate tags"
-msgstr "Usar el punto y coma para separar las extensiones"
+msgstr "Usar la coma para separar las etiquetas"
 
 #
 # File: gem/preferences.py, line: 1602
@@ -1999,13 +1888,12 @@ msgstr "Usar la ruta del archivo de configuración del emulador"
 # File: gem/gtk/preferences.py, line: 2389
 # File: gem/gtk/windows.py, line: 796
 msgid "Use game key"
-msgstr ""
+msgstr "Usar la clave del juego"
 
 #
 # File: gem/preferences.py, line: 1348
-#, fuzzy
 msgid "Use space to separate extensions"
-msgstr "Usar el punto y coma para separar las extensiones"
+msgstr "Usar espacio para separar las extensiones"
 
 #
 # File: gem/gtk/mednafen.py, line: 400
@@ -2038,7 +1926,7 @@ msgstr ""
 #
 # File: gem/ui/preferences/interface.py, line: 441
 msgid "Width of a tab character in spaces"
-msgstr ""
+msgstr "Ancho del tabulador de caracteres en espacios"
 
 #
 # File: gem/preferences.py, line: 1670
@@ -2047,9 +1935,8 @@ msgstr "Modo ventana"
 
 #
 # File: gem/preferences.py, line: 1196
-#, fuzzy
 msgid "Would you really want to clean icons cache directory ?"
-msgstr "¿Quiere borrar esta entrada?"
+msgstr "¿Quiere borrar la caché de los iconos?"
 
 #
 # File: gem/preferences.py, line: 1196
@@ -2058,19 +1945,18 @@ msgstr "¿Quiere borrar esta entrada?"
 
 #
 # File: gem/preferences.py, line: 1196
-#, fuzzy
 msgid "Would you want to replace existing file ?"
-msgstr "¿Quiere borrar esta entrada?"
+msgstr "¿Quiere remplazar el archivo existente?"
 
 #
 # File: gem/gtk/preferences.py, line: 2433
 msgid "Write your regex here..."
-msgstr ""
+msgstr "Escribe tu expresión regular aquí..."
 
 #
 # File: gem/gtk/windows.py, line: 171
 msgid "Yes"
-msgstr ""
+msgstr "Sí"
 
 #
 # File: gem/interface.py, line: 2121
@@ -2089,7 +1975,7 @@ msgstr ""
 #
 # File: gem/gtk/interface.py, line: 861
 msgid "You need to reload games list to apply changes"
-msgstr ""
+msgstr "Tienes que recargar la lista de juegos para aplicar los cambios"
 
 #
 # File: gem/interface.py, line: 419
@@ -2099,37 +1985,35 @@ msgstr "_A cerca de"
 #
 # File: gem/ui/interface.py, line: 564
 msgid "_Columns visibility"
-msgstr ""
+msgstr "Visibilidad de las _columnas"
 
 #
 # File: gem/ui/interface.py, line: 908
 msgid "_Copy games directory path to clipboard"
-msgstr ""
+msgstr "_Copiar la ruta del directorio de los juegos en el portapapeles"
 
 #
 # File: gem/interface.py, line: 401
 # File: gem/interface.py, line: 761
-#, fuzzy
 msgid "_Copy path to clipboard"
-msgstr "_Copiar la ruta del juego"
+msgstr "_Copiar la ruta al portapapeles"
 
 #
 # File: gem/ui/interface.py, line: 1296
 msgid "_Decrease score"
-msgstr ""
+msgstr "_Disminuir la puntuación"
 
 #
 # File: gem/interface.py, line: 386
 # File: gem/interface.py, line: 746
-#, fuzzy
 msgid "_Display"
-msgstr "Marcar como _mutijugador"
+msgstr "_Pantalla"
 
 #
 # File: gem/ui/interface.py, line: 621
 # File: gem/ui/interface.py, line: 1265
 msgid "_Duplicate"
-msgstr ""
+msgstr "_Duplicar"
 
 #
 # File: gem/preferences.py, line: 429
@@ -2138,44 +2022,39 @@ msgstr "_Editar"
 
 #
 # File: gem/preferences.py, line: 1602
-#, fuzzy
 msgid "_Edit configuration file"
-msgstr "Actualizar el archivo de configuración de %s"
+msgstr "_Editar la configuración"
 
 #
 # File: gem/preferences.py, line: 1602
-#, fuzzy
 msgid "_Edit console"
-msgstr "Actualizar el archivo de configuración de %s"
+msgstr "_Editar consola"
 
 #
 # File: gem/preferences.py, line: 280
-#, fuzzy
 msgid "_Edit emulator"
-msgstr "Emulador"
+msgstr "_Editar emulador"
 
 #
 # File: gem/preferences.py, line: 1602
-#, fuzzy
 msgid "_Edit game file"
-msgstr "Actualizar el archivo de configuración de %s"
+msgstr "_Editar el juego"
 
 #
 # File: gem/interface.py, line: 381
 # File: gem/interface.py, line: 741
-#, fuzzy
 msgid "_Favorite"
-msgstr "Marcar como _favorito"
+msgstr "_Favorito"
 
 #
 # File: gem/gtk/interface.py, line: 587
 msgid "_Finish"
-msgstr ""
+msgstr "_Terminar"
 
 #
 # File: gem/gtk/interface.py, line: 513
 msgid "_GEM"
-msgstr ""
+msgstr "_GEM"
 
 #
 # File: gem/preferences.py, line: 113
@@ -2184,9 +2063,8 @@ msgstr "_Juego"
 
 #
 # File: gem/preferences.py, line: 328
-#, fuzzy
 msgid "_Games lists"
-msgstr "Lista de juegos"
+msgstr "_Listas de juegos"
 
 #
 # File: gem/interface.py, line: 460
@@ -2200,14 +2078,13 @@ msgstr "_Ayuda"
 
 #
 # File: gem/preferences.py, line: 1602
-#, fuzzy
 msgid "_Hide empty consoles"
-msgstr "Actualizar el archivo de configuración de %s"
+msgstr "_Ocultar consolas vacías"
 
 #
 # File: gem/ui/interface.py, line: 1292
 msgid "_Increase score"
-msgstr ""
+msgstr "_Incrementar la puntuación"
 
 #
 # File: gem/preferences.py, line: 84
@@ -2218,14 +2095,13 @@ msgstr "_Lanzar"
 # File: gem/ui/interface.py, line: 680
 # File: gem/ui/interface.py, line: 1556
 msgid "_Maintenance"
-msgstr ""
+msgstr "_Mantenimiento"
 
 #
 # File: gem/interface.py, line: 386
 # File: gem/interface.py, line: 746
-#, fuzzy
 msgid "_Multiplayer"
-msgstr "Marcar como _mutijugador"
+msgstr "_Mutijugador"
 
 #
 # File: gem/interface.py, line: 384
@@ -2234,16 +2110,14 @@ msgstr "_Notas"
 
 #
 # File: gem/preferences.py, line: 91
-#, fuzzy
 msgid "_Open games directory"
-msgstr "Abrir carpeta del juego seleccionado"
+msgstr "_Abrir la carpeta de los juegos"
 
 #
 # File: gem/interface.py, line: 406
 # File: gem/interface.py, line: 766
-#, fuzzy
 msgid "_Open path"
-msgstr "_Abrir la ruta del archivo"
+msgstr "_Abrir ruta"
 
 #
 # File: gem/interface.py, line: 358
@@ -2253,7 +2127,7 @@ msgstr "_Preferencias"
 #
 # File: gem/gtk/interface.py, line: 1124
 msgid "_Properties"
-msgstr ""
+msgstr "_Propiedades"
 
 #
 # File: gem/interface.py, line: 363
@@ -2263,25 +2137,22 @@ msgstr "_Salir"
 #
 # File: gem/ui/interface.py, line: 768
 msgid "_Recursive"
-msgstr ""
+msgstr "_Repetir"
 
 #
 # File: gem/preferences.py, line: 328
-#, fuzzy
 msgid "_Reload games list"
-msgstr "Lista de juegos"
+msgstr "_Recargar la lista de juegos"
 
 #
 # File: gem/preferences.py, line: 1602
-#, fuzzy
 msgid "_Remove console"
-msgstr "Actualizar el archivo de configuración de %s"
+msgstr "_Borrar consola"
 
 #
 # File: gem/interface.py, line: 776
-#, fuzzy
 msgid "_Remove from disk"
-msgstr "_Borrar juego del disco"
+msgstr "_Borrar del disco"
 
 #
 # File: gem/interface.py, line: 736
@@ -2291,36 +2162,32 @@ msgstr "_Renombrar"
 #
 # File: gem/ui/interface.py, line: 787
 msgid "_Report problem"
-msgstr ""
+msgstr "_Reportar problema"
 
 #
 # File: gem/preferences.py, line: 86
-#, fuzzy
 msgid "_Reset data"
-msgstr "Renombrar un juego"
+msgstr "_Reiniciar los datos"
 
 #
 # File: gem/ui/interface.py, line: 1288
 msgid "_Score"
-msgstr ""
+msgstr "_Puntuación"
 
 #
 # File: gem/interface.py, line: 2006
-#, fuzzy
 msgid "_Screenshots"
-msgstr "Mostrar las _capturas de pantalla"
+msgstr "_Capturas de pantalla"
 
 #
 # File: gem/preferences.py, line: 431
-#, fuzzy
 msgid "_Sidebar"
-msgstr "Mostrar los números de línea"
+msgstr "_Barra lateral"
 
 #
 # File: gem/preferences.py, line: 431
-#, fuzzy
 msgid "_Statusbar"
-msgstr "Mostrar los números de línea"
+msgstr "_Barra de estado"
 
 #
 # File: gem/gtk/interface.py, line: 422
@@ -2330,9 +2197,9 @@ msgstr "_Herramientas"
 #
 # File: gem/ui/interface.py, line: 783
 msgid "_Website"
-msgstr ""
+msgstr "_Sitio web"
 
 #
 # File: gem/preferences.py, line: 280
 msgid "translator-credits"
-msgstr ""
+msgstr "José Luis LOPEZ CASTILLO aka DarkNekros"
