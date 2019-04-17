@@ -19,6 +19,7 @@ from pathlib import Path
 
 # GEM
 from gem.engine.api import GEM
+from gem.engine.utils import get_binary_path
 from gem.engine.console import Console
 from gem.engine.emulator import Emulator
 from gem.engine.lib.configuration import Configuration
@@ -1919,24 +1920,30 @@ class PreferencesWindow(CommonWindow):
             Console or Emulator instance
         """
 
+        status = str()
+
         if isinstance(data, Console):
             folder = "consoles"
 
             path = data.path.expanduser().resolve()
 
+            # Show a warning icon if the games directory not exists
+            if not path.exists():
+                status = Icons.Symbolic.WARNING
+
         elif isinstance(data, Emulator):
             folder = "emulators"
 
-            path = data.binary.expanduser().resolve()
+            path = data.binary.expanduser()
+
+            # Show a warning icon if the binary not exists
+            if not path.exists() and len(get_binary_path(str(path))) == 0:
+                status = Icons.Symbolic.WARNING
 
         icon = self.parent.get_pixbuf_from_cache(
             folder, 48, data.id, data.icon, use_cache=False)
         if icon is None:
             icon = self.icons.blank(48)
-
-        status = str()
-        if not path.exists():
-            status = Icons.Symbolic.WARNING
 
         return (icon, "<b>%s</b>\n<small>%s</small>" % (data.name, path),
             status, data)
