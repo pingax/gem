@@ -4096,19 +4096,23 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.sidebar_image = Path(screenshots[-1])
 
                 # Update sidebar screenshot
-                if self.sidebar_image.exists():
+                if self.sidebar_image.exists() and self.sidebar_image.is_file():
 
                     height = 200
                     if self.__current_orientation == Gtk.Orientation.HORIZONTAL:
                         height = 250
 
-                    # Set sidebar screenshot
-                    self.image_sidebar_screenshot.set_from_pixbuf(
-                        GdkPixbuf.Pixbuf.new_from_file_at_scale(
-                        str(self.sidebar_image), 300, height, True))
+                    try:
+                        # Set sidebar screenshot
+                        self.image_sidebar_screenshot.set_from_pixbuf(
+                            GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                            str(self.sidebar_image), 300, height, True))
 
-                    self.frame_sidebar_screenshot.set_visible(True)
-                    self.frame_sidebar_screenshot.show_all()
+                        self.frame_sidebar_screenshot.set_visible(True)
+                        self.frame_sidebar_screenshot.show_all()
+
+                    except GLib.Error:
+                        self.sidebar_image = None
 
             else:
                 self.image_statusbar_screenshots.set_tooltip_text(
@@ -6056,12 +6060,21 @@ class MainWindow(Gtk.ApplicationWindow):
                             if len(game.screenshots) > 0:
                                 image = Path(game.screenshots[-1])
 
-                        if image is not None and image.exists():
-                            # Resize pixbuf to have a 96 pixels height
-                            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
-                                str(image), -1, 96, True)
+                        if image is not None:
 
-                            self.__current_tooltip_pixbuf = pixbuf
+                            # Check if image exists and is not a directory
+                            if image.exists() and image.is_file():
+
+                                try:
+                                    # Resize pixbuf to have a 96 pixels height
+                                    pixbuf = \
+                                        GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                                        str(image), -1, 96, True)
+
+                                    self.__current_tooltip_pixbuf = pixbuf
+
+                                except GLib.Error:
+                                    self.__current_tooltip_pixbuf = None
 
                     else:
                         self.__current_tooltip_pixbuf = None
