@@ -231,6 +231,8 @@ class Game(object):
             return a list
         """
 
+        files = list()
+
         path = getattr(self.emulator, pattern, None)
 
         if path is not None:
@@ -250,10 +252,16 @@ class Game(object):
 
             path = Path(pattern).expanduser().resolve()
 
+            # Check if parent path exists and is a directory
             if path.parent.exists() and path.parent.is_dir():
-                return list(path.parent.glob(path.name))
 
-        return list()
+                for filename in path.parent.glob(path.name):
+
+                    # Only retrieve files which exists and are not directories
+                    if filename.exists() and filename.is_file():
+                        files.append(filename)
+
+        return files
 
 
     def __str__(self):

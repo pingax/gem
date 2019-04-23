@@ -27,6 +27,7 @@ try:
     from gi.repository import Gtk
     from gi.repository import Gdk
     from gi.repository import GdkPixbuf
+    from gi.repository import GLib
     from gi.repository import Pango
 
 except ImportError as error:
@@ -545,20 +546,26 @@ class ViewerDialog(CommonWindow):
 
         # Avoid to recreate a pixbuf for the same file
         if not str(path) == str(self.current_path):
-            self.current_path = path
 
-            # Set headerbar subtitle with current screenshot path
-            self.set_subtitle(str(self.current_path))
+            if path.exists() and path.is_file():
+                self.current_path = path
 
-            # Generate a Pixbuf from current screenshot
-            self.current_pixbuf = GdkPixbuf.Pixbuf.new_from_file(
-                str(self.current_path))
+                try:
+                    # Generate a Pixbuf from current screenshot
+                    self.current_pixbuf = GdkPixbuf.Pixbuf.new_from_file(
+                        str(self.current_path))
 
-            self.current_pixbuf_size = (
-                self.current_pixbuf.get_width(),
-                self.current_pixbuf.get_height())
+                    self.current_pixbuf_size = (
+                        self.current_pixbuf.get_width(),
+                        self.current_pixbuf.get_height())
 
-            self.current_pixbuf_zoom = None
+                    self.current_pixbuf_zoom = None
+
+                    # Set headerbar subtitle with current screenshot path
+                    self.set_subtitle(str(self.current_path))
+
+                except GLib.Error:
+                    self.current_pixbuf = None
 
         # Check if pixbuf has been generate correctly
         if self.current_pixbuf is not None:
