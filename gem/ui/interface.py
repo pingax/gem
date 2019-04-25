@@ -3271,7 +3271,10 @@ class MainWindow(Gtk.ApplicationWindow):
         """ Load data and start interface
         """
 
-        self.logger.info("Use GTK+ library v.%d.%d.%d" % (
+        self.logger.info("Use GEM version %s (%s)" % (
+            self.__version, Metadata.CODE_NAME))
+
+        self.logger.info("Use GTK+ library version %d.%d.%d" % (
             Gtk.get_major_version(),
             Gtk.get_minor_version(),
             Gtk.get_micro_version()))

@@ -263,9 +263,12 @@ def main():
     # ----------------------------------------
 
     if Folders.CACHE.exists() and arguments.clean_cache:
-        rmtree(Folders.CACHE)
 
-        Folders.CACHE.mkdir(mode=0o755, parents=True)
+        if Folders.CACHE.is_dir()
+            rmtree(Folders.CACHE)
+
+        if not Folders.CACHE.exists():
+            Folders.CACHE.mkdir(mode=0o755, parents=True)
 
     # ----------------------------------------
     #   Launch interface
@@ -327,7 +330,7 @@ def main():
                 sys_exit("GEM is already running with PID %d" % gem.pid)
 
     except ImportError as error:
-        gem.logger.exception("Cannot import modules: %s" % str(error))
+        gem.logger.exception("An error occur durint modules importation")
         return True
 
     except KeyboardInterrupt as error:
@@ -335,7 +338,7 @@ def main():
         return True
 
     except Exception as error:
-        gem.logger.exception("An error occur during exec: %s") % str(error)
+        gem.logger.exception("An error occur during execution")
         return True
 
     return False
