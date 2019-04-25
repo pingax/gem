@@ -51,7 +51,7 @@ def init_environment():
     """
 
     # Initialize localization
-    bindtextdomain("gem", get_data("i18n"))
+    bindtextdomain("gem", str(get_data("i18n")))
     textdomain("gem")
 
     # Initialize metadata
@@ -264,7 +264,7 @@ def main():
 
     if Folders.CACHE.exists() and arguments.clean_cache:
 
-        if Folders.CACHE.is_dir()
+        if Folders.CACHE.is_dir():
             rmtree(Folders.CACHE)
 
         if not Folders.CACHE.exists():

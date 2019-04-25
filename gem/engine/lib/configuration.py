@@ -53,7 +53,7 @@ class Configuration(ConfigParser):
         self.path = filepath.expanduser()
 
         if self.path.exists():
-            self.read(self.path)
+            self.read(str(self.path))
 
 
     def __str__(self):
