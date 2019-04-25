@@ -33,7 +33,6 @@ from gem.ui.utils import magic_from_file
 # System
 from argparse import ArgumentParser
 
-from os import remove
 from os import environ
 
 from sys import exit as sys_exit
@@ -59,26 +58,32 @@ def init_environment():
     metadata = Configuration(get_data("config", "metadata.conf"))
 
     # Retrieve metadata informations
-    for key, value in metadata.items("metadata"):
-        setattr(Metadata, key.upper(), value)
+    if metadata.has_section("metadata"):
+        for key, value in metadata.items("metadata"):
+            setattr(Metadata, key.upper(), value)
 
     # Retrieve icons informations
-    for key, value in metadata.items("icons"):
-        setattr(Icons, key.upper(), value)
-        setattr(Icons.Symbolic, key.upper(), "%s-symbolic" % value)
+    if metadata.has_section("icons"):
+        for key, value in metadata.items("icons"):
+            setattr(Icons, key.upper(), value)
+            setattr(Icons.Symbolic, key.upper(), "%s-symbolic" % value)
 
-    for key, value in metadata.items("icon-sizes"):
-        setattr(Icons.Size, key.upper(), value.split())
+    if metadata.has_section("icon-sizes"):
+        for key, value in metadata.items("icon-sizes"):
+            setattr(Icons.Size, key.upper(), value.split())
 
     # Retrieve columns informations
-    setattr(Columns, "ORDER",
-        metadata.get("misc", "columns_order", fallback=str()))
+    if metadata.has_section("misc"):
+        setattr(Columns, "ORDER",
+            metadata.get("misc", "columns_order", fallback=str()))
 
-    for key, value in metadata.items("list"):
-        setattr(Columns.List, key.upper(), int(value))
+    if metadata.has_section("list"):
+        for key, value in metadata.items("list"):
+            setattr(Columns.List, key.upper(), int(value))
 
-    for key, value in metadata.items("grid"):
-        setattr(Columns.Grid, key.upper(), int(value))
+    if metadata.has_section("grid"):
+        for key, value in metadata.items("grid"):
+            setattr(Columns.Grid, key.upper(), int(value))
 
 
 def init_configuration(gem):
@@ -115,7 +120,11 @@ def init_configuration(gem):
         if not path.exists():
             gem.logger.debug("Generate %s folder" % path)
 
-            path.mkdir(mode=0o755, parents=True)
+            try:
+                path.mkdir(mode=0o755, parents=True)
+
+            except FileExistsError:
+                gem.logger.error("Path %s already exists" % str(path))
 
     # ----------------------------------------
     #   Cache
@@ -130,7 +139,11 @@ def init_configuration(gem):
             if not path.exists():
                 gem.logger.debug("Generate %s" % path)
 
-                path.mkdir(mode=0o755, parents=True)
+                try:
+                    path.mkdir(mode=0o755, parents=True)
+
+                except FileExistsError:
+                    gem.logger.error("Path %s already exists" % str(path))
 
     # ----------------------------------------
     #   Icons
@@ -140,9 +153,16 @@ def init_configuration(gem):
 
     # Create icons storage folder
     if not icons_path.exists():
-        icons_path.mkdir(mode=0o755, parents=True)
+        gem.logger.debug("Generate %s" % icons_path)
 
-        move_collection = True
+        try:
+            icons_path.mkdir(mode=0o755, parents=True)
+
+        except FileExistsError:
+            gem.logger.error("Path %s already exists" % str(icons_path))
+
+        finally:
+            move_collection = True
 
     # Remove older icons collections folders (GEM < 1.0)
     else:
@@ -150,8 +170,13 @@ def init_configuration(gem):
         for folder in ("consoles", "emulators"):
             path = icons_path.joinpath(folder)
 
-            if path.exists() and path.is_dir():
-                remove(path)
+            if path.exists():
+
+                if path.is_dir():
+                    rmtree(path)
+
+                elif path.is_symlink():
+                    path.unlink()
 
                 move_collection = True
 
@@ -167,7 +192,12 @@ def init_configuration(gem):
                 mime = magic_from_file(filename, mime=True)
 
                 if mime.startswith("image/"):
-                    copy(filename, icons_path.joinpath(filename.name))
+                    new_path = icons_path.joinpath(filename.name)
+
+                    if not new_path.exists():
+                        gem.logger.debug("Copy %s" % str(new_path))
+
+                        copy(filename, new_path)
 
 
 def main():
