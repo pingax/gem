@@ -416,7 +416,10 @@ class GEM(object):
                 if games is not None:
 
                     # Get current table columns
-                    columns_name = previous_database.get_columns("games")
+                    old_columns_name = previous_database.get_columns("games")
+
+                    # Get new table columns
+                    new_columns_name = new_database.get_columns("games")
 
                     if updater is not None:
                         updater.init(len(games))
@@ -427,13 +430,12 @@ class GEM(object):
 
                         row_data = dict()
 
-                        index = int()
                         for element in row:
-                            column = columns_name[index]
+                            column = old_columns_name[row.index(element)]
 
-                            row_data[columns_name[index]] = element
-
-                            index += 1
+                            # Avoid to retrieve columns which are no more used
+                            if column in new_columns_name:
+                                row_data[column] = element
 
                         new_database.insert("games", row_data)
 
