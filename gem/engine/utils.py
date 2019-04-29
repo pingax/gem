@@ -30,7 +30,7 @@ from os import environ
 #   Methods
 # ------------------------------------------------------------------------------
 
-def get_data(*path, egg="gem"):
+def get_data(*args, egg="gem"):
     """ Provides easy access to data in a python egg or local folder
 
     This function search a path in a specific python egg or in local folder. The
@@ -40,24 +40,29 @@ def get_data(*path, egg="gem"):
 
     Parameters
     ----------
-    path : str
-        File path
+    args : list
+        File path as strings list
     egg : str, optional
         Python egg name (Default: gem)
 
     Returns
     -------
-    str or None
-        Path
+    pathlib.Path
+        File path instance
     """
 
-    path = Path(*path).expanduser()
+    path = Path(*args).expanduser()
 
     try:
         # Only available for Python >= 3.7
         from importlib.resources import path as resource_filename
 
-        data = resource_filename(egg, str(path)).expanduser()
+        # Generate a module name based on egg name and file resource path
+        module_name = '.'.join([egg, *args[:-1]])
+
+        # Open resource to retrieve Path instance
+        with resource_filename(module_name, args[-1]) as filepath:
+            data = filepath.expanduser()
 
     except ImportError:
         from pkg_resources import resource_filename
