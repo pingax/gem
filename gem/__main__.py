@@ -27,6 +27,9 @@ from gem.engine.lib.configuration import Configuration
 
 from gem.ui.data import *
 
+# Logging
+from logging import getLogger
+
 # Mimetypes
 from gem.ui.utils import magic_from_file
 
@@ -330,15 +333,15 @@ def main():
                 sys_exit("GEM is already running with PID %d" % gem.pid)
 
     except ImportError as error:
-        gem.logger.exception("An error occur durint modules importation")
+        getLogger("gem").exception("An error occur durint modules importation")
         return True
 
     except KeyboardInterrupt as error:
-        gem.logger.warning("Terminate by keyboard interrupt")
+        getLogger("gem").warning("Terminate by keyboard interrupt")
         return True
 
     except Exception as error:
-        gem.logger.exception("An error occur during execution")
+        getLogger("gem").exception("An error occur during execution")
         return True
 
     return False
