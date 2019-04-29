@@ -32,7 +32,6 @@ from copy import deepcopy
 
 from shutil import rmtree
 from shutil import move as rename
-from shutil import copy2 as copy
 
 # GEM
 from gem.engine.utils import *

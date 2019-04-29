@@ -18,10 +18,10 @@
 from pathlib import Path
 
 from shutil import rmtree
-from shutil import copy2 as copy
 
 # GEM
 from gem.engine.api import GEM
+from gem.engine.utils import copy
 from gem.engine.utils import get_data
 from gem.engine.lib.configuration import Configuration
 
@@ -288,7 +288,7 @@ def main():
                 # Initialize main configuration files
                 init_configuration(gem)
 
-                gem.logger.info("Start GEM with PID %s" % gem.pid)
+                getLogger("gem").info("Start GEM with PID %s" % gem.pid)
 
                 # Start splash
                 from gem.ui.splash import Splash
@@ -302,7 +302,7 @@ def main():
                 gem.free_lock()
 
             else:
-                gem.logger.critical("Cannot launch GEM without display")
+                getLogger("gem").critical("Cannot launch GEM without display")
 
         else:
             try:
@@ -327,7 +327,7 @@ def main():
                 dialog.destroy()
 
             except Exception as error:
-                gem.logger.critical("Cannot start dialog instance")
+                getLogger("gem").critical("Cannot start dialog instance")
 
             finally:
                 sys_exit("GEM is already running with PID %d" % gem.pid)

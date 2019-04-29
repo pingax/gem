@@ -21,13 +21,13 @@ from collections import OrderedDict
 from copy import deepcopy
 
 from shutil import move
-from shutil import copy2 as copy
 
 from pathlib import Path
 
 from os.path import splitext
 
 # GEM
+from gem.engine.utils import copy
 from gem.engine.utils import get_data
 from gem.engine.utils import generate_identifier
 
@@ -211,15 +211,17 @@ class GEM(object):
         Create a logger object based on logging library
         """
 
-        # Define log path with a global variable
-        logging.log_path = self.get_local(GEM.Log)
+        log_path = self.get_local(GEM.Log)
 
         # Save older log file to ~/.local/share/gem/gem.log.old
-        if logging.log_path.exists():
-            copy(logging.log_path, self.get_local(GEM.Log + ".old"))
+        if log_path.exists():
+            copy(log_path, self.get_local(GEM.Log + ".old"))
+
+        # Define log path with a global variable
+        logging.log_path = str(log_path)
 
         # Generate logger from log.conf
-        fileConfig(get_data("config", GEM.Logger))
+        fileConfig(str(get_data("config", GEM.Logger)))
 
         self.logger = logging.getLogger("gem")
 

@@ -20,6 +20,11 @@ from datetime import timedelta
 # Filesystem
 from pathlib import Path
 
+from shutil import copy2
+
+# Platform
+from platform import python_version_tuple
+
 # Regex
 from re import sub
 
@@ -220,3 +225,31 @@ def generate_extension(extension):
             pattern += '.'
 
     return pattern
+
+
+def copy(src, dst, follow_symlinks=True):
+    """ Compat function to use shutil.copy on python < 3.6
+
+    More informations with shutil.copy2 module
+
+    Parameters
+    ----------
+    src : str or pathlib.Path
+        File source
+    dst : str or pathlib.Path
+        File destination
+    follow_symlinks : bool, optional
+        Retrieve metadata from symlinks origins if True
+    """
+
+    major, minor, patchlevel = python_version_tuple()
+
+    if int(major) == 3 and int(minor) < 6:
+
+        if not isinstance(src, str):
+            src = str(src)
+
+        if not isinstance(dst, str):
+            dst = str(dst)
+
+    copy2(src, dst, follow_symlinks=follow_symlinks)
