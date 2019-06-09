@@ -858,6 +858,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.scroll_consoles.set_min_content_width(200)
 
+        self.listbox_consoles.set_selection_mode(Gtk.SelectionMode.SINGLE)
         self.listbox_consoles.set_filter_func(self.__on_filter_consoles)
         self.listbox_consoles.set_sort_func(self.__on_sort_consoles)
         self.listbox_consoles.set_placeholder(self.label_consoles)
@@ -4603,7 +4604,7 @@ class MainWindow(Gtk.ApplicationWindow):
             if dialog.run() == Gtk.ResponseType.YES:
 
                 # Remove cache directory
-                rmtree(Folders.CACHE)
+                rmtree(str(Folders.CACHE))
 
                 # Generate directories
                 Folders.CACHE.mkdir(mode=0o755, parents=True)
@@ -5272,10 +5273,8 @@ class MainWindow(Gtk.ApplicationWindow):
             Console instance when a selection exists, None otherwise
         """
 
-        row = self.listbox_consoles.get_selected_row()
-
-        if row is not None:
-            return getattr(row, "console", None)
+        if "console" in self.selection:
+            return self.selection["console"]
 
         return None
 
