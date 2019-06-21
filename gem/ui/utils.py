@@ -385,7 +385,8 @@ def magic_from_file(filename, mime=False):
         File type result as human readable name or mimetype
     """
 
-    commands = ["file", str(filename)]
+    # Use dereference to follow symlink
+    commands = ["file", "--dereference", str(filename)]
 
     if mime:
         commands.insert(1, "--mime-type")
