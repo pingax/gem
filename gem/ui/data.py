@@ -49,8 +49,8 @@ except ImportError as error:
 # ------------------------------------------------------------------------------
 
 class Metadata:
-        """ Store application informations
-        """
+    """ Store application informations
+    """
 
 class Folders:
     """ Store application paths
