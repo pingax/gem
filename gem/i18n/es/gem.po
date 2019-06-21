@@ -417,11 +417,6 @@ msgid "Copy selected game path"
 msgstr "Copiar la ruta del juego seleccionado"
 
 #
-# File: gem/gtk/windows.py, line: 2623
-msgid "Cover image"
-msgstr "Imagen de portada"
-
-#
 # File: gem/ui/dialog/dndconsole.py, line: 176
 msgid "Create consoles games subdirectory if missing"
 msgstr "Crear los subdirectorios de los juegos de consola si no están"
@@ -1788,6 +1783,11 @@ msgstr ""
 "\"Capturas de pantalla\"."
 
 #
+# File: gem/ui/dialog/cover.py, line: 143
+msgid "Thumbnail file"
+msgstr ""
+
+#
 # File: gem/gtk/preferences.py, line: 2097
 msgid ""
 "To facilitate file detection with every emulators, some custom parameters "
@@ -2203,3 +2203,8 @@ msgstr "_Sitio web"
 # File: gem/preferences.py, line: 280
 msgid "translator-credits"
 msgstr "José Luis LOPEZ CASTILLO aka DarkNekros"
+
+#
+# File: gem/gtk/windows.py, line: 2623
+#~ msgid "Cover image"
+#~ msgstr "Imagen de portada"

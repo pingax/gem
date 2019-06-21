@@ -19,6 +19,7 @@ from datetime import datetime
 from datetime import timedelta
 
 # Filesystem
+from os import R_OK
 from os import W_OK
 from os import X_OK
 from os import access
@@ -98,6 +99,8 @@ from re import search
 from re import IGNORECASE
 
 # System
+from sys import version_info
+
 from platform import system
 
 from shlex import split as shlex_split
@@ -2656,7 +2659,7 @@ class MainWindow(Gtk.ApplicationWindow):
         # Store image references with associate icons
         self.__images_storage = {
             self.image_headerbar_menu: Icons.Symbolic.MENU,
-            self.image_headerbar_view: Icons.Symbolic.VIEW_MORE,
+            self.image_headerbar_view: Icons.Symbolic.VIDEO,
             self.image_sidebar_tags: Icons.Symbolic.PAPERCLIP,
             self.image_toolbar_consoles_add: Icons.Symbolic.VIEW_MORE,
             self.image_toolbar_fullscreen: Icons.Symbolic.RESTORE,
@@ -3270,13 +3273,18 @@ class MainWindow(Gtk.ApplicationWindow):
         """ Load data and start interface
         """
 
-        self.logger.info("Use GEM version %s (%s)" % (
-            self.__version, Metadata.CODE_NAME))
+        self.logger.info("Use Python interpreter version %d.%d.%d" % (
+            version_info.major,
+            version_info.minor,
+            version_info.micro))
 
         self.logger.info("Use GTK+ library version %d.%d.%d" % (
             Gtk.get_major_version(),
             Gtk.get_minor_version(),
             Gtk.get_micro_version()))
+
+        self.logger.info("Use GEM version %s (%s)" % (
+            self.__version, Metadata.CODE_NAME))
 
         # ------------------------------------
         #   Load informations
@@ -3986,11 +3994,13 @@ class MainWindow(Gtk.ApplicationWindow):
             if not game.id in self.threads:
                 self.item_menubar_game_launch.set_sensitive(True)
                 self.item_menubar_database.set_sensitive(True)
-                self.item_menubar_delete.set_sensitive(True)
 
                 self.item_game_launch.set_sensitive(True)
                 self.item_game_database.set_sensitive(True)
-                self.item_game_remove.set_sensitive(True)
+
+                if game.path.exists() and access(game.path, W_OK):
+                    self.item_menubar_delete.set_sensitive(True)
+                    self.item_game_remove.set_sensitive(True)
 
             # Menus
             self.item_menubar_copy.set_sensitive(True)
@@ -4041,8 +4051,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
             # Game editable file
             if magic_from_file(game.path, mime=True).startswith("text/"):
-                self.item_game_edit_file.set_sensitive(True)
-                self.item_menubar_edit_file.set_sensitive(True)
+                if access(game.path, R_OK) and access(game.path, W_OK):
+                    self.item_game_edit_file.set_sensitive(True)
+                    self.item_menubar_edit_file.set_sensitive(True)
 
             if game.emulator is not None:
 
@@ -5981,11 +5992,10 @@ class MainWindow(Gtk.ApplicationWindow):
             # Get relative treerow position based on absolute cursor coordinates
             x, y = treeview.convert_widget_to_bin_window_coords(x, y)
 
-            if treeview == self.treeview_games:
-                selection = treeview.get_path_at_pos(x, y)
-
-            else:
-                selection = treeview.get_item_at_pos(x, y)
+            selection = treeview.get_path_at_pos(x, y)
+            # Using a tuple to mimic Gtk.TreeView behavior
+            if treeview == self.iconview_games and selection is not None:
+                selection = (selection)
 
             if selection is not None:
                 model = treeview.get_model()
@@ -6740,6 +6750,13 @@ class MainWindow(Gtk.ApplicationWindow):
                     # Store modified game
                     self.selection["game"] = game
 
+                    # Restore focus to current game view
+                    if self.button_toolbar_grid.get_active():
+                        self.iconview_games.grab_focus()
+
+                    elif self.button_toolbar_list.get_active():
+                        self.treeview_games.grab_focus()
+
                     self.__current_tooltip = None
 
                     self.set_informations()
@@ -6888,11 +6905,17 @@ class MainWindow(Gtk.ApplicationWindow):
                         # Reload the games list
                         if len(data["paths"]) > 0:
 
-                            # Duplicate game files
+                            # Remove specified game files
                             for element in data["paths"]:
-                                self.logger.debug("Remove %s" % element)
 
-                                remove(element)
+                                if access(element, W_OK):
+                                    self.logger.debug("Remove %s" % element)
+
+                                    remove(element)
+
+                                else:
+                                    self.logger.error("Cannot remove %s, "
+                                        "operation not permitted" % element)
 
                             need_to_reload = True
 

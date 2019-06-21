@@ -140,7 +140,7 @@ class CoverDialog(CommonWindow):
         self.button_reset = Gtk.Button()
 
         # Properties
-        self.label_image_selector.set_markup("<b>%s</b>" % _("Cover image"))
+        self.label_image_selector.set_markup("<b>%s</b>" % _("Thumbnail file"))
         self.label_image_selector.set_margin_top(12)
         self.label_image_selector.set_hexpand(True)
         self.label_image_selector.set_use_markup(True)

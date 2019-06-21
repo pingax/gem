@@ -22,14 +22,13 @@ from pathlib import Path
 
 from shutil import copy2
 
-# Platform
-from platform import python_version_tuple
-
 # Regex
 from re import sub
 
 # System
 from os import environ
+
+from sys import version_info
 
 # ------------------------------------------------------------------------------
 #   Methods
@@ -242,9 +241,7 @@ def copy(src, dst, follow_symlinks=True):
         Retrieve metadata from symlinks origins if True
     """
 
-    major, minor, patchlevel = python_version_tuple()
-
-    if int(major) == 3 and int(minor) < 6:
+    if version_info.major == 3 and version_info.minor < 6:
 
         if not isinstance(src, str):
             src = str(src)

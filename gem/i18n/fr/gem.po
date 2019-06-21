@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-04-09 11:32+0200\n"
+"PO-Revision-Date: 2019-06-21 20:06+0200\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -409,11 +409,6 @@ msgstr "Copier les fichiers"
 # File: src/window.py, line: 279
 msgid "Copy selected game path"
 msgstr "Copier le chemin du jeu sélectionné"
-
-#
-# File: gem/gtk/windows.py, line: 2623
-msgid "Cover image"
-msgstr "Image de couverture"
 
 #
 # File: gem/ui/dialog/dndconsole.py, line: 176
@@ -1764,6 +1759,11 @@ msgstr ""
 "», « Sauvegarde » et « Captures d'écran »."
 
 #
+# File: gem/ui/dialog/cover.py, line: 143
+msgid "Thumbnail file"
+msgstr "Fichier de miniature"
+
+#
 # File: gem/preferences.py, line: 1998
 msgid ""
 "To facilitate file detection with every emulators, some custom parameters "
@@ -2177,3 +2177,8 @@ msgstr "_Site internet"
 # File: gem/interface.py, line: 926
 msgid "translator-credits"
 msgstr "Lubert Aurélien (PacMiam)"
+
+#
+# File: gem/gtk/windows.py, line: 2623
+#~ msgid "Cover image"
+#~ msgstr "Image de couverture"

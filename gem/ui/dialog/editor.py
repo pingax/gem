@@ -15,6 +15,7 @@
 # ------------------------------------------------------------------------------
 
 # Filesystem
+from os import R_OK
 from os import W_OK
 from os import access
 
@@ -480,7 +481,7 @@ class EditorDialog(CommonWindow):
 
         yield True
 
-        if self.path.exists():
+        if self.path.exists() and access(self.path, R_OK):
             self.buffer_editor.set_text(self.path.read_text(errors="replace"))
 
             yield True
@@ -533,7 +534,7 @@ class EditorDialog(CommonWindow):
             widget.set_active(status)
 
         if status:
-            self.text_editor.set_wrap_mode(Gtk.WrapMode.WORD)
+            self.text_editor.set_wrap_mode(Gtk.WrapMode.WORD_CHAR)
 
         else:
             self.text_editor.set_wrap_mode(Gtk.WrapMode.NONE)
