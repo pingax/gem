@@ -16,6 +16,7 @@
 
 # GEM
 from gem.ui.data import Icons
+from gem.ui.data import Folders
 from gem.ui.utils import replace_for_markup
 from gem.ui.widgets.window import CommonWindow
 from gem.ui.widgets.widgets import ListBoxItem
@@ -276,7 +277,7 @@ class MaintenanceDialog(CommonWindow):
         # ------------------------------------
 
         if self.switch_log.get_active():
-            path = self.parent.api.get_local(self.game.log)
+            path = Folders.LOCAL.joinpath("logs", self.game.id + ".log")
 
             if path.exists():
                 data["paths"].append(path)
@@ -288,7 +289,7 @@ class MaintenanceDialog(CommonWindow):
         # ------------------------------------
 
         if self.switch_note.get_active():
-            path = self.parent.api.get_local(self.game.note)
+            path = Folders.LOCAL.joinpath("notes", self.game.id + ".txt")
 
             if path.exists():
                 data["paths"].append(path)
