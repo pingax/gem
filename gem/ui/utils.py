@@ -44,6 +44,7 @@ from re import findall as re_findall
 # Translation
 from gettext import gettext as _
 
+
 # ------------------------------------------------------------------------------
 #   Misc functions
 # ------------------------------------------------------------------------------
@@ -77,7 +78,7 @@ def icon_from_data(path, fallback=None, width=24, height=24):
         try:
             return GdkPixbuf.Pixbuf.new_from_file_at_size(
                 str(path), width, height)
-        except:
+        except Exception:
             pass
 
     # Return an empty icon
@@ -92,9 +93,9 @@ def icon_from_data(path, fallback=None, width=24, height=24):
 def icon_load(name, size=16, fallback="image-missing"):
     """ Load an icon from IconTheme
 
-    This function search an icon in current user icons theme. If founded, return
-    a generate Pixbuf from the icon name, else, return a generate Pixbuf from
-    the fallback icon name.
+    This function search an icon in current user icons theme. If founded,
+    return a generate Pixbuf from the icon name, else, return a generate Pixbuf
+    from the fallback icon name.
 
     Parameters
     ----------
@@ -119,7 +120,7 @@ def icon_load(name, size=16, fallback="image-missing"):
             return icons_theme.load_icon(
                 name, size, Gtk.IconLookupFlags.FORCE_SVG)
 
-        except:
+        except Exception:
             if type(fallback) == GdkPixbuf.Pixbuf:
                 return fallback
 
@@ -170,8 +171,8 @@ def set_pixbuf_opacity(pixbuf, opacity):
 
     try:
         pixbuf.composite(new_pixbuf, 0, 0, width, height, 0, 0, 1, 1,
-            GdkPixbuf.InterpType.NEAREST, opacity)
-    except:
+                         GdkPixbuf.InterpType.NEAREST, opacity)
+    except Exception:
         pass
 
     return new_pixbuf
@@ -220,35 +221,35 @@ def on_entry_clear(widget, pos, event):
 
 
 def on_activate_listboxrow(listbox, row):
-        """ Activate internal widget when a row has been activated
+    """ Activate internal widget when a row has been activated
 
-        Parameters
-        ----------
-        listbox : Gtk.ListBox
-            Object which receive signal
-        row : gem.widgets.widgets.ListBoxItem
-            Activated row
-        """
+    Parameters
+    ----------
+    listbox : Gtk.ListBox
+        Object which receive signal
+    row : gem.widgets.widgets.ListBoxItem
+        Activated row
+    """
 
-        widget = row.get_widget()
+    widget = row.get_widget()
 
-        if type(widget) == Gtk.ComboBox:
-            widget.popup()
+    if type(widget) == Gtk.ComboBox:
+        widget.popup()
 
-        elif type(widget) == Gtk.Entry:
-            widget.grab_focus()
+    elif type(widget) == Gtk.Entry:
+        widget.grab_focus()
 
-        elif type(widget) == Gtk.FileChooserButton:
-            widget.activate()
+    elif type(widget) == Gtk.FileChooserButton:
+        widget.activate()
 
-        elif type(widget) in [Gtk.Button, Gtk.FontButton]:
-            widget.clicked()
+    elif type(widget) in [Gtk.Button, Gtk.FontButton]:
+        widget.clicked()
 
-        elif type(widget) == Gtk.SpinButton:
-            widget.grab_focus()
+    elif type(widget) == Gtk.SpinButton:
+        widget.grab_focus()
 
-        elif type(widget) == Gtk.Switch:
-            widget.set_active(not widget.get_active())
+    elif type(widget) == Gtk.Switch:
+        widget.set_active(not widget.get_active())
 
 
 def string_from_date(date_object):
@@ -391,8 +392,8 @@ def magic_from_file(filename, mime=False):
     if mime:
         commands.insert(1, "--mime-type")
 
-    with Popen(commands, stdout=PIPE, stdin=PIPE,
-        stderr=STDOUT, universal_newlines=True) as pipe:
+    with Popen(commands, stdout=PIPE, stdin=PIPE, stderr=STDOUT,
+               universal_newlines=True) as pipe:
 
         output, error_output = pipe.communicate()
 

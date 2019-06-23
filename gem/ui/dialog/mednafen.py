@@ -35,6 +35,7 @@ except ImportError as error:
 # Translation
 from gettext import gettext as _
 
+
 # ------------------------------------------------------------------------------
 #   Class
 # ------------------------------------------------------------------------------
@@ -59,7 +60,10 @@ class MednafenDialog(CommonWindow):
             classic_theme = parent.use_classic_theme
 
         CommonWindow.__init__(self,
-            parent, _("Backup Memory Type"), Icons.Symbolic.SAVE, classic_theme)
+                              parent,
+                              _("Backup Memory Type"),
+                              Icons.Symbolic.SAVE,
+                              classic_theme)
 
         # ------------------------------------
         #   Initialize variables
@@ -69,7 +73,7 @@ class MednafenDialog(CommonWindow):
 
         self.name = name
 
-        self.memory_list = [ "eeprom", "flash", "rtc", "sensor", "sram" ]
+        self.memory_list = ["eeprom", "flash", "rtc", "sensor", "sram"]
 
         # ------------------------------------
         #   Prepare interface
@@ -83,7 +87,6 @@ class MednafenDialog(CommonWindow):
 
         # Start interface
         self.__start_interface()
-
 
     def __init_widgets(self):
         """ Initialize interface widgets
@@ -110,7 +113,7 @@ class MednafenDialog(CommonWindow):
 
         # Properties
         label.set_text(_("This dialog allow you to specify specific backup "
-            "memory type for the following game:"))
+                         "memory type for the following game:"))
         label.set_line_wrap(True)
         label.set_max_width_chars(8)
         label.set_single_line_mode(False)
@@ -158,7 +161,7 @@ class MednafenDialog(CommonWindow):
         # Properties
         link.set_label(_("Mednafen GBA documentation"))
         link.set_uri("https://mednafen.github.io/documentation/gba.html"
-            "#Section_backupmem_type")
+                     "#Section_backupmem_type")
 
         # ------------------------------------
         #   Content list
@@ -182,7 +185,7 @@ class MednafenDialog(CommonWindow):
 
         # Properties
         self.adjustment_value.set_lower(0)
-        self.adjustment_value.set_upper(2147483647) # INT_MAX
+        self.adjustment_value.set_upper(2147483647)  # INT_MAX
         self.adjustment_value.set_step_increment(16)
         self.adjustment_value.set_page_increment(1024)
 
@@ -235,7 +238,6 @@ class MednafenDialog(CommonWindow):
 
         self.pack_start(scroll, True, True)
 
-
     def __init_signals(self):
         """ Initialize widgets signals
         """
@@ -245,7 +247,6 @@ class MednafenDialog(CommonWindow):
 
         self.cell_key.connect("edited", self.__on_edited_cell)
         self.cell_value.connect("edited", self.__on_edited_cell)
-
 
     def __start_interface(self):
         """ Load data and start interface
@@ -262,7 +263,6 @@ class MednafenDialog(CommonWindow):
 
         self.show_all()
 
-
     def __on_append_item(self, widget):
         """ Append a new row in treeview
 
@@ -272,8 +272,7 @@ class MednafenDialog(CommonWindow):
             Object which receive signal
         """
 
-        self.model.append([ self.memory_list[0], int() ])
-
+        self.model.append([self.memory_list[0], int()])
 
     def __on_remove_item(self, widget):
         """ Remove a row in treeview
@@ -287,7 +286,6 @@ class MednafenDialog(CommonWindow):
         model, treeiter = self.treeview.get_selection().get_selected()
         if treeiter is not None:
             self.model.remove(treeiter)
-
 
     def __on_edited_cell(self, widget, path, text):
         """ Update treerow when a cell has been edited

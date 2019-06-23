@@ -38,6 +38,7 @@ except ImportError as error:
 # Translation
 from gettext import gettext as _
 
+
 # ------------------------------------------------------------------------------
 #   Class
 # ------------------------------------------------------------------------------
@@ -60,7 +61,10 @@ class MaintenanceDialog(CommonWindow):
             classic_theme = parent.use_classic_theme
 
         CommonWindow.__init__(self,
-            parent, _("Maintenance"), Icons.Symbolic.SYSTEM, classic_theme)
+                              parent,
+                              _("Maintenance"),
+                              Icons.Symbolic.SYSTEM,
+                              classic_theme)
 
         # ------------------------------------
         #   Variables
@@ -80,7 +84,6 @@ class MaintenanceDialog(CommonWindow):
 
         # Start interface
         self.__start_interface()
-
 
     def __init_widgets(self):
         """ Initialize interface widgets
@@ -110,8 +113,8 @@ class MaintenanceDialog(CommonWindow):
 
         # Properties
         self.label_title.set_markup(
-            "<span weight='bold' size='large'>%s</span>" % \
-            replace_for_markup(self.game.name))
+            "<span weight='bold' size='large'>%s</span>" % (
+                replace_for_markup(self.game.name)))
         self.label_title.set_use_markup(True)
         self.label_title.set_halign(Gtk.Align.CENTER)
         self.label_title.set_ellipsize(Pango.EllipsizeMode.END)
@@ -239,7 +242,6 @@ class MaintenanceDialog(CommonWindow):
         self.pack_start(self.label_data, False, False)
         self.pack_start(self.frame_options)
 
-
     def __init_signals(self):
         """ Initialize widgets signals
         """
@@ -247,14 +249,12 @@ class MaintenanceDialog(CommonWindow):
         self.listbox_options.connect(
             "row-activated", self.on_activate_listboxrow)
 
-
     def __start_interface(self):
         """ Load data and start interface
         """
 
         self.add_button(_("Cancel"), Gtk.ResponseType.CANCEL)
         self.add_button(_("Apply"), Gtk.ResponseType.APPLY, Gtk.Align.END)
-
 
     def get_data(self):
         """ Retrieve data to remove from user choices

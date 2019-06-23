@@ -17,9 +17,6 @@
 # Datetime
 from datetime import datetime
 
-# GEM
-from gem.engine.utils import generate_identifier
-
 # GObject
 try:
     from gi.repository import GObject
@@ -39,8 +36,6 @@ from os import environ
 # Threading
 from threading import Thread
 
-# Translation
-from gettext import gettext as _
 
 # ------------------------------------------------------------------------------
 #   Class
@@ -89,7 +84,6 @@ class GameThread(Thread, GObject.GObject):
         # ------------------------------------
 
         self.path = parent.api.get_local("logs", game.id + ".log")
-
 
     def run(self):
         """ Launch GameThread instance
@@ -158,7 +152,7 @@ class GameThread(Thread, GObject.GObject):
             self.logger.error("A memory error occur: %s" % str(error))
             self.error = True
 
-        except KeyboardInterrupt as error:
+        except KeyboardInterrupt:
             self.logger.info("Terminate by keyboard interrupt")
 
         except Exception as error:

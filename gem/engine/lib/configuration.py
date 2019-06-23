@@ -20,6 +20,7 @@ from pathlib import Path
 # System
 from configparser import ConfigParser
 
+
 # ------------------------------------------------------------------------------
 #   Class
 # ------------------------------------------------------------------------------
@@ -55,7 +56,6 @@ class Configuration(ConfigParser):
         if self.path.exists():
             self.read(str(self.path))
 
-
     def __str__(self):
         """ Formated informations
 
@@ -76,14 +76,12 @@ class Configuration(ConfigParser):
 
         return '\n'.join(text)
 
-
     def reload(self):
         """ Read again the configuration file if exists
         """
 
         if self.path.exists():
             self.read(self.path)
-
 
     def item(self, section, option, default=None):
         """ Return an item from configuration
@@ -95,7 +93,8 @@ class Configuration(ConfigParser):
         option : str
             Option name
         default : str, optional
-            Fallback value to return if nothing has been founded (default: None)
+            Fallback value to return if nothing has been founded
+            (default: None)
 
         Returns
         -------
@@ -107,7 +106,6 @@ class Configuration(ConfigParser):
             return self.get(section, option)
 
         return default
-
 
     def append(self, section, option, value):
         """ Append a new section to configuration
@@ -132,7 +130,6 @@ class Configuration(ConfigParser):
 
         self.add_section(section)
         self.set(section, option, str(value))
-
 
     def modify(self, section, option, value):
         """ Modify a section from configuration
@@ -162,7 +159,6 @@ class Configuration(ConfigParser):
         else:
             self.append(section, option, str(value))
 
-
     def rename(self, section, new_name):
         """ Rename a section from configuration
 
@@ -181,7 +177,6 @@ class Configuration(ConfigParser):
 
             self.remove(section)
 
-
     def remove(self, section):
         """ Remove a section from configuration
 
@@ -194,7 +189,6 @@ class Configuration(ConfigParser):
         if self.has_section(section):
             self.remove_section(section)
 
-
     def update(self):
         """ Write all data from cache into configuration file
 
@@ -204,7 +198,6 @@ class Configuration(ConfigParser):
 
         with self.path.open('w') as pipe:
             self.write(pipe)
-
 
     def add_missing_data(self, secondary_path):
         """ Append to configuration all missing data from another configuration

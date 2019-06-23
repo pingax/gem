@@ -15,8 +15,6 @@
 # ------------------------------------------------------------------------------
 
 # Filesystem
-from os import remove
-
 from pathlib import Path
 
 # GEM
@@ -46,6 +44,7 @@ except ImportError as error:
 # Translation
 from gettext import gettext as _
 
+
 # ------------------------------------------------------------------------------
 #   Class
 # ------------------------------------------------------------------------------
@@ -65,8 +64,11 @@ class EmulatorPreferences(CommonWindow):
             Use edit mode instead of append mode
         """
 
-        CommonWindow.__init__(self, parent, _("Emulator"),
-            Icons.Symbolic.PROPERTIES, parent.use_classic_theme)
+        CommonWindow.__init__(self,
+                              parent,
+                              _("Emulator"),
+                              Icons.Symbolic.PROPERTIES,
+                              parent.use_classic_theme)
 
         # ------------------------------------
         #   Initialize variables
@@ -132,7 +134,6 @@ class EmulatorPreferences(CommonWindow):
 
         # Start interface
         self.__start_interface()
-
 
     def __init_widgets(self):
         """ Initialize interface widgets
@@ -384,7 +385,6 @@ class EmulatorPreferences(CommonWindow):
         # Properties
         self.check_advanced.set_label(_("Advanced mode"))
 
-
     def __init_packing(self):
         """ Initialize widgets packing in main window
         """
@@ -444,7 +444,6 @@ class EmulatorPreferences(CommonWindow):
         self.grid_configuration.pack_start(
             self.button_configuration, False, False, 0)
 
-
     def __init_signals(self):
         """ Initialize widgets signals
         """
@@ -472,7 +471,6 @@ class EmulatorPreferences(CommonWindow):
         self.button_binary.connect("clicked", self.__on_file_set)
 
         self.check_advanced.connect("toggled", self.__on_check_advanced_mode)
-
 
     def __start_interface(self):
         """ Load data and start interface
@@ -539,7 +537,6 @@ class EmulatorPreferences(CommonWindow):
 
         self.__on_check_advanced_mode()
 
-
     def save(self):
         """ Save modification
         """
@@ -596,7 +593,6 @@ class EmulatorPreferences(CommonWindow):
 
         return data
 
-
     def __on_entry_update(self, widget):
         """ Check if a value is not already used
 
@@ -635,7 +631,7 @@ class EmulatorPreferences(CommonWindow):
                 if self.error:
                     icon = Icons.ERROR
                     tooltip = _("This emulator already exist, please, "
-                        "choose another name")
+                                "choose another name")
 
         else:
             self.error = True
@@ -675,7 +671,6 @@ class EmulatorPreferences(CommonWindow):
 
         self.set_response_sensitive(Gtk.ResponseType.APPLY, not self.error)
 
-
     def __on_icon_update(self, widget):
         """ Update icon thumbnail when the icon entry is update
 
@@ -692,7 +687,6 @@ class EmulatorPreferences(CommonWindow):
             self.path = Path(value).expanduser()
 
         self.set_icon(self.image_emulator, self.path)
-
 
     def __on_file_set(self, widget):
         """ Change response button state when user set a file
@@ -750,7 +744,6 @@ class EmulatorPreferences(CommonWindow):
 
         dialog.destroy()
 
-
     def __on_select_icon(self, widget):
         """ Select a new icon
 
@@ -773,7 +766,6 @@ class EmulatorPreferences(CommonWindow):
 
         dialog.destroy()
 
-
     def __on_check_advanced_mode(self, *args):
         """ Check advanced checkbutton status and update widgets sensitivity
         """
@@ -793,7 +785,6 @@ class EmulatorPreferences(CommonWindow):
         self.label_screenshots.set_visible(status)
         self.entry_screenshots.set_visible(status)
         self.label_joker.set_visible(status)
-
 
     def set_icon(self, widget, path, size=64):
         """ Set thumbnail icon from a specific path

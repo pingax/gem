@@ -25,7 +25,10 @@ from gem.engine.utils import copy
 from gem.engine.utils import get_data
 from gem.engine.lib.configuration import Configuration
 
-from gem.ui.data import *
+from gem.ui.data import Icons
+from gem.ui.data import Columns
+from gem.ui.data import Folders
+from gem.ui.data import Metadata
 
 # Logging
 from logging import getLogger
@@ -44,6 +47,7 @@ from sys import exit as sys_exit
 from gettext import textdomain
 from gettext import bindtextdomain
 from gettext import gettext as _
+
 
 # ------------------------------------------------------------------------------
 #   Launcher
@@ -78,7 +82,7 @@ def init_environment():
     # Retrieve columns informations
     if metadata.has_section("misc"):
         setattr(Columns, "ORDER",
-            metadata.get("misc", "columns_order", fallback=str()))
+                metadata.get("misc", "columns_order", fallback=str()))
 
     if metadata.has_section("list"):
         for key, value in metadata.items("list"):
@@ -215,30 +219,36 @@ def main():
     # ----------------------------------------
 
     parser = ArgumentParser(epilog=Metadata.COPYLEFT,
-        description="%s - %s" % (Metadata.NAME, Metadata.VERSION),
-        conflict_handler="resolve")
+                            description="%s - %s" % (Metadata.NAME,
+                                                     Metadata.VERSION),
+                            conflict_handler="resolve")
 
     parser.add_argument("-v", "--version", action="version",
-        version="%s %s (%s) - %s" % (Metadata.NAME, Metadata.VERSION,
-            Metadata.CODE_NAME, Metadata.LICENSE),
-        help="show the current version")
+                        version="%s %s (%s) - %s" % (Metadata.NAME,
+                                                     Metadata.VERSION,
+                                                     Metadata.CODE_NAME,
+                                                     Metadata.LICENSE),
+                        help="show the current version")
     parser.add_argument("-d", "--debug", action="store_true",
-        help="launch gem with debug flag")
+                        help="launch gem with debug flag")
 
     parser_api = parser.add_argument_group("api arguments")
     parser_api.add_argument("--cache", action="store", metavar="FOLDER",
-        default=Folders.Default.CACHE,
-        help="set cache folder (default: ~/.cache/)")
+                            default=Folders.Default.CACHE,
+                            help="set cache folder (default: %s)" % (
+                                Path('~/.cache').expanduser())),
     parser_api.add_argument("--config", action="store", metavar="FOLDER",
-        default=Folders.Default.CONFIG,
-        help="set configuration folder (default: ~/.config/)")
+                            default=Folders.Default.CONFIG,
+                            help="set configuration folder (default: %s)" % (
+                                Path('~/.config').expanduser())),
     parser_api.add_argument("--local", action="store", metavar="FOLDER",
-        default=Folders.Default.LOCAL,
-        help="set data folder (default: ~/.local/share/)")
+                            default=Folders.Default.LOCAL,
+                            help="set data folder (default: %s)" % (
+                                Path('~/.local/share').expanduser()))
 
     parser_maintenance = parser.add_argument_group("maintenance arguments")
     parser_maintenance.add_argument("--clean-cache", action="store_true",
-        help="clean icons cache directory")
+                                    help="clean icons cache directory")
 
     arguments = parser.parse_args()
 
@@ -247,17 +257,17 @@ def main():
     # ----------------------------------------
 
     setattr(Folders, "CACHE",
-        Path(arguments.cache, "gem").expanduser().resolve())
+            Path(arguments.cache, "gem").expanduser().resolve())
     if not Folders.CACHE.exists():
         Folders.CACHE.mkdir(mode=0o755, parents=True)
 
     setattr(Folders, "CONFIG",
-        Path(arguments.config, "gem").expanduser().resolve())
+            Path(arguments.config, "gem").expanduser().resolve())
     if not Folders.CONFIG.exists():
         Folders.CONFIG.mkdir(mode=0o755, parents=True)
 
     setattr(Folders, "LOCAL",
-        Path(arguments.local, "gem").expanduser().resolve())
+            Path(arguments.local, "gem").expanduser().resolve())
     if not Folders.LOCAL.exists():
         Folders.LOCAL.mkdir(mode=0o755, parents=True)
 
@@ -326,25 +336,26 @@ def main():
                 dialog.run()
                 dialog.destroy()
 
-            except Exception as error:
+            except Exception:
                 getLogger("gem").critical("Cannot start dialog instance")
 
             finally:
                 sys_exit("GEM is already running with PID %d" % gem.pid)
 
-    except ImportError as error:
+    except ImportError:
         getLogger("gem").exception("An error occur durint modules importation")
         return True
 
-    except KeyboardInterrupt as error:
+    except KeyboardInterrupt:
         getLogger("gem").warning("Terminate by keyboard interrupt")
         return True
 
-    except Exception as error:
+    except Exception:
         getLogger("gem").exception("An error occur during execution")
         return True
 
     return False
+
 
 if __name__ == "__main__":
     main()

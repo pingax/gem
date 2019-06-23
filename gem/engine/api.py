@@ -18,10 +18,6 @@
 from collections import OrderedDict
 
 # Filesystem
-from copy import deepcopy
-
-from shutil import move
-
 from pathlib import Path
 
 from os.path import splitext
@@ -48,7 +44,6 @@ from os import getpid
 
 from sys import exit as sys_exit
 
-from shlex import split as shlex_split
 
 # ------------------------------------------------------------------------------
 #   Class
@@ -56,13 +51,13 @@ from shlex import split as shlex_split
 
 class GEM(object):
 
-    Version     = "1.0"
+    Version = "1.0"
 
-    Log         = "gem.log"
-    Logger      = "log.conf"
-    Consoles    = "consoles.conf"
-    Emulators   = "emulators.conf"
-    Databases   = "databases.conf"
+    Log = "gem.log"
+    Logger = "log.conf"
+    Consoles = "consoles.conf"
+    Emulators = "emulators.conf"
+    Databases = "databases.conf"
     Environment = "environment.conf"
 
     def __init__(self, config, local, debug=False):
@@ -140,7 +135,7 @@ class GEM(object):
         #   Initialize folders
         # ----------------------------------------
 
-        for folder in [ self.__config, self.__local, self.__roms ]:
+        for folder in [self.__config, self.__local, self.__roms]:
 
             if not folder.exists():
                 folder.mkdir(mode=0o755, parents=True)
@@ -163,7 +158,6 @@ class GEM(object):
 
             self.logger.debug("Set local folder as %s" % str(self.__local))
             self.logger.debug("Set config folder as %s" % str(self.__config))
-
 
     def __init_lock(self):
         """ Initialize lock file
@@ -204,7 +198,6 @@ class GEM(object):
 
         return False
 
-
     def __init_logger(self):
         """ Initialize logger
 
@@ -227,7 +220,6 @@ class GEM(object):
 
         if not self.debug:
             self.logger.setLevel(logging.INFO)
-
 
     def __init_database(self):
         """ Initialize database
@@ -256,7 +248,8 @@ class GEM(object):
                     self.logger.info("Update database to v.%s" % GEM.Version)
 
                 self.database.modify("gem",
-                    { "version": GEM.Version }, { "version": version })
+                                     {"version": GEM.Version},
+                                     {"version": version})
 
             else:
                 self.logger.debug("Use GEM API v.%s" % GEM.Version)
@@ -282,7 +275,6 @@ class GEM(object):
         except Exception as error:
             self.logger.exception("An error occur: %s" % str(error))
             sys_exit(error)
-
 
     def __init_configurations(self):
         """ Initalize configuration
@@ -315,7 +307,6 @@ class GEM(object):
 
         self.__configurations[path.stem] = Configuration(path)
 
-
     def __init_emulators(self):
         """ Initalize emulators
 
@@ -333,7 +324,6 @@ class GEM(object):
         self.logger.debug(
             "%d emulator(s) has been founded" % len(self.emulators))
 
-
     def __init_consoles(self):
         """ Initalize consoles
 
@@ -348,8 +338,8 @@ class GEM(object):
         for section in consoles.sections():
             self.add_console(section, consoles.items(section))
 
-        self.logger.debug("%d console(s) has been founded" % len(self.consoles))
-
+        self.logger.debug(
+            "%d console(s) has been founded" % len(self.consoles))
 
     def init(self):
         """ Initalize data from configuration files
@@ -368,7 +358,6 @@ class GEM(object):
         self.__init_emulators()
         # Load user consoles
         self.__init_consoles()
-
 
     def check_database(self, updater=None):
         """ Check database and migrate to lastest GEM version if needed
@@ -401,7 +390,7 @@ class GEM(object):
                 new_database = Database(
                     self.get_local("gem.db"), config, self.logger)
 
-                new_database.insert("gem", { "version": GEM.Version })
+                new_database.insert("gem", {"version": GEM.Version})
 
                 # ----------------------------------------
                 #   Migrate data from previous database
@@ -470,7 +459,6 @@ class GEM(object):
         if updater is not None:
             updater.close()
 
-
     def write_object(self, data):
         """ Write data into a specific configuration file
 
@@ -514,7 +502,6 @@ class GEM(object):
                 config.modify(data.name, key, value)
 
             config.update()
-
 
     def write_data(self, *files):
         """ Write data into configuration files and database
@@ -578,7 +565,8 @@ class GEM(object):
                 config.update()
 
         except Exception as error:
-            self.logger.exception("Cannot write configuration: %s" % str(error))
+            self.logger.exception(
+                "Cannot write configuration: %s" % str(error))
 
             return False
 
@@ -591,8 +579,8 @@ class GEM(object):
 
                 # Update games which use a renamed emulator
                 self.database.update("games",
-                    { "emulator": emulator.id },
-                    { "emulator": previous })
+                                     {"emulator": emulator.id},
+                                     {"emulator": previous})
 
                 self.logger.info(
                     "Update old %s references from database to %s" % (
@@ -605,7 +593,6 @@ class GEM(object):
 
         return True
 
-
     def get_config(self, *args):
         """ Retrieve configuration data
 
@@ -616,7 +603,6 @@ class GEM(object):
         """
 
         return self.__config.joinpath(*args).expanduser()
-
 
     def get_local(self, *args):
         """ Retrieve local data
@@ -629,7 +615,6 @@ class GEM(object):
 
         return self.__local.joinpath(*args).expanduser()
 
-
     def is_locked(self):
         """ Check if database is locked
 
@@ -641,7 +626,6 @@ class GEM(object):
 
         return self.__lock
 
-
     def free_lock(self):
         """ Remove lock file if present
         """
@@ -650,7 +634,6 @@ class GEM(object):
 
         if lock_path.exists():
             lock_path.unlink()
-
 
     @property
     def pid(self):
@@ -664,7 +647,6 @@ class GEM(object):
 
         return self.__pid
 
-
     @property
     def emulators(self):
         """ Return emulators dict
@@ -677,7 +659,6 @@ class GEM(object):
 
         return self.__data["emulators"]
 
-
     def get_emulators(self):
         """ Return emulators list
 
@@ -688,7 +669,6 @@ class GEM(object):
         """
 
         return list(self.__data["emulators"].values())
-
 
     def get_emulator(self, emulator):
         """ Get a specific emulator
@@ -716,7 +696,6 @@ class GEM(object):
                 return self.__data["emulators"].get(identifier, None)
 
         return None
-
 
     def add_emulator(self, name, informations):
         """ Add a new emulator
@@ -753,7 +732,6 @@ class GEM(object):
 
         return emulator
 
-
     def update_emulator(self, emulator):
         """ Update a specific emulator
 
@@ -765,7 +743,6 @@ class GEM(object):
 
         if emulator is not None:
             self.__data["emulators"][emulator.id] = emulator
-
 
     def delete_emulator(self, emulator):
         """ Delete a specific emulator
@@ -781,11 +758,11 @@ class GEM(object):
             if emulator not exists
         """
 
-        if not emulator in self.__data["emulators"].keys():
-            raise IndexError("Cannot access to %s in emulators list" % emulator)
+        if emulator not in self.__data["emulators"].keys():
+            raise IndexError(
+                "Cannot access to %s in emulators list" % emulator)
 
         del self.__data["emulators"][emulator]
-
 
     def rename_emulator(self, previous, identifier):
         """ Rename an emulator and all associate objects (consoles and games)
@@ -806,7 +783,7 @@ class GEM(object):
         # Avoid to rename an emulator with the same name :D
         if not previous == identifier:
 
-            if not identifier in self.__data["emulators"].keys():
+            if identifier not in self.__data["emulators"].keys():
                 raise IndexError(
                     "Cannot access to %s in emulators list" % identifier)
 
@@ -820,7 +797,6 @@ class GEM(object):
                 if console is not None and console.emulator.id == previous:
                     console.emulator = self.__rename[previous]
 
-
     @property
     def consoles(self):
         """ Return consoles dict
@@ -833,7 +809,6 @@ class GEM(object):
 
         return self.__data["consoles"]
 
-
     def get_consoles(self):
         """ Return consoles list
 
@@ -844,7 +819,6 @@ class GEM(object):
         """
 
         return list(self.__data["consoles"].values())
-
 
     def get_console(self, console):
         """ Get a specific console
@@ -879,7 +853,6 @@ class GEM(object):
                 return self.__data["consoles"].get(identifier, None)
 
         return None
-
 
     def add_console(self, name, informations):
         """ Add a new console
@@ -918,7 +891,6 @@ class GEM(object):
 
         return console
 
-
     def update_console(self, console):
         """ Update a specific console
 
@@ -930,7 +902,6 @@ class GEM(object):
 
         if console is not None:
             self.__data["consoles"][console.id] = console
-
 
     def delete_console(self, console):
         """ Delete a specific console
@@ -946,11 +917,10 @@ class GEM(object):
             if console not exists
         """
 
-        if not console in self.__data["consoles"].keys():
+        if console not in self.__data["consoles"].keys():
             raise IndexError("Cannot access to %s in consoles list" % console)
 
         del self.__data["consoles"][console]
-
 
     @property
     def environment(self):
@@ -963,7 +933,6 @@ class GEM(object):
         """
 
         return self.__configurations["environment"]
-
 
     def get_games(self):
         """ List all games from register consoles
@@ -980,7 +949,6 @@ class GEM(object):
             games.extend(console.get_games())
 
         return games
-
 
     def get_game(self, console, game):
         """ Get game from a specific console
@@ -1010,12 +978,11 @@ class GEM(object):
         <gem.engine.api.Game object at 0x7f174a986f60>
         """
 
-        if not console in self.__data["consoles"]:
+        if console not in self.__data["consoles"]:
             raise IndexError("Cannot access to %s in consoles list" % console)
 
         # Check console games list
         return self.__data["consoles"][console].get_game(game)
-
 
     def get_game_tags(self):
         """ Retrieve avaialable game tags from database
@@ -1038,7 +1005,6 @@ class GEM(object):
 
         return list()
 
-
     def update_game(self, game):
         """ Update a game in database
 
@@ -1059,7 +1025,8 @@ class GEM(object):
         """
 
         if type(game) is not Game:
-            raise TypeError("Wrong type for game, expected gem.engine.api.Game")
+            raise TypeError(
+                "Wrong type for game, expected gem.engine.api.Game")
 
         # Store game data
         data = game.as_dict()
@@ -1082,7 +1049,7 @@ class GEM(object):
         # Update game in database
         self.logger.debug("Update %s database entry" % game.name)
 
-        self.database.modify("games", data, { "filename": game.path.name })
+        self.database.modify("games", data, {"filename": game.path.name})
 
         # Update game environment variables
         self.logger.debug("Update %s environment variables" % game.name)
@@ -1096,7 +1063,6 @@ class GEM(object):
                 self.environment.set(game.id, key.upper(), value)
 
         self.environment.update()
-
 
     def delete_game(self, game):
         """ Delete a specific game
@@ -1113,14 +1079,15 @@ class GEM(object):
         """
 
         if type(game) is not Game:
-            raise TypeError("Wrong type for game, expected gem.engine.api.Game")
+            raise TypeError(
+                "Wrong type for game, expected gem.engine.api.Game")
 
-        results = self.database.get("games", { "filename": game.path.name })
+        results = self.database.get("games", {"filename": game.path.name})
 
         if results is not None and len(results) > 0:
             self.logger.info("Remove %s from database" % game.name)
 
-            self.database.remove("games", { "filename": game.path.name })
+            self.database.remove("games", {"filename": game.path.name})
 
         # Update game environment variables
         self.logger.debug("Remove %s environment variables" % game.name)

@@ -36,15 +36,12 @@ except ImportError as error:
 
     exit("Cannot found python3-gobject module: %s" % str(error))
 
-# Regex
-from re import sub as re_sub
-from re import split as re_split
-
 # System
 from os import environ
 
 # Translation
 from gettext import gettext as _
+
 
 # ------------------------------------------------------------------------------
 #   Class
@@ -67,8 +64,11 @@ class ParametersDialog(CommonWindow):
         if parent is not None:
             classic_theme = parent.use_classic_theme
 
-        CommonWindow.__init__(self, parent,
-            _("Game properties"), Icons.Symbolic.GAMING, classic_theme)
+        CommonWindow.__init__(self,
+                              parent,
+                              _("Game properties"),
+                              Icons.Symbolic.GAMING,
+                              classic_theme)
 
         # ------------------------------------
         #   Initialize variables
@@ -117,7 +117,6 @@ class ParametersDialog(CommonWindow):
 
         # Start interface
         self.__start_interface()
-
 
     def __init_widgets(self):
         """ Initialize interface widgets
@@ -194,8 +193,8 @@ class ParametersDialog(CommonWindow):
 
         # Properties
         self.label_title.set_markup(
-            "<span weight='bold' size='large'>%s</span>" % \
-            replace_for_markup(self.game.name))
+            "<span weight='bold' size='large'>%s</span>" % (
+                replace_for_markup(self.game.name)))
         self.label_title.set_use_markup(True)
         self.label_title.set_halign(Gtk.Align.CENTER)
         self.label_title.set_ellipsize(Pango.EllipsizeMode.END)
@@ -425,7 +424,8 @@ class ParametersDialog(CommonWindow):
         grid_statistic_average.pack_start(
             self.label_statistic_average_value, True, True, 0)
 
-        self.stack.add_titled(grid_environment, "environment", _("Environment"))
+        self.stack.add_titled(
+            grid_environment, "environment", _("Environment"))
 
         scroll_environment.add(viewport_environment)
         viewport_environment.add(self.treeview_environment)
@@ -446,7 +446,6 @@ class ParametersDialog(CommonWindow):
 
         self.pack_start(self.label_title, False, False)
         self.pack_start(self.grid_content)
-
 
     def __init_signals(self):
         """ Initialize widgets signals
@@ -475,7 +474,6 @@ class ParametersDialog(CommonWindow):
         self.button_environment_remove.connect(
             "clicked", self.__on_remove_item)
 
-
     def __start_interface(self):
         """ Load data and start interface
         """
@@ -497,8 +495,8 @@ class ParametersDialog(CommonWindow):
 
                 row = self.model.append([icon, emulator.name])
 
-                if self.game.emulator is not None and \
-                    emulator.name == self.game.emulator.name:
+                if self.game.emulator is not None \
+                   and emulator.name == self.game.emulator.name:
                     self.combo.set_active_iter(row)
 
         self.combo.set_wrap_width(int(len(self.model) / 6))
@@ -536,7 +534,6 @@ class ParametersDialog(CommonWindow):
 
         self.combo.grab_focus()
 
-
     def __on_selected_emulator(self, widget=None):
         """ Select an emulator in combobox and update parameters placeholder
 
@@ -560,7 +557,6 @@ class ParametersDialog(CommonWindow):
             if emulator.exists:
                 self.set_response_sensitive(Gtk.ResponseType.APPLY, True)
 
-
     def __on_edited_cell(self, widget, path, text):
         """ Update treerow when a cell has been edited
 
@@ -580,7 +576,6 @@ class ParametersDialog(CommonWindow):
         elif widget == self.treeview_cell_environment_value:
             self.store_environment[path][1] = str(text)
 
-
     def __on_append_item(self, widget):
         """ Append a new row in treeview
 
@@ -590,8 +585,7 @@ class ParametersDialog(CommonWindow):
             Object which receive signal
         """
 
-        self.store_environment.append([ str(), str() ])
-
+        self.store_environment.append([str(), str()])
 
     def __on_remove_item(self, widget):
         """ Remove a row in treeview
@@ -607,7 +601,6 @@ class ParametersDialog(CommonWindow):
 
         if treeiter is not None:
             self.store_environment.remove(treeiter)
-
 
     def __on_entry_clear(self, widget, pos, event):
         """ Reset an entry widget when secondary icon is clicked
@@ -630,14 +623,13 @@ class ParametersDialog(CommonWindow):
         if type(widget) is not Gtk.Entry:
             return False
 
-        if pos == Gtk.EntryIconPosition.SECONDARY and \
-            len(widget.get_text()) > 0:
+        if pos == Gtk.EntryIconPosition.SECONDARY \
+           and len(widget.get_text()) > 0:
             widget.set_text(str())
 
             return True
 
         return False
-
 
     def __on_entry_match_tag(self, widget, key, treeiter):
         """ Check if current entry match an entry from completion
@@ -693,7 +685,6 @@ class ParametersDialog(CommonWindow):
 
         # Check if the tag start with the specified text
         return tag.startswith(text.strip())
-
 
     def __on_entry_write_tag(self, widget, model, treeiter):
         """ Write the specified completion item to entry

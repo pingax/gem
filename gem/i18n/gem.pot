@@ -3,20 +3,20 @@
 msgid   "%d days ago"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 4843
-# File: gem/ui/interface.py, line: 5193
-# File: gem/ui/interface.py, line: 6939
-# File: gem/ui/interface.py, line: 8239
+# File: gem/ui/interface.py, line: 4844
+# File: gem/ui/interface.py, line: 5194
+# File: gem/ui/interface.py, line: 6938
+# File: gem/ui/interface.py, line: 8238
 #, python-format
 msgid   "%d games"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 4325
+# File: gem/ui/interface.py, line: 4326
 #, python-format
 msgid   "%d games available"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 8286
+# File: gem/ui/interface.py, line: 8285
 #, python-format
 msgid   "%d games has been added"
 msgstr  ""
@@ -36,12 +36,12 @@ msgstr  ""
 msgid   "%d months ago"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 4174
+# File: gem/ui/interface.py, line: 4175
 #, python-format
 msgid   "%d savestates"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 4095
+# File: gem/ui/interface.py, line: 4096
 #, python-format
 msgid   "%d screenshots"
 msgstr  ""
@@ -56,18 +56,18 @@ msgstr  ""
 msgid   "%d years ago"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 6505
+# File: gem/ui/interface.py, line: 6504
 #, python-format
 msgid   "%s binary cannot be found"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 4811
-# File: gem/ui/interface.py, line: 4934
+# File: gem/ui/interface.py, line: 4812
+# File: gem/ui/interface.py, line: 4935
 #, python-format
 msgid   "%s has been correctly added to your configuration."
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 7645
+# File: gem/ui/interface.py, line: 7644
 #, python-format
 msgid   "%s was generated successfully"
 msgstr  ""
@@ -76,18 +76,18 @@ msgstr  ""
 msgid   "* can be used as joker"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 4841
-# File: gem/ui/interface.py, line: 5191
-# File: gem/ui/interface.py, line: 6937
-# File: gem/ui/interface.py, line: 8237
+# File: gem/ui/interface.py, line: 4842
+# File: gem/ui/interface.py, line: 5192
+# File: gem/ui/interface.py, line: 6936
+# File: gem/ui/interface.py, line: 8236
 msgid   "1 game"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 4320
+# File: gem/ui/interface.py, line: 4321
 msgid   "1 game available"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 8283
+# File: gem/ui/interface.py, line: 8282
 msgid   "1 game has been added"
 msgstr  ""
 #
@@ -99,11 +99,11 @@ msgstr  ""
 msgid   "1 minute"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 4172
+# File: gem/ui/interface.py, line: 4173
 msgid   "1 savestate"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 4093
+# File: gem/ui/interface.py, line: 4094
 msgid   "1 screenshot"
 msgstr  ""
 #
@@ -111,7 +111,7 @@ msgstr  ""
 msgid   "1 second"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 5553
+# File: gem/ui/interface.py, line: 5552
 #, python-format
 msgid   "<b>%s</b> cannot been found on your system"
 msgstr  ""
@@ -164,7 +164,7 @@ msgstr  ""
 msgid   "Add an ellipsis to title when there is not enough space"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 1013
+# File: gem/ui/interface.py, line: 1014
 msgid   "Advanced filters"
 msgstr  ""
 #
@@ -177,7 +177,7 @@ msgstr  ""
 msgid   "Allow to use an alternative screenshots viewer"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 965
+# File: gem/ui/interface.py, line: 966
 msgid   "Alternate game fullscreen mode"
 msgstr  ""
 #
@@ -185,7 +185,7 @@ msgstr  ""
 msgid   "Alternative emulator"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 7651
+# File: gem/ui/interface.py, line: 7650
 msgid   "An error occur during generation, consult log for futher details."
 msgstr  ""
 #
@@ -201,7 +201,7 @@ msgstr  ""
 msgid   "Application _log"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 4587
+# File: gem/ui/interface.py, line: 4588
 msgid   "Application log"
 msgstr  ""
 #
@@ -213,7 +213,7 @@ msgstr  ""
 msgid   "Apply"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 5036
+# File: gem/ui/interface.py, line: 5037
 #, python-format
 msgid   "Are you sure you want to remove <b>%s</b> ?"
 msgstr  ""
@@ -278,16 +278,16 @@ msgstr  ""
 msgid   "Cancel"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 4535
+# File: gem/ui/interface.py, line: 4536
 #, python-format
 msgid   "Cannot find <b>%s</b>"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 6504
+# File: gem/ui/interface.py, line: 6503
 msgid   "Cannot launch game"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 4534
+# File: gem/ui/interface.py, line: 4535
 msgid   "Cannot open screenshots viewer"
 msgstr  ""
 #
@@ -304,7 +304,7 @@ msgstr  ""
 msgid   "Clean icons _cache"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 4639
+# File: gem/ui/interface.py, line: 4640
 # File: gem/ui/dialog/cache.py, line: 59
 msgid   "Clean icons cache"
 msgstr  ""
@@ -332,7 +332,7 @@ msgstr  ""
 msgid   "Configuration file"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 4330
+# File: gem/ui/interface.py, line: 4331
 # File: gem/ui/preferences/console.py, line: 69
 # File: gem/ui/preferences/interface.py, line: 967
 msgid   "Console"
@@ -478,7 +478,7 @@ msgstr  ""
 msgid   "Drop games"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 7026
+# File: gem/ui/interface.py, line: 7025
 # File: gem/ui/dialog/duplicate.py, line: 69
 # File: gem/ui/preferences/interface.py, line: 158
 msgid   "Duplicate a game"
@@ -508,7 +508,7 @@ msgstr  ""
 msgid   "Edit"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 5002
+# File: gem/ui/interface.py, line: 5003
 #, python-format
 msgid   "Edit %s configuration"
 msgstr  ""
@@ -521,8 +521,8 @@ msgstr  ""
 msgid   "Editor"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 1254
-# File: gem/ui/interface.py, line: 4338
+# File: gem/ui/interface.py, line: 1255
+# File: gem/ui/interface.py, line: 4339
 # File: gem/ui/preferences/console.py, line: 283
 # File: gem/ui/preferences/emulator.py, line: 68
 # File: gem/ui/preferences/interface.py, line: 1063
@@ -611,7 +611,7 @@ msgid   "Extensions examples"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 557
-# File: gem/ui/interface.py, line: 1059
+# File: gem/ui/interface.py, line: 1060
 # File: gem/ui/preferences/console.py, line: 236
 # File: gem/ui/preferences/interface.py, line: 817
 msgid   "Favorite"
@@ -632,17 +632,17 @@ msgid   "Files patterns"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 821
-# File: gem/ui/interface.py, line: 1010
+# File: gem/ui/interface.py, line: 1011
 msgid   "Filter"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 561
-# File: gem/ui/interface.py, line: 1091
+# File: gem/ui/interface.py, line: 1092
 # File: gem/ui/preferences/interface.py, line: 827
 msgid   "Finish"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 1419
+# File: gem/ui/interface.py, line: 1420
 msgid   "Flags"
 msgstr  ""
 #
@@ -672,7 +672,7 @@ msgstr  ""
 msgid   "Game"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 1732
+# File: gem/ui/interface.py, line: 1733
 msgid   "Game _log"
 msgstr  ""
 #
@@ -696,7 +696,7 @@ msgstr  ""
 msgid   "Games folder"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 8288
+# File: gem/ui/interface.py, line: 8287
 msgid   "Games installation"
 msgstr  ""
 #
@@ -712,11 +712,11 @@ msgstr  ""
 msgid   "Generate desktop entry for a game"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 7644
+# File: gem/ui/interface.py, line: 7643
 msgid   "Generate menu entry"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 7650
+# File: gem/ui/interface.py, line: 7649
 #, python-format
 msgid   "Generate menu entry for %s"
 msgstr  ""
@@ -730,7 +730,7 @@ msgid   "Get some help about this dialog"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 579
-# File: gem/ui/interface.py, line: 980
+# File: gem/ui/interface.py, line: 981
 msgid   "Grid icons"
 msgstr  ""
 #
@@ -768,7 +768,7 @@ msgstr  ""
 msgid   "Icons cache"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 4640
+# File: gem/ui/interface.py, line: 4641
 msgid   "Icons cache directory has been succesfully cleaned."
 msgstr  ""
 #
@@ -789,8 +789,8 @@ msgstr  ""
 msgid   "Increase selected game score"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 1243
-# File: gem/ui/interface.py, line: 1418
+# File: gem/ui/interface.py, line: 1244
+# File: gem/ui/interface.py, line: 1419
 msgid   "Installed"
 msgstr  ""
 #
@@ -817,9 +817,9 @@ msgstr  ""
 msgid   "Large Toolbar"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 1225
-# File: gem/ui/interface.py, line: 1415
-# File: gem/ui/interface.py, line: 6039
+# File: gem/ui/interface.py, line: 1226
+# File: gem/ui/interface.py, line: 1416
+# File: gem/ui/interface.py, line: 6038
 msgid   "Last launch"
 msgstr  ""
 #
@@ -832,7 +832,7 @@ msgstr  ""
 msgid   "Last month"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 1234
+# File: gem/ui/interface.py, line: 1235
 msgid   "Last play time"
 msgstr  ""
 #
@@ -840,8 +840,8 @@ msgstr  ""
 msgid   "Last year"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 1203
-# File: gem/ui/interface.py, line: 1414
+# File: gem/ui/interface.py, line: 1204
+# File: gem/ui/interface.py, line: 1415
 msgid   "Launch"
 msgstr  ""
 #
@@ -854,8 +854,8 @@ msgstr  ""
 msgid   "Launch number"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 960
-# File: gem/ui/interface.py, line: 6420
+# File: gem/ui/interface.py, line: 961
+# File: gem/ui/interface.py, line: 6419
 msgid   "Launch selected game"
 msgstr  ""
 #
@@ -872,7 +872,7 @@ msgid   "Line numbers"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 576
-# File: gem/ui/interface.py, line: 981
+# File: gem/ui/interface.py, line: 982
 # File: gem/ui/preferences/interface.py, line: 720
 msgid   "List view"
 msgstr  ""
@@ -945,26 +945,26 @@ msgid   "Most of the time, extensions are common between differents emulators "
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 559
-# File: gem/ui/interface.py, line: 1075
+# File: gem/ui/interface.py, line: 1076
 # File: gem/ui/preferences/interface.py, line: 822
 msgid   "Multiplayer"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 4317
+# File: gem/ui/interface.py, line: 4318
 msgid   "N/A"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 1413
+# File: gem/ui/interface.py, line: 1414
 # File: gem/ui/preferences/console.py, line: 207
 # File: gem/ui/preferences/emulator.py, line: 190
 msgid   "Name"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 4811
+# File: gem/ui/interface.py, line: 4812
 msgid   "New console"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 4934
+# File: gem/ui/interface.py, line: 4935
 msgid   "New emulator"
 msgstr  ""
 #
@@ -988,7 +988,7 @@ msgstr  ""
 msgid   "No"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 868
+# File: gem/ui/interface.py, line: 869
 msgid   "No console available"
 msgstr  ""
 #
@@ -1006,22 +1006,22 @@ msgstr  ""
 msgid   "No default value"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 4839
-# File: gem/ui/interface.py, line: 5189
-# File: gem/ui/interface.py, line: 6935
-# File: gem/ui/interface.py, line: 8235
+# File: gem/ui/interface.py, line: 4840
+# File: gem/ui/interface.py, line: 5190
+# File: gem/ui/interface.py, line: 6934
+# File: gem/ui/interface.py, line: 8234
 msgid   "No game"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 8280
+# File: gem/ui/interface.py, line: 8279
 msgid   "No game has been added"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 4180
+# File: gem/ui/interface.py, line: 4181
 msgid   "No savestate"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 4132
+# File: gem/ui/interface.py, line: 4133
 msgid   "No screenshot"
 msgstr  ""
 #
@@ -1091,16 +1091,16 @@ msgstr  ""
 msgid   "Pattern to detect screenshots files"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 958
-# File: gem/ui/interface.py, line: 6416
-# File: gem/ui/interface.py, line: 6418
+# File: gem/ui/interface.py, line: 959
+# File: gem/ui/interface.py, line: 6415
+# File: gem/ui/interface.py, line: 6417
 msgid   "Play"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 565
-# File: gem/ui/interface.py, line: 1214
-# File: gem/ui/interface.py, line: 1416
-# File: gem/ui/interface.py, line: 6029
+# File: gem/ui/interface.py, line: 1215
+# File: gem/ui/interface.py, line: 1417
+# File: gem/ui/interface.py, line: 6028
 # File: gem/ui/preferences/interface.py, line: 842
 msgid   "Play time"
 msgstr  ""
@@ -1134,11 +1134,11 @@ msgstr  ""
 msgid   "Remove"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 5035
+# File: gem/ui/interface.py, line: 5036
 msgid   "Remove a console"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 6967
+# File: gem/ui/interface.py, line: 6966
 # File: gem/ui/dialog/delete.py, line: 65
 msgid   "Remove a game"
 msgstr  ""
@@ -1172,7 +1172,7 @@ msgstr  ""
 msgid   "Replace files"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 1100
+# File: gem/ui/interface.py, line: 1101
 msgid   "Reset filters"
 msgstr  ""
 #
@@ -1210,8 +1210,8 @@ msgstr  ""
 #
 # File: gem/ui/interface.py, line: 569
 # File: gem/ui/interface.py, line: 749
-# File: gem/ui/interface.py, line: 1263
-# File: gem/ui/interface.py, line: 1417
+# File: gem/ui/interface.py, line: 1264
+# File: gem/ui/interface.py, line: 1418
 # File: gem/ui/preferences/interface.py, line: 132
 # File: gem/ui/preferences/interface.py, line: 847
 msgid   "Score"
@@ -1247,7 +1247,7 @@ msgstr  ""
 msgid   "Set a game thumbnail"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 968
+# File: gem/ui/interface.py, line: 969
 msgid   "Set custom parameters"
 msgstr  ""
 #
@@ -1255,37 +1255,37 @@ msgstr  ""
 msgid   "Set game _thumbnail"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 1644
+# File: gem/ui/interface.py, line: 1645
 msgid   "Set game thumbnail"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 761
-# File: gem/ui/interface.py, line: 1689
+# File: gem/ui/interface.py, line: 1690
 msgid   "Set score as 0"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 765
-# File: gem/ui/interface.py, line: 1693
+# File: gem/ui/interface.py, line: 1694
 msgid   "Set score as 1"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 769
-# File: gem/ui/interface.py, line: 1697
+# File: gem/ui/interface.py, line: 1698
 msgid   "Set score as 2"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 773
-# File: gem/ui/interface.py, line: 1701
+# File: gem/ui/interface.py, line: 1702
 msgid   "Set score as 3"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 777
-# File: gem/ui/interface.py, line: 1705
+# File: gem/ui/interface.py, line: 1706
 msgid   "Set score as 4"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 781
-# File: gem/ui/interface.py, line: 1709
+# File: gem/ui/interface.py, line: 1710
 msgid   "Set score as 5"
 msgstr  ""
 #
@@ -1349,19 +1349,19 @@ msgstr  ""
 msgid   "Show line number at beginning of each line"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 973
+# File: gem/ui/interface.py, line: 974
 msgid   "Show selected game log"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 975
+# File: gem/ui/interface.py, line: 976
 msgid   "Show selected game notes"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 971
+# File: gem/ui/interface.py, line: 972
 msgid   "Show selected game screenshots"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 996
+# File: gem/ui/interface.py, line: 997
 msgid   "Show selected game tags"
 msgstr  ""
 #
@@ -1377,7 +1377,7 @@ msgstr  ""
 msgid   "Sidebar"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 1081
+# File: gem/ui/interface.py, line: 1082
 msgid   "Singleplayer"
 msgstr  ""
 #
@@ -1390,11 +1390,11 @@ msgid   "Snapshots"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 728
-# File: gem/ui/interface.py, line: 1741
+# File: gem/ui/interface.py, line: 1742
 msgid   "Specify a _memory type"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 1288
+# File: gem/ui/interface.py, line: 1289
 msgid   "Start to play by drag & drop some ROM files into interface"
 msgstr  ""
 #
@@ -1402,12 +1402,12 @@ msgstr  ""
 msgid   "Statistic"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 6426
-# File: gem/ui/interface.py, line: 6428
+# File: gem/ui/interface.py, line: 6425
+# File: gem/ui/interface.py, line: 6427
 msgid   "Stop"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 6430
+# File: gem/ui/interface.py, line: 6429
 msgid   "Stop selected game"
 msgstr  ""
 #
@@ -1440,7 +1440,7 @@ msgid   "The following game going to be removed from your harddrive. This "
         "action is irreversible !"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 5544
+# File: gem/ui/interface.py, line: 5543
 msgid   "There is no default emulator set for this console"
 msgstr  ""
 #
@@ -1461,11 +1461,11 @@ msgstr  ""
 msgid   "This emulator already exist, please, choose another name"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 7027
+# File: gem/ui/interface.py, line: 7026
 msgid   "This game was duplicated successfully"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 6968
+# File: gem/ui/interface.py, line: 6967
 msgid   "This game was removed successfully"
 msgstr  ""
 #
@@ -1499,11 +1499,11 @@ msgstr  ""
 msgid   "Total play time"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 1065
+# File: gem/ui/interface.py, line: 1066
 msgid   "Unfavorite"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 1097
+# File: gem/ui/interface.py, line: 1098
 msgid   "Unfinish"
 msgstr  ""
 #
@@ -1539,11 +1539,11 @@ msgstr  ""
 msgid   "Use a random game screenshot instead of latest"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 4196
+# File: gem/ui/interface.py, line: 4197
 msgid   "Use alternative arguments"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 4200
+# File: gem/ui/interface.py, line: 4201
 msgid   "Use alternative emulator"
 msgstr  ""
 #
@@ -1575,11 +1575,11 @@ msgstr  ""
 msgid   "Vertical"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 3334
+# File: gem/ui/interface.py, line: 3335
 msgid   "Welcome !"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 3335
+# File: gem/ui/interface.py, line: 3336
 msgid   "Welcome and thanks for choosing GEM as emulators manager. Start "
         "using GEM by droping some roms into interface.\n"
         "\n"
@@ -1625,7 +1625,7 @@ msgid   "You can edit interface shortcuts for some actions. Click on a "
         "shortcut and insert wanted shortcut with your keyboard."
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 931
+# File: gem/ui/interface.py, line: 932
 msgid   "You need to reload games list to apply changes"
 msgstr  ""
 #
@@ -1637,16 +1637,16 @@ msgstr  ""
 msgid   "_Columns visibility"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 912
+# File: gem/ui/interface.py, line: 913
 msgid   "_Copy games directory path to clipboard"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 700
-# File: gem/ui/interface.py, line: 1636
+# File: gem/ui/interface.py, line: 1637
 msgid   "_Copy path to clipboard"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 1685
+# File: gem/ui/interface.py, line: 1686
 msgid   "_Decrease score"
 msgstr  ""
 #
@@ -1655,40 +1655,40 @@ msgid   "_Display"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 692
-# File: gem/ui/interface.py, line: 1628
+# File: gem/ui/interface.py, line: 1629
 msgid   "_Duplicate"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 463
-# File: gem/ui/interface.py, line: 1620
+# File: gem/ui/interface.py, line: 1621
 msgid   "_Edit"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 908
+# File: gem/ui/interface.py, line: 909
 msgid   "_Edit configuration file"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 896
+# File: gem/ui/interface.py, line: 897
 msgid   "_Edit console"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 904
+# File: gem/ui/interface.py, line: 905
 msgid   "_Edit emulator"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 696
-# File: gem/ui/interface.py, line: 1632
+# File: gem/ui/interface.py, line: 1633
 msgid   "_Edit game file"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 638
-# File: gem/ui/interface.py, line: 924
-# File: gem/ui/interface.py, line: 1586
+# File: gem/ui/interface.py, line: 925
+# File: gem/ui/interface.py, line: 1587
 msgid   "_Favorite"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 646
-# File: gem/ui/interface.py, line: 1594
+# File: gem/ui/interface.py, line: 1595
 msgid   "_Finish"
 msgstr  ""
 #
@@ -1705,7 +1705,7 @@ msgid   "_Games lists"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 712
-# File: gem/ui/interface.py, line: 1738
+# File: gem/ui/interface.py, line: 1739
 msgid   "_Generate a menu entry"
 msgstr  ""
 #
@@ -1717,36 +1717,36 @@ msgstr  ""
 msgid   "_Hide empty consoles"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 1681
+# File: gem/ui/interface.py, line: 1682
 msgid   "_Increase score"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 634
-# File: gem/ui/interface.py, line: 1582
+# File: gem/ui/interface.py, line: 1583
 msgid   "_Launch"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 716
-# File: gem/ui/interface.py, line: 1648
+# File: gem/ui/interface.py, line: 1649
 msgid   "_Maintenance"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 642
-# File: gem/ui/interface.py, line: 1590
+# File: gem/ui/interface.py, line: 1591
 msgid   "_Multiplayer"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 658
-# File: gem/ui/interface.py, line: 1735
+# File: gem/ui/interface.py, line: 1736
 msgid   "_Notes"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 916
+# File: gem/ui/interface.py, line: 917
 msgid   "_Open games directory"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 704
-# File: gem/ui/interface.py, line: 1640
+# File: gem/ui/interface.py, line: 1641
 msgid   "_Open path"
 msgstr  ""
 #
@@ -1755,7 +1755,7 @@ msgid   "_Preferences"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 662
-# File: gem/ui/interface.py, line: 1598
+# File: gem/ui/interface.py, line: 1599
 msgid   "_Properties"
 msgstr  ""
 #
@@ -1763,25 +1763,25 @@ msgstr  ""
 msgid   "_Quit"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 928
+# File: gem/ui/interface.py, line: 929
 msgid   "_Recursive"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 920
+# File: gem/ui/interface.py, line: 921
 msgid   "_Reload games list"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 900
+# File: gem/ui/interface.py, line: 901
 msgid   "_Remove console"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 724
-# File: gem/ui/interface.py, line: 1656
+# File: gem/ui/interface.py, line: 1657
 msgid   "_Remove from disk"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 688
-# File: gem/ui/interface.py, line: 1624
+# File: gem/ui/interface.py, line: 1625
 msgid   "_Rename"
 msgstr  ""
 #
@@ -1790,16 +1790,16 @@ msgid   "_Report problem"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 720
-# File: gem/ui/interface.py, line: 1652
+# File: gem/ui/interface.py, line: 1653
 msgid   "_Reset data"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 1677
+# File: gem/ui/interface.py, line: 1678
 msgid   "_Score"
 msgstr  ""
 #
 # File: gem/ui/interface.py, line: 650
-# File: gem/ui/interface.py, line: 1729
+# File: gem/ui/interface.py, line: 1730
 msgid   "_Screenshots"
 msgstr  ""
 #
@@ -1811,7 +1811,7 @@ msgstr  ""
 msgid   "_Statusbar"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 1726
+# File: gem/ui/interface.py, line: 1727
 msgid   "_Tools"
 msgstr  ""
 #
@@ -1819,6 +1819,6 @@ msgstr  ""
 msgid   "_Website"
 msgstr  ""
 #
-# File: gem/ui/interface.py, line: 4433
+# File: gem/ui/interface.py, line: 4434
 msgid   "translator-credits"
 msgstr  ""

@@ -16,7 +16,6 @@
 
 # GEM
 from gem.ui.data import Icons
-from gem.ui.data import Folders
 from gem.ui.widgets.window import CommonWindow
 from gem.ui.widgets.widgets import ListBoxItem
 from gem.ui.widgets.widgets import ScrolledListBox
@@ -38,6 +37,7 @@ except ImportError as error:
 
 # Translation
 from gettext import gettext as _
+
 
 # ------------------------------------------------------------------------------
 #   Class
@@ -61,7 +61,10 @@ class DNDConsoleDialog(CommonWindow):
             classic_theme = parent.use_classic_theme
 
         CommonWindow.__init__(self,
-            parent, _("Drag & Drop"), Icons.Symbolic.GAMING, classic_theme)
+                              parent,
+                              _("Drag & Drop"),
+                              Icons.Symbolic.GAMING,
+                              classic_theme)
 
         # ----------------------------------------
         #   Initialize variables
@@ -85,7 +88,6 @@ class DNDConsoleDialog(CommonWindow):
 
         # Start interface
         self.__start_interface()
-
 
     def __init_widgets(self):
         """ Initialize interface widgets
@@ -191,7 +193,6 @@ class DNDConsoleDialog(CommonWindow):
         self.grid.pack_start(self.label_options, False, False, 0)
         self.grid.pack_start(self.frame_options, False, False, 0)
 
-
     def __init_signals(self):
         """ Initialize widgets signals
         """
@@ -201,7 +202,6 @@ class DNDConsoleDialog(CommonWindow):
 
         self.listbox_options.connect(
             "row-activated", self.on_activate_listboxrow)
-
 
     def __start_interface(self):
         """ Load data and start interface
@@ -235,11 +235,11 @@ class DNDConsoleDialog(CommonWindow):
 
                 # Only retrieve extensions and not part of the name
                 for subextension in path.suffixes:
-                    if not subextension in path.stem:
+                    if subextension not in path.stem:
                         extension += subextension.lower()
 
                 # Generate a tab for the new extension
-                if not extension in self.__notebook_pages.keys():
+                if extension not in self.__notebook_pages.keys():
                     self.__notebook_pages[extension] = \
                         DNDSelector(self, consoles)
 
@@ -253,8 +253,9 @@ class DNDConsoleDialog(CommonWindow):
 
         if len(self.frame_games.listbox) > 0:
             self.notebook_games.append_page(
-                self.frame_games, Gtk.Image.new_from_icon_name(
-                Icons.Symbolic.OK, Gtk.IconSize.MENU))
+                self.frame_games,
+                Gtk.Image.new_from_icon_name(
+                    Icons.Symbolic.OK, Gtk.IconSize.MENU))
 
             self.set_response_sensitive(Gtk.ResponseType.APPLY, True)
 
@@ -265,9 +266,9 @@ class DNDConsoleDialog(CommonWindow):
 
         if len(self.frame_error.listbox) > 0:
             self.notebook_games.append_page(
-                self.frame_error, Gtk.Image.new_from_icon_name(
-                Icons.Symbolic.ERROR, Gtk.IconSize.MENU))
-
+                self.frame_error,
+                Gtk.Image.new_from_icon_name(
+                    Icons.Symbolic.ERROR, Gtk.IconSize.MENU))
 
     def get_data(self):
         """ Retrieve validate dropped files
@@ -288,7 +289,6 @@ class DNDConsoleDialog(CommonWindow):
                 data[row.path] = row.console
 
         return data
-
 
     def get_options(self):
         """ Retrieve options values
@@ -345,7 +345,6 @@ class DNDSelector(Gtk.Box):
         # Start interface
         self.__start_interface()
 
-
     def __init_widgets(self):
         """ Initialize interface widgets
         """
@@ -390,7 +389,6 @@ class DNDSelector(Gtk.Box):
         self.listbox_manual.set_activate_on_single_click(True)
         self.listbox_manual.set_selection_mode(Gtk.SelectionMode.NONE)
 
-
     def __init_packing(self):
         """ Initialize widgets packing in main window
         """
@@ -404,7 +402,6 @@ class DNDSelector(Gtk.Box):
         self.pack_start(Gtk.Separator(), False, False, 0)
         self.pack_start(self.scroll_manual, True, True, 0)
 
-
     def __init_signals(self):
         """ Initialize widgets signals
         """
@@ -417,7 +414,6 @@ class DNDSelector(Gtk.Box):
 
         self.listbox_manual.connect(
             "row-activated", self.dialog.on_activate_listboxrow)
-
 
     def __start_interface(self):
         """ Load data and start interface
@@ -435,7 +431,6 @@ class DNDSelector(Gtk.Box):
 
         self.combo_consoles.set_active(0)
 
-
     def __on_select_console(self, widget, *args):
         """ Change every consoles based on combobox selection
 
@@ -449,7 +444,6 @@ class DNDSelector(Gtk.Box):
 
         for row in self.listbox_manual:
             row.set_console(console)
-
 
     def get_console(self):
         """ Retrieve current selected console
@@ -502,7 +496,6 @@ class DNDGameRow(ListBoxItem):
         # Start interface
         self.__start_interface()
 
-
     def __init_widgets(self):
         """ Initialize interface widgets
         """
@@ -523,7 +516,6 @@ class DNDGameRow(ListBoxItem):
 
         # Properties
         self.button_console.set_popup(self.menu_console)
-
 
     def __start_interface(self):
         """ Load data and start interface
@@ -561,7 +553,6 @@ class DNDGameRow(ListBoxItem):
 
             self.menu_console.show_all()
 
-
     def __on_select_console(self, widget, *args):
         """ Select a specific console for current row
 
@@ -572,7 +563,6 @@ class DNDGameRow(ListBoxItem):
         """
 
         self.set_console(widget.console)
-
 
     def set_icon(self, console):
         """ Update icon image based on console data
@@ -590,7 +580,6 @@ class DNDGameRow(ListBoxItem):
             icon = self.parent.icons.blank(24)
 
         self.image_console.set_from_pixbuf(icon)
-
 
     def set_console(self, console):
         """ Set selected console

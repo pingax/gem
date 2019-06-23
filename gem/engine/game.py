@@ -36,6 +36,7 @@ from re import compile as re_compile
 # System
 from shlex import split as shlex_split
 
+
 # ------------------------------------------------------------------------------
 #   Class
 # ------------------------------------------------------------------------------
@@ -61,7 +62,6 @@ class Game(object):
         "multiplayer": bool,
         "finish": bool
     }
-
 
     def __init__(self, parent, filename):
         """ Constructor
@@ -93,7 +93,6 @@ class Game(object):
         if self.__parent is not None:
             self.__init_from_database()
 
-
     def __init_attributes(self):
         """ Initialize object attributes
         """
@@ -120,7 +119,7 @@ class Game(object):
         setattr(self, "name", self.__path.stem)
 
         setattr(self, "installed",
-            datetime.fromtimestamp(getctime(self.__path)).date())
+                datetime.fromtimestamp(getctime(self.__path)).date())
 
         self.environment.clear()
         if self.__parent is not None:
@@ -131,14 +130,13 @@ class Game(object):
                     self.environment[option.upper()] = environment.get(
                         self.id, option, fallback=str())
 
-
     def __init_from_database(self):
         """ Initialize object with database results
         """
 
         # Retrieve data from database
         data = self.__parent.database.get(
-            "games", { "filename": self.__path.name })
+            "games", {"filename": self.__path.name})
 
         if data is not None:
 
@@ -200,7 +198,7 @@ class Game(object):
                             year, month, day = value.split('-')
 
                         setattr(self, key,
-                            date(int(year), int(month), int(day)))
+                                date(int(year), int(month), int(day)))
 
                     elif key_type is timedelta:
                         result = regex.match(value)
@@ -209,13 +207,12 @@ class Game(object):
                             hours, minutes, seconds = result.groups()
 
                             setattr(self, key, timedelta(
-                                hours=int(hours),
-                                minutes=int(minutes),
-                                seconds=int(seconds)))
+                                    hours=int(hours),
+                                    minutes=int(minutes),
+                                    seconds=int(seconds)))
 
                     elif key_type is str and len(value) > 0:
                         setattr(self, key, value)
-
 
     def __get_content(self, pattern):
         """ Get content list for a specific game
@@ -263,13 +260,11 @@ class Game(object):
 
         return files
 
-
     def __str__(self):
         """ Return a formatted string when using print function
         """
 
         return "[%s] %s" % (self.id, self.__path)
-
 
     def as_dict(self):
         """ Return object as dictionary structure
@@ -298,7 +293,6 @@ class Game(object):
             "cover": self.cover
         }
 
-
     def copy(self, filename):
         """ Copy game data into a new instance
 
@@ -322,13 +316,11 @@ class Game(object):
 
         return game
 
-
     def reset(self):
         """ Reset game attributes
         """
 
         self.__init_attributes()
-
 
     @property
     def path(self):
@@ -341,7 +333,6 @@ class Game(object):
         """
 
         return self.__path
-
 
     @property
     def extension(self):
@@ -357,11 +348,10 @@ class Game(object):
 
         # Only retrieve extensions and not part of the name
         for subextension in self.__path.suffixes:
-            if not subextension in self.__path.stem:
+            if subextension not in self.__path.stem:
                 extension += subextension.lower()
 
         return extension
-
 
     @property
     def screenshots(self):
@@ -374,7 +364,6 @@ class Game(object):
 
         return self.__get_content("screenshots")
 
-
     @property
     def savestates(self):
         """ Get savestates list
@@ -385,7 +374,6 @@ class Game(object):
         """
 
         return self.__get_content("savestates")
-
 
     def command(self, fullscreen=False):
         """ Generate a launch command
@@ -406,7 +394,7 @@ class Game(object):
             # Check emulator binary
             if not self.emulator.exists:
                 raise OSError(2, "Cannot found emulator binary",
-                    str(self.emulator.binary))
+                              str(self.emulator.binary))
 
             # ----------------------------------------
             #   Retrieve default parameters
@@ -439,7 +427,8 @@ class Game(object):
                 "rom_name": self.path.stem,
                 "rom_file": self.path,
                 "rom_path": self.path.parent,
-                "key": self.key }
+                "key": self.key
+            }
 
             for key, value in keys.items():
                 substring = "<%s>" % key
@@ -463,10 +452,9 @@ class Game(object):
 
         return None
 
-
     def update_installation_date(self):
         """ Reload installation date from game file
         """
 
         setattr(self, "installed",
-            datetime.fromtimestamp(getctime(self.__path)).date())
+                datetime.fromtimestamp(getctime(self.__path)).date())

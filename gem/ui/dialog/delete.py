@@ -17,7 +17,6 @@
 # GEM
 from gem.ui.data import Icons
 from gem.ui.data import Folders
-from gem.ui.data import Metadata
 from gem.ui.utils import replace_for_markup
 from gem.ui.widgets.window import CommonWindow
 from gem.ui.widgets.widgets import ListBoxItem
@@ -29,7 +28,6 @@ try:
     require_version("Gtk", "3.0")
 
     from gi.repository import Gtk
-    from gi.repository import GdkPixbuf
     from gi.repository import Pango
 
 except ImportError as error:
@@ -39,6 +37,7 @@ except ImportError as error:
 
 # Translation
 from gettext import gettext as _
+
 
 # ------------------------------------------------------------------------------
 #   Class
@@ -62,7 +61,10 @@ class DeleteDialog(CommonWindow):
             classic_theme = parent.use_classic_theme
 
         CommonWindow.__init__(self,
-            parent, _("Remove a game"), Icons.Symbolic.DELETE, classic_theme)
+                              parent,
+                              _("Remove a game"),
+                              Icons.Symbolic.DELETE,
+                              classic_theme)
 
         # ------------------------------------
         #   Variables
@@ -82,7 +84,6 @@ class DeleteDialog(CommonWindow):
 
         # Start interface
         self.__start_interface()
-
 
     def __init_widgets(self):
         """ Initialize interface widgets
@@ -112,8 +113,8 @@ class DeleteDialog(CommonWindow):
 
         # Properties
         self.label_title.set_markup(
-            "<span weight='bold' size='large'>%s</span>" % \
-            replace_for_markup(self.game.name))
+            "<span weight='bold' size='large'>%s</span>" % (
+                replace_for_markup(self.game.name)))
         self.label_title.set_use_markup(True)
         self.label_title.set_halign(Gtk.Align.CENTER)
         self.label_title.set_ellipsize(Pango.EllipsizeMode.END)
@@ -125,8 +126,9 @@ class DeleteDialog(CommonWindow):
         self.label_description = Gtk.Label()
 
         # Properties
-        self.label_description.set_text(_("The following game going to be "
-            "removed from your harddrive. This action is irreversible !"))
+        self.label_description.set_text(
+            _("The following game going to be removed from your harddrive. "
+              "This action is irreversible !"))
         self.label_description.set_line_wrap(True)
         self.label_description.set_max_width_chars(8)
         self.label_description.set_single_line_mode(False)
@@ -224,11 +226,10 @@ class DeleteDialog(CommonWindow):
         if self.game.emulator is not None:
 
             # Check extension and emulator for GBA game on mednafen
-            if self.parent.get_mednafen_status() and \
-                self.game.extension == ".gba":
-
-                if "mednafen" in str(self.game.emulator.binary):
-                    self.listbox_options.add(self.widget_memory)
+            if self.parent.get_mednafen_status() \
+               and self.game.extension == ".gba" \
+               and "mednafen" in str(self.game.emulator.binary):
+                self.listbox_options.add(self.widget_memory)
 
         self.scroll_options.add(self.listbox_options)
 
@@ -239,14 +240,12 @@ class DeleteDialog(CommonWindow):
         self.pack_start(self.label_data, False, False)
         self.pack_start(self.frame_options)
 
-
     def __init_signals(self):
         """ Initialize widgets signals
         """
 
         self.listbox_options.connect(
             "row-activated", self.on_activate_listboxrow)
-
 
     def __start_interface(self):
         """ Load data and start interface
@@ -258,7 +257,6 @@ class DeleteDialog(CommonWindow):
         self.switch_database.set_active(True)
         self.switch_desktop.set_active(True)
         self.switch_cache.set_active(True)
-
 
     def get_data(self):
         """ Retrieve data to remove from user choices

@@ -32,8 +32,6 @@ from subprocess import Popen
 # Threading
 from threading import Thread
 
-# Translation
-from gettext import gettext as _
 
 # ------------------------------------------------------------------------------
 #   Class
@@ -73,7 +71,6 @@ class ScriptThread(Thread, GObject.GObject):
 
         self.name = generate_identifier(game.name)
 
-
     def run(self):
         """ Launch GameThread instance
 
@@ -94,7 +91,7 @@ class ScriptThread(Thread, GObject.GObject):
         except MemoryError as error:
             self.logger.error("A memory error occur: %s" % str(error))
 
-        except KeyboardInterrupt as error:
+        except KeyboardInterrupt:
             self.logger.info("Terminate by keyboard interrupt")
 
         except Exception as error:

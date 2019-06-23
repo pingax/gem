@@ -16,8 +16,6 @@
 
 # GEM
 from gem.engine.api import GEM
-from gem.engine.utils import get_data
-from gem.engine.lib.configuration import Configuration
 
 from gem.ui.data import Metadata
 from gem.ui.widgets.widgets import IconsGenerator
@@ -44,6 +42,7 @@ from time import sleep
 # Translation
 from gettext import gettext as _
 
+
 # ------------------------------------------------------------------------------
 #   Class
 # ------------------------------------------------------------------------------
@@ -66,8 +65,7 @@ class Splash(Gtk.Window):
         """
 
         if not type(api) is GEM:
-            raise TypeError("Wrong type for api, expected " \
-                "gem.engine.api.GEM")
+            raise TypeError("Wrong type for api, expected gem.engine.api.GEM")
 
         Gtk.Window.__init__(self)
 
@@ -109,8 +107,7 @@ class Splash(Gtk.Window):
         # Start interface
         self.__start_interface()
 
-
-    def __init_widgets (self):
+    def __init_widgets(self):
         """ Load widgets into main interface
         """
 
@@ -154,9 +151,9 @@ class Splash(Gtk.Window):
         self.label_splash.set_line_wrap_mode(Pango.WrapMode.WORD)
         self.label_splash.set_markup(
             "<span weight='bold' size='x-large'>%s - %s</span>\n<i>%s</i>" % (
-            Metadata.NAME,
-            Metadata.VERSION,
-            Metadata.CODE_NAME))
+                Metadata.NAME,
+                Metadata.VERSION,
+                Metadata.CODE_NAME))
 
         self.image_splash.set_from_icon_name(Metadata.ICON, Gtk.IconSize.DND)
         self.image_splash.set_pixel_size(256)
@@ -176,7 +173,6 @@ class Splash(Gtk.Window):
 
         self.progressbar.set_show_text(True)
 
-
     def __init_packing(self):
         """ Initialize widgets packing in main window
         """
@@ -187,7 +183,6 @@ class Splash(Gtk.Window):
         self.grid.pack_start(self.progressbar, False, False, 0)
 
         self.add(self.grid)
-
 
     def __start_interface(self):
         """ Load data and start interface
@@ -215,7 +210,6 @@ class Splash(Gtk.Window):
         self.main_loop = GLib.MainLoop()
         self.main_loop.run()
 
-
     def close(self):
         """ Stop interface
         """
@@ -231,7 +225,6 @@ class Splash(Gtk.Window):
 
         self.destroy()
 
-
     def init(self, length):
         """ Initialize progressbar
 
@@ -245,7 +238,6 @@ class Splash(Gtk.Window):
 
         self.label_progress.show()
         self.progressbar.show()
-
 
     def update(self, index):
         """ Update progress in progressbar widgets
@@ -263,7 +255,6 @@ class Splash(Gtk.Window):
             self.progressbar.set_fraction(float(index) / (self.length))
 
             self.refresh()
-
 
     def refresh(self):
         """ Refresh all pendings event in main interface

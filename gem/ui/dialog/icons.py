@@ -22,7 +22,6 @@ from gem.ui.data import Icons
 from gem.ui.data import Folders
 from gem.ui.utils import magic_from_file
 from gem.ui.widgets.window import CommonWindow
-from gem.ui.widgets.widgets import IconsGenerator
 
 # GObject
 try:
@@ -33,7 +32,6 @@ try:
     from gi.repository import Gtk
     from gi.repository import GLib
     from gi.repository import GdkPixbuf
-    from gi.repository import Pango
 
 except ImportError as error:
     from sys import exit
@@ -42,6 +40,7 @@ except ImportError as error:
 
 # Translation
 from gettext import gettext as _
+
 
 # ------------------------------------------------------------------------------
 #   Class
@@ -64,8 +63,11 @@ class IconsDialog(CommonWindow):
             Icons folder
         """
 
-        CommonWindow.__init__(self, parent, title, Icons.Symbolic.IMAGE,
-            parent.use_classic_theme)
+        CommonWindow.__init__(self,
+                              parent,
+                              title,
+                              Icons.Symbolic.IMAGE,
+                              parent.use_classic_theme)
 
         # ------------------------------------
         #   Variables
@@ -105,7 +107,6 @@ class IconsDialog(CommonWindow):
 
         # Start interface
         self.__start_interface()
-
 
     def __init_widgets(self):
         """ Initialize interface widgets
@@ -176,7 +177,6 @@ class IconsDialog(CommonWindow):
         self.scroll_icons.set_policy(
             Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
 
-
     def __init_packing(self):
         """ Initialize widgets packing in main window
         """
@@ -198,7 +198,6 @@ class IconsDialog(CommonWindow):
 
             self.pack_start(self.frame_icons, True, True)
 
-
     def __init_signals(self):
         """ Initialize widgets signals
         """
@@ -211,7 +210,6 @@ class IconsDialog(CommonWindow):
         self.file_icons.connect("file-activated", self.__on_selected_icon)
 
         self.view_icons.connect("item-activated", self.__on_selected_icon)
-
 
     def __start_interface(self):
         """ Load data and start interface
@@ -231,7 +229,6 @@ class IconsDialog(CommonWindow):
         if response == Gtk.ResponseType.APPLY:
             self.save_interface()
 
-
     def __on_selected_icon(self, widget, path=None):
         """ Select an icon in treeview
 
@@ -244,7 +241,6 @@ class IconsDialog(CommonWindow):
         """
 
         self.emit_response(None, Gtk.ResponseType.APPLY)
-
 
     def __on_switch_stack_view(self, widget):
         """ Check file selector to avoid to lost file selection
@@ -265,7 +261,6 @@ class IconsDialog(CommonWindow):
             self.__file_active = True
 
             self.file_icons.set_filename(self.__file_path)
-
 
     def load_interface(self):
         """ Insert data into interface's widgets
@@ -298,7 +293,6 @@ class IconsDialog(CommonWindow):
                 self.__file_path = self.path
                 self.__file_active = True
 
-
     def save_interface(self):
         """ Return all the data from interface
         """
@@ -319,7 +313,6 @@ class IconsDialog(CommonWindow):
                 if len(items) > 0:
                     self.new_path = self.model_icons.get_value(
                         self.model_icons.get_iter(items[0]), 1)
-
 
     def append_icons(self, size):
         """ Append icons in icons view with a specific size

@@ -36,6 +36,7 @@ except ImportError as error:
 # Translation
 from gettext import gettext as _
 
+
 # ------------------------------------------------------------------------------
 #   Class
 # ------------------------------------------------------------------------------
@@ -55,8 +56,11 @@ class CleanCacheDialog(CommonWindow):
         if parent is not None:
             classic_theme = parent.use_classic_theme
 
-        CommonWindow.__init__(self, parent,
-            _("Clean icons cache"), Icons.Symbolic.FOLDER, classic_theme)
+        CommonWindow.__init__(self,
+                              parent,
+                              _("Clean icons cache"),
+                              Icons.Symbolic.FOLDER,
+                              classic_theme)
 
         # ------------------------------------
         #   Prepare interface
@@ -67,7 +71,6 @@ class CleanCacheDialog(CommonWindow):
 
         # Start interface
         self.__start_interface()
-
 
     def __init_widgets(self):
         """ Initialize interface widgets
@@ -87,8 +90,8 @@ class CleanCacheDialog(CommonWindow):
 
         # Properties
         self.label_title.set_markup(
-            "<span weight='bold' size='large'>%s</span>" % \
-            _("Would you really want to clean icons cache directory ?"))
+            "<span weight='bold' size='large'>%s</span>" % (
+                _("Would you really want to clean icons cache directory ?")))
         self.label_title.set_use_markup(True)
         self.label_title.set_halign(Gtk.Align.CENTER)
         self.label_title.set_ellipsize(Pango.EllipsizeMode.END)
@@ -113,7 +116,6 @@ class CleanCacheDialog(CommonWindow):
 
         self.pack_start(self.label_title, False, False)
         self.pack_start(self.label_description, False, False)
-
 
     def __start_interface(self):
         """ Load data and start interface

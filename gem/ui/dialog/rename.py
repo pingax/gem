@@ -37,6 +37,7 @@ except ImportError as error:
 # Translation
 from gettext import gettext as _
 
+
 # ------------------------------------------------------------------------------
 #   Class
 # ------------------------------------------------------------------------------
@@ -59,7 +60,10 @@ class RenameDialog(CommonWindow):
             classic_theme = parent.use_classic_theme
 
         CommonWindow.__init__(self,
-            parent, _("Rename a game"), Icons.Symbolic.EDITOR, classic_theme)
+                              parent,
+                              _("Rename a game"),
+                              Icons.Symbolic.EDITOR,
+                              classic_theme)
 
         # ------------------------------------
         #   Variables
@@ -80,7 +84,6 @@ class RenameDialog(CommonWindow):
         # Start interface
         self.__start_interface()
 
-
     def __init_widgets(self):
         """ Initialize interface widgets
         """
@@ -99,8 +102,8 @@ class RenameDialog(CommonWindow):
 
         # Properties
         self.label_title.set_markup(
-            "<span weight='bold' size='large'>%s</span>" % \
-            replace_for_markup(self.game.name))
+            "<span weight='bold' size='large'>%s</span>" % (
+                replace_for_markup(self.game.name)))
         self.label_title.set_use_markup(True)
         self.label_title.set_halign(Gtk.Align.CENTER)
         self.label_title.set_ellipsize(Pango.EllipsizeMode.END)
@@ -123,7 +126,6 @@ class RenameDialog(CommonWindow):
         self.pack_start(self.label_title, False, False)
         self.pack_start(self.entry_name, False, False)
 
-
     def __init_signals(self):
         """ Initialize widgets signals
         """
@@ -131,7 +133,6 @@ class RenameDialog(CommonWindow):
         self.entry_name.connect("icon-press", on_entry_clear)
 
         self.entry_name.connect("changed", self.check_name)
-
 
     def __start_interface(self):
         """ Load data and start interface
@@ -148,7 +149,6 @@ class RenameDialog(CommonWindow):
         else:
             self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
 
-
     def get_name(self):
         """ Retrieve the new name from entry widget
 
@@ -160,10 +160,10 @@ class RenameDialog(CommonWindow):
 
         return self.entry_name.get_text()
 
-
     def check_name(self, *args):
         """ Check the name value to update button sensitivity
         """
 
         self.set_response_sensitive(
-            Gtk.ResponseType.APPLY, len(self.entry_name.get_text().strip()) > 0)
+            Gtk.ResponseType.APPLY,
+            len(self.entry_name.get_text().strip()) > 0)

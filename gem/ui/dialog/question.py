@@ -35,6 +35,7 @@ except ImportError as error:
 # Translation
 from gettext import gettext as _
 
+
 # ------------------------------------------------------------------------------
 #   Class
 # ------------------------------------------------------------------------------
@@ -77,7 +78,6 @@ class QuestionDialog(CommonWindow):
         # Start interface
         self.__start_interface()
 
-
     def __init_widgets(self):
         """ Initialize interface widgets
         """
@@ -101,7 +101,6 @@ class QuestionDialog(CommonWindow):
         # ------------------------------------
 
         self.pack_start(self.label, False, True)
-
 
     def __start_interface(self):
         """ Load data and start interface

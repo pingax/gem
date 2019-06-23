@@ -28,15 +28,12 @@ try:
     from gi.repository import Gdk
     from gi.repository import GdkPixbuf
     from gi.repository import GLib
-    from gi.repository import Pango
 
 except ImportError as error:
     from sys import exit
 
     exit("Cannot found python3-gobject module: %s" % str(error))
 
-# Translation
-from gettext import gettext as _
 
 # ------------------------------------------------------------------------------
 #   Class
@@ -124,7 +121,6 @@ class ViewerDialog(CommonWindow):
 
         # Start interface
         self.__start_interface()
-
 
     def __init_widgets(self):
         """ Initialize interface widgets
@@ -326,20 +322,19 @@ class ViewerDialog(CommonWindow):
             self.button_last, False, False, 0)
 
         # self.grid_zoom_buttons.pack_start(
-            # self.button_zoom_minus, False, False, 0)
+        #    self.button_zoom_minus, False, False, 0)
         self.grid_zoom_buttons.pack_start(
             self.button_original, False, False, 0)
         self.grid_zoom_buttons.pack_start(
             self.button_fit, False, False, 0)
         # self.grid_zoom_buttons.pack_start(
-            # self.button_zoom_plus, False, False, 0)
+        #    self.button_zoom_plus, False, False, 0)
 
         self.overlay.add(self.scroll_image)
         self.overlay.add_overlay(self.button_overlay_previous)
         self.overlay.add_overlay(self.button_overlay_next)
 
         self.pack_start(self.overlay, True, True, 0)
-
 
     def __init_signals(self):
         """ Initialize widgets signals
@@ -367,7 +362,6 @@ class ViewerDialog(CommonWindow):
 
         self.scale_zoom.connect("change_value", self.update_adjustment)
 
-
     def __start_interface(self):
         """ Load data and start interface
         """
@@ -382,7 +376,6 @@ class ViewerDialog(CommonWindow):
 
         self.update_screenshot()
         self.set_widgets_sensitive()
-
 
     def __on_dnd_send_data(self, widget, context, data, info, time):
         """ Set screenshot file path uri
@@ -406,7 +399,6 @@ class ViewerDialog(CommonWindow):
 
         if self.current_path is not None and self.current_path.exists():
             data.set_uris(["file://%s" % str(self.current_path)])
-
 
     def change_screenshot(self, widget=None, event=None):
         """ Change current screenshot
@@ -464,7 +456,7 @@ class ViewerDialog(CommonWindow):
         elif widget == self.button_last:
             self.index = len(self.screenshots) - 1
 
-        #Fixes
+        # Fixes
         if self.index < 0:
             self.index = 0
 
@@ -480,7 +472,6 @@ class ViewerDialog(CommonWindow):
 
         self.update_screenshot()
         self.set_widgets_sensitive()
-
 
     def set_widgets_sensitive(self):
         """ Refresh interface's widgets
@@ -509,7 +500,6 @@ class ViewerDialog(CommonWindow):
         else:
             self.button_overlay_next.show()
 
-
     def update_adjustment(self, widget, scroll, value):
         """ Change current screenshot size
 
@@ -528,7 +518,6 @@ class ViewerDialog(CommonWindow):
             self.zoom_actual = int(value)
 
             self.update_screenshot()
-
 
     def update_screenshot(self, widget=None, event=None):
         """ Change current screenshot size

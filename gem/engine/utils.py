@@ -30,6 +30,7 @@ from os import environ
 
 from sys import version_info
 
+
 # ------------------------------------------------------------------------------
 #   Methods
 # ------------------------------------------------------------------------------
@@ -37,8 +38,8 @@ from sys import version_info
 def get_data(*args, egg="gem"):
     """ Provides easy access to data in a python egg or local folder
 
-    This function search a path in a specific python egg or in local folder. The
-    local folder is check before egg to allow quick debugging.
+    This function search a path in a specific python egg or in local folder.
+    The local folder is check before egg to allow quick debugging.
 
     Thanks Deluge :)
 
@@ -149,7 +150,7 @@ def get_binary_path(binary):
     for path in set(environ["PATH"].split(':')):
         binary_path = Path(path, binary)
 
-        if binary_path.exists() and not binary_path.name in available:
+        if binary_path.exists() and binary_path.name not in available:
             available.append(str(binary_path))
 
     return available
@@ -170,8 +171,8 @@ def generate_identifier(name):
 
     Examples
     --------
-    >>> generate_identifier("Double Dragon II - The Sacred Stones (Europe).nes")
-    'double-dragon-ii-the-sacred-stones-europe-nes-25953832'
+    >>> generate_identifier("Double Dragon (Europe).nes")
+    'double-dragon-europe-nes-25953832'
     """
 
     inode = int()

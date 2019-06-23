@@ -21,6 +21,7 @@ from pathlib import Path
 from gem.engine.utils import get_binary_path
 from gem.engine.utils import generate_identifier
 
+
 # ------------------------------------------------------------------------------
 #   Class
 # ------------------------------------------------------------------------------
@@ -39,7 +40,6 @@ class Emulator(object):
         "savestates": Path,
         "screenshots": Path
     }
-
 
     def __init__(self, parent, **kwargs):
         """ Constructor
@@ -62,7 +62,6 @@ class Emulator(object):
 
         # Initialize variables
         self.__init_keys(**kwargs)
-
 
     def __init_keys(self, **kwargs):
         """ Initialize object attributes
@@ -91,7 +90,6 @@ class Emulator(object):
 
         setattr(self, "id", generate_identifier(self.name))
 
-
     def as_dict(self):
         """ Return object as dictionary structure
 
@@ -111,7 +109,6 @@ class Emulator(object):
             "windowed": self.windowed,
             "fullscreen": self.fullscreen
         }
-
 
     @property
     def exists(self):

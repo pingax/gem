@@ -34,6 +34,7 @@ except ImportError as error:
 # Translation
 from gettext import gettext as _
 
+
 # ------------------------------------------------------------------------------
 #   Class
 # ------------------------------------------------------------------------------
@@ -81,7 +82,6 @@ class MessageDialog(CommonWindow):
         # Start interface
         self.__start_interface()
 
-
     def __init_widgets(self):
         """ Initialize interface widgets
         """
@@ -115,7 +115,6 @@ class MessageDialog(CommonWindow):
         # ------------------------------------
 
         self.pack_start(text, True, True)
-
 
     def __start_interface(self):
         """ Load data and start interface

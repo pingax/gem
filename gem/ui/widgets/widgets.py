@@ -15,9 +15,8 @@
 # ------------------------------------------------------------------------------
 
 # GEM
-from gem.engine.utils import *
-
-from gem.ui.utils import *
+from gem.ui.utils import icon_load
+from gem.ui.utils import set_pixbuf_opacity
 
 # GObject
 try:
@@ -34,8 +33,6 @@ except ImportError as error:
 
     exit("Cannot found python3-gobject module: %s" % str(error))
 
-# Translation
-from gettext import gettext as _
 
 # ------------------------------------------------------------------------------
 #   Class
@@ -64,7 +61,6 @@ class ListBoxItem(Gtk.ListBoxRow):
 
         # Init packing
         self.__init_packing()
-
 
     def __init_widgets(self):
         """ Initialize interface widgets
@@ -110,7 +106,6 @@ class ListBoxItem(Gtk.ListBoxRow):
         self.label_description.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
         self.label_description.get_style_context().add_class("dim-label")
 
-
     def __init_packing(self):
         """ Initialize widgets packing in main window
         """
@@ -121,7 +116,6 @@ class ListBoxItem(Gtk.ListBoxRow):
 
         self.grid_labels.pack_start(self.label_title, True, True, 0)
         self.grid_labels.pack_start(self.label_description, True, True, 0)
-
 
     @staticmethod
     def new(text):
@@ -138,7 +132,6 @@ class ListBoxItem(Gtk.ListBoxRow):
 
         return row
 
-
     def set_option_label(self, text):
         """ Set the option label text
 
@@ -150,7 +143,6 @@ class ListBoxItem(Gtk.ListBoxRow):
 
         self.label_title.set_text(text)
 
-
     def get_option_label(self):
         """ Retrieve the option label text
 
@@ -161,7 +153,6 @@ class ListBoxItem(Gtk.ListBoxRow):
         """
 
         return self.label_title.get_text()
-
 
     def set_description_label(self, text):
         """ Set the description label text
@@ -183,7 +174,6 @@ class ListBoxItem(Gtk.ListBoxRow):
 
         self.label_description.set_visible(len(text) > 0)
 
-
     def set_widget(self, widget):
         """ Set a new internal widget
 
@@ -202,7 +192,7 @@ class ListBoxItem(Gtk.ListBoxRow):
             widget.set_valign(Gtk.Align.CENTER)
 
             if type(widget) in (Gtk.Switch, Gtk.Button, Gtk.SpinButton,
-                Gtk.Image, Gtk.MenuButton):
+                                Gtk.Image, Gtk.MenuButton):
                 widget.set_halign(Gtk.Align.END)
                 widget.set_hexpand(False)
 
@@ -219,7 +209,6 @@ class ListBoxItem(Gtk.ListBoxRow):
                 self.grid.pack_start(widget, True, True, 0)
 
         self.__widget = widget
-
 
     def get_widget(self):
         """ Retrieve internal widget
@@ -251,7 +240,6 @@ class ScrolledListBox(Gtk.ScrolledWindow):
         # Init packing
         self.__init_packing()
 
-
     def __init_widgets(self):
         """ Initialize interface widgets
         """
@@ -267,7 +255,6 @@ class ScrolledListBox(Gtk.ScrolledWindow):
         # Properties
         self.listbox.set_activate_on_single_click(True)
         self.listbox.set_selection_mode(Gtk.SelectionMode.NONE)
-
 
     def __init_packing(self):
         """ Initialize widgets packing in main window
@@ -327,7 +314,6 @@ class IconsGenerator(object):
                 GdkPixbuf.Colorspace.RGB, True, 8, size, size)
             self.__blank[size].fill(0x00000000)
 
-
     def blank(self, size=22):
         """ Retrieve a blank icon with a specific size
 
@@ -342,11 +328,10 @@ class IconsGenerator(object):
             Generated icon
         """
 
-        if not size in self.__sizes:
+        if size not in self.__sizes:
             size = 22
 
         return self.__blank[size]
-
 
     def get(self, name, size=22):
         """ Retrieve an icon with a specific size
@@ -364,14 +349,13 @@ class IconsGenerator(object):
             Generated icon
         """
 
-        if not size in self.__sizes:
+        if size not in self.__sizes:
             size = 22
 
         if name in self.__normal.keys():
             return self.__normal[name][size]
 
         return self.blank(size)
-
 
     def get_translucent(self, name, size=22):
         """ Retrieve a translucent icon with a specific size
@@ -391,14 +375,13 @@ class IconsGenerator(object):
 
         if self.__translucent_status:
 
-            if not size in self.__sizes:
+            if size not in self.__sizes:
                 size = 22
 
             if name in self.__translucent.keys():
                 return self.__translucent[name][size]
 
         return self.blank(size)
-
 
     def set_translucent_status(self, status):
         """ Define the translucent status

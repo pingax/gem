@@ -40,7 +40,6 @@ try:
     from gi.repository import Gtk
     from gi.repository import GLib
     from gi.repository import Gdk
-    from gi.repository import GdkPixbuf
     from gi.repository import Pango
 
 except ImportError as error:
@@ -54,6 +53,7 @@ from gettext import gettext as _
 # URL
 from urllib.parse import urlparse
 from urllib.request import url2pathname
+
 
 # ------------------------------------------------------------------------------
 #   Class
@@ -109,7 +109,7 @@ class EditorDialog(CommonWindow):
         #   Targets
         # ------------------------------------
 
-        self.targets = [ Gtk.TargetEntry.new("text/uri-list", 0, 1337) ]
+        self.targets = [Gtk.TargetEntry.new("text/uri-list", 0, 1337)]
 
         # ------------------------------------
         #   Prepare interface
@@ -123,7 +123,6 @@ class EditorDialog(CommonWindow):
 
         # Start interface
         self.__start_interface()
-
 
     def __init_widgets(self):
         """ Initialize interface widgets
@@ -273,17 +272,19 @@ class EditorDialog(CommonWindow):
                     self.language_editor.guess_language(str(self.path)))
 
                 if self.parent is not None:
-                    self.text_editor.set_tab_width(self.parent.config.getint(
-                        "editor", "tab", fallback=4))
+                    self.text_editor.set_tab_width(
+                        self.parent.config.getint(
+                            "editor", "tab", fallback=4))
                     self.text_editor.set_show_line_numbers(
                         self.parent.config.getboolean(
-                        "editor", "lines", fallback=False))
+                            "editor", "lines", fallback=False))
 
                     self.buffer_editor.set_style_scheme(
-                        self.style_editor.get_scheme(self.parent.config.item(
-                        "editor", "colorscheme", "classic")))
+                        self.style_editor.get_scheme(
+                            self.parent.config.item(
+                                "editor", "colorscheme", "classic")))
 
-            except Exception as error:
+            except Exception:
                 self.text_editor = Gtk.TextView()
                 self.buffer_editor = Gtk.TextBuffer()
 
@@ -305,10 +306,10 @@ class EditorDialog(CommonWindow):
             Gtk.DestDefaults.MOTION | Gtk.DestDefaults.DROP, self.targets,
             Gdk.DragAction.COPY)
 
-        self.tag_found = self.buffer_editor.create_tag("found",
-            background="yellow", foreground="black")
-        self.tag_current = self.buffer_editor.create_tag("current",
-            background="cyan", foreground="black")
+        self.tag_found = self.buffer_editor.create_tag(
+            "found", background="yellow", foreground="black")
+        self.tag_current = self.buffer_editor.create_tag(
+            "current", background="cyan", foreground="black")
 
         # ------------------------------------
         #   Search
@@ -374,7 +375,6 @@ class EditorDialog(CommonWindow):
 
         self.listbox_menu_actions.add(self.widget_export)
 
-
     def __init_signals(self):
         """ Initialize widgets signals
         """
@@ -405,7 +405,6 @@ class EditorDialog(CommonWindow):
 
             self.window.connect("key-press-event", self.__on_manage_keys)
 
-
     def __start_interface(self):
         """ Load data and start interface
         """
@@ -421,7 +420,7 @@ class EditorDialog(CommonWindow):
         try:
             font = self.parent.config.item("editor", "font", "Sans 12").split()
 
-            # Retrieve informations based on font pattern '<family font> <size>'
+            # Retrieve informations based on pattern '<family font> <size>'
             font_size = int(font[-1])
             font_family = ' '.join(font[:-1])
 
@@ -432,7 +431,7 @@ class EditorDialog(CommonWindow):
             self.text_editor.get_style_context().add_provider(
                 self.provider_editor, Gtk.STYLE_PROVIDER_PRIORITY_USER)
 
-        except:
+        except Exception:
             self.logger.warning("Cannot parse editor font")
 
         self.entry_path.set_text(str(self.path))
@@ -445,7 +444,6 @@ class EditorDialog(CommonWindow):
         self.text_editor.grab_focus()
 
         self.__on_refresh_buffer()
-
 
     def __on_refresh_buffer(self, widget=None, pos=None, event=None):
         """ Load buffer text into editor area
@@ -474,7 +472,6 @@ class EditorDialog(CommonWindow):
             loader = self.__on_load_file()
             self.buffer_thread = GLib.idle_add(loader.__next__)
 
-
     def __on_load_file(self):
         """ Load file content into textbuffer
         """
@@ -498,7 +495,6 @@ class EditorDialog(CommonWindow):
 
         yield False
 
-
     def __on_manage_keys(self, widget, event):
         """ Manage widgets for specific keymaps
 
@@ -513,7 +509,6 @@ class EditorDialog(CommonWindow):
         # Refresh buffer
         if event.keyval == Gdk.KEY_F5:
             self.__on_refresh_buffer()
-
 
     def __on_break_line(self, widget, status=None):
         """ Set break line mode for textview
@@ -539,7 +534,6 @@ class EditorDialog(CommonWindow):
         else:
             self.text_editor.set_wrap_mode(Gtk.WrapMode.NONE)
 
-
     def __init_search(self, text):
         """ Initialize search from search entry
 
@@ -558,8 +552,8 @@ class EditorDialog(CommonWindow):
                 self.buffer_editor.get_end_iter())
 
             # Match tags from text in buffer
-            self.__on_search_and_mark(text, self.buffer_editor.get_start_iter())
-
+            self.__on_search_and_mark(
+                text, self.buffer_editor.get_start_iter())
 
     def __on_move_search(self, widget=None, backward=False):
         """ Move between search results
@@ -588,7 +582,7 @@ class EditorDialog(CommonWindow):
             self.previous_search = text
 
             # Avoid to check an index which not exist anymore
-            if not self.current_index in range(len(self.founded_iter)):
+            if self.current_index not in range(len(self.founded_iter)):
                 self.current_index = -1
 
             # Remove selector tag from previous match iter
@@ -617,7 +611,6 @@ class EditorDialog(CommonWindow):
             # Scroll editor to current match iter
             self.text_editor.scroll_to_iter(match[0], .25, False, .0, .0)
 
-
     def __on_entry_update(self, widget=None):
         """ Search entry value in text buffer
 
@@ -628,7 +621,6 @@ class EditorDialog(CommonWindow):
         """
 
         self.__on_move_search()
-
 
     def __on_entry_clear(self, widget, pos, event):
         """ Reset an entry widget when secondary icon is clicked
@@ -651,14 +643,13 @@ class EditorDialog(CommonWindow):
         if type(widget) is not Gtk.Entry:
             return False
 
-        if pos == Gtk.EntryIconPosition.SECONDARY and \
-            len(widget.get_text()) > 0:
+        if pos == Gtk.EntryIconPosition.SECONDARY \
+           and len(widget.get_text()) > 0:
             widget.set_text(str())
 
             return True
 
         return False
-
 
     def __on_search_and_mark(self, text, start):
         """ Search a text and mark it
@@ -671,8 +662,9 @@ class EditorDialog(CommonWindow):
             Start position in text buffer
         """
 
-        match = start.forward_search(text, Gtk.TextSearchFlags.CASE_INSENSITIVE,
-            self.buffer_editor.get_end_iter())
+        match = start.forward_search(text,
+                                     Gtk.TextSearchFlags.CASE_INSENSITIVE,
+                                     self.buffer_editor.get_end_iter())
 
         while match is not None:
             self.founded_iter.append(match)
@@ -682,7 +674,6 @@ class EditorDialog(CommonWindow):
             match = match[1].forward_search(
                 text, Gtk.TextSearchFlags.CASE_INSENSITIVE,
                 self.buffer_editor.get_end_iter())
-
 
     def __on_buffer_modified(self, textbuffer):
         """ Check buffer modification
@@ -694,7 +685,6 @@ class EditorDialog(CommonWindow):
         """
 
         self.modified_buffer = True
-
 
     def __on_import_file(self, widget, path=None):
         """ Import a plain text file
@@ -731,7 +721,6 @@ class EditorDialog(CommonWindow):
 
         self.window.set_sensitive(True)
 
-
     def __on_export_file(self, widget):
         """ Export buffer content to a plain text file
 
@@ -754,7 +743,9 @@ class EditorDialog(CommonWindow):
                 replace = True
 
                 if path.exists():
-                    subdialog = QuestionDialog(self, _("Existing file"),
+                    subdialog = QuestionDialog(
+                        self,
+                        _("Existing file"),
                         _("Would you want to replace existing file ?"))
 
                     if subdialog.run() == Gtk.ResponseType.NO:
@@ -770,7 +761,6 @@ class EditorDialog(CommonWindow):
         dialog.destroy()
 
         self.window.set_sensitive(True)
-
 
     def __on_dnd_received_data(self, widget, context, x, y, data, info, time):
         """ Manage drag & drop acquisition
@@ -844,7 +834,10 @@ class ImportDialog(CommonWindow):
             classic_theme = parent.use_classic_theme
 
         CommonWindow.__init__(self,
-            parent, _("Import"), Icons.Symbolic.SAVE_AS, classic_theme)
+                              parent,
+                              _("Import"),
+                              Icons.Symbolic.SAVE_AS,
+                              classic_theme)
 
         # ------------------------------------
         #   Variables
@@ -854,7 +847,7 @@ class ImportDialog(CommonWindow):
 
         self.path = path
 
-        self.mimetypes = [ "text/plain" ]
+        self.mimetypes = ["text/plain"]
 
         # ------------------------------------
         #   Prepare interface
@@ -868,7 +861,6 @@ class ImportDialog(CommonWindow):
 
         # Start interface
         self.__start_interface()
-
 
     def __init_widgets(self):
         """ Initialize interface widgets
@@ -898,8 +890,8 @@ class ImportDialog(CommonWindow):
 
         # Properties
         self.label_title.set_markup(
-            "<span weight='bold' size='large'>%s</span>" % \
-            replace_for_markup(self.import_title))
+            "<span weight='bold' size='large'>%s</span>" % (
+                replace_for_markup(self.import_title)))
         self.label_title.set_use_markup(True)
         self.label_title.set_halign(Gtk.Align.CENTER)
         self.label_title.set_ellipsize(Pango.EllipsizeMode.END)
@@ -989,7 +981,6 @@ class ImportDialog(CommonWindow):
         self.pack_start(self.label_data, False, False)
         self.pack_start(self.frame_options)
 
-
     def __init_signals(self):
         """ Initialize widgets signals
         """
@@ -999,7 +990,6 @@ class ImportDialog(CommonWindow):
 
         self.listbox_options.connect(
             "row-activated", self.on_activate_listboxrow)
-
 
     def __start_interface(self):
         """ Load data and start interface
@@ -1015,7 +1005,6 @@ class ImportDialog(CommonWindow):
 
         else:
             self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
-
 
     def __on_file_choose(self, *args):
         """ User choose a file with FileChooser
@@ -1067,7 +1056,10 @@ class ExportDialog(CommonWindow):
             classic_theme = parent.use_classic_theme
 
         CommonWindow.__init__(self,
-            parent, _("Export"), Icons.Symbolic.SEND, classic_theme)
+                              parent,
+                              _("Export"),
+                              Icons.Symbolic.SEND,
+                              classic_theme)
 
         # ------------------------------------
         #   Variables
@@ -1075,13 +1067,13 @@ class ExportDialog(CommonWindow):
 
         self.import_title = title
 
-        self.mimetypes = [ "text/plain" ]
+        self.mimetypes = ["text/plain"]
 
         # ------------------------------------
         #   Targets
         # ------------------------------------
 
-        self.targets = [ Gtk.TargetEntry.new("text/uri-list", 0, 1337) ]
+        self.targets = [Gtk.TargetEntry.new("text/uri-list", 0, 1337)]
 
         # ------------------------------------
         #   Prepare interface
@@ -1095,7 +1087,6 @@ class ExportDialog(CommonWindow):
 
         # Start interface
         self.__start_interface()
-
 
     def __init_widgets(self):
         """ Initialize interface widgets
@@ -1125,8 +1116,8 @@ class ExportDialog(CommonWindow):
 
         # Properties
         self.label_title.set_markup(
-            "<span weight='bold' size='large'>%s</span>" % \
-            replace_for_markup(self.import_title))
+            "<span weight='bold' size='large'>%s</span>" % (
+                replace_for_markup(self.import_title)))
         self.label_title.set_use_markup(True)
         self.label_title.set_halign(Gtk.Align.CENTER)
         self.label_title.set_ellipsize(Pango.EllipsizeMode.END)
@@ -1185,7 +1176,6 @@ class ExportDialog(CommonWindow):
         self.pack_start(self.label_selector, False, False)
         self.pack_start(self.grid_selector, False, False)
 
-
     def __init_signals(self):
         """ Initialize widgets signals
         """
@@ -1198,7 +1188,6 @@ class ExportDialog(CommonWindow):
 
         self.button_selector.connect("clicked", self.__on_file_set)
 
-
     def __start_interface(self):
         """ Load data and start interface
         """
@@ -1209,7 +1198,6 @@ class ExportDialog(CommonWindow):
         self.set_default_response(Gtk.ResponseType.APPLY)
 
         self.set_response_sensitive(Gtk.ResponseType.APPLY, False)
-
 
     def __on_file_set(self, *args):
         """ Open a FileChooserDialog to let user choose the export file
@@ -1248,7 +1236,6 @@ class ExportDialog(CommonWindow):
 
         dialog.destroy()
 
-
     def __on_file_choose(self, *args):
         """ User choose a file with FileChooser
         """
@@ -1263,7 +1250,6 @@ class ExportDialog(CommonWindow):
             status = not path.is_dir() and access(path.parent, W_OK)
 
         self.set_response_sensitive(Gtk.ResponseType.APPLY, status)
-
 
     def __on_dnd_received_data(self, widget, context, x, y, data, info, time):
         """ Manage drag & drop acquisition

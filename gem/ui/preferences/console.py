@@ -15,8 +15,6 @@
 # ------------------------------------------------------------------------------
 
 # Filesystem
-from os import remove
-
 from pathlib import Path
 
 # GEM
@@ -47,6 +45,7 @@ except ImportError as error:
 # Translation
 from gettext import gettext as _
 
+
 # ------------------------------------------------------------------------------
 #   Class
 # ------------------------------------------------------------------------------
@@ -66,8 +65,11 @@ class ConsolePreferences(CommonWindow):
             Emulator objects storage
         """
 
-        CommonWindow.__init__(self, parent, _("Console"),
-            Icons.Symbolic.GAMING, parent.use_classic_theme)
+        CommonWindow.__init__(self,
+                              parent,
+                              _("Console"),
+                              Icons.Symbolic.GAMING,
+                              parent.use_classic_theme)
 
         # ------------------------------------
         #   Initialize variables
@@ -110,15 +112,15 @@ class ConsolePreferences(CommonWindow):
             ],
             "Description": [
                 _("A console represent a games library. You can specify a "
-                "default emulator which is used by this console and extensions "
-                "which is readable by this emulator.")
+                  "default emulator which is used by this console and "
+                  "extensions which is readable by this emulator.")
             ],
             "Extensions": [
                 _("Most of the time, extensions are common between differents "
-                "emulators and represent the console acronym name (example: "
-                "Nintendo NES -> nes)."),
+                  "emulators and represent the console acronym name (example: "
+                  "Nintendo NES -> nes)."),
                 _("Extensions are split by spaces and must not having the "
-                "first dot (using \"nes\" than \".nes\").")
+                  "first dot (using \"nes\" than \".nes\").")
             ],
             _("Extensions examples"): {
                 "Nintendo NES": "nes",
@@ -126,7 +128,7 @@ class ConsolePreferences(CommonWindow):
             },
             "Expressions": [
                 _("It's possible to hide specific files from the games list "
-                "with regular expressions.")
+                  "with regular expressions.")
             ]
         }
 
@@ -145,7 +147,6 @@ class ConsolePreferences(CommonWindow):
 
         # Start interface
         self.__start_interface()
-
 
     def __init_widgets(self):
         """ Initialize interface widgets
@@ -362,7 +363,7 @@ class ConsolePreferences(CommonWindow):
         self.cell_ignores.set_padding(12, 6)
         self.cell_ignores.set_property("editable", True)
         self.cell_ignores.set_property("placeholder_text",
-            _("Write your regex here..."))
+                                       _("Write your regex here..."))
         self.cell_ignores.set_property("ellipsize", Pango.EllipsizeMode.END)
 
         # ------------------------------------
@@ -373,7 +374,6 @@ class ConsolePreferences(CommonWindow):
 
         # Properties
         self.check_advanced.set_label(_("Advanced mode"))
-
 
     def __init_packing(self):
         """ Initialize widgets packing in main window
@@ -433,7 +433,6 @@ class ConsolePreferences(CommonWindow):
 
         self.viewport_ignores.add(self.treeview_ignores)
 
-
     def __init_signals(self):
         """ Initialize widgets signals
         """
@@ -460,7 +459,6 @@ class ConsolePreferences(CommonWindow):
 
         self.check_advanced.connect("toggled", self.__on_check_advanced_mode)
 
-
     def __start_interface(self):
         """ Load data and start interface
         """
@@ -478,8 +476,12 @@ class ConsolePreferences(CommonWindow):
 
             if emulator.exists:
 
-                icon = self.interface.get_pixbuf_from_cache("emulators",
-                    22, emulator.id, emulator.icon, use_cache=False)
+                icon = self.interface.get_pixbuf_from_cache(
+                    "emulators",
+                    22,
+                    emulator.id,
+                    emulator.icon,
+                    use_cache=False)
 
                 if icon is None:
                     icon = self.icons.blank(22)
@@ -526,7 +528,7 @@ class ConsolePreferences(CommonWindow):
 
             # Ignores
             for ignore in self.console.ignores:
-                self.model_ignores.append([ ignore ])
+                self.model_ignores.append([ignore])
 
             # Emulator
             emulator = self.console.emulator
@@ -543,7 +545,6 @@ class ConsolePreferences(CommonWindow):
             self.config.getboolean("advanced", "console", fallback=False))
 
         self.__on_check_advanced_mode()
-
 
     def save(self):
         """ Save modification
@@ -594,7 +595,6 @@ class ConsolePreferences(CommonWindow):
 
         return data
 
-
     def __on_entry_update(self, widget=None):
         """ Update dialog response sensitive status
 
@@ -633,7 +633,7 @@ class ConsolePreferences(CommonWindow):
                 if self.error:
                     icon = Icons.ERROR
                     tooltip = _("This console already exist, please, "
-                        "choose another name")
+                                "choose another name")
 
         else:
             self.error = True
@@ -673,7 +673,6 @@ class ConsolePreferences(CommonWindow):
 
         self.set_response_sensitive(Gtk.ResponseType.APPLY, not self.error)
 
-
     def __on_icon_update(self, widget):
         """ Update icon thumbnail when the icon entry is update
 
@@ -690,7 +689,6 @@ class ConsolePreferences(CommonWindow):
             self.path = Path(value).expanduser()
 
         self.set_icon(self.image_console, self.path)
-
 
     def __on_select_icon(self, widget):
         """ Select a new icon
@@ -714,7 +712,6 @@ class ConsolePreferences(CommonWindow):
 
         dialog.destroy()
 
-
     def __on_append_item(self, widget):
         """ Append a new row in treeview
 
@@ -724,8 +721,7 @@ class ConsolePreferences(CommonWindow):
             Object which receive signal
         """
 
-        self.model_ignores.append([ str() ])
-
+        self.model_ignores.append([str()])
 
     def __on_remove_item(self, widget):
         """ Remove a row in treeview
@@ -739,7 +735,6 @@ class ConsolePreferences(CommonWindow):
         model, treeiter = self.treeview_ignores.get_selection().get_selected()
         if treeiter is not None:
             self.model_ignores.remove(treeiter)
-
 
     def __on_edited_cell(self, widget, path, text):
         """ Update treerow when a cell has been edited
@@ -755,7 +750,6 @@ class ConsolePreferences(CommonWindow):
         """
 
         self.model_ignores[path][0] = str(text)
-
 
     def __on_check_advanced_mode(self, *args):
         """ Check advanced checkbutton status and update widgets sensitivity
@@ -775,7 +769,6 @@ class ConsolePreferences(CommonWindow):
         self.button_ignores_add.set_visible(status)
         self.image_ignores_remove.set_visible(status)
         self.button_ignores_remove.set_visible(status)
-
 
     def set_icon(self, widget, path, size=64):
         """ Set thumbnail icon from a specific path
@@ -804,8 +797,8 @@ class ConsolePreferences(CommonWindow):
                 if collection_path.exists() and collection_path.is_file():
 
                     # Check the file mime-type to avoid non-image file
-                    if magic_from_file(
-                        collection_path, mime=True).startswith("image/"):
+                    if magic_from_file(collection_path,
+                                       mime=True).startswith("image/"):
 
                         icon = GdkPixbuf.Pixbuf.new_from_file_at_scale(
                             str(collection_path), size, size, True)
@@ -819,4 +812,3 @@ class ConsolePreferences(CommonWindow):
                         str(path), size, size, True)
 
         widget.set_from_pixbuf(icon)
-

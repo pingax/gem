@@ -26,7 +26,7 @@ try:
     from xdg.BaseDirectory import xdg_cache_home
     from xdg.BaseDirectory import xdg_config_home
 
-except ImportError as error:
+except ImportError:
     from os import environ
 
     if "XDG_DATA_HOME" in environ:
@@ -44,6 +44,7 @@ except ImportError as error:
     else:
         xdg_config_home = Path.home().joinpath(".config")
 
+
 # ------------------------------------------------------------------------------
 #   Class
 # ------------------------------------------------------------------------------
@@ -51,6 +52,7 @@ except ImportError as error:
 class Metadata:
     """ Store application informations
     """
+
 
 class Folders:
     """ Store application paths
@@ -66,6 +68,7 @@ class Folders:
         CONFIG = Path(xdg_config_home).expanduser()
         LOCAL = Path(xdg_data_home).expanduser()
 
+
 class Icons:
     """ Store icons name
     """
@@ -80,6 +83,7 @@ class Icons:
         Store icon symbolic version which are available in GNOME icons theme
         gnome-icon-theme-symbolic
         """
+
 
 class Columns:
     """ Store games views informations

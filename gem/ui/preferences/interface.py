@@ -52,12 +52,13 @@ except ImportError as error:
 # Translation
 from gettext import gettext as _
 
+
 # ------------------------------------------------------------------------------
 #   Class
 # ------------------------------------------------------------------------------
 
 class Manager(object):
-    CONSOLE  = 0
+    CONSOLE = 0
     EMULATOR = 1
 
 
@@ -82,8 +83,11 @@ class PreferencesWindow(CommonWindow):
         if type(api) is not GEM:
             raise TypeError("Wrong type for api, expected gem.engine.api.GEM")
 
-        CommonWindow.__init__(self, parent, _("Preferences"),
-            Icons.Symbolic.PREFERENCES, parent.use_classic_theme)
+        CommonWindow.__init__(self,
+                              parent,
+                              _("Preferences"),
+                              Icons.Symbolic.PREFERENCES,
+                              parent.use_classic_theme)
 
         # ------------------------------------
         #   Initialize variables
@@ -237,7 +241,6 @@ class PreferencesWindow(CommonWindow):
 
         # Start interface
         self.__start_interface()
-
 
     def __init_widgets(self):
         """ Initialize interface widgets
@@ -760,7 +763,8 @@ class PreferencesWindow(CommonWindow):
         self.widget_view_icons.set_option_label(
             _("Enable translucent icons"))
         self.widget_view_icons.set_description_label(
-            _("Display translucent icons in games views instead of empty ones"))
+            _("Display translucent icons in games views instead of empty "
+              "ones"))
 
         # ------------------------------------
         #   Interface - Columns
@@ -877,9 +881,10 @@ class PreferencesWindow(CommonWindow):
         self.cell_shortcuts_keys = Gtk.CellRendererAccel()
 
         # Properties
-        self.label_shortcuts.set_label(_("You can edit interface shortcuts for "
-            "some actions. Click on a shortcut and insert wanted shortcut "
-            "with your keyboard."))
+        self.label_shortcuts.set_label(
+            _("You can edit interface shortcuts for "
+              "some actions. Click on a shortcut and insert wanted shortcut "
+              "with your keyboard."))
         self.label_shortcuts.set_line_wrap_mode(Pango.WrapMode.WORD)
         self.label_shortcuts.set_line_wrap(True)
         self.label_shortcuts.set_halign(Gtk.Align.START)
@@ -1111,7 +1116,6 @@ class PreferencesWindow(CommonWindow):
         self.button_emulators_remove.set_tooltip_text(
             _("Remove selected emulator"))
 
-
     def __init_packing(self):
         """ Initialize widgets packing in main window
         """
@@ -1305,7 +1309,6 @@ class PreferencesWindow(CommonWindow):
         self.view_emulators.add(self.grid_emulators)
         self.scroll_emulators.add(self.view_emulators)
 
-
     def __init_signals(self):
         """ Initialize widgets signals
         """
@@ -1403,7 +1406,6 @@ class PreferencesWindow(CommonWindow):
             "clicked", self.__on_modify_item)
         self.button_emulators_remove.connect(
             "clicked", self.__on_remove_item)
-
 
     def __start_interface(self):
         """ Load data and start interface
@@ -1652,7 +1654,8 @@ class PreferencesWindow(CommonWindow):
             self.logger.error(
                 "Cannot resize preferences window: %s" % str(error))
 
-        self.window.set_geometry_hints(self.window, window_size,
+        self.window.set_geometry_hints(
+            self.window, window_size,
             Gdk.WindowHints.MIN_SIZE | Gdk.WindowHints.BASE_SIZE)
 
         self.set_size(window_size.base_width, window_size.base_height)
@@ -1672,7 +1675,6 @@ class PreferencesWindow(CommonWindow):
             self.button_consoles_remove.set_sensitive(False)
             self.button_emulators_remove.set_sensitive(False)
 
-
     def __stop_interface(self, widget=None, *args):
         """ Save data and stop interface
 
@@ -1687,14 +1689,13 @@ class PreferencesWindow(CommonWindow):
         self.config.modify("windows", "preferences", "%dx%d" % self.get_size())
         self.config.update()
 
-
     def save_configuration(self):
         """ Load configuration files and fill widgets
         """
 
         # Remove consoles
         for console in self.api.get_consoles():
-            if not console.id in self.consoles["objects"].keys():
+            if console.id not in self.consoles["objects"].keys():
                 self.api.delete_console(console.id)
 
         # Update consoles
@@ -1703,7 +1704,7 @@ class PreferencesWindow(CommonWindow):
 
         # Remove emulators
         for emulator in self.api.get_emulators():
-            if not emulator.id in self.emulators["objects"].keys():
+            if emulator.id not in self.emulators["objects"].keys():
                 self.api.delete_emulator(emulator.id)
 
         # Update emulators
@@ -1758,7 +1759,6 @@ class PreferencesWindow(CommonWindow):
 
         self.config.update()
 
-
     def load_configuration(self):
         """ Load configuration files and fill widgets
         """
@@ -1806,13 +1806,14 @@ class PreferencesWindow(CommonWindow):
         except ImportError:
             self.logger.warning("Cannot found GtkSource module")
 
-        except Exception as error:
+        except Exception:
             self.logger.exception("Cannot retrieve style schemes")
 
         if not visible_widget:
             self.listbox_general_editor.remove(self.widget_editor_tab_width)
             self.listbox_general_editor.remove(self.widget_editor_colorscheme)
-            self.listbox_general_editor.remove(self.widget_editor_lines_visible)
+            self.listbox_general_editor.remove(
+                self.widget_editor_lines_visible)
 
         # ------------------------------------
         #   Configuration file
@@ -1822,28 +1823,45 @@ class PreferencesWindow(CommonWindow):
             widget = row.get_widget()
 
             if data["type"] == Gtk.ComboBox:
-                widget.set_active_id(self.config.get(
-                    data["section"], data["option"], fallback=data["fallback"]))
+                widget.set_active_id(
+                    self.config.get(
+                        data["section"],
+                        data["option"],
+                        fallback=data["fallback"]))
 
             elif data["type"] == Gtk.Entry:
-                widget.set_text(self.config.get(
-                    data["section"], data["option"], fallback=data["fallback"]))
+                widget.set_text(
+                    self.config.get(
+                        data["section"],
+                        data["option"],
+                        fallback=data["fallback"]))
 
             elif data["type"] == Gtk.FileChooserButton:
-                widget.set_filename(self.config.get(
-                    data["section"], data["option"], fallback=data["fallback"]))
+                widget.set_filename(
+                    self.config.get(
+                        data["section"],
+                        data["option"],
+                        fallback=data["fallback"]))
 
             elif data["type"] == Gtk.FontButton:
-                widget.set_font(self.config.get(
-                    data["section"], data["option"], fallback=data["fallback"]))
+                widget.set_font(
+                    self.config.get(
+                        data["section"],
+                        data["option"],
+                        fallback=data["fallback"]))
 
             elif data["type"] == Gtk.SpinButton:
-                widget.set_value(self.config.getint(
-                    data["section"], data["option"], fallback=data["fallback"]))
+                widget.set_value(
+                    self.config.getint(
+                        data["section"],
+                        data["option"],
+                        fallback=data["fallback"]))
 
             elif data["type"] == Gtk.Switch:
                 value = self.config.getboolean(
-                    data["section"], data["option"], fallback=data["fallback"])
+                    data["section"],
+                    data["option"],
+                    fallback=data["fallback"])
 
                 if "reverse" in data and data["reverse"]:
                     value = not value
@@ -1878,7 +1896,6 @@ class PreferencesWindow(CommonWindow):
 
         self.on_load_emulators()
 
-
     def on_load_consoles(self):
         """ Load consoles into treeview
         """
@@ -1894,7 +1911,6 @@ class PreferencesWindow(CommonWindow):
 
             self.consoles["objects"][console.id] = console
 
-
     def on_load_emulators(self):
         """ Load emulators into treeview
         """
@@ -1909,7 +1925,6 @@ class PreferencesWindow(CommonWindow):
                 self.__on_generate_row(emulator))
 
             self.emulators["objects"][emulator.id] = emulator
-
 
     def __on_generate_row(self, data):
         """ Generate consoles data from an object
@@ -1945,9 +1960,10 @@ class PreferencesWindow(CommonWindow):
         if icon is None:
             icon = self.icons.blank(48)
 
-        return (icon, "<b>%s</b>\n<small>%s</small>" % (data.name, path),
-            status, data)
-
+        return (icon,
+                "<b>%s</b>\n<small>%s</small>" % (data.name, path),
+                status,
+                data)
 
     def __edit_keys(self, widget, path, key, mods, hwcode):
         """ Edit a shortcut
@@ -1973,7 +1989,6 @@ class PreferencesWindow(CommonWindow):
                 self.model_shortcuts.set_value(
                     treeiter, 1, Gtk.accelerator_name(key, mods))
 
-
     def __clear_keys(self, widget, path):
         """ Clear a shortcut
 
@@ -1989,7 +2004,6 @@ class PreferencesWindow(CommonWindow):
 
         if self.model_shortcuts.iter_parent(treeiter) is not None:
             self.model_shortcuts.set_value(treeiter, 1, None)
-
 
     def __on_list_shortcuts(self, treeiter):
         """ List treeiter from shortcuts treestore
@@ -2020,7 +2034,6 @@ class PreferencesWindow(CommonWindow):
 
         return results
 
-
     def __on_selected_treeview(self, treeview, event):
         """ Select a console in consoles treeview
 
@@ -2037,15 +2050,14 @@ class PreferencesWindow(CommonWindow):
         if treeiter is not None:
 
             # Keyboard
-            if event.type == Gdk.EventType.KEY_RELEASE and \
-                event.keyval == Gdk.KEY_Return:
+            if event.type == Gdk.EventType.KEY_RELEASE \
+               and event.keyval == Gdk.KEY_Return:
                 self.__on_modify_item(treeview)
 
             # Mouse
-            elif event.type == Gdk.EventType._2BUTTON_PRESS and \
-                event.button == 1:
+            elif event.type == Gdk.EventType._2BUTTON_PRESS \
+               and event.button == 1:
                 self.__on_modify_item(treeview)
-
 
     def __on_check_classic_theme(self, widget=None, state=None):
         """ Update native viewer widget from checkbutton state
@@ -2062,7 +2074,6 @@ class PreferencesWindow(CommonWindow):
 
         self.widget_appearance_header_button.set_sensitive(not status)
 
-
     def __on_check_native_viewer(self, widget=None, state=None):
         """ Update native viewer widget from checkbutton state
 
@@ -2078,7 +2089,6 @@ class PreferencesWindow(CommonWindow):
 
         self.widget_viewer_binary.set_sensitive(status)
         self.widget_viewer_options.set_sensitive(status)
-
 
     def __on_check_sidebar(self, widget=None, state=None):
         """ Update sidebar widget from checkbutton state
@@ -2097,7 +2107,6 @@ class PreferencesWindow(CommonWindow):
         self.widget_sidebar_random_screenshot.set_sensitive(status)
         self.widget_sidebar_ellipsize.set_sensitive(status)
 
-
     def __on_append_item(self, widget, *args):
         """ Append an item in the treeview
 
@@ -2108,8 +2117,10 @@ class PreferencesWindow(CommonWindow):
         """
 
         if widget == self.button_consoles_add:
-            dialog = ConsolePreferences(
-                self, None, self.consoles["objects"], self.emulators["objects"])
+            dialog = ConsolePreferences(self,
+                                        None,
+                                        self.consoles["objects"],
+                                        self.emulators["objects"])
 
             storage = self.consoles
             model = self.model_consoles
@@ -2147,7 +2158,6 @@ class PreferencesWindow(CommonWindow):
 
         dialog.destroy()
 
-
     def __on_modify_item(self, widget, *args):
         """ Modify an item in the treeview
 
@@ -2175,8 +2185,10 @@ class PreferencesWindow(CommonWindow):
             # ----------------------------------------
 
             if isinstance(element, Console):
-                dialog = ConsolePreferences(self, element,
-                    self.consoles["objects"], self.emulators["objects"])
+                dialog = ConsolePreferences(self,
+                                            element,
+                                            self.consoles["objects"],
+                                            self.emulators["objects"])
 
             elif isinstance(element, Emulator):
                 dialog = EmulatorPreferences(
@@ -2215,7 +2227,6 @@ class PreferencesWindow(CommonWindow):
 
         return True
 
-
     def __on_remove_item(self, widget):
         """ Remove an item in the treeview
 
@@ -2240,7 +2251,9 @@ class PreferencesWindow(CommonWindow):
         if treeiter is not None:
             element = model.get_value(treeiter, 3)
 
-            dialog = QuestionDialog(self, element.name,
+            dialog = QuestionDialog(
+                self,
+                element.name,
                 _("Would you really want to remove this entry ?"))
 
             if dialog.run() == Gtk.ResponseType.YES:

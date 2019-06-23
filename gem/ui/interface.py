@@ -15,6 +15,7 @@
 # ------------------------------------------------------------------------------
 
 # Datetime
+from datetime import date
 from datetime import datetime
 from datetime import timedelta
 
@@ -32,18 +33,27 @@ from pathlib import Path
 from copy import deepcopy
 
 from shutil import rmtree
-from shutil import move as rename
 
 # GEM
-from gem.engine.utils import *
+from gem.engine.utils import copy
+from gem.engine.utils import get_data
+from gem.engine.utils import get_binary_path
+from gem.engine.utils import parse_timedelta
+from gem.engine.utils import generate_identifier
 from gem.engine.api import GEM
-from gem.engine.game import Game
 from gem.engine.console import Console
-from gem.engine.emulator import Emulator
 from gem.engine.lib.configuration import Configuration
 
-from gem.ui.data import *
-from gem.ui.utils import *
+from gem.ui.data import Icons
+from gem.ui.data import Columns
+from gem.ui.data import Folders
+from gem.ui.data import Metadata
+from gem.ui.utils import magic_from_file
+from gem.ui.utils import on_change_theme
+from gem.ui.utils import string_from_date
+from gem.ui.utils import string_from_time
+from gem.ui.utils import replace_for_markup
+from gem.ui.utils import on_activate_listboxrow
 from gem.ui.dialog.cache import CleanCacheDialog
 from gem.ui.dialog.cover import CoverDialog
 from gem.ui.dialog.editor import EditorDialog
@@ -90,18 +100,14 @@ from subprocess import Popen
 from subprocess import STDOUT
 
 # Random
-from random import randint
 from random import shuffle
 
 # Regex
 from re import match
-from re import search
 from re import IGNORECASE
 
 # System
 from sys import version_info
-
-from platform import system
 
 from shlex import split as shlex_split
 
@@ -115,6 +121,7 @@ from gettext import gettext as _
 # URL
 from urllib.parse import urlparse
 from urllib.request import url2pathname
+
 
 # ------------------------------------------------------------------------------
 #   Class
@@ -185,7 +192,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.notes = dict()
         # Store script threads with basename game file without extension as key
         self.scripts = dict()
-        # Store started threads with basename game file without extension as key
+        # Store threads with basename game file without extension as key
         self.threads = dict()
         # Store selected game informations with console, game and name as keys
         self.selection = dict()
@@ -252,7 +259,7 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Targets
         # ------------------------------------
 
-        self.targets = [ Gtk.TargetEntry.new("text/uri-list", 0, 1337) ]
+        self.targets = [Gtk.TargetEntry.new("text/uri-list", 0, 1337)]
 
         # ------------------------------------
         #   Prepare interface
@@ -281,11 +288,10 @@ class MainWindow(Gtk.ApplicationWindow):
             self.main_loop = GLib.MainLoop()
             self.main_loop.run()
 
-        except KeyboardInterrupt as error:
+        except KeyboardInterrupt:
             self.logger.warning("Terminate by keyboard interrupt")
 
             self.__stop_interface()
-
 
     def __init_widgets(self):
         """ Initialize interface widgets
@@ -388,7 +394,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.grid_game_filters.set_spacing(-1)
 
         self.grid_game_filters_popover.set_border_width(6)
-        self.grid_game_filters_popover.set_orientation(Gtk.Orientation.VERTICAL)
+        self.grid_game_filters_popover.set_orientation(
+            Gtk.Orientation.VERTICAL)
 
         self.grid_games_views.drag_dest_set(
             Gtk.DestDefaults.MOTION | Gtk.DestDefaults.DROP, self.targets,
@@ -1297,14 +1304,15 @@ class MainWindow(Gtk.ApplicationWindow):
         self.scroll_games_grid = Gtk.ScrolledWindow()
 
         self.model_games_grid = Gtk.ListStore(
-            GdkPixbuf.Pixbuf, # Cover icon
-            str,    # Name
-            object  # Game object
+            GdkPixbuf.Pixbuf,   # Cover icon
+            str,                # Name
+            object              # Game object
         )
         self.iconview_games = Gtk.IconView()
 
         self.filter_games_grid = self.model_games_grid.filter_new()
-        self.sorted_games_grid = Gtk.TreeModelSort(model=self.filter_games_grid)
+        self.sorted_games_grid = Gtk.TreeModelSort(
+            model=self.filter_games_grid)
 
         # Properties
         self.scroll_games_grid.set_no_show_all(True)
@@ -1351,7 +1359,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.treeview_games = Gtk.TreeView()
 
         self.filter_games_list = self.model_games_list.filter_new()
-        self.sorted_games_list = Gtk.TreeModelSort(model=self.filter_games_list)
+        self.sorted_games_list = Gtk.TreeModelSort(
+            model=self.filter_games_list)
 
         self.column_game_favorite = Gtk.TreeViewColumn()
         self.column_game_multiplayer = Gtk.TreeViewColumn()
@@ -1387,19 +1396,26 @@ class MainWindow(Gtk.ApplicationWindow):
         self.scroll_games_list.set_no_show_all(True)
 
         self.sorted_games_list.set_sort_func(Columns.List.FAVORITE,
-            self.__on_sort_games, Columns.List.FAVORITE)
+                                             self.__on_sort_games,
+                                             Columns.List.FAVORITE)
         self.sorted_games_list.set_sort_func(Columns.List.MULTIPLAYER,
-            self.__on_sort_games, Columns.List.MULTIPLAYER)
+                                             self.__on_sort_games,
+                                             Columns.List.MULTIPLAYER)
         self.sorted_games_list.set_sort_func(Columns.List.FINISH,
-            self.__on_sort_games, Columns.List.FINISH)
+                                             self.__on_sort_games,
+                                             Columns.List.FINISH)
         self.sorted_games_list.set_sort_func(Columns.List.LAST_PLAY,
-            self.__on_sort_games, Columns.List.LAST_PLAY)
+                                             self.__on_sort_games,
+                                             Columns.List.LAST_PLAY)
         self.sorted_games_list.set_sort_func(Columns.List.TIME_PLAY,
-            self.__on_sort_games, Columns.List.TIME_PLAY)
+                                             self.__on_sort_games,
+                                             Columns.List.TIME_PLAY)
         self.sorted_games_list.set_sort_func(Columns.List.SCORE,
-            self.__on_sort_games, Columns.List.SCORE)
+                                             self.__on_sort_games,
+                                             Columns.List.SCORE)
         self.sorted_games_list.set_sort_func(Columns.List.INSTALLED,
-            self.__on_sort_games, Columns.List.INSTALLED)
+                                             self.__on_sort_games,
+                                             Columns.List.INSTALLED)
 
         self.treeview_games.set_model(self.sorted_games_list)
         self.treeview_games.set_search_column(Columns.List.NAME)
@@ -1785,7 +1801,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.progress_statusbar.set_no_show_all(True)
         self.progress_statusbar.set_show_text(True)
-
 
     def __init_packing(self):
         """ Initialize widgets packing in main window
@@ -2233,7 +2248,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.add(self.grid)
 
-
     def __init_signals(self):
         """ Initialize widgets signals
         """
@@ -2273,29 +2287,30 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.signal_menu_dark_theme = self.item_menubar_dark_theme.connect(
             "toggled", self.__on_activate_dark_theme)
-        self.signal_menu_statusbar = self.item_menubar_statusbar_status.connect(
-            "toggled", self.__on_activate_statusbar)
+        self.signal_menu_statusbar = \
+            self.item_menubar_statusbar_status.connect(
+                "toggled", self.__on_activate_statusbar)
 
         self.signal_menu_favorite = self.item_menubar_columns_favorite.connect(
             "activate", self.__on_switch_column_visibility, "favorite")
         self.signal_menu_multiplayer = \
             self.item_menubar_columns_multiplayer.connect(
-            "activate", self.__on_switch_column_visibility, "multiplayer")
+                "activate", self.__on_switch_column_visibility, "multiplayer")
         self.signal_menu_finish = self.item_menubar_columns_finish.connect(
             "activate", self.__on_switch_column_visibility, "finish")
         self.signal_menu_play = self.item_menubar_columns_play.connect(
             "activate", self.__on_switch_column_visibility, "play")
         self.signal_menu_play_time = \
             self.item_menubar_columns_play_time.connect(
-            "activate", self.__on_switch_column_visibility, "play_time")
+                "activate", self.__on_switch_column_visibility, "play_time")
         self.signal_menu_last_play = \
             self.item_menubar_columns_last_play.connect(
-            "activate", self.__on_switch_column_visibility, "last_play")
+                "activate", self.__on_switch_column_visibility, "last_play")
         self.signal_menu_score = self.item_menubar_columns_score.connect(
             "activate", self.__on_switch_column_visibility, "score")
         self.signal_menu_installed = \
             self.item_menubar_columns_installed.connect(
-            "activate", self.__on_switch_column_visibility, "installed")
+                "activate", self.__on_switch_column_visibility, "installed")
         self.signal_menu_flags = self.item_menubar_columns_flags.connect(
             "activate", self.__on_switch_column_visibility, "flags")
 
@@ -2317,15 +2332,16 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.signal_menu_game_favorite = \
             self.item_menubar_game_favorite.connect(
-            "activate", self.__on_game_marked_as_favorite)
+                "activate", self.__on_game_marked_as_favorite)
         self.signal_menu_game_multiplayer = \
             self.item_menubar_game_multiplayer.connect(
-            "activate", self.__on_game_marked_as_multiplayer)
+                "activate", self.__on_game_marked_as_multiplayer)
         self.signal_menu_game_finish = self.item_menubar_game_finish.connect(
             "activate", self.__on_game_marked_as_finish)
 
-        self.signal_menu_fullscreen = self.item_menubar_game_fullscreen.connect(
-            "toggled", self.__on_activate_fullscreen)
+        self.signal_menu_fullscreen = \
+            self.item_menubar_game_fullscreen.connect(
+                "toggled", self.__on_activate_fullscreen)
 
         self.item_menubar_rename.connect(
             "activate", self.__on_game_renamed)
@@ -2387,7 +2403,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.signal_console_hide_empty = \
             self.item_toolbar_hide_empty_console.connect(
-            "activate", self.__on_change_console_option)
+                "activate", self.__on_change_console_option)
 
         # ------------------------------------
         #   Sidebar - Consoles
@@ -2422,10 +2438,10 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.signal_console_favorite = \
             self.item_consoles_favorite.connect(
-            "activate", self.__on_change_console_option)
+                "activate", self.__on_change_console_option)
         self.signal_console_recursive = \
             self.item_consoles_recursive.connect(
-            "activate", self.__on_change_console_option)
+                "activate", self.__on_change_console_option)
 
         # ------------------------------------
         #   Toolbar - Game
@@ -2433,8 +2449,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.button_toolbar_launch.connect(
             "clicked", self.__on_game_launch)
-        self.signal_toolbar_fullscreen = self.button_toolbar_fullscreen.connect(
-            "toggled", self.__on_activate_fullscreen)
+        self.signal_toolbar_fullscreen = \
+            self.button_toolbar_fullscreen.connect(
+                "toggled", self.__on_activate_fullscreen)
         self.button_toolbar_screenshots.connect(
             "clicked", self.__on_show_viewer)
         self.button_toolbar_output.connect(
@@ -2590,7 +2607,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.filter_games_grid.set_visible_func(self.filters_match)
 
-
     def __init_storage(self):
         """ Initialize reference and constant storages
         """
@@ -2630,7 +2646,8 @@ class MainWindow(Gtk.ApplicationWindow):
             self.item_menubar_columns_flags: self.signal_menu_flags,
             self.item_menubar_columns_installed: self.signal_menu_installed,
             self.item_menubar_columns_last_play: self.signal_menu_last_play,
-            self.item_menubar_columns_multiplayer: self.signal_menu_multiplayer,
+            self.item_menubar_columns_multiplayer:
+                self.signal_menu_multiplayer,
             self.item_menubar_columns_play: self.signal_menu_play,
             self.item_menubar_columns_play_time: self.signal_menu_play_time,
             self.item_menubar_columns_score: self.signal_menu_score,
@@ -2745,7 +2762,6 @@ class MainWindow(Gtk.ApplicationWindow):
             self.check_filter_finish,
             self.check_filter_unfinish
         )
-
 
     def __init_shortcuts(self):
         """ Generate shortcuts signals from user configuration
@@ -3037,17 +3053,22 @@ class MainWindow(Gtk.ApplicationWindow):
 
                         # Avoid to have multiple shortcuts with classic theme
                         if not self.use_classic_theme:
-                            self.shortcuts_group.connect(key, mod,
-                                Gtk.AccelFlags.VISIBLE, data["function"])
+                            self.shortcuts_group.connect(
+                                key,
+                                mod,
+                                Gtk.AccelFlags.VISIBLE,
+                                data["function"])
 
                     # Local signals
                     else:
-                        widget.add_accelerator("activate", self.shortcuts_group,
-                            key, mod, Gtk.AccelFlags.VISIBLE)
+                        widget.add_accelerator("activate",
+                                               self.shortcuts_group,
+                                               key,
+                                               mod,
+                                               Gtk.AccelFlags.VISIBLE)
 
                     # Store current shortcut to remove it properly later
                     self.shortcuts.append((key, mod))
-
 
     def __init_interface(self):
         """ Init main interface
@@ -3139,7 +3160,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
             # Append missing column from columns_order string
             for key in original_order:
-                if not key in custom_order:
+                if key not in custom_order:
                     custom_order.append(key)
 
         # Append column in games treeview
@@ -3183,7 +3204,9 @@ class MainWindow(Gtk.ApplicationWindow):
         except ValueError as error:
             self.logger.error("Cannot resize main window: %s" % str(error))
 
-        self.set_geometry_hints(self, self.window_size,
+        self.set_geometry_hints(
+            self,
+            self.window_size,
             Gdk.WindowHints.MIN_SIZE | Gdk.WindowHints.BASE_SIZE)
 
         self.set_position(Gtk.WindowPosition.CENTER)
@@ -3192,19 +3215,18 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Sidebars position
         # ------------------------------------
 
-        if self.sidebar_console_position is not None and \
-            self.sidebar_console_position > -1:
+        if self.sidebar_console_position is not None \
+           and self.sidebar_console_position > -1:
             self.hpaned_consoles.set_position(self.sidebar_console_position)
 
-        if self.sidebar_game_position is not None and \
-            self.sidebar_game_position > -1:
+        if self.sidebar_game_position is not None \
+           and self.sidebar_game_position > -1:
 
             if self.sidebar_orientation == "horizontal":
                 self.hpaned_games.set_position(self.sidebar_game_position)
 
             else:
                 self.vpaned_games.set_position(self.sidebar_game_position)
-
 
     def __show_interface(self):
         """ Show main interface widgets
@@ -3269,7 +3291,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.scroll_games_grid.set_visible(False)
         self.scroll_games_placeholder.set_visible(True)
 
-
     def __start_interface(self):
         """ Load data and start interface
         """
@@ -3304,12 +3325,12 @@ class MainWindow(Gtk.ApplicationWindow):
             if len(console) > 0:
 
                 # Check if this console use the old console name value (< 0.8)
-                if not console in self.api.consoles.keys():
+                if console not in self.api.consoles.keys():
                     console = generate_identifier(console)
 
                 # Check if current identifier exists
-                if console in self.api.consoles.keys() and \
-                    console in self.consoles_iter.keys():
+                if console in self.api.consoles.keys() \
+                   and console in self.consoles_iter.keys():
                     self.treeview_games.set_visible(True)
 
                     row = self.consoles_iter[console]
@@ -3332,10 +3353,14 @@ class MainWindow(Gtk.ApplicationWindow):
                 if len(consoles) > 0:
                     self.listbox_consoles.select_row(consoles[0])
 
-            dialog = MessageDialog(self, _("Welcome !"),
+            dialog = MessageDialog(
+                self,
+                _("Welcome !"),
                 _("Welcome and thanks for choosing GEM as emulators manager. "
-                "Start using GEM by droping some roms into interface.\n\n"
-                "Enjoy and have fun :D"), Icons.Symbolic.SMILE_BIG, False)
+                  "Start using GEM by droping some roms into interface.\n\n"
+                  "Enjoy and have fun :D"),
+                Icons.Symbolic.SMILE_BIG,
+                False)
 
             dialog.set_size_request(500, -1)
 
@@ -3348,7 +3373,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Set default filters flag
         self.filters_reset()
-
 
     def __stop_interface(self, *args):
         """ Save data and stop interface
@@ -3450,8 +3474,9 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Sidebars position
         # ------------------------------------
 
-        self.config.modify("gem", "sidebar_console_position",
-            self.hpaned_consoles.get_position())
+        self.config.modify("gem",
+                           "sidebar_console_position",
+                           self.hpaned_consoles.get_position())
 
         if self.sidebar_orientation == "horizontal":
             position = self.hpaned_games.get_position()
@@ -3464,7 +3489,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.config.update()
 
         self.main_loop.quit()
-
 
     def load_configuration(self):
         """ Load main configuration file and store values
@@ -3556,10 +3580,9 @@ class MainWindow(Gtk.ApplicationWindow):
         # ------------------------------------
 
         # Avoid to have an empty string for last console value
-        if type(self.load_last_console) == 0 and \
-            len(self.load_last_console) == 0:
+        if type(self.load_last_console) == 0 \
+           and len(self.load_last_console) == 0:
             self.load_last_console = None
-
 
     def load_interface(self, init_interface=False):
         """ Load main interface
@@ -3664,7 +3687,8 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Console
         # ------------------------------------
 
-        self.item_toolbar_hide_empty_console.set_active(self.hide_empty_console)
+        self.item_toolbar_hide_empty_console.set_active(
+            self.hide_empty_console)
 
         self.append_consoles()
 
@@ -3704,7 +3728,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.__unblock_signals()
 
-
     def sensitive_interface(self, status=False):
         """ Update sensitive status for main widgets
 
@@ -3718,7 +3741,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         for widget in self.__widgets_storage:
             widget.set_sensitive(status)
-
 
     def filters_update(self, widget, status=None):
         """ Reload packages filter when user change filters from menu
@@ -3764,8 +3786,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.check_selection()
 
         self.set_informations_headerbar(self.__on_retrieve_selected_game(),
-            self.__on_retrieve_selected_console())
-
+                                        self.__on_retrieve_selected_console())
 
     def filters_reset(self, widget=None, events=None):
         """ Reset game filters
@@ -3783,7 +3804,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.button_toolbar_filters.get_style_context().remove_class(
             "suggested-action")
-
 
     def filters_match(self, model, row, *args):
         """ Update treeview rows
@@ -3872,11 +3892,10 @@ class MainWindow(Gtk.ApplicationWindow):
                     found = found and (
                         (status and first) or (not status and second))
 
-        except:
+        except Exception:
             pass
 
         return found
-
 
     def __on_filter_tag(self, widget):
         """ Refilter games list with a new tag
@@ -3895,7 +3914,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.entry_toolbar_filters.set_text(text)
 
-
     def __on_manage_keys(self, widget, event):
         """ Manage widgets for specific keymaps
 
@@ -3908,17 +3926,22 @@ class MainWindow(Gtk.ApplicationWindow):
         """
 
         # Give me more lifes, powerups or cookies konami code, I need more
-        konami_code = [Gdk.KEY_Up, Gdk.KEY_Up, Gdk.KEY_Down, Gdk.KEY_Down,
-            Gdk.KEY_Left, Gdk.KEY_Right, Gdk.KEY_Left, Gdk.KEY_Right]
+        konami_code = [Gdk.KEY_Up, Gdk.KEY_Up,
+                       Gdk.KEY_Down, Gdk.KEY_Down,
+                       Gdk.KEY_Left, Gdk.KEY_Right,
+                       Gdk.KEY_Left, Gdk.KEY_Right]
 
         if event.keyval in konami_code:
             self.keys.append(event.keyval)
 
             if self.keys == konami_code:
-                dialog = MessageDialog(self, "Someone wrote the KONAMI CODE !",
+                dialog = MessageDialog(
+                    self,
+                    "Someone wrote the KONAMI CODE !",
                     "Nice catch ! You have discover an easter-egg ! But, this "
                     "kind of code is usefull in a game, not in an emulators "
-                    "manager !", Icons.Symbolic.MONKEY)
+                    "manager !",
+                    Icons.Symbolic.MONKEY)
 
                 dialog.set_size_request(500, -1)
 
@@ -3929,7 +3952,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
             if not self.keys == konami_code[0:len(self.keys)]:
                 self.keys = list()
-
 
     def set_informations(self):
         """ Update headerbar title and subtitle
@@ -3987,12 +4009,12 @@ class MainWindow(Gtk.ApplicationWindow):
             #   Widgets
             # ----------------------------------------
 
-            self.__on_game_launch_button_update(not game.id in self.threads)
+            self.__on_game_launch_button_update(game.id not in self.threads)
 
             self.button_toolbar_launch.set_sensitive(True)
 
             # This game is not running
-            if not game.id in self.threads:
+            if game.id not in self.threads:
                 self.item_menubar_game_launch.set_sensitive(True)
                 self.item_menubar_database.set_sensitive(True)
 
@@ -4043,8 +4065,8 @@ class MainWindow(Gtk.ApplicationWindow):
             self.grid_sidebar_informations.set_visible(True)
 
             self.label_sidebar_title.set_markup(
-                "<span weight='bold' size='large'>%s</span>" % \
-                replace_for_markup(game.name))
+                "<span weight='bold' size='large'>%s</span>" % (
+                    replace_for_markup(game.name)))
 
             # ----------------------------------------
             #   Game special menu entries
@@ -4110,17 +4132,22 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.sidebar_image = Path(screenshots[-1])
 
                 # Update sidebar screenshot
-                if self.sidebar_image.exists() and self.sidebar_image.is_file():
+                if self.sidebar_image.exists() \
+                   and self.sidebar_image.is_file():
 
                     height = 200
-                    if self.__current_orientation == Gtk.Orientation.HORIZONTAL:
+                    if self.__current_orientation == \
+                       Gtk.Orientation.HORIZONTAL:
                         height = 250
 
                     try:
                         # Set sidebar screenshot
                         self.image_sidebar_screenshot.set_from_pixbuf(
                             GdkPixbuf.Pixbuf.new_from_file_at_scale(
-                            str(self.sidebar_image), 300, height, True))
+                                str(self.sidebar_image),
+                                300,
+                                height,
+                                True))
 
                         self.frame_sidebar_screenshot.set_visible(True)
                         self.frame_sidebar_screenshot.show_all()
@@ -4282,7 +4309,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.__unblock_signals()
 
-
     def set_informations_headerbar(self, game=None, console=None):
         """ Update headerbar and statusbar informations from games list
 
@@ -4354,7 +4380,6 @@ class MainWindow(Gtk.ApplicationWindow):
         if not self.use_classic_theme:
             self.headerbar.set_subtitle(" - ".join(texts))
 
-
     def set_message(self, title, message, icon="dialog-error", popup=True):
         """ Open a message dialog
 
@@ -4386,7 +4411,6 @@ class MainWindow(Gtk.ApplicationWindow):
             dialog.run()
             dialog.destroy()
 
-
     def __on_show_external_link(self, widget, *args):
         """ Open an external link
 
@@ -4405,11 +4429,10 @@ class MainWindow(Gtk.ApplicationWindow):
 
             self.logger.debug("Open %s in web navigator" % link)
 
-            status = self.__xdg_open_instance.launch_uris([link], None)
+            self.__xdg_open_instance.launch_uris([link], None)
 
         except GLib.Error:
             self.logger.exception("Cannot open external link")
-
 
     def __on_show_about(self, *args):
         """ Show about dialog
@@ -4429,8 +4452,12 @@ class MainWindow(Gtk.ApplicationWindow):
 
         about.set_logo_icon_name(Metadata.ICON)
 
-        about.set_authors(["Lubert Aurélien (PacMiam)"])
-        about.set_artists(["Evan-Amos %s - Public Domain" % Metadata.EVAN_AMOS])
+        about.set_authors([
+            "Lubert Aurélien (PacMiam)"
+        ])
+        about.set_artists([
+            "Evan-Amos %s - Public Domain" % Metadata.EVAN_AMOS
+        ])
         about.set_translator_credits(_("translator-credits"))
         about.set_license_type(Gtk.License.GPL_3_0)
 
@@ -4448,7 +4475,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.set_sensitive(True)
         about.destroy()
-
 
     def __on_show_viewer(self, *args):
         """ Show game screenshots
@@ -4484,7 +4510,7 @@ class MainWindow(Gtk.ApplicationWindow):
                         size = self.config.get(
                             "windows", "viewer", fallback="800x600").split('x')
 
-                    except ValueError as error:
+                    except ValueError:
                         size = (800, 600)
 
                     dialog = ViewerDialog(
@@ -4533,7 +4559,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 else:
                     self.set_message(_("Cannot open screenshots viewer"),
-                        _("Cannot find <b>%s</b>") % viewer.name, Icons.WARNING)
+                                     _("Cannot find <b>%s</b>") % viewer.name,
+                                     Icons.WARNING)
 
                 self.set_sensitive(True)
 
@@ -4542,9 +4569,10 @@ class MainWindow(Gtk.ApplicationWindow):
                 # ----------------------------------------
 
                 if len(game.screenshots) == 0:
-                    self.set_game_data(Columns.List.SCREENSHOT,
-                        self.icons.get_translucent("screenshot"), game.id)
-
+                    self.set_game_data(
+                        Columns.List.SCREENSHOT,
+                        self.icons.get_translucent("screenshot"),
+                        game.id)
 
     def __on_show_preferences(self, *args):
         """ Show preferences window
@@ -4566,7 +4594,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.set_sensitive(True)
 
-
     def __on_show_log(self, *args):
         """ Show gem log
 
@@ -4580,13 +4607,18 @@ class MainWindow(Gtk.ApplicationWindow):
                 size = self.config.get(
                     "windows", "log", fallback="800x600").split('x')
 
-            except ValueError as error:
+            except ValueError:
                 size = (800, 600)
 
             self.set_sensitive(False)
 
-            dialog = EditorDialog(self, _("Application log"),
-                path, size, Icons.Symbolic.TERMINAL, editable=False)
+            dialog = EditorDialog(
+                self,
+                _("Application log"),
+                path,
+                size,
+                Icons.Symbolic.TERMINAL,
+                editable=False)
 
             dialog.run()
 
@@ -4596,7 +4628,6 @@ class MainWindow(Gtk.ApplicationWindow):
             self.set_sensitive(True)
 
             dialog.destroy()
-
 
     def __on_show_clean_cache(self, *args):
         """ Clean icons cache directory
@@ -4637,12 +4668,12 @@ class MainWindow(Gtk.ApplicationWindow):
             dialog.destroy()
 
             if success:
-                self.set_message(_("Clean icons cache"),
+                self.set_message(
+                    _("Clean icons cache"),
                     _("Icons cache directory has been succesfully cleaned."),
                     Icons.INFORMATION)
 
             self.set_sensitive(True)
-
 
     def __on_show_notes(self, *args):
         """ Edit game notes
@@ -4662,33 +4693,40 @@ class MainWindow(Gtk.ApplicationWindow):
                     size = self.config.get(
                         "windows", "notes", fallback="800x600").split('x')
 
-                except ValueError as error:
+                except ValueError:
                     size = (800, 600)
 
                 dialog = EditorDialog(
-                    self, game.name, path, size, Icons.Symbolic.DOCUMENT)
+                    self,
+                    game.name,
+                    path,
+                    size,
+                    Icons.Symbolic.DOCUMENT)
 
                 # Allow to launch games with open notes
                 dialog.set_modal(False)
 
-                dialog.window.connect("response",
-                    self.__on_show_notes_response, dialog, game.name, path)
+                dialog.window.connect(
+                    "response",
+                    self.__on_show_notes_response,
+                    dialog,
+                    game.name,
+                    path)
 
                 dialog.show_all()
 
-                # Save dialogs to close it properly when gem terminate and avoid
-                # to reopen existing one
+                # Save dialogs to close it properly when gem terminate and
+                # avoid to reopen existing one
                 self.notes[str(path)] = dialog
 
             elif str(path) in self.notes.keys():
                 self.notes[str(path)].grab_focus()
 
-
     def __on_show_notes_response(self, widget, response, dialog, title, path):
         """ Close notes dialog
 
-        This function close current notes dialog and save his textview buffer to
-        the game notes file
+        This function close current notes dialog and save his textview buffer
+        to the game notes file
 
         Parameters
         ----------
@@ -4729,7 +4767,6 @@ class MainWindow(Gtk.ApplicationWindow):
         if str(path) in self.notes.keys():
             del self.notes[str(path)]
 
-
     def __on_show_console_editor(self, widget, *args):
         """ Open console editor dialog
 
@@ -4750,7 +4787,6 @@ class MainWindow(Gtk.ApplicationWindow):
             console = self.__current_menu_row.console
 
             previous_id = console.id
-            previous_path = console.path
 
         dialog = ConsolePreferences(
             self, console, self.api.consoles, self.api.emulators)
@@ -4809,9 +4845,11 @@ class MainWindow(Gtk.ApplicationWindow):
                         # Store console iter
                         self.consoles_iter[row.console.id] = row
 
-                    self.set_message(_("New console"), _("%s has been "
-                        "correctly added to your configuration.") % \
-                        console.name, Icons.Symbolic.INFORMATION)
+                    self.set_message(
+                        _("New console"),
+                        _("%s has been correctly added to your "
+                          "configuration.") % console.name,
+                        Icons.Symbolic.INFORMATION)
 
                 else:
 
@@ -4867,7 +4905,6 @@ class MainWindow(Gtk.ApplicationWindow):
         dialog.destroy()
 
         self.__unblock_signals()
-
 
     def __on_show_emulator_editor(self, widget, *args):
         """ Open console editor dialog
@@ -4932,9 +4969,11 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 if widget == self.item_toolbar_add_emulator:
 
-                    self.set_message(_("New emulator"), _("%s has been "
-                        "correctly added to your configuration.") % \
-                        emulator.name, Icons.Symbolic.INFORMATION)
+                    self.set_message(
+                        _("New emulator"),
+                        _("%s has been correctly added to your "
+                          "configuration.") % emulator.name,
+                        Icons.Symbolic.INFORMATION)
 
                 else:
 
@@ -4942,8 +4981,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     self.__current_menu_row.console.emulator = emulator
 
-                    if emulator is not None and \
-                        emulator.configuration is not None:
+                    if emulator is not None \
+                       and emulator.configuration is not None:
                         status = emulator.configuration.exists()
 
                     self.item_consoles_config.set_sensitive(status)
@@ -4974,7 +5013,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.__unblock_signals()
 
-
     def __on_show_emulator_config(self, *args):
         """ Edit emulator configuration file
         """
@@ -4994,14 +5032,17 @@ class MainWindow(Gtk.ApplicationWindow):
                         size = self.config.get(
                             "windows", "editor", fallback="800x600").split('x')
 
-                    except ValueError as error:
+                    except ValueError:
                         size = (800, 600)
 
                     self.set_sensitive(False)
 
-                    dialog = EditorDialog(self,
-                        _("Edit %s configuration") % (emulator.name),
-                        path, size, Icons.Symbolic.DOCUMENT)
+                    dialog = EditorDialog(
+                        self,
+                        _("Edit %s configuration") % emulator.name,
+                        path,
+                        size,
+                        Icons.Symbolic.DOCUMENT)
 
                     if dialog.run() == Gtk.ResponseType.APPLY:
 
@@ -5021,7 +5062,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     dialog.destroy()
 
-
     def __on_remove_console(self, *args):
         """ Remove a console from user configuration
         """
@@ -5033,8 +5073,11 @@ class MainWindow(Gtk.ApplicationWindow):
         if self.__current_menu_row is not None:
             console = self.__current_menu_row.console
 
-            dialog = QuestionDialog(self, _("Remove a console"),
-                _("Are you sure you want to remove <b>%s</b> ?") % console.name)
+            dialog = QuestionDialog(
+                self,
+                _("Remove a console"),
+                _("Are you sure you want to remove <b>%s</b> ?") % (
+                    console.name))
 
             if dialog.run() == Gtk.ResponseType.YES:
 
@@ -5066,7 +5109,6 @@ class MainWindow(Gtk.ApplicationWindow):
             dialog.destroy()
 
         self.__unblock_signals()
-
 
     def append_consoles(self):
         """ Append to consoles combobox all available consoles
@@ -5109,7 +5151,6 @@ class MainWindow(Gtk.ApplicationWindow):
             self.scroll_games_placeholder.set_visible(True)
             self.scroll_sidebar.set_visible(False)
 
-
     def __on_generate_console_row(self, console):
         """ Generate console row data from a specific console
 
@@ -5123,8 +5164,6 @@ class MainWindow(Gtk.ApplicationWindow):
         tuple or None
             Generation results
         """
-
-        need_save = False
 
         if not isinstance(console, Console):
             console = self.api.get_console(console)
@@ -5149,7 +5188,6 @@ class MainWindow(Gtk.ApplicationWindow):
             icon = self.icons.blank(24)
 
         return (console, icon)
-
 
     def __on_append_console_row(self, console, icon):
         """ Append console row in consoles list
@@ -5209,7 +5247,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.listbox_consoles.add(row_console)
 
         return row_console
-
 
     def __on_selected_console(self, widget, row, force=False):
         """ Select a console
@@ -5274,7 +5311,6 @@ class MainWindow(Gtk.ApplicationWindow):
             loader = self.append_games(row.console)
             self.list_thread = GLib.idle_add(loader.__next__)
 
-
     def __on_retrieve_selected_console(self):
         """ Retrieve console object instance from current selection
 
@@ -5288,7 +5324,6 @@ class MainWindow(Gtk.ApplicationWindow):
             return self.selection["console"]
 
         return None
-
 
     def __on_sort_consoles(self, first_row, second_row, *args):
         """ Sort consoles to reorganize them
@@ -5307,7 +5342,6 @@ class MainWindow(Gtk.ApplicationWindow):
                 second_row.console.name.lower()
 
         return first_row.console.favorite < second_row.console.favorite
-
 
     def __on_filter_consoles(self, row, *args):
         """ Filter list with consoles searchentry text
@@ -5330,9 +5364,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
             return filter_text in row.console.name.lower()
 
-        except:
+        except Exception:
             return False
-
 
     def __on_update_consoles(self, *args):
         """ Reload consoles list when user set a filter
@@ -5340,7 +5373,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.listbox_consoles.invalidate_sort()
         self.listbox_consoles.invalidate_filter()
-
 
     def __on_change_console_option(self, widget, *args):
         """ Change a console option switch
@@ -5393,12 +5425,11 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.__unblock_signals()
 
-
     def __on_console_menu_show(self, widget, event):
         """ Open context menu
 
-        This function open context-menu when user right-click or use context key
-        on games treeview
+        This function open context-menu when user right-click or use context
+        key on games treeview
 
         Parameters
         ----------
@@ -5437,8 +5468,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
                         # Check emulator configurator
                         self.item_consoles_config.set_sensitive(
-                            configuration is not None and \
-                            configuration.exists())
+                            configuration is not None
+                            and configuration.exists())
 
                     # Check console paths
                     if row.console.path is not None:
@@ -5475,8 +5506,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
                         # Check emulator configurator
                         self.item_consoles_config.set_sensitive(
-                            configuration is not None and \
-                            configuration.exists())
+                            configuration is not None
+                            and configuration.exists())
 
                     self.item_consoles_reload.set_sensitive(
                         selected_row == row)
@@ -5494,7 +5525,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.__unblock_signals()
 
         return status
-
 
     def append_games(self, console):
         """ Append to games treeview all games from console
@@ -5549,8 +5579,9 @@ class MainWindow(Gtk.ApplicationWindow):
             self.infobar.set_visible(True)
 
             self.infobar.set_message_type(Gtk.MessageType.ERROR)
-            self.label_infobar.set_markup(_("<b>%s</b> cannot been found on "
-                "your system") % console.emulator.name)
+            self.label_infobar.set_markup(
+                _("<b>%s</b> cannot been found on your system") % (
+                    console.emulator.name))
 
         # ------------------------------------
         #   Load data
@@ -5598,7 +5629,7 @@ class MainWindow(Gtk.ApplicationWindow):
         # Name
         if column == Columns.List.NAME:
             games.sort(key=lambda game: game.name.lower().replace(' ', ''),
-                reverse=reverse)
+                       reverse=reverse)
 
         # Favorite
         elif column == Columns.List.FAVORITE:
@@ -5714,7 +5745,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         yield False
 
-
     def __on_append_game(self, console, game):
         """ Append a new game to current views
 
@@ -5734,7 +5764,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     show = False
                     break
 
-            except Exception as error:
+            except Exception:
                 pass
 
         # Check if rom file exists
@@ -5747,7 +5777,8 @@ class MainWindow(Gtk.ApplicationWindow):
             row_data = [
                 self.__console_icon,
                 game.name,
-                game ]
+                game
+            ]
 
             # Large icon
             icon = self.get_pixbuf_from_cache(
@@ -5777,7 +5808,8 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.icons.get_translucent("screenshot"),
                 self.icons.get_translucent("savestate"),
                 game,
-                self.__console_thumbnail ]
+                self.__console_thumbnail
+            ]
 
             # Favorite
             if game.favorite:
@@ -5853,7 +5885,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         return False
 
-
     def __on_update_game_columns(self, column, cell, model, treeiter, *args):
         """ Manage specific columns behavior during games adding
 
@@ -5880,7 +5911,6 @@ class MainWindow(Gtk.ApplicationWindow):
                 else:
                     widget.set_property(
                         "pixbuf", self.icons.get_translucent("nostarred"))
-
 
     def __on_selected_game(self, treeview, event):
         """ Select a game
@@ -5962,7 +5992,6 @@ class MainWindow(Gtk.ApplicationWindow):
         if run_game:
             self.__on_game_launch()
 
-
     def __on_selected_game_tooltip(self, treeview, x, y, keyboard, tooltip):
         """ Show game informations tooltip
 
@@ -5988,7 +6017,8 @@ class MainWindow(Gtk.ApplicationWindow):
         # Show a tooltip when the main window is sentitive only
         if self.get_sensitive():
 
-            # Get relative treerow position based on absolute cursor coordinates
+            # Get relative treerow position based on absolute cursor
+            # coordinates
             x, y = treeview.convert_widget_to_bin_window_coords(x, y)
 
             selection = treeview.get_path_at_pos(x, y)
@@ -6050,8 +6080,8 @@ class MainWindow(Gtk.ApplicationWindow):
                 console = self.selection["console"]
 
                 # Get new screenshots from hovered game
-                if console is not None and \
-                    self.__current_tooltip_pixbuf is None:
+                if console is not None \
+                   and self.__current_tooltip_pixbuf is None:
 
                     image = None
 
@@ -6071,21 +6101,20 @@ class MainWindow(Gtk.ApplicationWindow):
                             if len(game.screenshots) > 0:
                                 image = Path(game.screenshots[-1])
 
-                        if image is not None:
+                        # Check if image exists and is not a directory
+                        if image is not None \
+                           and image.exists() and image.is_file():
 
-                            # Check if image exists and is not a directory
-                            if image.exists() and image.is_file():
-
-                                try:
-                                    # Resize pixbuf to have a 96 pixels height
-                                    pixbuf = \
-                                        GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                            try:
+                                # Resize pixbuf to have a 96 pixels height
+                                pixbuf = \
+                                    GdkPixbuf.Pixbuf.new_from_file_at_scale(
                                         str(image), -1, 96, True)
 
-                                    self.__current_tooltip_pixbuf = pixbuf
+                                self.__current_tooltip_pixbuf = pixbuf
 
-                                except GLib.Error:
-                                    self.__current_tooltip_pixbuf = None
+                            except GLib.Error:
+                                self.__current_tooltip_pixbuf = None
 
                     else:
                         self.__current_tooltip_pixbuf = None
@@ -6102,7 +6131,6 @@ class MainWindow(Gtk.ApplicationWindow):
                     return True
 
         return False
-
 
     def __on_retrieve_selected_game(self):
         """ Retrieve game object instance from current selection
@@ -6136,7 +6164,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         return None
 
-
     def __on_synchronize_game_selection(self, view, game):
         """ Synchronize grid and list views selection
 
@@ -6153,7 +6180,7 @@ class MainWindow(Gtk.ApplicationWindow):
             if view == self.treeview_games:
                 viewiter = self.sorted_games_grid.convert_child_iter_to_iter(
                     self.filter_games_grid.convert_child_iter_to_iter(
-                    self.game_path[game.id][2])[1])[1]
+                        self.game_path[game.id][2])[1])[1]
 
                 path = self.sorted_games_grid.get_path(viewiter)
 
@@ -6167,7 +6194,7 @@ class MainWindow(Gtk.ApplicationWindow):
             elif view == self.iconview_games:
                 viewiter = self.sorted_games_list.convert_child_iter_to_iter(
                     self.filter_games_list.convert_child_iter_to_iter(
-                    self.game_path[game.id][1])[1])[1]
+                        self.game_path[game.id][1])[1])[1]
 
                 path = self.sorted_games_list.get_path(viewiter)
 
@@ -6179,7 +6206,6 @@ class MainWindow(Gtk.ApplicationWindow):
                 else:
                     self.treeview_games.get_selection().unselect_all()
 
-
     def __on_reload_games(self, *args):
         """ Reload games list from selected console
         """
@@ -6188,7 +6214,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         if row is not None:
             self.__on_selected_console(None, row, force=True)
-
 
     def __on_sort_games(self, model, row1, row2, column):
         """ Sort games list for specific columns
@@ -6297,7 +6322,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         return 1
 
-
     def __on_switch_games_view(self, widget):
         """ Switch between the available games list view mode
 
@@ -6341,7 +6365,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.__unblock_signals()
 
-
     def __on_switch_column_visibility(self, widget, key):
         """ Manage games treeview columns visibility
 
@@ -6364,7 +6387,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.__unblock_signals()
 
-
     def check_selection(self):
         """ Check selected game
 
@@ -6384,7 +6406,8 @@ class MainWindow(Gtk.ApplicationWindow):
             name = self.selection["game"].name
 
         if name is not None:
-            model, treeiter = self.treeview_games.get_selection().get_selected()
+            model, treeiter = \
+                self.treeview_games.get_selection().get_selected()
 
             if treeiter is not None:
                 treeview_name = model.get_value(treeiter, Columns.List.NAME)
@@ -6399,7 +6422,6 @@ class MainWindow(Gtk.ApplicationWindow):
                     return False
 
         return True
-
 
     def __on_game_launch_button_update(self, status):
         """ Update game launch button
@@ -6432,20 +6454,17 @@ class MainWindow(Gtk.ApplicationWindow):
             self.button_toolbar_launch.get_style_context().add_class(
                 "destructive-action")
 
-
     def __on_game_launch(self, widget=None, *args):
         """ Prepare the game launch
 
-        This function prepare the game launch and start a thread when everything
-        are done
+        This function prepare the game launch and start a thread when
+        everything are done
 
         Parameters
         ----------
         widget : Gtk.Widget, optional
             Object which receive signal (Default: None)
         """
-
-        binary = str()
 
         # ----------------------------------------
         #   Check selection
@@ -6481,7 +6500,9 @@ class MainWindow(Gtk.ApplicationWindow):
                 # ----------------------------------------
 
                 try:
-                    thread = GameThread(self, game,
+                    thread = GameThread(
+                        self,
+                        game,
                         fullscreen=self.button_toolbar_fullscreen.get_active())
 
                     # Save thread references
@@ -6499,14 +6520,14 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     return True
 
-                except FileNotFoundError as error:
-                    self.set_message(_("Cannot launch game"),
+                except FileNotFoundError:
+                    self.set_message(
+                        _("Cannot launch game"),
                         _("%s binary cannot be found") % game.emulator.name)
 
                     return False
 
         return False
-
 
     def __on_game_started(self, widget, game):
         """ The game processus has been started
@@ -6530,7 +6551,6 @@ class MainWindow(Gtk.ApplicationWindow):
             # Launch thread
             thread.start()
 
-
     def __on_script_terminate(self, widget, thread):
         """ Terminate the script processus
 
@@ -6544,10 +6564,10 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Remove this script from threads list
         if thread.game.id in self.scripts:
-            self.logger.debug("Remove %s from scripts cache" % thread.game.name)
+            self.logger.debug(
+                "Remove %s from scripts cache" % thread.game.name)
 
             del self.scripts[thread.game.id]
-
 
     def __on_game_terminate(self, widget, thread):
         """ Terminate the game processus and update data
@@ -6587,35 +6607,42 @@ class MainWindow(Gtk.ApplicationWindow):
 
             # Last played
             self.set_game_data(Columns.List.LAST_PLAY,
-                string_from_date(game.last_launch_date), game.id)
+                               string_from_date(game.last_launch_date),
+                               game.id)
 
             # Last time played
             self.set_game_data(Columns.List.LAST_TIME_PLAY,
-                string_from_time(game.last_launch_time), game.id)
+                               string_from_time(game.last_launch_time),
+                               game.id)
 
             # Play time
             self.set_game_data(Columns.List.TIME_PLAY,
-                string_from_time(game.play_time), game.id)
+                               string_from_time(game.play_time),
+                               game.id)
 
             # Snaps
             if len(game.screenshots) > 0:
                 self.set_game_data(Columns.List.SCREENSHOT,
-                    self.icons.get("screenshot"), game.id)
+                                   self.icons.get("screenshot"),
+                                   game.id)
                 self.button_toolbar_screenshots.set_sensitive(True)
                 self.item_menubar_game_screenshots.set_sensitive(True)
 
             else:
                 self.set_game_data(Columns.List.SCREENSHOT,
-                    self.icons.get_translucent("screenshot"), game.id)
+                                   self.icons.get_translucent("screenshot"),
+                                   game.id)
 
             # Save state
             if len(game.savestates) > 0:
                 self.set_game_data(Columns.List.SAVESTATE,
-                    self.icons.get("savestate"), game.id)
+                                   self.icons.get("savestate"),
+                                   game.id)
 
             else:
                 self.set_game_data(Columns.List.SAVESTATE,
-                    self.icons.get_translucent("savestate"), game.id)
+                                   self.icons.get_translucent("savestate"),
+                                   game.id)
 
             self.set_informations()
 
@@ -6696,7 +6723,6 @@ class MainWindow(Gtk.ApplicationWindow):
             # Launch thread
             thread.start()
 
-
     def __on_game_renamed(self, *args):
         """ Set a custom name for a specific game
 
@@ -6713,8 +6739,6 @@ class MainWindow(Gtk.ApplicationWindow):
         game = self.__on_retrieve_selected_game()
 
         if game is not None:
-            treeiter = self.game_path[game.id][1]
-
             self.set_sensitive(False)
 
             dialog = RenameDialog(self, game)
@@ -6726,7 +6750,9 @@ class MainWindow(Gtk.ApplicationWindow):
                 # Check if game name has been changed
                 if not new_name == game.name:
                     self.logger.info("Rename %(old)s to %(new)s" % {
-                        "old": game.name, "new": dialog.get_name() })
+                        "old": game.name,
+                        "new": dialog.get_name()
+                    })
 
                     game.name = new_name
 
@@ -6764,7 +6790,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
             dialog.destroy()
 
-
     def __on_game_maintenance(self, *args):
         """ Set some maintenance for selected game
         """
@@ -6775,7 +6800,7 @@ class MainWindow(Gtk.ApplicationWindow):
         if game is not None and console is not None:
 
             # Avoid trying to remove an executed game
-            if not game.id in self.threads:
+            if game.id not in self.threads:
                 treeiter = self.game_path[game.id][1]
 
                 need_to_reload = False
@@ -6808,7 +6833,7 @@ class MainWindow(Gtk.ApplicationWindow):
                         # Clean game from database
                         if data["database"]:
                             game_data = {
-                                Columns.List.FAVORITE: \
+                                Columns.List.FAVORITE:
                                     self.icons.get_translucent("favorite"),
                                 Columns.List.NAME: game.path.stem,
                                 Columns.List.PLAYED: None,
@@ -6816,9 +6841,9 @@ class MainWindow(Gtk.ApplicationWindow):
                                 Columns.List.TIME_PLAY: None,
                                 Columns.List.LAST_TIME_PLAY: None,
                                 Columns.List.SCORE: 0,
-                                Columns.List.PARAMETER: \
+                                Columns.List.PARAMETER:
                                     self.icons.get_translucent("parameter"),
-                                Columns.List.MULTIPLAYER: \
+                                Columns.List.MULTIPLAYER:
                                     self.icons.get_translucent("multiplayer"),
                             }
 
@@ -6856,7 +6881,7 @@ class MainWindow(Gtk.ApplicationWindow):
                         self.item_game_finish.set_active(False)
                         self.item_menubar_game_finish.set_active(False)
 
-                    except Exception as error:
+                    except Exception:
                         self.logger.exception("An error occur during removing")
 
                 dialog.destroy()
@@ -6865,7 +6890,6 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.set_informations()
 
                 self.set_sensitive(True)
-
 
     def __on_game_removed(self, *args):
         """ Remove a game
@@ -6880,9 +6904,7 @@ class MainWindow(Gtk.ApplicationWindow):
         if game is not None and console is not None:
 
             # Avoid trying to remove an executed game
-            if not game.id in self.threads:
-                treeiter = self.game_path[game.id][1]
-
+            if game.id not in self.threads:
                 identifier = game.id
 
                 need_to_reload = False
@@ -6913,7 +6935,8 @@ class MainWindow(Gtk.ApplicationWindow):
                                     remove(element)
 
                                 else:
-                                    self.logger.error("Cannot remove %s, "
+                                    self.logger.error(
+                                        "Cannot remove %s, "
                                         "operation not permitted" % element)
 
                             need_to_reload = True
@@ -6939,7 +6962,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
                             row.set_tooltip_text(text)
 
-                    except Exception as error:
+                    except Exception:
                         self.logger.exception("An error occur during removing")
 
                 dialog.destroy()
@@ -6963,12 +6986,12 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     self.set_informations()
 
-                    self.set_message(_("Remove a game"),
+                    self.set_message(
+                        _("Remove a game"),
                         _("This game was removed successfully"),
                         Icons.INFORMATION)
 
                 self.set_sensitive(True)
-
 
     def __on_game_duplicate(self, *args):
         """ Duplicate a game
@@ -6980,8 +7003,6 @@ class MainWindow(Gtk.ApplicationWindow):
         game = self.__on_retrieve_selected_game()
 
         if game is not None:
-            console = self.__on_retrieve_selected_console()
-
             need_to_reload = False
 
             # ----------------------------------------
@@ -7014,7 +7035,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
                             need_to_reload = True
 
-                except Exception as error:
+                except Exception:
                     self.logger.exception("An error occur during duplication")
 
             dialog.destroy()
@@ -7022,12 +7043,12 @@ class MainWindow(Gtk.ApplicationWindow):
             if need_to_reload:
                 self.__on_reload_games()
 
-                self.set_message(_("Duplicate a game"),
+                self.set_message(
+                    _("Duplicate a game"),
                     _("This game was duplicated successfully"),
                     Icons.INFORMATION)
 
             self.set_sensitive(True)
-
 
     def __on_game_parameters(self, *args):
         """ Manage game default parameters
@@ -7090,10 +7111,12 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 if custom:
                     self.set_game_data(Columns.List.PARAMETER,
-                        self.icons.get("parameter"), game.id)
+                                       self.icons.get("parameter"),
+                                       game.id)
                 else:
                     self.set_game_data(Columns.List.PARAMETER,
-                        self.icons.get_translucent("parameter"), game.id)
+                                       self.icons.get_translucent("parameter"),
+                                       game.id)
 
                 # ----------------------------------------
                 #   Update views
@@ -7102,14 +7125,17 @@ class MainWindow(Gtk.ApplicationWindow):
                 # Screenshots
                 if len(game.screenshots) > 0:
                     self.set_game_data(Columns.List.SCREENSHOT,
-                        self.icons.get("screenshot"), game.id)
+                                       self.icons.get("screenshot"),
+                                       game.id)
 
                     self.button_toolbar_screenshots.set_sensitive(True)
                     self.item_menubar_game_screenshots.set_sensitive(True)
 
                 else:
-                    self.set_game_data(Columns.List.SCREENSHOT,
-                        self.icons.get_translucent("screenshot"), game.id)
+                    self.set_game_data(
+                        Columns.List.SCREENSHOT,
+                        self.icons.get_translucent("screenshot"),
+                        game.id)
 
                     self.button_toolbar_screenshots.set_sensitive(False)
                     self.item_menubar_game_screenshots.set_sensitive(False)
@@ -7117,11 +7143,13 @@ class MainWindow(Gtk.ApplicationWindow):
                 # Savestates
                 if len(game.savestates) > 0:
                     self.set_game_data(Columns.List.SAVESTATE,
-                        self.icons.get("savestate"), game.id)
+                                       self.icons.get("savestate"),
+                                       game.id)
 
                 else:
                     self.set_game_data(Columns.List.SAVESTATE,
-                        self.icons.get_translucent("savestate"), game.id)
+                                       self.icons.get_translucent("savestate"),
+                                       game.id)
 
                 # Objects
                 row, treepath, gridpath = self.game_path[game.id]
@@ -7136,7 +7164,6 @@ class MainWindow(Gtk.ApplicationWindow):
             self.set_sensitive(True)
 
             dialog.destroy()
-
 
     def __on_game_log(self, *args):
         """ Show game log
@@ -7153,13 +7180,18 @@ class MainWindow(Gtk.ApplicationWindow):
                 size = self.config.get(
                     "windows", "log", fallback="800x600").split('x')
 
-            except ValueError as error:
+            except ValueError:
                 size = (800, 600)
 
             self.set_sensitive(False)
 
-            dialog = EditorDialog(self,
-                game.name, path, size, Icons.Symbolic.TERMINAL, editable=False)
+            dialog = EditorDialog(
+                self,
+                game.name,
+                path,
+                size,
+                Icons.Symbolic.TERMINAL,
+                editable=False)
 
             dialog.run()
 
@@ -7169,7 +7201,6 @@ class MainWindow(Gtk.ApplicationWindow):
             self.set_sensitive(True)
 
             dialog.destroy()
-
 
     def __on_game_backup_memory(self, *args):
         """ Manage game backup memory
@@ -7225,7 +7256,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 dialog.destroy()
 
-
     def __on_game_marked_as_favorite(self, *args):
         """ Mark or unmark a game as favorite
 
@@ -7278,12 +7308,11 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.__unblock_signals()
 
-
     def __on_game_marked_as_multiplayer(self, *args):
         """ Mark or unmark a game as multiplayer
 
-        This function update the database when user change the game multiplayers
-        status
+        This function update the database when user change the game
+        multiplayers status
         """
 
         self.__block_signals()
@@ -7330,7 +7359,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.filters_update(None)
 
         self.__unblock_signals()
-
 
     def __on_game_marked_as_finish(self, *args):
         """ Mark or unmark a game as finish
@@ -7384,7 +7412,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.__unblock_signals()
 
-
     def __on_game_score(self, widget, score=None):
         """ Manage selected game score
 
@@ -7400,16 +7427,16 @@ class MainWindow(Gtk.ApplicationWindow):
 
         if game is not None:
 
-            if widget in [
-                self.item_menubar_score_up, self.item_game_score_up]:
+            if widget in [self.item_menubar_score_up,
+                          self.item_game_score_up]:
 
                 if game.score < 5:
                     game.score += 1
 
                     modification = True
 
-            elif widget in [
-                self.item_menubar_score_down, self.item_game_score_down]:
+            elif widget in [self.item_menubar_score_down,
+                            self.item_game_score_down]:
 
                 if game.score > 0:
                     game.score -= 1
@@ -7436,7 +7463,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
             self.set_informations()
 
-
     def __on_game_edit_file(self, *args):
         """ Edit game file
 
@@ -7453,13 +7479,17 @@ class MainWindow(Gtk.ApplicationWindow):
                     size = self.config.get(
                         "windows", "game", fallback="800x600").split('x')
 
-                except ValueError as error:
+                except ValueError:
                     size = (800, 600)
 
                 self.set_sensitive(False)
 
-                dialog = EditorDialog(self,
-                    game.name, game.path, size, Icons.Symbolic.EDIT)
+                dialog = EditorDialog(
+                    self,
+                    game.name,
+                    game.path,
+                    size,
+                    Icons.Symbolic.EDIT)
 
                 if dialog.run() == Gtk.ResponseType.APPLY:
                     game.path.write_text(dialog.buffer_editor.get_text(
@@ -7469,7 +7499,8 @@ class MainWindow(Gtk.ApplicationWindow):
                     game.update_installation_date()
 
                     self.set_game_data(Columns.List.INSTALLED,
-                        string_from_date(game.installed), game.id)
+                                       string_from_date(game.installed),
+                                       game.id)
 
                 self.config.modify(
                     "windows", "game", "%dx%d" % dialog.get_size())
@@ -7479,7 +7510,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 dialog.destroy()
 
-
     def __on_game_copy(self, *args):
         """ Copy path folder which contains selected game to clipboard
         """
@@ -7488,7 +7518,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         if game is not None:
             self.clipboard.set_text(str(game.path), -1)
-
 
     def __on_game_cover(self, *args):
         """ Set a new cover for selected game
@@ -7538,9 +7567,11 @@ class MainWindow(Gtk.ApplicationWindow):
                                 str(game.cover), 96, 96, True)
 
                             large.savev(str(large_cache_path),
-                                "png", list(), list())
+                                        "png",
+                                        list(),
+                                        list())
 
-                        except GLib.Error as error:
+                        except GLib.Error:
                             self.logger.exception(
                                 "An error occur during cover generation")
 
@@ -7549,13 +7580,16 @@ class MainWindow(Gtk.ApplicationWindow):
                         # ----------------------------------------
 
                         try:
-                            thumbnail = GdkPixbuf.Pixbuf.new_from_file_at_scale(
-                                str(game.cover), 22, 22, True)
+                            thumbnail = \
+                                GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                                    str(game.cover), 22, 22, True)
 
                             thumbnail.savev(str(thumbnail_cache_path),
-                                "png", list(), list())
+                                            "png",
+                                            list(),
+                                            list())
 
-                        except GLib.Error as error:
+                        except GLib.Error:
                             self.logger.exception(
                                 "An error occur during cover generation")
 
@@ -7584,7 +7618,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
             dialog.destroy()
 
-
     def __on_game_generate_desktop(self, *args):
         """ Generate application desktop file
 
@@ -7599,8 +7632,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
         if treeiter is not None and game is not None and console is not None:
 
-            if game.emulator is not None and \
-                game.emulator.id in self.api.emulators:
+            if game.emulator is not None \
+               and game.emulator.id in self.api.emulators:
                 name = "%s.desktop" % game.path.stem
 
                 # ----------------------------------------
@@ -7609,7 +7642,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 icon = console.icon
                 if not icon.exists():
-                    icon = Folders.LOCAL.joinpath("icons", '%s.png' % str(icon))
+                    icon = Folders.LOCAL.joinpath(
+                        "icons", '%s.png' % str(icon))
 
                 values = {
                     "%name%": game.name,
@@ -7640,24 +7674,24 @@ class MainWindow(Gtk.ApplicationWindow):
                     # Write the new desktop file
                     Folders.APPLICATIONS.joinpath(name).write_text(template)
 
-                    self.set_message(_("Generate menu entry"),
-                        _("%s was generated successfully")  % name,
+                    self.set_message(
+                        _("Generate menu entry"),
+                        _("%s was generated successfully") % name,
                         Icons.INFORMATION)
 
-                except OSError as error:
+                except OSError:
                     self.set_message(
                         _("Generate menu entry for %s") % game.name,
                         _("An error occur during generation, consult log for "
-                        "futher details."), Icons.ERROR)
+                          "futher details."), Icons.ERROR)
 
                 self.set_sensitive(True)
-
 
     def __on_game_menu_show(self, widget, event):
         """ Open context menu
 
-        This function open context-menu when user right-click or use context key
-        on games views
+        This function open context-menu when user right-click or use context
+        key on games views
 
         Parameters
         ----------
@@ -7730,7 +7764,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         return False
 
-
     def __on_activate_fullscreen(self, widget, *args):
         """ Update fullscreen button
 
@@ -7769,7 +7802,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.__unblock_signals()
 
-
     def __on_activate_dark_theme(self, widget, status=False, *args):
         """ Update dark theme status
 
@@ -7797,7 +7829,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.item_menubar_dark_theme.set_active(dark_theme_status)
 
         self.__unblock_signals()
-
 
     def __on_activate_sidebar(self, widget, status=False, *args):
         """ Update sidebar status
@@ -7828,7 +7859,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.__unblock_signals()
 
-
     def __on_move_sidebar(self, widget=None, init_interface=False):
         """ Move sidebar based on user configuration value
 
@@ -7854,8 +7884,8 @@ class MainWindow(Gtk.ApplicationWindow):
             self.config.update()
 
         # Right-side sidebar
-        if self.sidebar_orientation == "horizontal" and \
-            not self.__current_orientation == Gtk.Orientation.HORIZONTAL:
+        if self.sidebar_orientation == "horizontal" \
+           and not self.__current_orientation == Gtk.Orientation.HORIZONTAL:
 
             self.label_sidebar_title.set_justify(Gtk.Justification.CENTER)
             self.label_sidebar_title.set_halign(Gtk.Align.CENTER)
@@ -7884,8 +7914,8 @@ class MainWindow(Gtk.ApplicationWindow):
             self.__current_orientation = Gtk.Orientation.HORIZONTAL
 
         # Bottom-side sidebar
-        elif self.sidebar_orientation == "vertical" and \
-            not self.__current_orientation == Gtk.Orientation.VERTICAL:
+        elif self.sidebar_orientation == "vertical" \
+           and not self.__current_orientation == Gtk.Orientation.VERTICAL:
 
             self.label_sidebar_title.set_justify(Gtk.Justification.LEFT)
             self.label_sidebar_title.set_halign(Gtk.Align.START)
@@ -7915,7 +7945,6 @@ class MainWindow(Gtk.ApplicationWindow):
         if widget is not None:
             self.set_informations()
 
-
     def __on_activate_statusbar(self, widget, status=False, *args):
         """ Update statusbar status
 
@@ -7944,7 +7973,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.__unblock_signals()
 
-
     def __on_copy_path_to_clipboard(self, widget):
         """ Copy path to clipboard
 
@@ -7969,7 +7997,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         if path is not None:
             self.clipboard.set_text(str(path), -1)
-
 
     def __on_open_directory(self, widget):
         """ Open directory into files manager
@@ -7997,11 +8024,11 @@ class MainWindow(Gtk.ApplicationWindow):
             self.logger.debug("Open '%s' directory in files manager" % path)
 
             try:
-                self.__xdg_open_instance.launch_uris(["file://%s" % path], None)
+                self.__xdg_open_instance.launch_uris(
+                    ["file://%s" % path], None)
 
             except GLib.Error:
                 self.logger.exception("Cannot open files manager")
-
 
     def __on_dnd_send_data(self, widget, context, data, info, time):
         """ Set rom file path uri
@@ -8033,7 +8060,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
             if self.sidebar_image is not None:
                 data.set_uris(["file://%s" % self.sidebar_image])
-
 
     def __on_dnd_received_data(self, widget, context, x, y, data, info, delta):
         """ Manage drag & drop acquisition
@@ -8100,7 +8126,7 @@ class MainWindow(Gtk.ApplicationWindow):
             extension = str()
             # Only retrieve extensions and not part of the name
             for subextension in path.suffixes:
-                if not subextension in path.stem:
+                if subextension not in path.stem:
                     extension += subextension.lower()
 
             # Remove the first dot to match console extensions system
@@ -8144,7 +8170,6 @@ class MainWindow(Gtk.ApplicationWindow):
             else:
                 self.set_sensitive(True)
 
-
     def __on_dnd_install_data(self, data, options):
         """ Install received file in user system
 
@@ -8184,7 +8209,7 @@ class MainWindow(Gtk.ApplicationWindow):
             extension = str()
             # Only retrieve extensions and not part of the name
             for subextension in path.suffixes:
-                if not subextension in path.stem:
+                if subextension not in path.stem:
                     extension += subextension.lower()
 
             # Destination path
@@ -8207,8 +8232,9 @@ class MainWindow(Gtk.ApplicationWindow):
                     new_path.unlink()
 
             # Move or copy file to the correct location
-            if new_path.parent.exists() and new_path.parent.is_dir() and \
-                not new_path.exists():
+            if new_path.parent.exists() \
+               and new_path.parent.is_dir() \
+               and not new_path.exists():
                 validate_index += 1
 
                 copy(path, new_path)
@@ -8240,8 +8266,8 @@ class MainWindow(Gtk.ApplicationWindow):
                     row.set_tooltip_text(text)
 
                 # This file is owned by current selected console
-                if self.selection["console"] is not None and \
-                    console.id == self.selection["console"].id:
+                if self.selection["console"] is not None \
+                   and console.id == self.selection["console"].id:
 
                     # Remove an old entry in views
                     if game.id in self.game_path:
@@ -8284,8 +8310,9 @@ class MainWindow(Gtk.ApplicationWindow):
         elif validate_index > 1:
             text = _("%d games has been added") % validate_index
 
-        self.set_message(_("Games installation"), text,
-            Icons.Symbolic.INFORMATION)
+        self.set_message(_("Games installation"),
+                         text,
+                         Icons.Symbolic.INFORMATION)
 
         # Update consoles filters
         self.__on_update_consoles()
@@ -8296,7 +8323,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         yield False
 
-
     def __block_signals(self):
         """ Block check button signals to avoid stack overflow when toggled
         """
@@ -8304,14 +8330,12 @@ class MainWindow(Gtk.ApplicationWindow):
         for widget, signal in self.__signals_storage.items():
             widget.handler_block(signal)
 
-
     def __unblock_signals(self):
         """ Unblock check button signals
         """
 
         for widget, signal in self.__signals_storage.items():
             widget.handler_unblock(signal)
-
 
     def check_desktop(self, path):
         """ Check user applications folder for specific desktop file
@@ -8340,7 +8364,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         return Folders.APPLICATIONS.joinpath("%s.desktop" % path.stem).exists()
 
-
     def check_log(self):
         """ Check if a game has an output file available
 
@@ -8360,7 +8383,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         return None
 
-
     def check_mednafen(self):
         """ Check if Mednafen exists on user system
 
@@ -8375,13 +8397,13 @@ class MainWindow(Gtk.ApplicationWindow):
         Notes
         -----
         Still possible to troll this function with a script call mednafen which
-        send the match string as output. But, this problem only appear if a user
-        want to do that, so ...
+        send the match string as output. But, this problem only appear if a
+        user want to do that, so ...
         """
 
         if len(get_binary_path("mednafen")) > 0:
             proc = Popen(
-                [ "mednafen" ],
+                ["mednafen"],
                 stdin=PIPE,
                 stdout=PIPE,
                 stderr=STDOUT,
@@ -8397,7 +8419,6 @@ class MainWindow(Gtk.ApplicationWindow):
                     return True
 
         return False
-
 
     def check_version(self):
         """ Check development version when debug mode is activate
@@ -8420,7 +8441,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 if path.exists():
                     proc = Popen(
-                        [ "git", "rev-parse", "--short", "HEAD" ],
+                        ["git", "rev-parse", "--short", "HEAD"],
                         stdin=PIPE,
                         stdout=PIPE,
                         stderr=STDOUT,
@@ -8435,7 +8456,6 @@ class MainWindow(Gtk.ApplicationWindow):
                             return "%s-%s" % (version, output)
 
         return version
-
 
     def set_game_data(self, index, data, identifier):
         """ Update game informations in games treeview
@@ -8455,7 +8475,6 @@ class MainWindow(Gtk.ApplicationWindow):
         if treeiter is not None:
             self.model_games_list[treeiter[1]][index] = data
 
-
     def get_icon_from_cache(self, *args):
         """ Retrieve icon from cache folder
 
@@ -8467,9 +8486,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
         return self.__cache.joinpath(*args)
 
-
-    def get_pixbuf_from_cache(
-        self, key, size, identifier, path, use_cache=True):
+    def get_pixbuf_from_cache(self,
+                              key, size, identifier, path, use_cache=True):
         """ Retrieve an icon from cache or generate it
 
         Parameters
@@ -8515,8 +8533,8 @@ class MainWindow(Gtk.ApplicationWindow):
                     if collection_path.exists() and collection_path.is_file():
 
                         # Check the file mime-type to avoid non-image file
-                        if magic_from_file(
-                            collection_path, mime=True).startswith("image/"):
+                        if magic_from_file(collection_path,
+                                           mime=True).startswith("image/"):
 
                             icon = GdkPixbuf.Pixbuf.new_from_file_at_scale(
                                 str(collection_path), size, size, True)
@@ -8552,14 +8570,13 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     icon.savev(str(cache_path), "png", list(), list())
 
-                except GLib.Error as error:
+                except GLib.Error:
                     self.logger.exception(
                         "An error occur during cache generation")
 
             return icon
 
         return None
-
 
     def get_mednafen_status(self):
         """ Retrieve mednafen status
@@ -8571,7 +8588,6 @@ class MainWindow(Gtk.ApplicationWindow):
         """
 
         return self.__mednafen_status
-
 
     def get_mednafen_memory_type(self, game):
         """ Retrieve a memory type file for a specific game
@@ -8590,7 +8606,6 @@ class MainWindow(Gtk.ApplicationWindow):
         # FIXME: Maybe a better way to determine type file
         return Path.home().joinpath(
             ".mednafen", "sav", game.path.stem + ".type")
-
 
     def emit(self, *args):
         """ Override emit function

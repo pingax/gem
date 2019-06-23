@@ -37,6 +37,7 @@ except ImportError as error:
 # Translation
 from gettext import gettext as _
 
+
 # ------------------------------------------------------------------------------
 #   Class
 # ------------------------------------------------------------------------------
@@ -88,7 +89,6 @@ class CoverDialog(CommonWindow):
         # Start interface
         self.__start_interface()
 
-
     def __init_widgets(self):
         """ Initialize interface widgets
         """
@@ -116,8 +116,8 @@ class CoverDialog(CommonWindow):
 
         # Properties
         self.label_title.set_markup(
-            "<span weight='bold' size='large'>%s</span>" % \
-            replace_for_markup(self.game.name))
+            "<span weight='bold' size='large'>%s</span>" % (
+                replace_for_markup(self.game.name)))
         self.label_title.set_use_markup(True)
         self.label_title.set_halign(Gtk.Align.CENTER)
         self.label_title.set_ellipsize(Pango.EllipsizeMode.END)
@@ -210,7 +210,6 @@ class CoverDialog(CommonWindow):
         self.pack_start(self.label_preview, False, False)
         self.pack_start(self.scroll_preview)
 
-
     def __init_signals(self):
         """ Initialize widgets signals
         """
@@ -218,7 +217,6 @@ class CoverDialog(CommonWindow):
         self.file_image_selector.connect("file-set", self.__update_preview)
 
         self.button_reset.connect("clicked", self.__on_reset_cover)
-
 
     def __start_interface(self):
         """ Load data and start interface
@@ -232,13 +230,11 @@ class CoverDialog(CommonWindow):
 
         self.__update_preview()
 
-
     def __update_preview(self, *args):
         """ Update image preview
         """
 
         self.__on_set_preview(self.file_image_selector.get_filename())
-
 
     def __on_set_preview(self, path):
         """ Set a new preview from selector filepath
@@ -253,9 +249,8 @@ class CoverDialog(CommonWindow):
             self.image_preview.set_from_pixbuf(
                 GdkPixbuf.Pixbuf.new_from_file_at_scale(path, 400, 236, True))
 
-        except:
+        except Exception:
             self.__on_reset_cover()
-
 
     def __on_reset_cover(self, *args):
         """ Reset cover filechooser

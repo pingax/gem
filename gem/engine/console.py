@@ -31,6 +31,7 @@ from gem.engine.emulator import Emulator
 from re import IGNORECASE
 from re import compile as re_compile
 
+
 # ------------------------------------------------------------------------------
 #   Class
 # ------------------------------------------------------------------------------
@@ -48,7 +49,6 @@ class Console(object):
         "favorite": bool,
         "recursive": bool
     }
-
 
     def __init__(self, parent, **kwargs):
         """ Constructor
@@ -74,7 +74,6 @@ class Console(object):
         # Initialize variables
         self.__init_keys(**kwargs)
 
-
     def __init_keys(self, **kwargs):
         """ Initialize object attributes
         """
@@ -96,7 +95,8 @@ class Console(object):
             setattr(self, key, value)
 
             if key_type is Path and type(value) is str:
-                value = value.replace("<local>", str(self.__parent.get_local()))
+                value = value.replace("<local>",
+                                      str(self.__parent.get_local()))
 
                 path = Path(value).expanduser()
                 if len(value) == 0:
@@ -126,7 +126,6 @@ class Console(object):
 
         setattr(self, "id", generate_identifier(self.name))
 
-
     def as_dict(self):
         """ Return object as dictionary structure
 
@@ -145,7 +144,6 @@ class Console(object):
             "favorite": self.favorite,
             "recursive": self.recursive
         }
-
 
     def init_games(self):
         """ Initialize games list from path directory
@@ -185,7 +183,6 @@ class Console(object):
                 for filename in sorted(files):
                     self.add_game(filename)
 
-
     def add_game(self, filename):
         """ Add a new game
 
@@ -209,7 +206,6 @@ class Console(object):
 
         return game
 
-
     def delete_game(self, game):
         """ Remove a game from console storage
 
@@ -222,7 +218,6 @@ class Console(object):
         if game in self.__games:
             self.__games.remove(game)
 
-
     def get_games(self):
         """ Retrieve games list
 
@@ -233,7 +228,6 @@ class Console(object):
         """
 
         return self.__games
-
 
     def get_game(self, key):
         """ Return specific game from current console
@@ -251,7 +245,6 @@ class Console(object):
 
         return next((game for game in self.__games if game.id == key), None)
 
-
     def search_game(self, key):
         """ Search games from a specific key
 
@@ -268,5 +261,5 @@ class Console(object):
 
         regex = re_compile(key, IGNORECASE)
 
-        return (game for game in self.__games \
-            if regex.search(game.name) or regex.search(game.id))
+        return (game for game in self.__games
+                if regex.search(game.name) or regex.search(game.id))
