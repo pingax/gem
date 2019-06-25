@@ -6098,8 +6098,18 @@ class MainWindow(Gtk.ApplicationWindow):
 
                         if tooltip_image in ["both", "screenshot"]:
 
+                            # Ordered game screenshots
+                            if not self.use_random_screenshot:
+                                screenshots = sorted(game.screenshots)
+
+                            # Get a random file from game screenshots
+                            else:
+                                screenshots = game.screenshots
+
+                                shuffle(screenshots)
+
                             if len(game.screenshots) > 0:
-                                image = Path(game.screenshots[-1])
+                                image = Path(screenshots[-1])
 
                         # Check if image exists and is not a directory
                         if image is not None \
