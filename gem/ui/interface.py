@@ -1422,6 +1422,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.treeview_games.set_headers_clickable(True)
         self.treeview_games.set_headers_visible(True)
         self.treeview_games.set_show_expanders(False)
+        self.treeview_games.set_enable_search(False)
         self.treeview_games.set_has_tooltip(True)
 
         self.treeview_games.drag_source_set(
@@ -5601,7 +5602,6 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Refresh treeview
         # ------------------------------------
 
-        self.treeview_games.set_enable_search(False)
         self.treeview_games.freeze_child_notify()
 
         # ------------------------------------
@@ -5711,7 +5711,6 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.treeview_games.freeze_child_notify()
 
         # Restore options for packages treeviews
-        self.treeview_games.set_enable_search(True)
         self.treeview_games.thaw_child_notify()
 
         self.progress_statusbar.hide()
