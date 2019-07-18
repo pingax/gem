@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-06-21 20:06+0200\n"
+"PO-Revision-Date: 2019-07-18 22:11+0200\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Geany / PoHelper 1.34\n"
+"X-Generator: Geany / PoHelper 1.35\n"
 
 # File: src/window.py, line: 1064
 #, python-format
@@ -2177,8 +2177,3 @@ msgstr "_Site internet"
 # File: gem/interface.py, line: 926
 msgid "translator-credits"
 msgstr "Lubert Aurélien (PacMiam)"
-
-#
-# File: gem/gtk/windows.py, line: 2623
-#~ msgid "Cover image"
-#~ msgstr "Image de couverture"

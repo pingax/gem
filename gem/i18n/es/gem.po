@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.4\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-04-15 11:03+0200\n"
+"PO-Revision-Date: 2019-07-18 22:12+0200\n"
 "Last-Translator: José Luis LOPEZ CASTILLO <darknekros@gmail.com>\n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 2.0.6\n"
+"X-Generator: Geany / PoHelper 1.35\n"
 
 # File: gem/interface.py, line: 2123
 #, python-format
@@ -2203,8 +2203,3 @@ msgstr "_Sitio web"
 # File: gem/preferences.py, line: 280
 msgid "translator-credits"
 msgstr "José Luis LOPEZ CASTILLO aka DarkNekros"
-
-#
-# File: gem/gtk/windows.py, line: 2623
-#~ msgid "Cover image"
-#~ msgstr "Imagen de portada"
