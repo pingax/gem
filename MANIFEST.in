@@ -1,5 +1,10 @@
-recursive-include docs *.md
-recursive-include gem/i18n *.mo
-recursive-include gem/icons *.png
-recursive-include gem/config *.conf
-recursive-include gem/config template.desktop
+include gem/data/desktop/gem.svg
+include gem/data/desktop/gem.desktop
+
+include gem/data/docs/LICENSE.emulators.md
+
+recursive-include gem/data/i18n *.mo
+recursive-include gem/data/icons *.png
+recursive-include gem/data/config *.conf
+
+prune test
