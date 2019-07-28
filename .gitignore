@@ -3,3 +3,11 @@
 
 # Locale files
 *~
+
+# Build directories
+build
+dist
+GEM.egg-info
+
+# Tests directories
+.pytest_cache
