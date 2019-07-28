@@ -36,12 +36,11 @@ setup(
     license='GPLv3',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
-        'Environment :: Desktop Environment',
         'Environment :: X11 Applications :: GTK',
         'Intended Audience :: End Users/Desktop',
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Natural Language :: French',
-        'Operating System :: POSIX :: GNU/Linux',
+        'Operating System :: POSIX :: Linux',
         'Programming Language :: Python :: 3.6',
         'Topic :: Games/Entertainment',
         'Topic :: Utilities',
