@@ -58,11 +58,11 @@ def init_environment():
     """
 
     # Initialize localization
-    bindtextdomain("gem", str(get_data("i18n")))
+    bindtextdomain("gem", str(get_data("data", "i18n")))
     textdomain("gem")
 
     # Initialize metadata
-    metadata = Configuration(get_data("config", "metadata.conf"))
+    metadata = Configuration(get_data("data", "config", "metadata.conf"))
 
     # Retrieve metadata informations
     if metadata.has_section("metadata"):
@@ -115,7 +115,7 @@ def init_configuration(gem):
             gem.logger.debug("Copy default %s" % path)
 
             # Copy default configuration
-            copy(get_data("config", filename), path)
+            copy(get_data("data", "config", filename), path)
 
     # ----------------------------------------
     #   Local
@@ -191,7 +191,7 @@ def init_configuration(gem):
     if move_collection:
         gem.logger.debug("Generate consoles icons folder")
 
-        for filename in get_data("icons").glob("*.png"):
+        for filename in get_data("data", "icons").glob("*.png"):
 
             if filename.is_file():
 

@@ -51,7 +51,7 @@ from sys import exit as sys_exit
 
 class GEM(object):
 
-    Version = "1.0"
+    Version = "0.10.0"
 
     Log = "gem.log"
     Logger = "log.conf"
@@ -214,7 +214,7 @@ class GEM(object):
         logging.log_path = str(log_path)
 
         # Generate logger from log.conf
-        fileConfig(str(get_data("config", GEM.Logger)))
+        fileConfig(str(get_data("data", "config", GEM.Logger)))
 
         self.logger = logging.getLogger("gem")
 
@@ -229,7 +229,7 @@ class GEM(object):
         """
 
         try:
-            config = Configuration(get_data("config", GEM.Databases))
+            config = Configuration(get_data("data", "config", GEM.Databases))
 
             # Check GEM database file
             self.database = Database(
@@ -382,7 +382,8 @@ class GEM(object):
             # ----------------------------------------
 
             try:
-                config = Configuration(get_data("config", GEM.Databases))
+                config = Configuration(
+                    get_data("data", "config", GEM.Databases))
 
                 previous_database = Database(
                     self.get_local("save.gem.db"), config, self.logger)
@@ -1109,7 +1110,8 @@ if __name__ == "__main__":
         config_path.mkdir(mode=0o755, parents=True)
 
         for filename in (GEM.Consoles, GEM.Emulators):
-            copy(get_data("config", filename), config_path.joinpath(filename))
+            copy(get_data("data", "config", filename),
+                 config_path.joinpath(filename))
 
     gem = GEM(config_path, root.joinpath("local"), debug=True)
 

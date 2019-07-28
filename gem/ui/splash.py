@@ -16,6 +16,7 @@
 
 # GEM
 from gem.engine.api import GEM
+from gem.engine.utils import get_data
 
 from gem.ui.data import Metadata
 from gem.ui.widgets.widgets import IconsGenerator
@@ -155,7 +156,8 @@ class Splash(Gtk.Window):
                 Metadata.VERSION,
                 Metadata.CODE_NAME))
 
-        self.image_splash.set_from_icon_name(Metadata.ICON, Gtk.IconSize.DND)
+        self.image_splash.set_from_file(
+            str(get_data("data", "desktop", "gem.svg")))
         self.image_splash.set_pixel_size(256)
 
         # ------------------------------------

@@ -313,8 +313,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.set_title(self.title)
 
-        self.set_icon_name(Metadata.ICON)
-        self.set_default_icon_name(Icons.GAMING)
+        self.set_default_icon_from_file(
+            str(get_data("data", "desktop", "gem.svg")))
 
         self.set_position(Gtk.WindowPosition.CENTER)
 
@@ -3499,7 +3499,8 @@ class MainWindow(Gtk.ApplicationWindow):
             self.config = Configuration(Folders.CONFIG.joinpath("gem.conf"))
 
             # Get missing keys from config/gem.conf
-            self.config.add_missing_data(get_data("config", "gem.conf"))
+            self.config.add_missing_data(
+                get_data("data", "config", "gem.conf"))
 
         else:
             self.logger.debug("Reload configuration file")
@@ -4450,8 +4451,6 @@ class MainWindow(Gtk.ApplicationWindow):
         about.set_comments(Metadata.DESCRIPTION)
         about.set_copyright(Metadata.COPYLEFT)
         about.set_website(Metadata.WEBSITE)
-
-        about.set_logo_icon_name(Metadata.ICON)
 
         about.set_authors([
             "Lubert Aurélien (PacMiam)"
@@ -7670,7 +7669,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 try:
                     # Read default template
                     template = get_data(
-                        "config", "template.desktop").read_text()
+                        "data", "config", "template.desktop").read_text()
 
                     # Replace custom variables
                     for key, value in values.items():
