@@ -61,6 +61,7 @@ Dependencies
 
 * file
 * gtk+3
+* librsvg
 * python3 >= 3.5
 * python3-gobject
 * python3-setuptools

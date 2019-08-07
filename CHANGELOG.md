@@ -1,8 +1,15 @@
 GEM Changelog
 =============
 
-Version 0.10 - Forest Life
---------------------------
+Version 0.10.1 - Mr. Resetti
+----------------------------
+
+### Setup
+
+* Add `librsvg` system depend
+
+Version 0.10.0 - Forest Life (28 Aug, 2019)
+-------------------------------------------
 
 ### Data
 
