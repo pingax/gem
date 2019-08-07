@@ -48,7 +48,7 @@ echo "[INFO] Generate translations…"
 # Generate .po files
 xgettext \
     --package-name=gem \
-    --package-version="0.10.0" \
+    --package-version="0.10.1" \
     --copyright-holder="Kawa-Team" \
     --from-code="UTF-8" \
     --language="Python" \
