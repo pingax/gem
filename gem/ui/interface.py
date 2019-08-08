@@ -6753,13 +6753,13 @@ class MainWindow(Gtk.ApplicationWindow):
 
             if dialog.run() == Gtk.ResponseType.APPLY:
 
-                new_name = dialog.get_name()
+                new_name = dialog.get_name().strip()
 
                 # Check if game name has been changed
                 if not new_name == game.name:
-                    self.logger.info("Rename %(old)s to %(new)s" % {
+                    self.logger.info("Rename \"%(old)s\" to \"%(new)s\"" % {
                         "old": game.name,
-                        "new": dialog.get_name()
+                        "new": new_name
                     })
 
                     game.name = new_name

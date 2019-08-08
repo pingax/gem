@@ -11,6 +11,7 @@ Version 0.10.1 - Mr. Resetti
 ### Fix
 
 * Cannot retrieve resources with Python 3.7
+* Cannot validate the rename dialog entry with Return key
 
 Version 0.10.0 - Forest Life (28 Aug, 2019)
 -------------------------------------------

@@ -133,6 +133,7 @@ class RenameDialog(CommonWindow):
         self.entry_name.connect("icon-press", on_entry_clear)
 
         self.entry_name.connect("changed", self.check_name)
+        self.entry_name.connect("activate", self.validate_name)
 
     def __start_interface(self):
         """ Load data and start interface
@@ -167,3 +168,10 @@ class RenameDialog(CommonWindow):
         self.set_response_sensitive(
             Gtk.ResponseType.APPLY,
             len(self.entry_name.get_text().strip()) > 0)
+
+    def validate_name(self, *args):
+        """ Validate the new name by using the Return key
+        """
+
+        if len(self.entry_name.get_text().strip()):
+            self.emit_response(None, Gtk.ResponseType.APPLY)
