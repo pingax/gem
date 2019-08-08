@@ -36,6 +36,14 @@ Authors
 
 ### Packages
 
+### Pypi
+
+```
+# pip install Geode-GEM
+```
+
+[Informations](https://pypi.org/project/Geode-GEM)
+
 #### Frugalware
 
 Thanks to Pingax !
@@ -59,20 +67,25 @@ $ eopkg install gem
 Dependencies
 ------------
 
+### System
+
 * file
+* gobject-introspection
 * gtk+3
+* libgirepository
+* libgirepository-devel
 * librsvg
-* python3 >= 3.5
+* xdg-utils
+* gnome-icon-theme (_optional_)
+* gnome-icon-theme-symbolic (_optional_)
+* gtksourceview (_optional_)
+
+### Python
+
+* python3 >= 3.6
 * python3-gobject
 * python3-setuptools
-* xdg-utils
-
-### Optional
-
-* gnome-icon-theme
-* gnome-icon-theme-symbolic
-* gtksourceview
-* python3-xdg
+* python3-xdg (_optional_)
 
 Retrieve source code
 --------------------
