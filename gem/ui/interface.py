@@ -2568,7 +2568,7 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Treeview - Games
         # ------------------------------------
 
-        self.treeview_games.connect(
+        self.signal_view_list_select = self.treeview_games.connect(
             "cursor-changed", self.__on_selected_game)
         self.treeview_games.connect(
             "row-activated", self.__on_game_launch)
@@ -2590,7 +2590,7 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Iconview - Games
         # ------------------------------------
 
-        self.iconview_games.connect(
+        self.signal_view_grid_select = self.iconview_games.connect(
             "selection-changed", self.__on_selected_game)
         self.iconview_games.connect(
             "item-activated", self.__on_game_launch)
@@ -2672,7 +2672,10 @@ class MainWindow(Gtk.ApplicationWindow):
             # Game menu
             self.item_game_favorite: self.signal_game_favorite,
             self.item_game_finish: self.signal_game_finish,
-            self.item_game_multiplayer: self.signal_game_multiplayer
+            self.item_game_multiplayer: self.signal_game_multiplayer,
+            # Game views
+            self.treeview_games: self.signal_view_list_select,
+            self.iconview_games: self.signal_view_grid_select,
         }
 
         # Store image references with associate icons
@@ -5921,6 +5924,8 @@ class MainWindow(Gtk.ApplicationWindow):
             Object which receive signal
         """
 
+        self.__block_signals()
+
         # Current selected game
         game = self.__on_retrieve_selected_game()
 
@@ -5945,6 +5950,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Store game instance
         self.selection["game"] = game
+
+        self.__unblock_signals()
 
     def __on_selected_game_tooltip(self, treeview, x, y, keyboard, tooltip):
         """ Show game informations tooltip
