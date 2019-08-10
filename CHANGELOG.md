@@ -12,6 +12,7 @@ Version 0.10.1 - Mr. Resetti
 
 * Cannot retrieve resources with Python 3.7
 * Cannot validate the rename dialog entry with Return key
+* Click inside the empty area treeview, select the first game without showing his informations
 
 Version 0.10.0 - Forest Life (28 Aug, 2019)
 -------------------------------------------

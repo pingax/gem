@@ -7,7 +7,7 @@
 # Build directories
 build
 dist
-GEM.egg-info
+*.egg-info
 
 # Tests directories
 .pytest_cache

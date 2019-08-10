@@ -2569,9 +2569,9 @@ class MainWindow(Gtk.ApplicationWindow):
         # ------------------------------------
 
         self.treeview_games.connect(
-            "button-press-event", self.__on_selected_game)
+            "cursor-changed", self.__on_selected_game)
         self.treeview_games.connect(
-            "key-release-event", self.__on_selected_game)
+            "row-activated", self.__on_game_launch)
 
         self.treeview_games.connect(
             "button-press-event", self.__on_game_menu_show)
@@ -2591,9 +2591,9 @@ class MainWindow(Gtk.ApplicationWindow):
         # ------------------------------------
 
         self.iconview_games.connect(
-            "button-press-event", self.__on_selected_game)
+            "selection-changed", self.__on_selected_game)
         self.iconview_games.connect(
-            "key-release-event", self.__on_selected_game)
+            "item-activated", self.__on_game_launch)
 
         self.iconview_games.connect(
             "button-press-event", self.__on_game_menu_show)
@@ -5910,56 +5910,16 @@ class MainWindow(Gtk.ApplicationWindow):
                     widget.set_property(
                         "pixbuf", self.icons.get_translucent("nostarred"))
 
-    def __on_selected_game(self, treeview, event):
+    def __on_selected_game(self, widget):
         """ Select a game
 
         This function occurs when the user select a game in the games treeview
 
         Parameters
         ----------
-        treeview : Gtk.Treeview
+        widget : Gtk.Widget
             Object which receive signal
-        event : Gdk.EventButton or Gdk.EventKey
-            Event which triggered this signal
         """
-
-        # ----------------------------------------
-        #   Mouse events
-        # ----------------------------------------
-
-        run_game = False
-
-        # Set selection from cursor position
-        if event.type == Gdk.EventType.BUTTON_PRESS:
-            selection = treeview.get_path_at_pos(int(event.x), int(event.y))
-
-            if selection is not None:
-
-                if treeview == self.iconview_games:
-                    self.iconview_games.select_path(selection)
-
-                # Avoid to click on treeview header
-                elif event.window == treeview.get_bin_window():
-                    self.treeview_games.set_cursor(selection[0], None, False)
-
-            # Remove view selections
-            else:
-                self.iconview_games.unselect_all()
-                self.treeview_games.get_selection().unselect_all()
-
-        # Mouse - Double click with left mouse button
-        if event.type == Gdk.EventType._2BUTTON_PRESS and event.button == 1:
-
-            if treeview == self.iconview_games:
-                run_game = True
-
-            # Avoid to click on treeview header
-            elif event.window == treeview.get_bin_window():
-                run_game = True
-
-        # ----------------------------------------
-        #   Game selected
-        # ----------------------------------------
 
         # Current selected game
         game = self.__on_retrieve_selected_game()
@@ -5977,7 +5937,7 @@ class MainWindow(Gtk.ApplicationWindow):
         # A new game has been selected
         elif not self.selection["game"] == game:
             # Synchronize selection between both games views
-            self.__on_synchronize_game_selection(treeview, game)
+            self.__on_synchronize_game_selection(widget, game)
 
             # Update game informations and widgets
             self.sensitive_interface()
@@ -5985,10 +5945,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Store game instance
         self.selection["game"] = game
-
-        # The user has do a specific action to launch current game
-        if run_game:
-            self.__on_game_launch()
 
     def __on_selected_game_tooltip(self, treeview, x, y, keyboard, tooltip):
         """ Show game informations tooltip
