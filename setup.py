@@ -18,8 +18,8 @@ setup(
     url='https://gem.tuxfamily.org',
     project_urls={
         'Archives': 'https://download.tuxfamily.org/gem/releases',
-        'Source': 'https://framagit.org/PacMiam/gem',
-        'Tracker': 'https://framagit.org/PacMiam/gem/issues',
+        'Source': 'https://framagit.org/geode/gem',
+        'Tracker': 'https://framagit.org/geode/gem/issues',
     },
     packages=find_packages(exclude=['tools', 'test']),
     include_package_data=True,
