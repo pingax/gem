@@ -51,7 +51,7 @@ from sys import exit as sys_exit
 
 class GEM(object):
 
-    Version = "0.10.1"
+    Version = "0.10.2"
 
     Log = "gem.log"
     Logger = "log.conf"

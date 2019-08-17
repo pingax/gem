@@ -16,7 +16,9 @@
 #  MA 02110-1301, USA.
 # ------------------------------------------------------------------------------
 
-translation=(fr es)
+TRANSLATIONS=(fr es)
+
+LOCALE_PATH="gem/data/i18n"
 
 # ------------------------------------------------------------------------------
 #   Check default files
@@ -25,17 +27,19 @@ translation=(fr es)
 echo "[INFO] Check translations…"
 
 # Create .pot files
-for lang in "${translation[@]}" ; do
-    if [ ! -d "gem/i18n/$lang" ] ; then
-        mkdir -p "gem/i18n/$lang"
+for LANG in "${TRANSLATIONS[@]}" ; do
+    LANG_PATH="${LOCALE_PATH}/${LANG}"
+
+    if [ ! -d "${LANG_PATH}" ] ; then
+        mkdir -p "${LANG_PATH}"
     fi
 
-    if [ ! -f "gem/i18n/$lang/gem.po" ] ; then
-        echo "[INFO] Generate translation for ${lang}"
+    if [ ! -f "${LANG_PATH}/gem.po" ] ; then
+        echo "[INFO] Generate translation for ${LANG}"
 
         msginit \
-            --input="gem/i18n/gem.pot" \
-            --output="gem/i18n/$lang/gem.po"
+            --input="${LOCALE_PATH}/gem.pot" \
+            --output="${LANG_PATH}/gem.po"
     fi
 done
 
@@ -48,7 +52,7 @@ echo "[INFO] Generate translations…"
 # Generate .po files
 xgettext \
     --package-name=gem \
-    --package-version="0.10.1" \
+    --package-version="0.10.2" \
     --copyright-holder="Kawa-Team" \
     --from-code="UTF-8" \
     --language="Python" \
@@ -71,23 +75,24 @@ xgettext \
 
 echo "[INFO] Update translations…"
 
-for lang in "${translation[@]}" ; do
-    echo "[INFO] Merge translation for ${lang}"
+for LANG in "${TRANSLATIONS[@]}" ; do
+    echo "[INFO] Merge translation for ${LANG}"
+    LANG_PATH="${LOCALE_PATH}/${LANG}"
 
     msgmerge \
         --verbose \
         --update \
         --sort-output \
-        gem/i18n/$lang/gem.po \
-        gem/i18n/gem.pot
+        "${LANG_PATH}/gem.po" \
+        "${LOCALE_PATH}/gem.pot"
 
-    if [ ! -d gem/i18n/$lang/LC_MESSAGES ] ; then
-        mkdir -p gem/i18n/$lang/LC_MESSAGES
+    if [ ! -d "${LANG_PATH}/LC_MESSAGES" ] ; then
+        mkdir -p "${LANG_PATH}/LC_MESSAGES"
     fi
 
-    echo "[INFO] Update translation for ${lang}"
+    echo "[INFO] Update translation for ${LANG}"
 
     msgfmt \
-        gem/i18n/$lang/gem.po \
-        --output=gem/i18n/$lang/LC_MESSAGES/gem.mo
+        "${LANG_PATH}/gem.po" \
+        --output="${LANG_PATH}/LC_MESSAGES/gem.mo"
 done
