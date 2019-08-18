@@ -18,7 +18,7 @@
 
 TRANSLATIONS=(fr es)
 
-LOCALE_PATH="gem/data/i18n"
+LOCALE_PATH="geode_gem/data/i18n"
 
 # ------------------------------------------------------------------------------
 #   Check default files
@@ -51,7 +51,7 @@ echo "[INFO] Generate translations…"
 
 # Generate .po files
 xgettext \
-    --package-name=gem \
+    --package-name="Geode-GEM" \
     --package-version="0.10.2" \
     --copyright-holder="Kawa-Team" \
     --from-code="UTF-8" \
@@ -61,13 +61,13 @@ xgettext \
     --omit-header \
     --sort-output \
     --strict \
-    --output=gem/i18n/gem.pot \
-    gem/*.py \
-    gem/engine/*.py \
-    gem/ui/*.py \
-    gem/ui/dialog/*.py \
-    gem/ui/preferences/*.py \
-    gem/ui/widgets/*.py
+    --output="${LOCALE_PATH}/gem.pot" \
+    geode_gem/*.py \
+    geode_gem/engine/*.py \
+    geode_gem/ui/*.py \
+    geode_gem/ui/dialog/*.py \
+    geode_gem/ui/preferences/*.py \
+    geode_gem/ui/widgets/*.py
 
 # ------------------------------------------------------------------------------
 #   Update files

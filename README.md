@@ -104,14 +104,14 @@ Running GEM
 Go to the GEM source code root folder and launch the following command:
 
 ```
-$ python3 -m gem
+$ python3 -m geode_gem
 ```
 
 It's possible to set the configuration folders with --cache, --config and
 --local arguments:
 
 ```
-$ python3 -m gem --cache ~/.cache --config ~/.config --local ~/.local/share
+$ python3 -m geode_gem --cache ~/.cache --config ~/.config --local ~/.local/share
 ```
 
 Installation
