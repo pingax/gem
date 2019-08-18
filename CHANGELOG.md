@@ -1,6 +1,13 @@
 GEM Changelog
 =============
 
+Version 0.10.2 - Tom Nook
+-------------------------
+
+### Fix
+
+* Change library directory name to `geode-gem` to avoid conflicts with `gem` package
+
 Version 0.10.1 - Mr. Resetti (14 Aug, 2019)
 -------------------------------------------
 
