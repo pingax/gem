@@ -5932,8 +5932,7 @@ class MainWindow(Gtk.ApplicationWindow):
         # No game has been choosen (when the user click in the empty view area)
         if game is None:
             # Unselect both games views
-            self.treeview_games.get_selection().unselect_all()
-            self.iconview_games.unselect_all()
+            self.unselect_all()
 
             # Reset sidebar widgets and menus entries
             self.sensitive_interface()
@@ -6125,13 +6124,11 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # List view
         elif self.button_toolbar_list.get_active():
-            selection = self.treeview_games.get_selection()
+            model, treeiter = self.get_selected_treeiter_from_container(
+                self.treeview_games)
 
-            if selection is not None:
-                model, treeiter = selection.get_selected()
-
-                if treeiter is not None:
-                    return model.get_value(treeiter, Columns.List.OBJECT)
+            if treeiter is not None:
+                return model.get_value(treeiter, Columns.List.OBJECT)
 
         return None
 
@@ -6175,7 +6172,9 @@ class MainWindow(Gtk.ApplicationWindow):
                         path, None, True, 0.5, 0.5)
 
                 else:
-                    self.treeview_games.get_selection().unselect_all()
+                    selection = self.treeview_games.get_selection()
+                    if selection is not None:
+                        selection.unselect_all()
 
     def __on_reload_games(self, *args):
         """ Reload games list from selected console
@@ -6377,14 +6376,17 @@ class MainWindow(Gtk.ApplicationWindow):
             name = self.selection["game"].name
 
         if name is not None:
-            model, treeiter = \
-                self.treeview_games.get_selection().get_selected()
+            model, treeiter = self.get_selected_treeiter_from_container(
+                self.treeview_games)
 
             if treeiter is not None:
                 treeview_name = model.get_value(treeiter, Columns.List.NAME)
 
                 if not treeview_name == name:
-                    self.treeview_games.get_selection().unselect_iter(treeiter)
+                    selection = self.treeview_games.get_selection()
+                    if selection is not None:
+                        selection.unselect_iter(treeiter)
+
                     self.selection["game"] = None
 
                     self.sensitive_interface()
@@ -6393,6 +6395,47 @@ class MainWindow(Gtk.ApplicationWindow):
                     return False
 
         return True
+
+    def unselect_all(self):
+        """ Unselect selections from both games views
+        """
+
+        self.iconview_games.unselect_all()
+
+        selection = self.treeview_games.get_selection()
+        if selection is not None:
+            selection.unselect_all()
+
+    def get_selected_treeiter_from_container(self, widget):
+        """ Retrieve treeiter from container widget
+
+        Parameters
+        ----------
+        widget : Gtk.Container
+            Container widget
+
+        Returns
+        -------
+        Gtk.TreeStore, Gtk.TreeIter
+            Selected treeiter
+        """
+
+        model, treeiter = None, None
+
+        if widget == self.treeview_games:
+            selection = widget.get_selection()
+
+            if selection is not None:
+                model, treeiter = selection.get_selected()
+
+        elif widget == self.iconview_games:
+            model = widget.get_model()
+            items = widget.get_selected_items()
+
+            if len(items):
+                treeiter = model.get_iter(items[0])
+
+        return model, treeiter
 
     def __on_game_launch_button_update(self, status):
         """ Update game launch button
@@ -6656,9 +6699,6 @@ class MainWindow(Gtk.ApplicationWindow):
                     if "mednafen" in str(game.emulator.binary):
                         self.item_game_mednafen.set_sensitive(True)
                         self.item_menubar_mednafen.set_sensitive(True)
-
-            # Avoid to launch the game again when use Enter in game terminate
-            # self.treeview_games.get_selection().unselect_all()
 
         # ----------------------------------------
         #   Manage thread
@@ -6950,8 +6990,7 @@ class MainWindow(Gtk.ApplicationWindow):
                         del self.game_path[identifier]
 
                     # Remove view selections
-                    self.iconview_games.unselect_all()
-                    self.treeview_games.get_selection().unselect_all()
+                    self.unselect_all()
 
                     self.sensitive_interface()
 
@@ -7596,7 +7635,8 @@ class MainWindow(Gtk.ApplicationWindow):
         from his favorite applications launcher
         """
 
-        model, treeiter = self.treeview_games.get_selection().get_selected()
+        model, treeiter = self.get_selected_treeiter_from_container(
+            self.treeview_games)
 
         game = self.__on_retrieve_selected_game()
         console = self.__on_retrieve_selected_console()
@@ -7717,16 +7757,8 @@ class MainWindow(Gtk.ApplicationWindow):
         # Gdk.EventKey - Keyboard
         elif event.type == Gdk.EventType.KEY_RELEASE:
             if event.keyval == Gdk.KEY_Menu:
-
-                if widget == self.treeview_games:
-                    model, treeiter = widget.get_selection().get_selected()
-
-                elif widget == self.iconview_games:
-                    model = widget.get_model()
-                    items = widget.get_selected_items()
-
-                    if len(items) >= 1:
-                        treeiter = model.get_iter(items[0])
+                model, treeiter = self.get_selected_treeiter_from_container(
+                    widget)
 
                 if treeiter is not None:
                     self.menu_game.popup_at_pointer(event)
