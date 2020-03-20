@@ -8311,7 +8311,7 @@ class MainWindow(Gtk.ApplicationWindow):
             text = _("1 game has been added")
 
         elif validate_index > 1:
-            text = _("%d games has been added") % validate_index
+            text = _("%d games have been added") % validate_index
 
         self.set_message(_("Games installation"),
                          text,
