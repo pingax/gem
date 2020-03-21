@@ -307,6 +307,7 @@ class Game(object):
         for key in self.attributes.keys():
             setattr(game, key, getattr(self, key, None))
 
+        game.id = generate_identifier(filename)
         game.name = filename.stem
 
         return game
