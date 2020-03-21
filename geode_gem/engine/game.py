@@ -67,7 +67,23 @@ class Game(object):
             API instance
         filename : pathlib.Path
             Game file path
+
+        Raises
+        ------
+        ValueError
+            When the specified filename is empty or null
+        FileNotFoundError
+            When the specified filename not exists on filesystem
         """
+
+        if not filename:
+            raise ValueError(f"Cannot use an empty value as filename")
+
+        if isinstance(filename, str):
+            filename = Path(filename).expanduser()
+
+        if not filename.exists():
+            raise FileNotFoundError(f"Cannot found '{filename}' in filesytem")
 
         # ----------------------------------------
         #   Variables
