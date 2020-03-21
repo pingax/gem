@@ -73,7 +73,7 @@ def init_environment():
     if metadata.has_section("icons"):
         for key, value in metadata.items("icons"):
             setattr(Icons, key.upper(), value)
-            setattr(Icons.Symbolic, key.upper(), "%s-symbolic" % value)
+            setattr(Icons.Symbolic, key.upper(), f"{value}-symbolic")
 
     if metadata.has_section("icon-sizes"):
         for key, value in metadata.items("icon-sizes"):
@@ -112,7 +112,7 @@ def init_configuration(gem):
         path = Folders.CONFIG.joinpath(filename)
 
         if not path.exists():
-            gem.logger.debug("Copy default %s" % path)
+            gem.logger.debug(f"Copy default {path}")
 
             # Copy default configuration
             copy(get_data("data", "config", filename), path)
@@ -125,13 +125,13 @@ def init_configuration(gem):
         path = Folders.LOCAL.joinpath(folder)
 
         if not path.exists():
-            gem.logger.debug("Generate %s folder" % path)
+            gem.logger.debug(f"Generate {path} folder")
 
             try:
                 path.mkdir(mode=0o755, parents=True)
 
             except FileExistsError:
-                gem.logger.error("Path %s already exists" % str(path))
+                gem.logger.error(f"Path {path} already exists")
 
     # ----------------------------------------
     #   Cache
@@ -141,16 +141,16 @@ def init_configuration(gem):
         sizes = getattr(Icons.Size, name.upper(), list())
 
         for size in sizes:
-            path = Folders.CACHE.joinpath(name, "%sx%s" % (size, size))
+            path = Folders.CACHE.joinpath(name, f"{size}x{size}")
 
             if not path.exists():
-                gem.logger.debug("Generate %s" % path)
+                gem.logger.debug(f"Generate {path}")
 
                 try:
                     path.mkdir(mode=0o755, parents=True)
 
                 except FileExistsError:
-                    gem.logger.error("Path %s already exists" % str(path))
+                    gem.logger.error(f"Path {path} already exists")
 
     # ----------------------------------------
     #   Icons
@@ -160,13 +160,13 @@ def init_configuration(gem):
 
     # Create icons storage folder
     if not icons_path.exists():
-        gem.logger.debug("Generate %s" % icons_path)
+        gem.logger.debug(f"Generate {icons_path}")
 
         try:
             icons_path.mkdir(mode=0o755, parents=True)
 
         except FileExistsError:
-            gem.logger.error("Path %s already exists" % str(icons_path))
+            gem.logger.error(f"Path {icons_path} already exists")
 
         finally:
             move_collection = True
@@ -202,7 +202,7 @@ def init_configuration(gem):
                     new_path = icons_path.joinpath(filename.name)
 
                     if not new_path.exists():
-                        gem.logger.debug("Copy %s" % str(new_path))
+                        gem.logger.debug(f"Copy {new_path}")
 
                         copy(filename, new_path)
 
@@ -298,7 +298,7 @@ def main():
                 # Initialize main configuration files
                 init_configuration(gem)
 
-                getLogger("gem").info("Start GEM with PID %s" % gem.pid)
+                getLogger("gem").info(f"Start GEM with PID {gem.pid}")
 
                 # Start splash
                 from geode_gem.ui.splash import Splash
@@ -329,7 +329,7 @@ def main():
                 dialog.set_markup(
                     _("An instance already exists"))
                 dialog.format_secondary_text(
-                    _("GEM is already running with PID %d") % gem.pid)
+                    _(f"GEM is already running with PID {gem.pid}"))
 
                 dialog.add_button(_("Close"), Gtk.ResponseType.CLOSE)
 
@@ -340,7 +340,7 @@ def main():
                 getLogger("gem").critical("Cannot start dialog instance")
 
             finally:
-                sys_exit("GEM is already running with PID %d" % gem.pid)
+                sys_exit(f"GEM is already running with PID {gem.pid}")
 
     except ImportError:
         getLogger("gem").exception("An error occur durint modules importation")
