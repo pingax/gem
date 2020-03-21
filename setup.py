@@ -28,6 +28,12 @@ setup(
         'PyGobject ~= 3.32',
         'pyxdg ~= 0.26',
     ],
+    extras_require={
+        'dev': [
+            'pytest',
+            'flake8',
+        ],
+    },
     entry_points={
         'console_scripts': [
             'gem-ui = geode_gem.__main__:main',
