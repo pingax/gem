@@ -11,3 +11,7 @@ dist
 
 # Tests directories
 .pytest_cache
+
+# Misc files
+.coverage
+.project
