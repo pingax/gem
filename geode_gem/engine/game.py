@@ -29,9 +29,6 @@ from geode_gem.engine.emulator import Emulator
 # Regex
 from re import compile as re_compile
 
-# System
-from shlex import split as shlex_split
-
 
 # ------------------------------------------------------------------------------
 #   Class
@@ -225,52 +222,6 @@ class Game(object):
                     elif key_type is str and len(value) > 0:
                         setattr(self, key, value)
 
-    def __get_content(self, pattern):
-        """ Get content list for a specific game
-
-        Parameters
-        ----------
-        pattern : str
-            Game content path
-
-        Returns
-        -------
-        list
-            return a list
-        """
-
-        files = list()
-
-        path = getattr(self.emulator, pattern, None)
-
-        if path is not None:
-            pattern = str(path)
-
-            if "<rom_path>" in pattern:
-                pattern = pattern.replace("<rom_path>", str(self.path.parent))
-
-            if "<lname>" in pattern:
-                pattern = pattern.replace("<lname>", self.path.stem.lower())
-
-            elif "<name>" in pattern:
-                pattern = pattern.replace("<name>", self.path.stem)
-
-            if "<key>" in pattern and len(self.key) > 0:
-                pattern = pattern.replace("<key>", self.key)
-
-            path = Path(pattern).expanduser().resolve()
-
-            # Check if parent path exists and is a directory
-            if path.parent.exists() and path.parent.is_dir():
-
-                for filename in path.parent.glob(path.name):
-
-                    # Only retrieve files which exists and are not directories
-                    if filename.exists() and filename.is_file():
-                        files.append(filename)
-
-        return files
-
     def __str__(self):
         """ Return a formatted string when using print function
         """
@@ -368,24 +319,16 @@ class Game(object):
     @property
     def screenshots(self):
         """ Get screenshots list
-
-        See Also
-        --------
-        gem.engine.game.Game.__get_content()
         """
 
-        return self.__get_content("screenshots")
+        return self.emulator.get_screenshots(self)
 
     @property
     def savestates(self):
         """ Get savestates list
-
-        See Also
-        --------
-        gem.engine.game.Game.__get_content()
         """
 
-        return self.__get_content("savestates")
+        return self.emulator.get_savestates(self)
 
     def command(self, fullscreen=False):
         """ Generate a launch command
@@ -402,65 +345,7 @@ class Game(object):
         """
 
         if self.emulator is not None:
-
-            # Check emulator binary
-            if not self.emulator.exists:
-                raise OSError(2, "Cannot found emulator binary",
-                              str(self.emulator.binary))
-
-            # ----------------------------------------
-            #   Retrieve default parameters
-            # ----------------------------------------
-
-            arguments = shlex_split(str(self.emulator.binary))
-
-            # Retrieve fullscreen mode
-            if fullscreen and self.emulator.fullscreen is not None:
-                arguments.append(f" {self.emulator.fullscreen}")
-            elif not fullscreen and self.emulator.windowed is not None:
-                arguments.append(f" {self.emulator.windowed}")
-
-            # Retrieve default or specific arguments
-            if len(self.default) > 0:
-                arguments.append(f" {self.default}")
-            elif len(self.emulator.default) > 0:
-                arguments.append(f" {self.emulator.default}")
-
-            # ----------------------------------------
-            #   Replace pattern substitutes
-            # ----------------------------------------
-
-            command = ' '.join(arguments).strip()
-
-            need_gamefile = True
-
-            keys = {
-                "conf_path": self.emulator.configuration,
-                "rom_name": self.path.stem,
-                "rom_file": self.path,
-                "rom_path": self.path.parent,
-                "key": self.key
-            }
-
-            for key, value in keys.items():
-                substring = f"<{key}>"
-
-                if value is not None and substring in command:
-                    command = command.replace(substring, str(value))
-
-                    if key in ("rom_path", "rom_name", "rom_file"):
-                        need_gamefile = False
-
-            # ----------------------------------------
-            #   Generate subprocess compatible command
-            # ----------------------------------------
-
-            arguments = shlex_split(command)
-
-            if need_gamefile:
-                arguments.append(str(self.path))
-
-            return arguments
+            return self.emulator.get_command_line(self, fullscreen=fullscreen)
 
         return None
 

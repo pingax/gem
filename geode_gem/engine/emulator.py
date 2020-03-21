@@ -21,6 +21,9 @@ from pathlib import Path
 from geode_gem.engine.utils import get_binary_path
 from geode_gem.engine.utils import generate_identifier
 
+# System
+from shlex import split as shlex_split
+
 
 # ------------------------------------------------------------------------------
 #   Class
@@ -79,6 +82,51 @@ class Emulator(object):
 
         setattr(self, "id", generate_identifier(self.name))
 
+    def __get_content(self, attribute, game):
+        """ Get content list for a specific game
+
+        Parameters
+        ----------
+        attribute : pathlib.Path
+            Emulator path attribute
+        game : gem.engine.game.Game
+            Game object
+
+        Returns
+        -------
+        list
+            return a files list
+        """
+
+        pattern = str(attribute)
+
+        if "<rom_path>" in pattern:
+            pattern = pattern.replace("<rom_path>", str(game.path.parent))
+
+        if "<lname>" in pattern:
+            pattern = pattern.replace("<lname>", game.path.stem.lower())
+
+        elif "<name>" in pattern:
+            pattern = pattern.replace("<name>", game.path.stem)
+
+        if "<key>" in pattern and len(game.key) > 0:
+            pattern = pattern.replace("<key>", game.key)
+
+        files = list()
+
+        path = Path(pattern).expanduser().resolve()
+
+        # Check if parent path exists and is a directory
+        if path.parent.exists() and path.parent.is_dir():
+
+            for filename in path.parent.glob(path.name):
+
+                # Only retrieve files which exists and are not directories
+                if filename.exists() and filename.is_file():
+                    files.append(filename)
+
+        return files
+
     def as_dict(self):
         """ Return object as dictionary structure
 
@@ -113,3 +161,117 @@ class Emulator(object):
             return True
 
         return False
+
+    def get_screenshots(self, game):
+        """ Get screenshots list
+
+        Parameters
+        ----------
+        game : gem.engine.game.Game
+            Game object
+
+        Returns
+        -------
+        list
+            Files list
+
+        See Also
+        --------
+        gem.engine.emulator.Emulator.__get_content()
+        """
+
+        return self.__get_content(self.screenshots, game)
+
+    def get_savestates(self, game):
+        """ Get savestates list
+
+        Parameters
+        ----------
+        game : gem.engine.game.Game
+            Game object
+
+        Returns
+        -------
+        list
+            Files list
+
+        See Also
+        --------
+        gem.engine.emulator.Emulator.__get_content()
+        """
+
+        return self.__get_content(self.savestates, game)
+
+    def get_command_line(self, game, fullscreen=False):
+        """ Generate a launch command
+
+        Parameters
+        ----------
+        fullscreen : bool, optional
+            Use fullscreen parameters (Default: False)
+
+        Returns
+        -------
+        list or None
+            Command launcher parameters list, None otherwise
+        """
+
+        # Check emulator binary
+        if not self.exists:
+            raise FileNotFoundError(
+                f"Cannot found emulator binary '{self.binary}'")
+
+        # ----------------------------------------
+        #   Retrieve default parameters
+        # ----------------------------------------
+
+        arguments = shlex_split(str(self.binary))
+
+        # Retrieve fullscreen mode
+        if fullscreen and self.fullscreen is not None:
+            arguments.append(f" {self.fullscreen}")
+
+        elif not fullscreen and self.windowed is not None:
+            arguments.append(f" {self.windowed}")
+
+        # Retrieve default or specific arguments
+        if game.default:
+            arguments.append(f" {game.default}")
+
+        elif self.default:
+            arguments.append(f" {self.default}")
+
+        # ----------------------------------------
+        #   Replace pattern substitutes
+        # ----------------------------------------
+
+        command = ' '.join(arguments).strip()
+
+        need_gamefile = True
+
+        keys = {
+            "conf_path": self.configuration,
+            "rom_name": game.path.stem,
+            "rom_file": game.path,
+            "rom_path": game.path.parent,
+            "key": game.key
+        }
+
+        for key, value in keys.items():
+            substring = f"<{key}>"
+
+            if value is not None and substring in command:
+                command = command.replace(substring, str(value))
+
+                if key in ("rom_path", "rom_name", "rom_file"):
+                    need_gamefile = False
+
+        # ----------------------------------------
+        #   Generate subprocess compatible command
+        # ----------------------------------------
+
+        arguments = shlex_split(command)
+        if need_gamefile:
+            arguments.append(str(game.path))
+
+        return arguments
