@@ -15,19 +15,14 @@
 # ------------------------------------------------------------------------------
 
 # Datetime
-from datetime import date
-from datetime import datetime
-from datetime import timedelta
+from datetime import date, datetime, timedelta
 
 # Filesystem
 from os.path import getctime
-
 from pathlib import Path
 
 # GEM
-from geode_gem.engine.utils import parse_timedelta
-from geode_gem.engine.utils import generate_identifier
-
+from geode_gem.engine.utils import parse_timedelta, generate_identifier
 from geode_gem.engine.emulator import Emulator
 
 # Regex
@@ -264,7 +259,7 @@ class Game(object):
         """ Return a formatted string when using print function
         """
 
-        return "[%s] %s" % (self.id, self.__path)
+        return f"[{self.id}] {self.__path}"
 
     def as_dict(self):
         """ Return object as dictionary structure
@@ -404,15 +399,15 @@ class Game(object):
 
             # Retrieve fullscreen mode
             if fullscreen and self.emulator.fullscreen is not None:
-                arguments.append(" %s" % str(self.emulator.fullscreen))
+                arguments.append(f" {self.emulator.fullscreen}")
             elif not fullscreen and self.emulator.windowed is not None:
-                arguments.append(" %s" % str(self.emulator.windowed))
+                arguments.append(f" {self.emulator.windowed}")
 
             # Retrieve default or specific arguments
             if len(self.default) > 0:
-                arguments.append(" %s" % str(self.default))
+                arguments.append(f" {self.default}")
             elif len(self.emulator.default) > 0:
-                arguments.append(" %s" % str(self.emulator.default))
+                arguments.append(f" {self.emulator.default}")
 
             # ----------------------------------------
             #   Replace pattern substitutes
@@ -431,7 +426,7 @@ class Game(object):
             }
 
             for key, value in keys.items():
-                substring = "<%s>" % key
+                substring = f"<{key}>"
 
                 if value is not None and substring in command:
                     command = command.replace(substring, str(value))
