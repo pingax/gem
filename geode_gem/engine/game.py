@@ -15,14 +15,15 @@
 # ------------------------------------------------------------------------------
 
 # Datetime
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 
 # Filesystem
-from os.path import getctime
 from pathlib import Path
 
 # GEM
-from geode_gem.engine.utils import parse_timedelta, generate_identifier
+from geode_gem.engine.utils import (get_creation_datetime,
+                                    generate_identifier,
+                                    parse_timedelta)
 from geode_gem.engine.emulator import Emulator
 
 # Regex
@@ -129,8 +130,7 @@ class Game(object):
 
         setattr(self, "name", self.__path.stem)
 
-        setattr(self, "installed",
-                datetime.fromtimestamp(getctime(self.__path)).date())
+        setattr(self, "installed", get_creation_datetime(self.__path).date())
 
         self.environment.clear()
         if self.__parent is not None:
@@ -468,5 +468,4 @@ class Game(object):
         """ Reload installation date from game file
         """
 
-        setattr(self, "installed",
-                datetime.fromtimestamp(getctime(self.__path)).date())
+        setattr(self, "installed", get_creation_datetime(self.__path).date())
