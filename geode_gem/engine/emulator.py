@@ -41,20 +41,9 @@ class Emulator(object):
         "screenshots": Path
     }
 
-    def __init__(self, parent, **kwargs):
+    def __init__(self, **kwargs):
         """ Constructor
-
-        Parameters
-        ----------
-        parent : gem.engine.api.GEM
-            API instance
         """
-
-        # ----------------------------------------
-        #   Variables
-        # ----------------------------------------
-
-        self.__parent = parent
 
         # ----------------------------------------
         #   Initialization

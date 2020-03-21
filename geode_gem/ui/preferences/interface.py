@@ -2149,7 +2149,7 @@ class PreferencesWindow(CommonWindow):
                                 self.emulators["objects"][identifier]
 
                 elif widget == self.button_emulators_add:
-                    element = Emulator(self.api, **data)
+                    element = Emulator(**data)
 
                 storage["objects"][element.id] = element
 

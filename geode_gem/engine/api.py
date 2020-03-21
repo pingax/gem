@@ -727,7 +727,7 @@ class GEM(object):
             if value is not None:
                 data[option] = value
 
-        emulator = Emulator(self, **data)
+        emulator = Emulator(**data)
 
         self.__data["emulators"][emulator.id] = emulator
 
