@@ -15,9 +15,10 @@
 # ------------------------------------------------------------------------------
 
 # Datetime
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 # Filesystem
+from os.path import getctime
 from pathlib import Path
 from shutil import copy2
 
@@ -253,3 +254,31 @@ def copy(src, dst, follow_symlinks=True):
             dst = str(dst)
 
     copy2(src, dst, follow_symlinks=follow_symlinks)
+
+
+def get_creation_datetime(path):
+    """ Retrieve the creation date from a specific filename
+
+    Parameters
+    ----------
+    path : pathlib.Path or str
+        Path to retrieve creation datetime
+
+    Returns
+    -------
+    datetime.datetime
+        Creation datetime object
+
+    Examples
+    --------
+    >>> get_creation_datetime("~/.bashrc")
+    datetime.datetime(2019, 9, 22, 14, 1, 37, 56527)
+    """
+
+    if isinstance(path, str):
+        path = Path(path).expanduser()
+
+    if not path.exists():
+        return None
+
+    return datetime.fromtimestamp(getctime(path))

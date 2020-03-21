@@ -15,7 +15,7 @@
 # ------------------------------------------------------------------------------
 
 # Datetime
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 # Filesystem
 from pathlib import Path
@@ -25,6 +25,7 @@ from geode_gem.engine.utils import (copy,
                                     generate_extension,
                                     generate_identifier,
                                     get_binary_path,
+                                    get_creation_datetime,
                                     get_data,
                                     parse_timedelta)
 
@@ -87,6 +88,17 @@ class GeodeGEMUtilsTC(unittest.TestCase):
         self.assertGreater(len(get_binary_path("python3")), 0)
 
         self.assertEqual(len(get_binary_path("were-binary_of_doom")), 0)
+
+    def test_get_creation_datetime(self):
+        """ Check geode_gem.engine.utils.get_creation_datetime method
+        """
+
+        creation_date = get_creation_datetime(
+            get_data("test", "test_engine_utils.py"))
+        self.assertIs(type(creation_date), datetime)
+
+        creation_date = get_creation_datetime("not_exists.file")
+        self.assertIsNone(creation_date)
 
     def test_generate_extension(self):
         """ Check geode_gem.engine.utils.generate_extension method
