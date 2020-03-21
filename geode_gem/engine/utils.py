@@ -19,7 +19,6 @@ from datetime import timedelta
 
 # Filesystem
 from pathlib import Path
-
 from shutil import copy2
 
 # Regex
@@ -27,7 +26,6 @@ from re import sub
 
 # System
 from os import environ
-
 from sys import version_info
 
 
@@ -90,7 +88,7 @@ def parse_timedelta(delta):
 
     Parameters
     ----------
-    delta : datetime.deltatime
+    delta : datetime.timedelta
         Deltatime to parse
 
     Returns
@@ -156,12 +154,12 @@ def get_binary_path(binary):
     return available
 
 
-def generate_identifier(name):
-    """ Generate an identifier from a name string
+def generate_identifier(path):
+    """ Generate an identifier from a path
 
     Parameters
     ----------
-    name : pathlib.Path or str
+    path : pathlib.Path or str
         Path to parse into indentifier
 
     Returns
@@ -177,19 +175,23 @@ def generate_identifier(name):
 
     inode = int()
 
-    if isinstance(name, Path):
+    if isinstance(path, str):
+        path = Path(path).expanduser()
+
+    if path.exists():
         # Retrieve file inode number
-        inode = name.stat().st_ino
-        # Retrieve file basename
-        name = name.name
+        inode = path.stat().st_ino
+
+    # Retrieve file basename
+    path = path.name
 
     # Retrieve only alphanumeric element from filename
-    name = sub(r"[^\w\d]+", ' ', name.lower())
+    name = sub(r"[^\w\d]+", ' ', path.lower())
     # Remove useless spaces and replace the others with a dash
     name = sub(r"[\s|_]+", '-', name.strip())
 
     if inode > 0:
-        name = "%s-%d" % (name, inode)
+        name = f"{name}-{inode}"
 
     return name
 
@@ -219,7 +221,7 @@ def generate_extension(extension):
 
     for character in extension:
         if not character == '.':
-            pattern += "[%s%s]" % (character.lower(), character.upper())
+            pattern += f"[{character.lower()}{character.upper()}]"
 
         else:
             pattern += '.'
