@@ -15,15 +15,11 @@
 # ------------------------------------------------------------------------------
 
 # Filesystem
-from os import R_OK
-from os import access
-
+from os import access, R_OK
 from pathlib import Path
 
 # GEM
-from geode_gem.engine.utils import generate_extension
-from geode_gem.engine.utils import generate_identifier
-
+from geode_gem.engine.utils import generate_extension, generate_identifier
 from geode_gem.engine.game import Game
 from geode_gem.engine.emulator import Emulator
 
@@ -159,19 +155,22 @@ class Console(object):
         if self.path is not None:
 
             if not self.path.exists():
-                raise OSError(2, "Directory not found", str(self.path))
+                raise FileNotFoundError(
+                    f"Cannot found '{self.path}' in filesystem")
 
             elif not self.path.is_dir():
-                raise OSError(20, "Not a directory", str(self.path))
+                raise NotADirectoryError(
+                    f"'{self.path} is not a directory")
 
             elif not access(self.path, R_OK):
-                raise OSError(1, "Operation not permitted", str(self.path))
+                raise PermissionError(
+                    f"Read permission not available for '{self.path}'")
 
             # Rest games list
             self.__games.clear()
 
             for extension in self.extensions:
-                pattern = "*.%s" % generate_extension(extension)
+                pattern = f"*.{generate_extension(extension)}"
 
                 if self.recursive:
                     files = self.path.rglob(pattern)
