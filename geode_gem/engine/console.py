@@ -230,8 +230,11 @@ class Console(object):
             Game instance
         """
 
-        if game in self.__games:
-            self.__games.remove(game)
+        if game not in self.__games:
+            raise KeyError(
+                f"Cannot remove game '{game.name}' from '{self.id}' console")
+
+        self.__games.remove(game)
 
     def get_games(self):
         """ Retrieve games list
