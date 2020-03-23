@@ -91,8 +91,9 @@ class Console(object):
             setattr(self, key, value)
 
             if key_type is Path and type(value) is str:
-                value = value.replace("<local>",
-                                      str(self.__parent.get_local()))
+                if "<local>" in value and hasattr(self.__parent, "get_local"):
+                    value = value.replace(
+                        "<local>", str(self.__parent.get_local()))
 
                 path = Path(value).expanduser()
                 if len(value) == 0:
