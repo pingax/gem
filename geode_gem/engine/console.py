@@ -230,6 +230,10 @@ class Console(object):
             Game instance
         """
 
+        if not isinstance(game, Game):
+            raise TypeError(f"Cannot use specified game parameter, must be a "
+                            f"{repr(Game)} object")
+
         if game not in self.__games:
             raise KeyError(
                 f"Cannot remove game '{game.name}' from '{self.id}' console")
