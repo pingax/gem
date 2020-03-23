@@ -194,7 +194,7 @@ class Console(object):
 
         Parameters
         ----------
-        filename : pathlib.Path
+        filename : str or pathlib.Path
             Game filepath
 
         Returns
