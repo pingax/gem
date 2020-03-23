@@ -277,11 +277,11 @@ class Console(object):
 
         Returns
         -------
-        generator
-            Game instances
+        list
+            Found games list
         """
 
         regex = re_compile(key, IGNORECASE)
 
-        return (game for game in self.__games
-                if regex.search(game.name) or regex.search(game.id))
+        return list(game for game in self.__games
+                    if regex.search(game.name) or regex.search(game.id))
