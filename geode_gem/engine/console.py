@@ -201,9 +201,18 @@ class Console(object):
         -------
         gem.engine.game.Game
             Game instance
+
+        Raises
+        ------
+        ValueError
+            when the filename was already added to Console collection
         """
 
         game = Game(self.__parent, filename)
+
+        if self.get_game(game.id):
+            raise ValueError(f"The Game ID '{game.id}' already exists in "
+                             f"console '{self.name}'")
 
         if game.emulator is None:
             game.emulator = self.emulator
