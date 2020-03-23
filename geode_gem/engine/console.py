@@ -121,7 +121,13 @@ class Console(object):
 
                     setattr(self, key, value)
 
+        if not self.name and self.path:
+            setattr(self, "name", self.path.stem)
+
         setattr(self, "id", generate_identifier(self.name))
+
+        if not self.name:
+            setattr(self, "name", self.id)
 
     def as_dict(self):
         """ Return object as dictionary structure
