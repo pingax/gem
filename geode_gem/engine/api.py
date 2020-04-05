@@ -90,9 +90,6 @@ class GEM(object):
         # Debug mode
         self.debug = debug
 
-        # Lock mode
-        self.__lock = False
-
         # Migration mode
         self.__need_migration = False
 
@@ -113,24 +110,23 @@ class GEM(object):
             environment=None
         )
 
-        # API configuration path
-        self.__config = config.expanduser()
-
-        # API local path
-        self.__local = local.expanduser()
-
-        # API roms folder path
-        self.__roms = self.__local.joinpath("roms")
-
         # Process identifier
         self.__pid = int()
+        self.__lock = False
 
         # ----------------------------------------
-        #   Initialize folders
+        #   Initialize filepaths
         # ----------------------------------------
 
-        for folder in [self.__config, self.__local, self.__roms]:
+        self.__config = config.joinpath(GEM.Instance).expanduser()
+        self.__local = local.joinpath(GEM.Instance).expanduser()
 
+        self.__log_path = self.__local.joinpath(f"{GEM.Instance}.log")
+
+        self.__backup_path = self.__local.joinpath(f"backup.{GEM.Instance}.db")
+        self.__database_path = self.__local.joinpath(f"{GEM.Instance}.db")
+
+        for folder in (self.__config, self.__local):
             if not folder.exists():
                 folder.mkdir(mode=0o755, parents=True)
 
@@ -150,8 +146,8 @@ class GEM(object):
             # Initialize sqlite database
             self.__init_database()
 
-            self.logger.debug("Set local folder as %s" % str(self.__local))
-            self.logger.debug("Set config folder as %s" % str(self.__config))
+            self.logger.debug(f"Set local folder as {self.__local}")
+            self.logger.debug(f"Set config folder as {self.__config}")
 
     def __init_lock(self):
         """ Initialize lock file
@@ -198,20 +194,16 @@ class GEM(object):
         Create a logger object based on logging library
         """
 
-        log_path = self.get_local(GEM.Log)
-
-        # Save older log file to ~/.local/share/gem/gem.log.old
-        if log_path.exists():
-            copy(log_path, self.get_local(GEM.Log + ".old"))
+        if self.__log_path.exists():
+            copy(self.__log_path, str(self.__log_path) + ".old")
 
         # Define log path with a global variable
-        logging.log_path = str(log_path)
+        logging.log_path = str(self.__log_path)
 
         # Generate logger from log.conf
         fileConfig(str(get_data("data", "config", GEM.Logger)))
 
         self.logger = logging.getLogger("gem")
-
         if not self.debug:
             self.logger.setLevel(logging.INFO)
 
@@ -227,7 +219,7 @@ class GEM(object):
 
             # Check GEM database file
             self.database = Database(
-                self.get_local("gem.db"), config, self.logger)
+                self.__database_path, config, self.logger)
 
             # Check current GEM version
             version = self.database.select("gem", "version")
@@ -239,14 +231,14 @@ class GEM(object):
                     version = GEM.Version
 
                 else:
-                    self.logger.info("Update database to v.%s" % GEM.Version)
+                    self.logger.info(f"Update database to v.{GEM.Version}")
 
                 self.database.modify("gem",
                                      {"version": GEM.Version},
                                      {"version": version})
 
             else:
-                self.logger.debug("Use GEM API v.%s" % GEM.Version)
+                self.logger.debug(f"Use GEM API v.{GEM.Version}")
 
             # Check integrity and migrate if necessary
             self.logger.info("Check database integrity")
@@ -259,15 +251,15 @@ class GEM(object):
                 self.__need_migration = False
 
         except OSError as error:
-            self.logger.exception("Cannot access to database: %s" % str(error))
+            self.logger.exception(f"Cannot access to database: {error}")
             sys_exit(error)
 
         except ValueError as error:
-            self.logger.exception("A wrong value occur: %s" % str(error))
+            self.logger.exception(f"A wrong value occur: {error}")
             sys_exit(error)
 
         except Exception as error:
-            self.logger.exception("An error occur: %s" % str(error))
+            self.logger.exception(f"An error occur: {error}")
             sys_exit(error)
 
     def __init_configurations(self):
@@ -278,7 +270,7 @@ class GEM(object):
         """
 
         if not self.__config.exists():
-            self.logger.debug("Generate %s folder" % str(self.__config))
+            self.logger.debug(f"Generate {self.__config} folder")
 
             self.__config.mkdir(mode=0o755, parents=True)
 
@@ -288,16 +280,16 @@ class GEM(object):
 
             # Configuration file not exists
             if not path.exists():
-                raise OSError(2, "Cannot found %s file" % path)
+                raise FileNotFoundError(f"Cannot found {path} file")
 
-            self.logger.debug("Read %s configuration file" % path)
+            self.logger.debug(f"Read {path} configuration file")
 
             # Store Configuration object
             self.__configurations[path.stem] = Configuration(path)
 
         path = Path(self.get_config(GEM.Environment))
 
-        self.logger.debug("Read %s configuration file" % path)
+        self.logger.debug(f"Read {path} configuration file")
 
         self.__configurations[path.stem] = Configuration(path)
 
@@ -316,7 +308,7 @@ class GEM(object):
             self.add_emulator(section, emulators.items(section))
 
         self.logger.debug(
-            "%d emulator(s) has been founded" % len(self.emulators))
+            f"{len(self.emulators)} emulator(s) has been founded")
 
     def __init_consoles(self):
         """ Initalize consoles
@@ -333,7 +325,7 @@ class GEM(object):
             self.add_console(section, consoles.items(section))
 
         self.logger.debug(
-            "%d console(s) has been founded" % len(self.consoles))
+            f"{len(self.consoles)} console(s) has been founded")
 
     def init(self):
         """ Initalize data from configuration files
@@ -366,10 +358,10 @@ class GEM(object):
             self.logger.info("Backup database")
 
             # Database backup
-            copy(self.get_local("gem.db"), self.get_local("save.gem.db"))
+            copy(self.__database_path, self.__backup_path)
 
             # Remove previous database
-            self.get_local("gem.db").unlink()
+            self.__database_path.unlink()
 
             # ----------------------------------------
             #   Initialize new database
@@ -380,10 +372,10 @@ class GEM(object):
                     get_data("data", "config", GEM.Databases))
 
                 previous_database = Database(
-                    self.get_local("save.gem.db"), config, self.logger)
+                    self.__backup_path, config, self.logger)
 
                 new_database = Database(
-                    self.get_local("gem.db"), config, self.logger)
+                    self.__database_path, config, self.logger)
 
                 new_database.insert("gem", {"version": GEM.Version})
 
@@ -442,11 +434,11 @@ class GEM(object):
 
             except Exception as error:
                 self.logger.exception(
-                    "An error occurs during migration: %s" % str(error))
+                    f"An error occurs during migration: {error}")
 
                 self.logger.info("Restore database backup")
 
-                copy(self.get_local("save.gem.db"), self.get_local("gem.db"))
+                copy(self.__backup_path, self.__database_path)
 
             # Remove backup
             self.get_local("save.gem.db").unlink()
@@ -526,9 +518,9 @@ class GEM(object):
 
                 # Backup configuration file
                 if self.get_config(path).exists():
-                    self.logger.debug("Backup %s file" % path)
+                    self.logger.debug(f"Backup {path} file")
 
-                    copy(self.get_config(path), self.get_config('~' + path))
+                    copy(self.get_config(path), self.get_config(f"~{path}"))
 
                     self.get_config(path).unlink()
 
@@ -556,13 +548,11 @@ class GEM(object):
                             self.__data[name][element].name, key, value)
 
                 # Write new configuration file
-                self.logger.info("Write configuration into %s file" % path)
+                self.logger.info(f"Write configuration into {path} file")
                 config.update()
 
         except Exception as error:
-            self.logger.exception(
-                "Cannot write configuration: %s" % str(error))
-
+            self.logger.exception(f"Cannot write configuration: {error}")
             return False
 
         # ----------------------------------------
@@ -577,13 +567,11 @@ class GEM(object):
                                      {"emulator": emulator.id},
                                      {"emulator": previous})
 
-                self.logger.info(
-                    "Update old %s references from database to %s" % (
-                        previous, emulator.id))
+                self.logger.info(f"Update old {previous} references from "
+                                 f"database to {emulator.id}")
 
         except Exception as error:
-            self.logger.exception("Cannot write database: %s" % str(error))
-
+            self.logger.exception(f"Cannot write database: {error}")
             return False
 
         return True
@@ -641,6 +629,18 @@ class GEM(object):
         """
 
         return self.__pid
+
+    @property
+    def log(self):
+        """ Return application log filepath
+
+        Returns
+        -------
+        pathlib.Path
+            Log file instance
+        """
+
+        return self.__log_path
 
     @property
     def emulators(self):
@@ -754,8 +754,7 @@ class GEM(object):
         """
 
         if emulator not in self.__data["emulators"].keys():
-            raise IndexError(
-                "Cannot access to %s in emulators list" % emulator)
+            raise IndexError(f"Cannot access to {emulator} in emulators list")
 
         del self.__data["emulators"][emulator]
 
@@ -780,7 +779,7 @@ class GEM(object):
 
             if identifier not in self.__data["emulators"].keys():
                 raise IndexError(
-                    "Cannot access to %s in emulators list" % identifier)
+                    f"Cannot access to {identifier} in emulators list")
 
             # Retrieve emulator object
             self.__rename[previous] = self.__data["emulators"][identifier]
@@ -913,7 +912,7 @@ class GEM(object):
         """
 
         if console not in self.__data["consoles"].keys():
-            raise IndexError("Cannot access to %s in consoles list" % console)
+            raise IndexError(f"Cannot access to {console} in consoles list")
 
         del self.__data["consoles"][console]
 
@@ -974,7 +973,7 @@ class GEM(object):
         """
 
         if console not in self.__data["consoles"]:
-            raise IndexError("Cannot access to %s in consoles list" % console)
+            raise IndexError(f"Cannot access to {console} in consoles list")
 
         # Check console games list
         return self.__data["consoles"][console].get_game(game)
@@ -1042,12 +1041,12 @@ class GEM(object):
                 data[key] = str(value.name)
 
         # Update game in database
-        self.logger.debug("Update %s database entry" % game.name)
+        self.logger.debug(f"Update {game.name} database entry")
 
         self.database.modify("games", data, {"filename": game.path.name})
 
         # Update game environment variables
-        self.logger.debug("Update %s environment variables" % game.name)
+        self.logger.debug(f"Update {game.name} environment variables")
 
         self.environment.remove_section(game.id)
 
@@ -1080,12 +1079,12 @@ class GEM(object):
         results = self.database.get("games", {"filename": game.path.name})
 
         if results is not None and len(results) > 0:
-            self.logger.info("Remove %s from database" % game.name)
+            self.logger.info(f"Remove {game.name} from database")
 
             self.database.remove("games", {"filename": game.path.name})
 
         # Update game environment variables
-        self.logger.debug("Remove %s environment variables" % game.name)
+        self.logger.debug(f"Remove {game.name} environment variables")
 
         self.environment.remove_section(game.id)
 
