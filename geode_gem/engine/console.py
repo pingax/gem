@@ -153,9 +153,11 @@ class Console(object):
 
         Raises
         ------
-        OSError
+        FileNotFoundError
             when path directory was not founded
+        NotADirectoryError
             when path is not a directory
+        PermissionError
             when path did not have read access
         """
 
