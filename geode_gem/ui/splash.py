@@ -48,6 +48,37 @@ from gettext import gettext as _
 #   Class
 # ------------------------------------------------------------------------------
 
+class Message(Gtk.MessageDialog):
+
+    def __init__(self, title, text):
+        """ Constructor
+
+        Parameters
+        ----------
+        title : str
+            Main text of message dialog
+        text : str
+            Secondary text of message dialog
+        """
+
+        super().__init__()
+
+        self.set_transient_for(None)
+
+        self.set_markup(title)
+        self.format_secondary_text(text)
+
+        self.add_button(_("Close"), Gtk.ResponseType.CLOSE)
+
+    def run(self):
+        """ Launch and show the message dialog
+        """
+
+        super().run()
+
+        self.destroy()
+
+
 class Splash(Gtk.Window):
 
     def __init__(self, api):
