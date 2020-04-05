@@ -3499,7 +3499,7 @@ class MainWindow(Gtk.ApplicationWindow):
         """
 
         if getattr(self, "config", None) is None:
-            self.config = Configuration(Folders.CONFIG.joinpath("gem.conf"))
+            self.config = Configuration(self.api.get_config("gem.conf"))
 
             # Get missing keys from config/gem.conf
             self.config.add_missing_data(
@@ -4603,9 +4603,7 @@ class MainWindow(Gtk.ApplicationWindow):
         This function show the gem log content in a non-editable dialog
         """
 
-        path = Folders.LOCAL.joinpath("gem.log")
-
-        if path.exists():
+        if self.api.log.exists():
             try:
                 size = self.config.get(
                     "windows", "log", fallback="800x600").split('x')
@@ -4618,7 +4616,7 @@ class MainWindow(Gtk.ApplicationWindow):
             dialog = EditorDialog(
                 self,
                 _("Application log"),
-                path,
+                self.api.log,
                 size,
                 Icons.Symbolic.TERMINAL,
                 editable=False)
@@ -4689,7 +4687,7 @@ class MainWindow(Gtk.ApplicationWindow):
         game = self.__on_retrieve_selected_game()
 
         if game is not None:
-            path = Folders.LOCAL.joinpath("notes", game.id + ".txt")
+            path = self.api.get_local("notes", game.id + ".txt")
 
             if path is not None and not str(path) in self.notes.keys():
                 try:
@@ -6554,7 +6552,7 @@ class MainWindow(Gtk.ApplicationWindow):
             Game object
         """
 
-        path = Folders.LOCAL.joinpath("ongamestarted")
+        path = self.api.get_local("ongamestarted")
 
         if path.exists() and access(path, X_OK):
             thread = ScriptThread(self, path, game)
@@ -6723,7 +6721,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
             del self.scripts[game.id]
 
-        path = Folders.LOCAL.joinpath("ongamestopped")
+        path = self.api.get_local("ongamestopped")
 
         if path.exists() and access(path, X_OK):
             thread = ScriptThread(self, path, game)
@@ -7653,8 +7651,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 icon = console.icon
                 if not icon.exists():
-                    icon = Folders.LOCAL.joinpath(
-                        "icons", '%s.png' % str(icon))
+                    icon = self.api.get_local("icons", '%s.png' % str(icon))
 
                 values = {
                     "%name%": game.name,
@@ -8379,7 +8376,7 @@ class MainWindow(Gtk.ApplicationWindow):
         game = self.__on_retrieve_selected_game()
 
         if game is not None:
-            log_path = Folders.LOCAL.joinpath("logs", game.id + ".log")
+            log_path = self.api.get_local("logs", game.id + ".log")
 
             if log_path.exists():
                 return log_path
@@ -8529,7 +8526,7 @@ class MainWindow(Gtk.ApplicationWindow):
             if not path.exists():
 
                 if key == "consoles":
-                    collection_path = Folders.LOCAL.joinpath(
+                    collection_path = self.api.get_local(
                         "icons", "%s.png" % path)
 
                     # Generate a new cache icon
