@@ -1073,30 +1073,3 @@ class GEM(object):
         self.environment.remove_section(game.id)
 
         self.environment.update()
-
-
-if __name__ == "__main__":
-    """ Debug GEM API
-    """
-
-    root = Path("test", "gem")
-
-    config_path = root.joinpath("config")
-
-    if not config_path.exists():
-        config_path.mkdir(mode=0o755, parents=True)
-
-        for filename in (GEM.Consoles, GEM.Emulators):
-            copy(get_data("data", "config", filename),
-                 config_path.joinpath(filename))
-
-    gem = GEM(config_path, root.joinpath("local"), debug=True)
-
-    if not gem.is_locked():
-        gem.init()
-
-        gem.logger.info("Found %d consoles" % len(gem.consoles))
-        gem.logger.info("Found %d emulators" % len(gem.emulators))
-        gem.logger.info("Found %d games" % len(gem.get_games()))
-
-        gem.free_lock()
