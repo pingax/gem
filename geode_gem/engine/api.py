@@ -66,29 +66,22 @@ class GEM(object):
 
         Parameters
         ----------
-        config : pathlib.Path
+        config : pathlib.Path or str
             Default config folder
-        local : pathlib.Path
+        local : pathlib.Path or str
             Default data folder
         debug : bool, optional
             Debug mode status (default: False)
-
-        Raises
-        ------
-        TypeError
-            if config type is not pathlib.Path or None
-            if local type is not pathlib.Path or None
-            if debug type is not bool
         """
 
-        if not isinstance(config, Path):
-            raise TypeError("Wrong type for config, expected pathlib.Path")
+        if isinstance(config, str):
+            config = Path(config)
 
-        if not isinstance(local, Path):
-            raise TypeError("Wrong type for local, expected pathlib.Path")
+        if isinstance(local, str):
+            local = Path(local)
 
         if type(debug) is not bool:
-            raise TypeError("Wrong type for debug, expected bool")
+            debug = False
 
         # ----------------------------------------
         #   Variables
