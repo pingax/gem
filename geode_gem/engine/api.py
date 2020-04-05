@@ -40,8 +40,8 @@ import logging
 from logging.config import fileConfig
 
 # System
+from fcntl import flock, LOCK_EX, LOCK_NB
 from os import getpid
-
 from sys import exit as sys_exit
 
 
@@ -122,6 +122,7 @@ class GEM(object):
         self.__local = local.joinpath(GEM.Instance).expanduser()
 
         self.__log_path = self.__local.joinpath(f"{GEM.Instance}.log")
+        self.__lock_path = self.__local.joinpath(".lock")
 
         self.__backup_path = self.__local.joinpath(f"backup.{GEM.Instance}.db")
         self.__database_path = self.__local.joinpath(f"{GEM.Instance}.db")
@@ -156,37 +157,22 @@ class GEM(object):
         instance simultaneous
         """
 
-        lock_path = self.get_local(".lock")
+        if not self.__lock_path.exists():
+            self.__pid = getpid()
 
-        if lock_path.exists():
-            self.__pid = int()
+            with self.__lock_path.open('wb') as pipe:
+                # Register current PID into file
+                pipe.write(bytes(str(self.__pid), "UTF-8"))
+                # Perform the lock operation on file
+                flock(pipe, LOCK_EX | LOCK_NB)
 
-            # Read lock content
-            with lock_path.open('r') as pipe:
-                self.__pid = int(pipe.read())
+            return False
 
-            proc_path = Path("/proc", str(self.__pid))
+        with self.__lock_path.open('r') as pipe:
+            # Retrieve current launched instance PID0
+            self.__pid = pipe.read()
 
-            # Lock PID still exists
-            if proc_path.exists():
-                path = proc_path.joinpath("cmdline")
-
-                # Check process command line
-                if path.exists():
-                    with path.open('r') as pipe:
-                        content = pipe.read()
-
-                    # Check if lock process is gem
-                    if "gem" in content or "gem-ui" in content:
-                        return True
-
-        self.__pid = getpid()
-
-        # Save current PID into lock file
-        with lock_path.open('w') as pipe:
-            pipe.write(str(self.__pid))
-
-        return False
+        return True
 
     def __init_logger(self):
         """ Initialize logger
@@ -613,10 +599,8 @@ class GEM(object):
         """ Remove lock file if present
         """
 
-        lock_path = self.get_local(".lock")
-
-        if lock_path.exists():
-            lock_path.unlink()
+        if self.__lock_path.exists():
+            self.__lock_path.unlink()
 
     @property
     def pid(self):
