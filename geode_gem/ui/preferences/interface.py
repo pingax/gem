@@ -218,7 +218,7 @@ class PreferencesWindow(CommonWindow):
         #   Initialize configuration files
         # ------------------------------------
 
-        self.config = Configuration(Folders.CONFIG.joinpath("gem.conf"))
+        self.config = Configuration(self.api.get_config("gem.conf"))
 
         # ------------------------------------
         #   Initialize logger
