@@ -1,6 +1,13 @@
 GEM Changelog
 =============
 
+Version 0.10.3 - Gracie
+-----------------------
+
+### New
+
+* Allow to hide game tooltip in games views
+
 Version 0.10.2 - Tom Nook
 -------------------------
 

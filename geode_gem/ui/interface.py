@@ -5972,131 +5972,136 @@ class MainWindow(Gtk.ApplicationWindow):
             Tooltip visible status
         """
 
+        # Show a tooltip when the show_tooltip option is activate
+        if not self.config.getboolean("gem", "show_tooltip", fallback=True):
+            return False
+
         # Show a tooltip when the main window is sentitive only
-        if self.get_sensitive():
+        if not self.get_sensitive():
+            return False
 
-            # Get relative treerow position based on absolute cursor
-            # coordinates
-            x, y = treeview.convert_widget_to_bin_window_coords(x, y)
+        # Get relative treerow position based on absolute cursor
+        # coordinates
+        x, y = treeview.convert_widget_to_bin_window_coords(x, y)
 
-            selection = treeview.get_path_at_pos(x, y)
-            # Using a tuple to mimic Gtk.TreeView behavior
-            if treeview == self.iconview_games and selection is not None:
-                selection = (selection)
+        selection = treeview.get_path_at_pos(x, y)
+        # Using a tuple to mimic Gtk.TreeView behavior
+        if treeview == self.iconview_games and selection is not None:
+            selection = (selection)
 
-            if selection is not None:
-                model = treeview.get_model()
-                treeiter = model.get_iter(selection[0])
+        if selection is not None:
+            model = treeview.get_model()
+            treeiter = model.get_iter(selection[0])
 
-                column_id = Columns.Grid.OBJECT
-                if treeview == self.treeview_games:
-                    column_id = Columns.List.OBJECT
+            column_id = Columns.Grid.OBJECT
+            if treeview == self.treeview_games:
+                column_id = Columns.List.OBJECT
 
-                game = model.get_value(treeiter, column_id)
+            game = model.get_value(treeiter, column_id)
 
-                # Reload tooltip when another game is hovered
-                if not self.__current_tooltip == game:
-                    self.__current_tooltip = game
-                    self.__current_tooltip_data = list()
+            # Reload tooltip when another game is hovered
+            if not self.__current_tooltip == game:
+                self.__current_tooltip = game
+                self.__current_tooltip_data = list()
+                self.__current_tooltip_pixbuf = None
+
+                return False
+
+            # Get new data from hovered game
+            if len(self.__current_tooltip_data) == 0:
+                data = list()
+
+                data.append(
+                    "<big><b>%s</b></big>" % replace_for_markup(game.name))
+
+                if not game.play_time == timedelta():
+                    data.append(
+                        ": ".join(
+                            [
+                                "<b>%s</b>" % _("Play time"),
+                                parse_timedelta(game.play_time)
+                            ]
+                        )
+                    )
+
+                if not game.last_launch_time == timedelta():
+                    data.append(
+                        ": ".join(
+                            [
+                                "<b>%s</b>" % _("Last launch"),
+                                parse_timedelta(game.last_launch_time)
+                            ]
+                        )
+                    )
+
+                # Fancy new line
+                if len(data) > 1:
+                    data.insert(1, str())
+
+                self.__current_tooltip_data = data
+
+            console = self.selection["console"]
+
+            # Get new screenshots from hovered game
+            if console is not None \
+               and self.__current_tooltip_pixbuf is None:
+
+                image = None
+
+                # Retrieve user choice for tooltip image
+                tooltip_image = self.config.get(
+                    "gem", "tooltip_image_type", fallback="screenshot")
+
+                if not tooltip_image == "none":
+
+                    if tooltip_image in ["both", "cover"]:
+
+                        if game.cover is not None and game.cover.exists():
+                            image = game.cover
+
+                    if tooltip_image in ["both", "screenshot"]:
+
+                        # Ordered game screenshots
+                        if not self.use_random_screenshot:
+                            screenshots = sorted(game.screenshots)
+
+                        # Get a random file from game screenshots
+                        else:
+                            screenshots = game.screenshots
+
+                            shuffle(screenshots)
+
+                        if len(game.screenshots) > 0:
+                            image = Path(screenshots[-1])
+
+                    # Check if image exists and is not a directory
+                    if image is not None \
+                       and image.exists() and image.is_file():
+
+                        try:
+                            # Resize pixbuf to have a 96 pixels height
+                            pixbuf = \
+                                GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                                    str(image), -1, 96, True)
+
+                            self.__current_tooltip_pixbuf = pixbuf
+
+                        except GLib.Error:
+                            self.__current_tooltip_pixbuf = None
+
+                else:
                     self.__current_tooltip_pixbuf = None
 
-                    return False
+            # Only show tooltip when data are available
+            if len(self.__current_tooltip_data) > 0:
+                tooltip.set_markup('\n'.join(self.__current_tooltip_data))
 
-                # Get new data from hovered game
-                if len(self.__current_tooltip_data) == 0:
-                    data = list()
+                if self.__current_tooltip_pixbuf is not None:
+                    tooltip.set_icon(self.__current_tooltip_pixbuf)
 
-                    data.append(
-                        "<big><b>%s</b></big>" % replace_for_markup(game.name))
+                self.__current_tooltip = game
 
-                    if not game.play_time == timedelta():
-                        data.append(
-                            ": ".join(
-                                [
-                                    "<b>%s</b>" % _("Play time"),
-                                    parse_timedelta(game.play_time)
-                                ]
-                            )
-                        )
-
-                    if not game.last_launch_time == timedelta():
-                        data.append(
-                            ": ".join(
-                                [
-                                    "<b>%s</b>" % _("Last launch"),
-                                    parse_timedelta(game.last_launch_time)
-                                ]
-                            )
-                        )
-
-                    # Fancy new line
-                    if len(data) > 1:
-                        data.insert(1, str())
-
-                    self.__current_tooltip_data = data
-
-                console = self.selection["console"]
-
-                # Get new screenshots from hovered game
-                if console is not None \
-                   and self.__current_tooltip_pixbuf is None:
-
-                    image = None
-
-                    # Retrieve user choice for tooltip image
-                    tooltip_image = self.config.get(
-                        "gem", "tooltip_image_type", fallback="screenshot")
-
-                    if not tooltip_image == "none":
-
-                        if tooltip_image in ["both", "cover"]:
-
-                            if game.cover is not None and game.cover.exists():
-                                image = game.cover
-
-                        if tooltip_image in ["both", "screenshot"]:
-
-                            # Ordered game screenshots
-                            if not self.use_random_screenshot:
-                                screenshots = sorted(game.screenshots)
-
-                            # Get a random file from game screenshots
-                            else:
-                                screenshots = game.screenshots
-
-                                shuffle(screenshots)
-
-                            if len(game.screenshots) > 0:
-                                image = Path(screenshots[-1])
-
-                        # Check if image exists and is not a directory
-                        if image is not None \
-                           and image.exists() and image.is_file():
-
-                            try:
-                                # Resize pixbuf to have a 96 pixels height
-                                pixbuf = \
-                                    GdkPixbuf.Pixbuf.new_from_file_at_scale(
-                                        str(image), -1, 96, True)
-
-                                self.__current_tooltip_pixbuf = pixbuf
-
-                            except GLib.Error:
-                                self.__current_tooltip_pixbuf = None
-
-                    else:
-                        self.__current_tooltip_pixbuf = None
-
-                # Only show tooltip when data are available
-                if len(self.__current_tooltip_data) > 0:
-                    tooltip.set_markup('\n'.join(self.__current_tooltip_data))
-
-                    if self.__current_tooltip_pixbuf is not None:
-                        tooltip.set_icon(self.__current_tooltip_pixbuf)
-
-                    self.__current_tooltip = game
-
-                    return True
+                return True
 
         return False
 
