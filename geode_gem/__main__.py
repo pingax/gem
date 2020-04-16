@@ -274,6 +274,8 @@ def main():
     #   Launch interface
     # ----------------------------------------
 
+    process_status = False
+
     try:
         gem = GEM(arguments.config, arguments.local, arguments.debug)
 
@@ -315,17 +317,21 @@ def main():
 
     except ImportError:
         getLogger("gem").exception("An error occur durint modules importation")
-        return True
+        process_status = True
 
     except KeyboardInterrupt:
         getLogger("gem").warning("Terminate by keyboard interrupt")
-        return True
+        process_status = True
 
     except Exception:
         getLogger("gem").exception("An error occur during execution")
-        return True
+        process_status = True
 
-    return False
+    # Remove lock when an error occurs
+    if process_status:
+        gem.free_lock()
+
+    return process_status
 
 
 if __name__ == "__main__":
