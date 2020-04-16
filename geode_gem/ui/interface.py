@@ -3499,7 +3499,8 @@ class MainWindow(Gtk.ApplicationWindow):
         """
 
         if getattr(self, "config", None) is None:
-            self.config = Configuration(self.api.get_config("gem.conf"))
+            self.config = Configuration(
+                self.api.get_config("gem.conf"), strict=False)
 
             # Get missing keys from config/gem.conf
             self.config.add_missing_data(

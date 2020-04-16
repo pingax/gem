@@ -4,6 +4,10 @@ GEM Changelog
 Version 0.10.3 - Gracie
 -----------------------
 
+### Fix
+
+* Fix crash when an option is duplicated in configuration files
+
 ### New
 
 * Allow to hide game tooltip in games views

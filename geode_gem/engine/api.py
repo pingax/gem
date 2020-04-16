@@ -201,7 +201,8 @@ class GEM(object):
         """
 
         try:
-            config = Configuration(get_data("data", "config", GEM.Databases))
+            config = Configuration(
+                get_data("data", "config", GEM.Databases), strict=False)
 
             # Check GEM database file
             self.database = Database(
@@ -271,7 +272,8 @@ class GEM(object):
             self.logger.debug(f"Read {path} configuration file")
 
             # Store Configuration object
-            self.__configurations[path.stem] = Configuration(path)
+            self.__configurations[path.stem] = Configuration(path,
+                                                             strict=False)
 
         path = Path(self.get_config(GEM.Environment))
 
