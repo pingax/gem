@@ -53,8 +53,7 @@ class Configuration(ConfigParser):
 
         self.path = filepath.expanduser()
 
-        if self.path.exists():
-            self.read(str(self.path))
+        self.reload()
 
     def __str__(self):
         """ Formated informations
