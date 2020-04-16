@@ -49,7 +49,7 @@ class Configuration(ConfigParser):
         #   Variables
         # ------------------------------------
 
-        ConfigParser.__init__(self, kwargs)
+        ConfigParser.__init__(self, **kwargs)
 
         self.path = filepath.expanduser()
 
