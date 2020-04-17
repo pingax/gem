@@ -5562,6 +5562,8 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Check errors
         # ------------------------------------
 
+        self.__block_signals()
+
         self.infobar.set_visible(False)
 
         if console.emulator is None:
@@ -5588,6 +5590,8 @@ class MainWindow(Gtk.ApplicationWindow):
         # ------------------------------------
         #   Load data
         # ------------------------------------
+
+        self.unselect_all()
 
         self.scroll_games_list.set_visible(False)
         self.scroll_games_grid.set_visible(False)
@@ -5687,6 +5691,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
         else:
             self.scroll_sidebar.set_visible(False)
+
+        self.__unblock_signals()
 
         yield True
 

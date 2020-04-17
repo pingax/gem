@@ -7,6 +7,7 @@ Version 0.10.3 - Gracie
 ### Fix
 
 * Fix crash when an option is duplicated in configuration files
+* Fix console selection is slow when a game is selected in games list view
 
 ### New
 
