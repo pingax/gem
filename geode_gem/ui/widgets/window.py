@@ -238,6 +238,20 @@ class CommonWindow(object):
         dialog.run()
         dialog.destroy()
 
+    def __on_execute_method_from_widget(self, widget, method):
+        """ Execute specified method from widget if available
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Widget which received the event
+        method : str
+            Method to execute
+        """
+
+        if hasattr(widget, method):
+            getattr(widget, method)()
+
     def show_all(self):
         """ Recursively shows a widget, and any child widgets
         """
@@ -675,28 +689,30 @@ class CommonWindow(object):
             Activated row
         """
 
+        data = {
+            Gtk.ComboBox: "popup",
+            Gtk.Entry: "grab_focus",
+            Gtk.FileChooserButton: "activate",
+            Gtk.FontButton: "clicked",
+            Gtk.MenuButton: "clicked",
+            Gtk.SpinButton: "grab_focus",
+        }
+
         widget = row.get_widget()
+        widget_type = type(widget)
 
-        if type(widget) == Gtk.ComboBox:
-            widget.popup()
+        if widget_type in data.keys():
+            self.__on_execute_method_from_widget(widget, data.get(widget_type))
 
-        elif type(widget) == Gtk.Entry:
-            widget.grab_focus()
-
-        elif type(widget) == Gtk.MenuButton:
-            widget.clicked()
-
-        elif type(widget) == Gtk.FileChooserButton:
-            widget.activate()
-
-        elif type(widget) == Gtk.FontButton:
-            widget.clicked()
-
-        elif type(widget) == Gtk.SpinButton:
-            widget.grab_focus()
-
-        elif type(widget) == Gtk.Switch:
+        elif widget_type is Gtk.Switch:
             widget.set_active(not widget.get_active())
+
+        elif widget_type is Gtk.Box:
+            children = widget.get_children()
+
+            if children:
+                self.__on_execute_method_from_widget(
+                    children[0], data.get(type(children[0])))
 
 
 class HelpDialog(CommonWindow):

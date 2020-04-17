@@ -357,15 +357,22 @@ class DNDSelector(Gtk.Box):
         self.item_automatic_description = ListBoxItem.new(
             _("Automatic selection"))
 
+        self.grid_consoles = Gtk.Box()
+
         self.store_consoles = Gtk.ListStore(GdkPixbuf.Pixbuf, str, object)
         self.combo_consoles = Gtk.ComboBox()
         self.cell_consoles_icon = Gtk.CellRendererPixbuf()
         self.cell_consoles_text = Gtk.CellRendererText()
 
+        self.image_consoles = Gtk.Image()
+        self.button_consoles = Gtk.Button()
+
         # Properties
-        self.item_automatic_description.set_widget(self.combo_consoles)
+        self.item_automatic_description.set_widget(self.grid_consoles)
         self.item_automatic_description.set_description_label(
             _("Select this console for every rows"))
+
+        self.grid_consoles.set_spacing(12)
 
         self.combo_consoles.set_id_column(1)
         self.combo_consoles.set_hexpand(True)
@@ -375,6 +382,13 @@ class DNDSelector(Gtk.Box):
         self.combo_consoles.pack_start(self.cell_consoles_text, True)
         self.combo_consoles.add_attribute(self.cell_consoles_icon, "pixbuf", 0)
         self.combo_consoles.add_attribute(self.cell_consoles_text, "text", 1)
+
+        self.image_consoles.set_from_icon_name(
+            Icons.Symbolic.REFRESH, Gtk.IconSize.BUTTON)
+        self.button_consoles.add(self.image_consoles)
+        self.button_consoles.set_tooltip_text(
+            _("Apply this console to each games in the list above"))
+        self.button_consoles.get_style_context().add_class("suggested-action")
 
         # ----------------------------------------
         #   Manual selection
@@ -393,6 +407,9 @@ class DNDSelector(Gtk.Box):
         """ Initialize widgets packing in main window
         """
 
+        self.grid_consoles.pack_start(self.combo_consoles, True, True, 0)
+        self.grid_consoles.pack_start(self.button_consoles, False, False, 0)
+
         self.frame_automatic_description.listbox.add(
             self.item_automatic_description)
 
@@ -409,8 +426,8 @@ class DNDSelector(Gtk.Box):
         self.frame_automatic_description.listbox.connect(
             "row-activated", self.dialog.on_activate_listboxrow)
 
-        self.combo_consoles.connect(
-            "changed", self.__on_select_console)
+        self.button_consoles.connect(
+            "clicked", self.__on_select_console)
 
         self.listbox_manual.connect(
             "row-activated", self.dialog.on_activate_listboxrow)
