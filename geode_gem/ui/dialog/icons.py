@@ -326,7 +326,7 @@ class IconsDialog(CommonWindow):
         yield True
 
         # Retrieve files from icons collection
-        collection_path = Folders.LOCAL.joinpath("icons")
+        collection_path = self.api.get_local("icons")
 
         for path in sorted(collection_path.glob("*.png")):
 

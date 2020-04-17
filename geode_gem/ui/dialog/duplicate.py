@@ -75,6 +75,8 @@ class DuplicateDialog(CommonWindow):
         #   Initialize variables
         # ------------------------------------
 
+        self.api = parent.api
+
         self.game = game
 
         # ------------------------------------
@@ -323,7 +325,7 @@ class DuplicateDialog(CommonWindow):
             # ------------------------------------
 
             if self.switch_note.get_active():
-                path = Folders.LOCAL.joinpath("notes", self.game.id + ".txt")
+                path = self.api.get_local("notes", f"{self.game.id}.txt")
 
                 if path.exists():
                     data["paths"].append((path, self.parent.api.get_local(

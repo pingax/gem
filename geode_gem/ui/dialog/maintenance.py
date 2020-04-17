@@ -70,6 +70,8 @@ class MaintenanceDialog(CommonWindow):
         #   Variables
         # ------------------------------------
 
+        self.api = parent.api
+
         self.game = game
 
         # ------------------------------------
@@ -277,7 +279,7 @@ class MaintenanceDialog(CommonWindow):
         # ------------------------------------
 
         if self.switch_log.get_active():
-            path = Folders.LOCAL.joinpath("logs", self.game.id + ".log")
+            path = self.api.get_local("logs", f"{self.game.id}.log")
 
             if path.exists():
                 data["paths"].append(path)
@@ -289,7 +291,7 @@ class MaintenanceDialog(CommonWindow):
         # ------------------------------------
 
         if self.switch_note.get_active():
-            path = Folders.LOCAL.joinpath("notes", self.game.id + ".txt")
+            path = self.api.get_local("notes", f"{self.game.id}.txt")
 
             if path.exists():
                 data["paths"].append(path)

@@ -790,8 +790,7 @@ class ConsolePreferences(CommonWindow):
 
             # Check icon from icons theme
             if not path.exists():
-                collection_path = Folders.LOCAL.joinpath(
-                    "icons", "%s.png" % path)
+                collection_path = self.api.get_local("icons", f"{path}.png")
 
                 # Retrieve icon from collection
                 if collection_path.exists() and collection_path.is_file():
