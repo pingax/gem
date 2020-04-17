@@ -707,11 +707,6 @@ class PreferencesWindow(CommonWindow):
         self.combo_games_view_grid_lines = Gtk.ComboBox()
         self.cell_games_view_grid_lines = Gtk.CellRendererText()
 
-        self.widget_view_tooltip_icon = ListBoxItem()
-        self.model_games_view_tooltip_icon = Gtk.ListStore(str, str)
-        self.combo_games_view_tooltip_icon = Gtk.ComboBox()
-        self.cell_games_view_tooltip_icon = Gtk.CellRendererText()
-
         self.widget_view_icons = ListBoxItem()
         self.switch_games_view_icons = Gtk.Switch()
 
@@ -743,21 +738,6 @@ class PreferencesWindow(CommonWindow):
         self.combo_games_view_grid_lines.add_attribute(
             self.cell_games_view_grid_lines, "text", 1)
 
-        self.widget_view_tooltip_icon.set_widget(
-            self.combo_games_view_tooltip_icon)
-        self.widget_view_tooltip_icon.set_option_label(
-            _("Tooltip image"))
-        self.widget_view_tooltip_icon.set_description_label(
-            _("Display an image in game tooltip"))
-
-        self.combo_games_view_tooltip_icon.set_model(
-            self.model_games_view_tooltip_icon)
-        self.combo_games_view_tooltip_icon.set_id_column(0)
-        self.combo_games_view_tooltip_icon.pack_start(
-            self.cell_games_view_tooltip_icon, True)
-        self.combo_games_view_tooltip_icon.add_attribute(
-            self.cell_games_view_tooltip_icon, "text", 1)
-
         self.widget_view_icons.set_widget(
             self.switch_games_view_icons)
         self.widget_view_icons.set_option_label(
@@ -765,6 +745,58 @@ class PreferencesWindow(CommonWindow):
         self.widget_view_icons.set_description_label(
             _("Display translucent icons in games views instead of empty "
               "ones"))
+
+        # ------------------------------------
+        #   Interface - Tooltip
+        # ------------------------------------
+
+        self.label_games_tooltip = Gtk.Label()
+
+        self.frame_games_tooltip = Gtk.Frame()
+        self.listbox_games_tooltip = Gtk.ListBox()
+
+        self.widget_games_tooltip_activated = ListBoxItem()
+        self.switch_games_tooltip_activated = Gtk.Switch()
+
+        self.widget_games_tooltip_icon = ListBoxItem()
+        self.model_games_tooltip_icon = Gtk.ListStore(str, str)
+        self.combo_games_tooltip_icon = Gtk.ComboBox()
+        self.cell_games_tooltip_icon = Gtk.CellRendererText()
+
+        # Properties
+        self.label_games_tooltip.set_hexpand(True)
+        self.label_games_tooltip.set_use_markup(True)
+        self.label_games_tooltip.set_halign(Gtk.Align.CENTER)
+        self.label_games_tooltip.set_markup(
+            "<b>%s</b>" % _("Tooltip"))
+
+        self.frame_games_tooltip.set_margin_bottom(12)
+
+        self.listbox_games_tooltip.set_activate_on_single_click(True)
+        self.listbox_games_tooltip.set_selection_mode(
+            Gtk.SelectionMode.NONE)
+
+        self.widget_games_tooltip_icon.set_widget(
+            self.combo_games_tooltip_icon)
+        self.widget_games_tooltip_icon.set_option_label(
+            _("Tooltip image"))
+        self.widget_games_tooltip_icon.set_description_label(
+            _("Display an image in game tooltip"))
+
+        self.widget_games_tooltip_activated.set_widget(
+            self.switch_games_tooltip_activated)
+        self.widget_games_tooltip_activated.set_option_label(
+            _("Enable tooltip"))
+        self.widget_games_tooltip_activated.set_description_label(
+            _("Display a tooltip when the mouse hovered a game"))
+
+        self.combo_games_tooltip_icon.set_model(
+            self.model_games_tooltip_icon)
+        self.combo_games_tooltip_icon.set_id_column(0)
+        self.combo_games_tooltip_icon.pack_start(
+            self.cell_games_tooltip_icon, True)
+        self.combo_games_tooltip_icon.add_attribute(
+            self.cell_games_tooltip_icon, "text", 1)
 
         # ------------------------------------
         #   Interface - Columns
@@ -1219,8 +1251,12 @@ class PreferencesWindow(CommonWindow):
         self.frame_games_view.add(self.listbox_games_view)
 
         self.listbox_games_view.add(self.widget_view_grid_lines)
-        self.listbox_games_view.add(self.widget_view_tooltip_icon)
         self.listbox_games_view.add(self.widget_view_icons)
+
+        self.frame_games_tooltip.add(self.listbox_games_tooltip)
+
+        self.listbox_games_tooltip.add(self.widget_games_tooltip_activated)
+        self.listbox_games_tooltip.add(self.widget_games_tooltip_icon)
 
         self.frame_games_column.add(self.listbox_games_column)
 
@@ -1238,6 +1274,10 @@ class PreferencesWindow(CommonWindow):
             self.label_games_view, False, False, 0)
         self.grid_games.pack_start(
             self.frame_games_view, False, False, 0)
+        self.grid_games.pack_start(
+            self.label_games_tooltip, False, False, 0)
+        self.grid_games.pack_start(
+            self.frame_games_tooltip, False, False, 0)
         self.grid_games.pack_start(
             self.label_games_column, False, False, 0)
         self.grid_games.pack_start(
@@ -1361,7 +1401,12 @@ class PreferencesWindow(CommonWindow):
         #   Games
         # ------------------------------------
 
+        self.switch_games_tooltip_activated.connect(
+            "state-set", self.__on_check_tooltip)
+
         self.listbox_games_view.connect(
+            "row-activated", self.on_activate_listboxrow)
+        self.listbox_games_tooltip.connect(
             "row-activated", self.on_activate_listboxrow)
         self.listbox_games_column.connect(
             "row-activated", self.on_activate_listboxrow)
@@ -1556,17 +1601,28 @@ class PreferencesWindow(CommonWindow):
                 "option": "games_treeview_lines",
                 "fallback": "none"
             },
-            self.widget_view_tooltip_icon: {
-                "type": Gtk.ComboBox,
-                "section": "gem",
-                "option": "tooltip_image_type",
-                "fallback": "screenshot"
-            },
             self.widget_view_icons: {
                 "type": Gtk.Switch,
                 "section": "gem",
                 "option": "use_translucent_icons",
                 "fallback": True
+            },
+
+            # ------------------------------------
+            #   Games - Tooltip
+            # ------------------------------------
+
+            self.widget_games_tooltip_activated: {
+                "type": Gtk.Switch,
+                "section": "gem",
+                "option": "show_tooltip",
+                "fallback": True
+            },
+            self.widget_games_tooltip_icon: {
+                "type": Gtk.ComboBox,
+                "section": "gem",
+                "option": "tooltip_image_type",
+                "fallback": "screenshot"
             },
 
             # ------------------------------------
@@ -1668,6 +1724,7 @@ class PreferencesWindow(CommonWindow):
 
         # Update widget sensitive status
         self.__on_check_sidebar()
+        self.__on_check_tooltip()
         self.__on_check_native_viewer()
 
         # Avoid to remove console or emulator when games are launched
@@ -1777,7 +1834,7 @@ class PreferencesWindow(CommonWindow):
 
         # Fill combobox
         for key, value in self.tooltips.items():
-            self.model_games_view_tooltip_icon.append([value, key])
+            self.model_games_tooltip_icon.append([value, key])
 
         # ------------------------------------
         #   Editor
@@ -2106,6 +2163,21 @@ class PreferencesWindow(CommonWindow):
         self.widget_sidebar_position.set_sensitive(status)
         self.widget_sidebar_random_screenshot.set_sensitive(status)
         self.widget_sidebar_ellipsize.set_sensitive(status)
+
+    def __on_check_tooltip(self, widget=None, state=None):
+        """ Update tooltip widget from checkbutton state
+
+        Parameters
+        ----------
+        widget : Gtk.Widget, optional
+            Object which receive signal (Default: None)
+        state : bool or None, optional
+            New status for current widget (Default: None)
+        """
+
+        status = self.switch_games_tooltip_activated.get_active()
+
+        self.widget_games_tooltip_icon.set_sensitive(status)
 
     def __on_append_item(self, widget, *args):
         """ Append an item in the treeview
