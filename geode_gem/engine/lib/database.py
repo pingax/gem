@@ -325,7 +325,8 @@ class Database(object):
 
             with database:
                 cursor.execute(
-                    "INSERT INTO %(table)s (%(columns)s) VALUES (%(data)s);" % {
+                    "INSERT INTO %(table)s (%(columns)s) VALUES (%(data)s);"
+                    "" % {
                         "table": table,
                         "columns": ", ".join(columns),
                         "data": ", ".join(values)

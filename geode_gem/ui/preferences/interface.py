@@ -25,7 +25,6 @@ from geode_gem.engine.emulator import Emulator
 from geode_gem.engine.lib.configuration import Configuration
 
 from geode_gem.ui.data import Icons
-from geode_gem.ui.data import Folders
 from geode_gem.ui.utils import on_entry_clear
 from geode_gem.ui.dialog.question import QuestionDialog
 from geode_gem.ui.widgets.window import CommonWindow
@@ -36,17 +35,12 @@ from geode_gem.ui.preferences.emulator import EmulatorPreferences
 # GObject
 try:
     from gi import require_version
-
     require_version("Gtk", "3.0")
 
-    from gi.repository import Gtk
-    from gi.repository import Gdk
-    from gi.repository import GdkPixbuf
-    from gi.repository import Pango
+    from gi.repository import Gtk, Gdk, GdkPixbuf, Pango
 
 except ImportError as error:
     from sys import exit
-
     exit("Cannot found python3-gobject module: %s" % str(error))
 
 # Translation
@@ -2112,8 +2106,8 @@ class PreferencesWindow(CommonWindow):
                 self.__on_modify_item(treeview)
 
             # Mouse
-            elif event.type == Gdk.EventType._2BUTTON_PRESS \
-               and event.button == 1:
+            elif (event.type == Gdk.EventType._2BUTTON_PRESS
+                  and event.button == 1):
                 self.__on_modify_item(treeview)
 
     def __on_check_classic_theme(self, widget=None, state=None):

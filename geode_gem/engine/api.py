@@ -23,9 +23,7 @@ from pathlib import Path
 from os.path import splitext
 
 # GEM
-from geode_gem.engine.utils import copy
-from geode_gem.engine.utils import get_data
-from geode_gem.engine.utils import generate_identifier
+from geode_gem.engine.utils import copy, get_data, generate_identifier
 
 from geode_gem.engine.game import Game
 from geode_gem.engine.console import Console

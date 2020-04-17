@@ -19,7 +19,6 @@ from pathlib import Path
 
 # GEM
 from geode_gem.ui.data import Icons
-from geode_gem.ui.data import Folders
 from geode_gem.ui.utils import magic_from_file
 from geode_gem.ui.widgets.window import CommonWindow
 
@@ -29,13 +28,10 @@ try:
 
     require_version("Gtk", "3.0")
 
-    from gi.repository import Gtk
-    from gi.repository import GLib
-    from gi.repository import GdkPixbuf
+    from gi.repository import Gtk, GLib, GdkPixbuf
 
 except ImportError as error:
     from sys import exit
-
     exit("Cannot found python3-gobject module: %s" % str(error))
 
 # Translation

@@ -21,7 +21,6 @@ from pathlib import Path
 from geode_gem.engine.utils import generate_identifier
 
 from geode_gem.ui.data import Icons
-from geode_gem.ui.data import Folders
 from geode_gem.ui.utils import replace_for_markup
 from geode_gem.ui.widgets.window import CommonWindow
 from geode_gem.ui.widgets.widgets import ListBoxItem
@@ -29,15 +28,12 @@ from geode_gem.ui.widgets.widgets import ListBoxItem
 # GObject
 try:
     from gi import require_version
-
     require_version("Gtk", "3.0")
 
-    from gi.repository import Gtk
-    from gi.repository import Pango
+    from gi.repository import Gtk, Pango
 
 except ImportError as error:
     from sys import exit
-
     exit("Cannot found python3-gobject module: %s" % str(error))
 
 # Translation

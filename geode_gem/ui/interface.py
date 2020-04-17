@@ -15,45 +15,32 @@
 # ------------------------------------------------------------------------------
 
 # Datetime
-from datetime import date
-from datetime import datetime
-from datetime import timedelta
+from datetime import date, datetime, timedelta
 
 # Filesystem
-from os import R_OK
-from os import W_OK
-from os import X_OK
-from os import access
-from os import remove
-
+from os import R_OK, W_OK, X_OK, access, remove
 from os.path import getctime
-
 from pathlib import Path
-
 from copy import deepcopy
-
 from shutil import rmtree
 
 # GEM
-from geode_gem.engine.utils import copy
-from geode_gem.engine.utils import get_data
-from geode_gem.engine.utils import get_binary_path
-from geode_gem.engine.utils import parse_timedelta
-from geode_gem.engine.utils import generate_identifier
+from geode_gem.engine.utils import (copy,
+                                    get_data,
+                                    get_binary_path,
+                                    parse_timedelta,
+                                    generate_identifier)
 from geode_gem.engine.api import GEM
 from geode_gem.engine.console import Console
 from geode_gem.engine.lib.configuration import Configuration
 
-from geode_gem.ui.data import Icons
-from geode_gem.ui.data import Columns
-from geode_gem.ui.data import Folders
-from geode_gem.ui.data import Metadata
-from geode_gem.ui.utils import magic_from_file
-from geode_gem.ui.utils import on_change_theme
-from geode_gem.ui.utils import string_from_date
-from geode_gem.ui.utils import string_from_time
-from geode_gem.ui.utils import replace_for_markup
-from geode_gem.ui.utils import on_activate_listboxrow
+from geode_gem.ui.data import Icons, Columns, Folders, Metadata
+from geode_gem.ui.utils import (magic_from_file,
+                                on_change_theme,
+                                string_from_date,
+                                string_from_time,
+                                replace_for_markup,
+                                on_activate_listboxrow)
 from geode_gem.ui.dialog.cache import CleanCacheDialog
 from geode_gem.ui.dialog.cover import CoverDialog
 from geode_gem.ui.dialog.editor import EditorDialog
@@ -67,48 +54,35 @@ from geode_gem.ui.dialog.duplicate import DuplicateDialog
 from geode_gem.ui.dialog.parameter import ParametersDialog
 from geode_gem.ui.dialog.dndconsole import DNDConsoleDialog
 from geode_gem.ui.dialog.maintenance import MaintenanceDialog
-from geode_gem.ui.preferences.interface import ConsolePreferences
-from geode_gem.ui.preferences.interface import EmulatorPreferences
-from geode_gem.ui.preferences.interface import PreferencesWindow
+from geode_gem.ui.preferences.interface import (ConsolePreferences,
+                                                EmulatorPreferences,
+                                                PreferencesWindow)
 from geode_gem.ui.widgets.game import GameThread
 from geode_gem.ui.widgets.script import ScriptThread
-from geode_gem.ui.widgets.widgets import ListBoxItem
-from geode_gem.ui.widgets.widgets import IconsGenerator
+from geode_gem.ui.widgets.widgets import ListBoxItem, IconsGenerator
 
 # GObject
 try:
     from gi import require_version
-
     require_version("Gtk", "3.0")
 
-    from gi.repository import Gtk
-    from gi.repository import GLib
-    from gi.repository import GObject
-    from gi.repository import Gio
-    from gi.repository import Gdk
-    from gi.repository import GdkPixbuf
-    from gi.repository import Pango
+    from gi.repository import Gtk, GLib, GObject, Gio, Gdk, GdkPixbuf, Pango
 
 except ImportError as error:
     from sys import exit
-
     exit("Cannot found python3-gobject module: %s" % str(error))
 
 # Processus
-from subprocess import PIPE
-from subprocess import Popen
-from subprocess import STDOUT
+from subprocess import PIPE, Popen, STDOUT
 
 # Random
 from random import shuffle
 
 # Regex
-from re import match
-from re import IGNORECASE
+from re import match, IGNORECASE
 
 # System
 from sys import version_info
-
 from shlex import split as shlex_split
 
 # Thread
@@ -7926,8 +7900,8 @@ class MainWindow(Gtk.ApplicationWindow):
             self.__current_orientation = Gtk.Orientation.HORIZONTAL
 
         # Bottom-side sidebar
-        elif self.sidebar_orientation == "vertical" \
-           and not self.__current_orientation == Gtk.Orientation.VERTICAL:
+        elif (self.sidebar_orientation == "vertical"
+              and not self.__current_orientation == Gtk.Orientation.VERTICAL):
 
             self.label_sidebar_title.set_justify(Gtk.Justification.LEFT)
             self.label_sidebar_title.set_halign(Gtk.Align.START)
