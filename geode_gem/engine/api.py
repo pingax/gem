@@ -19,11 +19,14 @@ from collections import OrderedDict
 
 # Filesystem
 from pathlib import Path
-
 from os.path import splitext
 
 # GEM
-from geode_gem.engine.utils import copy, get_data, generate_identifier
+from geode_gem.engine.utils import (are_equivalent_timestamps,
+                                    copy,
+                                    generate_identifier,
+                                    get_data,
+                                    get_boot_datetime_as_timestamp)
 
 from geode_gem.engine.game import Game
 from geode_gem.engine.console import Console
@@ -40,6 +43,7 @@ from logging.config import fileConfig
 # System
 from fcntl import flock, LOCK_EX, LOCK_NB
 from os import getpid
+from os import name as os_name
 from sys import exit as sys_exit
 
 
@@ -153,24 +157,61 @@ class GEM(object):
 
         Create a lock file which avoid to access to the database with multiple
         instance simultaneous
+
+        The .lock file is stored into the XDG_DATA_HOME/gem directory.
+
+        Inside, we store these values: "GEM_PID BOOT_TIMESTAMP".
         """
 
-        if not self.__lock_path.exists():
-            self.__pid = getpid()
-
-            with self.__lock_path.open('wb') as pipe:
-                # Register current PID into file
-                pipe.write(bytes(str(self.__pid), "UTF-8"))
-                # Perform the lock operation on file
-                flock(pipe, LOCK_EX | LOCK_NB)
-
+        if not os_name == "posix":
+            logging.getLogger(self.Instance).warning(
+                "Your operating system do not support POSIX standard")
             return False
 
-        with self.__lock_path.open('r') as pipe:
-            # Retrieve current launched instance PID0
-            self.__pid = pipe.read()
+        proc_path = Path("/proc")
+        if not proc_path.exists():
+            logging.getLogger(self.Instance).warning(
+                "Your operating system do not support process file system")
+            return False
 
-        return True
+        # Retrieve current boot session timestamp
+        try:
+            timestamp = get_boot_datetime_as_timestamp()
+            if timestamp is None:
+                return False
+
+        except FileNotFoundError:
+            return False
+
+        # A lock file already exists on file system
+        if self.__lock_path.exists():
+            # Ensure to always retrieve the first line which contains PID
+            with self.__lock_path.open('r') as pipe:
+                content = pipe.read().split()
+
+            if content:
+                self.__pid, *more = content[0:]
+
+                # Check if specified PID still alive
+                if proc_path.joinpath(self.__pid).exists():
+
+                    # No way to check if this PID is really owned by GEM
+                    if not more or not more[0]:
+                        return True
+
+                    if are_equivalent_timestamps(timestamp, more[0], delta=4):
+                        return True
+
+        # Generate a new lock file
+        self.__pid = getpid()
+
+        with self.__lock_path.open('wb') as pipe:
+            # Register current PID into file
+            pipe.write(bytes(f"{self.__pid} {timestamp}", "UTF-8"))
+            # Perform the lock operation on file
+            flock(pipe, LOCK_EX | LOCK_NB)
+
+        return False
 
     def __init_logger(self):
         """ Initialize logger

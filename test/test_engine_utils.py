@@ -21,16 +21,18 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 # Geode
-from geode_gem.engine.utils import (copy,
+from geode_gem.engine.utils import (are_equivalent_timestamps,
+                                    copy,
                                     generate_extension,
                                     generate_identifier,
                                     get_binary_path,
+                                    get_boot_datetime_as_timestamp,
                                     get_creation_datetime,
                                     get_data,
                                     parse_timedelta)
 
 # System
-from tempfile import gettempdir
+from tempfile import gettempdir, TemporaryDirectory
 
 # Unittest
 import unittest
@@ -157,6 +159,45 @@ class GeodeGEMUtilsTC(unittest.TestCase):
             parse_timedelta(timedelta(days=2)), "48:00:00")
         self.assertEqual(
             parse_timedelta(timedelta(days=1337, seconds=42)), "32088:00:42")
+
+    def test_get_boot_datetime_as_timestamp(self):
+        """ Check geode_gem.engine.utils.get_boot_datetime_as_timestamp method
+        """
+
+        with self.assertRaises(FileNotFoundError):
+            get_boot_datetime_as_timestamp("unknown-path")
+
+        path = TemporaryDirectory(prefix="geode-gem-", suffix="-test")
+        with self.assertRaises(FileNotFoundError):
+            get_boot_datetime_as_timestamp(path.name)
+
+        uptime_path = Path(path.name, "uptime")
+        uptime_path.touch()
+
+        self.assertIsNone(get_boot_datetime_as_timestamp(path.name))
+
+        with uptime_path.open('w') as pipe:
+            pipe.write("1337.0 42.0")
+
+        result = get_boot_datetime_as_timestamp(path.name)
+        self.assertIsNotNone(result)
+
+        self.assertAlmostEqual(
+            result, datetime.now().timestamp() - 1337.0, delta=1)
+
+    def test_are_equivalent_timestamps(self):
+        """ Check geode_gem.engine.utils.are_equivalent_timestamps method
+        """
+
+        data = [(1587400601, 1587400601, 0, True),
+                (1587400601, 1587400604, 0, False),
+                (1587400601, 1587400604, 2, False),
+                (1587400601, 1587400604, 3, True)]
+
+        for first, second, delta, result in data:
+            self.assertEqual(
+                are_equivalent_timestamps(first, second, delta=delta),
+                result)
 
 
 if __name__ == "__main__":

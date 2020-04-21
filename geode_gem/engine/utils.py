@@ -282,3 +282,66 @@ def get_creation_datetime(path):
         return None
 
     return datetime.fromtimestamp(getctime(path))
+
+
+def get_boot_datetime_as_timestamp(proc_path="/proc"):
+    """ Retrieve boot datetime as timestamp
+
+    The 'uptime' file contains two values: boot time and idle time. This method
+    only retrieve the first one to calculate the boot datetime.
+
+    Parameters
+    ----------
+    proc_path : pathlib.Path or str, optional
+        Process file system path (Only used to test the method)
+
+    Returns
+    -------
+    float
+        Boot datetime as timestamp value
+
+    Raises
+    ------
+    FileNotFoundError
+        When the /proc directory do not exists on filesystem
+        When the /proc/uptime file do not exists on filesystem
+    """
+
+    if isinstance(proc_path, str):
+        proc_path = Path(proc_path)
+
+    if not proc_path.exists():
+        raise FileNotFoundError("Cannot found process file system")
+
+    uptime_file = proc_path.joinpath("uptime")
+    if not uptime_file.exists():
+        raise FileNotFoundError(f"Cannot found {uptime_file} on filesystem")
+
+    with uptime_file.open('r') as pipe:
+        content = pipe.read().split('\n')[0]
+
+    if content:
+        return datetime.now().timestamp() - float(content.split()[0])
+
+    return None
+
+
+def are_equivalent_timestamps(first, second, delta=0):
+    """ Check if two timestamps are equivalent
+
+    Parameters
+    ----------
+    first : int
+        First timestamp
+    second : int
+        Second timestamp
+    delta : int, optional
+        Allowed difference between the two timestamps
+
+    Returns
+    -------
+    bool
+        True if timestamps are equivalent, False otherwise
+    """
+
+    return abs(int(float(first)) - int(float(second))) in range(0, delta + 1)
