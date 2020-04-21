@@ -23,7 +23,6 @@ from pathlib import Path
 from geode_gem.ui.data import Icons
 from geode_gem.ui.utils import (on_entry_clear,
                                 magic_from_file,
-                                replace_for_markup,
                                 on_activate_listboxrow)
 from geode_gem.ui.dialog.question import QuestionDialog
 from geode_gem.ui.widgets.window import CommonWindow
@@ -828,15 +827,13 @@ class ImportDialog(CommonWindow):
 
         CommonWindow.__init__(self,
                               parent,
-                              _("Import"),
+                              title,
                               Icons.Symbolic.SAVE_AS,
                               classic_theme)
 
         # ------------------------------------
         #   Variables
         # ------------------------------------
-
-        self.import_title = title
 
         self.path = path
 
@@ -883,8 +880,7 @@ class ImportDialog(CommonWindow):
 
         # Properties
         self.label_title.set_markup(
-            "<span weight='bold' size='large'>%s</span>" % (
-                replace_for_markup(self.import_title)))
+            "<span weight='bold' size='large'>%s</span>" % _("Import"))
         self.label_title.set_use_markup(True)
         self.label_title.set_halign(Gtk.Align.CENTER)
         self.label_title.set_ellipsize(Pango.EllipsizeMode.END)
@@ -1050,15 +1046,13 @@ class ExportDialog(CommonWindow):
 
         CommonWindow.__init__(self,
                               parent,
-                              _("Export"),
+                              title,
                               Icons.Symbolic.SEND,
                               classic_theme)
 
         # ------------------------------------
         #   Variables
         # ------------------------------------
-
-        self.import_title = title
 
         self.mimetypes = ["text/plain"]
 
@@ -1109,8 +1103,7 @@ class ExportDialog(CommonWindow):
 
         # Properties
         self.label_title.set_markup(
-            "<span weight='bold' size='large'>%s</span>" % (
-                replace_for_markup(self.import_title)))
+            "<span weight='bold' size='large'>%s</span>" % _("Export"))
         self.label_title.set_use_markup(True)
         self.label_title.set_halign(Gtk.Align.CENTER)
         self.label_title.set_ellipsize(Pango.EllipsizeMode.END)
