@@ -37,6 +37,7 @@ setup(
     entry_points={
         'console_scripts': [
             'gem-ui = geode_gem.__main__:main',
+            'geode-gem = geode_gem.__main__:main',
         ],
     },
     license='GPLv3',
