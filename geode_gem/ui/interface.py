@@ -1267,7 +1267,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.image_game_placeholder.get_style_context().add_class("dim-label")
 
         self.label_game_placeholder.set_label(
-            _("Start to play by drag & drop some ROM files into interface"))
+            _("Start to play by drag & drop some files into interface"))
         self.label_game_placeholder.set_halign(Gtk.Align.CENTER)
         self.label_game_placeholder.set_valign(Gtk.Align.START)
 
@@ -3335,7 +3335,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 self,
                 _("Welcome !"),
                 _("Welcome and thanks for choosing GEM as emulators manager. "
-                  "Start using GEM by droping some roms into interface.\n\n"
+                  "Start using GEM by droping some files into interface.\n\n"
                   "Enjoy and have fun :D"),
                 Icons.Symbolic.SMILE_BIG,
                 False)

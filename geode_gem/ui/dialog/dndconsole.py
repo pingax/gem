@@ -382,7 +382,7 @@ class DNDSelector(Gtk.Box):
             Icons.Symbolic.REFRESH, Gtk.IconSize.BUTTON)
         self.button_consoles.add(self.image_consoles)
         self.button_consoles.set_tooltip_text(
-            _("Apply this console to each games in the list above"))
+            _("Use this console to each games in the list above"))
         self.button_consoles.get_style_context().add_class("suggested-action")
 
         # ----------------------------------------

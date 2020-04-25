@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-07-18 22:11+0200\n"
+"PO-Revision-Date: 2020-04-25 11:29+0200\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Geany / PoHelper 1.35\n"
+"X-Generator: Geany / PoHelper 1.36\n"
 
 # File: src/window.py, line: 1064
 #, python-format
@@ -32,7 +32,7 @@ msgstr "%d jeux disponibles"
 #
 # File: gem/ui/interface.py, line: 8186
 #, python-format
-msgid "%d games has been added"
+msgid "%d games have been added"
 msgstr "%d jeux ont été ajoutés"
 
 #
@@ -94,7 +94,7 @@ msgstr "%s a été correctement ajouté à votre configuration."
 # File: gem/interface.py, line: 1882
 #, python-format
 msgid "%s was generated successfully"
-msgstr "%s à été généré avec succès"
+msgstr "%s a été généré avec succès"
 
 #
 # File: gem/gtk/preferences.py, line: 2612
@@ -114,7 +114,7 @@ msgstr "1 jeu disponible"
 #
 # File: gem/ui/interface.py, line: 8183
 msgid "1 game has been added"
-msgstr "1 jeu à été ajouté"
+msgstr "1 jeu a été ajouté"
 
 #
 # File: gem/utils.py, line: 330
@@ -207,7 +207,7 @@ msgstr "Ajouter un nouvel émulateur"
 # File: gem/ui/preferences/interface.py, line: 657
 msgid "Add an ellipsis to title when there is not enough space"
 msgstr ""
-"Ajouter des points de suspenssion au titre quand il n'y a pas assez d'espace"
+"Ajouter des points de suspension au titre quand il n'y a pas assez d'espace"
 
 #
 # File: gem/ui/preferences/console.py, line: 338
@@ -508,6 +508,11 @@ msgid "Display a sidebar next to games view"
 msgstr "Afficher la barre latérale à côté de la vue des jeux"
 
 #
+# File: geode_gem/ui/preferences/interface.py, line: 791
+msgid "Display a tooltip when the mouse hovered a game"
+msgstr "Afficher une infobulle au survol d'un jeu"
+
+#
 # File: gem/ui/preferences/interface.py, line: 739
 msgid "Display an image in game tooltip"
 msgstr "Afficher une image dans l'infobulle de jeu"
@@ -520,7 +525,7 @@ msgstr "Afficher des lignes de fond dans la liste de jeux"
 #
 # File: gem/ui/preferences/interface.py, line: 572
 msgid "Display headerbar close buttons"
-msgstr "Afficher les boutons de fermeture de la barre d'en-tête"
+msgstr "Afficher les boutons de fermeture dans la barre d'en-tête"
 
 #
 # File: src/window.py, line: 375
@@ -585,7 +590,7 @@ msgstr "Dupliquer le fichier de note du jeu"
 #
 # File: gem/gtk/preferences.py, line: 2597
 msgid "Duplicate savestates files"
-msgstr "Dupliquer les fichiers de sauvegarde"
+msgstr "Dupliquer les fichiers de sauvegardes"
 
 #
 # File: gem/preferences.py, line: 335
@@ -669,6 +674,11 @@ msgstr "Activer l'affichage aléatoire de la capture d'écran"
 # File: gem/preferences.py, line: 338
 msgid "Enable sidebar"
 msgstr "Activer la barre latérale"
+
+#
+# File: geode_gem/ui/preferences/interface.py, line: 789
+msgid "Enable tooltip"
+msgstr "Activer l'infobulle"
 
 #
 # File: gem/preferences.py, line: 283
@@ -785,8 +795,8 @@ msgstr "Plein écran"
 #
 # File: gem/__main__.py, line: 96
 #, python-format
-msgid "GEM is already running with PID %d"
-msgstr "GEM est déjà lancé avec l'identificateur de processus %d"
+msgid "GEM is already running with PID %s"
+msgstr "GEM est déjà lancé avec l'identificateur de processus %s"
 
 #
 # File: gem/preferences.py, line: 113
@@ -963,7 +973,7 @@ msgstr ""
 #
 # File: gem/gtk/windows.py, line: 1069
 msgid "Key"
-msgstr "Clé"
+msgstr "Clef"
 
 #
 # File: gem/gtk/preferences.py, line: 179
@@ -1059,7 +1069,7 @@ msgstr "Maintenance"
 #
 # File: gem/ui/dialog/dndconsole.py, line: 164
 msgid "Make copy of dropped files instead of moving them"
-msgstr "Faire une copie des jeux reçu plutôt que de les déplacer"
+msgstr "Faire une copie des jeux reçus plutôt que de les déplacer"
 
 #
 # File: src/window.py, line: 436
@@ -1080,7 +1090,7 @@ msgstr "Marquer un jeu comme multi-joueurs"
 #
 # File: gem/gtk/mednafen.py, line: 186
 msgid "Mednafen GBA documentation"
-msgstr "Documentation de Mednafen pour la GBA"
+msgstr "Documentation de Mednafen concernant la GBA"
 
 #
 # File: gem/gtk/preferences.py, line: 177
@@ -1551,7 +1561,7 @@ msgstr "Mettre le score à 5 du jeu sélectionné"
 #
 # File: gem/ui/preferences/interface.py, line: 660
 msgid "Set sidebar position as for games view"
-msgstr "Définir la position de la barre latérale à coté de la vue des jeux"
+msgstr "Définir la position de la barre latérale vis à vis de la vue des jeux"
 
 #
 # File: gem/preferences.py, line: 633
@@ -1651,8 +1661,8 @@ msgstr "Spécifier un type de mémoire"
 
 #
 # File: gem/gtk/interface.py, line: 949
-msgid "Start to play by drag & drop some ROM files into interface"
-msgstr "Commencez à jouer en déplaçant des ROM dans l'interface"
+msgid "Start to play by drag & drop some files into interface"
+msgstr "Commencez à jouer en déplaçant des fichiers dans l'interface"
 
 #
 # File: gem/gtk/windows.py, line: 1052
@@ -1784,6 +1794,11 @@ msgstr "Barre d'outils"
 
 #
 # File: gem/ui/preferences/interface.py, line: 741
+msgid "Tooltip"
+msgstr "Infobulle"
+
+#
+# File: gem/ui/preferences/interface.py, line: 741
 msgid "Tooltip image"
 msgstr "Image d'infobulle"
 
@@ -1871,6 +1886,11 @@ msgid "Use space to separate extensions"
 msgstr "Utilisez l'espace pour séparer les extensions"
 
 #
+# File: geode_gem/ui/dialog/dndconsole.py, line: 385
+msgid "Use this console to each games in the list above"
+msgstr "Utiliser cette console pour chacun des jeux de la liste ci-dessous"
+
+#
 # File: gem/gtk/mednafen.py, line: 400
 msgid "Value"
 msgstr "Valeur"
@@ -1889,12 +1909,12 @@ msgstr "Bienvenue !"
 # File: gem/interface.py, line: 596
 msgid ""
 "Welcome and thanks for choosing GEM as emulators manager. Start using GEM by "
-"droping some roms into interface.\n"
+"droping some files into interface.\n"
 "\n"
 "Enjoy and have fun :D"
 msgstr ""
 "Bienvenue et merci d'avoir choisi GEM pour gérer vos émulateurs. Commencez à "
-"utiliser GEM en déposant une rom dans l'interface.\n"
+"utiliser GEM en déposant des fichiers dans l'interface.\n"
 "\n"
 "Amusez-vous bien :D"
 
@@ -1911,7 +1931,7 @@ msgstr "Fenêtré"
 #
 # File: src/window.py, line: 940
 msgid "Would you really want to clean icons cache directory ?"
-msgstr "Voulez-vous vraiment nattoyer le dossier de cache des icônes ?"
+msgstr "Voulez-vous vraiment nettoyer le dossier de cache des icônes ?"
 
 #
 # File: src/window.py, line: 940

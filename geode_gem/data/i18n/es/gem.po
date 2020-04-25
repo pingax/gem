@@ -31,8 +31,8 @@ msgstr "%d juegos disponibles"
 
 #
 # File: gem/ui/interface.py, line: 8186
-#, python-format
-msgid "%d games has been added"
+#, fuzzy, python-format
+msgid "%d games have been added"
 msgstr "%d juegos añadidos"
 
 #
@@ -517,6 +517,11 @@ msgid "Display a sidebar next to games view"
 msgstr "Mostrar una barra lateral al lado de la vista de juegos"
 
 #
+# File: geode_gem/ui/preferences/interface.py, line: 791
+msgid "Display a tooltip when the mouse hovered a game"
+msgstr ""
+
+#
 # File: gem/ui/preferences/interface.py, line: 747
 msgid "Display an image in game tooltip"
 msgstr "Mostrar una imagen en la descripción emergente del juego"
@@ -677,6 +682,11 @@ msgid "Enable sidebar"
 msgstr "Activar la barra lateral"
 
 #
+# File: geode_gem/ui/preferences/interface.py, line: 789
+msgid "Enable tooltip"
+msgstr ""
+
+#
 # File: gem/preferences.py, line: 283
 msgid "Enable translucent icons"
 msgstr "Activar iconos traslúcidos"
@@ -791,8 +801,8 @@ msgstr "Pantalla completa"
 
 #
 # File: gem/main.py, line: 148
-#, python-format
-msgid "GEM is already running with PID %d"
+#, fuzzy, python-format
+msgid "GEM is already running with PID %s"
 msgstr "GEM ya se está ejecutando con el PID %d"
 
 #
@@ -1677,7 +1687,8 @@ msgstr "Escoge un tipo de _memoria"
 
 #
 # File: gem/gtk/interface.py, line: 949
-msgid "Start to play by drag & drop some ROM files into interface"
+#, fuzzy
+msgid "Start to play by drag & drop some files into interface"
 msgstr "Empieza a jugar arrastrando y soltando algunas ROM en la aplicación"
 
 #
@@ -1808,6 +1819,12 @@ msgstr "Barra de herramientas"
 
 #
 # File: gem/ui/preferences/interface.py, line: 737
+#, fuzzy
+msgid "Tooltip"
+msgstr "Imagen de la descripción emergente"
+
+#
+# File: gem/ui/preferences/interface.py, line: 737
 msgid "Tooltip image"
 msgstr "Imagen de la descripción emergente"
 
@@ -1896,6 +1913,11 @@ msgid "Use space to separate extensions"
 msgstr "Usar espacio para separar las extensiones"
 
 #
+# File: geode_gem/ui/dialog/dndconsole.py, line: 385
+msgid "Use this console to each games in the list above"
+msgstr ""
+
+#
 # File: gem/gtk/mednafen.py, line: 400
 msgid "Value"
 msgstr "Valor"
@@ -1912,9 +1934,10 @@ msgstr "¡Bienvenido!"
 
 #
 # File: gem/interface.py, line: 596
+#, fuzzy
 msgid ""
 "Welcome and thanks for choosing GEM as emulators manager. Start using GEM by "
-"droping some roms into interface.\n"
+"droping some files into interface.\n"
 "\n"
 "Enjoy and have fun :D"
 msgstr ""
