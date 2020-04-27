@@ -42,12 +42,15 @@ else
 
     echo -e "\033[1m==> Install icon files\033[0m"
     mkdir -pv "${PREFIX}/share/pixmaps/"
-    cp -v "data/gem.svg" "${PREFIX}/share/pixmaps/"
+    cp -v "geode_gem/data/desktop/gem.svg" \
+          "${PREFIX}/share/pixmaps/"
 
     mkdir -pv "${PREFIX}/share/icons/hicolor/scalable/apps/"
-    cp -v "data/gem.svg" "${PREFIX}/share/icons/hicolor/scalable/apps/"
+    cp -v "geode_gem/data/desktop/gem.svg" \
+          "${PREFIX}/share/icons/hicolor/scalable/apps/"
 
     echo -e "\033[1m==> Install desktop file\033[0m"
     mkdir -pv "${PREFIX}/share/applications/"
-    cp -v "data/gem.desktop" "${PREFIX}/share/applications/"
+    cp -v "geode_gem/data/desktop/gem.desktop" \
+          "${PREFIX}/share/applications/"
 fi
