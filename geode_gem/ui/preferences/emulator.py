@@ -1,7 +1,10 @@
 # ------------------------------------------------------------------------------
+#  Copyleft 2015-2020  PacMiam
+#
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 3 of the License.
+#  the Free Software Foundation; either version 3 of the License, or
+#  (at your option) any later version.
 #
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,27 +21,22 @@
 from pathlib import Path
 
 # GEM
-from geode_gem.engine.utils import get_binary_path
-from geode_gem.engine.utils import generate_identifier
+from geode_gem.engine.utils import get_binary_path, generate_identifier
 
 from geode_gem.ui.data import Icons
-from geode_gem.ui.utils import on_entry_clear
-from geode_gem.ui.utils import magic_from_file
+from geode_gem.ui.utils import on_entry_clear, magic_from_file
 from geode_gem.ui.dialog.icons import IconsDialog
 from geode_gem.ui.widgets.window import CommonWindow
 
 # GObject
 try:
     from gi import require_version
-
     require_version("Gtk", "3.0")
 
-    from gi.repository import Gtk
-    from gi.repository import GdkPixbuf
+    from gi.repository import Gtk, GdkPixbuf
 
 except ImportError as error:
     from sys import exit
-
     exit("Cannot found python3-gobject module: %s" % str(error))
 
 # Translation
@@ -106,7 +104,7 @@ class EmulatorPreferences(CommonWindow):
             _("Description"): [
                 _("To facilitate file detection with every emulators, some "
                     "custom parameters have been created."),
-                _("This parameters are used in \"Default options\", \"Save\" "
+                _("These parameters are used in \"Default options\", \"Save\" "
                     "and \"Snapshots\" entries."),
             ],
             _("Parameters"): {
@@ -281,7 +279,7 @@ class EmulatorPreferences(CommonWindow):
         self.entry_launch.set_hexpand(True)
         self.entry_launch.set_no_show_all(True)
         self.entry_launch.set_placeholder_text(
-            _("Default arguments to add when launch emulator"))
+            _("Defaults arguments to add when launching emulator"))
         self.entry_launch.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.CLEAR)
 

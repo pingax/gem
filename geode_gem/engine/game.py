@@ -1,7 +1,10 @@
 # ------------------------------------------------------------------------------
+#  Copyleft 2015-2020  PacMiam
+#
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 3 of the License.
+#  the Free Software Foundation; either version 3 of the License, or
+#  (at your option) any later version.
 #
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -15,26 +18,19 @@
 # ------------------------------------------------------------------------------
 
 # Datetime
-from datetime import date
-from datetime import datetime
-from datetime import timedelta
+from datetime import date, timedelta
 
 # Filesystem
-from os.path import getctime
-
 from pathlib import Path
 
 # GEM
-from geode_gem.engine.utils import parse_timedelta
-from geode_gem.engine.utils import generate_identifier
-
+from geode_gem.engine.utils import (get_creation_datetime,
+                                    generate_identifier,
+                                    parse_timedelta)
 from geode_gem.engine.emulator import Emulator
 
 # Regex
 from re import compile as re_compile
-
-# System
-from shlex import split as shlex_split
 
 
 # ------------------------------------------------------------------------------
@@ -72,7 +68,23 @@ class Game(object):
             API instance
         filename : pathlib.Path
             Game file path
+
+        Raises
+        ------
+        ValueError
+            When the specified filename is empty or null
+        FileNotFoundError
+            When the specified filename not exists on filesystem
         """
+
+        if not filename:
+            raise ValueError(f"Cannot use an empty value as filename")
+
+        if isinstance(filename, str):
+            filename = Path(filename).expanduser()
+
+        if not filename.exists():
+            raise FileNotFoundError(f"Cannot found '{filename}' in filesytem")
 
         # ----------------------------------------
         #   Variables
@@ -118,8 +130,7 @@ class Game(object):
 
         setattr(self, "name", self.__path.stem)
 
-        setattr(self, "installed",
-                datetime.fromtimestamp(getctime(self.__path)).date())
+        setattr(self, "installed", get_creation_datetime(self.__path).date())
 
         self.environment.clear()
         if self.__parent is not None:
@@ -214,57 +225,11 @@ class Game(object):
                     elif key_type is str and len(value) > 0:
                         setattr(self, key, value)
 
-    def __get_content(self, pattern):
-        """ Get content list for a specific game
-
-        Parameters
-        ----------
-        pattern : str
-            Game content path
-
-        Returns
-        -------
-        list
-            return a list
-        """
-
-        files = list()
-
-        path = getattr(self.emulator, pattern, None)
-
-        if path is not None:
-            pattern = str(path)
-
-            if "<rom_path>" in pattern:
-                pattern = pattern.replace("<rom_path>", str(self.path.parent))
-
-            if "<lname>" in pattern:
-                pattern = pattern.replace("<lname>", self.path.stem.lower())
-
-            elif "<name>" in pattern:
-                pattern = pattern.replace("<name>", self.path.stem)
-
-            if "<key>" in pattern and len(self.key) > 0:
-                pattern = pattern.replace("<key>", self.key)
-
-            path = Path(pattern).expanduser().resolve()
-
-            # Check if parent path exists and is a directory
-            if path.parent.exists() and path.parent.is_dir():
-
-                for filename in path.parent.glob(path.name):
-
-                    # Only retrieve files which exists and are not directories
-                    if filename.exists() and filename.is_file():
-                        files.append(filename)
-
-        return files
-
     def __str__(self):
         """ Return a formatted string when using print function
         """
 
-        return "[%s] %s" % (self.id, self.__path)
+        return f"[{self.id}] {self.__path}"
 
     def as_dict(self):
         """ Return object as dictionary structure
@@ -312,6 +277,7 @@ class Game(object):
         for key in self.attributes.keys():
             setattr(game, key, getattr(self, key, None))
 
+        game.id = generate_identifier(filename)
         game.name = filename.stem
 
         return game
@@ -356,24 +322,16 @@ class Game(object):
     @property
     def screenshots(self):
         """ Get screenshots list
-
-        See Also
-        --------
-        gem.engine.game.Game.__get_content()
         """
 
-        return self.__get_content("screenshots")
+        return self.emulator.get_screenshots(self)
 
     @property
     def savestates(self):
         """ Get savestates list
-
-        See Also
-        --------
-        gem.engine.game.Game.__get_content()
         """
 
-        return self.__get_content("savestates")
+        return self.emulator.get_savestates(self)
 
     def command(self, fullscreen=False):
         """ Generate a launch command
@@ -390,65 +348,7 @@ class Game(object):
         """
 
         if self.emulator is not None:
-
-            # Check emulator binary
-            if not self.emulator.exists:
-                raise OSError(2, "Cannot found emulator binary",
-                              str(self.emulator.binary))
-
-            # ----------------------------------------
-            #   Retrieve default parameters
-            # ----------------------------------------
-
-            arguments = shlex_split(str(self.emulator.binary))
-
-            # Retrieve fullscreen mode
-            if fullscreen and self.emulator.fullscreen is not None:
-                arguments.append(" %s" % str(self.emulator.fullscreen))
-            elif not fullscreen and self.emulator.windowed is not None:
-                arguments.append(" %s" % str(self.emulator.windowed))
-
-            # Retrieve default or specific arguments
-            if len(self.default) > 0:
-                arguments.append(" %s" % str(self.default))
-            elif len(self.emulator.default) > 0:
-                arguments.append(" %s" % str(self.emulator.default))
-
-            # ----------------------------------------
-            #   Replace pattern substitutes
-            # ----------------------------------------
-
-            command = ' '.join(arguments).strip()
-
-            need_gamefile = True
-
-            keys = {
-                "conf_path": self.emulator.configuration,
-                "rom_name": self.path.stem,
-                "rom_file": self.path,
-                "rom_path": self.path.parent,
-                "key": self.key
-            }
-
-            for key, value in keys.items():
-                substring = "<%s>" % key
-
-                if value is not None and substring in command:
-                    command = command.replace(substring, str(value))
-
-                    if key in ("rom_path", "rom_name", "rom_file"):
-                        need_gamefile = False
-
-            # ----------------------------------------
-            #   Generate subprocess compatible command
-            # ----------------------------------------
-
-            arguments = shlex_split(command)
-
-            if need_gamefile:
-                arguments.append(str(self.path))
-
-            return arguments
+            return self.emulator.get_command_line(self, fullscreen=fullscreen)
 
         return None
 
@@ -456,5 +356,4 @@ class Game(object):
         """ Reload installation date from game file
         """
 
-        setattr(self, "installed",
-                datetime.fromtimestamp(getctime(self.__path)).date())
+        setattr(self, "installed", get_creation_datetime(self.__path).date())

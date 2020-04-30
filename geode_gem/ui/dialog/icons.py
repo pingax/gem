@@ -1,7 +1,10 @@
 # ------------------------------------------------------------------------------
+#  Copyleft 2015-2020  PacMiam
+#
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 3 of the License.
+#  the Free Software Foundation; either version 3 of the License, or
+#  (at your option) any later version.
 #
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -19,7 +22,6 @@ from pathlib import Path
 
 # GEM
 from geode_gem.ui.data import Icons
-from geode_gem.ui.data import Folders
 from geode_gem.ui.utils import magic_from_file
 from geode_gem.ui.widgets.window import CommonWindow
 
@@ -29,13 +31,10 @@ try:
 
     require_version("Gtk", "3.0")
 
-    from gi.repository import Gtk
-    from gi.repository import GLib
-    from gi.repository import GdkPixbuf
+    from gi.repository import Gtk, GLib, GdkPixbuf
 
 except ImportError as error:
     from sys import exit
-
     exit("Cannot found python3-gobject module: %s" % str(error))
 
 # Translation
@@ -326,7 +325,7 @@ class IconsDialog(CommonWindow):
         yield True
 
         # Retrieve files from icons collection
-        collection_path = Folders.LOCAL.joinpath("icons")
+        collection_path = self.api.get_local("icons")
 
         for path in sorted(collection_path.glob("*.png")):
 

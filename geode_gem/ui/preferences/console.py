@@ -1,7 +1,10 @@
 # ------------------------------------------------------------------------------
+#  Copyleft 2015-2020  PacMiam
+#
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 3 of the License.
+#  the Free Software Foundation; either version 3 of the License, or
+#  (at your option) any later version.
 #
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -21,25 +24,19 @@ from pathlib import Path
 from geode_gem.engine.utils import generate_identifier
 
 from geode_gem.ui.data import Icons
-from geode_gem.ui.data import Folders
-from geode_gem.ui.utils import on_entry_clear
-from geode_gem.ui.utils import magic_from_file
+from geode_gem.ui.utils import on_entry_clear, magic_from_file
 from geode_gem.ui.dialog.icons import IconsDialog
 from geode_gem.ui.widgets.window import CommonWindow
 
 # GObject
 try:
     from gi import require_version
-
     require_version("Gtk", "3.0")
 
-    from gi.repository import Gtk
-    from gi.repository import GdkPixbuf
-    from gi.repository import Pango
+    from gi.repository import Gtk, GdkPixbuf, Pango
 
 except ImportError as error:
     from sys import exit
-
     exit("Cannot found python3-gobject module: %s" % str(error))
 
 # Translation
@@ -119,8 +116,8 @@ class ConsolePreferences(CommonWindow):
                 _("Most of the time, extensions are common between differents "
                   "emulators and represent the console acronym name (example: "
                   "Nintendo NES -> nes)."),
-                _("Extensions are split by spaces and must not having the "
-                  "first dot (using \"nes\" than \".nes\").")
+                _("Extensions are split by spaces and must not have the first "
+                  "dot (using \"nes\" than \".nes\").")
             ],
             _("Extensions examples"): {
                 "Nintendo NES": "nes",
@@ -632,7 +629,7 @@ class ConsolePreferences(CommonWindow):
 
                 if self.error:
                     icon = Icons.ERROR
-                    tooltip = _("This console already exist, please, "
+                    tooltip = _("This console already exists, please, "
                                 "choose another name")
 
         else:
@@ -790,8 +787,7 @@ class ConsolePreferences(CommonWindow):
 
             # Check icon from icons theme
             if not path.exists():
-                collection_path = Folders.LOCAL.joinpath(
-                    "icons", "%s.png" % path)
+                collection_path = self.api.get_local("icons", f"{path}.png")
 
                 # Retrieve icon from collection
                 if collection_path.exists() and collection_path.is_file():

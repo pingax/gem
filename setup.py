@@ -6,7 +6,7 @@ from setuptools import find_packages
 
 setup(
     name='Geode-GEM',
-    version='0.10.2',
+    version='0.10.3',
     author='PacMiam',
     author_email='pacmiam@tuxfamily.org',
     description='Graphical Emulators Manager',
@@ -28,9 +28,16 @@ setup(
         'PyGobject ~= 3.32',
         'pyxdg ~= 0.26',
     ],
+    extras_require={
+        'dev': [
+            'pytest',
+            'flake8',
+        ],
+    },
     entry_points={
         'console_scripts': [
             'gem-ui = geode_gem.__main__:main',
+            'geode-gem = geode_gem.__main__:main',
         ],
     },
     license='GPLv3',

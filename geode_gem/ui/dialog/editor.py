@@ -1,7 +1,10 @@
 # ------------------------------------------------------------------------------
+#  Copyleft 2015-2020  PacMiam
+#
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 3 of the License.
+#  the Free Software Foundation; either version 3 of the License, or
+#  (at your option) any later version.
 #
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -15,18 +18,15 @@
 # ------------------------------------------------------------------------------
 
 # Filesystem
-from os import R_OK
-from os import W_OK
-from os import access
+from os import R_OK, W_OK, access
 
 from pathlib import Path
 
 # GEM
 from geode_gem.ui.data import Icons
-from geode_gem.ui.utils import on_entry_clear
-from geode_gem.ui.utils import magic_from_file
-from geode_gem.ui.utils import replace_for_markup
-from geode_gem.ui.utils import on_activate_listboxrow
+from geode_gem.ui.utils import (on_entry_clear,
+                                magic_from_file,
+                                on_activate_listboxrow)
 from geode_gem.ui.dialog.question import QuestionDialog
 from geode_gem.ui.widgets.window import CommonWindow
 from geode_gem.ui.widgets.widgets import ListBoxItem
@@ -34,17 +34,12 @@ from geode_gem.ui.widgets.widgets import ListBoxItem
 # GObject
 try:
     from gi import require_version
-
     require_version("Gtk", "3.0")
 
-    from gi.repository import Gtk
-    from gi.repository import GLib
-    from gi.repository import Gdk
-    from gi.repository import Pango
+    from gi.repository import Gtk, GLib, Gdk, Pango
 
 except ImportError as error:
     from sys import exit
-
     exit("Cannot found python3-gobject module: %s" % str(error))
 
 # Translation
@@ -746,7 +741,7 @@ class EditorDialog(CommonWindow):
                     subdialog = QuestionDialog(
                         self,
                         _("Existing file"),
-                        _("Would you want to replace existing file ?"))
+                        _("Do you want to replace existing file ?"))
 
                     if subdialog.run() == Gtk.ResponseType.NO:
                         replace = False
@@ -835,15 +830,13 @@ class ImportDialog(CommonWindow):
 
         CommonWindow.__init__(self,
                               parent,
-                              _("Import"),
+                              title,
                               Icons.Symbolic.SAVE_AS,
                               classic_theme)
 
         # ------------------------------------
         #   Variables
         # ------------------------------------
-
-        self.import_title = title
 
         self.path = path
 
@@ -890,8 +883,7 @@ class ImportDialog(CommonWindow):
 
         # Properties
         self.label_title.set_markup(
-            "<span weight='bold' size='large'>%s</span>" % (
-                replace_for_markup(self.import_title)))
+            "<span weight='bold' size='large'>%s</span>" % _("Import"))
         self.label_title.set_use_markup(True)
         self.label_title.set_halign(Gtk.Align.CENTER)
         self.label_title.set_ellipsize(Pango.EllipsizeMode.END)
@@ -1057,15 +1049,13 @@ class ExportDialog(CommonWindow):
 
         CommonWindow.__init__(self,
                               parent,
-                              _("Export"),
+                              title,
                               Icons.Symbolic.SEND,
                               classic_theme)
 
         # ------------------------------------
         #   Variables
         # ------------------------------------
-
-        self.import_title = title
 
         self.mimetypes = ["text/plain"]
 
@@ -1116,8 +1106,7 @@ class ExportDialog(CommonWindow):
 
         # Properties
         self.label_title.set_markup(
-            "<span weight='bold' size='large'>%s</span>" % (
-                replace_for_markup(self.import_title)))
+            "<span weight='bold' size='large'>%s</span>" % _("Export"))
         self.label_title.set_use_markup(True)
         self.label_title.set_halign(Gtk.Align.CENTER)
         self.label_title.set_ellipsize(Pango.EllipsizeMode.END)

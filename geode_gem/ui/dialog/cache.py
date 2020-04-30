@@ -1,7 +1,10 @@
 # ------------------------------------------------------------------------------
+#  Copyleft 2015-2020  PacMiam
+#
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 3 of the License.
+#  the Free Software Foundation; either version 3 of the License, or
+#  (at your option) any later version.
 #
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -15,22 +18,18 @@
 # ------------------------------------------------------------------------------
 
 # GEM
-from geode_gem.ui.data import Icons
-from geode_gem.ui.data import Folders
+from geode_gem.ui.data import Icons, Folders
 from geode_gem.ui.widgets.window import CommonWindow
 
 # GObject
 try:
     from gi import require_version
-
     require_version("Gtk", "3.0")
 
-    from gi.repository import Gtk
-    from gi.repository import Pango
+    from gi.repository import Gtk, Pango
 
 except ImportError as error:
     from sys import exit
-
     exit("Cannot found python3-gobject module: %s" % str(error))
 
 # Translation
@@ -91,7 +90,7 @@ class CleanCacheDialog(CommonWindow):
         # Properties
         self.label_title.set_markup(
             "<span weight='bold' size='large'>%s</span>" % (
-                _("Would you really want to clean icons cache directory ?")))
+                _("Do you really want to clean icons cache directory ?")))
         self.label_title.set_use_markup(True)
         self.label_title.set_halign(Gtk.Align.CENTER)
         self.label_title.set_ellipsize(Pango.EllipsizeMode.END)

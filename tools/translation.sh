@@ -1,5 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # ------------------------------------------------------------------------------
+#  Copyleft 2015-2020  PacMiam
+#
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation; either version 3 of the License, or
@@ -21,78 +23,96 @@ TRANSLATIONS=(fr es)
 LOCALE_PATH="geode_gem/data/i18n"
 
 # ------------------------------------------------------------------------------
-#   Check default files
+#   Functions
 # ------------------------------------------------------------------------------
 
-echo "[INFO] Check translations…"
+function update_project() {
+    # Update the .pot file
 
-# Create .pot files
-for LANG in "${TRANSLATIONS[@]}" ; do
-    LANG_PATH="${LOCALE_PATH}/${LANG}"
+    echo "[INFO] Generate translation template…"
+    xgettext \
+        --package-name="Geode-GEM" \
+        --package-version="0.10.3" \
+        --copyright-holder="Kawa-Team" \
+        --from-code="UTF-8" \
+        --language="Python" \
+        --add-location \
+        --indent \
+        --keyword="_" \
+        --omit-header \
+        --sort-output \
+        --strict \
+        --output="${LOCALE_PATH}/gem.pot" \
+        geode_gem/*.py \
+        geode_gem/engine/*.py \
+        geode_gem/ui/*.py \
+        geode_gem/ui/dialog/*.py \
+        geode_gem/ui/preferences/*.py \
+        geode_gem/ui/widgets/*.py
+}
+
+function update_locale() {
+    # Update the .po file for a specific locale
+
+    LANG_PATH="${LOCALE_PATH}/${1}"
 
     if [ ! -d "${LANG_PATH}" ] ; then
         mkdir -p "${LANG_PATH}"
     fi
 
     if [ ! -f "${LANG_PATH}/gem.po" ] ; then
-        echo "[INFO] Generate translation for ${LANG}"
-
+        echo "[INFO] Initialize translation for ${1}"
         msginit \
+            --no-translator \
             --input="${LOCALE_PATH}/gem.pot" \
             --output="${LANG_PATH}/gem.po"
     fi
-done
 
-# ------------------------------------------------------------------------------
-#   Generate translations
-# ------------------------------------------------------------------------------
-
-echo "[INFO] Generate translations…"
-
-# Generate .po files
-xgettext \
-    --package-name="Geode-GEM" \
-    --package-version="0.10.2" \
-    --copyright-holder="Kawa-Team" \
-    --from-code="UTF-8" \
-    --language="Python" \
-    --indent \
-    --keyword="_" \
-    --omit-header \
-    --sort-output \
-    --strict \
-    --output="${LOCALE_PATH}/gem.pot" \
-    geode_gem/*.py \
-    geode_gem/engine/*.py \
-    geode_gem/ui/*.py \
-    geode_gem/ui/dialog/*.py \
-    geode_gem/ui/preferences/*.py \
-    geode_gem/ui/widgets/*.py
-
-# ------------------------------------------------------------------------------
-#   Update files
-# ------------------------------------------------------------------------------
-
-echo "[INFO] Update translations…"
-
-for LANG in "${TRANSLATIONS[@]}" ; do
-    echo "[INFO] Merge translation for ${LANG}"
-    LANG_PATH="${LOCALE_PATH}/${LANG}"
-
+    echo "[INFO] Update translation for ${1}"
     msgmerge \
         --verbose \
         --update \
         --sort-output \
         "${LANG_PATH}/gem.po" \
         "${LOCALE_PATH}/gem.pot"
+}
+
+function generate_locale() {
+    # Generate the .mo file for a specific locale
+
+    LANG_PATH="${LOCALE_PATH}/${1}"
 
     if [ ! -d "${LANG_PATH}/LC_MESSAGES" ] ; then
         mkdir -p "${LANG_PATH}/LC_MESSAGES"
     fi
 
-    echo "[INFO] Update translation for ${LANG}"
-
+    echo "[INFO] Merge translation for ${1}"
     msgfmt \
         "${LANG_PATH}/gem.po" \
         --output="${LANG_PATH}/LC_MESSAGES/gem.mo"
-done
+}
+
+# ------------------------------------------------------------------------------
+#   Launcher
+# ------------------------------------------------------------------------------
+
+if [ -z $@ ] ; then
+    echo "Usage: $(basename $0) update|merge"
+    exit 1
+fi
+
+case "${1}" in
+    update)
+        update_project
+
+        for LANG in "${TRANSLATIONS[@]}" ; do
+            update_locale "${LANG}"
+        done
+        ;;
+
+    merge)
+        for LANG in "${TRANSLATIONS[@]}" ; do
+            generate_locale "${LANG}"
+        done
+        ;;
+esac

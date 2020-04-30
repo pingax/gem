@@ -1,8 +1,21 @@
 GEM Changelog
 =============
 
-Version 0.10.2 - Tom Nook
--------------------------
+Version 0.10.3 - Gracie (30 Apr, 2020)
+--------------------------------------
+
+### Fix
+
+* Fix crash when an option is duplicated in configuration files
+* Fix console selection is slow when a game is selected in games list view
+* Fix lock manager when GEM crash
+
+### New
+
+* Allow to hide game tooltip in games views
+
+Version 0.10.2 - Tom Nook (23 Aug, 2019)
+----------------------------------------
 
 ### Fix
 

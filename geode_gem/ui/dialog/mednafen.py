@@ -1,7 +1,10 @@
 # ------------------------------------------------------------------------------
+#  Copyleft 2015-2020  PacMiam
+#
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 3 of the License.
+#  the Free Software Foundation; either version 3 of the License, or
+#  (at your option) any later version.
 #
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -21,15 +24,12 @@ from geode_gem.ui.widgets.window import CommonWindow
 # GObject
 try:
     from gi import require_version
-
     require_version("Gtk", "3.0")
 
-    from gi.repository import Gtk
-    from gi.repository import Pango
+    from gi.repository import Gtk, Pango
 
 except ImportError as error:
     from sys import exit
-
     exit("Cannot found python3-gobject module: %s" % str(error))
 
 # Translation
@@ -112,7 +112,7 @@ class MednafenDialog(CommonWindow):
         label_game = Gtk.Label()
 
         # Properties
-        label.set_text(_("This dialog allow you to specify specific backup "
+        label.set_text(_("This dialog allows you to specify specific backup "
                          "memory type for the following game:"))
         label.set_line_wrap(True)
         label.set_max_width_chars(8)

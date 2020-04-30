@@ -1,7 +1,10 @@
 # ------------------------------------------------------------------------------
+#  Copyleft 2015-2020  PacMiam
+#
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 3 of the License.
+#  the Free Software Foundation; either version 3 of the License, or
+#  (at your option) any later version.
 #
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -47,6 +50,37 @@ from gettext import gettext as _
 # ------------------------------------------------------------------------------
 #   Class
 # ------------------------------------------------------------------------------
+
+class Message(Gtk.MessageDialog):
+
+    def __init__(self, title, text):
+        """ Constructor
+
+        Parameters
+        ----------
+        title : str
+            Main text of message dialog
+        text : str
+            Secondary text of message dialog
+        """
+
+        super().__init__()
+
+        self.set_transient_for(None)
+
+        self.set_markup(title)
+        self.format_secondary_text(text)
+
+        self.add_button(_("Close"), Gtk.ResponseType.CLOSE)
+
+    def run(self):
+        """ Launch and show the message dialog
+        """
+
+        super().run()
+
+        self.destroy()
+
 
 class Splash(Gtk.Window):
 

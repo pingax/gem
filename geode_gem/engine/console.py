@@ -1,7 +1,10 @@
 # ------------------------------------------------------------------------------
+#  Copyleft 2015-2020  PacMiam
+#
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 3 of the License.
+#  the Free Software Foundation; either version 3 of the License, or
+#  (at your option) any later version.
 #
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -15,15 +18,11 @@
 # ------------------------------------------------------------------------------
 
 # Filesystem
-from os import R_OK
-from os import access
-
+from os import access, R_OK
 from pathlib import Path
 
 # GEM
-from geode_gem.engine.utils import generate_extension
-from geode_gem.engine.utils import generate_identifier
-
+from geode_gem.engine.utils import generate_extension, generate_identifier
 from geode_gem.engine.game import Game
 from geode_gem.engine.emulator import Emulator
 
@@ -95,8 +94,9 @@ class Console(object):
             setattr(self, key, value)
 
             if key_type is Path and type(value) is str:
-                value = value.replace("<local>",
-                                      str(self.__parent.get_local()))
+                if "<local>" in value and hasattr(self.__parent, "get_local"):
+                    value = value.replace(
+                        "<local>", str(self.__parent.get_local()))
 
                 path = Path(value).expanduser()
                 if len(value) == 0:
@@ -124,7 +124,13 @@ class Console(object):
 
                     setattr(self, key, value)
 
+        if not self.name and self.path:
+            setattr(self, "name", self.path.stem)
+
         setattr(self, "id", generate_identifier(self.name))
+
+        if not self.name:
+            setattr(self, "name", self.id)
 
     def as_dict(self):
         """ Return object as dictionary structure
@@ -150,28 +156,33 @@ class Console(object):
 
         Raises
         ------
-        OSError
+        FileNotFoundError
             when path directory was not founded
+        NotADirectoryError
             when path is not a directory
+        PermissionError
             when path did not have read access
         """
 
         if self.path is not None:
 
             if not self.path.exists():
-                raise OSError(2, "Directory not found", str(self.path))
+                raise FileNotFoundError(
+                    f"Cannot found '{self.path}' in filesystem")
 
             elif not self.path.is_dir():
-                raise OSError(20, "Not a directory", str(self.path))
+                raise NotADirectoryError(
+                    f"'{self.path} is not a directory")
 
             elif not access(self.path, R_OK):
-                raise OSError(1, "Operation not permitted", str(self.path))
+                raise PermissionError(
+                    f"Read permission not available for '{self.path}'")
 
             # Rest games list
             self.__games.clear()
 
             for extension in self.extensions:
-                pattern = "*.%s" % generate_extension(extension)
+                pattern = f"*.{generate_extension(extension)}"
 
                 if self.recursive:
                     files = self.path.rglob(pattern)
@@ -188,16 +199,25 @@ class Console(object):
 
         Parameters
         ----------
-        filename : pathlib.Path
+        filename : str or pathlib.Path
             Game filepath
 
         Returns
         -------
         gem.engine.game.Game
             Game instance
+
+        Raises
+        ------
+        ValueError
+            when the filename was already added to Console collection
         """
 
         game = Game(self.__parent, filename)
+
+        if self.get_game(game.id):
+            raise ValueError(f"The Game ID '{game.id}' already exists in "
+                             f"console '{self.name}'")
 
         if game.emulator is None:
             game.emulator = self.emulator
@@ -215,8 +235,15 @@ class Console(object):
             Game instance
         """
 
-        if game in self.__games:
-            self.__games.remove(game)
+        if not isinstance(game, Game):
+            raise TypeError(f"Cannot use specified game parameter, must be a "
+                            f"{repr(Game)} object")
+
+        if game not in self.__games:
+            raise KeyError(
+                f"Cannot remove game '{game.name}' from '{self.id}' console")
+
+        self.__games.remove(game)
 
     def get_games(self):
         """ Retrieve games list
@@ -255,11 +282,11 @@ class Console(object):
 
         Returns
         -------
-        generator
-            Game instances
+        list
+            Found games list
         """
 
         regex = re_compile(key, IGNORECASE)
 
-        return (game for game in self.__games
-                if regex.search(game.name) or regex.search(game.id))
+        return list(game for game in self.__games
+                    if regex.search(game.name) or regex.search(game.id))

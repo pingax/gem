@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 # ------------------------------------------------------------------------------
+#  Copyleft 2015-2020  PacMiam
+#
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 3 of the License.
+#  the Free Software Foundation; either version 3 of the License, or
+#  (at your option) any later version.
 #
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -42,12 +45,15 @@ else
 
     echo -e "\033[1m==> Install icon files\033[0m"
     mkdir -pv "${PREFIX}/share/pixmaps/"
-    cp -v "data/gem.svg" "${PREFIX}/share/pixmaps/"
+    cp -v "geode_gem/data/desktop/gem.svg" \
+          "${PREFIX}/share/pixmaps/"
 
     mkdir -pv "${PREFIX}/share/icons/hicolor/scalable/apps/"
-    cp -v "data/gem.svg" "${PREFIX}/share/icons/hicolor/scalable/apps/"
+    cp -v "geode_gem/data/desktop/gem.svg" \
+          "${PREFIX}/share/icons/hicolor/scalable/apps/"
 
     echo -e "\033[1m==> Install desktop file\033[0m"
     mkdir -pv "${PREFIX}/share/applications/"
-    cp -v "data/gem.desktop" "${PREFIX}/share/applications/"
+    cp -v "geode_gem/data/desktop/gem.desktop" \
+          "${PREFIX}/share/applications/"
 fi

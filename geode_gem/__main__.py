@@ -1,7 +1,10 @@
 # ------------------------------------------------------------------------------
+#  Copyleft 2015-2020  PacMiam
+#
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 3 of the License.
+#  the Free Software Foundation; either version 3 of the License, or
+#  (at your option) any later version.
 #
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -16,36 +19,25 @@
 
 # Filesystem
 from pathlib import Path
-
 from shutil import rmtree
 
 # GEM
 from geode_gem.engine.api import GEM
-from geode_gem.engine.utils import copy
-from geode_gem.engine.utils import get_data
+from geode_gem.engine.utils import copy, get_data
 from geode_gem.engine.lib.configuration import Configuration
 
-from geode_gem.ui.data import Icons
-from geode_gem.ui.data import Columns
-from geode_gem.ui.data import Folders
-from geode_gem.ui.data import Metadata
+from geode_gem.ui.data import Icons, Columns, Folders, Metadata
+from geode_gem.ui.utils import magic_from_file
 
 # Logging
 from logging import getLogger
 
-# Mimetypes
-from geode_gem.ui.utils import magic_from_file
-
 # System
 from argparse import ArgumentParser
-
 from os import environ
 
-from sys import exit as sys_exit
-
 # Translation
-from gettext import textdomain
-from gettext import bindtextdomain
+from gettext import textdomain, bindtextdomain
 from gettext import gettext as _
 
 
@@ -73,7 +65,7 @@ def init_environment():
     if metadata.has_section("icons"):
         for key, value in metadata.items("icons"):
             setattr(Icons, key.upper(), value)
-            setattr(Icons.Symbolic, key.upper(), "%s-symbolic" % value)
+            setattr(Icons.Symbolic, key.upper(), f"{value}-symbolic")
 
     if metadata.has_section("icon-sizes"):
         for key, value in metadata.items("icon-sizes"):
@@ -109,10 +101,10 @@ def init_configuration(gem):
     # ----------------------------------------
 
     for filename in ("gem.conf", "consoles.conf", "emulators.conf"):
-        path = Folders.CONFIG.joinpath(filename)
+        path = gem.get_config(filename)
 
         if not path.exists():
-            gem.logger.debug("Copy default %s" % path)
+            gem.logger.debug(f"Copy default {path}")
 
             # Copy default configuration
             copy(get_data("data", "config", filename), path)
@@ -122,16 +114,16 @@ def init_configuration(gem):
     # ----------------------------------------
 
     for folder in ("logs", "notes"):
-        path = Folders.LOCAL.joinpath(folder)
+        path = gem.get_local(folder)
 
         if not path.exists():
-            gem.logger.debug("Generate %s folder" % path)
+            gem.logger.debug(f"Generate {path} folder")
 
             try:
                 path.mkdir(mode=0o755, parents=True)
 
             except FileExistsError:
-                gem.logger.error("Path %s already exists" % str(path))
+                gem.logger.error(f"Path {path} already exists")
 
     # ----------------------------------------
     #   Cache
@@ -141,32 +133,32 @@ def init_configuration(gem):
         sizes = getattr(Icons.Size, name.upper(), list())
 
         for size in sizes:
-            path = Folders.CACHE.joinpath(name, "%sx%s" % (size, size))
+            path = Folders.CACHE.joinpath(name, f"{size}x{size}")
 
             if not path.exists():
-                gem.logger.debug("Generate %s" % path)
+                gem.logger.debug(f"Generate {path}")
 
                 try:
                     path.mkdir(mode=0o755, parents=True)
 
                 except FileExistsError:
-                    gem.logger.error("Path %s already exists" % str(path))
+                    gem.logger.error(f"Path {path} already exists")
 
     # ----------------------------------------
     #   Icons
     # ----------------------------------------
 
-    icons_path = Folders.LOCAL.joinpath("icons")
+    icons_path = gem.get_local("icons")
 
     # Create icons storage folder
     if not icons_path.exists():
-        gem.logger.debug("Generate %s" % icons_path)
+        gem.logger.debug(f"Generate {icons_path}")
 
         try:
             icons_path.mkdir(mode=0o755, parents=True)
 
         except FileExistsError:
-            gem.logger.error("Path %s already exists" % str(icons_path))
+            gem.logger.error(f"Path {icons_path} already exists")
 
         finally:
             move_collection = True
@@ -202,7 +194,7 @@ def init_configuration(gem):
                     new_path = icons_path.joinpath(filename.name)
 
                     if not new_path.exists():
-                        gem.logger.debug("Copy %s" % str(new_path))
+                        gem.logger.debug(f"Copy {new_path}")
 
                         copy(filename, new_path)
 
@@ -218,62 +210,60 @@ def main():
     #   Generate arguments
     # ----------------------------------------
 
-    parser = ArgumentParser(epilog=Metadata.COPYLEFT,
-                            description="%s - %s" % (Metadata.NAME,
-                                                     Metadata.VERSION),
-                            conflict_handler="resolve")
+    parser = ArgumentParser(
+        epilog=Metadata.COPYLEFT,
+        description=f"{Metadata.NAME} - {Metadata.VERSION}",
+        conflict_handler="resolve")
 
-    parser.add_argument("-v", "--version", action="version",
-                        version="%s %s (%s) - %s" % (Metadata.NAME,
-                                                     Metadata.VERSION,
-                                                     Metadata.CODE_NAME,
-                                                     Metadata.LICENSE),
-                        help="show the current version")
-    parser.add_argument("-d", "--debug", action="store_true",
-                        help="launch gem with debug flag")
+    parser.add_argument(
+        "-v",
+        "--version",
+        action="version",
+        version=f"{Metadata.NAME} {Metadata.VERSION} "
+                f"({Metadata.CODE_NAME}) - {Metadata.LICENSE}",
+        help="show the current version")
+    parser.add_argument(
+        "-d",
+        "--debug",
+        action="store_true",
+        help="launch gem with debug flag")
 
     parser_api = parser.add_argument_group("api arguments")
-    parser_api.add_argument("--cache", action="store", metavar="FOLDER",
-                            default=Folders.Default.CACHE,
-                            help="set cache folder (default: %s)" % (
-                                Path('~/.cache').expanduser())),
-    parser_api.add_argument("--config", action="store", metavar="FOLDER",
-                            default=Folders.Default.CONFIG,
-                            help="set configuration folder (default: %s)" % (
-                                Path('~/.config').expanduser())),
-    parser_api.add_argument("--local", action="store", metavar="FOLDER",
-                            default=Folders.Default.LOCAL,
-                            help="set data folder (default: %s)" % (
-                                Path('~/.local/share').expanduser()))
+    parser_api.add_argument(
+        "--cache",
+        action="store",
+        metavar="FOLDER",
+        default=Folders.Default.CACHE,
+        help=f"set cache folder (default: {Folders.Default.CACHE})")
+    parser_api.add_argument(
+        "--config",
+        action="store",
+        metavar="FOLDER",
+        default=Folders.Default.CONFIG,
+        help=f"set configuration folder (default: {Folders.Default.CONFIG})")
+    parser_api.add_argument(
+        "--local",
+        action="store",
+        metavar="FOLDER",
+        default=Folders.Default.LOCAL,
+        help=f"set data folder (default: {Folders.Default.LOCAL})")
 
     parser_maintenance = parser.add_argument_group("maintenance arguments")
-    parser_maintenance.add_argument("--clean-cache", action="store_true",
-                                    help="clean icons cache directory")
+    parser_maintenance.add_argument(
+        "--clean-cache",
+        action="store_true",
+        help="clean icons cache directory")
 
     arguments = parser.parse_args()
 
     # ----------------------------------------
-    #   Initialize paths
+    #   Cache directory
     # ----------------------------------------
 
     setattr(Folders, "CACHE",
             Path(arguments.cache, "gem").expanduser().resolve())
     if not Folders.CACHE.exists():
         Folders.CACHE.mkdir(mode=0o755, parents=True)
-
-    setattr(Folders, "CONFIG",
-            Path(arguments.config, "gem").expanduser().resolve())
-    if not Folders.CONFIG.exists():
-        Folders.CONFIG.mkdir(mode=0o755, parents=True)
-
-    setattr(Folders, "LOCAL",
-            Path(arguments.local, "gem").expanduser().resolve())
-    if not Folders.LOCAL.exists():
-        Folders.LOCAL.mkdir(mode=0o755, parents=True)
-
-    # ----------------------------------------
-    #   Maintenance
-    # ----------------------------------------
 
     if Folders.CACHE.exists() and arguments.clean_cache:
 
@@ -287,18 +277,22 @@ def main():
     #   Launch interface
     # ----------------------------------------
 
+    process_status = False
+
     try:
-        gem = GEM(Folders.CONFIG, Folders.LOCAL, arguments.debug)
+        gem = GEM(arguments.config, arguments.local, arguments.debug)
 
-        if not gem.is_locked():
+        # Set cache directory
+        cache_path = Folders.Default.CACHE.joinpath(gem.Instance)
 
-            # Check display settings
-            if "DISPLAY" in environ and len(environ["DISPLAY"]) > 0:
+        # Check display settings
+        if "DISPLAY" in environ and environ.get("DISPLAY"):
 
+            if not gem.is_locked():
                 # Initialize main configuration files
                 init_configuration(gem)
 
-                getLogger("gem").info("Start GEM with PID %s" % gem.pid)
+                getLogger(gem.Instance).info(f"Start GEM with PID {gem.pid}")
 
                 # Start splash
                 from geode_gem.ui.splash import Splash
@@ -306,55 +300,42 @@ def main():
 
                 # Start interface
                 from geode_gem.ui.interface import MainWindow
-                MainWindow(gem, Folders.CACHE)
+                MainWindow(gem, cache_path)
 
                 # Remove lock
                 gem.free_lock()
 
             else:
-                getLogger("gem").critical("Cannot launch GEM without display")
+                getLogger(gem.Instance).critical(
+                    f"GEM is already running with PID {gem.pid}")
+
+                from geode_gem.ui.splash import Message
+                message = Message(
+                    _("An instance already exists"),
+                    _("GEM is already running with PID %s") % gem.pid)
+                message.run()
 
         else:
-            try:
-                # Show a GTK+ dialog to alert user
-                from gi import require_version
-
-                require_version("Gtk", "3.0")
-
-                from gi.repository import Gtk
-
-                dialog = Gtk.MessageDialog()
-                dialog.set_transient_for(None)
-
-                dialog.set_markup(
-                    _("An instance already exists"))
-                dialog.format_secondary_text(
-                    _("GEM is already running with PID %d") % gem.pid)
-
-                dialog.add_button(_("Close"), Gtk.ResponseType.CLOSE)
-
-                dialog.run()
-                dialog.destroy()
-
-            except Exception:
-                getLogger("gem").critical("Cannot start dialog instance")
-
-            finally:
-                sys_exit("GEM is already running with PID %d" % gem.pid)
+            getLogger(gem.Instance).critical(
+                "Cannot launch GEM without display")
 
     except ImportError:
         getLogger("gem").exception("An error occur durint modules importation")
-        return True
+        process_status = True
 
     except KeyboardInterrupt:
         getLogger("gem").warning("Terminate by keyboard interrupt")
-        return True
+        process_status = True
 
     except Exception:
         getLogger("gem").exception("An error occur during execution")
-        return True
+        process_status = True
 
-    return False
+    # Remove lock when an error occurs
+    if process_status:
+        gem.free_lock()
+
+    return process_status
 
 
 if __name__ == "__main__":

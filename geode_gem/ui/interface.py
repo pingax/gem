@@ -1,7 +1,10 @@
 # ------------------------------------------------------------------------------
+#  Copyleft 2015-2020 PacMiam
+#
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 3 of the License.
+#  the Free Software Foundation; either version 3 of the License, or
+#  (at your option) any later version.
 #
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -15,45 +18,32 @@
 # ------------------------------------------------------------------------------
 
 # Datetime
-from datetime import date
-from datetime import datetime
-from datetime import timedelta
+from datetime import date, datetime, timedelta
 
 # Filesystem
-from os import R_OK
-from os import W_OK
-from os import X_OK
-from os import access
-from os import remove
-
+from os import R_OK, W_OK, X_OK, access, remove
 from os.path import getctime
-
 from pathlib import Path
-
 from copy import deepcopy
-
 from shutil import rmtree
 
 # GEM
-from geode_gem.engine.utils import copy
-from geode_gem.engine.utils import get_data
-from geode_gem.engine.utils import get_binary_path
-from geode_gem.engine.utils import parse_timedelta
-from geode_gem.engine.utils import generate_identifier
+from geode_gem.engine.utils import (copy,
+                                    get_data,
+                                    get_binary_path,
+                                    parse_timedelta,
+                                    generate_identifier)
 from geode_gem.engine.api import GEM
 from geode_gem.engine.console import Console
 from geode_gem.engine.lib.configuration import Configuration
 
-from geode_gem.ui.data import Icons
-from geode_gem.ui.data import Columns
-from geode_gem.ui.data import Folders
-from geode_gem.ui.data import Metadata
-from geode_gem.ui.utils import magic_from_file
-from geode_gem.ui.utils import on_change_theme
-from geode_gem.ui.utils import string_from_date
-from geode_gem.ui.utils import string_from_time
-from geode_gem.ui.utils import replace_for_markup
-from geode_gem.ui.utils import on_activate_listboxrow
+from geode_gem.ui.data import Icons, Columns, Folders, Metadata
+from geode_gem.ui.utils import (magic_from_file,
+                                on_change_theme,
+                                string_from_date,
+                                string_from_time,
+                                replace_for_markup,
+                                on_activate_listboxrow)
 from geode_gem.ui.dialog.cache import CleanCacheDialog
 from geode_gem.ui.dialog.cover import CoverDialog
 from geode_gem.ui.dialog.editor import EditorDialog
@@ -67,48 +57,35 @@ from geode_gem.ui.dialog.duplicate import DuplicateDialog
 from geode_gem.ui.dialog.parameter import ParametersDialog
 from geode_gem.ui.dialog.dndconsole import DNDConsoleDialog
 from geode_gem.ui.dialog.maintenance import MaintenanceDialog
-from geode_gem.ui.preferences.interface import ConsolePreferences
-from geode_gem.ui.preferences.interface import EmulatorPreferences
-from geode_gem.ui.preferences.interface import PreferencesWindow
+from geode_gem.ui.preferences.interface import (ConsolePreferences,
+                                                EmulatorPreferences,
+                                                PreferencesWindow)
 from geode_gem.ui.widgets.game import GameThread
 from geode_gem.ui.widgets.script import ScriptThread
-from geode_gem.ui.widgets.widgets import ListBoxItem
-from geode_gem.ui.widgets.widgets import IconsGenerator
+from geode_gem.ui.widgets.widgets import ListBoxItem, IconsGenerator
 
 # GObject
 try:
     from gi import require_version
-
     require_version("Gtk", "3.0")
 
-    from gi.repository import Gtk
-    from gi.repository import GLib
-    from gi.repository import GObject
-    from gi.repository import Gio
-    from gi.repository import Gdk
-    from gi.repository import GdkPixbuf
-    from gi.repository import Pango
+    from gi.repository import Gtk, GLib, GObject, Gio, Gdk, GdkPixbuf, Pango
 
 except ImportError as error:
     from sys import exit
-
     exit("Cannot found python3-gobject module: %s" % str(error))
 
 # Processus
-from subprocess import PIPE
-from subprocess import Popen
-from subprocess import STDOUT
+from subprocess import PIPE, Popen, STDOUT
 
 # Random
 from random import shuffle
 
 # Regex
-from re import match
-from re import IGNORECASE
+from re import match, IGNORECASE
 
 # System
 from sys import version_info
-
 from shlex import split as shlex_split
 
 # Thread
@@ -650,7 +627,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.item_menubar_game_multiplayer.set_use_underline(True)
 
         self.item_menubar_game_finish.set_label(
-            _("_Finish"))
+            _("Finished"))
         self.item_menubar_game_finish.set_use_underline(True)
 
         self.item_menubar_game_screenshots.set_label(
@@ -1102,7 +1079,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.widget_filters_unfinish.set_widget(
             self.check_filter_unfinish)
         self.widget_filters_unfinish.set_option_label(
-            _("Unfinish"))
+            _("Unfinished"))
         self.check_filter_unfinish.set_active(True)
 
         self.item_filter_reset.set_label(_("Reset filters"))
@@ -1293,7 +1270,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.image_game_placeholder.get_style_context().add_class("dim-label")
 
         self.label_game_placeholder.set_label(
-            _("Start to play by drag & drop some ROM files into interface"))
+            _("Start to play by drag & drop some files into interface"))
         self.label_game_placeholder.set_halign(Gtk.Align.CENTER)
         self.label_game_placeholder.set_valign(Gtk.Align.START)
 
@@ -1609,7 +1586,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.item_game_multiplayer.set_use_underline(True)
 
         self.item_game_finish.set_label(
-            _("_Finish"))
+            _("Finished"))
         self.item_game_finish.set_use_underline(True)
 
         self.item_game_properties.set_label(
@@ -3359,9 +3336,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
             dialog = MessageDialog(
                 self,
-                _("Welcome !"),
+                _("Welcome!"),
                 _("Welcome and thanks for choosing GEM as emulators manager. "
-                  "Start using GEM by droping some roms into interface.\n\n"
+                  "Start using GEM by dropping some files into interface.\n\n"
                   "Enjoy and have fun :D"),
                 Icons.Symbolic.SMILE_BIG,
                 False)
@@ -3388,8 +3365,11 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Threads
         # ------------------------------------
 
+        self.logger.debug("Terminate remaining threaded processus")
+
         # Remove games listing thread
         if not self.list_thread == 0:
+            self.logger.debug(f"Remove thread ID {self.list_thread}")
             GLib.source_remove(self.list_thread)
 
         # Remove game and script threads
@@ -3397,6 +3377,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
             # Avoid to remove the main thread
             if thread is not thread_main_thread():
+                self.logger.debug(f"Remove thread {thread.name}")
                 thread.proc.terminate()
                 thread.join()
 
@@ -3408,6 +3389,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Close open notes dialog
         if len(self.notes.keys()) > 0:
+            self.logger.debug("Terminate openning notes")
+
             for dialog in self.notes.copy().keys():
                 self.notes[dialog].emit_response(None, Gtk.ResponseType.APPLY)
 
@@ -3492,14 +3475,17 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.config.update()
 
-        self.main_loop.quit()
+        if self.main_loop.is_running():
+            self.logger.debug("Close main loop")
+            self.main_loop.quit()
 
     def load_configuration(self):
         """ Load main configuration file and store values
         """
 
         if getattr(self, "config", None) is None:
-            self.config = Configuration(Folders.CONFIG.joinpath("gem.conf"))
+            self.config = Configuration(
+                self.api.get_config("gem.conf"), strict=False)
 
             # Get missing keys from config/gem.conf
             self.config.add_missing_data(
@@ -4456,12 +4442,20 @@ class MainWindow(Gtk.ApplicationWindow):
         about.set_website(Metadata.WEBSITE)
 
         about.set_authors([
-            "Lubert Aurélien (PacMiam)"
+            "Aurélien Lubert (PacMiam)"
         ])
         about.set_artists([
             "Evan-Amos %s - Public Domain" % Metadata.EVAN_AMOS
         ])
-        about.set_translator_credits(_("translator-credits"))
+        about.set_translator_credits('\n'.join([
+            "Anthony Jorion (Pingax)",
+            "Aurélien Lubert (PacMiam)",
+            "José Luis Lopez Castillo (DarkNekros)",
+        ]))
+        about.add_credit_section(_("Tested by"), [
+            "Bruno Visse (atralfalgar)",
+            "Herlief",
+        ])
         about.set_license_type(Gtk.License.GPL_3_0)
 
         # Strange case... With an headerbar, the AboutDialog got some useless
@@ -4603,9 +4597,7 @@ class MainWindow(Gtk.ApplicationWindow):
         This function show the gem log content in a non-editable dialog
         """
 
-        path = Folders.LOCAL.joinpath("gem.log")
-
-        if path.exists():
+        if self.api.log.exists():
             try:
                 size = self.config.get(
                     "windows", "log", fallback="800x600").split('x')
@@ -4618,7 +4610,7 @@ class MainWindow(Gtk.ApplicationWindow):
             dialog = EditorDialog(
                 self,
                 _("Application log"),
-                path,
+                self.api.log,
                 size,
                 Icons.Symbolic.TERMINAL,
                 editable=False)
@@ -4689,7 +4681,7 @@ class MainWindow(Gtk.ApplicationWindow):
         game = self.__on_retrieve_selected_game()
 
         if game is not None:
-            path = Folders.LOCAL.joinpath("notes", game.id + ".txt")
+            path = self.api.get_local("notes", game.id + ".txt")
 
             if path is not None and not str(path) in self.notes.keys():
                 try:
@@ -5563,6 +5555,8 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Check errors
         # ------------------------------------
 
+        self.__block_signals()
+
         self.infobar.set_visible(False)
 
         if console.emulator is None:
@@ -5589,6 +5583,8 @@ class MainWindow(Gtk.ApplicationWindow):
         # ------------------------------------
         #   Load data
         # ------------------------------------
+
+        self.unselect_all()
 
         self.scroll_games_list.set_visible(False)
         self.scroll_games_grid.set_visible(False)
@@ -5688,6 +5684,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
         else:
             self.scroll_sidebar.set_visible(False)
+
+        self.__unblock_signals()
 
         yield True
 
@@ -5974,131 +5972,136 @@ class MainWindow(Gtk.ApplicationWindow):
             Tooltip visible status
         """
 
+        # Show a tooltip when the show_tooltip option is activate
+        if not self.config.getboolean("gem", "show_tooltip", fallback=True):
+            return False
+
         # Show a tooltip when the main window is sentitive only
-        if self.get_sensitive():
+        if not self.get_sensitive():
+            return False
 
-            # Get relative treerow position based on absolute cursor
-            # coordinates
-            x, y = treeview.convert_widget_to_bin_window_coords(x, y)
+        # Get relative treerow position based on absolute cursor
+        # coordinates
+        x, y = treeview.convert_widget_to_bin_window_coords(x, y)
 
-            selection = treeview.get_path_at_pos(x, y)
-            # Using a tuple to mimic Gtk.TreeView behavior
-            if treeview == self.iconview_games and selection is not None:
-                selection = (selection)
+        selection = treeview.get_path_at_pos(x, y)
+        # Using a tuple to mimic Gtk.TreeView behavior
+        if treeview == self.iconview_games and selection is not None:
+            selection = (selection)
 
-            if selection is not None:
-                model = treeview.get_model()
-                treeiter = model.get_iter(selection[0])
+        if selection is not None:
+            model = treeview.get_model()
+            treeiter = model.get_iter(selection[0])
 
-                column_id = Columns.Grid.OBJECT
-                if treeview == self.treeview_games:
-                    column_id = Columns.List.OBJECT
+            column_id = Columns.Grid.OBJECT
+            if treeview == self.treeview_games:
+                column_id = Columns.List.OBJECT
 
-                game = model.get_value(treeiter, column_id)
+            game = model.get_value(treeiter, column_id)
 
-                # Reload tooltip when another game is hovered
-                if not self.__current_tooltip == game:
-                    self.__current_tooltip = game
-                    self.__current_tooltip_data = list()
+            # Reload tooltip when another game is hovered
+            if not self.__current_tooltip == game:
+                self.__current_tooltip = game
+                self.__current_tooltip_data = list()
+                self.__current_tooltip_pixbuf = None
+
+                return False
+
+            # Get new data from hovered game
+            if len(self.__current_tooltip_data) == 0:
+                data = list()
+
+                data.append(
+                    "<big><b>%s</b></big>" % replace_for_markup(game.name))
+
+                if not game.play_time == timedelta():
+                    data.append(
+                        ": ".join(
+                            [
+                                "<b>%s</b>" % _("Play time"),
+                                parse_timedelta(game.play_time)
+                            ]
+                        )
+                    )
+
+                if not game.last_launch_time == timedelta():
+                    data.append(
+                        ": ".join(
+                            [
+                                "<b>%s</b>" % _("Last launch"),
+                                parse_timedelta(game.last_launch_time)
+                            ]
+                        )
+                    )
+
+                # Fancy new line
+                if len(data) > 1:
+                    data.insert(1, str())
+
+                self.__current_tooltip_data = data
+
+            console = self.selection["console"]
+
+            # Get new screenshots from hovered game
+            if console is not None \
+               and self.__current_tooltip_pixbuf is None:
+
+                image = None
+
+                # Retrieve user choice for tooltip image
+                tooltip_image = self.config.get(
+                    "gem", "tooltip_image_type", fallback="screenshot")
+
+                if not tooltip_image == "none":
+
+                    if tooltip_image in ["both", "cover"]:
+
+                        if game.cover is not None and game.cover.exists():
+                            image = game.cover
+
+                    if tooltip_image in ["both", "screenshot"]:
+
+                        # Ordered game screenshots
+                        if not self.use_random_screenshot:
+                            screenshots = sorted(game.screenshots)
+
+                        # Get a random file from game screenshots
+                        else:
+                            screenshots = game.screenshots
+
+                            shuffle(screenshots)
+
+                        if len(game.screenshots) > 0:
+                            image = Path(screenshots[-1])
+
+                    # Check if image exists and is not a directory
+                    if image is not None \
+                       and image.exists() and image.is_file():
+
+                        try:
+                            # Resize pixbuf to have a 96 pixels height
+                            pixbuf = \
+                                GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                                    str(image), -1, 96, True)
+
+                            self.__current_tooltip_pixbuf = pixbuf
+
+                        except GLib.Error:
+                            self.__current_tooltip_pixbuf = None
+
+                else:
                     self.__current_tooltip_pixbuf = None
 
-                    return False
+            # Only show tooltip when data are available
+            if len(self.__current_tooltip_data) > 0:
+                tooltip.set_markup('\n'.join(self.__current_tooltip_data))
 
-                # Get new data from hovered game
-                if len(self.__current_tooltip_data) == 0:
-                    data = list()
+                if self.__current_tooltip_pixbuf is not None:
+                    tooltip.set_icon(self.__current_tooltip_pixbuf)
 
-                    data.append(
-                        "<big><b>%s</b></big>" % replace_for_markup(game.name))
+                self.__current_tooltip = game
 
-                    if not game.play_time == timedelta():
-                        data.append(
-                            ": ".join(
-                                [
-                                    "<b>%s</b>" % _("Play time"),
-                                    parse_timedelta(game.play_time)
-                                ]
-                            )
-                        )
-
-                    if not game.last_launch_time == timedelta():
-                        data.append(
-                            ": ".join(
-                                [
-                                    "<b>%s</b>" % _("Last launch"),
-                                    parse_timedelta(game.last_launch_time)
-                                ]
-                            )
-                        )
-
-                    # Fancy new line
-                    if len(data) > 1:
-                        data.insert(1, str())
-
-                    self.__current_tooltip_data = data
-
-                console = self.selection["console"]
-
-                # Get new screenshots from hovered game
-                if console is not None \
-                   and self.__current_tooltip_pixbuf is None:
-
-                    image = None
-
-                    # Retrieve user choice for tooltip image
-                    tooltip_image = self.config.get(
-                        "gem", "tooltip_image_type", fallback="screenshot")
-
-                    if not tooltip_image == "none":
-
-                        if tooltip_image in ["both", "cover"]:
-
-                            if game.cover is not None and game.cover.exists():
-                                image = game.cover
-
-                        if tooltip_image in ["both", "screenshot"]:
-
-                            # Ordered game screenshots
-                            if not self.use_random_screenshot:
-                                screenshots = sorted(game.screenshots)
-
-                            # Get a random file from game screenshots
-                            else:
-                                screenshots = game.screenshots
-
-                                shuffle(screenshots)
-
-                            if len(game.screenshots) > 0:
-                                image = Path(screenshots[-1])
-
-                        # Check if image exists and is not a directory
-                        if image is not None \
-                           and image.exists() and image.is_file():
-
-                            try:
-                                # Resize pixbuf to have a 96 pixels height
-                                pixbuf = \
-                                    GdkPixbuf.Pixbuf.new_from_file_at_scale(
-                                        str(image), -1, 96, True)
-
-                                self.__current_tooltip_pixbuf = pixbuf
-
-                            except GLib.Error:
-                                self.__current_tooltip_pixbuf = None
-
-                    else:
-                        self.__current_tooltip_pixbuf = None
-
-                # Only show tooltip when data are available
-                if len(self.__current_tooltip_data) > 0:
-                    tooltip.set_markup('\n'.join(self.__current_tooltip_data))
-
-                    if self.__current_tooltip_pixbuf is not None:
-                        tooltip.set_icon(self.__current_tooltip_pixbuf)
-
-                    self.__current_tooltip = game
-
-                    return True
+                return True
 
         return False
 
@@ -6554,7 +6557,7 @@ class MainWindow(Gtk.ApplicationWindow):
             Game object
         """
 
-        path = Folders.LOCAL.joinpath("ongamestarted")
+        path = self.api.get_local("ongamestarted")
 
         if path.exists() and access(path, X_OK):
             thread = ScriptThread(self, path, game)
@@ -6723,7 +6726,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
             del self.scripts[game.id]
 
-        path = Folders.LOCAL.joinpath("ongamestopped")
+        path = self.api.get_local("ongamestopped")
 
         if path.exists() and access(path, X_OK):
             thread = ScriptThread(self, path, game)
@@ -7653,8 +7656,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 icon = console.icon
                 if not icon.exists():
-                    icon = Folders.LOCAL.joinpath(
-                        "icons", '%s.png' % str(icon))
+                    icon = self.api.get_local("icons", '%s.png' % str(icon))
 
                 values = {
                     "%name%": game.name,
@@ -7694,7 +7696,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.set_message(
                         _("Generate menu entry for %s") % game.name,
                         _("An error occur during generation, consult log for "
-                          "futher details."), Icons.ERROR)
+                          "further details."), Icons.ERROR)
 
                 self.set_sensitive(True)
 
@@ -7917,8 +7919,8 @@ class MainWindow(Gtk.ApplicationWindow):
             self.__current_orientation = Gtk.Orientation.HORIZONTAL
 
         # Bottom-side sidebar
-        elif self.sidebar_orientation == "vertical" \
-           and not self.__current_orientation == Gtk.Orientation.VERTICAL:
+        elif (self.sidebar_orientation == "vertical"
+              and not self.__current_orientation == Gtk.Orientation.VERTICAL):
 
             self.label_sidebar_title.set_justify(Gtk.Justification.LEFT)
             self.label_sidebar_title.set_halign(Gtk.Align.START)
@@ -8311,7 +8313,7 @@ class MainWindow(Gtk.ApplicationWindow):
             text = _("1 game has been added")
 
         elif validate_index > 1:
-            text = _("%d games has been added") % validate_index
+            text = _("%d games have been added") % validate_index
 
         self.set_message(_("Games installation"),
                          text,
@@ -8379,7 +8381,7 @@ class MainWindow(Gtk.ApplicationWindow):
         game = self.__on_retrieve_selected_game()
 
         if game is not None:
-            log_path = Folders.LOCAL.joinpath("logs", game.id + ".log")
+            log_path = self.api.get_local("logs", game.id + ".log")
 
             if log_path.exists():
                 return log_path
@@ -8529,7 +8531,7 @@ class MainWindow(Gtk.ApplicationWindow):
             if not path.exists():
 
                 if key == "consoles":
-                    collection_path = Folders.LOCAL.joinpath(
+                    collection_path = self.api.get_local(
                         "icons", "%s.png" % path)
 
                     # Generate a new cache icon
