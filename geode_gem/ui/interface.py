@@ -4431,12 +4431,20 @@ class MainWindow(Gtk.ApplicationWindow):
         about.set_website(Metadata.WEBSITE)
 
         about.set_authors([
-            "Lubert Aurélien (PacMiam)"
+            "Aurélien Lubert (PacMiam)"
         ])
         about.set_artists([
             "Evan-Amos %s - Public Domain" % Metadata.EVAN_AMOS
         ])
-        about.set_translator_credits(_("translator-credits"))
+        about.set_translator_credits('\n'.join([
+            "Anthony Jorion (Pingax)",
+            "Aurélien Lubert (PacMiam)",
+            "José Luis Lopez Castillo (DarkNekros)",
+        ]))
+        about.add_credit_section(_("Tested by"), [
+            "Bruno Visse (atralfalgar)",
+            "Herlief",
+        ])
         about.set_license_type(Gtk.License.GPL_3_0)
 
         # Strange case... With an headerbar, the AboutDialog got some useless
