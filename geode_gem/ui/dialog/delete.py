@@ -123,8 +123,8 @@ class DeleteDialog(CommonWindow):
 
         # Properties
         self.label_description.set_text(
-            _("The following game going to be removed from your harddrive. "
-              "This action is irreversible !"))
+            _("The following game going to be removed from your hard drive. "
+              "This action is irreversible!"))
         self.label_description.set_line_wrap(True)
         self.label_description.set_max_width_chars(8)
         self.label_description.set_single_line_mode(False)

@@ -117,7 +117,7 @@ class PreferencesWindow(CommonWindow):
                 "multiplayer": [
                     _("Mark a game as multiplayer"), "F4"],
                 "finish": [
-                    _("Mark a game as finish"), "<Control>F3"],
+                    _("Mark a game as finished"), "<Control>F3"],
                 "snapshots": [
                     _("Show a game screenshots"), "F5"],
                 "log": [
@@ -782,7 +782,7 @@ class PreferencesWindow(CommonWindow):
         self.widget_games_tooltip_activated.set_option_label(
             _("Enable tooltip"))
         self.widget_games_tooltip_activated.set_description_label(
-            _("Display a tooltip when the mouse hovered a game"))
+            _("Display a tooltip when the mouse hovers a game"))
 
         self.combo_games_tooltip_icon.set_model(
             self.model_games_tooltip_icon)
@@ -2320,7 +2320,7 @@ class PreferencesWindow(CommonWindow):
             dialog = QuestionDialog(
                 self,
                 element.name,
-                _("Would you really want to remove this entry ?"))
+                _("Do you really want to remove this entry ?"))
 
             if dialog.run() == Gtk.ResponseType.YES:
                 del storage["objects"][element.id]

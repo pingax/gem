@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2020-04-25 11:29+0200\n"
+"PO-Revision-Date: 2020-04-30 19:06+0200\n"
 "Last-Translator: PacMiam <pacmiam@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -173,7 +173,7 @@ msgstr "Accepter"
 #
 # File: gem/preferences.py, line: 329
 msgid "Action"
-msgstr "Actions"
+msgstr "Action"
 
 #
 # File: gem/preferences.py, line: 731
@@ -238,7 +238,7 @@ msgstr "Émulateur alternatif"
 
 #
 # File: gem/interface.py, line: 2112
-msgid "An error occur during generation, consult log for futher details."
+msgid "An error occur during generation, consult log for further details."
 msgstr ""
 "Une erreur est survenue durant la génération, consultez le journal pour plus "
 "de détails."
@@ -432,11 +432,6 @@ msgid "Decrease selected game score"
 msgstr "Diminuer le score du jeu sélectionné"
 
 #
-# File: gem/gtk/preferences.py, line: 2563
-msgid "Default arguments to add when launch emulator"
-msgstr "Arguments par défaut à ajouter lors du lancement de l'émulateur"
-
-#
 # File: gem/interface.py, line: 300
 msgid "Default emulator"
 msgstr "Émulateur par défaut"
@@ -445,6 +440,11 @@ msgstr "Émulateur par défaut"
 # File: gem/preferences.py, line: 1269
 msgid "Default options"
 msgstr "Options par défaut"
+
+#
+# File: gem/gtk/preferences.py, line: 2563
+msgid "Defaults arguments to add when launching emulator"
+msgstr "Arguments par défaut à ajouter lors du lancement de l'émulateur"
 
 #
 # File: gem/ui/dialog/maintenance.py, line: 201
@@ -484,7 +484,7 @@ msgstr "Supprimer les icônes générées dans le cache"
 #
 # File: gem/gtk/preferences.py, line: 2597
 msgid "Delete savestates files"
-msgstr "Supprimer les fichiers de sauvegarde"
+msgstr "Supprimer les fichiers de sauvegarde d'état"
 
 #
 # File: gem/preferences.py, line: 335
@@ -509,7 +509,7 @@ msgstr "Afficher la barre latérale à côté de la vue des jeux"
 
 #
 # File: geode_gem/ui/preferences/interface.py, line: 791
-msgid "Display a tooltip when the mouse hovered a game"
+msgid "Display a tooltip when the mouse hovers a game"
 msgstr "Afficher une infobulle au survol d'un jeu"
 
 #
@@ -553,6 +553,21 @@ msgid "Display translucent icons in games views instead of empty ones"
 msgstr "Afficher des icônes translucides dans les vues de jeux"
 
 #
+# File: src/window.py, line: 940
+msgid "Do you really want to clean icons cache directory ?"
+msgstr "Voulez-vous vraiment nettoyer le dossier de cache des icônes ?"
+
+#
+# File: src/window.py, line: 940
+msgid "Do you really want to remove this entry ?"
+msgstr "Voulez-vous vraiment supprimer cette entrée ?"
+
+#
+# File: src/window.py, line: 940
+msgid "Do you want to replace existing file ?"
+msgstr "Voulez-vous vraiment remplacer ce fichier ?"
+
+#
 # File: gem/gtk/windows.py, line: 1885
 msgid "Drag & Drop"
 msgstr "Glisser-déposer"
@@ -590,7 +605,7 @@ msgstr "Dupliquer le fichier de note du jeu"
 #
 # File: gem/gtk/preferences.py, line: 2597
 msgid "Duplicate savestates files"
-msgstr "Dupliquer les fichiers de sauvegardes"
+msgstr "Dupliquer les fichiers de sauvegardes d'état"
 
 #
 # File: gem/preferences.py, line: 335
@@ -724,7 +739,7 @@ msgstr "Extensions"
 #
 # File: gem/gtk/preferences.py, line: 1792
 msgid ""
-"Extensions are split by spaces and must not having the first dot (using \"nes"
+"Extensions are split by spaces and must not have the first dot (using \"nes"
 "\" than \".nes\")."
 msgstr ""
 "Les extensions sont séparées par des espaces et ne doivent pas contenir le "
@@ -764,6 +779,11 @@ msgstr "Filtre"
 #
 # File: gem/gtk/interface.py, line: 796
 msgid "Finish"
+msgstr "Terminé"
+
+#
+# File: gem/gtk/interface.py, line: 796
+msgid "Finished"
 msgstr "Terminé"
 
 #
@@ -1078,7 +1098,7 @@ msgstr "Marquer un jeu comme favori"
 
 #
 # File: src/window.py, line: 436
-msgid "Mark a game as finish"
+msgid "Mark a game as finished"
 msgstr "Marquer un jeu comme terminé"
 
 #
@@ -1131,14 +1151,14 @@ msgid ""
 "represent the console acronym name (example: Nintendo NES -> nes)."
 msgstr ""
 "La plupart du temps, les extensions sont communes entre les différents "
-"émulateurs et représente l'acronyme du nom de la console (exemple: Nintendo "
-"NES -> nes)."
+"émulateurs et représentent l'acronyme du nom de la console (exemple: "
+"Nintendo NES -> nes)."
 
 #
 # File: gem/interface.py, line: 251
 # File: gem/interface.py, line: 550
 msgid "Multiplayer"
-msgstr "Multi-joueurs"
+msgstr "Multijoueurs"
 
 #
 # File: gem/gtk/interface.py, line: 2783
@@ -1357,7 +1377,7 @@ msgstr "Supprimer la console"
 #
 # File: src/window.py, line: 451
 msgid "Remove a game"
-msgstr "Supprimer un jeu"
+msgstr "Supprimer le jeu"
 
 #
 # File: src/window.py, line: 446
@@ -1387,7 +1407,7 @@ msgstr "Remplacer l'actuel tampon de texte"
 #
 # File: gem/ui/dialog/dndconsole.py, line: 170
 msgid "Replace existing files on disk"
-msgstr "Remplacer les fichiers existant sur le disque"
+msgstr "Remplacer les fichiers existants sur le disque"
 
 #
 # File: gem/gtk/interface.py, line: 802
@@ -1397,7 +1417,7 @@ msgstr "Replacer les fichiers"
 #
 # File: gem/gtk/interface.py, line: 802
 msgid "Reset filters"
-msgstr "Réinitialisation"
+msgstr "Réinitialisation des filtres"
 
 #
 # File: gem/gtk/preferences.py, line: 477
@@ -1531,37 +1551,37 @@ msgstr "Mettre le score à 5"
 #
 # File: src/window.py, line: 441
 msgid "Set selected game score as 0"
-msgstr "Mettre le score à 0 du jeu sélectionné"
+msgstr "Mettre le score du jeu sélectionné à 0"
 
 #
 # File: src/window.py, line: 441
 msgid "Set selected game score as 1"
-msgstr "Mettre le score à 1 du jeu sélectionné"
+msgstr "Mettre le score du jeu sélectionné à 1"
 
 #
 # File: src/window.py, line: 441
 msgid "Set selected game score as 2"
-msgstr "Mettre le score à 2 du jeu sélectionné"
+msgstr "Mettre le score du jeu sélectionné à 2"
 
 #
 # File: src/window.py, line: 441
 msgid "Set selected game score as 3"
-msgstr "Mettre le score à 3 du jeu sélectionné"
+msgstr "Mettre le score du jeu sélectionné à 3"
 
 #
 # File: src/window.py, line: 441
 msgid "Set selected game score as 4"
-msgstr "Mettre le score à 4 du jeu sélectionné"
+msgstr "Mettre le score du jeu sélectionné à 4"
 
 #
 # File: src/window.py, line: 441
 msgid "Set selected game score as 5"
-msgstr "Mettre le score à 5 du jeu sélectionné"
+msgstr "Mettre le score du jeu sélectionné à 5"
 
 #
 # File: gem/ui/preferences/interface.py, line: 660
 msgid "Set sidebar position as for games view"
-msgstr "Définir la position de la barre latérale vis à vis de la vue des jeux"
+msgstr "Définir la position de la barre latérale vis-à-vis de la vue des jeux"
 
 #
 # File: gem/preferences.py, line: 633
@@ -1707,15 +1727,20 @@ msgid "Tags are split by commas."
 msgstr "Les étiquettes sont séparées par des virgules."
 
 #
+# File: src/window.py, line: 1062
+msgid "Tested by"
+msgstr "Testé par"
+
+#
 # File: gem/ui/dialog/maintenance.py, line: 118
-msgid "The following actions are irreversible, becareful !"
+msgid "The following actions are irreversible, be careful!"
 msgstr "Les actions suivantes sont irréversibles, faites attention !"
 
 #
 # File: gem/ui/interface.glade, line: 960
 msgid ""
-"The following game going to be removed from your harddrive. This action is "
-"irreversible !"
+"The following game going to be removed from your hard drive. This action is "
+"irreversible!"
 msgstr ""
 "Le jeu suivant va être supprimé de votre disque dur. Cette action est "
 "irréversible !"
@@ -1726,23 +1751,32 @@ msgid "There is no default emulator set for this console"
 msgstr "Il n'y a pas d'émulateur par défaut pour cette console"
 
 #
+# File: gem/preferences.py, line: 2000
+msgid ""
+"These parameters are used in \"Default options\", \"Save\" and \"Snapshots\" "
+"entries."
+msgstr ""
+"Ces paramètres sont utilisés dans les champs de texte « Options par défaut "
+"», « Sauvegarde » et « Captures d'écran »."
+
+#
 # File: gem/preferences.py, line: 1020
 msgid "This binary not exist, please, check the path"
 msgstr "Ce binaire n'existe pas, veuillez vérifier le chemin"
 
 #
 # File: gem/preferences.py, line: 1020
-msgid "This console already exist, please, choose another name"
+msgid "This console already exists, please, choose another name"
 msgstr "Cette console existe déjà, veuillez choisir un autre nom"
 
 #
 # File: gem/gtk/mednafen.py, line: 154
 msgid ""
-"This dialog allow you to specify specific backup memory type for the "
+"This dialog allows you to specify specific backup memory type for the "
 "following game:"
 msgstr ""
 "Cette fenêtre vous permet de spécifier des types de mémoire de secours pour "
-"le jeu suivant:"
+"le jeu suivant :"
 
 #
 # File: gem/preferences.py, line: 1366
@@ -1752,21 +1786,12 @@ msgstr "Cet émulateur existe déjà, veuillez choisir un autre nom"
 #
 # File: gem/interface.py, line: 1882
 msgid "This game was duplicated successfully"
-msgstr "Ce jeu à été dupliqué avec succès"
+msgstr "Ce jeu a été dupliqué avec succès"
 
 #
 # File: gem/interface.py, line: 1882
 msgid "This game was removed successfully"
-msgstr "Ce jeu à été supprimé avec succès"
-
-#
-# File: gem/preferences.py, line: 2000
-msgid ""
-"This parameters are used in \"Default options\", \"Save\" and \"Snapshots\" "
-"entries."
-msgstr ""
-"Ces paramètres sont utilisés dans les champs de texte « Options par défaut "
-"», « Sauvegarde » et « Captures d'écran »."
+msgstr "Ce jeu a été supprimé avec succès"
 
 #
 # File: gem/ui/dialog/cover.py, line: 143
@@ -1814,7 +1839,7 @@ msgstr "Non favoris"
 
 #
 # File: gem/gtk/interface.py, line: 797
-msgid "Unfinish"
+msgid "Unfinished"
 msgstr "Non terminé"
 
 #
@@ -1901,15 +1926,10 @@ msgid "Vertical"
 msgstr "Verticales"
 
 #
-# File: gem/interface.py, line: 829
-msgid "Welcome !"
-msgstr "Bienvenue !"
-
-#
 # File: gem/interface.py, line: 596
 msgid ""
 "Welcome and thanks for choosing GEM as emulators manager. Start using GEM by "
-"droping some files into interface.\n"
+"dropping some files into interface.\n"
 "\n"
 "Enjoy and have fun :D"
 msgstr ""
@@ -1917,6 +1937,11 @@ msgstr ""
 "utiliser GEM en déposant des fichiers dans l'interface.\n"
 "\n"
 "Amusez-vous bien :D"
+
+#
+# File: gem/interface.py, line: 829
+msgid "Welcome!"
+msgstr "Bienvenue !"
 
 #
 # File: gem/ui/preferences/interface.py, line: 441
@@ -1927,21 +1952,6 @@ msgstr "Taille en espace du caractère de tabulation"
 # File: gem/preferences.py, line: 1274
 msgid "Windowed"
 msgstr "Fenêtré"
-
-#
-# File: src/window.py, line: 940
-msgid "Would you really want to clean icons cache directory ?"
-msgstr "Voulez-vous vraiment nettoyer le dossier de cache des icônes ?"
-
-#
-# File: src/window.py, line: 940
-msgid "Would you really want to remove this entry ?"
-msgstr "Voulez-vous vraiment supprimer cette entrée ?"
-
-#
-# File: src/window.py, line: 940
-msgid "Would you want to replace existing file ?"
-msgstr "Voulez-vous vraiment remplacer ce fichier ?"
 
 #
 # File: gem/gtk/preferences.py, line: 2433
@@ -2040,11 +2050,6 @@ msgstr "_Modifier le fichier du jeu"
 # File: gem/gtk/interface.py, line: 792
 msgid "_Favorite"
 msgstr "_Favoris"
-
-#
-# File: gem/gtk/interface.py, line: 796
-msgid "_Finish"
-msgstr "_Terminé"
 
 #
 # File: gem/gtk/interface.py, line: 513
@@ -2192,8 +2197,3 @@ msgstr "_Outils"
 # File: gem/ui/interface.py, line: 783
 msgid "_Website"
 msgstr "_Site internet"
-
-#
-# File: gem/interface.py, line: 926
-msgid "translator-credits"
-msgstr "Lubert Aurélien (PacMiam)"

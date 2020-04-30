@@ -101,7 +101,7 @@ class EmulatorPreferences(CommonWindow):
             _("Description"): [
                 _("To facilitate file detection with every emulators, some "
                     "custom parameters have been created."),
-                _("This parameters are used in \"Default options\", \"Save\" "
+                _("These parameters are used in \"Default options\", \"Save\" "
                     "and \"Snapshots\" entries."),
             ],
             _("Parameters"): {
@@ -276,7 +276,7 @@ class EmulatorPreferences(CommonWindow):
         self.entry_launch.set_hexpand(True)
         self.entry_launch.set_no_show_all(True)
         self.entry_launch.set_placeholder_text(
-            _("Default arguments to add when launch emulator"))
+            _("Defaults arguments to add when launching emulator"))
         self.entry_launch.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, Icons.Symbolic.CLEAR)
 

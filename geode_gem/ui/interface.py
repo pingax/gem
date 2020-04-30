@@ -624,7 +624,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.item_menubar_game_multiplayer.set_use_underline(True)
 
         self.item_menubar_game_finish.set_label(
-            _("_Finish"))
+            _("Finished"))
         self.item_menubar_game_finish.set_use_underline(True)
 
         self.item_menubar_game_screenshots.set_label(
@@ -1076,7 +1076,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.widget_filters_unfinish.set_widget(
             self.check_filter_unfinish)
         self.widget_filters_unfinish.set_option_label(
-            _("Unfinish"))
+            _("Unfinished"))
         self.check_filter_unfinish.set_active(True)
 
         self.item_filter_reset.set_label(_("Reset filters"))
@@ -1583,7 +1583,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.item_game_multiplayer.set_use_underline(True)
 
         self.item_game_finish.set_label(
-            _("_Finish"))
+            _("Finished"))
         self.item_game_finish.set_use_underline(True)
 
         self.item_game_properties.set_label(
@@ -3333,9 +3333,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
             dialog = MessageDialog(
                 self,
-                _("Welcome !"),
+                _("Welcome!"),
                 _("Welcome and thanks for choosing GEM as emulators manager. "
-                  "Start using GEM by droping some files into interface.\n\n"
+                  "Start using GEM by dropping some files into interface.\n\n"
                   "Enjoy and have fun :D"),
                 Icons.Symbolic.SMILE_BIG,
                 False)
@@ -7677,7 +7677,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.set_message(
                         _("Generate menu entry for %s") % game.name,
                         _("An error occur during generation, consult log for "
-                          "futher details."), Icons.ERROR)
+                          "further details."), Icons.ERROR)
 
                 self.set_sensitive(True)
 

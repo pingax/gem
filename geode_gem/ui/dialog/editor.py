@@ -738,7 +738,7 @@ class EditorDialog(CommonWindow):
                     subdialog = QuestionDialog(
                         self,
                         _("Existing file"),
-                        _("Would you want to replace existing file ?"))
+                        _("Do you want to replace existing file ?"))
 
                     if subdialog.run() == Gtk.ResponseType.NO:
                         replace = False

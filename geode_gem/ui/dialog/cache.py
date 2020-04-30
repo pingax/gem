@@ -87,7 +87,7 @@ class CleanCacheDialog(CommonWindow):
         # Properties
         self.label_title.set_markup(
             "<span weight='bold' size='large'>%s</span>" % (
-                _("Would you really want to clean icons cache directory ?")))
+                _("Do you really want to clean icons cache directory ?")))
         self.label_title.set_use_markup(True)
         self.label_title.set_halign(Gtk.Align.CENTER)
         self.label_title.set_ellipsize(Pango.EllipsizeMode.END)

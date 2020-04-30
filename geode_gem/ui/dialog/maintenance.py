@@ -125,7 +125,7 @@ class MaintenanceDialog(CommonWindow):
 
         # Properties
         self.label_description.set_text(
-            _("The following actions are irreversible, becareful !"))
+            _("The following actions are irreversible, be careful!"))
         self.label_description.set_line_wrap(True)
         self.label_description.set_max_width_chars(8)
         self.label_description.set_single_line_mode(False)

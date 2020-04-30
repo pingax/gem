@@ -241,7 +241,8 @@ msgstr "Emulador alternativo"
 
 #
 # File: gem/interface.py, line: 2112
-msgid "An error occur during generation, consult log for futher details."
+#, fuzzy
+msgid "An error occur during generation, consult log for further details."
 msgstr ""
 "Un error ha ocurrido durante la creación, consulta el historial para más "
 "detalles."
@@ -438,11 +439,6 @@ msgid "Decrease selected game score"
 msgstr "Reducir la puntuación del juego seleccionado"
 
 #
-# File: gem/gtk/preferences.py, line: 2563
-msgid "Default arguments to add when launch emulator"
-msgstr "Opciones por defecto a añadir cuando se lanza el emulador"
-
-#
 # File: gem/preferences.py, line: 1013
 msgid "Default emulator"
 msgstr "Emulador por defecto"
@@ -452,6 +448,12 @@ msgstr "Emulador por defecto"
 # File: gem/preferences.py, line: 1665
 msgid "Default options"
 msgstr "Opciones por defecto"
+
+#
+# File: gem/gtk/preferences.py, line: 2563
+#, fuzzy
+msgid "Defaults arguments to add when launching emulator"
+msgstr "Opciones por defecto a añadir cuando se lanza el emulador"
 
 #
 # File: gem/ui/dialog/maintenance.py, line: 201
@@ -517,8 +519,8 @@ msgid "Display a sidebar next to games view"
 msgstr "Mostrar una barra lateral al lado de la vista de juegos"
 
 #
-# File: geode_gem/ui/preferences/interface.py, line: 791
-msgid "Display a tooltip when the mouse hovered a game"
+# File: geode_gem/ui/preferences/interface.py, line: 785
+msgid "Display a tooltip when the mouse hovers a game"
 msgstr ""
 
 #
@@ -560,6 +562,24 @@ msgstr "Mostrar solo la miniatura"
 # File: gem/ui/preferences/interface.py, line: 754
 msgid "Display translucent icons in games views instead of empty ones"
 msgstr "Mostrar iconos traslúcidos en la vista de juegos en vez de los vacíos"
+
+#
+# File: gem/preferences.py, line: 1196
+#, fuzzy
+msgid "Do you really want to clean icons cache directory ?"
+msgstr "¿Quiere borrar la caché de los iconos?"
+
+#
+# File: gem/preferences.py, line: 1196
+#, fuzzy
+msgid "Do you really want to remove this entry ?"
+msgstr "¿Quiere borrar esta entrada?"
+
+#
+# File: gem/preferences.py, line: 1196
+#, fuzzy
+msgid "Do you want to replace existing file ?"
+msgstr "¿Quiere remplazar el archivo existente?"
 
 #
 # File: gem/gtk/windows.py, line: 1885
@@ -729,8 +749,9 @@ msgstr "Extensiones"
 
 #
 # File: gem/gtk/preferences.py, line: 1792
+#, fuzzy
 msgid ""
-"Extensions are split by spaces and must not having the first dot (using \"nes"
+"Extensions are split by spaces and must not have the first dot (using \"nes"
 "\" than \".nes\")."
 msgstr ""
 "Las extensiones se separan por espacios y no tienen que tener un punto al "
@@ -771,6 +792,12 @@ msgstr "Filtro"
 #
 # File: gem/gtk/interface.py, line: 796
 msgid "Finish"
+msgstr "Terminar"
+
+#
+# File: gem/gtk/interface.py, line: 796
+#, fuzzy
+msgid "Finished"
 msgstr "Terminar"
 
 #
@@ -1084,7 +1111,8 @@ msgstr "Marcar el juego como favorito"
 
 #
 # File: gem/preferences.py, line: 87
-msgid "Mark a game as finish"
+#, fuzzy
+msgid "Mark a game as finished"
 msgstr "Marcar un juego como acabado"
 
 #
@@ -1734,15 +1762,23 @@ msgid "Tags are split by commas."
 msgstr "Las etiquetas se separan con comas."
 
 #
+# File: gem/interface.py, line: 2121
+#, fuzzy
+msgid "Tested by"
+msgstr "Ayer"
+
+#
 # File: gem/ui/dialog/maintenance.py, line: 118
-msgid "The following actions are irreversible, becareful !"
+#, fuzzy
+msgid "The following actions are irreversible, be careful!"
 msgstr "Las siguientes acciones son irreversibles, ¡ten cuidado!"
 
 #
 # File: gem/ui/interface.glade, line: 960
+#, fuzzy
 msgid ""
-"The following game going to be removed from your harddrive. This action is "
-"irreversible !"
+"The following game going to be removed from your hard drive. This action is "
+"irreversible!"
 msgstr "Este juego va a ser borrado de tu disco. ¡Esta acción es irreversible!"
 
 #
@@ -1751,19 +1787,31 @@ msgid "There is no default emulator set for this console"
 msgstr "No hay un emulador por defecto asignado a esta consola"
 
 #
+# File: gem/gtk/preferences.py, line: 2099
+#, fuzzy
+msgid ""
+"These parameters are used in \"Default options\", \"Save\" and \"Snapshots\" "
+"entries."
+msgstr ""
+"Estos parámetros son utilizados en \"Opciones por defecto\", \"Guardar\" y "
+"\"Capturas de pantalla\"."
+
+#
 # File: gem/preferences.py, line: 1418
 msgid "This binary not exist, please, check the path"
 msgstr "Este binario no existe, por favor compruebe la ruta"
 
 #
 # File: gem/preferences.py, line: 1418
-msgid "This console already exist, please, choose another name"
+#, fuzzy
+msgid "This console already exists, please, choose another name"
 msgstr "Esta consola ya existe, por favor escoja otro nombre"
 
 #
 # File: gem/gtk/mednafen.py, line: 154
+#, fuzzy
 msgid ""
-"This dialog allow you to specify specific backup memory type for the "
+"This dialog allows you to specify specific backup memory type for the "
 "following game:"
 msgstr ""
 "Este dialogo te permite especificar el tipo de memoria de guardado para el "
@@ -1783,15 +1831,6 @@ msgstr "El juego fue duplicado con éxito"
 # File: gem/interface.py, line: 1218
 msgid "This game was removed successfully"
 msgstr "El juego fue borrado con éxito"
-
-#
-# File: gem/gtk/preferences.py, line: 2099
-msgid ""
-"This parameters are used in \"Default options\", \"Save\" and \"Snapshots\" "
-"entries."
-msgstr ""
-"Estos parámetros son utilizados en \"Opciones por defecto\", \"Guardar\" y "
-"\"Capturas de pantalla\"."
 
 #
 # File: gem/ui/dialog/cover.py, line: 143
@@ -1840,7 +1879,8 @@ msgstr "Sin favorito"
 
 #
 # File: gem/gtk/interface.py, line: 797
-msgid "Unfinish"
+#, fuzzy
+msgid "Unfinished"
 msgstr "Sin terminar"
 
 #
@@ -1928,16 +1968,11 @@ msgid "Vertical"
 msgstr "Vertical"
 
 #
-# File: gem/interface.py, line: 1098
-msgid "Welcome !"
-msgstr "¡Bienvenido!"
-
-#
 # File: gem/interface.py, line: 596
 #, fuzzy
 msgid ""
 "Welcome and thanks for choosing GEM as emulators manager. Start using GEM by "
-"droping some files into interface.\n"
+"dropping some files into interface.\n"
 "\n"
 "Enjoy and have fun :D"
 msgstr ""
@@ -1945,6 +1980,12 @@ msgstr ""
 "utilizar GEM arrastrando algunas ROMs dentro de la interfaz.\n"
 "\n"
 "Diviértete y disfruta :D"
+
+#
+# File: gem/interface.py, line: 1098
+#, fuzzy
+msgid "Welcome!"
+msgstr "¡Bienvenido!"
 
 #
 # File: gem/ui/preferences/interface.py, line: 441
@@ -1955,21 +1996,6 @@ msgstr "Ancho del tabulador de caracteres en espacios"
 # File: gem/preferences.py, line: 1670
 msgid "Windowed"
 msgstr "Modo ventana"
-
-#
-# File: gem/preferences.py, line: 1196
-msgid "Would you really want to clean icons cache directory ?"
-msgstr "¿Quiere borrar la caché de los iconos?"
-
-#
-# File: gem/preferences.py, line: 1196
-msgid "Would you really want to remove this entry ?"
-msgstr "¿Quiere borrar esta entrada?"
-
-#
-# File: gem/preferences.py, line: 1196
-msgid "Would you want to replace existing file ?"
-msgstr "¿Quiere remplazar el archivo existente?"
 
 #
 # File: gem/gtk/preferences.py, line: 2433
@@ -2068,11 +2094,6 @@ msgstr "_Editar el juego"
 # File: gem/interface.py, line: 741
 msgid "_Favorite"
 msgstr "_Favorito"
-
-#
-# File: gem/gtk/interface.py, line: 587
-msgid "_Finish"
-msgstr "_Terminar"
 
 #
 # File: gem/gtk/interface.py, line: 513
@@ -2221,8 +2242,3 @@ msgstr "_Herramientas"
 # File: gem/ui/interface.py, line: 783
 msgid "_Website"
 msgstr "_Sitio web"
-
-#
-# File: gem/preferences.py, line: 280
-msgid "translator-credits"
-msgstr "José Luis LOPEZ CASTILLO aka DarkNekros"

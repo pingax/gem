@@ -109,7 +109,7 @@ class MednafenDialog(CommonWindow):
         label_game = Gtk.Label()
 
         # Properties
-        label.set_text(_("This dialog allow you to specify specific backup "
+        label.set_text(_("This dialog allows you to specify specific backup "
                          "memory type for the following game:"))
         label.set_line_wrap(True)
         label.set_max_width_chars(8)

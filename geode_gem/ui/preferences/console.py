@@ -113,8 +113,8 @@ class ConsolePreferences(CommonWindow):
                 _("Most of the time, extensions are common between differents "
                   "emulators and represent the console acronym name (example: "
                   "Nintendo NES -> nes)."),
-                _("Extensions are split by spaces and must not having the "
-                  "first dot (using \"nes\" than \".nes\").")
+                _("Extensions are split by spaces and must not have the first "
+                  "dot (using \"nes\" than \".nes\").")
             ],
             _("Extensions examples"): {
                 "Nintendo NES": "nes",
@@ -626,7 +626,7 @@ class ConsolePreferences(CommonWindow):
 
                 if self.error:
                     icon = Icons.ERROR
-                    tooltip = _("This console already exist, please, "
+                    tooltip = _("This console already exists, please, "
                                 "choose another name")
 
         else:
