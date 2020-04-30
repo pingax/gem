@@ -3362,8 +3362,11 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Threads
         # ------------------------------------
 
+        self.logger.debug("Terminate remaining threaded processus")
+
         # Remove games listing thread
         if not self.list_thread == 0:
+            self.logger.debug(f"Remove thread ID {self.list_thread}")
             GLib.source_remove(self.list_thread)
 
         # Remove game and script threads
@@ -3371,6 +3374,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
             # Avoid to remove the main thread
             if thread is not thread_main_thread():
+                self.logger.debug(f"Remove thread {thread.name}")
                 thread.proc.terminate()
                 thread.join()
 
@@ -3382,6 +3386,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Close open notes dialog
         if len(self.notes.keys()) > 0:
+            self.logger.debug("Terminate openning notes")
+
             for dialog in self.notes.copy().keys():
                 self.notes[dialog].emit_response(None, Gtk.ResponseType.APPLY)
 
@@ -3466,7 +3472,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.config.update()
 
-        self.main_loop.quit()
+        if self.main_loop.is_running():
+            self.logger.debug("Close main loop")
+            self.main_loop.quit()
 
     def load_configuration(self):
         """ Load main configuration file and store values
