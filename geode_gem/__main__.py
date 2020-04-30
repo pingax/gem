@@ -292,7 +292,7 @@ def main():
                 # Initialize main configuration files
                 init_configuration(gem)
 
-                getLogger("gem").info(f"Start GEM with PID {gem.pid}")
+                getLogger(gem.Instance).info(f"Start GEM with PID {gem.pid}")
 
                 # Start splash
                 from geode_gem.ui.splash import Splash
@@ -306,7 +306,7 @@ def main():
                 gem.free_lock()
 
             else:
-                getLogger("gem").critical(
+                getLogger(gem.Instance).critical(
                     f"GEM is already running with PID {gem.pid}")
 
                 from geode_gem.ui.splash import Message
@@ -316,7 +316,8 @@ def main():
                 message.run()
 
         else:
-            getLogger("gem").critical("Cannot launch GEM without display")
+            getLogger(gem.Instance).critical(
+                "Cannot launch GEM without display")
 
     except ImportError:
         getLogger("gem").exception("An error occur durint modules importation")
