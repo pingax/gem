@@ -32,7 +32,7 @@ function update_project() {
     echo "[INFO] Generate translation template…"
     xgettext \
         --package-name="Geode-GEM" \
-        --package-version="0.10.2" \
+        --package-version="0.10.3" \
         --copyright-holder="Kawa-Team" \
         --from-code="UTF-8" \
         --language="Python" \
