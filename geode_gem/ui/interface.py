@@ -335,8 +335,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.grid_game_filters_popover = Gtk.Box.new(
             Gtk.Orientation.VERTICAL, 6)
 
-        self.grid_infobar = Gtk.Box()
-
         self.grid_games = Gtk.Box.new(Gtk.Orientation.VERTICAL, 0)
         self.grid_games_views = Gtk.Box.new(Gtk.Orientation.VERTICAL, 0)
         self.grid_games_placeholder = Gtk.Box.new(Gtk.Orientation.VERTICAL, 12)
@@ -1090,14 +1088,7 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Infobar
         # ------------------------------------
 
-        self.infobar = Gtk.InfoBar()
-
-        self.label_infobar = Gtk.Label()
-
-        # Properties
-        self.infobar.set_show_close_button(False)
-
-        self.label_infobar.set_use_markup(True)
+        self.infobar = GeodeGtk.InfoBar()
 
         # ------------------------------------
         #   Sidebar - Game
@@ -2026,10 +2017,6 @@ class MainWindow(Gtk.ApplicationWindow):
             self.widget_filters_finish)
         self.listbox_filters_finish.add(
             self.widget_filters_unfinish)
-
-        # Infobar
-        self.infobar.get_content_area().pack_start(
-            self.label_infobar, True, True, 4)
 
         # ------------------------------------
         #   Games
@@ -3167,9 +3154,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.grid_consoles_menu.show_all()
         self.grid_game_filters_popover.show_all()
 
-        self.infobar.show_all()
-        self.grid_infobar.show_all()
-        self.label_infobar.show_all()
+        self.infobar.show()
 
         self.grid_sidebar.show_all()
         self.scroll_sidebar.show_all()
@@ -5497,20 +5482,16 @@ class MainWindow(Gtk.ApplicationWindow):
             self.logger.warning(
                 "Cannot find emulator for %s" % console.name)
 
-            self.infobar.set_visible(True)
-
-            self.infobar.set_message_type(Gtk.MessageType.WARNING)
-            self.label_infobar.set_markup(
+            self.infobar.set_message(
+                Gtk.MessageType.WARNING,
                 _("There is no default emulator set for this console"))
 
         elif not console.emulator.exists:
             self.logger.warning(
                 "%s emulator not exist" % console.emulator.name)
 
-            self.infobar.set_visible(True)
-
-            self.infobar.set_message_type(Gtk.MessageType.ERROR)
-            self.label_infobar.set_markup(
+            self.infobar.set_message(
+                Gtk.MessageType.ERROR,
                 _("<b>%s</b> cannot been found on your system") % (
                     console.emulator.name))
 

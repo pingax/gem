@@ -17,6 +17,7 @@
 #  MA 02110-1301, USA.
 # ------------------------------------------------------------------------------
 
+from geode_gem.ui.widgets.infobar import GeodeGtkInfoBar
 from geode_gem.ui.widgets.statusbar import GeodeGtkStatusbar
 
 
@@ -28,4 +29,5 @@ class GeodeGtk:
     """ Custom widgets for Geode-GEM applications
     """
 
+    InfoBar = GeodeGtkInfoBar
     Statusbar = GeodeGtkStatusbar
