@@ -62,6 +62,7 @@ from geode_gem.ui.preferences.interface import (ConsolePreferences,
                                                 PreferencesWindow)
 from geode_gem.ui.widgets.game import GameThread
 from geode_gem.ui.widgets.script import ScriptThread
+from geode_gem.ui.widgets import GeodeGtk
 from geode_gem.ui.widgets.widgets import ListBoxItem, IconsGenerator
 
 # GObject
@@ -1740,45 +1741,7 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Statusbar
         # ------------------------------------
 
-        self.statusbar = Gtk.Statusbar()
-
-        self.grid_statusbar = self.statusbar.get_message_area()
-
-        self.label_statusbar_console = self.grid_statusbar.get_children()[0]
-        self.label_statusbar_emulator = Gtk.Label()
-        self.label_statusbar_game = Gtk.Label()
-
-        self.image_statusbar_properties = Gtk.Image()
-        self.image_statusbar_screenshots = Gtk.Image()
-        self.image_statusbar_savestates = Gtk.Image()
-
-        self.progress_statusbar = Gtk.ProgressBar()
-
-        # Properties
-        self.statusbar.set_no_show_all(True)
-
-        self.grid_statusbar.set_spacing(12)
-        self.grid_statusbar.set_margin_top(0)
-        self.grid_statusbar.set_margin_end(0)
-        self.grid_statusbar.set_margin_start(0)
-        self.grid_statusbar.set_margin_bottom(0)
-
-        self.label_statusbar_console.set_use_markup(True)
-        self.label_statusbar_console.set_halign(Gtk.Align.START)
-        self.label_statusbar_console.set_valign(Gtk.Align.CENTER)
-        self.label_statusbar_emulator.set_use_markup(True)
-        self.label_statusbar_emulator.set_halign(Gtk.Align.START)
-        self.label_statusbar_emulator.set_valign(Gtk.Align.CENTER)
-        self.label_statusbar_game.set_ellipsize(Pango.EllipsizeMode.END)
-        self.label_statusbar_game.set_halign(Gtk.Align.START)
-        self.label_statusbar_game.set_valign(Gtk.Align.CENTER)
-
-        self.image_statusbar_properties.set_from_pixbuf(self.icons.blank())
-        self.image_statusbar_screenshots.set_from_pixbuf(self.icons.blank())
-        self.image_statusbar_savestates.set_from_pixbuf(self.icons.blank())
-
-        self.progress_statusbar.set_no_show_all(True)
-        self.progress_statusbar.set_show_text(True)
+        self.statusbar = GeodeGtk.Statusbar()
 
     def __init_packing(self):
         """ Initialize widgets packing in main window
@@ -2205,24 +2168,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menu_game_tools.append(self.item_game_desktop)
         self.menu_game_tools.append(Gtk.SeparatorMenuItem())
         self.menu_game_tools.append(self.item_game_mednafen)
-
-        # ------------------------------------
-        #   Statusbar
-        # ------------------------------------
-
-        self.grid_statusbar.pack_start(
-            self.label_statusbar_emulator, False, False, 0)
-        self.grid_statusbar.pack_start(
-            self.label_statusbar_game, True, True, 0)
-
-        self.grid_statusbar.pack_end(
-            self.progress_statusbar, False, False, 0)
-        self.grid_statusbar.pack_end(
-            self.image_statusbar_savestates, False, False, 0)
-        self.grid_statusbar.pack_end(
-            self.image_statusbar_screenshots, False, False, 0)
-        self.grid_statusbar.pack_end(
-            self.image_statusbar_properties, False, False, 0)
 
         self.add(self.grid)
 
@@ -3262,8 +3207,6 @@ class MainWindow(Gtk.ApplicationWindow):
         # Manage statusbar visibility
         if self.show_statusbar:
             self.statusbar.show()
-            self.grid_statusbar.show_all()
-
         else:
             self.statusbar.hide()
 
@@ -3983,12 +3926,9 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Statusbar
         # ----------------------------------------
 
-        self.image_statusbar_properties.set_from_pixbuf(self.icons.blank(24))
-        self.image_statusbar_savestates.set_from_pixbuf(self.icons.blank(24))
-        self.image_statusbar_screenshots.set_from_pixbuf(self.icons.blank(24))
-        self.image_statusbar_properties.set_tooltip_text(str())
-        self.image_statusbar_savestates.set_tooltip_text(str())
-        self.image_statusbar_screenshots.set_tooltip_text(str())
+        for widget_key in self.statusbar.pixbuf_widgets:
+            self.statusbar.set_widget_value(
+                widget_key, image=self.icons.blank(), tooltip=str())
 
         # ----------------------------------------
         #   Update informations
@@ -4095,6 +4035,7 @@ class MainWindow(Gtk.ApplicationWindow):
             # ----------------------------------------
 
             pixbuf = self.icons.get_translucent("screenshot")
+            tooltip = _("No screenshot")
 
             # Check screenshots
             if len(game.screenshots) > 0:
@@ -4104,11 +4045,9 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.item_game_screenshots.set_sensitive(True)
                 self.item_menubar_game_screenshots.set_sensitive(True)
 
-                text = _("1 screenshot")
+                tooltip = _("1 screenshot")
                 if len(game.screenshots) > 1:
-                    text = _("%d screenshots") % len(game.screenshots)
-
-                self.image_statusbar_screenshots.set_tooltip_text(text)
+                    tooltip = _("%d screenshots") % len(game.screenshots)
 
                 # Ordered game screenshots
                 if not self.use_random_screenshot:
@@ -4146,12 +4085,8 @@ class MainWindow(Gtk.ApplicationWindow):
                     except GLib.Error:
                         self.sidebar_image = None
 
-            else:
-                self.image_statusbar_screenshots.set_tooltip_text(
-                    _("No screenshot"))
-
-            # Set statusbar icon for screenshot status
-            self.image_statusbar_screenshots.set_from_pixbuf(pixbuf)
+            self.statusbar.set_widget_value(
+                "screenshots", image=pixbuf, tooltip=tooltip)
 
             # ----------------------------------------
             #   Game log
@@ -4184,21 +4119,17 @@ class MainWindow(Gtk.ApplicationWindow):
             # ----------------------------------------
 
             pixbuf = self.icons.get_translucent("savestate")
+            tooltip = _("No savestate")
 
             if len(game.savestates) > 0:
                 pixbuf = self.icons.get("savestate")
 
-                text = _("1 savestate")
+                tooltip = _("1 savestate")
                 if len(game.savestates) > 1:
-                    text = _("%d savestates") % len(game.savestates)
+                    tooltip = _("%d savestates") % len(game.savestates)
 
-                self.image_statusbar_savestates.set_tooltip_text(text)
-
-            else:
-                self.image_statusbar_savestates.set_tooltip_text(
-                    _("No savestate"))
-
-            self.image_statusbar_savestates.set_from_pixbuf(pixbuf)
+            self.statusbar.set_widget_value(
+                "savestates", image=pixbuf, tooltip=tooltip)
 
             # ----------------------------------------
             #   Game custom parameters
@@ -4206,19 +4137,19 @@ class MainWindow(Gtk.ApplicationWindow):
 
             # Game custom parameters
             pixbuf = self.icons.get_translucent("parameter")
+            tooltip = str()
 
             if len(game.default) > 0 or not game.emulator == console.emulator:
                 pixbuf = self.icons.get("parameter")
 
                 if len(game.default) > 0:
-                    self.image_statusbar_properties.set_tooltip_text(
-                        _("Use alternative arguments"))
+                    tooltip = _("Use alternative arguments")
 
                 elif game.emulator == console.emulator:
-                    self.image_statusbar_properties.set_tooltip_text(
-                        _("Use alternative emulator"))
+                    tooltip = _("Use alternative emulator")
 
-            self.image_statusbar_properties.set_from_pixbuf(pixbuf)
+            self.statusbar.set_widget_value(
+                "properties", image=pixbuf, tooltip=tooltip)
 
             # ----------------------------------------
             #   Sidebar informations
@@ -4321,9 +4252,9 @@ class MainWindow(Gtk.ApplicationWindow):
         if console is not None:
             emulator = console.emulator
 
-        self.label_statusbar_console.set_visible(console is not None)
-        self.label_statusbar_emulator.set_visible(emulator is not None)
-        self.label_statusbar_game.set_visible(game is not None)
+        self.statusbar.set_widget_visibility("console", console is not None)
+        self.statusbar.set_widget_visibility("emulator", emulator is not None)
+        self.statusbar.set_widget_visibility("game", game is not None)
 
         texts = list()
 
@@ -4344,23 +4275,25 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 texts.append(text)
 
-            self.label_statusbar_console.set_markup(
-                "<b>%s</b> : %s" % (_("Console"), text))
+            name = replace_for_markup(text)
+            self.statusbar.set_widget_value(
+                "console", markup=f"<b>{_('Console')}</b>: {name}")
 
         # ----------------------------------------
         #   Emulator
         # ----------------------------------------
 
         if emulator is not None:
-            self.label_statusbar_emulator.set_markup(
-                "<b>%s</b> : %s" % (_("Emulator"), emulator.name))
+            name = replace_for_markup(emulator.name)
+            self.statusbar.set_widget_value(
+                "emulator", markup=f"<b>{_('Emulator')}</b>: {name}")
 
         # ----------------------------------------
         #   Game
         # ----------------------------------------
 
         if game is not None:
-            self.label_statusbar_game.set_text(game.name)
+            self.statusbar.set_widget_value("game", text=game.name)
 
             texts.append(game.name)
 
@@ -5680,7 +5613,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
             self.scroll_games_placeholder.set_visible(False)
 
-            self.progress_statusbar.show()
+            self.statusbar.show_widget("progressbar")
 
         else:
             self.scroll_sidebar.set_visible(False)
@@ -5703,8 +5636,8 @@ class MainWindow(Gtk.ApplicationWindow):
             if self.__on_append_game(console, game):
                 self.set_informations_headerbar()
 
-                self.progress_statusbar.set_text("%d/%d" % (index, len(games)))
-                self.progress_statusbar.set_fraction(index / len(games))
+                self.statusbar.set_widget_value(
+                    "progressbar", index=index, length=len(games))
 
                 self.treeview_games.thaw_child_notify()
                 yield True
@@ -5713,7 +5646,7 @@ class MainWindow(Gtk.ApplicationWindow):
         # Restore options for packages treeviews
         self.treeview_games.thaw_child_notify()
 
-        self.progress_statusbar.hide()
+        self.statusbar.hide_widget("progressbar")
 
         self.set_informations_headerbar()
 
@@ -8194,8 +8127,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.get_window().set_cursor(
             Gdk.Cursor.new_from_name(self.window_display, "wait"))
 
-        self.progress_statusbar.set_text(None)
-        self.progress_statusbar.show()
+        self.statusbar.set_widget_value("progressbar")
+        self.statusbar.show_widget("progressbar")
 
         yield True
 
@@ -8206,7 +8139,8 @@ class MainWindow(Gtk.ApplicationWindow):
         for path, console in data.items():
             progress_index += 1
 
-            self.progress_statusbar.set_fraction(progress_index / len(data))
+            self.statusbar.set_widget_value(
+                "progressbar", index=index, length=len(games))
 
             yield True
 
