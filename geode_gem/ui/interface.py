@@ -95,6 +95,7 @@ from threading import main_thread as thread_main_thread
 
 # Translation
 from gettext import gettext as _
+from gettext import ngettext
 
 # URL
 from urllib.parse import urlparse
@@ -4038,16 +4039,16 @@ class MainWindow(Gtk.ApplicationWindow):
             tooltip = _("No screenshot")
 
             # Check screenshots
-            if len(game.screenshots) > 0:
+            if game.screenshots:
                 pixbuf = self.icons.get("screenshot")
 
                 self.button_toolbar_screenshots.set_sensitive(True)
                 self.item_game_screenshots.set_sensitive(True)
                 self.item_menubar_game_screenshots.set_sensitive(True)
 
-                tooltip = _("1 screenshot")
-                if len(game.screenshots) > 1:
-                    tooltip = _("%d screenshots") % len(game.screenshots)
+                tooltip = ngettext(_("1 screenshot"),
+                                   _("%d screenshots") % len(game.screenshots),
+                                   len(game.screenshots))
 
                 # Ordered game screenshots
                 if not self.use_random_screenshot:
@@ -4121,12 +4122,12 @@ class MainWindow(Gtk.ApplicationWindow):
             pixbuf = self.icons.get_translucent("savestate")
             tooltip = _("No savestate")
 
-            if len(game.savestates) > 0:
+            if game.savestates:
                 pixbuf = self.icons.get("savestate")
 
-                tooltip = _("1 savestate")
-                if len(game.savestates) > 1:
-                    tooltip = _("%d savestates") % len(game.savestates)
+                tooltip = ngettext(_("1 savestate"),
+                                   _("%d savestates") % len(game.savestates),
+                                   len(game.savestates))
 
             self.statusbar.set_widget_value(
                 "savestates", image=pixbuf, tooltip=tooltip)
@@ -4265,13 +4266,11 @@ class MainWindow(Gtk.ApplicationWindow):
         if console is not None:
             text = _("N/A")
 
-            if len(self.filter_games_list) == 1:
-                text = _("1 game available")
-
-                texts.append(text)
-
-            elif len(self.filter_games_list) > 1:
-                text = _("%d games available") % len(self.filter_games_list)
+            if self.filter_games_list:
+                text = ngettext(
+                    _("1 game available"),
+                    _("%d games available") % len(self.filter_games_list),
+                    len(self.filter_games_list))
 
                 texts.append(text)
 
@@ -4804,10 +4803,11 @@ class MainWindow(Gtk.ApplicationWindow):
                         icon, Gtk.IconSize.MENU)
 
                     text = _("No game")
-                    if len(console.get_games()) == 1:
-                        text = _("1 game")
-                    elif len(console.get_games()) > 1:
-                        text = _("%d games") % len(console.get_games())
+                    if console.get_games():
+                        text = ngettext(
+                            _("1 game"),
+                            _("%d games") % len(console.get_games()),
+                            len(console.get_games()))
 
                     self.__current_menu_row.set_tooltip_text(text)
 
@@ -5154,10 +5154,11 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.icons.blank(22))
 
         text = _("No game")
-        if len(console.get_games()) == 1:
-            text = _("1 game")
-        elif len(console.get_games()) > 1:
-            text = _("%d games") % len(console.get_games())
+        if console.get_games():
+            text = ngettext(
+                _("1 game"),
+                _("%d games") % len(console.get_games()),
+                len(console.get_games()))
 
         row_console.set_tooltip_text(text)
 
@@ -6902,10 +6903,11 @@ class MainWindow(Gtk.ApplicationWindow):
                             row = self.consoles_iter[console.id]
 
                             text = _("No game")
-                            if len(console.get_games()) == 1:
-                                text = _("1 game")
-                            elif len(console.get_games()) > 1:
-                                text = _("%d games") % len(console.get_games())
+                            if console.get_games():
+                                text = ngettext(
+                                    _("1 game"),
+                                    _("%d games") % len(console.get_games()),
+                                    len(console.get_games()))
 
                             row.set_tooltip_text(text)
 
@@ -8197,10 +8199,11 @@ class MainWindow(Gtk.ApplicationWindow):
                     row = self.consoles_iter[console.id]
 
                     text = _("No game")
-                    if len(console.get_games()) == 1:
-                        text = _("1 game")
-                    elif len(console.get_games()) > 1:
-                        text = _("%d games") % len(console.get_games())
+                    if console.get_games():
+                        text = ngettext(
+                            _("1 game"),
+                            _("%d games") % len(console.get_games()),
+                            len(console.get_games()))
 
                     row.set_tooltip_text(text)
 
@@ -8242,12 +8245,11 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Show an informative dialog
         text = _("No game has been added")
-
-        if validate_index == 1:
-            text = _("1 game has been added")
-
-        elif validate_index > 1:
-            text = _("%d games have been added") % validate_index
+        if validate_index > 0:
+            text = ngettext(
+                _("1 game has been added"),
+                _("%d games have been added") % validate_index,
+                validate_index)
 
         self.set_message(_("Games installation"),
                          text,
