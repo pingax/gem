@@ -324,14 +324,20 @@ class Game(object):
         """ Get screenshots list
         """
 
-        return self.emulator.get_screenshots(self)
+        if self.emulator is not None:
+            return self.emulator.get_screenshots(self)
+
+        return list()
 
     @property
     def savestates(self):
         """ Get savestates list
         """
 
-        return self.emulator.get_savestates(self)
+        if self.emulator is not None:
+            return self.emulator.get_savestates(self)
+
+        return list()
 
     def command(self, fullscreen=False):
         """ Generate a launch command
