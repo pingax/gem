@@ -17,6 +17,9 @@
 #  MA 02110-1301, USA.
 # ------------------------------------------------------------------------------
 
+# Geode
+from geode_gem.ui.widgets.common import GeodeGtkCommon
+
 # GObject
 from gi.repository import Gtk
 
@@ -25,7 +28,7 @@ from gi.repository import Gtk
 #   Class
 # ------------------------------------------------------------------------------
 
-class GeodeGtkInfoBar(Gtk.InfoBar):
+class GeodeGtkInfoBar(GeodeGtkCommon, Gtk.InfoBar):
 
     def __init__(self):
         """ Constructor
@@ -33,9 +36,9 @@ class GeodeGtkInfoBar(Gtk.InfoBar):
 
         Gtk.InfoBar.__init__(self)
 
-        self.__inner_grid = self.get_content_area()
+        self.inner_grid = self.get_content_area()
 
-        self.__inner_widgets = {
+        self.inner_widgets = {
             "label": Gtk.Label.new(None),
         }
 
@@ -45,23 +48,14 @@ class GeodeGtkInfoBar(Gtk.InfoBar):
 
         self.set_show_close_button(False)
 
-        self.__inner_widgets.get("label").set_use_markup(True)
+        self.inner_widgets.get("label").set_use_markup(True)
 
         # ------------------------------------
         #   Packing
         # ------------------------------------
 
-        self.__inner_grid.pack_start(
-            self.__inner_widgets.get("label"), True, True, 4)
-
-    def do_show(self):
-        """ Virtual method called when self.show() method is called
-        """
-
-        Gtk.InfoBar.do_show(self)
-
-        # Ensure to show all internal widgets
-        self.__inner_grid.show_all()
+        self.inner_grid.pack_start(
+            self.inner_widgets.get("label"), True, True, 4)
 
     def set_message(self, message_type, message_text):
         """ Set a new message with a specific type
@@ -87,4 +81,4 @@ class GeodeGtkInfoBar(Gtk.InfoBar):
         if message_type and not self.get_visible():
             self.set_visible(True)
 
-        self.__inner_widgets.get("label").set_markup(message_text)
+        self.inner_widgets.get("label").set_markup(message_text)
