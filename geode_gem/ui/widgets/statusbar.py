@@ -74,20 +74,20 @@ class GeodeGtkStatusbar(GeodeGtkCommon, Gtk.Statusbar):
                 widget.set_no_show_all(True)
                 widget.set_show_text(True)
 
-        self.inner_widgets.get("game").set_ellipsize(Pango.EllipsizeMode.END)
+        self.get_widget("game").set_ellipsize(Pango.EllipsizeMode.END)
 
         # ------------------------------------
         #   Packing
         # ------------------------------------
 
         self.inner_grid.pack_start(
-            self.inner_widgets.get("emulator"), False, False, 0)
+            self.get_widget("emulator"), False, False, 0)
         self.inner_grid.pack_start(
-            self.inner_widgets.get("game"), True, True, 0)
+            self.get_widget("game"), True, True, 0)
 
         for name in ("progressbar",) + self.pixbuf_widgets:
             self.inner_grid.pack_end(
-                self.inner_widgets.get(name), False, False, 0)
+                self.get_widget(name), False, False, 0)
 
     def set_widget_value(self, widget_key, **kwargs):
         """ Set an internal widget value
@@ -102,17 +102,9 @@ class GeodeGtkStatusbar(GeodeGtkCommon, Gtk.Statusbar):
         ----------
         widget_key : str
             Internal widget keys, contains in self.inner_widgets
-
-        Raises
-        ------
-        KeyError
-            When specified widget do not exists in widget
         """
 
-        if widget_key not in self.inner_widgets.keys():
-            raise KeyError(f"Cannot found {widget_key} in {self} widgets")
-
-        widget = self.inner_widgets.get(widget_key)
+        widget = self.get_widget(widget_key)
 
         if type(widget) is Gtk.Label:
             if "markup" in kwargs.keys():

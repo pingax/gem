@@ -48,14 +48,13 @@ class GeodeGtkInfoBar(GeodeGtkCommon, Gtk.InfoBar):
 
         self.set_show_close_button(False)
 
-        self.inner_widgets.get("label").set_use_markup(True)
+        self.get_widget("label").set_use_markup(True)
 
         # ------------------------------------
         #   Packing
         # ------------------------------------
 
-        self.inner_grid.pack_start(
-            self.inner_widgets.get("label"), True, True, 4)
+        self.inner_grid.pack_start(self.get_widget("label"), True, True, 4)
 
     def set_message(self, message_type, message_text):
         """ Set a new message with a specific type
@@ -81,4 +80,4 @@ class GeodeGtkInfoBar(GeodeGtkCommon, Gtk.InfoBar):
         if message_type and not self.get_visible():
             self.set_visible(True)
 
-        self.inner_widgets.get("label").set_markup(message_text)
+        self.get_widget("label").set_markup(message_text)

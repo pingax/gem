@@ -53,6 +53,30 @@ class GeodeGtkCommon():
 
         self.set_widget_visibility(widget_key, True)
 
+    def get_widget(self, widget_key):
+        """ Retrieve a specific widget from internal container
+
+        Parameters
+        ----------
+        widget_key : str
+            Internal widget keys, contains in self.inner_widgets
+
+        Returns
+        -------
+        Gtk.Widget or None
+            Widget from internal container
+
+        Raises
+        ------
+        KeyError
+            When specified widget do not exists in widget
+        """
+
+        if widget_key not in self.inner_widgets.keys():
+            raise KeyError(f"Cannot found {widget_key} in {self} widgets")
+
+        return self.inner_widgets.get(widget_key, None)
+
     def set_widget_visibility(self, widget_key, visibility_status):
         """ Define an internal widget visibility status
 
@@ -65,20 +89,15 @@ class GeodeGtkCommon():
 
         Raises
         ------
-        KeyError
-            When specified widget do not exists in widget
         TypeError
             When specified visibility_status type is not a boolean
         """
-
-        if widget_key not in self.inner_widgets.keys():
-            raise KeyError(f"Cannot found {widget_key} in {self} widgets")
 
         if not isinstance(visibility_status, bool):
             raise TypeError(
                 "The visibility_status parameter must be a boolean")
 
-        widget = self.inner_widgets.get(widget_key)
+        widget = self.get_widget(widget_key)
 
         if visibility_status:
             widget.show()
