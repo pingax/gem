@@ -36,6 +36,7 @@ class GeodeGtkStatusbar(GeodeGtkCommon, Gtk.Statusbar):
         """ Constructor
         """
 
+        GeodeGtkCommon.__init__(self)
         Gtk.Statusbar.__init__(self)
 
         self.inner_grid = self.get_message_area()

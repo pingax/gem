@@ -27,8 +27,12 @@ from gi.repository import Gtk
 
 class GeodeGtkCommon():
 
-    inner_grid = None
-    inner_widgets = dict()
+    def __init__(self):
+        """ Constructor
+        """
+
+        self.inner_grid = None
+        self.inner_widgets = dict()
 
     def do_show(self):
         """ Virtual method called when self.show() method is called

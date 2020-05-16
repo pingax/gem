@@ -34,6 +34,7 @@ class GeodeGtkInfoBar(GeodeGtkCommon, Gtk.InfoBar):
         """ Constructor
         """
 
+        GeodeGtkCommon.__init__(self)
         Gtk.InfoBar.__init__(self)
 
         self.inner_grid = self.get_content_area()
