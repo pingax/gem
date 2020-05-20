@@ -5075,6 +5075,8 @@ class MainWindow(Gtk.ApplicationWindow):
             raise TypeError(
                 "Wrong type for console, expected gem.engine.console.Console")
 
+        self.logger.debug(f"Append games for console {console.name}")
+
         # Get current thread id
         current_thread_id = self.list_thread
 
@@ -5463,6 +5465,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # A new game has been selected
         elif not self.selection["game"] == game:
+            self.logger.debug(f"Select game '{game.id}'")
+
             # Synchronize selection between both games views
             self.__on_synchronize_game_selection(widget, game)
 
@@ -5672,6 +5676,7 @@ class MainWindow(Gtk.ApplicationWindow):
         """
 
         if game is not None and game.id in self.game_path:
+            self.logger.debug(f"Synchronize selection for game '{game.id}'")
 
             if view == self.treeview_games:
                 viewiter = self.sorted_games_grid.convert_child_iter_to_iter(
@@ -5883,6 +5888,9 @@ class MainWindow(Gtk.ApplicationWindow):
             if column is not None:
                 column.set_visible(widget.get_active())
 
+                self.logger.debug(f"Switch visibility for '{key}' column to "
+                                  f"{column.get_visible()}")
+
         self.__unblock_signals()
 
     def check_selection(self):
@@ -5927,6 +5935,8 @@ class MainWindow(Gtk.ApplicationWindow):
     def unselect_all(self):
         """ Unselect selections from both games views
         """
+
+        self.logger.debug("Unselect games on both views")
 
         self.iconview_games.unselect_all()
 
