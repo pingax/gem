@@ -8123,7 +8123,7 @@ class MainWindow(Gtk.ApplicationWindow):
             progress_index += 1
 
             self.statusbar.set_widget_value(
-                "progressbar", index=index, length=len(games))
+                "progressbar", index=progress_index, length=len(data))
 
             yield True
 
