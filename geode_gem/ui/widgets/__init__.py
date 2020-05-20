@@ -18,6 +18,7 @@
 # ------------------------------------------------------------------------------
 
 from geode_gem.ui.widgets.infobar import GeodeGtkInfoBar
+from geode_gem.ui.widgets.menu import GeodeGtkMenu, GeodeGtkMenuItem
 from geode_gem.ui.widgets.statusbar import GeodeGtkStatusbar
 
 
@@ -30,4 +31,6 @@ class GeodeGtk:
     """
 
     InfoBar = GeodeGtkInfoBar
+    Menu = GeodeGtkMenu
+    MenuItem = GeodeGtkMenuItem
     Statusbar = GeodeGtkStatusbar
