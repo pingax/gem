@@ -57,6 +57,22 @@ class GeodeGtkCommon():
 
         self.set_widget_visibility(widget_key, True)
 
+    def has_widget(self, widget_key):
+        """ Check if a specific widget exists in internal container
+
+        Parameters
+        ----------
+        widget_key : str
+            Internal widget keys, contains in self.inner_widgets
+
+        Returns
+        -------
+        bool
+            True if widget exists, False otherwise
+        """
+
+        return widget_key in self.inner_widgets.keys()
+
     def get_widget(self, widget_key):
         """ Retrieve a specific widget from internal container
 
@@ -76,10 +92,88 @@ class GeodeGtkCommon():
             When specified widget do not exists in widget
         """
 
-        if widget_key not in self.inner_widgets.keys():
+        if not self.has_widget(widget_key):
             raise KeyError(f"Cannot found {widget_key} in {self} widgets")
 
         return self.inner_widgets.get(widget_key, None)
+
+    def get_active(self, widget=None):
+        """ Returns the widget active entry
+
+        Parameters
+        ----------
+        widget : str, optionnal
+            Internal widget keys, contains in self.inner_widgets
+
+        Returns
+        -------
+        Gtk.Widget
+            The activated widget from internal container
+        """
+
+        if widget is None:
+            return super().get_active()
+
+        elif self.has_widget(widget):
+            return self.get_widget(widget).get_active()
+
+        return None
+
+    def set_active(self, value, widget=None):
+        """ Set the active value for a specific widget
+
+        Parameters
+        ----------
+        value : bool or int
+            The new activate value for specified widget
+        widget : str, optionnal
+            Internal widget keys, contains in self.inner_widgets
+        """
+
+        if widget is None:
+            super().set_active(value)
+
+        elif self.has_widget(widget):
+            self.get_widget(widget).set_active(value)
+
+    def get_sensitive(self, widget=None):
+        """ Returns the widget sensitivity
+
+        Parameters
+        ----------
+        widget : str, optionnal
+            Internal widget keys, contains in self.inner_widgets
+
+        Returns
+        -------
+        bool
+            True if the widget is sensitive, False otherwise
+        """
+
+        if widget is None:
+            return super().get_sensitive()
+
+        elif self.has_widget(widget):
+            return self.get_widget(widget).get_sensitive()
+
+        return True
+
+    def set_sensitive(self, sensitive, widget=None):
+        """ Set the widget sensitivity
+
+        Parameters
+        ----------
+        sensitive : bool
+            The new internal widget sensitive status
+        widget : str, optionnal
+            Internal widget keys, contains in self.inner_widgets
+        """
+
+        if widget is None:
+            super().set_sensitive(sensitive)
+
+        elif self.has_widget(widget):
+            self.get_widget(widget).set_sensitive(sensitive)
 
     def set_widget_visibility(self, widget_key, visibility_status):
         """ Define an internal widget visibility status
