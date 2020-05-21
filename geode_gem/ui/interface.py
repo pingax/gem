@@ -596,59 +596,24 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Menu - Consoles
         # ------------------------------------
 
-        self.menu_consoles = Gtk.Menu()
+        self.menu_consoles = GeodeGtk.Menu(
+            "menu_consoles",
+            ("edit_console", _("_Edit console")),
+            ("remove_console", _("_Remove console")),
+            None,
+            ("edit_emulator", _("_Edit emulator")),
+            ("edit_file", _("_Edit configuration file")),
+            None,
+            ("copy_path", _("_Copy games directory path to clipboard")),
+            ("open_path", _("_Open games directory")),
+            None,
+            ("reload", _("_Reload games list")),
+            None,
+            ("favorite", _("_Favorite"), Gtk.CheckMenuItem),
+            ("recursive", _("_Recursive"), Gtk.CheckMenuItem),
+        )
 
-        self.item_consoles_console = Gtk.MenuItem()
-        self.item_consoles_remove = Gtk.MenuItem()
-
-        self.item_consoles_emulator = Gtk.MenuItem()
-        self.item_consoles_config = Gtk.MenuItem()
-
-        self.item_consoles_copy = Gtk.MenuItem()
-        self.item_consoles_open = Gtk.MenuItem()
-
-        self.item_consoles_reload = Gtk.MenuItem()
-
-        self.item_consoles_favorite = Gtk.CheckMenuItem()
-        self.item_consoles_recursive = Gtk.CheckMenuItem()
-
-        # Properties
-        self.item_consoles_console.set_label(
-            _("_Edit console"))
-        self.item_consoles_console.set_use_underline(True)
-
-        self.item_consoles_remove.set_label(
-            _("_Remove console"))
-        self.item_consoles_remove.set_use_underline(True)
-
-        self.item_consoles_emulator.set_label(
-            _("_Edit emulator"))
-        self.item_consoles_emulator.set_use_underline(True)
-
-        self.item_consoles_config.set_label(
-            _("_Edit configuration file"))
-        self.item_consoles_config.set_use_underline(True)
-
-        self.item_consoles_copy.set_label(
-            _("_Copy games directory path to clipboard"))
-        self.item_consoles_copy.set_use_underline(True)
-
-        self.item_consoles_open.set_label(
-            _("_Open games directory"))
-        self.item_consoles_open.set_use_underline(True)
-
-        self.item_consoles_reload.set_label(
-            _("_Reload games list"))
-        self.item_consoles_reload.set_use_underline(True)
-
-        self.item_consoles_favorite.set_label(
-            _("_Favorite"))
-        self.item_consoles_favorite.set_use_underline(True)
-
-        self.item_consoles_recursive.set_label(
-            _("_Recursive"))
-        self.item_consoles_recursive.set_use_underline(True)
-        self.item_consoles_recursive.set_tooltip_text(
+        self.menu_consoles.get_widget("recursive").set_tooltip_text(
             _("You need to reload games list to apply changes"))
 
         # ------------------------------------
@@ -1411,24 +1376,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.hpaned_consoles.pack2(self.vpaned_games, True, True)
 
         # ------------------------------------
-        #   Menu - Consoles
-        # ------------------------------------
-
-        self.menu_consoles.append(self.item_consoles_console)
-        self.menu_consoles.append(self.item_consoles_remove)
-        self.menu_consoles.append(Gtk.SeparatorMenuItem())
-        self.menu_consoles.append(self.item_consoles_emulator)
-        self.menu_consoles.append(self.item_consoles_config)
-        self.menu_consoles.append(Gtk.SeparatorMenuItem())
-        self.menu_consoles.append(self.item_consoles_copy)
-        self.menu_consoles.append(self.item_consoles_open)
-        self.menu_consoles.append(Gtk.SeparatorMenuItem())
-        self.menu_consoles.append(self.item_consoles_reload)
-        self.menu_consoles.append(Gtk.SeparatorMenuItem())
-        self.menu_consoles.append(self.item_consoles_favorite)
-        self.menu_consoles.append(self.item_consoles_recursive)
-
-        # ------------------------------------
         #   Toolbar - Games
         # ------------------------------------
 
@@ -1912,18 +1859,44 @@ class MainWindow(Gtk.ApplicationWindow):
                     },
                 ],
             },
-            self.item_consoles_favorite: {
+            self.menu_consoles: {
                 "activate": [
                     {
+                        "method": self.__on_show_console_editor,
+                        "widget": "edit_console",
+                    },
+                    {
+                        "method": self.__on_remove_console,
+                        "widget": "remove_console",
+                    },
+                    {
+                        "method": self.__on_show_emulator_editor,
+                        "widget": "edit_emulator",
+                    },
+                    {
+                        "method": self.__on_show_emulator_config,
+                        "widget": "edit_file",
+                    },
+                    {
+                        "method": self.__on_copy_path_to_clipboard,
+                        "widget": "copy_path",
+                    },
+                    {
+                        "method": self.__on_open_directory,
+                        "widget": "open_path",
+                    },
+                    {
+                        "method": self.__on_reload_games,
+                        "widget": "reload",
+                    },
+                    {
                         "method": self.__on_change_console_option,
+                        "widget": "favorite",
                         "allow_block_signal": True,
                     },
-                ],
-            },
-            self.item_consoles_recursive: {
-                "activate": [
                     {
                         "method": self.__on_change_console_option,
+                        "widget": "recursive",
                         "allow_block_signal": True,
                     },
                 ],
@@ -2012,41 +1985,6 @@ class MainWindow(Gtk.ApplicationWindow):
             self.entry_toolbar_consoles_filters: {
                 "changed": [
                     {"method": self.__on_update_consoles},
-                ],
-            },
-            self.item_consoles_console: {
-                "activate": [
-                    {"method": self.__on_show_console_editor},
-                ],
-            },
-            self.item_consoles_remove: {
-                "activate": [
-                    {"method": self.__on_remove_console},
-                ],
-            },
-            self.item_consoles_emulator: {
-                "activate": [
-                    {"method": self.__on_show_emulator_editor},
-                ],
-            },
-            self.item_consoles_config: {
-                "activate": [
-                    {"method": self.__on_show_emulator_config},
-                ],
-            },
-            self.item_consoles_copy: {
-                "activate": [
-                    {"method": self.__on_copy_path_to_clipboard},
-                ],
-            },
-            self.item_consoles_open: {
-                "activate": [
-                    {"method": self.__on_open_directory},
-                ],
-            },
-            self.item_consoles_reload: {
-                "activate": [
-                    {"method": self.__on_reload_games},
                 ],
             },
         }
@@ -4130,8 +4068,10 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.__current_menu_row.set_tooltip_text(text)
 
                     # Console flag selectors
-                    self.item_consoles_favorite.set_active(console.favorite)
-                    self.item_consoles_recursive.set_active(console.recursive)
+                    self.menu_consoles.set_active(
+                        console.favorite, widget="favorite")
+                    self.menu_consoles.set_active(
+                        console.recursive, widget="recursive")
 
                 # ----------------------------------------
                 #   Refilter consoles list
@@ -4234,7 +4174,8 @@ class MainWindow(Gtk.ApplicationWindow):
                        and emulator.configuration is not None:
                         status = emulator.configuration.exists()
 
-                    self.item_consoles_config.set_sensitive(status)
+                    self.menu_consoles.set_sensitive(
+                        status, widget="edit_file")
 
                     # ----------------------------------------
                     #   Reload games list
@@ -4651,13 +4592,13 @@ class MainWindow(Gtk.ApplicationWindow):
 
         elif self.__current_menu_row is not None:
 
-            if widget == self.item_consoles_recursive:
+            if widget == self.menu_consoles.get_widget("recursive"):
                 self.__current_menu_row.console.recursive = \
                     not self.__current_menu_row.console.recursive
 
                 self.api.write_object(self.__current_menu_row.console)
 
-            elif widget == self.item_consoles_favorite:
+            elif widget == self.menu_consoles.get_widget("favorite"):
                 self.__current_menu_row.console.favorite = \
                     not self.__current_menu_row.console.favorite
 
@@ -4710,31 +4651,32 @@ class MainWindow(Gtk.ApplicationWindow):
                 if row is not None:
                     self.__current_menu_row = row
 
-                    self.item_consoles_config.set_sensitive(False)
+                    self.menu_consoles.set_sensitive(False, widget="edit_file")
 
                     # Check console emulator
                     if row.console.emulator is not None:
                         configuration = row.console.emulator.configuration
 
                         # Check emulator configurator
-                        self.item_consoles_config.set_sensitive(
-                            configuration is not None
-                            and configuration.exists())
+                        self.menu_consoles.set_sensitive(
+                            configuration is not None and
+                            configuration.exists(),
+                            widget="edit_file")
 
                     # Check console paths
                     if row.console.path is not None:
-                        self.item_consoles_copy.set_sensitive(
-                            row.console.path.exists())
-                        self.item_consoles_open.set_sensitive(
-                            row.console.path.exists())
+                        self.menu_consoles.set_sensitive(
+                            row.console.path.exists(), widget="copy_path")
+                        self.menu_consoles.set_sensitive(
+                            row.console.path.exists(), widget="open_path")
 
-                    self.item_consoles_reload.set_sensitive(
-                        selected_row == row)
+                    self.menu_consoles.set_sensitive(
+                        selected_row == row, widget="reload")
 
-                    self.item_consoles_favorite.set_active(
-                        row.console.favorite)
-                    self.item_consoles_recursive.set_active(
-                        row.console.recursive)
+                    self.menu_consoles.set_active(
+                        row.console.favorite, widget="favorite")
+                    self.menu_consoles.set_active(
+                        row.console.recursive, widget="recursive")
 
                     self.menu_consoles.popup_at_pointer(event)
 
@@ -4748,24 +4690,25 @@ class MainWindow(Gtk.ApplicationWindow):
                 if row is not None:
                     self.__current_menu_row = row
 
-                    self.item_consoles_config.set_sensitive(False)
+                    self.menu_consoles.set_sensitive(False, widget="edit_file")
 
                     # Check console emulator
                     if row.console.emulator is not None:
                         configuration = row.console.emulator.configuration
 
                         # Check emulator configurator
-                        self.item_consoles_config.set_sensitive(
-                            configuration is not None
-                            and configuration.exists())
+                        self.menu_consoles.set_sensitive(
+                            configuration is not None and
+                            configuration.exists(),
+                            widget="edit_file")
 
-                    self.item_consoles_reload.set_sensitive(
-                        selected_row == row)
+                    self.menu_consoles.set_sensitive(
+                        selected_row == row, widget="reload")
 
-                    self.item_consoles_favorite.set_active(
-                        row.console.favorite)
-                    self.item_consoles_recursive.set_active(
-                        row.console.recursive)
+                    self.menu_consoles.set_active(
+                        row.console.favorite, widget="favorite")
+                    self.menu_consoles.set_active(
+                        row.console.recursive, widget="recursive")
 
                     self.menu_consoles.popup_at_widget(
                         row, Gdk.Gravity.CENTER, Gdk.Gravity.NORTH, event)
@@ -7155,7 +7098,7 @@ class MainWindow(Gtk.ApplicationWindow):
             if game is not None and game.path.parent.exists():
                 path = game.path
 
-        elif widget == self.item_consoles_copy:
+        elif widget == self.menu_consoles.get_widget("copy_path"):
 
             if self.__current_menu_row is not None:
                 path = self.__current_menu_row.console.path
@@ -7181,7 +7124,7 @@ class MainWindow(Gtk.ApplicationWindow):
             if game is not None and game.path.parent.exists():
                 path = game.path.parent
 
-        elif widget == self.item_consoles_open:
+        elif widget == self.menu_consoles.get_widget("open_path"):
 
             if self.__current_menu_row is not None:
                 path = self.__current_menu_row.console.path
