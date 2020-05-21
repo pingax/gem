@@ -17,24 +17,45 @@
 #  MA 02110-1301, USA.
 # ------------------------------------------------------------------------------
 
-from geode_gem.ui.widgets.button import GeodeGtkMenuButton
-from geode_gem.ui.widgets.headerbar import GeodeGtkHeaderBar
-from geode_gem.ui.widgets.infobar import GeodeGtkInfoBar
-from geode_gem.ui.widgets.menu import GeodeGtkMenu, GeodeGtkMenuItem
-from geode_gem.ui.widgets.statusbar import GeodeGtkStatusbar
+# Geode
+from geode_gem.ui.widgets.common import GeodeGtkCommon
+
+# GObject
+from gi.repository import Gtk
 
 
 # ------------------------------------------------------------------------------
 #   Class
 # ------------------------------------------------------------------------------
 
-class GeodeGtk:
-    """ Custom widgets for Geode-GEM applications
-    """
+class GeodeGtkHeaderBar(GeodeGtkCommon, Gtk.HeaderBar):
 
-    HeaderBar = GeodeGtkHeaderBar
-    InfoBar = GeodeGtkInfoBar
-    Menu = GeodeGtkMenu
-    MenuButton = GeodeGtkMenuButton
-    MenuItem = GeodeGtkMenuItem
-    Statusbar = GeodeGtkStatusbar
+    def __init__(self, identifier, title, *args, subtitle=None):
+        """ Constructor
+
+        Parameters
+        ----------
+        identifier : str
+            String to identify this object in internal container
+        """
+
+        GeodeGtkCommon.__init__(self)
+        Gtk.HeaderBar.__init__(self)
+
+        # ------------------------------------
+        #   Properties
+        # ------------------------------------
+
+        self.set_title(title)
+        if subtitle is not None:
+            self.set_subtitle(subtitle)
+
+        # ------------------------------------
+        #   Packing
+        # ------------------------------------
+
+        for widget in args:
+            self.inner_widgets[widget.identifier] = widget
+            self.inner_widgets.update(widget.inner_widgets)
+
+            self.pack_start(widget)
