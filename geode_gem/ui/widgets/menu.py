@@ -42,8 +42,6 @@ class GeodeGtkMenu(GeodeGtkCommon, Gtk.Menu):
         GeodeGtkCommon.__init__(self)
         Gtk.Menu.__init__(self)
 
-        self.entries_orders = list()
-
         separator, item = int(), int()
         for element in args:
 
@@ -75,14 +73,7 @@ class GeodeGtkMenu(GeodeGtkCommon, Gtk.Menu):
                     widget = widget_type.new_with_mnemonic(subtitle)
 
             self.inner_widgets[widget_id] = widget
-            self.entries_orders.append(widget_id)
-
-        # ------------------------------------
-        #   Packing
-        # ------------------------------------
-
-        for element in self.entries_orders:
-            self.append(self.get_widget(element))
+            self.append(self.get_widget(widget_id))
 
 
 class GeodeGtkMenuItem(GeodeGtkCommon, Gtk.MenuItem):
