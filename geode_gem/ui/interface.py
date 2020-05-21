@@ -556,25 +556,13 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Menu - Consoles toolbar
         # ------------------------------------
 
-        self.menu_toolbar_consoles = Gtk.Menu()
-
-        self.item_toolbar_add_console = Gtk.MenuItem()
-        self.item_toolbar_add_emulator = Gtk.MenuItem()
-
-        self.item_toolbar_hide_empty_console = Gtk.CheckMenuItem()
-
-        # Properties
-        self.item_toolbar_add_console.set_label(
-            _("Add _console"))
-        self.item_toolbar_add_console.set_use_underline(True)
-
-        self.item_toolbar_add_emulator.set_label(
-            _("Add _emulator"))
-        self.item_toolbar_add_emulator.set_use_underline(True)
-
-        self.item_toolbar_hide_empty_console.set_label(
-            _("_Hide empty consoles"))
-        self.item_toolbar_hide_empty_console.set_use_underline(True)
+        self.menu_toolbar_consoles = GeodeGtk.Menu(
+            "toolbar_consoles",
+            ("add_console", _("Add _console")),
+            ("add_emulator", _("Add _emulator")),
+            None,
+            ("hide_empty", _("_Hide empty consoles"), Gtk.CheckMenuItem),
+        )
 
         # ------------------------------------
         #   Sidebar - Consoles
@@ -1407,11 +1395,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.button_toolbar_consoles_add.set_popup(self.menu_toolbar_consoles)
 
-        self.menu_toolbar_consoles.append(self.item_toolbar_add_console)
-        self.menu_toolbar_consoles.append(self.item_toolbar_add_emulator)
-        self.menu_toolbar_consoles.append(Gtk.SeparatorMenuItem())
-        self.menu_toolbar_consoles.append(self.item_toolbar_hide_empty_console)
-
         self.grid_consoles.pack_start(
             self.grid_consoles_toolbar, False, False, 0)
 
@@ -1912,10 +1895,19 @@ class MainWindow(Gtk.ApplicationWindow):
                     } for index in range(0, 6)
                 ],
             },
-            self.item_toolbar_hide_empty_console: {
+            self.menu_toolbar_consoles: {
                 "activate": [
                     {
+                        "method": self.__on_show_console_editor,
+                        "widget": "add_console",
+                    },
+                    {
+                        "method": self.__on_show_emulator_editor,
+                        "widget": "add_emulator",
+                    },
+                    {
                         "method": self.__on_change_console_option,
+                        "widget": "hide_empty",
                         "allow_block_signal": True,
                     },
                 ],
@@ -2020,16 +2012,6 @@ class MainWindow(Gtk.ApplicationWindow):
             self.entry_toolbar_consoles_filters: {
                 "changed": [
                     {"method": self.__on_update_consoles},
-                ],
-            },
-            self.item_toolbar_add_console: {
-                "activate": [
-                    {"method": self.__on_show_console_editor},
-                ],
-            },
-            self.item_toolbar_add_emulator: {
-                "activate": [
-                    {"method": self.__on_show_emulator_editor},
                 ],
             },
             self.item_consoles_console: {
@@ -2956,8 +2938,8 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Console
         # ------------------------------------
 
-        self.item_toolbar_hide_empty_console.set_active(
-            self.hide_empty_console)
+        self.menu_toolbar_consoles.set_active(
+            self.hide_empty_console, widget="hide_empty")
 
         self.append_consoles()
 
@@ -4042,7 +4024,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         selected_row = self.listbox_consoles.get_selected_row()
 
-        if widget == self.item_toolbar_add_console:
+        if widget == self.menu_toolbar_consoles.get_widget("add_console"):
             console = None
 
         elif self.__current_menu_row is not None:
@@ -4097,7 +4079,8 @@ class MainWindow(Gtk.ApplicationWindow):
                 #   Update console row
                 # ----------------------------------------
 
-                if widget == self.item_toolbar_add_console:
+                if widget == self.menu_toolbar_consoles.get_widget(
+                   "add_console"):
 
                     console_data = self.__on_generate_console_row(console)
 
@@ -4182,7 +4165,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
         selected_row = self.listbox_consoles.get_selected_row()
 
-        if widget == self.item_toolbar_add_emulator:
+        if widget == self.menu_toolbar_consoles.get_widget(
+           "add_emulator"):
             emulator = None
 
         elif self.__current_menu_row is not None:
@@ -4209,7 +4193,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 emulator = self.api.add_emulator(data["name"], data.items())
 
-                if not widget == self.item_toolbar_add_emulator:
+                if not widget == self.menu_toolbar_consoles.get_widget(
+                   "add_emulator"):
 
                     # Rename emulator identifier in consoles and games
                     if not emulator.id == previous_id:
@@ -4230,7 +4215,8 @@ class MainWindow(Gtk.ApplicationWindow):
                 #   Update console row
                 # ----------------------------------------
 
-                if widget == self.item_toolbar_add_emulator:
+                if widget == self.menu_toolbar_consoles.get_widget(
+                   "add_emulator"):
 
                     self.set_message(
                         _("New emulator"),
@@ -4649,7 +4635,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.__block_signals()
 
-        if widget == self.item_toolbar_hide_empty_console:
+        if widget == self.menu_toolbar_consoles.get_widget("hide_empty"):
 
             self.hide_empty_console = not self.config.getboolean(
                 "gem", "hide_empty_console", fallback=False)
@@ -4658,8 +4644,8 @@ class MainWindow(Gtk.ApplicationWindow):
                 "gem", "hide_empty_console", self.hide_empty_console)
             self.config.update()
 
-            self.item_toolbar_hide_empty_console.set_active(
-                self.hide_empty_console)
+            self.menu_toolbar_consoles.set_active(
+                self.hide_empty_console, widget="hide_empty")
 
             self.__on_update_consoles()
 
