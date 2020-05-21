@@ -2294,302 +2294,57 @@ class MainWindow(Gtk.ApplicationWindow):
         """ Generate shortcuts signals from user configuration
         """
 
-        shortcuts = [
-            {
-                "path": "<GEM>/game/edit",
-                "widgets": [
-                    self.menu_game.get_widget("game_file"),
-                    self.menubar_edit.get_widget("game_file"),
-                ],
-                "keys": self.config.item("keys", "edit-file", "<Control>M"),
-            },
-            {
-                "path": "<GEM>/game/open",
-                "widgets": [
-                    self.menu_game.get_widget("open_path"),
-                    self.menubar_edit.get_widget("open_path"),
-                ],
-                "keys": self.config.item("keys", "open", "<Control>O"),
-            },
-            {
-                "path": "<GEM>/game/copy",
-                "widgets": [
-                    self.menu_game.get_widget("copy_path"),
-                    self.menubar_edit.get_widget("copy_path"),
-                ],
-                "keys": self.config.item("keys", "copy", "<Control>C"),
-            },
-            {
-                "path": "<GEM>/game/desktop",
-                "widgets": [
-                    self.menu_game.get_widget("menu_entry"),
-                    self.menubar_edit.get_widget("menu_entry"),
-                ],
-                "keys": self.config.item("keys", "desktop", "<Control>G"),
-            },
-            {
-                "path": "<GEM>/game/start",
-                "widgets": [
-                    self.menu_game.get_widget("launch"),
-                    self.menubar_game.get_widget("launch"),
-                ],
-                "keys": self.config.item("keys", "start", "<Control>Return"),
-            },
-            {
-                "path": "<GEM>/game/rename",
-                "widgets": [
-                    self.menu_game.get_widget("rename"),
-                    self.menubar_edit.get_widget("rename"),
-                ],
-                "keys": self.config.item("keys", "rename", "F2"),
-            },
-            {
-                "path": "<GEM>/game/duplicate",
-                "widgets": [
-                    self.menu_game.get_widget("duplicate"),
-                    self.menubar_edit.get_widget("duplicate"),
-                ],
-                "keys": self.config.item("keys", "duplicate", "<Control>U"),
-            },
-            {
-                "path": "<GEM>/game/favorite",
-                "widgets": [
-                    self.menu_game.get_widget("favorite"),
-                    self.menubar_game.get_widget("favorite"),
-                ],
-                "keys": self.config.item("keys", "favorite", "F3"),
-            },
-            {
-                "path": "<GEM>/game/multiplayer",
-                "widgets": [
-                    self.menu_game.get_widget("multiplayer"),
-                    self.menubar_game.get_widget("multiplayer"),
-                ],
-                "keys": self.config.item("keys", "multiplayer", "F4"),
-            },
-            {
-                "path": "<GEM>/game/finish",
-                "widgets": [
-                    self.menu_game.get_widget("finish"),
-                    self.menubar_game.get_widget("finish"),
-                ],
-                "keys": self.config.item("keys", "finish", "<Control>F3"),
-            },
-            {
-                "path": "<GEM>/game/score/up",
-                "widgets": [
-                    self.menu_game.get_widget("increase"),
-                    self.menubar_edit.get_widget("increase"),
-                ],
-                "keys": self.config.item(
-                    "keys", "score-up", "<Control>Page_Up"),
-            },
-            {
-                "path": "<GEM>/game/score/down",
-                "widgets": [
-                    self.menu_game.get_widget("decrease"),
-                    self.menubar_edit.get_widget("decrease"),
-                ],
-                "keys": self.config.item(
-                    "keys", "score-down", "<Control>Page_Down"),
-            },
-            {
-                "path": "<GEM>/game/score/0",
-                "widgets": [
-                    self.menu_game.get_widget("score_0"),
-                    self.menubar_edit.get_widget("score_0"),
-                ],
-                "keys": self.config.item("keys", "score-0", "<Primary>0"),
-            },
-            {
-                "path": "<GEM>/game/score/1",
-                "widgets": [
-                    self.menu_game.get_widget("score_1"),
-                    self.menubar_edit.get_widget("score_1"),
-                ],
-                "keys": self.config.item("keys", "score-1", "<Primary>1"),
-            },
-            {
-                "path": "<GEM>/game/score/2",
-                "widgets": [
-                    self.menu_game.get_widget("score_2"),
-                    self.menubar_edit.get_widget("score_2"),
-                ],
-                "keys": self.config.item("keys", "score-2", "<Primary>2"),
-            },
-            {
-                "path": "<GEM>/game/score/3",
-                "widgets": [
-                    self.menu_game.get_widget("score_3"),
-                    self.menubar_edit.get_widget("score_3"),
-                ],
-                "keys": self.config.item("keys", "score-3", "<Primary>3"),
-            },
-            {
-                "path": "<GEM>/game/score/4",
-                "widgets": [
-                    self.menu_game.get_widget("score_4"),
-                    self.menubar_edit.get_widget("score_4"),
-                ],
-                "keys": self.config.item("keys", "score-4", "<Primary>4"),
-            },
-            {
-                "path": "<GEM>/game/score/5",
-                "widgets": [
-                    self.menu_game.get_widget("score_5"),
-                    self.menubar_edit.get_widget("score_5"),
-                ],
-                "keys": self.config.item("keys", "score-5", "<Primary>5"),
-            },
-            {
-                "path": "<GEM>/game/cover",
-                "widgets": [
-                    self.menu_game.get_widget("thumbnail"),
-                    self.menubar_edit.get_widget("thumbnail"),
-                ],
-                "keys": self.config.item("keys", "cover", "<Control>I"),
-            },
-            {
-                "path": "<GEM>/game/screenshots",
-                "widgets": [
-                    self.menu_game.get_widget("screenshots"),
-                    self.menubar_game.get_widget("screenshots"),
-                    self.button_toolbar_screenshots,
-                ],
-                "keys": self.config.item("keys", "snapshots", "F5"),
-            },
-            {
-                "path": "<GEM>/game/log",
-                "widgets": [
-                    self.menu_game.get_widget("game_log"),
-                    self.menubar_game.get_widget("game_log"),
-                ],
-                "keys": self.config.item("keys", "log", "F6"),
-            },
-            {
-                "path": "<GEM>/game/notes",
-                "widgets": [
-                    self.menu_game.get_widget("notes"),
-                    self.menubar_game.get_widget("notes"),
-                ],
-                "keys": self.config.item("keys", "notes", "F7"),
-            },
-            {
-                "path": "<GEM>/game/memory",
-                "widgets": [
-                    self.menu_game.get_widget("memory_type"),
-                    self.menubar_edit.get_widget("memory_type"),
-                ],
-                "keys": self.config.item("keys", "memory", "F8"),
-            },
-            {
-                "path": "<GEM>/fullscreen",
-                "widgets": [
-                    self.menubar_game.get_widget("fullscreen"),
-                ],
-                "keys": self.config.item("keys", "fullscreen", "F11"),
-                "function": self.__on_activate_fullscreen,
-            },
-            {
-                "path": "<GEM>/sidebar",
-                "widgets": [
-                    self.menubar_view.get_widget("show_sidebar"),
-                ],
-                "keys": self.config.item("keys", "sidebar", "F9"),
-                "function": self.__on_activate_sidebar,
-            },
-            {
-                "path": "<GEM>/statusbar",
-                "widgets": [
-                    self.menubar_view.get_widget("show_statusbar"),
-                ],
-                "keys": self.config.item("keys", "statusbar", "<Control>F9"),
-                "function": self.__on_activate_statusbar,
-            },
-            {
-                "path": "<GEM>/game/exceptions",
-                "widgets": [
-                    self.menu_game.get_widget("properties"),
-                    self.menubar_game.get_widget("properties"),
-                ],
-                "keys": self.config.item("keys", "exceptions", "F12"),
-            },
-            {
-                "path": "<GEM>/game/delete",
-                "widgets": [
-                    self.menu_game.get_widget("remove"),
-                    self.menubar_edit.get_widget("remove"),
-                ],
-                "keys": self.config.item("keys", "delete", "<Control>Delete"),
-            },
-            {
-                "path": "<GEM>/game/maintenance",
-                "widgets": [
-                    self.menu_game.get_widget("maintenance"),
-                    self.menubar_edit.get_widget("maintenance"),
-                ],
-                "keys": self.config.item("keys", "maintenance", "<Control>D"),
-            },
-            {
-                "path": "<GEM>/preferences",
-                "widgets": [
-                    self.menubar_main.get_widget("preferences"),
-                ],
-                "keys": self.config.item("keys", "preferences", "<Control>P"),
-                "function": self.__on_show_preferences,
-            },
-            {
-                "path": "<GEM>/log",
-                "widgets": [
-                    self.menubar_main.get_widget("log"),
-                ],
-                "keys": self.config.item("keys", "gem", "<Control>L"),
-                "function": self.__on_show_log,
-            },
-            {
-                "path": "<GEM>/quit",
-                "widgets": [
-                    self.menubar_main.get_widget("quit"),
-                ],
-                "keys": self.config.item("keys", "quit", "<Control>Q"),
-                "function": self.__stop_interface,
-            }
-        ]
-
         # Disconnect previous shortcut to avoid multiple allocation
         for key, mod in self.shortcuts:
             self.shortcuts_group.disconnect_key(key, mod)
 
-        for data in shortcuts:
-            key, mod = Gtk.accelerator_parse(data["keys"])
+        # Retrieve shortcuts metadata from GeodeGEM project
+        shortcuts = Configuration(get_data("data", "config", "shortcuts.conf"))
 
-            if Gtk.accelerator_valid(key, mod):
+        for section in shortcuts.sections():
+            shortcut = self.config.item(
+                "keys", *shortcuts.get(section, "shortcut").split(" | "))
 
-                self.shortcuts_map.change_entry(data["path"], key, mod, True)
+            # Parse shortcut to Gtk specific format
+            accelerator = Gtk.accelerator_parse(shortcut)
+            if not Gtk.accelerator_valid(*accelerator):
+                self.logger.warning(f"Invalid accelerator for {section}")
+                continue
 
-                for widget in data["widgets"]:
+            self.shortcuts_map.change_entry(section, *accelerator, True)
 
-                    # Global signals
-                    if type(widget) is MainWindow:
+            # Associate shortcut to each widgets
+            for widget in shortcuts.get(section, "widgets").split(" | "):
+                internal_widget = getattr(self, widget, None)
 
-                        # Avoid to have multiple shortcuts with classic theme
-                        if not self.use_classic_theme:
-                            self.shortcuts_group.connect(
-                                key,
-                                mod,
-                                Gtk.AccelFlags.VISIBLE,
-                                data["function"])
+                # Specified widget must be declared into main interface
+                if internal_widget is None:
+                    self.logger.warning(
+                        f"Cannot retrieve widget '{widget}' from interface")
+                    continue
 
-                    # Local signals
-                    else:
-                        widget.add_accelerator("activate",
-                                               self.shortcuts_group,
-                                               key,
-                                               mod,
-                                               Gtk.AccelFlags.VISIBLE)
+                # Retrieve internal widget for GeodeGtkCommon objects
+                if hasattr(internal_widget, "has_widget"):
+                    widget_key = shortcuts.get(section, "key")
 
-                    # Store current shortcut to remove it properly later
-                    self.shortcuts.append((key, mod))
+                    if not internal_widget.has_widget(widget_key):
+                        self.logger.warning(
+                            f"Cannot retrieve internal widget '{widget_key}'")
+                        continue
+
+                    internal_widget = internal_widget.get_widget(widget_key)
+
+                self.logger.debug(
+                    f"Associate shortcut {shortcut} to {widget}/{widget_key}")
+                internal_widget.add_accelerator("activate",
+                                                self.shortcuts_group,
+                                                *accelerator,
+                                                Gtk.AccelFlags.VISIBLE)
+
+                # Store current shortcut to remove it properly later
+                self.shortcuts.append(accelerator)
+
+        del shortcuts
 
     def __init_interface(self):
         """ Init main interface
