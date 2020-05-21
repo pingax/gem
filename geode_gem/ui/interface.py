@@ -44,22 +44,7 @@ from geode_gem.ui.utils import (magic_from_file,
                                 string_from_time,
                                 replace_for_markup,
                                 on_activate_listboxrow)
-from geode_gem.ui.dialog.cache import CleanCacheDialog
-from geode_gem.ui.dialog.cover import CoverDialog
-from geode_gem.ui.dialog.editor import EditorDialog
-from geode_gem.ui.dialog.delete import DeleteDialog
-from geode_gem.ui.dialog.rename import RenameDialog
-from geode_gem.ui.dialog.viewer import ViewerDialog
-from geode_gem.ui.dialog.message import MessageDialog
-from geode_gem.ui.dialog.question import QuestionDialog
-from geode_gem.ui.dialog.mednafen import MednafenDialog
-from geode_gem.ui.dialog.duplicate import DuplicateDialog
-from geode_gem.ui.dialog.parameter import ParametersDialog
-from geode_gem.ui.dialog.dndconsole import DNDConsoleDialog
-from geode_gem.ui.dialog.maintenance import MaintenanceDialog
-from geode_gem.ui.preferences.interface import (ConsolePreferences,
-                                                EmulatorPreferences,
-                                                PreferencesWindow)
+from geode_gem.ui.dialog import GeodeDialog
 from geode_gem.ui.widgets.game import GameThread
 from geode_gem.ui.widgets.script import ScriptThread
 from geode_gem.ui.widgets import GeodeGtk
@@ -2627,7 +2612,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 if len(consoles) > 0:
                     self.listbox_consoles.select_row(consoles[0])
 
-            dialog = MessageDialog(
+            dialog = GeodeDialog.Message(
                 self,
                 _("Welcome!"),
                 _("Welcome and thanks for choosing GEM as emulators manager. "
@@ -3221,7 +3206,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.keys.append(event.keyval)
 
             if self.keys == konami_code:
-                dialog = MessageDialog(
+                dialog = GeodeDialog.Message(
                     self,
                     "Someone wrote the KONAMI CODE !",
                     "Nice catch ! You have discover an easter-egg ! But, this "
@@ -3679,7 +3664,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.logger.info(message)
 
         if popup:
-            dialog = MessageDialog(self, title, message, icon)
+            dialog = GeodeDialog.Message(self, title, message, icon)
 
             dialog.run()
             dialog.destroy()
@@ -3792,7 +3777,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     except ValueError:
                         size = (800, 600)
 
-                    dialog = ViewerDialog(
+                    dialog = GeodeDialog.Viewer(
                         self, title, size, sorted(game.screenshots))
                     dialog.run()
 
@@ -3861,7 +3846,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.set_sensitive(False)
 
-        dialog = PreferencesWindow(self.api, self)
+        dialog = GeodeDialog.Preferences(self.api, self)
 
         if dialog.run() == Gtk.ResponseType.APPLY:
             dialog.save_configuration()
@@ -3889,7 +3874,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
             self.set_sensitive(False)
 
-            dialog = EditorDialog(
+            dialog = GeodeDialog.Editor(
                 self,
                 _("Application log"),
                 self.api.log,
@@ -3918,7 +3903,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
             success = False
 
-            dialog = CleanCacheDialog(self)
+            dialog = GeodeDialog.CleanCache(self)
 
             if dialog.run() == Gtk.ResponseType.YES:
 
@@ -3973,7 +3958,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 except ValueError:
                     size = (800, 600)
 
-                dialog = EditorDialog(
+                dialog = GeodeDialog.Editor(
                     self,
                     game.name,
                     path,
@@ -4011,7 +3996,7 @@ class MainWindow(Gtk.ApplicationWindow):
             Dialog object
         response : Gtk.ResponseType
             Dialog object user response
-        dialog : gem.windows.EditorDialog
+        dialog : Gtk.Dialog
             Dialog editor object
         title : str
             Dialog title, it's game name by default
@@ -4065,7 +4050,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
             previous_id = console.id
 
-        dialog = ConsolePreferences(
+        dialog = GeodeDialog.Console(
             self, console, self.api.consoles, self.api.emulators)
 
         if dialog.run() == Gtk.ResponseType.APPLY:
@@ -4208,7 +4193,7 @@ class MainWindow(Gtk.ApplicationWindow):
             # Retrieve the correct emulator instance from api
             emulator = self.api.get_emulator(previous_id)
 
-        dialog = EmulatorPreferences(self, emulator, self.api.emulators)
+        dialog = GeodeDialog.Emulator(self, emulator, self.api.emulators)
 
         if dialog.run() == Gtk.ResponseType.APPLY:
 
@@ -4315,7 +4300,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     self.set_sensitive(False)
 
-                    dialog = EditorDialog(
+                    dialog = GeodeDialog.Editor(
                         self,
                         _("Edit %s configuration") % emulator.name,
                         path,
@@ -4351,7 +4336,7 @@ class MainWindow(Gtk.ApplicationWindow):
         if self.__current_menu_row is not None:
             console = self.__current_menu_row.console
 
-            dialog = QuestionDialog(
+            dialog = GeodeDialog.Question(
                 self,
                 _("Remove a console"),
                 _("Are you sure you want to remove <b>%s</b> ?") % (
@@ -6045,7 +6030,7 @@ class MainWindow(Gtk.ApplicationWindow):
         if game is not None:
             self.set_sensitive(False)
 
-            dialog = RenameDialog(self, game)
+            dialog = GeodeDialog.Rename(self, game)
 
             if dialog.run() == Gtk.ResponseType.APPLY:
 
@@ -6115,7 +6100,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 self.set_sensitive(False)
 
-                dialog = MaintenanceDialog(self, game)
+                dialog = GeodeDialog.Maintenance(self, game)
 
                 if dialog.run() == Gtk.ResponseType.APPLY:
                     try:
@@ -6216,7 +6201,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 self.set_sensitive(False)
 
-                dialog = DeleteDialog(self, game)
+                dialog = GeodeDialog.Delete(self, game)
 
                 if dialog.run() == Gtk.ResponseType.YES:
                     self.logger.info("Remove %s" % game.name)
@@ -6312,7 +6297,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
             self.set_sensitive(False)
 
-            dialog = DuplicateDialog(self, game)
+            dialog = GeodeDialog.Duplicate(self, game)
 
             if dialog.run() == Gtk.ResponseType.APPLY:
                 self.logger.info("Duplicate %s" % game.name)
@@ -6369,7 +6354,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
             self.set_sensitive(False)
 
-            dialog = ParametersDialog(self, game)
+            dialog = GeodeDialog.Parameters(self, game)
 
             if dialog.run() == Gtk.ResponseType.APPLY:
                 self.logger.info("Update %s parameters" % game.name)
@@ -6486,7 +6471,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
             self.set_sensitive(False)
 
-            dialog = EditorDialog(
+            dialog = GeodeDialog.Editor(
                 self,
                 game.name,
                 path,
@@ -6536,7 +6521,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 self.set_sensitive(False)
 
-                dialog = MednafenDialog(self, game.name, content)
+                dialog = GeodeDialog.Mednafen(self, game.name, content)
 
                 if dialog.run() == Gtk.ResponseType.APPLY:
                     data = list()
@@ -6682,7 +6667,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 self.set_sensitive(False)
 
-                dialog = EditorDialog(
+                dialog = GeodeDialog.Editor(
                     self,
                     game.name,
                     game.path,
@@ -6726,7 +6711,7 @@ class MainWindow(Gtk.ApplicationWindow):
         if game is not None:
             self.set_sensitive(False)
 
-            dialog = CoverDialog(self, game)
+            dialog = GeodeDialog.Cover(self, game)
 
             response = dialog.run()
 
@@ -7346,7 +7331,7 @@ class MainWindow(Gtk.ApplicationWindow):
             data = None
             options = None
 
-            dialog = DNDConsoleDialog(self, filepaths)
+            dialog = GeodeDialog.DNDConsole(self, filepaths)
 
             if dialog.run() == Gtk.ResponseType.APPLY:
                 # Retrieve validate files
