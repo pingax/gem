@@ -399,23 +399,67 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Headerbar
         # ------------------------------------
 
-        self.headerbar = Gtk.HeaderBar()
-
-        self.image_headerbar_menu = Gtk.Image()
-        self.button_headerbar_main = Gtk.MenuButton()
-
-        self.image_headerbar_view = Gtk.Image()
-        self.button_headerbar_view = Gtk.MenuButton()
-
-        # Properties
-        self.headerbar.set_title(self.title)
-        self.headerbar.set_subtitle(str())
-
-        self.button_headerbar_main.set_tooltip_text(_("Main menu"))
-        self.button_headerbar_main.set_use_popover(False)
-
-        self.button_headerbar_view.set_tooltip_text(_("Display menu"))
-        self.button_headerbar_view.set_use_popover(False)
+        self.headerbar = GeodeGtk.HeaderBar(
+            "headerbar",
+            self.title,
+            GeodeGtk.MenuButton(
+                "main",
+                _("Main menu"),
+                ("preferences", _("_Preferences…")),
+                ("log", _("Application _log…")),
+                None,
+                ("clean_cache", _("Clean icons _cache…")),
+                None,
+                ("website", _("_Website")),
+                ("report", _("_Report problem")),
+                None,
+                ("about", _("_About")),
+                None,
+                ("quit", _("_Quit")),
+                icon_name=Icons.Symbolic.MENU,
+            ),
+            GeodeGtk.MenuButton(
+                "display",
+                _("Display menu"),
+                GeodeGtk.MenuItem(
+                    "games_list",
+                    _("_Games lists"),
+                    GeodeGtk.MenuItem(
+                        "columns",
+                        _("_Columns visibility"),
+                        ("favorite", _("Favorite"), Gtk.CheckMenuItem),
+                        ("multiplayer", _("Multiplayer"), Gtk.CheckMenuItem),
+                        ("finish", _("Finish"), Gtk.CheckMenuItem),
+                        ("play", _("Launch number"), Gtk.CheckMenuItem),
+                        ("play_time", _("Play time"), Gtk.CheckMenuItem),
+                        ("last_play", _("Last launch date"), Gtk.CheckMenuItem),
+                        ("score", _("Score"), Gtk.CheckMenuItem),
+                        ("installed", _("Installed date"), Gtk.CheckMenuItem),
+                        ("flags", _("Emulator flags"), Gtk.CheckMenuItem)
+                    ),
+                    None,
+                    ("list", _("List view"), Gtk.RadioMenuItem),
+                    ("grid", _("Grid icons"), Gtk.RadioMenuItem, "list")
+                ),
+                None,
+                GeodeGtk.MenuItem(
+                    "sidebar",
+                    _("_Sidebar"),
+                    ("show_sidebar", _("Show _sidebar"), Gtk.CheckMenuItem),
+                    None,
+                    ("right", _("Right"), Gtk.RadioMenuItem),
+                    ("bottom", _("Bottom"), Gtk.RadioMenuItem, "right")
+                ),
+                GeodeGtk.MenuItem(
+                    "statusbar",
+                    _("_Statusbar"),
+                    ("show_statusbar", _("Show _statusbar"), Gtk.CheckMenuItem),
+                ),
+                None,
+                ("dark_theme", _("Use _dark theme"), Gtk.CheckMenuItem),
+                icon_name=Icons.Symbolic.VIDEO,
+            ),
+        )
 
         # ------------------------------------
         #   Menubar
@@ -1327,17 +1371,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.grid.pack_start(self.statusbar, False, False, 0)
 
         # ------------------------------------
-        #   Headerbar
-        # ------------------------------------
-
-        self.headerbar.pack_start(self.button_headerbar_main)
-        self.headerbar.pack_start(self.button_headerbar_view)
-
-        # Headerbar main menu
-        self.button_headerbar_main.add(self.image_headerbar_menu)
-        self.button_headerbar_view.add(self.image_headerbar_view)
-
-        # ------------------------------------
         #   Menubar
         # ------------------------------------
 
@@ -1577,6 +1610,82 @@ class MainWindow(Gtk.ApplicationWindow):
                 ],
                 "key-press-event": [
                     {"method": self.__on_manage_keys},
+                ],
+            },
+            self.headerbar: {
+                "activate": [
+                    {
+                        "method": self.__on_show_preferences,
+                        "widget": "preferences",
+                    },
+                    {
+                        "method": self.__on_show_log,
+                        "widget": "log",
+                    },
+                    {
+                        "method": self.__on_show_clean_cache,
+                        "widget": "clean_cache",
+                    },
+                    {
+                        "method": self.__on_show_external_link,
+                        "widget": "website",
+                    },
+                    {
+                        "method": self.__on_show_external_link,
+                        "widget": "report",
+                    },
+                    {
+                        "method": self.__on_show_about,
+                        "widget": "about",
+                    },
+                    {
+                        "method": self.__stop_interface,
+                        "widget": "quit",
+                    },
+                ] + [
+                    {
+                        "method": self.__on_switch_column_visibility,
+                        "args": (widget,),
+                        "widget": widget,
+                        "allow_block_signal": True,
+                    } for widget in self.__columns_labels
+                ],
+                "toggled": [
+                    {
+                        "method": self.__on_activate_sidebar,
+                        "widget": "show_sidebar",
+                        "allow_block_signal": True,
+                    },
+                    {
+                        "method": self.__on_move_sidebar,
+                        "widget": "right",
+                        "allow_block_signal": True,
+                    },
+                    {
+                        "method": self.__on_move_sidebar,
+                        "widget": "bottom",
+                        "allow_block_signal": True,
+                    },
+                    {
+                        "method": self.__on_activate_dark_theme,
+                        "widget": "dark_theme",
+                        "allow_block_signal": True,
+                    },
+                    {
+                        "method": self.__on_activate_statusbar,
+                        "widget": "show_statusbar",
+                        "allow_block_signal": True,
+                    },
+                    {
+                        "method": self.__on_switch_games_view,
+                        "widget": "list",
+                        "allow_block_signal": True,
+                    },
+                    {
+                        "method": self.__on_switch_games_view,
+                        "widget": "grid",
+                        "allow_block_signal": True,
+                    },
                 ],
             },
             self.menubar_main: {
@@ -2109,8 +2218,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Store image references with associate icons
         self.__images_storage = {
-            self.image_headerbar_menu: Icons.Symbolic.MENU,
-            self.image_headerbar_view: Icons.Symbolic.VIDEO,
+            self.headerbar.get_widget("main_image"): Icons.Symbolic.MENU,
+            self.headerbar.get_widget("display_image"): Icons.Symbolic.VIDEO,
             self.image_sidebar_tags: Icons.Symbolic.PAPERCLIP,
             self.image_toolbar_consoles_add: Icons.Symbolic.VIEW_MORE,
             self.image_toolbar_fullscreen: Icons.Symbolic.RESTORE,
@@ -2258,29 +2367,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.selection = dict(console=None, game=None)
 
         # ------------------------------------
-        #   Menus
-        # ------------------------------------
-
-        # if self.use_classic_theme:
-            # self.item_menubar_main.set_submenu(self.menubar_main)
-            # self.item_menubar_view.set_submenu(self.menubar_view)
-
-            # self.menubar_help.append(self.item_menubar_website)
-            # self.menubar_help.append(self.item_menubar_bug_tracker)
-            # self.menubar_help.append(Gtk.SeparatorMenuItem())
-            # self.menubar_help.append(self.item_menubar_about)
-
-        # else:
-            # self.button_headerbar_main.set_popup(self.menubar_main)
-            # self.button_headerbar_view.set_popup(self.menubar_view)
-
-            # self.menubar_main.insert(self.item_menubar_website, 5)
-            # self.menubar_main.insert(self.item_menubar_bug_tracker, 6)
-            # self.menubar_main.insert(Gtk.SeparatorMenuItem(), 7)
-            # self.menubar_main.insert(self.item_menubar_about, 8)
-            # self.menubar_main.insert(Gtk.SeparatorMenuItem(), 9)
-
-        # ------------------------------------
         #   Toolbar icons
         # ------------------------------------
 
@@ -2300,10 +2386,12 @@ class MainWindow(Gtk.ApplicationWindow):
 
         if self.view_mode == Columns.Key.Grid:
             self.button_toolbar_grid.set_active(True)
+            self.headerbar.set_active(True, widget="grid")
             self.menubar_view.set_active(True, widget="grid")
 
         else:
             self.button_toolbar_list.set_active(True)
+            self.headerbar.set_active(True, widget="list")
             self.menubar_view.set_active(True, widget="list")
 
         # ------------------------------------
@@ -2313,8 +2401,8 @@ class MainWindow(Gtk.ApplicationWindow):
         # Update design colorscheme
         on_change_theme(self.use_dark_theme)
 
-        self.menubar_view.set_active(
-            self.use_dark_theme, widget="dark_theme")
+        self.headerbar.set_active(self.use_dark_theme, widget="dark_theme")
+        self.menubar_view.set_active(self.use_dark_theme, widget="dark_theme")
 
         if self.use_dark_theme:
             self.logger.debug("Use dark variant for GTK+ theme")
@@ -2434,8 +2522,10 @@ class MainWindow(Gtk.ApplicationWindow):
         # Manage window template
         if self.use_classic_theme:
             self.menubar.show_all()
+            self.headerbar.hide()
 
         else:
+            self.headerbar.show_all()
             self.menubar.hide()
 
         self.menubar_main.show_all()
@@ -2810,10 +2900,11 @@ class MainWindow(Gtk.ApplicationWindow):
         self.headerbar.set_show_close_button(self.show_headerbar_buttons)
 
         # Show sidebar visibility buttons
-        self.menubar_view.set_active(
-            self.show_sidebar, widget="show_sidebar")
+        self.headerbar.set_active(self.show_sidebar, widget="show_sidebar")
+        self.menubar_view.set_active(self.show_sidebar, widget="show_sidebar")
 
         # Show statusbar visibility buttons
+        self.headerbar.set_active(self.show_statusbar, widget="show_statusbar")
         self.menubar_view.set_active(
             self.show_statusbar, widget="show_statusbar")
 
@@ -2839,12 +2930,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.__on_move_sidebar(init_interface=init_interface)
 
-        if self.__current_orientation == Gtk.Orientation.VERTICAL:
-            self.menubar_view.set_active(True, widget="bottom")
-
-        else:
-            self.menubar_view.set_active(True, widget="right")
-
         # ------------------------------------
         #   Treeview
         # ------------------------------------
@@ -2861,6 +2946,7 @@ class MainWindow(Gtk.ApplicationWindow):
             widget.set_visible(visibility)
 
             if key in self.menubar_view.inner_widgets.keys():
+                self.headerbar.set_active(visibility, widget=key)
                 self.menubar_view.set_active(visibility, widget=key)
 
         if self.column_game_score.get_visible():
@@ -3205,41 +3291,29 @@ class MainWindow(Gtk.ApplicationWindow):
 
             # This game is not running
             if game.id not in self.threads:
-                self.menubar_game.set_sensitive(True, widget="launch")
-
                 self.menu_game.set_sensitive(True, widget="launch")
+                self.menubar_game.set_sensitive(True, widget="launch")
 
                 if game.path.exists() and access(game.path, W_OK):
                     self.menu_game.set_sensitive(True, widget="remove")
                     self.menubar_edit.set_sensitive(True, widget="remove")
 
             # Menubar
-            self.menubar_game.set_sensitive(True, widget="favorite")
-            self.menubar_game.set_sensitive(True, widget="finish")
-            self.menubar_game.set_sensitive(True, widget="multiplayer")
-            self.menubar_game.set_sensitive(True, widget="notes")
-            self.menubar_game.set_sensitive(True, widget="properties")
-            self.menubar_edit.set_sensitive(True, widget="copy_path")
-            self.menubar_edit.set_sensitive(True, widget="duplicate")
-            self.menubar_edit.set_sensitive(True, widget="maintenance")
-            self.menubar_edit.set_sensitive(True, widget="menu_entry")
-            self.menubar_edit.set_sensitive(True, widget="open_path")
-            self.menubar_edit.set_sensitive(True, widget="rename")
-            self.menubar_edit.set_sensitive(True, widget="thumbnail")
-            self.menubar_edit.set_sensitive(True, widget="score")
+            for widget in ("favorite", "finish", "multiplayer", "notes",
+                           "properties"):
+                self.headerbar.set_sensitive(True, widget=widget)
+                self.menubar_game.set_sensitive(True, widget=widget)
+
+            for widget in ("copy_path", "open_path", "duplicate", "menu_entry",
+                           "maintenance", "rename", "thumbnail", "score"):
+                self.headerbar.set_sensitive(True, widget=widget)
+                self.menubar_edit.set_sensitive(True, widget=widget)
 
             # Game menu
-            self.menu_game.set_sensitive(True, widget="copy_path")
-            self.menu_game.set_sensitive(True, widget="duplicate")
-            self.menu_game.set_sensitive(True, widget="favorite")
-            self.menu_game.set_sensitive(True, widget="finish")
-            self.menu_game.set_sensitive(True, widget="maintenance")
-            self.menu_game.set_sensitive(True, widget="menu_entry")
-            self.menu_game.set_sensitive(True, widget="multiplayer")
-            self.menu_game.set_sensitive(True, widget="notes")
-            self.menu_game.set_sensitive(True, widget="open_path")
-            self.menu_game.set_sensitive(True, widget="rename")
-            self.menu_game.set_sensitive(True, widget="thumbnail")
+            for widget in ("copy_path", "open_path", "duplicate", "menu_entry",
+                           "maintenance", "rename", "thumbnail", "notes",
+                           "favorite", "finish", "multiplayer"):
+                self.menu_game.set_sensitive(True, widget=widget)
 
             # Toolbar
             self.button_toolbar_notes.set_sensitive(True)
@@ -3283,8 +3357,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
             for name in ("favorite", "multiplayer", "finish"):
                 self.menu_game.set_active(getattr(game, name), widget=name)
-                self.menubar_game.set_active(
-                    getattr(game, name), widget=name)
+                self.menubar_game.set_active(getattr(game, name), widget=name)
 
             # ----------------------------------------
             #   Game screenshots
@@ -3599,10 +3672,12 @@ class MainWindow(Gtk.ApplicationWindow):
         """
 
         try:
-            if widget == self.menubar_help.get_widget("website"):
+            if widget in (self.headerbar.get_widget("website"),
+                          self.menubar_help.get_widget("website")):
                 link = Metadata.WEBSITE
 
-            elif widget == self.menubar_help.get_widget("report"):
+            elif widget in (self.headerbar.get_widget("report"),
+                            self.menubar_help.get_widget("report")):
                 link = Metadata.BUG_TRACKER
 
             self.logger.debug("Open %s in web navigator" % link)
@@ -5505,24 +5580,19 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.__block_signals()
 
-        status = widget.get_active()
+        games_view = "grid"
+        if widget in (self.button_toolbar_list,
+                      self.headerbar.get_widget("list"),
+                      self.menubar_view.get_widget("list")):
+            games_view = "list"
 
-        if widget == self.button_toolbar_list:
-            self.button_toolbar_grid.set_active(not status)
+        # Update widgets status based on selected games view
+        self.headerbar.set_active(True, widget=games_view)
+        self.menubar_view.set_active(True, widget=games_view)
+        self.button_toolbar_list.set_active(games_view == "list")
+        self.button_toolbar_grid.set_active(games_view == "grid")
 
-            self.menubar_view.set_active(status, widget="list")
-
-        elif widget == self.button_toolbar_grid:
-            self.button_toolbar_list.set_active(not status)
-
-            self.menubar_view.set_active(status, widget="grid")
-
-        elif widget == self.menubar_view.get_widget("list"):
-            self.button_toolbar_list.set_active(status)
-
-        elif widget == self.menubar_view.get_widget("grid"):
-            self.button_toolbar_grid.set_active(status)
-
+        # Show activated games view when there are games available
         if not self.scroll_games_placeholder.get_visible():
             self.scroll_games_list.set_visible(
                 self.button_toolbar_list.get_active())
@@ -5918,6 +5988,7 @@ class MainWindow(Gtk.ApplicationWindow):
             del self.threads[game.id]
 
         if len(self.threads) == 0:
+            self.headerbar.set_sensitive(True, widget="quit")
             self.menubar_main.set_sensitive(True, widget="quit")
 
         # ----------------------------------------
@@ -6977,13 +7048,15 @@ class MainWindow(Gtk.ApplicationWindow):
             Interface first initialization (Default: False)
         """
 
+        self.__block_signals()
+
         self.sidebar_image = None
 
+        # Retrieve current position and update configuration file
         if widget is not None:
-            status = self.menubar_view.get_active(widget="right")
-
             self.sidebar_orientation = "vertical"
-            if status:
+            if widget in (self.headerbar.get_widget("right"),
+                          self.menubar_view.get_widget("right")):
                 self.sidebar_orientation = "horizontal"
 
             self.config.modify(
@@ -6991,8 +7064,8 @@ class MainWindow(Gtk.ApplicationWindow):
             self.config.update()
 
         # Right-side sidebar
-        if self.sidebar_orientation == "horizontal" \
-           and not self.__current_orientation == Gtk.Orientation.HORIZONTAL:
+        if self.sidebar_orientation == "horizontal" and \
+           not self.__current_orientation == Gtk.Orientation.HORIZONTAL:
 
             self.label_sidebar_title.set_justify(Gtk.Justification.CENTER)
             self.label_sidebar_title.set_halign(Gtk.Align.CENTER)
@@ -7021,8 +7094,8 @@ class MainWindow(Gtk.ApplicationWindow):
             self.__current_orientation = Gtk.Orientation.HORIZONTAL
 
         # Bottom-side sidebar
-        elif (self.sidebar_orientation == "vertical"
-              and not self.__current_orientation == Gtk.Orientation.VERTICAL):
+        elif (self.sidebar_orientation == "vertical" and
+              not self.__current_orientation == Gtk.Orientation.VERTICAL):
 
             self.label_sidebar_title.set_justify(Gtk.Justification.LEFT)
             self.label_sidebar_title.set_halign(Gtk.Align.START)
@@ -7048,6 +7121,18 @@ class MainWindow(Gtk.ApplicationWindow):
             self.scroll_sidebar.set_min_content_height(260)
 
             self.__current_orientation = Gtk.Orientation.VERTICAL
+
+        # Update menu radio widgets
+        position = "right"
+        if self.__current_orientation == Gtk.Orientation.VERTICAL:
+            position = "bottom"
+
+        self.headerbar.set_active(True, widget=position)
+        self.menubar_view.set_active(True, widget=position)
+
+        self.logger.debug(f"Mode sidebar to {position} side")
+
+        self.__unblock_signals()
 
         if widget is not None:
             self.set_informations()
