@@ -21,6 +21,7 @@
 from datetime import datetime, timedelta
 
 # Filesystem
+from os import access, R_OK
 from os.path import getctime
 from pathlib import Path
 from shutil import copy2
@@ -149,11 +150,14 @@ def get_binary_path(binary):
     if binary.exists():
         available.append(binary.name)
 
-    for path in set(environ["PATH"].split(':')):
-        binary_path = Path(path, binary)
+    for directory in set(environ["PATH"].split(':')):
+        path = Path(directory).expanduser()
 
-        if binary_path.exists() and binary_path.name not in available:
-            available.append(str(binary_path))
+        if access(path, R_OK):
+            binary_path = path.joinpath(binary)
+
+            if binary_path.exists() and binary_path.name not in available:
+                available.append(str(binary_path))
 
     return available
 

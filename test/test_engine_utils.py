@@ -35,6 +35,7 @@ from geode_gem.engine.utils import (are_equivalent_timestamps,
                                     parse_timedelta)
 
 # System
+from os import environ
 from tempfile import gettempdir, TemporaryDirectory
 
 # Unittest
@@ -93,6 +94,21 @@ class GeodeGEMUtilsTC(unittest.TestCase):
         self.assertGreater(len(get_binary_path("python3")), 0)
 
         self.assertEqual(len(get_binary_path("were-binary_of_doom")), 0)
+
+        path = TemporaryDirectory(prefix="geode-gem-", suffix="-test")
+
+        filepath = Path(path.name).joinpath("binary_test")
+        filepath.touch()
+
+        self.assertEqual(len(get_binary_path("binary_test")), 0)
+
+        # Add a new entry into PATH environment to retrieve binary_test
+        environ["PATH"] = f"{filepath.parent}:{environ['PATH']}"
+        self.assertEqual(len(get_binary_path("binary_test")), 1)
+
+        # Ensure to have an unreadable directory for current test
+        filepath.parent.chmod(0o033)
+        self.assertEqual(len(get_binary_path("binary_test")), 0)
 
     def test_get_creation_datetime(self):
         """ Check geode_gem.engine.utils.get_creation_datetime method
