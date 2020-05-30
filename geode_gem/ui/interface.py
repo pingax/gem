@@ -2765,6 +2765,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         if self.main_loop.is_running():
             self.logger.debug("Close main loop")
+            self.__block_signals()
             self.main_loop.quit()
 
     def load_configuration(self):
