@@ -27,12 +27,14 @@ from gi.repository import Gtk
 
 class GeodeGtkCommon():
 
-    def __init__(self):
+    def __init__(self, identifier=None):
         """ Constructor
         """
 
         self.inner_grid = None
         self.inner_widgets = dict()
+
+        self.identifier = identifier
 
     def do_show(self):
         """ Virtual method called when self.show() method is called
@@ -45,17 +47,20 @@ class GeodeGtkCommon():
         if isinstance(self.inner_grid, Gtk.Container):
             self.inner_grid.show_all()
 
-    def hide_widget(self, widget_key):
-        """ See self.set_widget_visibility method
+    def append_widget(self, widget):
+        """ Check if a specific widget exists in internal container
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Gtk object instance
         """
 
-        self.set_widget_visibility(widget_key, False)
+        if hasattr(widget, "identifier") and widget.identifier is not None:
+            self.inner_widgets[widget.identifier] = widget
 
-    def show_widget(self, widget_key):
-        """ See self.set_widget_visibility method
-        """
-
-        self.set_widget_visibility(widget_key, True)
+        if hasattr(widget, "inner_widgets"):
+            self.inner_widgets.update(widget.inner_widgets)
 
     def has_widget(self, widget_key):
         """ Check if a specific widget exists in internal container
@@ -174,30 +179,3 @@ class GeodeGtkCommon():
 
         elif self.has_widget(widget):
             self.get_widget(widget).set_sensitive(sensitive)
-
-    def set_widget_visibility(self, widget_key, visibility_status):
-        """ Define an internal widget visibility status
-
-        Parameters
-        ----------
-        widget_key : str
-            Internal widget keys, contains in self.inner_widgets
-        visibility_status : bool
-            The new internal widget visibility status
-
-        Raises
-        ------
-        TypeError
-            When specified visibility_status type is not a boolean
-        """
-
-        if not isinstance(visibility_status, bool):
-            raise TypeError(
-                "The visibility_status parameter must be a boolean")
-
-        widget = self.get_widget(widget_key)
-
-        if visibility_status:
-            widget.show()
-        else:
-            widget.hide()

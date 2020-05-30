@@ -30,7 +30,7 @@ from gi.repository import Gtk
 
 class GeodeGtkHeaderBar(GeodeGtkCommon, Gtk.HeaderBar):
 
-    def __init__(self, identifier, title, *args, subtitle=None):
+    def __init__(self, identifier, *args, **kwargs):
         """ Constructor
 
         Parameters
@@ -39,23 +39,14 @@ class GeodeGtkHeaderBar(GeodeGtkCommon, Gtk.HeaderBar):
             String to identify this object in internal container
         """
 
-        GeodeGtkCommon.__init__(self)
+        GeodeGtkCommon.__init__(self, identifier)
         Gtk.HeaderBar.__init__(self)
 
-        # ------------------------------------
-        #   Properties
-        # ------------------------------------
+        # Properties
+        self.set_title(kwargs.get("title", str()))
+        self.set_subtitle(kwargs.get("subtitle", str()))
 
-        self.set_title(title)
-        if subtitle is not None:
-            self.set_subtitle(subtitle)
-
-        # ------------------------------------
-        #   Packing
-        # ------------------------------------
-
+        # Packing
         for widget in args:
-            self.inner_widgets[widget.identifier] = widget
-            self.inner_widgets.update(widget.inner_widgets)
-
+            self.append_widget(widget)
             self.pack_start(widget)

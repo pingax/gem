@@ -41,15 +41,13 @@ class GeodeGtkStatusbar(GeodeGtkCommon, Gtk.Statusbar):
 
         self.inner_grid = self.get_message_area()
 
-        self.inner_widgets = {
-            "console": self.inner_grid.get_children()[0],
-            "emulator": Gtk.Label.new(None),
-            "game": Gtk.Label.new(None),
-            "properties": Gtk.Image.new(),
-            "screenshots": Gtk.Image.new(),
-            "savestates": Gtk.Image.new(),
-            "progressbar": Gtk.ProgressBar.new(),
-        }
+        self.console = self.inner_grid.get_children()[0]
+        self.emulator = Gtk.Label.new(None)
+        self.game = Gtk.Label.new(None)
+        self.properties = Gtk.Image.new()
+        self.screenshots = Gtk.Image.new()
+        self.savestates = Gtk.Image.new()
+        self.progressbar = Gtk.ProgressBar.new()
 
         # ------------------------------------
         #   Properties
@@ -75,20 +73,26 @@ class GeodeGtkStatusbar(GeodeGtkCommon, Gtk.Statusbar):
                 widget.set_no_show_all(True)
                 widget.set_show_text(True)
 
-        self.get_widget("game").set_ellipsize(Pango.EllipsizeMode.END)
+        self.game.set_ellipsize(Pango.EllipsizeMode.END)
+        self.game.set_halign(Gtk.Align.START)
 
         # ------------------------------------
         #   Packing
         # ------------------------------------
 
-        self.inner_grid.pack_start(
-            self.get_widget("emulator"), False, False, 0)
-        self.inner_grid.pack_start(
-            self.get_widget("game"), True, True, 0)
+        self.append_widget(self.console)
+        self.append_widget(self.emulator)
+        self.append_widget(self.game)
 
-        for name in ("progressbar",) + self.pixbuf_widgets:
-            self.inner_grid.pack_end(
-                self.get_widget(name), False, False, 0)
+        self.inner_grid.pack_start(self.emulator, False, False, 0)
+        self.inner_grid.pack_start(self.game, True, True, 0)
+
+        for name in ("progressbar", "savestates", "screenshots", "properties"):
+            widget = getattr(self, name, None)
+
+            if widget is not None:
+                self.append_widget(widget)
+                self.inner_grid.pack_end(widget, False, False, 0)
 
     def set_widget_value(self, widget_key, **kwargs):
         """ Set an internal widget value
@@ -102,10 +106,12 @@ class GeodeGtkStatusbar(GeodeGtkCommon, Gtk.Statusbar):
         Parameters
         ----------
         widget_key : str
-            Internal widget keys, contains in self.inner_widgets
+            Internal widget keys, contains in self.__dict__
         """
 
-        widget = self.get_widget(widget_key)
+        widget = getattr(self, widget_key, None)
+        if widget is None:
+            raise KeyError(f"Cannot found {widget_key} in {type(self)}")
 
         if type(widget) is Gtk.Label:
             if "markup" in kwargs.keys():

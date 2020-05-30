@@ -31,49 +31,54 @@ from gi.repository import Gtk
 
 class GeodeGtkMenuButton(GeodeGtkCommon, Gtk.MenuButton):
 
-    def __init__(self,
-                 identifier, title, *args, icon_name=None, use_popover=False):
+    def __init__(self, identifier, label, *args, **kwargs):
         """ Constructor
 
         Parameters
         ----------
         identifier : str
             String to identify this object in internal container
+        label : str
+            Menu button label
         """
 
-        GeodeGtkCommon.__init__(self)
+        GeodeGtkCommon.__init__(self, identifier)
         Gtk.MenuButton.__init__(self)
 
-        self.identifier = identifier
+        # Inner widgets
+        self.image = None
+        self.submenu = None
+        # Button image icon name
+        self.icon_name = kwargs.get("icon_name", None)
 
         # ------------------------------------
         #   Properties
         # ------------------------------------
 
-        self.set_use_popover(use_popover)
+        self.set_use_popover(kwargs.get("use_popover", False))
 
         if args:
-            submenu = GeodeGtkMenu(identifier, *args)
+            self.submenu = GeodeGtkMenu(identifier, *args)
+            self.append_widget(self.submenu)
 
-            self.inner_widgets.update(submenu.inner_widgets)
-
-        if icon_name is None:
-            self.set_label(title)
+        if self.icon_name is None:
+            self.set_label(label)
 
         else:
-            self.set_tooltip_text(title)
+            self.set_tooltip_text(label)
 
-            self.inner_widgets[f"{identifier}_image"] = \
-                Gtk.Image.new_from_icon_name(icon_name, Gtk.IconSize.BUTTON)
+            self.image = Gtk.Image.new_from_icon_name(self.icon_name,
+                                                      Gtk.IconSize.BUTTON)
+            setattr(self.image, "identifier", f"{identifier}_image")
 
         # ------------------------------------
         #   Packing
         # ------------------------------------
 
-        if args:
-            self.set_popup(submenu)
+        if self.submenu is not None:
+            self.set_popup(self.submenu)
+            self.submenu.show_all()
 
-            submenu.show_all()
-
-        if icon_name:
-            self.add(self.get_widget(f"{identifier}_image"))
+        if self.image is not None:
+            self.append_widget(self.image)
+            self.add(self.image)

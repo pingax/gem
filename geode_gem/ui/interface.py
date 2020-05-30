@@ -401,7 +401,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.headerbar = GeodeGtk.HeaderBar(
             "headerbar",
-            self.title,
             GeodeGtk.MenuButton(
                 "main",
                 _("Main menu"),
@@ -459,6 +458,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 ("dark_theme", _("Use _dark theme"), Gtk.CheckMenuItem),
                 icon_name=Icons.Symbolic.VIDEO,
             ),
+            title=self.title,
         )
 
         # ------------------------------------
@@ -1594,6 +1594,8 @@ class MainWindow(Gtk.ApplicationWindow):
         """ Initialize widgets signals
         """
 
+        self.logger.info("Associate signals to main interface")
+
         signals = {
             self: {
                 "game-started": [
@@ -2120,6 +2122,13 @@ class MainWindow(Gtk.ApplicationWindow):
                         if metadata.get("allow_block_signal", False):
                             self.signals_storage[signal] = widget
 
+                            if not hasattr(widget, 'identifier'):
+                                continue
+
+                            self.logger.debug(
+                                f"Associate signal identifier '{signal}' to "
+                                f"{instance.identifier}/{widget.identifier}")
+
                     except:
                         self.logger.exception(
                             f"Cannot connect signal for {widget}: "
@@ -2308,6 +2317,8 @@ class MainWindow(Gtk.ApplicationWindow):
         """ Generate shortcuts signals from user configuration
         """
 
+        self.logger.info("Associate shortcuts to main interface")
+
         # Disconnect previous shortcut to avoid multiple allocation
         for key, mod in self.shortcuts:
             self.shortcuts_group.disconnect_key(key, mod)
@@ -2348,8 +2359,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     internal_widget = internal_widget.get_widget(widget_key)
 
-                self.logger.debug(
-                    f"Associate shortcut {shortcut} to {widget}/{widget_key}")
+                self.logger.debug(f"Associate shortcut '{shortcut}' to "
+                                  f"{widget}/{widget_key}")
                 internal_widget.add_accelerator("activate",
                                                 self.shortcuts_group,
                                                 *accelerator,
@@ -2696,7 +2707,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.config.modify("gem", "last_console", row.console.id)
 
                 self.logger.info(
-                    "Save %s console for next startup" % row.console.id)
+                    f"Save {row.console.name} console for next startup")
 
         # ------------------------------------
         #   Last sorted column
@@ -2872,6 +2883,9 @@ class MainWindow(Gtk.ApplicationWindow):
         init_interface : bool, optional
             Interface first initialization (Default: False)
         """
+
+        self.logger.debug(
+            "%s main interface" % ("Load" if init_interface else "Reload"))
 
         self.__block_signals()
 
@@ -3582,9 +3596,9 @@ class MainWindow(Gtk.ApplicationWindow):
         if console is not None:
             emulator = console.emulator
 
-        self.statusbar.set_widget_visibility("console", console is not None)
-        self.statusbar.set_widget_visibility("emulator", emulator is not None)
-        self.statusbar.set_widget_visibility("game", game is not None)
+        self.statusbar.console.set_visible(console is not None)
+        self.statusbar.emulator.set_visible(emulator is not None)
+        self.statusbar.game.set_visible(game is not None)
 
         texts = list()
 
@@ -4376,6 +4390,18 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.__unblock_signals()
 
+    def __on_clear_games_views(self):
+        """ Remove games from both list and icon views
+        """
+
+        if len(self.model_games_list):
+            self.logger.debug("Clear games treeview content")
+            self.model_games_list.clear()
+
+        if len(self.model_games_grid):
+            self.logger.debug("Clear games iconview content")
+            self.model_games_grid.clear()
+
     def append_consoles(self):
         """ Append to consoles combobox all available consoles
 
@@ -4391,8 +4417,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.listbox_consoles.remove(child)
 
         # Reset games view content
-        self.model_games_list.clear()
-        self.model_games_grid.clear()
+        self.__on_clear_games_views()
 
         # Retrieve available consoles
         for console in self.api.consoles:
@@ -4820,7 +4845,7 @@ class MainWindow(Gtk.ApplicationWindow):
             raise TypeError(
                 "Wrong type for console, expected gem.engine.console.Console")
 
-        self.logger.debug(f"Append games for console {console.name}")
+        self.logger.debug(f"Start to append games for console {console.name}")
 
         # Get current thread id
         current_thread_id = self.list_thread
@@ -4863,8 +4888,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.scroll_games_placeholder.set_visible(True)
 
-        self.model_games_list.clear()
-        self.model_games_grid.clear()
+        self.__on_clear_games_views()
 
         self.set_informations()
 
@@ -4890,6 +4914,10 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.logger.warning(error)
 
         games = console.get_games()
+        if len(games):
+            self.logger.info(f"Found {len(games)} game(s) for {console.name}")
+        else:
+            self.logger.info(f"No game available for {console.name}")
 
         column, order = self.sorted_games_list.get_sort_column_id()
 
@@ -4952,7 +4980,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
             self.scroll_games_placeholder.set_visible(False)
 
-            self.statusbar.show_widget("progressbar")
+            self.statusbar.progressbar.show()
 
         else:
             self.scroll_sidebar.set_visible(False)
@@ -4985,7 +5013,7 @@ class MainWindow(Gtk.ApplicationWindow):
         # Restore options for packages treeviews
         self.treeview_games.thaw_child_notify()
 
-        self.statusbar.hide_widget("progressbar")
+        self.statusbar.progressbar.hide()
 
         self.set_informations_headerbar()
 
@@ -4995,18 +5023,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
         delta = (datetime.now() - started).total_seconds()
 
-        if len(console.get_games()) == 0:
-            text = "No game available for %s" % console.name
-
-        elif len(console.get_games()) == 1:
-            text = "Append 1 game for %s in %s second(s)" % (
-                console.name, delta)
-
-        elif len(console.get_games()) >= 2:
-            text = "Append %d games for %s in %s second(s)" % (
-                len(console.get_games()), console.name, delta)
-
-        self.logger.debug(text)
+        if len(console.get_games()):
+            self.logger.debug(
+                f"Append game(s) for {console.name} in {delta} second(s)")
 
         # ------------------------------------
         #   Close thread
@@ -7385,7 +7404,7 @@ class MainWindow(Gtk.ApplicationWindow):
             Gdk.Cursor.new_from_name(self.window_display, "wait"))
 
         self.statusbar.set_widget_value("progressbar")
-        self.statusbar.show_widget("progressbar")
+        self.statusbar.progressbar.show()
 
         yield True
 
