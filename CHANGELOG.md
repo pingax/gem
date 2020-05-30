@@ -1,6 +1,14 @@
 GEM Changelog
 =============
 
+Version 0.11.0 - Bounty Hunter
+------------------------------
+
+### Fix
+
+* Fix a PermissionError when a binaries directory cannot be readed by user
+* Fix avoid to call widget signals when closing main interface
+
 Version 0.10.3 - Gracie (30 Apr, 2020)
 --------------------------------------
 
