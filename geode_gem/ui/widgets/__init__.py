@@ -17,11 +17,17 @@
 #  MA 02110-1301, USA.
 # ------------------------------------------------------------------------------
 
-from geode_gem.ui.widgets.button import GeodeGtkMenuButton
+from geode_gem.ui.widgets.button import (GeodeGtkButton,
+                                         GeodeGtkMenuButton,
+                                         GeodeGtkToggleButton)
+from geode_gem.ui.widgets.entry import GeodeGtkSearchEntry
 from geode_gem.ui.widgets.headerbar import GeodeGtkHeaderBar
 from geode_gem.ui.widgets.infobar import GeodeGtkInfoBar
 from geode_gem.ui.widgets.menu import GeodeGtkMenu, GeodeGtkMenuItem
 from geode_gem.ui.widgets.statusbar import GeodeGtkStatusbar
+from geode_gem.ui.widgets.toolbar import (GeodeGtkToolbar,
+                                          GeodeGtkToolbarBox,
+                                          GeodeGtkToolbarSwitch)
 
 
 # ------------------------------------------------------------------------------
@@ -32,9 +38,15 @@ class GeodeGtk:
     """ Custom widgets for Geode-GEM applications
     """
 
+    Button = GeodeGtkButton
     HeaderBar = GeodeGtkHeaderBar
     InfoBar = GeodeGtkInfoBar
     Menu = GeodeGtkMenu
     MenuButton = GeodeGtkMenuButton
     MenuItem = GeodeGtkMenuItem
+    SearchEntry = GeodeGtkSearchEntry
     Statusbar = GeodeGtkStatusbar
+    ToggleButton = GeodeGtkToggleButton
+    Toolbar = GeodeGtkToolbar
+    ToolbarBox = GeodeGtkToolbarBox
+    ToolbarSwitch = GeodeGtkToolbarSwitch
