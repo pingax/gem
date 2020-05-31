@@ -100,33 +100,18 @@ class CommonButton(GeodeGtkCommon):
 
 class GeodeGtkButton(CommonButton, Gtk.Button):
 
-    def __init__(self, identifier, label, *args, **kwargs):
-        """ Constructor
-
-        Parameters
-        ----------
-        identifier : str
-            String to identify this object in internal container
-        label : str
-            Menu button label
+    def __init__(self, *args, **kwargs):
+        """ See geode_gem.ui.widgets.button.CommonButton
         """
 
-        CommonButton.__init__(
-            self, Gtk.Button, identifier, label, *args, **kwargs)
+        CommonButton.__init__(self, Gtk.Button, *args, **kwargs)
         Gtk.Button.__init__(self)
 
 
 class GeodeGtkMenuButton(CommonButton, Gtk.MenuButton):
 
     def __init__(self, identifier, label, *args, **kwargs):
-        """ Constructor
-
-        Parameters
-        ----------
-        identifier : str
-            String to identify this object in internal container
-        label : str
-            Menu button label
+        """ See geode_gem.ui.widgets.button.CommonButton
         """
 
         CommonButton.__init__(
@@ -143,7 +128,7 @@ class GeodeGtkMenuButton(CommonButton, Gtk.MenuButton):
         self.set_use_popover(kwargs.get("use_popover", False))
 
         if args:
-            self.submenu = GeodeGtkMenu(identifier, *args)
+            self.submenu = GeodeGtkMenu(self.identifier, *args)
             self.append_widget(self.submenu)
 
         # ------------------------------------
@@ -157,17 +142,9 @@ class GeodeGtkMenuButton(CommonButton, Gtk.MenuButton):
 
 class GeodeGtkToggleButton(CommonButton, Gtk.ToggleButton):
 
-    def __init__(self, identifier, label, *args, **kwargs):
-        """ Constructor
-
-        Parameters
-        ----------
-        identifier : str
-            String to identify this object in internal container
-        label : str
-            Menu button label
+    def __init__(self, *args, **kwargs):
+        """ See geode_gem.ui.widgets.button.CommonButton
         """
 
-        CommonButton.__init__(
-            self, Gtk.ToggleButton, identifier, label, *args, **kwargs)
+        CommonButton.__init__(self, Gtk.ToggleButton, *args, **kwargs)
         Gtk.ToggleButton.__init__(self)
