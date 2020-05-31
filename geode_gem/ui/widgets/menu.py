@@ -28,6 +28,36 @@ from gi.repository import Gtk
 #   Class
 # ------------------------------------------------------------------------------
 
+class CommonMenuItem(GeodeGtkCommon):
+
+    def __init__(self, subclass, identifier, title, *args, **kwargs):
+        """ Constructor
+
+        Parameters
+        ----------
+        subclass : Gtk.MenuItem
+            Subclass widget type
+        identifier : str
+            String to identify this object in internal container
+        title : str
+            Menu item label
+        """
+
+        GeodeGtkCommon.__init__(self, identifier)
+        subclass.__init__(self)
+
+        # Properties
+        self.set_label(title)
+        self.set_tooltip_text(kwargs.get("tooltip", str()))
+        self.set_use_underline(kwargs.get("use_underline", True))
+
+        if args:
+            submenu = GeodeGtkMenu(f"{self.identifier}_menu", *args)
+
+            self.append_widget(submenu)
+            self.set_submenu(submenu)
+
+
 class GeodeGtkMenu(GeodeGtkCommon, Gtk.Menu):
 
     def __init__(self, identifier, *args):
@@ -43,76 +73,47 @@ class GeodeGtkMenu(GeodeGtkCommon, Gtk.Menu):
         Gtk.Menu.__init__(self)
 
         for index, element in enumerate(args):
-            widget_id, widget = self.__parse_menu_entry(element)
 
             # Generate a dynamic name for Gtk.SeparatorMenuItem
-            if widget_id == "separator":
-                widget_id = f"{identifier}_{widget_id}_{index}"
+            if element is None:
+                widget_id = f"{identifier}_separator_{index}"
+                element = Gtk.SeparatorMenuItem.new()
 
-            # Ensure native Gtk.Widget to have self.identifier
-            if not hasattr(widget, "identifier"):
-                setattr(widget, "identifier", widget_id)
+            elif isinstance(element, Gtk.RadioMenuItem):
+                if element.group is not None:
+                    element.join_group(self.get_widget(element.group))
 
-            self.append_widget(widget)
-            self.append(self.get_widget(widget_id))
+            self.append_widget(element)
+            self.append(element)
 
-    def __parse_menu_entry(self, entry):
-        """ Retrieve identifier and widget from specifiec entry
 
-        Parameters
-        ----------
-        entry : Gtk.Widget or None or tuple()
-            Entry element to parse
+class GeodeGtkMenuItem(CommonMenuItem, Gtk.MenuItem):
 
-        Returns
-        -------
-        tuple
-            Parsed identifier and widget as tuple
+    def __init__(self, *args, **kwargs):
+        """ See geode_gem.ui.widgets.menu.CommonMenuItem
         """
 
-        if entry is None:
-            return ("separator", Gtk.SeparatorMenuItem.new())
-
-        if isinstance(entry, Gtk.MenuItem):
-            return (entry.identifier, entry)
-
-        identifier, subtitle, *data = entry
-
-        # Retrieve specified widget from data or take a native Gtk.MenuItem
-        widget = Gtk.MenuItem if not data else data[0]
-
-        # Radio menu item must have dedicated group to work together
-        if widget is Gtk.RadioMenuItem:
-            group = self.get_widget(data[1]) if len(data) > 1 else None
-
-            return (identifier,
-                    widget.new_with_mnemonic_from_widget(group, subtitle))
-
-        return (identifier, widget.new_with_mnemonic(subtitle))
-
-
-class GeodeGtkMenuItem(GeodeGtkCommon, Gtk.MenuItem):
-
-    def __init__(self, identifier, title, *args):
-        """ Constructor
-
-        Parameters
-        ----------
-        identifier : str
-            String to identify this object in internal container
-        title : str
-            Menuitem title label
-        """
-
-        GeodeGtkCommon.__init__(self, identifier)
+        CommonMenuItem.__init__(self, Gtk.MenuItem, *args, **kwargs)
         Gtk.MenuItem.__init__(self)
 
-        # Properties
-        self.set_label(title)
-        self.set_use_underline(True)
 
-        if args:
-            submenu = GeodeGtkMenu(f"{self.identifier}_menu", *args)
+class GeodeGtkCheckMenuItem(CommonMenuItem, Gtk.CheckMenuItem):
 
-            self.append_widget(submenu)
-            self.set_submenu(submenu)
+    def __init__(self, *args, **kwargs):
+        """ See geode_gem.ui.widgets.menu.CommonMenuItem
+        """
+
+        CommonMenuItem.__init__(self, Gtk.CheckMenuItem, *args, **kwargs)
+        Gtk.CheckMenuItem.__init__(self)
+
+
+class GeodeGtkRadioMenuItem(CommonMenuItem, Gtk.RadioMenuItem):
+
+    def __init__(self, *args, **kwargs):
+        """ See geode_gem.ui.widgets.menu.CommonMenuItem
+        """
+
+        CommonMenuItem.__init__(self, Gtk.RadioMenuItem, *args, **kwargs)
+        Gtk.RadioMenuItem.__init__(self)
+
+        self.group = kwargs.get("group", None)

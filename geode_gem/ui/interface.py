@@ -371,17 +371,17 @@ class MainWindow(Gtk.ApplicationWindow):
             GeodeGtk.MenuButton(
                 "main",
                 _("Main menu"),
-                ("preferences", _("_Preferences…")),
-                ("log", _("Application _log…")),
+                GeodeGtk.MenuItem("preferences", _("_Preferences…")),
+                GeodeGtk.MenuItem("log", _("Application _log…")),
                 None,
-                ("clean_cache", _("Clean icons _cache…")),
+                GeodeGtk.MenuItem("clean_cache", _("Clean icons _cache…")),
                 None,
-                ("website", _("_Website")),
-                ("report", _("_Report problem")),
+                GeodeGtk.MenuItem("website", _("_Website")),
+                GeodeGtk.MenuItem("report", _("_Report problem")),
                 None,
-                ("about", _("_About")),
+                GeodeGtk.MenuItem("about", _("_About")),
                 None,
-                ("quit", _("_Quit")),
+                GeodeGtk.MenuItem("quit", _("_Quit")),
                 icon_name=Icons.Symbolic.MENU,
             ),
             GeodeGtk.MenuButton(
@@ -393,36 +393,48 @@ class MainWindow(Gtk.ApplicationWindow):
                     GeodeGtk.MenuItem(
                         "columns",
                         _("_Columns visibility"),
-                        ("favorite", _("Favorite"), Gtk.CheckMenuItem),
-                        ("multiplayer", _("Multiplayer"), Gtk.CheckMenuItem),
-                        ("finish", _("Finish"), Gtk.CheckMenuItem),
-                        ("play", _("Launch number"), Gtk.CheckMenuItem),
-                        ("play_time", _("Play time"), Gtk.CheckMenuItem),
-                        ("last_play", _("Last launch date"), Gtk.CheckMenuItem),
-                        ("score", _("Score"), Gtk.CheckMenuItem),
-                        ("installed", _("Installed date"), Gtk.CheckMenuItem),
-                        ("flags", _("Emulator flags"), Gtk.CheckMenuItem)
+                        GeodeGtk.CheckMenuItem("favorite", _("Favorite")),
+                        GeodeGtk.CheckMenuItem("multiplayer",
+                                               _("Multiplayer")),
+                        GeodeGtk.CheckMenuItem("finish", _("Finish")),
+                        GeodeGtk.CheckMenuItem("play", _("Launch number")),
+                        GeodeGtk.CheckMenuItem("play_time", _("Play time")),
+                        GeodeGtk.CheckMenuItem("last_play",
+                                               _("Last launch date")),
+                        GeodeGtk.CheckMenuItem("score", _("Score")),
+                        GeodeGtk.CheckMenuItem("installed",
+                                               _("Installed date")),
+                        GeodeGtk.CheckMenuItem("flags", _("Emulator flags")),
                     ),
                     None,
-                    ("list", _("List view"), Gtk.RadioMenuItem),
-                    ("grid", _("Grid icons"), Gtk.RadioMenuItem, "list")
+                    GeodeGtk.RadioMenuItem("list", _("List view")),
+                    GeodeGtk.RadioMenuItem(
+                        "grid",
+                        _("Grid icons"),
+                        group="list",
+                    ),
                 ),
                 None,
                 GeodeGtk.MenuItem(
                     "sidebar",
                     _("_Sidebar"),
-                    ("show_sidebar", _("Show _sidebar"), Gtk.CheckMenuItem),
+                    GeodeGtk.CheckMenuItem("show_sidebar", _("Show _sidebar")),
                     None,
-                    ("right", _("Right"), Gtk.RadioMenuItem),
-                    ("bottom", _("Bottom"), Gtk.RadioMenuItem, "right")
+                    GeodeGtk.RadioMenuItem("right", _("Right")),
+                    GeodeGtk.RadioMenuItem(
+                        "bottom",
+                        _("Bottom"),
+                        group="right",
+                    ),
                 ),
                 GeodeGtk.MenuItem(
                     "statusbar",
                     _("_Statusbar"),
-                    ("show_statusbar", _("Show _statusbar"), Gtk.CheckMenuItem),
+                    GeodeGtk.CheckMenuItem("show_statusbar",
+                                           _("Show _statusbar")),
                 ),
                 None,
-                ("dark_theme", _("Use _dark theme"), Gtk.CheckMenuItem),
+                GeodeGtk.CheckMenuItem("dark_theme", _("Use _dark theme")),
                 icon_name=Icons.Symbolic.VIDEO,
             ),
             title=self.title,
@@ -437,12 +449,12 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menubar_main = GeodeGtk.MenuItem(
             "menubar_main",
             _("_GEM"),
-            ("preferences", _("_Preferences…")),
-            ("log", _("Application _log…")),
+            GeodeGtk.MenuItem("preferences", _("_Preferences…")),
+            GeodeGtk.MenuItem("log", _("Application _log…")),
             None,
-            ("clean_cache", _("Clean icons _cache…")),
+            GeodeGtk.MenuItem("clean_cache", _("Clean icons _cache…")),
             None,
-            ("quit", _("_Quit"))
+            GeodeGtk.MenuItem("quit", _("_Quit"))
         )
 
         self.menubar_view = GeodeGtk.MenuItem(
@@ -454,54 +466,62 @@ class MainWindow(Gtk.ApplicationWindow):
                 GeodeGtk.MenuItem(
                     "columns",
                     _("_Columns visibility"),
-                    ("favorite", _("Favorite"), Gtk.CheckMenuItem),
-                    ("multiplayer", _("Multiplayer"), Gtk.CheckMenuItem),
-                    ("finish", _("Finish"), Gtk.CheckMenuItem),
-                    ("play", _("Launch number"), Gtk.CheckMenuItem),
-                    ("play_time", _("Play time"), Gtk.CheckMenuItem),
-                    ("last_play", _("Last launch date"), Gtk.CheckMenuItem),
-                    ("score", _("Score"), Gtk.CheckMenuItem),
-                    ("installed", _("Installed date"), Gtk.CheckMenuItem),
-                    ("flags", _("Emulator flags"), Gtk.CheckMenuItem)
+                    GeodeGtk.CheckMenuItem("favorite", _("Favorite")),
+                    GeodeGtk.CheckMenuItem("multiplayer", _("Multiplayer")),
+                    GeodeGtk.CheckMenuItem("finish", _("Finish")),
+                    GeodeGtk.CheckMenuItem("play", _("Launch number")),
+                    GeodeGtk.CheckMenuItem("play_time", _("Play time")),
+                    GeodeGtk.CheckMenuItem("last_play", _("Last launch date")),
+                    GeodeGtk.CheckMenuItem("score", _("Score")),
+                    GeodeGtk.CheckMenuItem("installed", _("Installed date")),
+                    GeodeGtk.CheckMenuItem("flags", _("Emulator flags")),
                 ),
                 None,
-                ("list", _("List view"), Gtk.RadioMenuItem),
-                ("grid", _("Grid icons"), Gtk.RadioMenuItem, "list")
+                GeodeGtk.RadioMenuItem("list", _("List view")),
+                GeodeGtk.RadioMenuItem(
+                    "grid",
+                    _("Grid icons"),
+                    group="list",
+                )
             ),
             None,
             GeodeGtk.MenuItem(
                 "sidebar",
                 _("_Sidebar"),
-                ("show_sidebar", _("Show _sidebar"), Gtk.CheckMenuItem),
+                GeodeGtk.CheckMenuItem("show_sidebar", _("Show _sidebar")),
                 None,
-                ("right", _("Right"), Gtk.RadioMenuItem),
-                ("bottom", _("Bottom"), Gtk.RadioMenuItem, "right")
+                GeodeGtk.RadioMenuItem("right", _("Right")),
+                GeodeGtk.RadioMenuItem(
+                    "bottom",
+                    _("Bottom"),
+                    group="right",
+                )
             ),
             GeodeGtk.MenuItem(
                 "statusbar",
                 _("_Statusbar"),
-                ("show_statusbar", _("Show _statusbar"), Gtk.CheckMenuItem),
+                GeodeGtk.CheckMenuItem("show_statusbar", _("Show _statusbar")),
             ),
             None,
-            ("dark_theme", _("Use _dark theme"), Gtk.CheckMenuItem)
+            GeodeGtk.CheckMenuItem("dark_theme", _("Use _dark theme"))
         )
 
         self.menubar_game = GeodeGtk.MenuItem(
             "menubar_game",
             _("_Game"),
-            ("launch", _("_Launch")),
+            GeodeGtk.MenuItem("launch", _("_Launch")),
             None,
-            ("favorite", _("_Favorite"), Gtk.CheckMenuItem),
-            ("multiplayer", _("_Multiplayer"), Gtk.CheckMenuItem),
-            ("finish", _("_Finished"), Gtk.CheckMenuItem),
+            GeodeGtk.CheckMenuItem("favorite", _("_Favorite")),
+            GeodeGtk.CheckMenuItem("multiplayer", _("_Multiplayer")),
+            GeodeGtk.CheckMenuItem("finish", _("_Finished")),
             None,
-            ("properties", _("_Properties…")),
+            GeodeGtk.MenuItem("properties", _("_Properties…")),
             None,
-            ("screenshots", _("_Screenshots…")),
-            ("game_log", _("Output _log…")),
-            ("notes", _("_Notes…")),
+            GeodeGtk.MenuItem("screenshots", _("_Screenshots…")),
+            GeodeGtk.MenuItem("game_log", _("Output _log…")),
+            GeodeGtk.MenuItem("notes", _("_Notes…")),
             None,
-            ("fullscreen", _("Fullscreen mode"), Gtk.CheckMenuItem),
+            GeodeGtk.CheckMenuItem("fullscreen", _("Fullscreen mode")),
         )
 
         self.menubar_edit = GeodeGtk.MenuItem(
@@ -510,47 +530,127 @@ class MainWindow(Gtk.ApplicationWindow):
             GeodeGtk.MenuItem(
                 "score",
                 _("_Score"),
-                ("increase", _("_Increase score")),
-                ("decrease", _("_Decrease score")),
+                GeodeGtk.MenuItem("increase", _("_Increase score")),
+                GeodeGtk.MenuItem("decrease", _("_Decrease score")),
                 None,
-                ("score_0", _("Set score as 0")),
-                ("score_1", _("Set score as 1")),
-                ("score_2", _("Set score as 2")),
-                ("score_3", _("Set score as 3")),
-                ("score_4", _("Set score as 4")),
-                ("score_5", _("Set score as 5")),
+                GeodeGtk.MenuItem("score_0", _("Set score as 0")),
+                GeodeGtk.MenuItem("score_1", _("Set score as 1")),
+                GeodeGtk.MenuItem("score_2", _("Set score as 2")),
+                GeodeGtk.MenuItem("score_3", _("Set score as 3")),
+                GeodeGtk.MenuItem("score_4", _("Set score as 4")),
+                GeodeGtk.MenuItem("score_5", _("Set score as 5")),
             ),
             None,
-            ("rename", _("_Rename…")),
+            GeodeGtk.MenuItem("rename", _("_Rename…")),
             None,
-            ("duplicate", _("_Duplicate…")),
+            GeodeGtk.MenuItem("duplicate", _("_Duplicate…")),
             None,
-            ("memory_type", _("Specify a _memory type…")),
+            GeodeGtk.MenuItem("memory_type", _("Specify a _memory type…")),
             None,
-            ("game_file", _("_Edit game file")),
+            GeodeGtk.MenuItem("game_file", _("_Edit game file")),
             None,
-            ("copy_path", _("_Copy path to clipboard")),
-            ("open_path", _("_Open path")),
-            ("menu_entry", _("_Generate a menu entry")),
+            GeodeGtk.MenuItem("copy_path", _("_Copy path to clipboard")),
+            GeodeGtk.MenuItem("open_path", _("_Open path")),
+            GeodeGtk.MenuItem("menu_entry", _("_Generate a menu entry")),
             None,
-            ("thumbnail", _("Set game _thumbnail…")),
+            GeodeGtk.MenuItem("thumbnail", _("Set game _thumbnail…")),
             None,
-            ("maintenance", _("_Maintenance…")),
+            GeodeGtk.MenuItem("maintenance", _("_Maintenance…")),
             None,
-            ("remove", _("_Remove from disk…")),
+            GeodeGtk.MenuItem("remove", _("_Remove from disk…")),
         )
 
         self.menubar_help = GeodeGtk.MenuItem(
             "menubar_help",
             _("_Help"),
-            ("website", _("_Website")),
-            ("report", _("_Report problem")),
+            GeodeGtk.MenuItem("website", _("_Website")),
+            GeodeGtk.MenuItem("report", _("_Report problem")),
             None,
-            ("about", _("_About")),
+            GeodeGtk.MenuItem("about", _("_About")),
         )
 
         # ------------------------------------
-        #   Toolbar - Consoles
+        #   Submenu
+        # ------------------------------------
+
+        self.menu_consoles = GeodeGtk.Menu(
+            "menu_consoles",
+            GeodeGtk.MenuItem("edit_console", _("_Edit console")),
+            GeodeGtk.MenuItem("remove_console", _("_Remove console")),
+            None,
+            GeodeGtk.MenuItem("edit_emulator", _("_Edit emulator")),
+            GeodeGtk.MenuItem("edit_file", _("_Edit configuration file")),
+            None,
+            GeodeGtk.MenuItem(
+                "copy_path", _("_Copy games directory path to clipboard")),
+            GeodeGtk.MenuItem("open_path", _("_Open games directory")),
+            None,
+            GeodeGtk.MenuItem("reload", _("_Reload games list")),
+            None,
+            GeodeGtk.CheckMenuItem("favorite", _("_Favorite")),
+            GeodeGtk.CheckMenuItem(
+                "recursive",
+                _("_Recursive"),
+                tooltip=_("You need to reload games list to apply changes"),
+            ),
+        )
+
+        self.menu_game = GeodeGtk.Menu(
+            "menu_game",
+            GeodeGtk.MenuItem("launch", _("_Launch")),
+            None,
+            GeodeGtk.CheckMenuItem("favorite", _("_Favorite")),
+            GeodeGtk.CheckMenuItem("multiplayer", _("_Multiplayer")),
+            GeodeGtk.CheckMenuItem("finish", _("_Finished")),
+            None,
+            GeodeGtk.MenuItem("properties", _("_Properties…")),
+            None,
+            GeodeGtk.MenuItem(
+                "edit",
+                _("_Edit"),
+                GeodeGtk.MenuItem("rename", _("_Rename…")),
+                None,
+                GeodeGtk.MenuItem("duplicate", _("_Duplicate…")),
+                None,
+                GeodeGtk.MenuItem("game_file", _("_Edit game file")),
+                None,
+                GeodeGtk.MenuItem("copy_path", _("_Copy path to clipboard")),
+                GeodeGtk.MenuItem("open_path", _("_Open path")),
+                None,
+                GeodeGtk.MenuItem("thumbnail", _("Set game thumbnail…")),
+                None,
+                GeodeGtk.MenuItem("maintenance", _("_Maintenance…")),
+                None,
+                GeodeGtk.MenuItem("remove", _("_Remove from disk…")),
+            ),
+            GeodeGtk.MenuItem(
+                "score",
+                _("_Score"),
+                GeodeGtk.MenuItem("increase", _("_Increase score")),
+                GeodeGtk.MenuItem("decrease", _("_Decrease score")),
+                None,
+                GeodeGtk.MenuItem("score_0", _("Set score as 0")),
+                GeodeGtk.MenuItem("score_1", _("Set score as 1")),
+                GeodeGtk.MenuItem("score_2", _("Set score as 2")),
+                GeodeGtk.MenuItem("score_3", _("Set score as 3")),
+                GeodeGtk.MenuItem("score_4", _("Set score as 4")),
+                GeodeGtk.MenuItem("score_5", _("Set score as 5")),
+            ),
+            GeodeGtk.MenuItem(
+                "tools",
+                _("_Tools"),
+                GeodeGtk.MenuItem("screenshots", _("_Screenshots…")),
+                GeodeGtk.MenuItem("game_log", _("Game _log…")),
+                GeodeGtk.MenuItem("notes", _("_Notes…")),
+                None,
+                GeodeGtk.MenuItem("menu_entry", _("_Generate a menu entry")),
+                None,
+                GeodeGtk.MenuItem("memory_type", _("Specify a _memory type…")),
+            )
+        )
+
+        # ------------------------------------
+        #   Toolbar
         # ------------------------------------
 
         self.toolbar_consoles = GeodeGtk.Toolbar(
@@ -565,76 +665,17 @@ class MainWindow(Gtk.ApplicationWindow):
                 GeodeGtk.MenuButton(
                     "consoles",
                     _("Manage console and emulator"),
-                    ("add_console", _("Add _console")),
-                    ("add_emulator", _("Add _emulator")),
+                    GeodeGtk.MenuItem("add_console", _("Add _console")),
+                    GeodeGtk.MenuItem("add_emulator", _("Add _emulator")),
                     None,
-                    (
-                        "hide_empty",
-                        _("_Hide empty consoles"),
-                        Gtk.CheckMenuItem
-                    ),
+                    GeodeGtk.CheckMenuItem("hide_empty",
+                                           _("_Hide empty consoles")),
                     icon_name=Icons.Symbolic.VIEW_MORE,
                 ),
                 merge=True,
             ),
             border_width=4,
         )
-
-        # ------------------------------------
-        #   Sidebar - Consoles
-        # ------------------------------------
-
-        self.hpaned_consoles = Gtk.Paned()
-
-        self.scroll_consoles = Gtk.ScrolledWindow()
-        self.listbox_consoles = Gtk.ListBox()
-
-        self.label_consoles = Gtk.Label()
-
-        # Properties
-        self.hpaned_consoles.set_orientation(Gtk.Orientation.HORIZONTAL)
-        self.hpaned_consoles.set_position(280)
-
-        self.scroll_consoles.set_min_content_width(200)
-
-        self.listbox_consoles.set_selection_mode(Gtk.SelectionMode.SINGLE)
-        self.listbox_consoles.set_filter_func(self.__on_filter_consoles)
-        self.listbox_consoles.set_sort_func(self.__on_sort_consoles)
-        self.listbox_consoles.set_placeholder(self.label_consoles)
-
-        self.label_consoles.set_text(_("No console available"))
-        self.label_consoles.set_single_line_mode(False)
-        self.label_consoles.set_line_wrap(True)
-        self.label_consoles.set_justify(Gtk.Justification.CENTER)
-        self.label_consoles.get_style_context().add_class("dim-label")
-
-        # ------------------------------------
-        #   Menu - Consoles
-        # ------------------------------------
-
-        self.menu_consoles = GeodeGtk.Menu(
-            "menu_consoles",
-            ("edit_console", _("_Edit console")),
-            ("remove_console", _("_Remove console")),
-            None,
-            ("edit_emulator", _("_Edit emulator")),
-            ("edit_file", _("_Edit configuration file")),
-            None,
-            ("copy_path", _("_Copy games directory path to clipboard")),
-            ("open_path", _("_Open games directory")),
-            None,
-            ("reload", _("_Reload games list")),
-            None,
-            ("favorite", _("_Favorite"), Gtk.CheckMenuItem),
-            ("recursive", _("_Recursive"), Gtk.CheckMenuItem),
-        )
-
-        self.menu_consoles.get_widget("recursive").set_tooltip_text(
-            _("You need to reload games list to apply changes"))
-
-        # ------------------------------------
-        #   Toolbar - Game
-        # ------------------------------------
 
         self.toolbar_games = GeodeGtk.Toolbar(
             "toolbar",
@@ -714,10 +755,6 @@ class MainWindow(Gtk.ApplicationWindow):
             border_width=4,
             spacing=8,
         )
-
-        # ------------------------------------
-        #   Toolbar - Game tags
-        # ------------------------------------
 
         self.menu_sidebar_tags = Gtk.Menu()
 
@@ -819,6 +856,34 @@ class MainWindow(Gtk.ApplicationWindow):
         # ------------------------------------
 
         self.infobar = GeodeGtk.InfoBar()
+
+        # ------------------------------------
+        #   Sidebar - Consoles
+        # ------------------------------------
+
+        self.hpaned_consoles = Gtk.Paned()
+
+        self.scroll_consoles = Gtk.ScrolledWindow()
+        self.listbox_consoles = Gtk.ListBox()
+
+        self.label_consoles = Gtk.Label()
+
+        # Properties
+        self.hpaned_consoles.set_orientation(Gtk.Orientation.HORIZONTAL)
+        self.hpaned_consoles.set_position(280)
+
+        self.scroll_consoles.set_min_content_width(200)
+
+        self.listbox_consoles.set_selection_mode(Gtk.SelectionMode.SINGLE)
+        self.listbox_consoles.set_filter_func(self.__on_filter_consoles)
+        self.listbox_consoles.set_sort_func(self.__on_sort_consoles)
+        self.listbox_consoles.set_placeholder(self.label_consoles)
+
+        self.label_consoles.set_text(_("No console available"))
+        self.label_consoles.set_single_line_mode(False)
+        self.label_consoles.set_line_wrap(True)
+        self.label_consoles.set_justify(Gtk.Justification.CENTER)
+        self.label_consoles.get_style_context().add_class("dim-label")
 
         # ------------------------------------
         #   Sidebar - Game
@@ -1281,64 +1346,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.cell_game_except.set_padding(2, 0)
         self.cell_game_snapshots.set_padding(2, 0)
         self.cell_game_save.set_padding(2, 0)
-
-        # ------------------------------------
-        #   Menu - Game
-        # ------------------------------------
-
-        self.menu_game = GeodeGtk.Menu(
-            "menu_game",
-            ("launch", _("_Launch")),
-            None,
-            ("favorite", _("_Favorite"), Gtk.CheckMenuItem),
-            ("multiplayer", _("_Multiplayer"), Gtk.CheckMenuItem),
-            ("finish", _("_Finished"), Gtk.CheckMenuItem),
-            None,
-            ("properties", _("_Properties…")),
-            None,
-            GeodeGtk.MenuItem(
-                "edit",
-                _("_Edit"),
-                ("rename", _("_Rename…")),
-                None,
-                ("duplicate", _("_Duplicate…")),
-                None,
-                ("game_file", _("_Edit game file")),
-                None,
-                ("copy_path", _("_Copy path to clipboard")),
-                ("open_path", _("_Open path")),
-                None,
-                ("thumbnail", _("Set game thumbnail…")),
-                None,
-                ("maintenance", _("_Maintenance…")),
-                None,
-                ("remove", _("_Remove from disk…")),
-            ),
-            GeodeGtk.MenuItem(
-                "score",
-                _("_Score"),
-                ("increase", _("_Increase score")),
-                ("decrease", _("_Decrease score")),
-                None,
-                ("score_0", _("Set score as 0")),
-                ("score_1", _("Set score as 1")),
-                ("score_2", _("Set score as 2")),
-                ("score_3", _("Set score as 3")),
-                ("score_4", _("Set score as 4")),
-                ("score_5", _("Set score as 5")),
-            ),
-            GeodeGtk.MenuItem(
-                "tools",
-                _("_Tools"),
-                ("screenshots", _("_Screenshots…")),
-                ("game_log", _("Game _log…")),
-                ("notes", _("_Notes…")),
-                None,
-                ("menu_entry", _("_Generate a menu entry")),
-                None,
-                ("memory_type", _("Specify a _memory type…")),
-            )
-        )
 
         # ------------------------------------
         #   Statusbar

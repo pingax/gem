@@ -23,7 +23,10 @@ from geode_gem.ui.widgets.button import (GeodeGtkButton,
 from geode_gem.ui.widgets.entry import GeodeGtkSearchEntry
 from geode_gem.ui.widgets.headerbar import GeodeGtkHeaderBar
 from geode_gem.ui.widgets.infobar import GeodeGtkInfoBar
-from geode_gem.ui.widgets.menu import GeodeGtkMenu, GeodeGtkMenuItem
+from geode_gem.ui.widgets.menu import (GeodeGtkCheckMenuItem,
+                                       GeodeGtkMenu,
+                                       GeodeGtkMenuItem,
+                                       GeodeGtkRadioMenuItem)
 from geode_gem.ui.widgets.statusbar import GeodeGtkStatusbar
 from geode_gem.ui.widgets.toolbar import (GeodeGtkToolbar,
                                           GeodeGtkToolbarBox,
@@ -39,11 +42,13 @@ class GeodeGtk:
     """
 
     Button = GeodeGtkButton
+    CheckMenuItem = GeodeGtkCheckMenuItem
     HeaderBar = GeodeGtkHeaderBar
     InfoBar = GeodeGtkInfoBar
     Menu = GeodeGtkMenu
     MenuButton = GeodeGtkMenuButton
     MenuItem = GeodeGtkMenuItem
+    RadioMenuItem = GeodeGtkRadioMenuItem
     SearchEntry = GeodeGtkSearchEntry
     Statusbar = GeodeGtkStatusbar
     ToggleButton = GeodeGtkToggleButton
