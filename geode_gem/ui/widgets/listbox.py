@@ -42,13 +42,32 @@ class GeodeGtkListBox(GeodeGtkCommon, Gtk.ListBox):
         GeodeGtkCommon.__init__(self, identifier)
         Gtk.ListBox.__init__(self)
 
-        # Properties
+        self.placeholder = Gtk.Label.new(None)
+
+        # ------------------------------------
+        #   Properties
+        # ------------------------------------
+
         self.set_activate_on_single_click(
             kwargs.get("activate_on_single_click", True))
+        self.set_placeholder(self.placeholder)
         self.set_selection_mode(
             kwargs.get("selection_mode", Gtk.SelectionMode.NONE))
 
-        # Packing
+        self.placeholder.set_justify(Gtk.Justification.CENTER)
+        self.placeholder.set_line_wrap(True)
+        self.placeholder.set_single_line_mode(False)
+        self.placeholder.get_style_context().add_class("dim-label")
+        self.placeholder.set_text(kwargs.get("placeholder", str()))
+
+        # ------------------------------------
+        #   Packing
+        # ------------------------------------
+
+        self.append_widget(self.placeholder)
+
+        self.placeholder.show()
+
         for element in args:
             self.add(element)
 
@@ -99,11 +118,9 @@ class GeodeGtkListBoxItem(GeodeGtkCommon, Gtk.ListBoxRow):
             kwargs.get("orientation", Gtk.Orientation.HORIZONTAL),
             kwargs.get("spacing", 12))
 
-        self.inner_widgets = {
-            "label_grid": Gtk.Box.new(Gtk.Orientation.VERTICAL, 2),
-            "title": Gtk.Label.new(None),
-            "description": Gtk.Label.new(None),
-        }
+        self.label_grid = Gtk.Box.new(Gtk.Orientation.VERTICAL, 2)
+        self.label_title = Gtk.Label.new(None)
+        self.label_description = Gtk.Label.new(None)
 
         self.set_text(label, kwargs.get("description", None))
 
@@ -116,31 +133,32 @@ class GeodeGtkListBoxItem(GeodeGtkCommon, Gtk.ListBoxRow):
         self.inner_grid.set_border_width(kwargs.get("border_width", 6))
         self.inner_grid.set_homogeneous(kwargs.get("homogeneous", False))
 
-        self.get_widget("label_grid").set_homogeneous(False)
+        self.label_grid.set_homogeneous(False)
 
-        for key in ("title", "description"):
-            self.get_widget(key).set_halign(Gtk.Align.START)
-            self.get_widget(key).set_justify(Gtk.Justification.FILL)
-            self.get_widget(key).set_line_wrap(True)
-            self.get_widget(key).set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
+        for widget in (self.label_title, self.label_description):
+            widget.set_halign(Gtk.Align.START)
+            widget.set_justify(Gtk.Justification.FILL)
+            widget.set_line_wrap(True)
+            widget.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
 
-        self.get_widget("description").set_hexpand(True)
-        self.get_widget("description").set_use_markup(True)
-        self.get_widget("description").set_no_show_all(True)
-        self.get_widget("description").set_valign(Gtk.Align.START)
-        self.get_widget("description").get_style_context().add_class(
-            "dim-label")
+        self.label_description.set_hexpand(True)
+        self.label_description.set_use_markup(True)
+        self.label_description.set_no_show_all(True)
+        self.label_description.set_valign(Gtk.Align.START)
+        self.label_description.get_style_context().add_class("dim-label")
 
         # ------------------------------------
         #   Packing
         # ------------------------------------
 
-        self.get_widget("label_grid").pack_start(
-            self.get_widget("title"), True, True, 0)
-        self.get_widget("label_grid").pack_start(
-            self.get_widget("description"), True, True, 0)
+        self.append_widget(self.label_grid)
+        self.append_widget(self.label_title)
+        self.append_widget(self.label_description)
 
-        self.inner_grid.add(self.get_widget("label_grid"))
+        self.label_grid.pack_start(self.label_title, True, True, 0)
+        self.label_grid.pack_start(self.label_description, True, True, 0)
+
+        self.inner_grid.add(self.label_grid)
 
         self.add(self.inner_grid)
 
@@ -155,16 +173,14 @@ class GeodeGtkListBoxItem(GeodeGtkCommon, Gtk.ListBoxRow):
             Description label string
         """
 
-        title_widget = self.get_widget("title")
-        title_widget.set_label(title)
-        title_widget.set_valign(
+        self.label_title.set_label(title)
+        self.label_title.set_valign(
             Gtk.Align.END if description is not None else Gtk.Align.CENTER)
 
-        description_widget = self.get_widget("description")
-        description_widget.set_visible(description is not None)
+        self.label_description.set_visible(description is not None)
 
         if description is not None:
-            description_widget.set_markup(
+            self.label_description.set_markup(
                 f"<span size='small'>{description}</span>")
 
 
@@ -178,22 +194,22 @@ class GeodeGtkListBoxCheckItem(GeodeGtkListBoxItem):
 
         GeodeGtkListBoxItem.__init__(self, identifier, label, *args, **kwargs)
 
-        self.__identifier = f"{identifier}_switch"
-
-        self.inner_widgets[self.__identifier] = Gtk.Switch.new()
+        self.switch = Gtk.Switch.new()
+        setattr(self.switch, "identifier", f"{identifier}_switch")
 
         # Properties
-        self.get_widget(self.__identifier).set_halign(Gtk.Align.END)
-        self.get_widget(self.__identifier).set_hexpand(False)
-        self.get_widget(self.__identifier).set_valign(Gtk.Align.CENTER)
-        self.get_widget(self.__identifier).set_active(
-            kwargs.get("activate", True))
+        self.switch.set_active(kwargs.get("activate", True))
+        self.switch.set_halign(Gtk.Align.END)
+        self.switch.set_hexpand(False)
+        self.switch.set_valign(Gtk.Align.CENTER)
 
-        self.inner_grid.pack_end(
-            self.get_widget(self.__identifier), False, False, 0)
+        # Packing
+        self.append_widget(self.switch)
+
+        self.inner_grid.pack_end(self.switch, False, False, 0)
 
     def do_activate(self):
         """ See Gtk.Switch.do_activate()
         """
 
-        self.get_widget(self.__identifier).activate()
+        self.switch.activate()
