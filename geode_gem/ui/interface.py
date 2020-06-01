@@ -736,6 +736,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     _("Grid icons"),
                     icon_name=Icons.Symbolic.GRID,
                 ),
+                default="list",
                 merge=True,
             ),
             GeodeGtk.ToolbarBox(
@@ -2354,12 +2355,12 @@ class MainWindow(Gtk.ApplicationWindow):
         if self.view_mode == Columns.Key.Grid:
             self.headerbar.set_active(True, widget="grid")
             self.menubar_view.set_active(True, widget="grid")
-            self.toolbar_games.set_active(True, widget="grid")
+            self.toolbar_games.get_widget("views").switch_to("grid")
 
         else:
             self.headerbar.set_active(True, widget="list")
             self.menubar_view.set_active(True, widget="list")
-            self.toolbar_games.set_active(True, widget="list")
+            self.toolbar_games.get_widget("views").switch_to("list")
 
         # ------------------------------------
         #   Toolbar design
@@ -5561,15 +5562,12 @@ class MainWindow(Gtk.ApplicationWindow):
         # Update widgets status based on selected games view
         self.headerbar.set_active(True, widget=games_view)
         self.menubar_view.set_active(True, widget=games_view)
-        self.toolbar_games.set_active(games_view == "list", widget="list")
-        self.toolbar_games.set_active(games_view == "grid", widget="grid")
+        self.toolbar_games.get_widget("views").switch_to(games_view)
 
         # Show activated games view when there are games available
         if not self.scroll_games_placeholder.get_visible():
-            self.scroll_games_list.set_visible(
-                self.toolbar_games.get_active("list"))
-            self.scroll_games_grid.set_visible(
-                self.toolbar_games.get_active("grid"))
+            self.scroll_games_list.set_visible(games_view == "list")
+            self.scroll_games_grid.set_visible(games_view == "grid")
 
             if self.scroll_games_list.get_visible():
                 self.treeview_games.show_all()

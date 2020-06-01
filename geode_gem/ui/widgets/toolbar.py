@@ -131,3 +131,42 @@ class GeodeGtkToolbarSwitch(GeodeGtkToolbarBox):
         """
 
         GeodeGtkToolbarBox.__init__(self, identifier, *args, **kwargs)
+
+        # Current toggled button
+        self.toggled_identifier = kwargs.get("default", None)
+
+        if self.has_widget(self.toggled_identifier):
+            self.get_widget(self.toggled_identifier).set_active(True)
+
+    def switch_to(self, widget_key):
+        """ Toggled a specific widget
+
+        Parameters
+        ----------
+        widget_key : str
+            Internal widget keys, contains in self.inner_widgets
+        """
+
+        widget_activated = self.get_widget(widget_key)
+
+        # Update buttons state
+        for widget in self.inner_widgets.values():
+            if isinstance(widget, Gtk.Button):
+                widget.set_active(widget == widget_activated)
+
+                # Store current toggled widget identifier
+                self.toggled_identifier = widget.identifier
+
+    def get_toggled_widget(self):
+        """ Retrieve current toggled widget
+
+        Returns
+        -------
+        Gtk.Button or None
+            Toggled widget if founded, None otherwise
+        """
+
+        if self.has_widget(self.toggled_identifier):
+            return self.get_widget(toggled_identifier)
+
+        return None
