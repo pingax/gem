@@ -757,7 +757,7 @@ class MainWindow(Gtk.ApplicationWindow):
             spacing=8,
         )
 
-        self.menu_sidebar_tags = Gtk.Menu()
+        self.menu_tags = GeodeGtk.Menu("tags")
 
         # ------------------------------------
         #   Toolbar - Game filter
@@ -1397,7 +1397,7 @@ class MainWindow(Gtk.ApplicationWindow):
         # ------------------------------------
 
         # Toolbar - Tags menu
-        self.toolbar_games.get_widget("tags").set_popup(self.menu_sidebar_tags)
+        self.toolbar_games.get_widget("tags").set_popup(self.menu_tags)
 
         # Toolbar - Filters menu
         self.toolbar_games.get_widget("filters").set_popover(
@@ -3150,8 +3150,6 @@ class MainWindow(Gtk.ApplicationWindow):
         ----------
         widget : Gtk.Widget
             Object which receive signal
-        row : Gtk.ListBoxRow
-            Activated ListBox row which contain a specific tag
         """
 
         entry_widget = self.toolbar_games.get_widget("entry")
@@ -3220,8 +3218,7 @@ class MainWindow(Gtk.ApplicationWindow):
         # ----------------------------------------
 
         # Remove tags list
-        for widget in self.menu_sidebar_tags.get_children():
-            self.menu_sidebar_tags.remove(widget)
+        self.menu_tags.clear()
 
         # ----------------------------------------
         #   Sidebar
@@ -3407,12 +3404,12 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 # Append game tags
                 for tag in sorted(game.tags):
-                    item = Gtk.MenuItem.new_with_label(tag)
+                    item = GeodeGtk.MenuItem(tag, tag)
                     item.connect("activate", self.__on_filter_tag)
 
-                    self.menu_sidebar_tags.append(item)
+                    self.menu_tags.append(item)
 
-                self.menu_sidebar_tags.show_all()
+                self.menu_tags.show_all()
 
             # ----------------------------------------
             #   Game savestates

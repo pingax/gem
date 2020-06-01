@@ -72,19 +72,50 @@ class GeodeGtkMenu(GeodeGtkCommon, Gtk.Menu):
         GeodeGtkCommon.__init__(self, identifier)
         Gtk.Menu.__init__(self)
 
-        for index, element in enumerate(args):
-
-            # Generate a dynamic name for Gtk.SeparatorMenuItem
-            if element is None:
-                widget_id = f"{identifier}_separator_{index}"
-                element = Gtk.SeparatorMenuItem.new()
-
-            elif isinstance(element, Gtk.RadioMenuItem):
-                if element.group is not None:
-                    element.join_group(self.get_widget(element.group))
-
-            self.append_widget(element)
+        for element in args:
             self.append(element)
+
+    def append(self, child):
+        """ Append a new child at the end of menu list
+
+        Parameters
+        ----------
+        child : Gtk.MenuItem
+            New menu item to append
+        """
+
+        # Generate a dynamic name for Gtk.SeparatorMenuItem
+        if child is None:
+            child = Gtk.SeparatorMenuItem.new()
+
+        elif isinstance(child, Gtk.RadioMenuItem):
+            if child.group is not None:
+                child.join_group(self.get_widget(child.group))
+
+        self.append_widget(child)
+
+        super().append(child)
+
+    def remove(self, child):
+        """ Remove a specific widget from menu list
+
+        Parameters
+        ----------
+        child : Gtk.MenuItem
+            Menu item to remove
+        """
+
+        if hasattr(child, "identifier") and self.has_widget(child.identifier):
+            del self.inner_widgets[child.identifier]
+
+        super().remove(child)
+
+    def clear(self):
+        """ Remove all items from menu list
+        """
+
+        for child in self.get_children():
+            self.remove(child)
 
 
 class GeodeGtkMenuItem(CommonMenuItem, Gtk.MenuItem):
