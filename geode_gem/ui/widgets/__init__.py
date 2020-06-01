@@ -20,6 +20,8 @@
 from geode_gem.ui.widgets.button import (GeodeGtkButton,
                                          GeodeGtkMenuButton,
                                          GeodeGtkToggleButton)
+from geode_gem.ui.widgets.cellrenderer import (GeodeGtkCellRendererPixbuf,
+                                               GeodeGtkCellRendererText)
 from geode_gem.ui.widgets.entry import GeodeGtkSearchEntry
 from geode_gem.ui.widgets.frame import GeodeGtkFrame
 from geode_gem.ui.widgets.headerbar import GeodeGtkHeaderBar
@@ -37,6 +39,8 @@ from geode_gem.ui.widgets.statusbar import GeodeGtkStatusbar
 from geode_gem.ui.widgets.toolbar import (GeodeGtkToolbar,
                                           GeodeGtkToolbarBox,
                                           GeodeGtkToolbarSwitch)
+from geode_gem.ui.widgets.treeview import (GeodeGtkTreeView,
+                                           GeodeGtkTreeViewColumn)
 
 
 # ------------------------------------------------------------------------------
@@ -67,3 +71,7 @@ class GeodeGtk:
     Toolbar = GeodeGtkToolbar
     ToolbarBox = GeodeGtkToolbarBox
     ToolbarSwitch = GeodeGtkToolbarSwitch
+    TreeView = GeodeGtkTreeView
+    CellRendererPixbuf = GeodeGtkCellRendererPixbuf
+    CellRendererText = GeodeGtkCellRendererText
+    TreeViewColumn = GeodeGtkTreeViewColumn
