@@ -35,6 +35,8 @@ class GeodeGtkCommon():
         self.inner_widgets = dict()
 
         self.identifier = identifier
+        # Widget class style
+        self.current_style = None
 
     def do_show(self):
         """ Virtual method called when self.show() method is called
@@ -179,3 +181,21 @@ class GeodeGtkCommon():
 
         elif self.has_widget(widget):
             self.get_widget(widget).set_sensitive(sensitive)
+
+
+    def set_style(self, style=None):
+        """ Define a specific class for current button
+
+        Parameters
+        ----------
+        style : str, optional
+            Class style name
+        """
+
+        if self.current_style is not None and not self.current_style == style:
+            self.get_style_context().remove_class(self.current_style)
+
+        if style is not None and not self.current_style == style:
+            self.get_style_context().add_class(style)
+
+        self.current_style = style

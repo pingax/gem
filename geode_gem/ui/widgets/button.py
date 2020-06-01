@@ -51,8 +51,6 @@ class CommonButton(GeodeGtkCommon):
         self.image = None
         # Button image icon name
         self.icon_name = kwargs.get("icon_name", None)
-        # Button class style
-        self.current_style = None
 
         # ------------------------------------
         #   Properties
@@ -78,24 +76,6 @@ class CommonButton(GeodeGtkCommon):
         if self.image is not None:
             self.append_widget(self.image)
             self.add(self.image)
-
-
-    def set_style(self, style=None):
-        """ Define a specific class for current button
-
-        Parameters
-        ----------
-        style : str, optional
-            Class style name
-        """
-
-        if self.current_style is not None and not self.current_style == style:
-            self.get_style_context().remove_class(self.current_style)
-
-        if style is not None and not self.current_style == style:
-            self.get_style_context().add_class(style)
-
-        self.current_style = style
 
 
 class GeodeGtkButton(CommonButton, Gtk.Button):
