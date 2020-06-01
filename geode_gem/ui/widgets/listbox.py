@@ -74,7 +74,7 @@ class GeodeGtkListBox(GeodeGtkCommon, Gtk.ListBox):
             Activated row widget
         """
 
-        if row.activatable:
+        if getattr(row, "activatable", False):
             row.activate()
 
 
