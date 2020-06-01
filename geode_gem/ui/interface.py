@@ -203,6 +203,11 @@ class MainWindow(Gtk.ApplicationWindow):
         self.__columns_labels = self.__flags_labels + (
             "play", "play_time", "last_play", "score", "installed", "flags")
 
+        # Store filter widget references
+        self.__filters_keys = (
+            "favorite_switch", "unfavorite_switch", "multiplayer_switch",
+            "singleplayer_switch", "finish_switch", "unfinish_switch")
+
         # ------------------------------------
         #   Initialize icons
         # ------------------------------------
@@ -763,94 +768,38 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Toolbar - Game filter
         # ------------------------------------
 
-        self.popover_toolbar_filters = Gtk.Popover()
-
-        # Properties
-        self.popover_toolbar_filters.set_modal(True)
-
-        # ------------------------------------
-        #   Toolbar - Game filter menu
-        # ------------------------------------
-
-        self.frame_filters_favorite = Gtk.Frame()
-        self.listbox_filters_favorite = Gtk.ListBox()
-
-        self.widget_filters_favorite = ListBoxItem()
-        self.check_filter_favorite = Gtk.Switch()
-
-        self.widget_filters_unfavorite = ListBoxItem()
-        self.check_filter_unfavorite = Gtk.Switch()
-
-        self.frame_filters_multiplayer = Gtk.Frame()
-        self.listbox_filters_multiplayer = Gtk.ListBox()
-
-        self.widget_filters_multiplayer = ListBoxItem()
-        self.check_filter_multiplayer = Gtk.Switch()
-
-        self.widget_filters_singleplayer = ListBoxItem()
-        self.check_filter_singleplayer = Gtk.Switch()
-
-        self.frame_filters_finish = Gtk.Frame()
-        self.listbox_filters_finish = Gtk.ListBox()
-
-        self.widget_filters_finish = ListBoxItem()
-        self.check_filter_finish = Gtk.Switch()
-
-        self.widget_filters_unfinish = ListBoxItem()
-        self.check_filter_unfinish = Gtk.Switch()
-
-        self.item_filter_reset = Gtk.Button()
-
-        # Properties
-        self.listbox_filters_favorite.set_activate_on_single_click(True)
-        self.listbox_filters_favorite.set_selection_mode(
-            Gtk.SelectionMode.NONE)
-
-        self.widget_filters_favorite.set_widget(
-            self.check_filter_favorite)
-        self.widget_filters_favorite.set_option_label(
-            _("Favorite"))
-        self.check_filter_favorite.set_active(True)
-
-        self.widget_filters_unfavorite.set_widget(
-            self.check_filter_unfavorite)
-        self.widget_filters_unfavorite.set_option_label(
-            _("Unfavorite"))
-        self.check_filter_unfavorite.set_active(True)
-
-        self.listbox_filters_multiplayer.set_activate_on_single_click(True)
-        self.listbox_filters_multiplayer.set_selection_mode(
-            Gtk.SelectionMode.NONE)
-
-        self.widget_filters_multiplayer.set_widget(
-            self.check_filter_multiplayer)
-        self.widget_filters_multiplayer.set_option_label(
-            _("Multiplayer"))
-        self.check_filter_multiplayer.set_active(True)
-
-        self.widget_filters_singleplayer.set_widget(
-            self.check_filter_singleplayer)
-        self.widget_filters_singleplayer.set_option_label(
-            _("Singleplayer"))
-        self.check_filter_singleplayer.set_active(True)
-
-        self.listbox_filters_finish.set_activate_on_single_click(True)
-        self.listbox_filters_finish.set_selection_mode(
-            Gtk.SelectionMode.NONE)
-
-        self.widget_filters_finish.set_widget(
-            self.check_filter_finish)
-        self.widget_filters_finish.set_option_label(
-            _("Finish"))
-        self.check_filter_finish.set_active(True)
-
-        self.widget_filters_unfinish.set_widget(
-            self.check_filter_unfinish)
-        self.widget_filters_unfinish.set_option_label(
-            _("Unfinished"))
-        self.check_filter_unfinish.set_active(True)
-
-        self.item_filter_reset.set_label(_("Reset filters"))
+        self.popover_filters = GeodeGtk.Popover(
+            "filters",
+            GeodeGtk.Frame(
+                "favorite_frame",
+                GeodeGtk.ListBox(
+                    "favorite_flags",
+                    GeodeGtk.ListBoxCheckItem("favorite", _("Favorite")),
+                    GeodeGtk.ListBoxCheckItem("unfavorite", _("Unfavorite")),
+                ),
+            ),
+            GeodeGtk.Frame(
+                "multiplayer_frame",
+                GeodeGtk.ListBox(
+                    "multiplayer_flags",
+                    GeodeGtk.ListBoxCheckItem("multiplayer", _("Multiplayer")),
+                    GeodeGtk.ListBoxCheckItem("singleplayer",
+                                              _("Singleplayer")),
+                ),
+            ),
+            GeodeGtk.Frame(
+                "finish_frame",
+                GeodeGtk.ListBox(
+                    "finish_flags",
+                    GeodeGtk.ListBoxCheckItem("finish", _("Finish")),
+                    GeodeGtk.ListBoxCheckItem("unfinish", _("Unfinished")),
+                ),
+            ),
+            GeodeGtk.Button("reset", _("Reset filters")),
+            orientation=Gtk.Orientation.VERTICAL,
+            border_width=6,
+            spacing=6,
+        )
 
         # ------------------------------------
         #   Infobar
@@ -1401,39 +1350,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Toolbar - Filters menu
         self.toolbar_games.get_widget("filters").set_popover(
-            self.popover_toolbar_filters)
-
-        self.popover_toolbar_filters.add(self.grid_game_filters_popover)
-
-        self.grid_game_filters_popover.pack_start(
-            self.frame_filters_favorite, False, False, 0)
-        self.grid_game_filters_popover.pack_start(
-            self.frame_filters_multiplayer, False, False, 0)
-        self.grid_game_filters_popover.pack_start(
-            self.frame_filters_finish, False, False, 0)
-        self.grid_game_filters_popover.pack_start(
-            self.item_filter_reset, False, False, 0)
-
-        self.frame_filters_favorite.add(self.listbox_filters_favorite)
-
-        self.listbox_filters_favorite.add(
-            self.widget_filters_favorite)
-        self.listbox_filters_favorite.add(
-            self.widget_filters_unfavorite)
-
-        self.frame_filters_multiplayer.add(self.listbox_filters_multiplayer)
-
-        self.listbox_filters_multiplayer.add(
-            self.widget_filters_multiplayer)
-        self.listbox_filters_multiplayer.add(
-            self.widget_filters_singleplayer)
-
-        self.frame_filters_finish.add(self.listbox_filters_finish)
-
-        self.listbox_filters_finish.add(
-            self.widget_filters_finish)
-        self.listbox_filters_finish.add(
-            self.widget_filters_unfinish)
+            self.popover_filters)
 
         # ------------------------------------
         #   Games
@@ -1931,6 +1848,20 @@ class MainWindow(Gtk.ApplicationWindow):
                     },
                 ],
             },
+            self.popover_filters: {
+                "clicked": [
+                    {
+                        "method": self.filters_reset,
+                        "widget": "reset",
+                    }
+                ],
+                "state-set": [
+                    {
+                        "method": self.filters_update,
+                        "widget": widget,
+                    } for widget in self.__filters_keys
+                ],
+            },
             self.treeview_games: {
                 "cursor-changed": [
                     {
@@ -2097,32 +2028,6 @@ class MainWindow(Gtk.ApplicationWindow):
         del signals
 
         # ------------------------------------
-        #   Toolbar - Game
-        # ------------------------------------
-
-        self.listbox_filters_favorite.connect(
-            "row-activated", on_activate_listboxrow)
-        self.listbox_filters_multiplayer.connect(
-            "row-activated", on_activate_listboxrow)
-        self.listbox_filters_finish.connect(
-            "row-activated", on_activate_listboxrow)
-
-        self.check_filter_favorite.connect(
-            "state-set", self.filters_update)
-        self.check_filter_unfavorite.connect(
-            "state-set", self.filters_update)
-        self.check_filter_multiplayer.connect(
-            "state-set", self.filters_update)
-        self.check_filter_singleplayer.connect(
-            "state-set", self.filters_update)
-        self.check_filter_finish.connect(
-            "state-set", self.filters_update)
-        self.check_filter_unfinish.connect(
-            "state-set", self.filters_update)
-        self.item_filter_reset.connect(
-            "clicked", self.filters_reset)
-
-        # ------------------------------------
         #   Sidebar - Games
         # ------------------------------------
 
@@ -2258,16 +2163,6 @@ class MainWindow(Gtk.ApplicationWindow):
             self.menu_game.get_widget("rename"),
             self.menu_game.get_widget("screenshots"),
             self.menu_game.get_widget("thumbnail")
-        )
-
-        # Store filter widget references
-        self.__filters_storage = (
-            self.check_filter_favorite,
-            self.check_filter_unfavorite,
-            self.check_filter_multiplayer,
-            self.check_filter_singleplayer,
-            self.check_filter_finish,
-            self.check_filter_unfinish
         )
 
     def __init_shortcuts(self):
@@ -3008,18 +2903,10 @@ class MainWindow(Gtk.ApplicationWindow):
         if status is not None and type(status) is bool:
             widget.set_active(status)
 
-        widgets = (
-            self.check_filter_favorite,
-            self.check_filter_unfavorite,
-            self.check_filter_multiplayer,
-            self.check_filter_singleplayer,
-            self.check_filter_finish,
-            self.check_filter_unfinish
-        )
-
         active_filter = False
-        for switch in widgets:
-            active_filter = active_filter or not switch.get_active()
+        for widget in self.__filters_keys:
+            active_filter = (
+                active_filter or not self.popover_filters.get_active(widget))
 
         if active_filter:
             self.toolbar_games.get_widget("filters").set_style(
@@ -3046,8 +2933,8 @@ class MainWindow(Gtk.ApplicationWindow):
             Event which triggered this signal (Default: None)
         """
 
-        for switch in self.__filters_storage:
-            switch.set_active(True)
+        for widget in self.__filters_keys:
+            self.popover_filters.set_active(True, widget=widget)
 
         self.toolbar_games.get_widget("filters").set_style()
 
@@ -3114,24 +3001,14 @@ class MainWindow(Gtk.ApplicationWindow):
             # ------------------------------------
 
             flags = [
-                (
-                    self.check_filter_favorite.get_active(),
-                    self.check_filter_unfavorite.get_active(),
-                    game.favorite
-                ),
-                (
-                    self.check_filter_multiplayer.get_active(),
-                    self.check_filter_singleplayer.get_active(),
-                    game.multiplayer
-                ),
-                (
-                    self.check_filter_finish.get_active(),
-                    self.check_filter_unfinish.get_active(),
-                    game.finish
-                )
+                ("favorite", "unfavorite", game.favorite),
+                ("multiplayer", "singleplayer", game.multiplayer),
+                ("finish", "unfinish", game.finish)
             ]
 
             for first, second, status in flags:
+                first = self.popover_filters.get_active(f"{first}_switch")
+                second = self.popover_filters.get_active(f"{second}_switch")
 
                 # Check if one of the two checkbox is not active
                 if not (first and second):
