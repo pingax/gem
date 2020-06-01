@@ -322,9 +322,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.grid_consoles = Gtk.Box.new(Gtk.Orientation.VERTICAL, 0)
 
-        self.grid_game_filters_popover = Gtk.Box.new(
-            Gtk.Orientation.VERTICAL, 6)
-
         self.grid_games = Gtk.Box.new(Gtk.Orientation.VERTICAL, 0)
         self.grid_games_views = Gtk.Box.new(Gtk.Orientation.VERTICAL, 0)
         self.grid_games_placeholder = Gtk.Box.new(Gtk.Orientation.VERTICAL, 12)
@@ -335,10 +332,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.grid_sidebar_informations = Gtk.Grid()
 
         # Properties
-        self.grid_game_filters_popover.set_border_width(6)
-        self.grid_game_filters_popover.set_orientation(
-            Gtk.Orientation.VERTICAL)
-
         self.grid_games_views.drag_dest_set(
             Gtk.DestDefaults.MOTION | Gtk.DestDefaults.DROP, self.targets,
             Gdk.DragAction.COPY)
