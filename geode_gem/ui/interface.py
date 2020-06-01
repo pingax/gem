@@ -198,9 +198,9 @@ class MainWindow(Gtk.ApplicationWindow):
         self.__mednafen_status = self.check_mednafen()
 
         # Manage game flags
-        self.__flags_labels = ("favorite", "multiplayer", "finish")
+        self.__flags_keys = ("favorite", "multiplayer", "finish")
         # Manage treeview columns
-        self.__columns_labels = self.__flags_labels + (
+        self.__columns_keys = (
             "play", "play_time", "last_play", "score", "installed", "flags")
 
         # Store filter widget references
@@ -1503,7 +1503,7 @@ class MainWindow(Gtk.ApplicationWindow):
                         "args": (widget,),
                         "widget": widget,
                         "allow_block_signal": True,
-                    } for widget in self.__columns_labels
+                    } for widget in self.__flags_keys + self.__columns_keys
                 ],
                 "toggled": [
                     {
@@ -1570,7 +1570,7 @@ class MainWindow(Gtk.ApplicationWindow):
                         "args": (widget,),
                         "widget": widget,
                         "allow_block_signal": True,
-                    } for widget in self.__columns_labels
+                    } for widget in self.__flags_keys + self.__columns_keys
                 ],
                 "toggled": [
                     {
@@ -1637,7 +1637,7 @@ class MainWindow(Gtk.ApplicationWindow):
                         "method": self.update_game_flag,
                         "widget": widget,
                         "allow_block_signal": True,
-                    } for widget in self.__flags_labels
+                    } for widget in self.__flags_keys
                 ],
                 "toggled": [
                     {
@@ -1797,7 +1797,7 @@ class MainWindow(Gtk.ApplicationWindow):
                         "args": (widget,),
                         "widget": widget,
                         "allow_block_signal": True,
-                    } for widget in self.__flags_labels
+                    } for widget in self.__flags_keys
                 ] + [
                     {
                         "method": self.__on_game_score,
