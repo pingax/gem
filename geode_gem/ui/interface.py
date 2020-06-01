@@ -807,9 +807,12 @@ class MainWindow(Gtk.ApplicationWindow):
         self.hpaned_consoles = Gtk.Paned()
 
         self.scroll_consoles = Gtk.ScrolledWindow()
-        self.listbox_consoles = Gtk.ListBox()
 
-        self.label_consoles = Gtk.Label()
+        self.listbox_consoles = GeodeGtk.ListBox(
+            "consoles",
+            placeholder=_("No console available"),
+            selection_mode=Gtk.SelectionMode.SINGLE,
+        )
 
         # Properties
         self.hpaned_consoles.set_orientation(Gtk.Orientation.HORIZONTAL)
@@ -817,16 +820,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.scroll_consoles.set_min_content_width(200)
 
-        self.listbox_consoles.set_selection_mode(Gtk.SelectionMode.SINGLE)
         self.listbox_consoles.set_filter_func(self.__on_filter_consoles)
         self.listbox_consoles.set_sort_func(self.__on_sort_consoles)
-        self.listbox_consoles.set_placeholder(self.label_consoles)
-
-        self.label_consoles.set_text(_("No console available"))
-        self.label_consoles.set_single_line_mode(False)
-        self.label_consoles.set_line_wrap(True)
-        self.label_consoles.set_justify(Gtk.Justification.CENTER)
-        self.label_consoles.get_style_context().add_class("dim-label")
 
         # ------------------------------------
         #   Sidebar - Game
@@ -2363,8 +2358,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.show_all()
 
-        self.grid_game_filters_popover.show_all()
-
         self.infobar.show()
 
         self.grid_sidebar.show_all()
@@ -2372,7 +2365,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.scroll_sidebar_informations.show_all()
 
         self.grid_games_placeholder.show_all()
-        self.label_consoles.show_all()
 
         # Manage window template
         if self.use_classic_theme:
