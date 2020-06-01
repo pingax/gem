@@ -1006,32 +1006,25 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.scroll_games_grid = Gtk.ScrolledWindow()
 
-        self.model_games_grid = Gtk.ListStore(
-            GdkPixbuf.Pixbuf,   # Cover icon
-            str,                # Name
-            object              # Game object
+        self.iconview_games = GeodeGtk.IconView(
+            "games",
+            Gtk.ListStore(
+                GdkPixbuf.Pixbuf,   # Cover icon
+                str,                # Name
+                object              # Game object
+            ),
+            pixbuf_column=0,
+            text_column=1,
+            item_width=96,
+            spacing=6,
+            filterable=True,
+            has_tooltip=True,
+            sortable=True,
+            visible_func=self.filters_match,
         )
-        self.iconview_games = Gtk.IconView()
-
-        self.filter_games_grid = self.model_games_grid.filter_new()
-        self.sorted_games_grid = Gtk.TreeModelSort(
-            model=self.filter_games_grid)
 
         # Properties
         self.scroll_games_grid.set_no_show_all(True)
-
-        self.sorted_games_grid.set_sort_column_id(
-            Columns.Grid.NAME, Gtk.SortType.ASCENDING)
-
-        self.iconview_games.set_model(self.sorted_games_grid)
-        self.iconview_games.set_selection_mode(Gtk.SelectionMode.SINGLE)
-        self.iconview_games.set_has_tooltip(True)
-        self.iconview_games.set_column_spacing(0)
-        self.iconview_games.set_row_spacing(0)
-        self.iconview_games.set_item_width(96)
-        self.iconview_games.set_pixbuf_column(0)
-        self.iconview_games.set_text_column(1)
-        self.iconview_games.set_spacing(6)
 
         self.iconview_games.drag_source_set(
             Gdk.ModifierType.BUTTON1_MASK, self.targets, Gdk.DragAction.COPY)
@@ -2034,7 +2027,6 @@ class MainWindow(Gtk.ApplicationWindow):
         # ------------------------------------
 
         self.filter_games_list.set_visible_func(self.filters_match)
-        self.filter_games_grid.set_visible_func(self.filters_match)
 
     def __init_storage(self):
         """ Initialize reference and constant storages
@@ -2900,7 +2892,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.toolbar_games.get_widget("filters").set_style()
 
         self.filter_games_list.refilter()
-        self.filter_games_grid.refilter()
+        self.iconview_games.refilter()
 
         self.check_selection()
 
@@ -2943,7 +2935,7 @@ class MainWindow(Gtk.ApplicationWindow):
         if model == self.model_games_list:
             game = model.get_value(row, Columns.List.OBJECT)
 
-        elif model == self.model_games_grid:
+        elif model == self.iconview_games.list_model:
             game = model.get_value(row, Columns.Grid.OBJECT)
 
         try:
@@ -4191,7 +4183,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.scroll_games_placeholder.set_visible(True)
 
                     self.model_games_list.clear()
-                    self.model_games_grid.clear()
+                    self.iconview_games.clear()
 
                     self.set_informations()
 
@@ -4207,9 +4199,9 @@ class MainWindow(Gtk.ApplicationWindow):
             self.logger.debug("Clear games treeview content")
             self.model_games_list.clear()
 
-        if len(self.model_games_grid):
+        if len(self.iconview_games.get_model()):
             self.logger.debug("Clear games iconview content")
-            self.model_games_grid.clear()
+            self.iconview_games.clear()
 
     def append_consoles(self):
         """ Append to consoles combobox all available consoles
@@ -4889,7 +4881,7 @@ class MainWindow(Gtk.ApplicationWindow):
             if icon is not None:
                 row_data[Columns.Grid.THUMBNAIL] = icon
 
-            row_grid = self.model_games_grid.append(row_data)
+            row_grid = self.iconview_games.append(row_data)
 
             # ------------------------------------
             #   List mode
@@ -5222,13 +5214,10 @@ class MainWindow(Gtk.ApplicationWindow):
         # Grid view
         if self.toolbar_games.get_active("grid"):
             model = self.iconview_games.get_model()
-            items = self.iconview_games.get_selected_items()
 
-            if len(items) >= 1:
-                treeiter = model.get_iter(items[0])
-
-                if treeiter is not None:
-                    return model.get_value(treeiter, Columns.Grid.OBJECT)
+            treeiter = self.iconview_games.get_selected_treeiter()
+            if treeiter is not None:
+                return model.get_value(treeiter, Columns.Grid.OBJECT)
 
         # List view
         elif self.toolbar_games.get_active("list"):
@@ -5255,11 +5244,8 @@ class MainWindow(Gtk.ApplicationWindow):
             self.logger.debug(f"Synchronize selection for game '{game.id}'")
 
             if view == self.treeview_games:
-                viewiter = self.sorted_games_grid.convert_child_iter_to_iter(
-                    self.filter_games_grid.convert_child_iter_to_iter(
-                        self.game_path[game.id][2])[1])[1]
-
-                path = self.sorted_games_grid.get_path(viewiter)
+                path = self.iconview_games.get_path_from_treeiter(
+                    self.game_path[game.id][2])
 
                 if path is not None:
                     self.iconview_games.select_path(path)
@@ -5535,11 +5521,8 @@ class MainWindow(Gtk.ApplicationWindow):
                 model, treeiter = selection.get_selected()
 
         elif widget == self.iconview_games:
-            model = widget.get_model()
-            items = widget.get_selected_items()
-
-            if len(items):
-                treeiter = model.get_iter(items[0])
+            model = self.iconview_games.get_model()
+            treeiter = self.iconview_games.get_selected_item()
 
         return model, treeiter
 
@@ -5874,9 +5857,10 @@ class MainWindow(Gtk.ApplicationWindow):
                         new_name)
                     self.model_games_list[treepath][Columns.List.OBJECT] = game
 
-                    self.model_games_grid[gridpath][Columns.Grid.NAME] = str(
-                        new_name)
-                    self.model_games_grid[gridpath][Columns.Grid.OBJECT] = game
+                    self.iconview_games.set_value(
+                        gridpath, Columns.Grid.NAME, str(new_name))
+                    self.iconview_games.set_value(
+                        gridpath, Columns.Grid.OBJECT, game)
 
                     # Update game from database
                     self.api.update_game(game)
@@ -6081,7 +6065,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     if identifier in self.game_path:
                         self.model_games_list.remove(
                             self.game_path[identifier][1])
-                        self.model_games_grid.remove(
+                        self.iconview_games.remove(
                             self.game_path[identifier][2])
 
                         del self.game_path[identifier]
@@ -6266,7 +6250,8 @@ class MainWindow(Gtk.ApplicationWindow):
                 treepath = self.model_games_list.get_path(treepath)
 
                 self.model_games_list[treepath][Columns.List.OBJECT] = game
-                self.model_games_grid[gridpath][Columns.Grid.OBJECT] = game
+                self.iconview_games.set_value(
+                    gridpath, Columns.Grid.OBJECT, game)
 
                 self.set_informations()
 
@@ -6399,8 +6384,7 @@ class MainWindow(Gtk.ApplicationWindow):
             # Update game object in both games views storages
             self.model_games_list.set_value(
                 treepath, Columns.List.OBJECT, game)
-            self.model_games_grid.set_value(
-                gridpath, Columns.Grid.OBJECT, game)
+            self.iconview_games.set_value(gridpath, Columns.Grid.OBJECT, game)
 
             self.logger.debug(
                 f"Set {flag_name} status for '{game.id}' to {status}")
@@ -6462,8 +6446,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.model_games_list.set_value(
                 treepath, Columns.List.OBJECT, game)
 
-            self.model_games_grid.set_value(
-                gridpath, Columns.Grid.OBJECT, game)
+            self.iconview_games.set_value(gridpath, Columns.Grid.OBJECT, game)
 
             self.api.update_game(game)
 
@@ -6611,7 +6594,7 @@ class MainWindow(Gtk.ApplicationWindow):
                         if thumbnail_cache_path.exists():
                             remove(thumbnail_cache_path)
 
-                    self.model_games_grid.set_value(
+                    self.iconview_games.set_value(
                         treeiter[2], Columns.Grid.THUMBNAIL, large)
 
                     self.model_games_list.set_value(
@@ -7293,8 +7276,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     if game.id in self.game_path:
                         self.model_games_list.remove(
                             self.game_path[game.id][1])
-                        self.model_games_grid.remove(
-                            self.game_path[game.id][2])
+                        self.iconview_games.remove(self.game_path[game.id][2])
 
                         del self.game_path[game.id]
 
