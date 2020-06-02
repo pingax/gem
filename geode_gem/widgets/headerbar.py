@@ -18,7 +18,7 @@
 # ------------------------------------------------------------------------------
 
 # Geode
-from geode_gem.ui.widgets.common import GeodeGtkCommon
+from geode_gem.widgets.common import GeodeGtkCommon
 
 # GObject
 from gi.repository import Gtk

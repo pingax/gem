@@ -18,7 +18,7 @@
 # ------------------------------------------------------------------------------
 
 # Geode
-from geode_gem.ui.widgets.common import GeodeGtkCommon
+from geode_gem.widgets.common import GeodeGtkCommon
 
 # GObject
 from gi.repository import Gtk
@@ -28,7 +28,7 @@ from gi.repository import Gtk
 #   Class
 # ------------------------------------------------------------------------------
 
-class GeodeGtkPopover(GeodeGtkCommon, Gtk.Popover):
+class GeodeGtkFrame(GeodeGtkCommon, Gtk.Frame):
 
     def __init__(self, identifier, *args, **kwargs):
         """ Constructor
@@ -40,32 +40,12 @@ class GeodeGtkPopover(GeodeGtkCommon, Gtk.Popover):
         """
 
         GeodeGtkCommon.__init__(self, identifier)
-        Gtk.Popover.__init__(self)
-
-        self.inner_grid = Gtk.Box.new(
-            kwargs.get("orientation", Gtk.Orientation.HORIZONTAL),
-            kwargs.get("spacing", 0))
-
-        # ------------------------------------
-        #   Properties
-        # ------------------------------------
-
-        self.set_modal(kwargs.get("is_modal", True))
-
-        self.inner_grid.set_border_width(kwargs.get("border_width", 0))
-
-        # ------------------------------------
-        #   Packing
-        # ------------------------------------
+        Gtk.Frame.__init__(self)
 
         for element in args:
-            self.append(element)
+            self.add(element)
 
-        self.add(self.inner_grid)
-
-        self.inner_grid.show_all()
-
-    def append(self, child):
+    def add(self, child):
         """ Append a new child in container
 
         Parameters
@@ -76,4 +56,4 @@ class GeodeGtkPopover(GeodeGtkCommon, Gtk.Popover):
 
         self.append_widget(child)
 
-        self.inner_grid.add(child)
+        super().add(child)

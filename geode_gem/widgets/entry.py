@@ -18,7 +18,7 @@
 # ------------------------------------------------------------------------------
 
 # Geode
-from geode_gem.ui.widgets.common import GeodeGtkCommon
+from geode_gem.widgets.common import GeodeGtkCommon
 
 # GObject
 from gi.repository import Gtk
@@ -28,7 +28,7 @@ from gi.repository import Gtk
 #   Class
 # ------------------------------------------------------------------------------
 
-class GeodeGtkFrame(GeodeGtkCommon, Gtk.Frame):
+class GeodeGtkSearchEntry(GeodeGtkCommon, Gtk.SearchEntry):
 
     def __init__(self, identifier, *args, **kwargs):
         """ Constructor
@@ -40,20 +40,8 @@ class GeodeGtkFrame(GeodeGtkCommon, Gtk.Frame):
         """
 
         GeodeGtkCommon.__init__(self, identifier)
-        Gtk.Frame.__init__(self)
+        Gtk.SearchEntry.__init__(self)
 
-        for element in args:
-            self.add(element)
-
-    def add(self, child):
-        """ Append a new child in container
-
-        Parameters
-        ----------
-        child : Gtk.Widget
-            New widget to add into container
-        """
-
-        self.append_widget(child)
-
-        super().add(child)
+        # Properties
+        self.set_hexpand(kwargs.get("expand", False))
+        self.set_placeholder_text(kwargs.get("placeholder", str()))

@@ -47,8 +47,8 @@ from geode_gem.ui.utils import (magic_from_file,
 from geode_gem.ui.dialog import GeodeDialog
 from geode_gem.ui.widgets.game import GameThread
 from geode_gem.ui.widgets.script import ScriptThread
-from geode_gem.ui.widgets import GeodeGtk
 from geode_gem.ui.widgets.widgets import ListBoxItem, IconsGenerator
+from geode_gem.widgets import GeodeGtk
 
 # GObject
 try:
