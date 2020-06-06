@@ -78,6 +78,23 @@ class GeodeGtkTreeView(CommonView, Gtk.TreeView):
 
         self.set_model(self.inner_model)
 
+    def set_columns_order(self, *columns):
+        """ Set columns order based on column widget keys
+
+        Parameters
+        ----------
+        columns : list
+            Columns widget key list
+        """
+
+        for index, key in enumerate(columns):
+            if not self.has_widget(key):
+                continue
+
+            column_widget = self.get_widget(key)
+            self.remove_column(column_widget)
+            self.insert_column(column_widget, index)
+
 
 class GeodeGtkTreeViewColumn(GeodeGtkCommon, Gtk.TreeViewColumn):
 
