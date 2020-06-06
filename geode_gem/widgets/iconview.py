@@ -63,14 +63,6 @@ class GeodeGtkIconView(CommonView, Gtk.IconView):
         #   Settings
         # ------------------------------------
 
-        if self.is_sorterable:
-            self.inner_model.set_sort_column_id(
-                kwargs.get("sorting_column", self.get_text_column()),
-                kwargs.get("sorting_order", Gtk.SortType.ASCENDING))
-
-        elif self.is_filterable and "visible_func" in kwargs:
-            self.inner_model.set_visible_func(kwargs.get("visible_func"))
-
         self.set_model(self.inner_model)
 
     def get_selected_treeiter(self):

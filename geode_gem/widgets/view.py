@@ -51,7 +51,7 @@ class CommonView(GeodeGtkCommon):
         self.is_filterable = kwargs.get("filterable", False)
 
         # ------------------------------------
-        #   Settings
+        #   Models
         # ------------------------------------
 
         self.inner_model = self.list_model
@@ -61,6 +61,18 @@ class CommonView(GeodeGtkCommon):
 
         elif self.is_filterable:
             self.inner_model = self.filtered_model
+
+        # ------------------------------------
+        #   Settings
+        # ------------------------------------
+
+        if self.is_sorterable:
+            self.inner_model.set_sort_column_id(
+                kwargs.get("sorting_column", self.get_text_column()),
+                kwargs.get("sorting_order", Gtk.SortType.ASCENDING))
+
+        elif self.is_filterable and "visible_func" in kwargs:
+            self.inner_model.set_visible_func(kwargs.get("visible_func"))
 
     def append(self, data=None):
         """ Append a new item in main model
