@@ -70,6 +70,7 @@ class GeodeGtkTreeView(CommonView, Gtk.TreeView):
                 element.set_cell_data_func(cells[0], element.cell_data_func)
 
             self.append_widget(element)
+            self.append_column(element)
 
         # ------------------------------------
         #   Settings
