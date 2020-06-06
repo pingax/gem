@@ -104,6 +104,7 @@ class GeodeGtkTreeViewColumn(GeodeGtkCommon, Gtk.TreeViewColumn):
         if title is not None:
             self.set_title(title)
 
+        self.set_alignment(kwargs.get("alignment", 0.5))
         self.set_expand(kwargs.get("expand", False))
         self.set_fixed_width(kwargs.get("fixed_width", -1))
         self.set_max_width(kwargs.get("max_width", -1))
