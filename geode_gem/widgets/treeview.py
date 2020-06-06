@@ -111,7 +111,7 @@ class GeodeGtkTreeViewColumn(GeodeGtkCommon, Gtk.TreeViewColumn):
         self.set_resizable(kwargs.get("resizable", True))
         self.set_reorderable(kwargs.get("reorderable", True))
         self.set_sizing(
-            kwargs.get("sizing", Gtk.TreeViewColumnSizing.AUTOSIZE))
+            kwargs.get("sizing", Gtk.TreeViewColumnSizing.GROW_ONLY))
 
         # ------------------------------------
         #   Packing
