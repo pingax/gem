@@ -59,11 +59,16 @@ class GeodeGtkTreeView(CommonView, Gtk.TreeView):
         # ------------------------------------
 
         for element in args:
+            # Only manage TreeViewColumn objects
+            if not isinstance(element, Gtk.TreeViewColumn):
+                continue
+
             if self.is_sorterable and element.sort_column_id is not None:
                 element.set_sort_column_id(element.sort_column_id)
 
-                self.sorted_games_list.set_sort_func(
-                    element.sort_column_id, self.sort_func, element)
+                if self.sort_func is not None:
+                    self.sorted_model.set_sort_func(
+                        element.sort_column_id, self.sort_func, element)
 
             cells = element.get_cells()
             if cells and element.cell_data_func is not None:
