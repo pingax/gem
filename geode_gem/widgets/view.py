@@ -50,6 +50,13 @@ class CommonView(GeodeGtkCommon):
         self.is_sorterable = kwargs.get("sorterable", False)
         self.is_filterable = kwargs.get("filterable", False)
 
+        self.sorting_column = kwargs.get("sorting_column", None)
+        self.sorting_order = kwargs.get(
+            "sorting_order", Gtk.SortType.ASCENDING)
+
+        self.sort_func = kwargs.get("sort_func", None)
+        self.visible_func = kwargs.get("visible_func", None)
+
         # ------------------------------------
         #   Models
         # ------------------------------------
@@ -66,13 +73,12 @@ class CommonView(GeodeGtkCommon):
         #   Settings
         # ------------------------------------
 
-        if self.is_sorterable:
-            self.inner_model.set_sort_column_id(
-                kwargs.get("sorting_column", self.get_text_column()),
-                kwargs.get("sorting_order", Gtk.SortType.ASCENDING))
+        if self.is_sorterable and self.sorting_column is not None:
+            self.sorted_model.set_sort_column_id(
+                self.sorting_column, self.sorting_order)
 
-        elif self.is_filterable and "visible_func" in kwargs:
-            self.inner_model.set_visible_func(kwargs.get("visible_func"))
+        elif self.is_filterable and self.visible_func is not None:
+            self.filtered_model.set_visible_func(self.visible_func)
 
     def append(self, data=None):
         """ Append a new item in main model
@@ -158,21 +164,42 @@ class CommonView(GeodeGtkCommon):
 
         return None
 
-    def set_value(self, path, column, value):
+    def get_selected_treeiter(self):
+        """ Retrieve current selected item from icon view
+
+        Returns
+        -------
+        Gtk.TreeIter
+            Selected item, None otherwise
+        """
+
+        raise NotImplementedError()
+
+    def set_value(self, treeiter, column, value):
         """ Set new value for a specific entry from main model
 
         Parameters
         ----------
-        path : Gtk.TreePath
-            Entry path from main model
+        treeiter : Gtk.TreeIter
+            Entry iter from main model
         column : int
             Column index to update
         value : object
             New value to set
         """
 
-        if path in self.list_model and column in self.list_model[path]:
-            self.list_model[path][column] = value
+        self.list_model.set_value(treeiter, column, value)
+
+    def select_path_and_scroll(self, treepath, **kwargs):
+        """ Select a specific path from view and scroll to the related item
+
+        Parameters
+        ----------
+        treepath : Gtk.TreePath
+            Path value from stored model
+        """
+
+        raise NotImplementedError()
 
     def refilter(self):
         """ Refilter the filtered model if available
