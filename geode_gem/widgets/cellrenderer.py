@@ -55,7 +55,7 @@ class CommonCellRenderer(GeodeGtkCommon):
         self.column_index = kwargs.get("index", None)
 
         # Properties
-        self.set_alignment(*kwargs.get("alignment", (.5, .5)))
+        self.set_alignment(*kwargs.get("alignment", (0.5, 0.5)))
         self.set_padding(*kwargs.get("padding", (0, 0)))
 
 
@@ -87,4 +87,4 @@ class GeodeGtkCellRendererText(CommonCellRenderer, Gtk.CellRendererText):
         self.set_property(
             "editable", kwargs.get("editable", False))
         self.set_property(
-            "ellipsize", kwargs.get("ellipsize", Pango.EllipsizeMode.END))
+            "ellipsize", kwargs.get("ellipsize", Pango.EllipsizeMode.NONE))
