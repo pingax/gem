@@ -66,12 +66,7 @@ class GeodeGtkIconView(CommonView, Gtk.IconView):
         self.set_model(self.inner_model)
 
     def get_selected_treeiter(self):
-        """ Retrieve current selected item from icon view
-
-        Returns
-        -------
-        Gtk.TreeIter
-            Selected item, None otherwise
+        """ See geode_gem.widgets.view.CommonView.get_selected_treeiter
         """
 
         items_list = self.get_selected_items()
@@ -80,3 +75,14 @@ class GeodeGtkIconView(CommonView, Gtk.IconView):
             return self.inner_model.get_iter(items_list[0])
 
         return None
+
+    def select_path_and_scroll(self, treepath, **kwargs):
+        """ See geode_gem.widgets.view.CommonView.select_path_and_scroll
+        """
+
+        self.select_path(treepath)
+
+        self.scroll_to_path(treepath,
+                            kwargs.get("use_align", True),
+                            kwargs.get("row_align", 0.5),
+                            kwargs.get("col_align", 0.5))

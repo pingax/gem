@@ -78,6 +78,29 @@ class GeodeGtkTreeView(CommonView, Gtk.TreeView):
 
         self.set_model(self.inner_model)
 
+    def get_selected_treeiter(self):
+        """ See geode_gem.widgets.view.CommonView.get_selected_treeiter
+        """
+
+        selection = self.get_selection()
+
+        if selection is not None:
+            return selection.get_selected()[1]
+
+        return None
+
+    def select_path_and_scroll(self, treepath, **kwargs):
+        """ See geode_gem.widgets.view.CommonView.select_path_and_scroll
+        """
+
+        self.set_cursor(treepath, None, kwargs.get("start_editing", False))
+
+        self.scroll_to_cell(treepath,
+                            None,
+                            kwargs.get("use_align", True),
+                            kwargs.get("row_align", 0.5),
+                            kwargs.get("col_align", 0.5))
+
     def set_columns_order(self, *columns):
         """ Set columns order based on column widget keys
 
