@@ -183,19 +183,26 @@ class GeodeGtkCommon():
             self.get_widget(widget).set_sensitive(sensitive)
 
 
-    def set_style(self, style=None):
+    def set_style(self, style=None, widget=None):
         """ Define a specific class for current button
 
         Parameters
         ----------
         style : str, optional
             Class style name
+        widget : str, optionnal
+            Internal widget keys, contains in self.inner_widgets
         """
 
+        if widget is not None and self.has_widget(widget):
+            context = self.get_widget(widget).get_style_context()
+        else:
+            context = self.get_style_context()
+
         if self.current_style is not None and not self.current_style == style:
-            self.get_style_context().remove_class(self.current_style)
+            context.remove_class(self.current_style)
 
         if style is not None and not self.current_style == style:
-            self.get_style_context().add_class(style)
+            context.add_class(style)
 
         self.current_style = style
