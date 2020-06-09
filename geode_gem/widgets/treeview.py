@@ -118,6 +118,15 @@ class GeodeGtkTreeView(CommonView, Gtk.TreeView):
             self.remove_column(column_widget)
             self.insert_column(column_widget, index)
 
+    def unselect_all(self):
+        """ Unselect any selected row from treeview widget
+        """
+
+        selection = self.get_selection()
+
+        if selection is not None:
+            selection.unselect_all()
+
 
 class GeodeGtkTreeViewColumn(GeodeGtkCommon, Gtk.TreeViewColumn):
 
