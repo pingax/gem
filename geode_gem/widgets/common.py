@@ -18,6 +18,9 @@
 # ------------------------------------------------------------------------------
 
 # GObject
+from gi import require_version
+require_version("Gtk", "3.0")
+
 from gi.repository import Gtk
 
 
@@ -49,14 +52,19 @@ class GeodeGtkCommon():
         if isinstance(self.inner_grid, Gtk.Container):
             self.inner_grid.show_all()
 
-    def append_widget(self, widget):
+    def append_widget(self, widget, identifier=None):
         """ Check if a specific widget exists in internal container
 
         Parameters
         ----------
         widget : Gtk.Widget
             Gtk object instance
+        identifier : str, optional
+            Set a specific identifier to specified widget
         """
+
+        if identifier is not None:
+            setattr(widget, "identifier", identifier)
 
         if hasattr(widget, "identifier") and widget.identifier is not None:
             self.inner_widgets[widget.identifier] = widget
