@@ -3072,7 +3072,7 @@ class MainWindow(Gtk.ApplicationWindow):
         if not self.use_classic_theme:
             self.headerbar.set_subtitle(" - ".join(texts))
 
-    def set_message(self, title, message, icon="dialog-error", popup=True):
+    def set_message(self, title, message, icon=Icons.ERROR, popup=True):
         """ Open a message dialog
 
         This function open a dialog to inform user and write message to logger
@@ -3085,14 +3085,14 @@ class MainWindow(Gtk.ApplicationWindow):
         message : str
             Dialog message
         icon : str, optional
-            Dialog icon, set also the logging mode (Default: dialog-error)
+            Dialog icon, set also the logging mode (Default: Icons.ERROR)
         popup : bool, optional
             Show a popup dialog with specified message (Default: True)
         """
 
-        if icon == Icons.ERROR:
+        if icon.startswith(Icons.ERROR):
             self.logger.error(message)
-        elif icon == Icons.WARNING:
+        elif icon.startswith(Icons.WARNING):
             self.logger.warning(message)
         else:
             self.logger.info(message)
