@@ -1552,7 +1552,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     {"method": self.__on_game_menu_show},
                 ],
                 "drag-data-get": [
-                    {"method": self.__on_dnd_send_data},
+                    {"method": self.on_dnd_send_data},
                 ],
                 "query-tooltip": [
                     {"method": self.__on_selected_game_tooltip},
@@ -1575,7 +1575,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     {"method": self.__on_game_menu_show},
                 ],
                 "drag-data-get": [
-                    {"method": self.__on_dnd_send_data},
+                    {"method": self.on_dnd_send_data},
                 ],
                 "query-tooltip": [
                     {"method": self.__on_selected_game_tooltip},
@@ -1614,6 +1614,11 @@ class MainWindow(Gtk.ApplicationWindow):
                         "widget": "entry",
                     },
                 ],
+            },
+            self.view_sidebar_screenshot: {
+                "drag-data-get": [
+                    {"method": self.on_dnd_send_data},
+                ]
             },
             self.toolbar_games: {
                 "clicked": [
@@ -1699,20 +1704,6 @@ class MainWindow(Gtk.ApplicationWindow):
                             f"{list(metadata.values())}")
 
         del signals
-
-        # ------------------------------------
-        #   Sidebar - Games
-        # ------------------------------------
-
-        self.view_sidebar_screenshot.connect(
-            "drag-data-get", self.__on_dnd_send_data)
-
-        # ------------------------------------
-        #   Placeholder - Games
-        # ------------------------------------
-
-        # self.grid_games_views.connect(
-        #     "drag-data-received", self.__on_dnd_received_data)
 
     def __init_storage(self):
         """ Initialize reference and constant storages
@@ -6254,7 +6245,7 @@ class MainWindow(Gtk.ApplicationWindow):
             except GLib.Error:
                 self.logger.exception("Cannot open files manager")
 
-    def __on_dnd_send_data(self, widget, context, data, info, time):
+    def on_dnd_send_data(self, widget, context, data, info, time):
         """ Set rom file path uri
 
         This function send rom file path uri when user drag a game from gem and
@@ -6285,7 +6276,7 @@ class MainWindow(Gtk.ApplicationWindow):
             if self.sidebar_image is not None:
                 data.set_uris(["file://%s" % self.sidebar_image])
 
-    def __on_dnd_received_data(self, widget, context, x, y, data, info, delta):
+    def on_dnd_received_data(self, widget, context, x, y, data, info, delta):
         """ Manage drag & drop acquisition
 
         This function receive drag files and install them into the correct
