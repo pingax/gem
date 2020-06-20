@@ -2600,7 +2600,11 @@ class MainWindow(Gtk.ApplicationWindow):
 
         found = False
 
-        for element in [game.name].extend(game.tags):
+        tags = [game.name]
+        if game.tags:
+            tags.extend(game.tags)
+
+        for element in tags:
 
             # Regex match game.name
             if match(fr"{text}$", game.name) is not None:
