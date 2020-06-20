@@ -41,12 +41,13 @@ from geode_gem.ui.utils import (magic_from_file,
                                 on_change_theme,
                                 string_from_date,
                                 string_from_time,
-                                replace_for_markup,
-                                on_activate_listboxrow)
-from geode_gem.ui.dialog import GeodeDialog
+                                replace_for_markup)
 from geode_gem.ui.widgets.game import GameThread
 from geode_gem.ui.widgets.script import ScriptThread
-from geode_gem.ui.widgets.widgets import ListBoxItem, IconsGenerator
+from geode_gem.ui.widgets.widgets import IconsGenerator
+
+from geode_gem.ui import GeodeGEM
+from geode_gem.ui.dialog import GeodeDialog
 from geode_gem.widgets import GeodeGtk
 
 # GObject
@@ -67,7 +68,7 @@ from subprocess import PIPE, Popen, STDOUT
 from random import shuffle
 
 # Regex
-from re import match, IGNORECASE
+from re import match
 
 # System
 from sys import version_info
@@ -223,6 +224,23 @@ class MainWindow(Gtk.ApplicationWindow):
             nostarred=Icons.NO_STARRED,
             starred=Icons.STARRED)
 
+        self.treeview_icons = {
+            Columns.List.FAVORITE:
+                (Icons.Symbolic.FAVORITE, None),
+            Columns.List.MULTIPLAYER:
+                (Icons.Symbolic.USERS, Icons.Symbolic.AVATAR),
+            Columns.List.FINISH:
+                (Icons.Symbolic.WEATHER_CLEAR, None),
+            Columns.List.SCORE:
+                (Icons.Symbolic.STARRED, Icons.Symbolic.NO_STARRED),
+            Columns.List.PARAMETER:
+                (Icons.Symbolic.PROPERTIES, None),
+            Columns.List.SCREENSHOT:
+                (Icons.Symbolic.CAMERA, None),
+            Columns.List.SAVESTATE:
+                (Icons.Symbolic.FLOPPY, None),
+        }
+
         # ------------------------------------
         #   Shortcuts
         # ------------------------------------
@@ -322,8 +340,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.grid_consoles = Gtk.Box.new(Gtk.Orientation.VERTICAL, 0)
 
         self.grid_games = Gtk.Box.new(Gtk.Orientation.VERTICAL, 0)
-        self.grid_games_views = Gtk.Box.new(Gtk.Orientation.VERTICAL, 0)
-        self.grid_games_placeholder = Gtk.Box.new(Gtk.Orientation.VERTICAL, 12)
 
         self.grid_sidebar = Gtk.Grid()
         self.grid_sidebar_content = Gtk.Box.new(Gtk.Orientation.VERTICAL, 6)
@@ -331,12 +347,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.grid_sidebar_informations = Gtk.Grid()
 
         # Properties
-        self.grid_games_views.drag_dest_set(
-            Gtk.DestDefaults.MOTION | Gtk.DestDefaults.DROP, self.targets,
-            Gdk.DragAction.COPY)
-
-        self.grid_games_placeholder.set_border_width(18)
-
         self.grid_sidebar.set_border_width(12)
         self.grid_sidebar.set_hexpand(True)
         self.grid_sidebar.set_vexpand(True)
@@ -821,6 +831,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.listbox_consoles.set_filter_func(self.__on_filter_consoles)
         self.listbox_consoles.set_sort_func(self.__on_sort_consoles)
+        self.listbox_consoles.set_header_func(self.__on_header_consoles)
 
         # ------------------------------------
         #   Sidebar - Game
@@ -976,240 +987,10 @@ class MainWindow(Gtk.ApplicationWindow):
         self.label_sidebar_score.get_style_context().add_class("dim-label")
 
         # ------------------------------------
-        #   Games - Placeholder
+        #   Games - Views
         # ------------------------------------
 
-        self.scroll_games_placeholder = Gtk.ScrolledWindow()
-
-        self.image_game_placeholder = Gtk.Image()
-        self.label_game_placeholder = Gtk.Label()
-
-        # Properties
-        self.scroll_games_placeholder.set_no_show_all(True)
-
-        self.image_game_placeholder.set_from_icon_name(
-            Icons.Symbolic.GAMING, Gtk.IconSize.DIALOG)
-        self.image_game_placeholder.set_pixel_size(256)
-        self.image_game_placeholder.set_halign(Gtk.Align.CENTER)
-        self.image_game_placeholder.set_valign(Gtk.Align.END)
-        self.image_game_placeholder.get_style_context().add_class("dim-label")
-
-        self.label_game_placeholder.set_label(
-            _("Start to play by drag & drop some files into interface"))
-        self.label_game_placeholder.set_halign(Gtk.Align.CENTER)
-        self.label_game_placeholder.set_valign(Gtk.Align.START)
-
-        # ------------------------------------
-        #   Games - Treeview / Grid mode
-        # ------------------------------------
-
-        self.scroll_games_grid = Gtk.ScrolledWindow()
-
-        self.iconview_games = GeodeGtk.IconView(
-            "games",
-            Gtk.ListStore(
-                GdkPixbuf.Pixbuf,   # Cover icon
-                str,                # Name
-                object              # Game object
-            ),
-            pixbuf_column=0,
-            text_column=1,
-            item_width=96,
-            spacing=6,
-            filterable=True,
-            has_tooltip=True,
-            sorterable=False,
-            sorting_column=1,
-            visible_func=self.filters_match,
-        )
-
-        # Properties
-        self.scroll_games_grid.set_no_show_all(True)
-
-        self.iconview_games.drag_source_set(
-            Gdk.ModifierType.BUTTON1_MASK, self.targets, Gdk.DragAction.COPY)
-
-        # ------------------------------------
-        #   Games - Treeview / List mode
-        # ------------------------------------
-
-        self.scroll_games_list = Gtk.ScrolledWindow()
-
-        self.treeview_games = GeodeGtk.TreeView(
-            "games",
-            Gtk.ListStore(
-                GdkPixbuf.Pixbuf,   # Favorite icon
-                GdkPixbuf.Pixbuf,   # Multiplayer icon
-                GdkPixbuf.Pixbuf,   # Finish icon
-                str,                # Name
-                int,                # Played
-                str,                # Last play
-                str,                # Last time play
-                str,                # Time play
-                int,                # Score
-                str,                # Installed
-                GdkPixbuf.Pixbuf,   # Custom parameters
-                GdkPixbuf.Pixbuf,   # Screenshots
-                GdkPixbuf.Pixbuf,   # Save states
-                object,             # Game object
-                GdkPixbuf.Pixbuf    # Thumbnail
-            ),
-            GeodeGtk.TreeViewColumn(
-                "favorite",
-                None,
-                GeodeGtk.CellRendererPixbuf(
-                    "cell_favorite",
-                    index=Columns.List.FAVORITE,
-                    padding=(4, 0),
-                ),
-                resizable=False,
-                sizing=Gtk.TreeViewColumnSizing.FIXED,
-                sort_column_id=Columns.List.FAVORITE,
-            ),
-            GeodeGtk.TreeViewColumn(
-                "multiplayer",
-                None,
-                GeodeGtk.CellRendererPixbuf(
-                    "cell_multiplayer",
-                    index=Columns.List.MULTIPLAYER,
-                    padding=(4, 0),
-                ),
-                resizable=False,
-                sizing=Gtk.TreeViewColumnSizing.FIXED,
-                sort_column_id=Columns.List.MULTIPLAYER,
-            ),
-            GeodeGtk.TreeViewColumn(
-                "finish",
-                None,
-                GeodeGtk.CellRendererPixbuf(
-                    "cell_finish",
-                    index=Columns.List.FINISH,
-                    padding=(4, 0),
-                ),
-                resizable=False,
-                sizing=Gtk.TreeViewColumnSizing.FIXED,
-                sort_column_id=Columns.List.FINISH,
-            ),
-            GeodeGtk.TreeViewColumn(
-                "name",
-                _("Name"),
-                GeodeGtk.CellRendererPixbuf(
-                    "cell_thumbnail",
-                    ellipsize=Pango.EllipsizeMode.END,
-                    index=Columns.List.THUMBNAIL,
-                    padding=(2, 0),
-                ),
-                GeodeGtk.CellRendererText(
-                    "cell_name",
-                    alignment=(0, 0.5),
-                    ellipsize=Pango.EllipsizeMode.END,
-                    expand=True,
-                    index=Columns.List.NAME,
-                    padding=(4, 4),
-                ),
-                alignment=0,
-                expand=True,
-                min_width=100,
-                fixed_width=300,
-                sort_column_id=Columns.List.NAME,
-            ),
-            GeodeGtk.TreeViewColumn(
-                "play",
-                _("Launch"),
-                GeodeGtk.CellRendererText(
-                    "cell_play",
-                    index=Columns.List.PLAYED,
-                    padding=(4, 4),
-                ),
-                sort_column_id=Columns.List.PLAYED,
-            ),
-            GeodeGtk.TreeViewColumn(
-                "last_play",
-                _("Last launch"),
-                GeodeGtk.CellRendererText(
-                    "cell_last_play",
-                    alignment=(0, .5),
-                    index=Columns.List.LAST_PLAY,
-                    padding=(4, 0),
-                ),
-                GeodeGtk.CellRendererText(
-                    "cell_last_launch_time",
-                    alignment=(1, .5),
-                    index=Columns.List.LAST_TIME_PLAY,
-                    padding=(4, 0),
-                ),
-                sort_column_id=Columns.List.LAST_PLAY,
-            ),
-            GeodeGtk.TreeViewColumn(
-                "play_time",
-                _("Play time"),
-                GeodeGtk.CellRendererText(
-                    "cell_last_launch",
-                    index=Columns.List.TIME_PLAY,
-                    padding=(4, 0),
-                ),
-                sort_column_id=Columns.List.TIME_PLAY,
-            ),
-            GeodeGtk.TreeViewColumn(
-                "score",
-                _("Score"),
-                *[
-                    GeodeGtk.CellRendererPixbuf(
-                        f"cell_score_{index}",
-                        expand=True,
-                        padding=(2, 0),
-                    ) for index in range(1, 6)
-                ],
-                cell_data_func=self.__on_update_game_columns,
-                sort_column_id=Columns.List.SCORE,
-            ),
-            GeodeGtk.TreeViewColumn(
-                "installed",
-                _("Installed"),
-                GeodeGtk.CellRendererText(
-                    "cell_installed",
-                    index=Columns.List.INSTALLED,
-                    padding=(4, 0),
-                ),
-                sort_column_id=Columns.List.INSTALLED,
-            ),
-            GeodeGtk.TreeViewColumn(
-                "flags",
-                _("Flags"),
-                GeodeGtk.CellRendererPixbuf(
-                    "cell_customize",
-                    expand=True,
-                    index=Columns.List.PARAMETER,
-                    padding=(2, 0),
-                ),
-                GeodeGtk.CellRendererPixbuf(
-                    "cell_screenshot",
-                    expand=True,
-                    index=Columns.List.SCREENSHOT,
-                    padding=(2, 0),
-                ),
-                GeodeGtk.CellRendererPixbuf(
-                    "cell_savestate",
-                    expand=True,
-                    index=Columns.List.SAVESTATE,
-                    padding=(2, 0),
-                ),
-            ),
-            enable_search=False,
-            filterable=True,
-            has_tooltip=True,
-            search_column=Columns.List.NAME,
-            show_expanders=False,
-            sorterable=True,
-            sort_func=self.__on_sort_games,
-            visible_func=self.filters_match,
-        )
-
-        # Properties
-        self.scroll_games_list.set_no_show_all(True)
-
-        self.treeview_games.drag_source_set(
-            Gdk.ModifierType.BUTTON1_MASK, self.targets, Gdk.DragAction.COPY)
+        self.views_games = GeodeGEM.Views(interface=self)
 
         # ------------------------------------
         #   Statusbar
@@ -1272,7 +1053,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.grid_games.pack_start(self.toolbar_games, False, False, 0)
         self.grid_games.pack_start(self.infobar, False, False, 0)
-        self.grid_games.pack_start(self.grid_games_views, True, True, 0)
+        self.grid_games.pack_start(self.views_games, True, True, 0)
 
         self.vpaned_games.pack1(self.hpaned_games, True, True)
 
@@ -1332,28 +1113,6 @@ class MainWindow(Gtk.ApplicationWindow):
             self.image_sidebar_score_3, False, False, 0)
         self.grid_sidebar_score.pack_start(
             self.image_sidebar_score_4, False, False, 0)
-
-        # Games views
-        self.grid_games_views.pack_start(
-            self.scroll_games_placeholder, True, True, 0)
-        self.grid_games_views.pack_start(
-            self.scroll_games_list, True, True, 0)
-        self.grid_games_views.pack_start(
-            self.scroll_games_grid, True, True, 0)
-
-        # Games placeholder
-        self.scroll_games_placeholder.add(self.grid_games_placeholder)
-
-        self.grid_games_placeholder.pack_start(
-            self.image_game_placeholder, True, True, 0)
-        self.grid_games_placeholder.pack_start(
-            self.label_game_placeholder, True, True, 0)
-
-        # Games treeview / grid
-        self.scroll_games_grid.add(self.iconview_games)
-
-        # Games treeview / list
-        self.scroll_games_list.add(self.treeview_games)
 
         self.add(self.grid)
 
@@ -1776,7 +1535,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     } for widget in self.__filters_keys
                 ],
             },
-            self.treeview_games: {
+            self.views_games.treeview: {
                 "cursor-changed": [
                     {
                         "method": self.__on_selected_game,
@@ -1799,7 +1558,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     {"method": self.__on_selected_game_tooltip},
                 ],
             },
-            self.iconview_games: {
+            self.views_games.iconview: {
                 "selection-changed": [
                     {
                         "method": self.__on_selected_game,
@@ -1934,7 +1693,7 @@ class MainWindow(Gtk.ApplicationWindow):
                                 f"Associate signal identifier '{signal}' to "
                                 f"{instance.identifier}/{widget.identifier}")
 
-                    except:
+                    except Exception:
                         self.logger.exception(
                             f"Cannot connect signal for {widget}: "
                             f"{list(metadata.values())}")
@@ -1952,8 +1711,8 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Placeholder - Games
         # ------------------------------------
 
-        self.grid_games_views.connect(
-            "drag-data-received", self.__on_dnd_received_data)
+        # self.grid_games_views.connect(
+        #     "drag-data-received", self.__on_dnd_received_data)
 
     def __init_storage(self):
         """ Initialize reference and constant storages
@@ -2014,7 +1773,6 @@ class MainWindow(Gtk.ApplicationWindow):
             "favorite", "multiplayer", "finish", "name", "play", "last_play",
             "play_time", "score", "installed", "flags",
         )
-
 
         # Store widgets references which can change sensitive state
         self.__widgets_storage = (
@@ -2152,10 +1910,14 @@ class MainWindow(Gtk.ApplicationWindow):
             self.menubar_view.set_active(True, widget="grid")
             self.toolbar_games.get_widget("views").switch_to("grid")
 
+            self.views_games.set_view(GeodeGEM.Views.Name.GRID)
+
         else:
             self.headerbar.set_active(True, widget="list")
             self.menubar_view.set_active(True, widget="list")
             self.toolbar_games.get_widget("views").switch_to("list")
+
+            self.views_games.set_view(GeodeGEM.Views.Name.LIST)
 
         # ------------------------------------
         #   Toolbar design
@@ -2185,7 +1947,7 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Treeview columns order
         # ------------------------------------
 
-        self.treeview_games.set_columns_order(*self.columns_order)
+        self.views_games.treeview.set_columns_order(*self.columns_order)
 
         # ------------------------------------
         #   Treeview columns sorting
@@ -2203,7 +1965,8 @@ class MainWindow(Gtk.ApplicationWindow):
             if self.load_sort_column_order == "desc":
                 order = Gtk.SortType.DESCENDING
 
-        self.treeview_games.sorted_model.set_sort_column_id(column, order)
+        self.views_games.treeview.sorted_model.set_sort_column_id(
+            column, order)
 
         # ------------------------------------
         #   Window size
@@ -2259,8 +2022,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.scroll_sidebar.show_all()
         self.scroll_sidebar_informations.show_all()
 
-        self.grid_games_placeholder.show_all()
-
         # Manage window template
         if self.use_classic_theme:
             self.menubar.show_all()
@@ -2296,11 +2057,6 @@ class MainWindow(Gtk.ApplicationWindow):
             self.statusbar.show()
         else:
             self.statusbar.hide()
-
-        # Manage games views
-        self.scroll_games_list.set_visible(False)
-        self.scroll_games_grid.set_visible(False)
-        self.scroll_games_placeholder.set_visible(True)
 
     def __start_interface(self):
         """ Load data and start interface
@@ -2342,8 +2098,6 @@ class MainWindow(Gtk.ApplicationWindow):
                 # Check if current identifier exists
                 if console in self.api.consoles.keys() \
                    and console in self.consoles_iter.keys():
-                    self.treeview_games.set_visible(True)
-
                     row = self.consoles_iter[console]
 
                     # Set console combobox active iter
@@ -2444,7 +2198,8 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Last sorted column
         # ------------------------------------
 
-        column, order = self.treeview_games.sorted_model.get_sort_column_id()
+        column, order = \
+            self.views_games.treeview.sorted_model.get_sort_column_id()
 
         if column is not None and order is not None:
 
@@ -2465,7 +2220,7 @@ class MainWindow(Gtk.ApplicationWindow):
         # ------------------------------------
 
         columns = [column.identifier
-                   for column in self.treeview_games.get_columns()]
+                   for column in self.views_games.treeview.get_columns()]
 
         self.config.modify("columns", "order", ':'.join(columns))
 
@@ -2679,7 +2434,7 @@ class MainWindow(Gtk.ApplicationWindow):
         # ------------------------------------
 
         # Games - Treeview lines
-        self.treeview_games.set_grid_lines(
+        self.views_games.treeview.set_grid_lines(
             self.__treeview_lines.get(
                 self.treeview_lines, Gtk.TreeViewGridLines.NONE))
 
@@ -2687,13 +2442,13 @@ class MainWindow(Gtk.ApplicationWindow):
         for key in self.__columns_storage:
             visibility = self.config.getboolean("columns", key, fallback=True)
 
-            self.treeview_games.get_widget(key).set_visible(visibility)
+            self.views_games.treeview.get_widget(key).set_visible(visibility)
 
             if key in self.menubar_view.inner_widgets.keys():
                 self.headerbar.set_active(visibility, widget=key)
                 self.menubar_view.set_active(visibility, widget=key)
 
-        self.treeview_games.columns_autosize()
+        self.views_games.treeview.columns_autosize()
 
         # ------------------------------------
         #   Console
@@ -2730,7 +2485,7 @@ class MainWindow(Gtk.ApplicationWindow):
         if selected_row is not None:
             self.scroll_sidebar.set_visible(self.show_sidebar)
 
-            self.__on_selected_console(None, selected_row, True)
+            self.listbox_consoles.select_row(selected_row)
 
         # Manage default widgets visibility when no console selected
         else:
@@ -2786,14 +2541,12 @@ class MainWindow(Gtk.ApplicationWindow):
             self.toolbar_games.set_style("suggested-action", widget="filters")
 
         # Refilter games views to update visible rows
-        self.treeview_games.refilter()
-        self.iconview_games.refilter()
+        self.views_games.refilter()
 
         self.check_selection()
 
         # Update games length in headerbar subtitle
-        self.set_informations_headerbar(self.__on_retrieve_selected_game(),
-                                        self.__on_retrieve_selected_console())
+        self.set_informations_headerbar()
 
     def filters_reset(self, widget=None, events=None):
         """ Reset game filters
@@ -2825,72 +2578,56 @@ class MainWindow(Gtk.ApplicationWindow):
             Treeview current row
         """
 
-        found = False
-
         # Get game object from treeview
-        if model == self.treeview_games.list_model:
+        if model == self.views_games.treeview.list_model:
             game = model.get_value(row, Columns.List.OBJECT)
 
-        elif model == self.iconview_games.list_model:
+        elif model == self.views_games.iconview.list_model:
             game = model.get_value(row, Columns.Grid.OBJECT)
 
-        try:
-            text = self.toolbar_games.get_widget("entry").get_text()
+        if not game:
+            return False
 
-            # No filter
-            if not text:
+        text = self.toolbar_games.get_widget("entry").get_text()
+
+        # No filter
+        if not text:
+            return True
+
+        # ------------------------------------
+        #   Check filter
+        # ------------------------------------
+
+        found = False
+
+        for element in [game.name].extend(game.tags):
+
+            # Regex match game.name
+            if match(fr"{text}$", game.name) is not None:
                 found = True
 
-            # ------------------------------------
-            #   Check filter
-            # ------------------------------------
+            # Lowercase filter match lowercase game.name
+            if text.lower() in game.name.lower():
+                found = True
 
-            # Check game name first
-            if game.name:
+        # ------------------------------------
+        #   Set status
+        # ------------------------------------
 
-                # Regex match game.name
-                if match(fr"{text}$", game.name) is not None:
-                    found = True
+        flags = [
+            ("favorite", "unfavorite", game.favorite),
+            ("multiplayer", "singleplayer", game.multiplayer),
+            ("finish", "unfinish", game.finish)
+        ]
 
-                # Lowercase filter match lowercase game.name
-                if text.lower() in game.name.lower():
-                    found = True
+        for first, second, status in flags:
+            first = self.popover_filters.get_active(f"{first}_switch")
+            second = self.popover_filters.get_active(f"{second}_switch")
 
-            # Check game tags second
-            if game.tags and not found:
-
-                for tag in game.tags:
-
-                    # Regex match one of game tag
-                    if match(fr"{text}$", tag) is not None:
-                        found = True
-
-                    # Lowercase filter match lowercase game.name
-                    if text.lower() in tag.lower():
-                        found = True
-
-            # ------------------------------------
-            #   Set status
-            # ------------------------------------
-
-            flags = [
-                ("favorite", "unfavorite", game.favorite),
-                ("multiplayer", "singleplayer", game.multiplayer),
-                ("finish", "unfinish", game.finish)
-            ]
-
-            for first, second, status in flags:
-                first = self.popover_filters.get_active(f"{first}_switch")
-                second = self.popover_filters.get_active(f"{second}_switch")
-
-                # Check if one of the two checkbox is not active
-                if not (first and second):
-                    found = found and (
-                        (status and first) or (not status and second))
-
-        except Exception as error:
-            self.logger.error(f"An error occurs during filters_match "
-                              f"({type(model)}): {error}")
+            # Check if one of the two checkbox is not active
+            if not (first and second):
+                found = found and (
+                    (status and first) or (not status and second))
 
         return found
 
@@ -2955,15 +2692,14 @@ class MainWindow(Gtk.ApplicationWindow):
         """
 
         self.__block_signals()
-        self.logger.debug(f"set_informations")
 
         self.sidebar_image = None
 
-        game = self.__on_retrieve_selected_game()
-        console = self.__on_retrieve_selected_console()
+        console = self.selection.get("console", None)
+        game = self.views_games.get_selected_game()
 
         # Update headerbar and statusbar informations
-        self.set_informations_headerbar(game, console)
+        self.set_informations_headerbar()
 
         # ----------------------------------------
         #   Toolbar
@@ -3277,71 +3013,66 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.__unblock_signals()
 
-    def set_informations_headerbar(self, game=None, console=None):
+    def set_informations_headerbar(self):
         """ Update headerbar and statusbar informations from games list
-
-        Parameters
-        ----------
-        game : gem.engine.game.Game
-            Game object
-        console : gem.api.Console
-            Console object
         """
 
-        if game is None:
-            game = self.__on_retrieve_selected_game()
-
-        if console is None:
-            console = self.__on_retrieve_selected_console()
-
-        emulator = None
-        if console is not None:
-            emulator = console.emulator
-
-        self.statusbar.console.set_visible(console is not None)
-        self.statusbar.emulator.set_visible(emulator is not None)
-        self.statusbar.game.set_visible(game is not None)
-
         texts = list()
+
+        console = self.selection.get("console", None)
+        game = self.views_games.get_selected_game()
+
+        self.statusbar.console.set_visible(console)
+        self.statusbar.emulator.set_visible(console and console.emulator)
+        self.statusbar.game.set_visible(console and game)
 
         # ----------------------------------------
         #   Console
         # ----------------------------------------
 
-        if console is not None:
+        if self.statusbar.console.get_visible():
+
+            if self.views_games.treeview.is_filterable:
+                games_length = len(self.views_games.treeview.filtered_model)
+            else:
+                games_length = len(self.views_games.treeview.list_model)
+
             text = _("N/A")
-
-            if self.treeview_games.is_filterable:
-                games_length = len(self.treeview_games.filtered_model)
-
+            if games_length:
                 text = ngettext(
                     _("1 game available"),
                     _("%d games available") % games_length,
                     games_length)
 
-                texts.append(text)
-
-            name = replace_for_markup(text)
             self.statusbar.set_widget_value(
-                "console", markup=f"<b>{_('Console')}</b>: {name}")
+                "console",
+                markup=f"<b>{_('Console')}</b>: {replace_for_markup(text)}")
+            texts.append(text)
 
-        # ----------------------------------------
-        #   Emulator
-        # ----------------------------------------
+            # ----------------------------------------
+            #   Emulator
+            # ----------------------------------------
 
-        if emulator is not None:
-            name = replace_for_markup(emulator.name)
-            self.statusbar.set_widget_value(
-                "emulator", markup=f"<b>{_('Emulator')}</b>: {name}")
+            if self.statusbar.emulator.get_visible():
+                emulator_name = replace_for_markup(console.emulator.name)
 
-        # ----------------------------------------
-        #   Game
-        # ----------------------------------------
+                text = f"<b>{_('Emulator')}</b>: "
 
-        if game is not None:
-            self.statusbar.set_widget_value("game", text=game.name)
+                if game and not game.emulator.id == console.emulator.id:
+                    text += (f"<s>{emulator_name}</s> "
+                             f"{replace_for_markup(game.emulator.name)}")
+                else:
+                    text += emulator_name
 
-            texts.append(game.name)
+                self.statusbar.set_widget_value("emulator", markup=text)
+
+            # ----------------------------------------
+            #   Game
+            # ----------------------------------------
+
+            if self.statusbar.game.get_visible():
+                self.statusbar.set_widget_value("game", text=game.name)
+                texts.append(game.name)
 
         # ----------------------------------------
         #   Headerbar
@@ -3399,7 +3130,7 @@ class MainWindow(Gtk.ApplicationWindow):
                             self.menubar_help.get_widget("report")):
                 link = Metadata.BUG_TRACKER
 
-            self.logger.debug("Open %s in web navigator" % link)
+            self.logger.debug(f"Open {link} in web navigator")
 
             self.__xdg_open_instance.launch_uris([link], None)
 
@@ -3462,95 +3193,76 @@ class MainWindow(Gtk.ApplicationWindow):
         configuration file
         """
 
-        game = self.__on_retrieve_selected_game()
-        console = self.__on_retrieve_selected_console()
+        console = self.selection.get("console", None)
+        game = self.views_games.get_selected_game()
 
-        if game is not None and console is not None:
+        if game is None or console is None or len(game.screenshots) == 0:
+            return
 
-            # ----------------------------------------
-            #   Show screenshots viewer
-            # ----------------------------------------
+        self.set_sensitive(False)
 
-            if len(game.screenshots) > 0:
-                title = "%s (%s)" % (game.name, console.name)
+        # Get external viewer
+        viewer = Path(self.config.get("viewer", "binary")).expanduser()
 
-                self.set_sensitive(False)
+        screenshots_list = sorted(game.screenshots)
 
-                # Get external viewer
-                viewer = Path(self.config.get("viewer", "binary"))
+        # Native viewer
+        if self.config.getboolean("viewer", "native", fallback=True):
+            try:
+                size = self.config.get(
+                    "windows", "viewer", fallback="800x600").split('x')
 
-                # ----------------------------------------
-                #   Native viewer
-                # ----------------------------------------
+            except ValueError:
+                size = (800, 600)
 
-                if self.config.getboolean("viewer", "native", fallback=True):
-                    try:
-                        size = self.config.get(
-                            "windows", "viewer", fallback="800x600").split('x')
+            dialog = GeodeDialog.Viewer(
+                self, f"{game.name} ({console.name})", size, screenshots_list)
+            dialog.run()
 
-                    except ValueError:
-                        size = (800, 600)
+            self.config.modify(
+                "windows", "viewer", "%dx%d" % dialog.get_size())
+            self.config.update()
 
-                    dialog = GeodeDialog.Viewer(
-                        self, title, size, sorted(game.screenshots))
-                    dialog.run()
+            dialog.destroy()
 
-                    self.config.modify(
-                        "windows", "viewer", "%dx%d" % dialog.get_size())
-                    self.config.update()
+        # External viewer
+        elif viewer.exists():
 
-                    dialog.destroy()
+            # Retrieve viewer binary
+            command = shlex_split(str(viewer))
 
-                # ----------------------------------------
-                #   External viewer
-                # ----------------------------------------
+            # Add arguments if available
+            parameters = self.config.item("viewer", "options")
+            if parameters is not None:
+                command.append(parameters)
 
-                elif viewer.exists():
+            # Add game screenshot files
+            command.extend([str(path) for path in screenshots_list])
 
-                    # Retrieve viewer binary
-                    command = shlex_split(str(viewer))
+            # Launch external viewer
+            try:
+                instance = Gio.AppInfo.create_from_commandline(
+                    ' '.join(command), None,
+                    Gio.AppInfoCreateFlags.SUPPORTS_URIS)
 
-                    # Add arguments if available
-                    parameters = self.config.item("viewer", "options")
-                    if parameters is not None:
-                        command.append(parameters)
+                instance.launch(None, None)
 
-                    # Add game screenshot files
-                    for path in sorted(game.screenshots):
-                        command.append(str(path))
+            except GLib.Error:
+                self.logger.exception(
+                    "Cannot generate %s instance" % str(viewer))
 
-                    # Launch external viewer
-                    try:
-                        instance = Gio.AppInfo.create_from_commandline(
-                            ' '.join(command), None,
-                            Gio.AppInfoCreateFlags.SUPPORTS_URIS)
+        # No available viewer
+        else:
+            self.set_message(_("Cannot open screenshots viewer"),
+                             _("Cannot find %s") % f"<b>{viewer.name}</b>",
+                             Icons.WARNING)
 
-                        instance.launch(None, None)
+        # External viewer can remove file, so we need to check again
+        if len(game.screenshots) == 0:
+            self.views_games.treeview.set_value(
+                game.id, Columns.List.SCREENSHOT, None)
 
-                    except GLib.Error:
-                        self.logger.exception(
-                            "Cannot generate %s instance" % str(viewer))
-
-                # ----------------------------------------
-                #   No available viewer
-                # ----------------------------------------
-
-                else:
-                    self.set_message(_("Cannot open screenshots viewer"),
-                                     _("Cannot find <b>%s</b>") % viewer.name,
-                                     Icons.WARNING)
-
-                self.set_sensitive(True)
-
-                # ----------------------------------------
-                #   Check screenshots
-                # ----------------------------------------
-
-                if len(game.screenshots) == 0:
-                    self.set_game_data(
-                        Columns.List.SCREENSHOT,
-                        self.icons.get_translucent("screenshot"),
-                        game.id)
+        self.set_sensitive(True)
 
     def __on_show_preferences(self, *args):
         """ Show preferences window
@@ -3659,7 +3371,7 @@ class MainWindow(Gtk.ApplicationWindow):
         open
         """
 
-        game = self.__on_retrieve_selected_game()
+        game = self.views_games.get_selected_game()
 
         if game is not None:
             path = self.api.get_local("notes", game.id + ".txt")
@@ -4074,31 +3786,14 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     self.infobar.set_visible(False)
                     self.scroll_sidebar.set_visible(False)
-                    self.scroll_games_list.set_visible(False)
-                    self.scroll_games_grid.set_visible(False)
 
-                    self.scroll_games_placeholder.set_visible(True)
-
-                    self.treeview_games.clear()
-                    self.iconview_games.clear()
+                    self.views_games.clear()
 
                     self.set_informations()
 
             dialog.destroy()
 
         self.__unblock_signals()
-
-    def __on_clear_games_views(self):
-        """ Remove games from both list and icon views
-        """
-
-        if len(self.treeview_games.get_model()):
-            self.logger.debug("Clear games treeview content")
-            self.treeview_games.clear()
-
-        if len(self.iconview_games.get_model()):
-            self.logger.debug("Clear games iconview content")
-            self.iconview_games.clear()
 
     def append_consoles(self):
         """ Append to consoles lisbox all available consoles
@@ -4117,7 +3812,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.listbox_consoles.remove(child)
 
         # Reset games view content
-        self.__on_clear_games_views()
+        self.views_games.clear()
 
         # Retrieve available consoles
         for console in self.api.consoles:
@@ -4142,7 +3837,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Show games placeholder when no console available
         else:
-            self.scroll_games_placeholder.set_visible(True)
             self.scroll_sidebar.set_visible(False)
 
     def __on_generate_console_row(self, console):
@@ -4263,7 +3957,7 @@ class MainWindow(Gtk.ApplicationWindow):
         if force or not self.selection.get("console") == row.console:
             self.__block_signals()
 
-            self.logger.debug("Select %s console" % row.console.name)
+            self.logger.debug(f"Select {row.console.name} console")
 
             self.selection = {
                 "game": None,
@@ -4283,6 +3977,11 @@ class MainWindow(Gtk.ApplicationWindow):
                 "consoles", 22, row.console.id, row.console.icon)
             if self.__console_thumbnail is None:
                 self.__console_thumbnail = self.icons.blank(22)
+
+            self.icons_games_views = {
+                "treeview": self.__console_thumbnail,
+                "iconview": self.__console_icon,
+            }
 
             # ------------------------------------
             #   Check data
@@ -4304,20 +4003,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
             self.list_thread = GLib.idle_add(
                 self.append_games(row.console).__next__)
-
-    def __on_retrieve_selected_console(self):
-        """ Retrieve console object instance from current selection
-
-        Returns
-        -------
-        gem.engine.console.Console or None
-            Console instance when a selection exists, None otherwise
-        """
-
-        if "console" in self.selection:
-            return self.selection["console"]
-
-        return None
 
     def __on_sort_consoles(self, first_row, second_row, *args):
         """ Sort consoles to reorganize them
@@ -4363,6 +4048,34 @@ class MainWindow(Gtk.ApplicationWindow):
 
         except Exception:
             return False
+
+    def __on_header_consoles(self, row, before, *args):
+        """ Update consoles listboxrow header based on console favorite status
+
+        Parameters
+        ----------
+        row : Gtk.ListBoxRow
+            Row to update
+        before : Gtk.ListBoxRow
+            Previous row, None if row is the first one
+        """
+
+        header = None
+
+        if before is None and row.console.favorite:
+            header = GeodeGtk.Label("label_favorite",
+                                    text=f"<b>{_('Favorite')}</b>")
+
+        elif (not row.console.favorite and (
+              not before or before.console.favorite)):
+            header = GeodeGtk.Label("label_consoles",
+                                    text=f"<b>{_('Consoles')}</b>")
+
+        if header is not None:
+            header.set_margin_top(6)
+            header.set_margin_bottom(6)
+
+        row.set_header(header)
 
     def __on_update_consoles(self, *args):
         """ Reload consoles list when user set a filter
@@ -4465,7 +4178,7 @@ class MainWindow(Gtk.ApplicationWindow):
             row.console.recursive, widget="recursive")
 
         # Allow to reload games list only for the current viewed console
-        current_console = self.__on_retrieve_selected_console()
+        current_console = self.selection.get("console", None)
         self.menu_consoles.set_sensitive(
             current_console is None or current_console.id == row.console.id,
             widget="reload")
@@ -4516,20 +4229,54 @@ class MainWindow(Gtk.ApplicationWindow):
         Using yield avoid an UI freeze when append a lot of games
         """
 
-        self.logger.debug(f"Start to append games for console {console.name}")
-
         # Get current thread id
         current_thread_id = self.list_thread
 
-        self.game_path = dict()
-
-        # ------------------------------------
-        #   Check errors
-        # ------------------------------------
+        self.logger.debug(f"Start to append games for console {console.name}")
 
         self.__block_signals()
 
+        # Clean interface
         self.infobar.set_visible(False)
+
+        self.views_games.clear()
+
+        self.set_informations()
+
+        # ------------------------------------
+        #   Check console
+        # ------------------------------------
+
+        self.selection["console"] = console
+
+        error_message = None
+
+        # Load games list if the game directory exists
+        try:
+            console.init_games()
+
+        except FileNotFoundError as error:
+            self.logger.error(error)
+            error_message = \
+                _("Cannot retrieve console path '%s'") % console.path
+
+        except NotADirectoryError as error:
+            self.logger.error(error)
+            error_message = \
+                _("Console path '%' is not a directory") % console.path
+
+        except PermissionError as error:
+            self.logger.error(error)
+            error_message = \
+                _("Cannot read console path '%s'") % console.path
+
+        if error_message is not None:
+            self.infobar.set_message(Gtk.MessageType.ERROR, error_message)
+            yield False
+
+        # ------------------------------------
+        #   Check emulator
+        # ------------------------------------
 
         if console.emulator is None:
             self.logger.warning(f"Cannot find emulator for {console.name}")
@@ -4543,116 +4290,65 @@ class MainWindow(Gtk.ApplicationWindow):
 
             self.infobar.set_message(
                 Gtk.MessageType.ERROR,
-                _("<b>%s</b> cannot been found on your system") % (
-                    console.emulator.name))
-
-        # ------------------------------------
-        #   Load data
-        # ------------------------------------
-
-        self.unselect_all()
-
-        self.scroll_games_list.set_visible(False)
-        self.scroll_games_grid.set_visible(False)
-
-        self.scroll_games_placeholder.set_visible(True)
-
-        self.__on_clear_games_views()
-
-        self.set_informations()
-
-        # ------------------------------------
-        #   Refresh treeview
-        # ------------------------------------
-
-        self.treeview_games.freeze_child_notify()
-
-        # ------------------------------------
-        #   Prepare games
-        # ------------------------------------
-
-        self.selection["console"] = console
-
-        # Load games list if the game directory exists
-        if console.path.exists():
-
-            try:
-                console.init_games()
-
-            except OSError as error:
-                self.logger.warning(error)
-
-        games = console.get_games()
-        if games:
-            self.logger.info(f"Found {len(games)} game(s) for {console.name}")
-        else:
-            self.logger.info(f"No game available for {console.name}")
+                _("%s cannot been found on your system") % (
+                    f"<b>{console.emulator.name}</b>"))
 
         # ------------------------------------
         #   Load games
         # ------------------------------------
 
+        games = console.get_games()
+
         if games:
+            self.logger.info(f"Found {len(games)} game(s) for {console.name}")
+
             # Ordered games by name
             games.sort(key=lambda game: game.name.lower().replace(' ', ''))
 
-            self.scroll_sidebar.set_visible(self.config.getboolean(
-                "gem", "show_sidebar", fallback=True))
+            self.scroll_sidebar.set_visible(
+                self.config.getboolean("gem", "show_sidebar", fallback=True))
 
-            if self.toolbar_games.get_active("list"):
-                self.scroll_games_list.set_visible(True)
-                self.treeview_games.show_all()
+            self.__unblock_signals()
 
-            if self.toolbar_games.get_active("grid"):
-                self.scroll_games_grid.set_visible(True)
-                self.iconview_games.show_all()
+            # Start a timer for debug purpose
+            started = datetime.now()
 
-            self.scroll_games_placeholder.set_visible(False)
+            # ------------------------------------
+            #   Append games
+            # ------------------------------------
 
             self.statusbar.progressbar.show()
 
-        else:
-            self.scroll_sidebar.set_visible(False)
+            for index, game in self.views_games.append_games(console, games):
 
-        self.__unblock_signals()
+                # Another thread has been called by user, close this one
+                if not current_thread_id == self.list_thread:
+                    yield False
 
-        yield True
-
-        # Start a timer for debug purpose
-        started = datetime.now()
-
-        for index, game in enumerate(games):
-
-            # Another thread has been called by user, close this one
-            if not current_thread_id == self.list_thread:
-                yield False
-
-            if self.__on_append_game(console, game):
                 self.set_informations_headerbar()
 
                 self.statusbar.set_widget_value(
                     "progressbar", index=index, length=len(games))
 
-                self.treeview_games.thaw_child_notify()
                 yield True
-                self.treeview_games.freeze_child_notify()
 
-        # Restore options for packages treeviews
-        self.treeview_games.thaw_child_notify()
+            self.statusbar.progressbar.hide()
 
-        self.statusbar.progressbar.hide()
+            self.set_informations_headerbar()
 
-        self.set_informations_headerbar()
+            # ------------------------------------
+            #   Timer - Debug
+            # ------------------------------------
 
-        # ------------------------------------
-        #   Timer - Debug
-        # ------------------------------------
+            delta = (datetime.now() - started).total_seconds()
 
-        delta = (datetime.now() - started).total_seconds()
-
-        if len(console.get_games()):
             self.logger.debug(
                 f"Append game(s) for '{console.id}' in {delta} second(s)")
+
+        else:
+            self.logger.info(f"No game available for {console.name}")
+
+            self.scroll_sidebar.set_visible(False)
 
         # ------------------------------------
         #   Close thread
@@ -4661,172 +4357,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.list_thread = int()
 
         yield False
-
-    def __on_append_game(self, console, game):
-        """ Append a new game to current views
-
-        Parameters
-        ----------
-        console : gem.engine.console.Console
-            Console instance
-        game : gem.engine.game.Game
-            Game instance
-        """
-
-        # Hide games which match ignores regex
-        show = True
-        for element in console.ignores:
-            try:
-                if match(element, game.name, IGNORECASE) is not None:
-                    show = False
-                    break
-
-            except Exception:
-                self.logger.error(
-                    f"Problem to match {element} with {game.name}")
-
-        # Check if rom file exists
-        if game.path.exists() and show:
-
-            # ------------------------------------
-            #   Grid mode
-            # ------------------------------------
-
-            row_data = [
-                self.__console_icon,
-                game.name,
-                game
-            ]
-
-            # Large icon
-            icon = self.get_pixbuf_from_cache("games", 96, game.id, game.cover)
-            if icon is not None:
-                row_data[Columns.Grid.THUMBNAIL] = icon
-
-            row_grid = self.iconview_games.append(row_data)
-
-            # ------------------------------------
-            #   List mode
-            # ------------------------------------
-
-            row_data = [
-                self.icons.get_translucent("favorite"),
-                self.icons.get_translucent("multiplayer"),
-                self.icons.get_translucent("unfinish"),
-                game.name,
-                game.played,
-                str(),          # Last launch date
-                str(),          # Last launch time
-                str(),          # Total play time
-                game.score,
-                str(),          # Installed date
-                self.icons.get_translucent("parameter"),
-                self.icons.get_translucent("screenshot"),
-                self.icons.get_translucent("savestate"),
-                game,
-                self.__console_thumbnail
-            ]
-
-            # Favorite
-            if game.favorite:
-                row_data[Columns.List.FAVORITE] = \
-                    self.icons.get("favorite")
-
-            # Multiplayer
-            if game.multiplayer:
-                row_data[Columns.List.MULTIPLAYER] = \
-                    self.icons.get("multiplayer")
-
-            # Finish
-            if game.finish:
-                row_data[Columns.List.FINISH] = \
-                    self.icons.get("finish")
-
-            # Last launch date
-            if not game.last_launch_date.strftime("%d%m%y") == "010101":
-                row_data[Columns.List.LAST_PLAY] = \
-                    string_from_date(game.last_launch_date)
-
-            # Last launch time
-            if not game.last_launch_time == timedelta():
-                row_data[Columns.List.LAST_TIME_PLAY] = \
-                    string_from_time(game.last_launch_time)
-
-            # Play time
-            if not game.play_time == timedelta():
-                row_data[Columns.List.TIME_PLAY] = \
-                    string_from_time(game.play_time)
-
-            # Parameters
-            if len(game.default) > 0:
-                row_data[Columns.List.PARAMETER] = \
-                    self.icons.get("parameter")
-
-            elif not game.emulator == console.emulator:
-                row_data[Columns.List.PARAMETER] = \
-                    self.icons.get("parameter")
-
-            # Installed time
-            if game.installed is not None:
-                row_data[Columns.List.INSTALLED] = \
-                    string_from_date(game.installed)
-
-            # Snap
-            if len(game.screenshots) > 0:
-                row_data[Columns.List.SCREENSHOT] = \
-                    self.icons.get("screenshot")
-
-            # Save state
-            if len(game.savestates) > 0:
-                row_data[Columns.List.SAVESTATE] = \
-                    self.icons.get("savestate")
-
-            # Thumbnail icon
-            icon = self.get_pixbuf_from_cache(
-                "games", 22, game.id, game.cover)
-
-            if icon is not None:
-                row_data[Columns.List.THUMBNAIL] = icon
-
-            row_list = self.treeview_games.append(row_data)
-
-            # ------------------------------------
-            #   Refesh view
-            # ------------------------------------
-
-            # Store both Gtk.TreeIter under game filename key
-            self.game_path[game.id] = [game, row_list, row_grid]
-
-            return True
-
-        return False
-
-    def __on_update_game_columns(self, column, cell, model, treeiter, *args):
-        """ Manage specific columns behavior during games adding
-
-        Parameters
-        ----------
-        column : Gtk.TreeViewColumn
-            Treeview column which contains cell
-        cell : Gtk.CellRenderer
-            Cell that is being rendered by column
-        model : Gtk.TreeModel
-            Rendered model
-        treeiter : Gtk.TreeIter
-            Rendered row
-        """
-
-        if column.get_visible():
-            score = model.get_value(treeiter, Columns.List.SCORE)
-
-            for index in range(1, 6):
-                widget = self.treeview_games.get_widget(f"cell_score_{index}")
-
-                icon = self.icons.get_translucent("nostarred")
-                if score >= index:
-                    icon = self.icons.get("starred")
-
-                widget.set_property("pixbuf", icon)
 
     def __on_selected_game(self, widget):
         """ Select a game
@@ -4842,12 +4372,12 @@ class MainWindow(Gtk.ApplicationWindow):
         self.__block_signals()
 
         # Current selected game
-        game = self.__on_retrieve_selected_game()
+        game = self.views_games.get_selected_game()
 
         # No game has been choosen (when the user click in the empty view area)
         if game is None:
             # Unselect both games views
-            self.unselect_all()
+            self.views_games.unselect_all()
 
             # Reset sidebar widgets and menus entries
             self.sensitive_interface()
@@ -4905,7 +4435,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         selection = treeview.get_path_at_pos(x, y)
         # Using a tuple to mimic Gtk.TreeView behavior
-        if treeview == self.iconview_games and selection is not None:
+        if treeview == self.views_games.iconview and selection is not None:
             selection = (selection)
 
         if selection is not None:
@@ -4913,7 +4443,7 @@ class MainWindow(Gtk.ApplicationWindow):
             treeiter = model.get_iter(selection[0])
 
             column_id = Columns.Grid.OBJECT
-            if treeview == self.treeview_games:
+            if treeview == self.views_games.treeview:
                 column_id = Columns.List.OBJECT
 
             game = model.get_value(treeiter, column_id)
@@ -5024,33 +4554,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         return False
 
-    def __on_retrieve_selected_game(self):
-        """ Retrieve game object instance from current selection
-
-        Returns
-        -------
-        gem.engine.game.Game or None
-            Game instance when a selection exists, None otherwise
-        """
-
-        # Grid view
-        if self.toolbar_games.get_active("grid"):
-            model = self.iconview_games.get_model()
-
-            treeiter = self.iconview_games.get_selected_treeiter()
-            if treeiter is not None:
-                return model.get_value(treeiter, Columns.Grid.OBJECT)
-
-        # List view
-        elif self.toolbar_games.get_active("list"):
-            model, treeiter = self.get_selected_treeiter_from_container(
-                self.treeview_games)
-
-            if treeiter is not None:
-                return model.get_value(treeiter, Columns.List.OBJECT)
-
-        return None
-
     def __on_synchronize_game_selection(self, widget, game):
         """ Synchronize grid and list views selection
 
@@ -5062,15 +4565,16 @@ class MainWindow(Gtk.ApplicationWindow):
             Game instance
         """
 
-        if game is not None and game.id in self.game_path:
+        if game is not None and self.views_games.has_game(game.id):
 
             # Select the view to synchronise
-            if widget == self.iconview_games:
-                index, view = 1, self.treeview_games
-            elif widget == self.treeview_games:
-                index, view = 2, self.iconview_games
+            if widget == self.views_games.iconview:
+                index, view = 0, self.views_games.treeview
+            elif widget == self.views_games.treeview:
+                index, view = 1, self.views_games.iconview
 
-            path = view.get_path_from_treeiter(self.game_path[game.id][index])
+            path = view.get_path_from_treeiter(
+                self.views_games.get_iter_from_key(game.id)[index])
 
             if path is not None:
                 view.select_path_and_scroll(path)
@@ -5088,7 +4592,7 @@ class MainWindow(Gtk.ApplicationWindow):
         if row is not None:
             self.__on_selected_console(None, row, force=True)
 
-    def __on_sort_games(self, model, row1, row2, column):
+    def on_sort_games(self, model, row1, row2, column):
         """ Sort games list for specific columns
 
         Parameters
@@ -5114,7 +4618,7 @@ class MainWindow(Gtk.ApplicationWindow):
         # Column order
         order = Gtk.SortType.ASCENDING
         if column.identifier not in ("last_play", "time_play", "installed"):
-            order = self.treeview_games.get_widget(
+            order = self.views_games.treeview.get_widget(
                 column.identifier).get_sort_order()
 
         # Object sorting references
@@ -5194,27 +4698,20 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.__block_signals()
 
-        games_view = "grid"
+        games_view = GeodeGEM.Views.Name.GRID
         if widget in (self.headerbar.get_widget("list"),
                       self.menubar_view.get_widget("list"),
                       self.toolbar_games.get_widget("list")):
-            games_view = "list"
+            games_view = GeodeGEM.Views.Name.LIST
 
         # Update widgets status based on selected games view
-        self.headerbar.set_active(True, widget=games_view)
-        self.menubar_view.set_active(True, widget=games_view)
-        self.toolbar_games.get_widget("views").switch_to(games_view)
+        self.headerbar.set_active(True, widget=games_view.value)
+        self.menubar_view.set_active(True, widget=games_view.value)
+        self.toolbar_games.get_widget("views").switch_to(games_view.value)
 
         # Show activated games view when there are games available
-        if not self.scroll_games_placeholder.get_visible():
-            self.scroll_games_list.set_visible(games_view == "list")
-            self.scroll_games_grid.set_visible(games_view == "grid")
-
-            if self.scroll_games_list.get_visible():
-                self.treeview_games.show_all()
-
-            elif self.scroll_games_grid.get_visible():
-                self.iconview_games.show_all()
+        if not self.views_games.placeholder.get_visible():
+            self.views_games.set_view(games_view)
 
         self.__unblock_signals()
 
@@ -5234,11 +4731,11 @@ class MainWindow(Gtk.ApplicationWindow):
         if self.config.has_option("columns", key):
             self.config.modify("columns", key, widget.get_active())
 
-            if self.treeview_games.has_widget(key):
-                column = self.treeview_games.get_widget(key)
+            if self.views_games.treeview.has_widget(key):
+                column = self.views_games.treeview.get_widget(key)
                 column.set_visible(widget.get_active())
 
-                self.treeview_games.columns_autosize()
+                self.views_games.treeview.columns_autosize()
 
                 self.logger.debug(f"Switch visibility for '{key}' column to "
                                   f"{column.get_visible()}")
@@ -5265,13 +4762,13 @@ class MainWindow(Gtk.ApplicationWindow):
 
         if name is not None:
             model, treeiter = self.get_selected_treeiter_from_container(
-                self.treeview_games)
+                self.views_games.treeview)
 
             if treeiter is not None:
                 treeview_name = model.get_value(treeiter, Columns.List.NAME)
 
                 if not treeview_name == name:
-                    selection = self.treeview_games.get_selection()
+                    selection = self.views_games.treeview.get_selection()
                     if selection is not None:
                         selection.unselect_iter(treeiter)
 
@@ -5283,18 +4780,6 @@ class MainWindow(Gtk.ApplicationWindow):
                     return False
 
         return True
-
-    def unselect_all(self):
-        """ Unselect selections from both games views
-        """
-
-        self.logger.debug("Unselect games on both views")
-
-        self.iconview_games.unselect_all()
-
-        selection = self.treeview_games.get_selection()
-        if selection is not None:
-            selection.unselect_all()
 
     def get_selected_treeiter_from_container(self, widget):
         """ Retrieve treeiter from container widget
@@ -5350,7 +4835,7 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Check selection
         # ----------------------------------------
 
-        game = self.__on_retrieve_selected_game()
+        game = self.views_games.get_selected_game()
 
         if game is None or game.emulator is None:
             return False
@@ -5368,7 +4853,7 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Check emulator
         # ----------------------------------------
 
-        console = self.__on_retrieve_selected_console()
+        console = self.selection.get("console", None)
 
         if console is not None and game.emulator is not None:
 
@@ -5483,46 +4968,45 @@ class MainWindow(Gtk.ApplicationWindow):
             self.api.update_game(game)
 
             # Played
-            self.set_game_data(Columns.List.PLAYED, game.played, game.id)
+            self.views_games.treeview.set_value(
+                game.id, Columns.List.PLAYED, game.played)
 
             # Last played
-            self.set_game_data(Columns.List.LAST_PLAY,
-                               string_from_date(game.last_launch_date),
-                               game.id)
+            self.views_games.treeview.set_value(
+                game.id,
+                Columns.List.LAST_PLAY,
+                string_from_time(game.last_launch_date))
 
             # Last time played
-            self.set_game_data(Columns.List.LAST_TIME_PLAY,
-                               string_from_time(game.last_launch_time),
-                               game.id)
+            self.views_games.treeview.set_value(
+                game.id,
+                Columns.List.LAST_TIME_PLAY,
+                string_from_time(game.last_launch_time))
 
             # Play time
-            self.set_game_data(Columns.List.TIME_PLAY,
-                               string_from_time(game.play_time),
-                               game.id)
+            self.views_games.treeview.set_value(
+                game.id,
+                Columns.List.TIME_PLAY,
+                string_from_time(game.play_time))
 
-            # Snaps
-            if len(game.screenshots) > 0:
-                self.set_game_data(Columns.List.SCREENSHOT,
-                                   self.icons.get("screenshot"),
-                                   game.id)
-                self.menubar_game.set_sensitive(True, widget="screenshots")
-                self.toolbar_games.set_sensitive(True, widget="screenshots")
+            # Screenshots
+            has_screenshots = len(game.screenshots) > 0
 
-            else:
-                self.set_game_data(Columns.List.SCREENSHOT,
-                                   self.icons.get_translucent("screenshot"),
-                                   game.id)
+            self.views_games.treeview.set_value(
+                game.id,
+                Columns.List.SCREENSHOT,
+                Icons.Symbolic.CAMERA if has_screenshots else None)
+
+            self.menubar_game.set_sensitive(
+                has_screenshots, widget="screenshots")
+            self.toolbar_games.set_sensitive(
+                has_screenshots, widget="screenshots")
 
             # Save state
-            if len(game.savestates) > 0:
-                self.set_game_data(Columns.List.SAVESTATE,
-                                   self.icons.get("savestate"),
-                                   game.id)
-
-            else:
-                self.set_game_data(Columns.List.SAVESTATE,
-                                   self.icons.get_translucent("savestate"),
-                                   game.id)
+            self.views_games.treeview.set_value(
+                game.id,
+                Columns.List.SAVESTATE,
+                Icons.Symbolic.FLOPPY if len(game.savestates) > 0 else None)
 
             self.set_informations()
 
@@ -5530,10 +5014,8 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Refresh widgets
         # ----------------------------------------
 
-        # Get current selected file
-        select_game = self.__on_retrieve_selected_game()
-        # Get current selected console
-        select_console = self.__on_retrieve_selected_console()
+        select_console = self.selection.get("console", None)
+        select_game = self.views_games.get_selected_game()
 
         if select_console is None:
             self.logger.debug("Restore widgets status for %s" % game.name)
@@ -5611,7 +5093,7 @@ class MainWindow(Gtk.ApplicationWindow):
             new name
         """
 
-        game = self.__on_retrieve_selected_game()
+        game = self.views_games.get_selected_game()
 
         if game is not None:
             self.set_sensitive(False)
@@ -5631,17 +5113,18 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     game.name = new_name
 
-                    row, treeiter, griditer = self.game_path[game.id]
+                    treeiter, griditer = \
+                        self.views_games.get_iter_from_key(game.id)
 
                     # Update game name
-                    self.treeview_games.set_value(
+                    self.views_games.treeview.set_value(
                         treeiter, Columns.List.NAME, str(new_name))
-                    self.treeview_games.set_value(
+                    self.views_games.treeview.set_value(
                         treeiter, Columns.List.OBJECT, game)
 
-                    self.iconview_games.set_value(
+                    self.views_games.iconview.set_value(
                         griditer, Columns.Grid.NAME, str(new_name))
-                    self.iconview_games.set_value(
+                    self.views_games.iconview.set_value(
                         griditer, Columns.Grid.OBJECT, game)
 
                     # Update game from database
@@ -5652,10 +5135,10 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     # Restore focus to current game view
                     if self.toolbar_games.get_active("grid"):
-                        self.iconview_games.grab_focus()
+                        self.views_games.iconview.grab_focus()
 
                     elif self.toolbar_games.get_active("list"):
-                        self.treeview_games.grab_focus()
+                        self.views_games.treeview.grab_focus()
 
                     self.__current_tooltip = None
 
@@ -5669,14 +5152,14 @@ class MainWindow(Gtk.ApplicationWindow):
         """ Set some maintenance for selected game
         """
 
-        game = self.__on_retrieve_selected_game()
-        console = self.__on_retrieve_selected_console()
+        console = self.selection.get("console", None)
+        game = self.views_games.get_selected_game()
 
         if game is not None and console is not None:
 
             # Avoid trying to remove an executed game
             if game.id not in self.threads:
-                treeiter = self.game_path[game.id][1]
+                treeiter = self.views_games.get_iter_from_key(game.id)[0]
 
                 need_to_reload = False
 
@@ -5723,7 +5206,7 @@ class MainWindow(Gtk.ApplicationWindow):
                             }
 
                             for key, value in game_data.items():
-                                self.treeview_games.set_value(
+                                self.views_games.treeview.set_value(
                                     treeiter, key, value)
 
                             game.reset()
@@ -5772,8 +5255,8 @@ class MainWindow(Gtk.ApplicationWindow):
         savestates and game file.
         """
 
-        game = self.__on_retrieve_selected_game()
-        console = self.__on_retrieve_selected_console()
+        console = self.selection.get("console", None)
+        game = self.views_games.get_selected_game()
 
         if game is not None and console is not None:
 
@@ -5843,18 +5326,10 @@ class MainWindow(Gtk.ApplicationWindow):
                 dialog.destroy()
 
                 if need_to_reload:
-
                     # Remove an old entry in views
-                    if identifier in self.game_path:
-                        self.treeview_games.remove(
-                            self.game_path[identifier][1])
-                        self.iconview_games.remove(
-                            self.game_path[identifier][2])
-
-                        del self.game_path[identifier]
-
+                    self.views_games.remove_game(identifier)
                     # Remove view selections
-                    self.unselect_all()
+                    self.views_games.unselect_all()
 
                     self.sensitive_interface()
 
@@ -5874,7 +5349,7 @@ class MainWindow(Gtk.ApplicationWindow):
         data
         """
 
-        game = self.__on_retrieve_selected_game()
+        game = self.views_games.get_selected_game()
 
         if game is not None:
             need_to_reload = False
@@ -5931,115 +5406,81 @@ class MainWindow(Gtk.ApplicationWindow):
         emulator arguments for the selected game
         """
 
-        game = self.__on_retrieve_selected_game()
-        console = self.__on_retrieve_selected_console()
+        console = self.selection.get("console", None)
+        game = self.views_games.get_selected_game()
 
-        if game is not None and console is not None:
+        if game is None or console is None:
+            return
+
+        self.set_sensitive(False)
+
+        dialog = GeodeDialog.Parameters(self, game)
+
+        if dialog.run() == Gtk.ResponseType.APPLY:
+            self.logger.info(f"Update {game.name} parameters")
+
+            # Retrieve values from dialog
+            game.emulator = self.api.get_emulator(dialog.combo.get_active_id())
+            game.default = dialog.entry_arguments.get_text().strip()
+            game.key = dialog.entry_key.get_text().strip()
+
+            game.tags = [tag.strip()
+                         for tag in dialog.entry_tags.get_text().split(',')]
+
+            game.environment.clear()
+            for row in dialog.store_environment:
+                key = dialog.store_environment.get_value(row.iter, 0)
+
+                if len(key) > 0:
+                    game.environment[key] = \
+                        dialog.store_environment.get_value(row.iter, 1)
+
+            # Update game from database
+            self.api.update_game(game)
 
             # ----------------------------------------
-            #   Dialog
+            #   Update games views
             # ----------------------------------------
 
-            self.set_sensitive(False)
+            # Custom properties
+            has_custom = \
+                not game.emulator == console.emulator or game.default
 
-            dialog = GeodeDialog.Parameters(self, game)
+            self.views_games.treeview.set_value(
+                game.id,
+                Columns.List.PARAMETER,
+                Icons.Symbolic.PROPERTIES if has_custom else None)
 
-            if dialog.run() == Gtk.ResponseType.APPLY:
-                self.logger.info("Update %s parameters" % game.name)
+            # Screenshots
+            has_screenshots = len(game.screenshots) > 0
 
-                game.emulator = self.api.get_emulator(
-                    dialog.combo.get_active_id())
+            self.views_games.treeview.set_value(
+                game.id,
+                Columns.List.SCREENSHOT,
+                Icons.Symbolic.CAMERA if has_screenshots else None)
 
-                game.default = dialog.entry_arguments.get_text().strip()
+            self.menubar_game.set_sensitive(
+                has_screenshots, widget="screenshots")
+            self.toolbar_games.set_sensitive(
+                has_screenshots, widget="screenshots")
 
-                game.key = dialog.entry_key.get_text().strip()
+            # Savestates
+            self.views_games.treeview.set_value(
+                game.id,
+                Columns.List.SAVESTATE,
+                Icons.Symbolic.FLOPPY if len(game.savestates) > 0 else None)
 
-                game.tags.clear()
-                for tag in dialog.entry_tags.get_text().split(","):
-                    game.tags.append(tag.strip())
+            # Objects
+            self.views_games.treeview.set_value(
+                game.id, Columns.List.OBJECT, game)
+            self.views_games.iconview.set_value(
+                game.id, Columns.Grid.OBJECT, game)
 
-                game.environment.clear()
-                for row in dialog.store_environment:
-                    key = dialog.store_environment.get_value(row.iter, 0)
+            self.set_informations()
 
-                    if key is not None and len(key) > 0:
-                        value = dialog.store_environment.get_value(row.iter, 1)
+        self.set_sensitive(True)
 
-                        if value is not None and len(value) > 0:
-                            game.environment[key] = value
-
-                # Update game from database
-                self.api.update_game(game)
-
-                # ----------------------------------------
-                #   Check diferences
-                # ----------------------------------------
-
-                custom = False
-
-                if not game.emulator == console.emulator:
-                    custom = True
-
-                elif len(game.default) > 0:
-                    custom = True
-
-                if custom:
-                    self.set_game_data(Columns.List.PARAMETER,
-                                       self.icons.get("parameter"),
-                                       game.id)
-                else:
-                    self.set_game_data(Columns.List.PARAMETER,
-                                       self.icons.get_translucent("parameter"),
-                                       game.id)
-
-                # ----------------------------------------
-                #   Update views
-                # ----------------------------------------
-
-                # Screenshots
-                if len(game.screenshots) > 0:
-                    self.set_game_data(Columns.List.SCREENSHOT,
-                                       self.icons.get("screenshot"),
-                                       game.id)
-
-                    self.menubar_game.set_sensitive(True, widget="screenshots")
-                    self.toolbar_games.set_sensitive(
-                        True, widget="screenshots")
-
-                else:
-                    self.set_game_data(
-                        Columns.List.SCREENSHOT,
-                        self.icons.get_translucent("screenshot"),
-                        game.id)
-
-                    self.menubar_game.set_sensitive(True, widget="screenshots")
-                    self.toolbar_games.set_sensitive(
-                        False, widget="screenshots")
-
-                # Savestates
-                if len(game.savestates) > 0:
-                    self.set_game_data(Columns.List.SAVESTATE,
-                                       self.icons.get("savestate"),
-                                       game.id)
-
-                else:
-                    self.set_game_data(Columns.List.SAVESTATE,
-                                       self.icons.get_translucent("savestate"),
-                                       game.id)
-
-                # Objects
-                row, treeiter, griditer = self.game_path[game.id]
-
-                self.treeview_games.set_value(
-                    treeiter, Columns.List.OBJECT, game)
-                self.iconview_games.set_value(
-                    griditer, Columns.Grid.OBJECT, game)
-
-                self.set_informations()
-
-            self.set_sensitive(True)
-
-            dialog.destroy()
+        dialog.destroy()
 
     def __on_game_log(self, *args):
         """ Show game log
@@ -6050,7 +5491,7 @@ class MainWindow(Gtk.ApplicationWindow):
         path = self.check_log()
 
         if path is not None and path.exists():
-            game = self.__on_retrieve_selected_game()
+            game = self.views_games.get_selected_game()
 
             try:
                 size = self.config.get(
@@ -6086,8 +5527,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
         if self.menu_game.get_sensitive(widget="memory_type"):
 
-            game = self.__on_retrieve_selected_game()
-            console = self.__on_retrieve_selected_console()
+            console = self.selection.get("console", None)
+            game = self.views_games.get_selected_game()
 
             if game is not None and console is not None:
                 content = dict()
@@ -6145,10 +5586,10 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.__block_signals()
 
-        game, status = self.__on_retrieve_selected_game(), False
+        game, status = self.views_games.get_selected_game(), False
 
         if game is not None:
-            row, treeiter, griditer = self.game_path[game.id]
+            treeiter, griditer = self.views_games.get_iter_from_key(game.id)
 
             # Reverse current game status
             status = not getattr(game, flag_name, False)
@@ -6156,16 +5597,16 @@ class MainWindow(Gtk.ApplicationWindow):
             # Update treeview icon
             flag_column = getattr(Columns.List, flag_name.upper(), None)
             if flag_column is not None:
+                icon = self.get_treeview_icon(flag_column, status)
 
-                icon = self.icons.get_translucent(flag_name)
-                if status:
-                    icon = self.icons.get(flag_name)
-
-                self.treeview_games.set_value(treeiter, flag_column, icon)
+                self.views_games.treeview.set_value(
+                    treeiter, flag_column, icon)
 
             # Update game object in both games views storages
-            self.treeview_games.set_value(treeiter, Columns.List.OBJECT, game)
-            self.iconview_games.set_value(griditer, Columns.Grid.OBJECT, game)
+            self.views_games.treeview.set_value(
+                treeiter, Columns.List.OBJECT, game)
+            self.views_games.iconview.set_value(
+                griditer, Columns.Grid.OBJECT, game)
 
             self.logger.debug(
                 f"Set {flag_name} status for '{game.id}' to {status}")
@@ -6194,7 +5635,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         modification = False
 
-        game = self.__on_retrieve_selected_game()
+        game = self.views_games.get_selected_game()
 
         if game is not None:
 
@@ -6220,13 +5661,14 @@ class MainWindow(Gtk.ApplicationWindow):
                 modification = True
 
         if modification:
-            self.treeview_games.set_value(
-                self.game_path[game.id][1], Columns.List.SCORE, game.score)
-            self.treeview_games.set_value(
-                self.game_path[game.id][1], Columns.List.OBJECT, game)
+            treeiter, griditer = self.views_games.get_iter_from_key(game.id)
 
-            self.iconview_games.set_value(
-                self.game_path[game.id][2], Columns.Grid.OBJECT, game)
+            self.views_games.treeview.set_value(
+                treeiter, Columns.List.SCORE, game.score)
+            self.views_games.treeview.set_value(
+                treeiter, Columns.List.OBJECT, game)
+            self.views_games.iconview.set_value(
+                griditer, Columns.Grid.OBJECT, game)
 
             self.api.update_game(game)
 
@@ -6238,7 +5680,7 @@ class MainWindow(Gtk.ApplicationWindow):
         This function check if the game file mime type is text/
         """
 
-        game = self.__on_retrieve_selected_game()
+        game = self.views_games.get_selected_game()
 
         if game is not None:
 
@@ -6267,9 +5709,10 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     game.update_installation_date()
 
-                    self.set_game_data(Columns.List.INSTALLED,
-                                       string_from_date(game.installed),
-                                       game.id)
+                    self.views_games.treeview.set_value(
+                        game.id,
+                        Columns.List.INSTALLED,
+                        string_from_date(game.installed))
 
                 self.config.modify(
                     "windows", "game", "%dx%d" % dialog.get_size())
@@ -6283,7 +5726,7 @@ class MainWindow(Gtk.ApplicationWindow):
         """ Copy path folder which contains selected game to clipboard
         """
 
-        game = self.__on_retrieve_selected_game()
+        game = self.views_games.get_selected_game()
 
         if game is not None:
             self.clipboard.set_text(str(game.path), -1)
@@ -6292,7 +5735,7 @@ class MainWindow(Gtk.ApplicationWindow):
         """ Set a new cover for selected game
         """
 
-        game = self.__on_retrieve_selected_game()
+        game = self.views_games.get_selected_game()
 
         if game is not None:
             self.set_sensitive(False)
@@ -6316,7 +5759,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     # Update game from database
                     self.api.update_game(game)
 
-                    viewiters = self.game_path[game.id]
+                    viewiters = self.views_games.get_iter_from_key(game.id)
 
                     large_cache_path = self.get_icon_from_cache(
                         "games", "96x96", game.id + ".png")
@@ -6374,11 +5817,11 @@ class MainWindow(Gtk.ApplicationWindow):
                         if thumbnail_cache_path.exists():
                             remove(thumbnail_cache_path)
 
-                    self.iconview_games.set_value(
-                        viewiters[2], Columns.Grid.THUMBNAIL, large)
+                    self.views_games.iconview.set_value(
+                        viewiters[1], Columns.Grid.THUMBNAIL, large)
 
-                    self.treeview_games.set_value(
-                        viewiters[1], Columns.List.THUMBNAIL, thumbnail)
+                    self.views_games.treeview.set_value(
+                        viewiters[0], Columns.List.THUMBNAIL, thumbnail)
 
                     # Reset tooltip pixbuf
                     self.__current_tooltip_pixbuf = None
@@ -6395,10 +5838,10 @@ class MainWindow(Gtk.ApplicationWindow):
         """
 
         model, treeiter = self.get_selected_treeiter_from_container(
-            self.treeview_games)
+            self.views_games.treeview)
 
-        game = self.__on_retrieve_selected_game()
-        console = self.__on_retrieve_selected_console()
+        console = self.selection.get("console", None)
+        game = self.views_games.get_selected_game()
 
         if treeiter is not None and game is not None and console is not None:
 
@@ -6485,7 +5928,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 x, y = int(event.x), int(event.y)
 
                 # List view
-                if widget == self.treeview_games:
+                if widget == self.views_games.treeview:
 
                     # Avoid to click on treeview header
                     if event.window == widget.get_bin_window():
@@ -6497,7 +5940,7 @@ class MainWindow(Gtk.ApplicationWindow):
                             selection = True
 
                 # Grid icons view
-                if widget == self.iconview_games:
+                if widget == self.views_games.iconview:
                     treeiter = widget.get_path_at_pos(x, y)
 
                     if treeiter is not None:
@@ -6610,7 +6053,7 @@ class MainWindow(Gtk.ApplicationWindow):
         sidebar_status = not self.config.getboolean(
             "gem", "show_sidebar", fallback=True)
 
-        if sidebar_status and not self.scroll_games_placeholder.get_visible():
+        if sidebar_status and not self.views_games.placeholder.get_visible():
             self.scroll_sidebar.show()
 
         else:
@@ -6765,7 +6208,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         if widget in (self.menubar_edit.get_widget("copy_path"),
                       self.menu_game.get_widget("copy_path")):
-            game = self.__on_retrieve_selected_game()
+            game = self.views_games.get_selected_game()
 
             if game is not None and game.path.parent.exists():
                 path = game.path
@@ -6791,7 +6234,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         if widget in (self.menubar_edit.get_widget("open_path"),
                       self.menu_game.get_widget("open_path")):
-            game = self.__on_retrieve_selected_game()
+            game = self.views_games.get_selected_game()
 
             if game is not None and game.path.parent.exists():
                 path = game.path.parent
@@ -6832,7 +6275,7 @@ class MainWindow(Gtk.ApplicationWindow):
         """
 
         if type(widget) is Gtk.TreeView or type(widget) is Gtk.IconView:
-            game = self.__on_retrieve_selected_game()
+            game = self.views_games.get_selected_game()
 
             if game is not None:
                 data.set_uris(["file://%s" % game.path])
@@ -7053,30 +6496,19 @@ class MainWindow(Gtk.ApplicationWindow):
                    and console.id == self.selection["console"].id:
 
                     # Remove an old entry in views
-                    if game.id in self.game_path:
-                        self.treeview_games.remove(self.game_path[game.id][1])
-                        self.iconview_games.remove(self.game_path[game.id][2])
-
-                        del self.game_path[game.id]
+                    self.views_games.remove_game(game.id)
 
                     # Add a new item to views
-                    if self.__on_append_game(console, game):
+                    if self.views_games.append_game(console, game):
                         self.set_informations_headerbar()
 
                         self.scroll_sidebar.set_visible(self.config.getboolean(
                             "gem", "show_sidebar", fallback=True))
 
-                        # Grid view
-                        if self.toolbar_games.get_active("grid"):
-                            self.scroll_games_grid.set_visible(True)
-                            self.iconview_games.show_all()
-
-                        # List view
-                        elif self.toolbar_games.get_active("list"):
-                            self.scroll_games_list.set_visible(True)
-                            self.treeview_games.show_all()
-
-                        self.scroll_games_placeholder.set_visible(False)
+                        if self.toolbar_games.get_active("list"):
+                            self.views_games.set_view(GeodeGEM.Views.Name.LIST)
+                        else:
+                            self.views_games.set_view(GeodeGEM.Views.Name.GRID)
 
         # Reset mouse cursor
         self.get_window().set_cursor(
@@ -7153,7 +6585,7 @@ class MainWindow(Gtk.ApplicationWindow):
             Output file path
         """
 
-        game = self.__on_retrieve_selected_game()
+        game = self.views_games.get_selected_game()
 
         if game is not None:
             log_path = self.api.get_local("logs", game.id + ".log")
@@ -7236,24 +6668,6 @@ class MainWindow(Gtk.ApplicationWindow):
                             return "%s-%s" % (version, output)
 
         return version
-
-    def set_game_data(self, index, data, identifier):
-        """ Update game informations in games treeview
-
-        Parameters
-        ----------
-        index : int
-            Column index
-        data : object
-            Value to set
-        identifier : str
-            Game identifier
-        """
-
-        treeiter = self.game_path.get(identifier, None)
-
-        if treeiter is not None:
-            self.treeview_games.list_model[treeiter[1]][index] = data
 
     def get_icon_from_cache(self, *args):
         """ Retrieve icon from cache folder
@@ -7386,6 +6800,28 @@ class MainWindow(Gtk.ApplicationWindow):
         # FIXME: Maybe a better way to determine type file
         return Path.home().joinpath(
             ".mednafen", "sav", game.path.stem + ".type")
+
+    def get_treeview_icon(self, column, status):
+        """ Retrieve an icon for a specific treeview column based on his status
+
+        Parameters
+        ----------
+        column : str
+            Column name based on Columns metadata class
+        status : bool
+            Activate status for icon
+
+        Returns
+        -------
+        str
+            Icon name if found in treeview_icons storage, None otherwise
+        """
+
+        if column not in self.treeview_icons:
+            return None
+
+        activate, unactivate = self.treeview_icons.get(column)
+        return activate if status else unactivate
 
     def emit(self, *args):
         """ Override emit function
