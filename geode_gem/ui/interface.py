@@ -4441,8 +4441,6 @@ class MainWindow(Gtk.ApplicationWindow):
             Context menu popup status
         """
 
-        self.__block_signals()
-
         row = None
 
         # Mouse
@@ -4458,6 +4456,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
         if row is None:
             return False
+
+        self.__block_signals()
 
         self.menu_consoles.set_active(
             row.console.favorite, widget="favorite")
