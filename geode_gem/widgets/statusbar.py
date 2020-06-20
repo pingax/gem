@@ -120,8 +120,15 @@ class GeodeGtkStatusbar(GeodeGtkCommon, Gtk.Statusbar):
                 widget.set_text(kwargs.get("text").strip())
 
         elif type(widget) is Gtk.Image:
-            widget.set_from_pixbuf(kwargs.get("image", None))
             widget.set_tooltip_text(kwargs.get("tooltip", str()).strip())
+
+            value = kwargs.get("image", None)
+            if isinstance(value, tuple):
+                widget.set_from_icon_name(*value)
+            else:
+                widget.set_from_pixbuf(value)
+
+            widget.set_visible(value is not None)
 
         elif type(widget) is Gtk.ProgressBar:
             index = kwargs.get("index", int())
