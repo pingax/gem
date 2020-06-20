@@ -4942,6 +4942,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
         if not thread.error:
 
+            treeiter, griditer = \
+                self.views_games.get_iter_from_key(game.id)
+
             # ----------------------------------------
             #   Update data
             # ----------------------------------------
@@ -4957,23 +4960,23 @@ class MainWindow(Gtk.ApplicationWindow):
 
             # Played
             self.views_games.treeview.set_value(
-                game.id, Columns.List.PLAYED, game.played)
+                treeiter, Columns.List.PLAYED, game.played)
 
             # Last played
             self.views_games.treeview.set_value(
-                game.id,
+                treeiter,
                 Columns.List.LAST_PLAY,
-                string_from_time(game.last_launch_date))
+                string_from_date(game.last_launch_date))
 
             # Last time played
             self.views_games.treeview.set_value(
-                game.id,
+                treeiter,
                 Columns.List.LAST_TIME_PLAY,
                 string_from_time(game.last_launch_time))
 
             # Play time
             self.views_games.treeview.set_value(
-                game.id,
+                treeiter,
                 Columns.List.TIME_PLAY,
                 string_from_time(game.play_time))
 
@@ -4981,7 +4984,7 @@ class MainWindow(Gtk.ApplicationWindow):
             has_screenshots = len(game.screenshots) > 0
 
             self.views_games.treeview.set_value(
-                game.id,
+                treeiter,
                 Columns.List.SCREENSHOT,
                 Icons.Symbolic.CAMERA if has_screenshots else None)
 
@@ -4992,7 +4995,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
             # Save state
             self.views_games.treeview.set_value(
-                game.id,
+                treeiter,
                 Columns.List.SAVESTATE,
                 Icons.Symbolic.FLOPPY if len(game.savestates) > 0 else None)
 
