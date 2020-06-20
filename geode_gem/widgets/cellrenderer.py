@@ -88,3 +88,5 @@ class GeodeGtkCellRendererText(CommonCellRenderer, Gtk.CellRendererText):
             "editable", kwargs.get("editable", False))
         self.set_property(
             "ellipsize", kwargs.get("ellipsize", Pango.EllipsizeMode.NONE))
+        self.set_property(
+            "placeholder-text", kwargs.get("placeholder-text", str()))
