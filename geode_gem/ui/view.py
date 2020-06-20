@@ -646,11 +646,11 @@ class GeodeGEMTreeView(CommonGamesView):
             thumbnail = self.interface.icons_games_views.get("treeview")
 
         row_data = [
-            self.interface.get_treeview_icon(
+            self.interface.get_ui_icon(
                 Columns.List.FAVORITE, game.favorite),
-            self.interface.get_treeview_icon(
+            self.interface.get_ui_icon(
                 Columns.List.MULTIPLAYER, game.multiplayer),
-            self.interface.get_treeview_icon(
+            self.interface.get_ui_icon(
                 Columns.List.FINISH, game.finish),
             game.name,
             game.played,
@@ -663,12 +663,12 @@ class GeodeGEMTreeView(CommonGamesView):
                 if not game.play_time == timedelta() else None),
             game.score,
             string_from_date(game.installed) if game.installed else None,
-            self.interface.get_treeview_icon(
+            self.interface.get_ui_icon(
                 Columns.List.PARAMETER,
                 not game.emulator == console.emulator or game.default),
-            self.interface.get_treeview_icon(
+            self.interface.get_ui_icon(
                 Columns.List.SCREENSHOT, game.screenshots),
-            self.interface.get_treeview_icon(
+            self.interface.get_ui_icon(
                 Columns.List.SAVESTATE, game.savestates),
             game,
             thumbnail,
@@ -700,7 +700,7 @@ class GeodeGEMTreeView(CommonGamesView):
             for index in range(1, 6):
                 widget = self.view.get_widget(f"cell_score_{index}")
 
-                icon_name = self.interface.get_treeview_icon(
+                icon_name = self.interface.get_ui_icon(
                     Columns.List.SCORE, score >= index)
 
                 widget.set_sensitive(score >= index)

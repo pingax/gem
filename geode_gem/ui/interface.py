@@ -225,20 +225,13 @@ class MainWindow(Gtk.ApplicationWindow):
             starred=Icons.STARRED)
 
         self.treeview_icons = {
-            Columns.List.FAVORITE:
-                (Icons.Symbolic.FAVORITE, None),
-            Columns.List.MULTIPLAYER:
-                (Icons.Symbolic.USERS, Icons.Symbolic.AVATAR),
-            Columns.List.FINISH:
-                (Icons.Symbolic.WEATHER_CLEAR, None),
-            Columns.List.SCORE:
-                (Icons.Symbolic.STARRED, Icons.Symbolic.NO_STARRED),
-            Columns.List.PARAMETER:
-                (Icons.Symbolic.PROPERTIES, None),
-            Columns.List.SCREENSHOT:
-                (Icons.Symbolic.CAMERA, None),
-            Columns.List.SAVESTATE:
-                (Icons.Symbolic.FLOPPY, None),
+            Columns.List.FAVORITE: ("favorite", None),
+            Columns.List.MULTIPLAYER: ("users", "avatar"),
+            Columns.List.FINISH: ("weather_clear", None),
+            Columns.List.SCORE: ("starred", "no_starred"),
+            Columns.List.PARAMETER: ("properties", None),
+            Columns.List.SCREENSHOT: ("camera", None),
+            Columns.List.SAVESTATE: ("floppy", None),
         }
 
         # ------------------------------------
@@ -2354,6 +2347,9 @@ class MainWindow(Gtk.ApplicationWindow):
         self.main_window_size = self.config.get(
             "windows", "main", fallback="1024x768").split('x')
 
+        self.use_symbolic_icon = self.config.getboolean(
+            "treeview", "use_symbolic_icon", fallback=False)
+
         # ------------------------------------
         #   Configuration operations
         # ------------------------------------
@@ -2817,20 +2813,43 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.menubar_game.set_active(getattr(game, name), widget=name)
 
             # ----------------------------------------
+            #   Game log
+            # ----------------------------------------
+
+            # Check game log file
+            if self.check_log() is not None:
+                self.menu_game.set_sensitive(True, widget="game_log")
+                self.menubar_game.set_sensitive(True, widget="game_log")
+                self.toolbar_games.set_sensitive(True, widget="game_log")
+
+            # ----------------------------------------
+            #   Game tags
+            # ----------------------------------------
+
+            if game.tags:
+                self.toolbar_games.get_widget("tags").set_sensitive(True)
+
+                # Append game tags
+                for tag in sorted(game.tags):
+                    item = GeodeGtk.MenuItem(tag, tag)
+                    item.connect("activate", self.__on_filter_tag)
+
+                    self.menu_tags.append(item)
+
+                self.menu_tags.show_all()
+
+            # ----------------------------------------
             #   Game screenshots
             # ----------------------------------------
 
-            pixbuf = self.icons.get_translucent("screenshot")
+            image = (self.get_ui_icon(
+                         Columns.List.SCREENSHOT, game.screenshots),
+                     Gtk.IconSize.MENU)
+
             tooltip = _("No screenshot")
 
             # Check screenshots
             if game.screenshots:
-                pixbuf = self.icons.get("screenshot")
-
-                self.menu_game.set_sensitive(True, widget="screenshots")
-                self.menubar_game.set_sensitive(True, widget="screenshots")
-                self.toolbar_games.set_sensitive(True, widget="screenshots")
-
                 tooltip = ngettext(_("1 screenshot"),
                                    _("%d screenshots") % len(game.screenshots),
                                    len(game.screenshots))
@@ -2872,70 +2891,48 @@ class MainWindow(Gtk.ApplicationWindow):
                         self.sidebar_image = None
 
             self.statusbar.set_widget_value(
-                "screenshots", image=pixbuf, tooltip=tooltip)
+                "screenshots", image=image, tooltip=tooltip)
 
-            # ----------------------------------------
-            #   Game log
-            # ----------------------------------------
-
-            # Check game log file
-            if self.check_log() is not None:
-                self.menu_game.set_sensitive(True, widget="game_log")
-                self.menubar_game.set_sensitive(True, widget="game_log")
-                self.toolbar_games.set_sensitive(True, widget="game_log")
-
-            # ----------------------------------------
-            #   Game tags
-            # ----------------------------------------
-
-            if len(game.tags) > 0:
-                self.toolbar_games.get_widget("tags").set_sensitive(True)
-
-                # Append game tags
-                for tag in sorted(game.tags):
-                    item = GeodeGtk.MenuItem(tag, tag)
-                    item.connect("activate", self.__on_filter_tag)
-
-                    self.menu_tags.append(item)
-
-                self.menu_tags.show_all()
+            for name in ("menu_game", "menubar_game", "toolbar_games"):
+                getattr(self, name).set_sensitive(
+                    game.screenshots, widget="screenshots")
 
             # ----------------------------------------
             #   Game savestates
             # ----------------------------------------
 
-            pixbuf = self.icons.get_translucent("savestate")
+            image = (self.get_ui_icon(
+                         Columns.List.SAVESTATE, game.savestates),
+                     Gtk.IconSize.MENU)
+
             tooltip = _("No savestate")
-
             if game.savestates:
-                pixbuf = self.icons.get("savestate")
-
                 tooltip = ngettext(_("1 savestate"),
                                    _("%d savestates") % len(game.savestates),
                                    len(game.savestates))
 
             self.statusbar.set_widget_value(
-                "savestates", image=pixbuf, tooltip=tooltip)
+                "savestates", image=image, tooltip=tooltip)
 
             # ----------------------------------------
             #   Game custom parameters
             # ----------------------------------------
 
-            # Game custom parameters
-            pixbuf = self.icons.get_translucent("parameter")
+            use_parameters = \
+                game.default or not game.emulator == console.emulator
+
+            image = (self.get_ui_icon(
+                         Columns.List.PARAMETER, use_parameters),
+                     Gtk.IconSize.MENU)
+
             tooltip = str()
-
-            if len(game.default) > 0 or not game.emulator == console.emulator:
-                pixbuf = self.icons.get("parameter")
-
-                if len(game.default) > 0:
-                    tooltip = _("Use alternative arguments")
-
-                elif game.emulator == console.emulator:
-                    tooltip = _("Use alternative emulator")
+            if game.default:
+                tooltip = _("Use alternative arguments")
+            elif game.emulator == console.emulator:
+                tooltip = _("Use alternative emulator")
 
             self.statusbar.set_widget_value(
-                "properties", image=pixbuf, tooltip=tooltip)
+                "properties", image=image, tooltip=tooltip)
 
             # ----------------------------------------
             #   Sidebar informations
@@ -3005,12 +3002,14 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     # Append star icons to sidebar
                     for child in children:
-                        icon = Icons.Symbolic.NO_STARRED
-                        if game.score >= children.index(child) + 1:
-                            icon = Icons.Symbolic.STARRED
+                        is_starred = game.score >= children.index(child) + 1
 
                         child.set_from_icon_name(
-                            icon, Gtk.IconSize.LARGE_TOOLBAR)
+                            self.get_ui_icon(
+                                Columns.List.SCORE, is_starred),
+                            Gtk.IconSize.LARGE_TOOLBAR)
+
+                        child.set_sensitive(is_starred)
 
                     # Show game score as tooltip
                     data["widget"].set_tooltip_text("%d/5" % game.score)
@@ -4981,23 +4980,18 @@ class MainWindow(Gtk.ApplicationWindow):
                 string_from_time(game.play_time))
 
             # Screenshots
-            has_screenshots = len(game.screenshots) > 0
-
             self.views_games.treeview.set_value(
                 treeiter,
                 Columns.List.SCREENSHOT,
-                Icons.Symbolic.CAMERA if has_screenshots else None)
-
-            self.menubar_game.set_sensitive(
-                has_screenshots, widget="screenshots")
-            self.toolbar_games.set_sensitive(
-                has_screenshots, widget="screenshots")
+                self.get_ui_icon(
+                    Columns.List.SCREENSHOT, game.screenshots))
 
             # Save state
             self.views_games.treeview.set_value(
                 treeiter,
                 Columns.List.SAVESTATE,
-                Icons.Symbolic.FLOPPY if len(game.savestates) > 0 else None)
+                self.get_ui_icon(
+                    Columns.List.SAVESTATE, game.savestates))
 
             self.set_informations()
 
@@ -5567,7 +5561,7 @@ class MainWindow(Gtk.ApplicationWindow):
             # Update treeview icon
             flag_column = getattr(Columns.List, flag_name.upper(), None)
             if flag_column is not None:
-                icon = self.get_treeview_icon(flag_column, status)
+                icon = self.get_ui_icon(flag_column, status)
 
                 self.views_games.treeview.set_value(
                     treeiter, flag_column, icon)
@@ -6752,7 +6746,7 @@ class MainWindow(Gtk.ApplicationWindow):
         return Path.home().joinpath(
             ".mednafen", "sav", game.path.stem + ".type")
 
-    def get_treeview_icon(self, column, status):
+    def get_ui_icon(self, column, status):
         """ Retrieve an icon for a specific treeview column based on his status
 
         Parameters
@@ -6772,7 +6766,15 @@ class MainWindow(Gtk.ApplicationWindow):
             return None
 
         activate, unactivate = self.treeview_icons.get(column)
-        return activate if status else unactivate
+
+        icon_name = activate if status else unactivate
+        if icon_name is None:
+            return None
+
+        if self.use_symbolic_icon:
+            return getattr(Icons.Symbolic, icon_name.upper(), None)
+
+        return getattr(Icons, icon_name.upper(), None)
 
     def emit(self, *args):
         """ Override emit function
