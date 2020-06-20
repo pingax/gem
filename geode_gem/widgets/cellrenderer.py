@@ -71,6 +71,9 @@ class GeodeGtkCellRendererPixbuf(CommonCellRenderer, Gtk.CellRendererPixbuf):
             self, Gtk.CellRendererPixbuf, identifier, **kwargs)
         Gtk.CellRendererPixbuf.__init__(self)
 
+        if "mode" in kwargs:
+            self.mode = kwargs.get("mode")
+
 
 class GeodeGtkCellRendererText(CommonCellRenderer, Gtk.CellRendererText):
 
