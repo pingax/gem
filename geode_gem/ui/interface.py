@@ -2254,6 +2254,19 @@ class MainWindow(Gtk.ApplicationWindow):
             self.__block_signals()
             self.main_loop.quit()
 
+    def use_sensitivity(function):
+        """ Decorator to manage main interface sensitivity
+        """
+
+        def __function__(self, *args, **kwargs):
+            self.set_sensitive(False)
+            results = function(self, *args, **kwargs)
+            self.set_sensitive(True)
+
+            return results
+
+        return __function__
+
     def load_configuration(self):
         """ Load main configuration file and store values
         """
@@ -3128,11 +3141,10 @@ class MainWindow(Gtk.ApplicationWindow):
         except GLib.Error:
             self.logger.exception("Cannot open external link")
 
+    @use_sensitivity
     def __on_show_about(self, *args):
         """ Show about dialog
         """
-
-        self.set_sensitive(False)
 
         about = Gtk.AboutDialog(use_header_bar=not self.use_classic_theme)
 
@@ -3172,10 +3184,9 @@ class MainWindow(Gtk.ApplicationWindow):
                     about.get_header_bar().remove(child)
 
         about.run()
-
-        self.set_sensitive(True)
         about.destroy()
 
+    @use_sensitivity
     def __on_show_viewer(self, *args):
         """ Show game screenshots
 
@@ -3189,8 +3200,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         if game is None or console is None or len(game.screenshots) == 0:
             return
-
-        self.set_sensitive(False)
 
         # Get external viewer
         viewer = Path(self.config.get("viewer", "binary")).expanduser()
@@ -3253,15 +3262,12 @@ class MainWindow(Gtk.ApplicationWindow):
             self.views_games.treeview.set_value(
                 game.id, Columns.List.SCREENSHOT, None)
 
-        self.set_sensitive(True)
-
+    @use_sensitivity
     def __on_show_preferences(self, *args):
         """ Show preferences window
 
         This function show the gem preferences manager
         """
-
-        self.set_sensitive(False)
 
         dialog = GeodeDialog.Preferences(self.api, self)
 
@@ -3273,8 +3279,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         dialog.destroy()
 
-        self.set_sensitive(True)
-
+    @use_sensitivity
     def __on_show_log(self, *args):
         """ Show gem log
 
@@ -3289,8 +3294,6 @@ class MainWindow(Gtk.ApplicationWindow):
             except ValueError:
                 size = (800, 600)
 
-            self.set_sensitive(False)
-
             dialog = GeodeDialog.Editor(
                 self,
                 _("Application log"),
@@ -3304,10 +3307,9 @@ class MainWindow(Gtk.ApplicationWindow):
             self.config.modify("windows", "log", "%dx%d" % dialog.get_size())
             self.config.update()
 
-            self.set_sensitive(True)
-
             dialog.destroy()
 
+    @use_sensitivity
     def __on_show_clean_cache(self, *args):
         """ Clean icons cache directory
 
@@ -3316,8 +3318,6 @@ class MainWindow(Gtk.ApplicationWindow):
         """
 
         if Folders.CACHE.exists():
-            self.set_sensitive(False)
-
             success = False
 
             dialog = GeodeDialog.CleanCache(self)
@@ -3351,8 +3351,6 @@ class MainWindow(Gtk.ApplicationWindow):
                     _("Clean icons cache"),
                     _("Icons cache directory has been succesfully cleaned."),
                     Icons.INFORMATION)
-
-            self.set_sensitive(True)
 
     def __on_show_notes(self, *args):
         """ Edit game notes
@@ -3446,6 +3444,7 @@ class MainWindow(Gtk.ApplicationWindow):
         if str(path) in self.notes.keys():
             del self.notes[str(path)]
 
+    @use_sensitivity
     def __on_show_console_editor(self, widget, *args):
         """ Open console editor dialog
 
@@ -3587,6 +3586,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.__unblock_signals()
 
+    @use_sensitivity
     def __on_show_emulator_editor(self, widget, *args):
         """ Open console editor dialog
 
@@ -3694,6 +3694,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.__unblock_signals()
 
+    @use_sensitivity
     def __on_show_emulator_config(self, *args):
         """ Edit emulator configuration file
         """
@@ -3716,8 +3717,6 @@ class MainWindow(Gtk.ApplicationWindow):
                     except ValueError:
                         size = (800, 600)
 
-                    self.set_sensitive(False)
-
                     dialog = GeodeDialog.Editor(
                         self,
                         _("Edit %s configuration") % emulator.name,
@@ -3738,8 +3737,6 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.config.modify(
                         "windows", "editor", "%dx%d" % dialog.get_size())
                     self.config.update()
-
-                    self.set_sensitive(True)
 
                     dialog.destroy()
 
@@ -5071,6 +5068,7 @@ class MainWindow(Gtk.ApplicationWindow):
             # Launch thread
             thread.start()
 
+    @use_sensitivity
     def __on_game_renamed(self, *args):
         """ Set a custom name for a specific game
 
@@ -5087,8 +5085,6 @@ class MainWindow(Gtk.ApplicationWindow):
         game = self.views_games.get_selected_game()
 
         if game is not None:
-            self.set_sensitive(False)
-
             dialog = GeodeDialog.Rename(self, game)
 
             if dialog.run() == Gtk.ResponseType.APPLY:
@@ -5135,10 +5131,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     self.set_informations()
 
-            self.set_sensitive(True)
-
             dialog.destroy()
 
+    @use_sensitivity
     def __on_game_maintenance(self, *args):
         """ Set some maintenance for selected game
         """
@@ -5157,8 +5152,6 @@ class MainWindow(Gtk.ApplicationWindow):
                 # ----------------------------------------
                 #   Dialog
                 # ----------------------------------------
-
-                self.set_sensitive(False)
 
                 dialog = GeodeDialog.Maintenance(self, game)
 
@@ -5237,8 +5230,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 if need_to_reload:
                     self.set_informations()
 
-                self.set_sensitive(True)
-
+    @use_sensitivity
     def __on_game_removed(self, *args):
         """ Remove a game
 
@@ -5260,8 +5252,6 @@ class MainWindow(Gtk.ApplicationWindow):
                 # ----------------------------------------
                 #   Dialog
                 # ----------------------------------------
-
-                self.set_sensitive(False)
 
                 dialog = GeodeDialog.Delete(self, game)
 
@@ -5331,8 +5321,7 @@ class MainWindow(Gtk.ApplicationWindow):
                         _("This game was removed successfully"),
                         Icons.INFORMATION)
 
-                self.set_sensitive(True)
-
+    @use_sensitivity
     def __on_game_duplicate(self, *args):
         """ Duplicate a game
 
@@ -5348,8 +5337,6 @@ class MainWindow(Gtk.ApplicationWindow):
             # ----------------------------------------
             #   Dialog
             # ----------------------------------------
-
-            self.set_sensitive(False)
 
             dialog = GeodeDialog.Duplicate(self, game)
 
@@ -5388,8 +5375,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     _("This game was duplicated successfully"),
                     Icons.INFORMATION)
 
-            self.set_sensitive(True)
-
+    @use_sensitivity
     def __on_game_parameters(self, *args):
         """ Manage game default parameters
 
@@ -5402,8 +5388,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         if game is None or console is None:
             return
-
-        self.set_sensitive(False)
 
         dialog = GeodeDialog.Parameters(self, game)
 
@@ -5469,10 +5453,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
             self.set_informations()
 
-        self.set_sensitive(True)
-
         dialog.destroy()
 
+    @use_sensitivity
     def __on_game_log(self, *args):
         """ Show game log
 
@@ -5491,8 +5474,6 @@ class MainWindow(Gtk.ApplicationWindow):
             except ValueError:
                 size = (800, 600)
 
-            self.set_sensitive(False)
-
             dialog = GeodeDialog.Editor(
                 self,
                 game.name,
@@ -5506,10 +5487,9 @@ class MainWindow(Gtk.ApplicationWindow):
             self.config.modify("windows", "log", "%dx%d" % dialog.get_size())
             self.config.update()
 
-            self.set_sensitive(True)
-
             dialog.destroy()
 
+    @use_sensitivity
     def __on_game_backup_memory(self, *args):
         """ Manage game backup memory
 
@@ -5541,8 +5521,6 @@ class MainWindow(Gtk.ApplicationWindow):
                 #   Dialog
                 # ----------------------------------------
 
-                self.set_sensitive(False)
-
                 dialog = GeodeDialog.Mednafen(self, game.name, content)
 
                 if dialog.run() == Gtk.ResponseType.APPLY:
@@ -5559,8 +5537,6 @@ class MainWindow(Gtk.ApplicationWindow):
                     # Remove type file when no data are available
                     elif filepath.exists():
                         filepath.unlink()
-
-                self.set_sensitive(True)
 
                 dialog.destroy()
 
@@ -5665,6 +5641,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
             self.set_informations()
 
+    @use_sensitivity
     def __on_game_edit_file(self, *args):
         """ Edit game file
 
@@ -5683,8 +5660,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 except ValueError:
                     size = (800, 600)
-
-                self.set_sensitive(False)
 
                 dialog = GeodeDialog.Editor(
                     self,
@@ -5709,8 +5684,6 @@ class MainWindow(Gtk.ApplicationWindow):
                     "windows", "game", "%dx%d" % dialog.get_size())
                 self.config.update()
 
-                self.set_sensitive(True)
-
                 dialog.destroy()
 
     def __on_game_copy(self, *args):
@@ -5722,6 +5695,7 @@ class MainWindow(Gtk.ApplicationWindow):
         if game is not None:
             self.clipboard.set_text(str(game.path), -1)
 
+    @use_sensitivity
     def __on_game_cover(self, *args):
         """ Set a new cover for selected game
         """
@@ -5729,8 +5703,6 @@ class MainWindow(Gtk.ApplicationWindow):
         game = self.views_games.get_selected_game()
 
         if game is not None:
-            self.set_sensitive(False)
-
             dialog = GeodeDialog.Cover(self, game)
 
             response = dialog.run()
@@ -5817,10 +5789,9 @@ class MainWindow(Gtk.ApplicationWindow):
                     # Reset tooltip pixbuf
                     self.__current_tooltip_pixbuf = None
 
-            self.set_sensitive(True)
-
             dialog.destroy()
 
+    @use_sensitivity
     def __on_game_generate_desktop(self, *args):
         """ Generate application desktop file
 
@@ -5834,61 +5805,55 @@ class MainWindow(Gtk.ApplicationWindow):
         console = self.selection.get("console", None)
         game = self.views_games.get_selected_game()
 
-        if treeiter is not None and game is not None and console is not None:
+        if not all((treeiter, game, console)):
+            return
 
-            if game.emulator is not None \
-               and game.emulator.id in self.api.emulators:
-                name = f"{game.path.stem}.desktop"
+        if not game.emulator or game.emulator.id not in self.api.emulators:
+            return
 
-                # ----------------------------------------
-                #   Fill template
-                # ----------------------------------------
+        # ----------------------------------------
+        #   Fill template
+        # ----------------------------------------
 
-                icon = console.icon
-                if not icon.exists():
-                    icon = self.api.get_local("icons", f"{icon}.png")
+        values = {
+            "%name%": game.name,
+            "%icon%": (console.icon if console.icon.exists()
+                       else self.api.get_local("icons", f"{icon}.png")),
+            "%path%": game.path.parent,
+            "%command%": ' '.join(game.command())
+        }
 
-                values = {
-                    "%name%": game.name,
-                    "%icon%": icon,
-                    "%path%": str(game.path.parent),
-                    "%command%": ' '.join(game.command())
-                }
+        # Put game path between quotes
+        values["%command%"] = \
+            values["%command%"].replace(str(game.path), f"\"{game.path}\"")
 
-                # Put game path between quotes
-                values["%command%"] = values["%command%"].replace(
-                    str(game.path), f"\"{game.path}\"" % str())
+        try:
+            # Read default template
+            template = get_data(
+                "data", "config", "template.desktop").read_text()
 
-                self.set_sensitive(False)
+            # Replace custom variables
+            for key, value in values.items():
+                template = template.replace(key, str(value))
 
-                try:
-                    # Read default template
-                    template = get_data(
-                        "data", "config", "template.desktop").read_text()
+            # Check ~/.local/share/applications
+            if not Folders.APPLICATIONS.exists():
+                Folders.APPLICATIONS.mkdir(mode=0o755, parents=True)
 
-                    # Replace custom variables
-                    for key, value in values.items():
-                        template = template.replace(key, str(value))
+            # Write the new desktop file
+            file = Folders.APPLICATIONS.joinpath(f"{game.path.stem}.desktop")
+            file.write_text(template)
 
-                    # Check ~/.local/share/applications
-                    if not Folders.APPLICATIONS.exists():
-                        Folders.APPLICATIONS.mkdir(mode=0o755, parents=True)
+            self.set_message(
+                _("Generate menu entry"),
+                _("%s was generated successfully") % file.name,
+                Icons.INFORMATION)
 
-                    # Write the new desktop file
-                    Folders.APPLICATIONS.joinpath(name).write_text(template)
-
-                    self.set_message(
-                        _("Generate menu entry"),
-                        _("%s was generated successfully") % name,
-                        Icons.INFORMATION)
-
-                except OSError:
-                    self.set_message(
-                        _("Generate menu entry for %s") % game.name,
-                        _("An error occur during generation, consult log for "
-                          "further details."), Icons.ERROR)
-
-                self.set_sensitive(True)
+        except OSError:
+            self.set_message(
+                _("Generate menu entry for %s") % game.name,
+                _("An error occur during generation, consult log for "
+                  "further details."), Icons.ERROR)
 
     def __on_game_menu_show(self, widget, event):
         """ Open context menu
@@ -6321,12 +6286,12 @@ class MainWindow(Gtk.ApplicationWindow):
 
         for uri in data.get_uris():
             result = urlparse(uri)
+            if not result.scheme == "file":
+                continue
 
-            if result.scheme == "file":
-                path = Path(url2pathname(result.path)).expanduser()
-
-                if path is not None and path.exists():
-                    filepaths[path] = list()
+            path = Path(url2pathname(result.path)).expanduser()
+            if path is not None and path.exists():
+                filepaths[path] = list()
 
         # ----------------------------------------
         #   Retrieve consoles for every file
@@ -6335,7 +6300,7 @@ class MainWindow(Gtk.ApplicationWindow):
         consoles = self.api.get_consoles()
 
         for path in filepaths:
-            self.logger.debug("Receive %s" % path.name)
+            self.logger.debug(f"Receive {path.name}")
 
             # Lowercase extension
             extension = str()
@@ -6345,7 +6310,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     extension += subextension.lower()
 
             # Remove the first dot to match console extensions system
-            if len(extension) > 0 and extension[0] == '.':
+            if extension and extension[0] == '.':
                 extension = extension[1:]
 
             # Check consoles which
@@ -6360,30 +6325,25 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Drag and drop dialog
         # ----------------------------------------
 
-        if len(filepaths) > 0:
-            self.set_sensitive(False)
+        if filepaths:
+            self.__on_dnd_show_dialog(filepaths)
 
-            data = None
-            options = None
+    @use_sensitivity
+    def __on_dnd_show_dialog(self, filepaths):
+        """
+        """
 
-            dialog = GeodeDialog.DNDConsole(self, filepaths)
+        data, options = None, None
 
-            if dialog.run() == Gtk.ResponseType.APPLY:
-                # Retrieve validate files
-                data = dialog.get_data()
+        dialog = GeodeDialog.DNDConsole(self, filepaths)
+        if dialog.run() == Gtk.ResponseType.APPLY:
+            data, options = dialog.get_data(), dialog.get_options()
 
-                # Retrieve user options
-                options = dialog.get_options()
+        dialog.destroy()
 
-            dialog.destroy()
-
-            # Manage validate files
-            if data is not None and options is not None:
-                GLib.idle_add(
-                    self.__on_dnd_install_data(data, options).__next__)
-
-            else:
-                self.set_sensitive(True)
+        # Manage validate files
+        if all((data, options)):
+            GLib.idle_add(self.__on_dnd_install_data(data, options).__next__)
 
     def __on_dnd_install_data(self, data, options):
         """ Install received file in user system
@@ -6409,8 +6369,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         yield True
 
-        validate_index = int()
-        progress_index = int()
+        validate_index, progress_index = int(), int()
 
         # Manage files
         for path, console in data.items():
@@ -6520,9 +6479,7 @@ class MainWindow(Gtk.ApplicationWindow):
         # Update consoles filters
         self.__on_update_consoles()
 
-        self.set_sensitive(True)
-
-        self.progress_statusbar.hide()
+        self.statusbar.progressbar.hide()
 
         yield False
 
