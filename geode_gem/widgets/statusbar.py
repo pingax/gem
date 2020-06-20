@@ -127,5 +127,6 @@ class GeodeGtkStatusbar(GeodeGtkCommon, Gtk.Statusbar):
             index = kwargs.get("index", int())
             length = kwargs.get("length", int())
 
-            widget.set_text(f"{index}/{length}")
-            widget.set_fraction(index / length)
+            if length > 0:
+                widget.set_text(f"{index}/{length}")
+                widget.set_fraction(index / length)
