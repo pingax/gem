@@ -3896,14 +3896,6 @@ class MainWindow(Gtk.ApplicationWindow):
         label_console.set_ellipsize(Pango.EllipsizeMode.END)
         label_console.set_halign(Gtk.Align.START)
 
-        if console.favorite:
-            image_console_status = Gtk.Image.new_from_icon_name(
-                Icons.Symbolic.FAVORITE, Gtk.IconSize.MENU)
-
-        else:
-            image_console_status = Gtk.Image.new_from_pixbuf(
-                self.icons.blank(22))
-
         text = _("No game")
         if console.get_games():
             text = ngettext(
@@ -3915,14 +3907,12 @@ class MainWindow(Gtk.ApplicationWindow):
 
         grid_console.pack_start(image_console, False, False, 0)
         grid_console.pack_start(label_console, True, True, 0)
-        grid_console.pack_start(image_console_status, False, False, 0)
 
         row_console.show_all()
 
         setattr(row_console, "label", label_console)
         setattr(row_console, "console", console)
         setattr(row_console, "image_icon", image_console)
-        setattr(row_console, "image_status", image_console_status)
 
         self.listbox_consoles.add(row_console)
 
@@ -4065,6 +4055,7 @@ class MainWindow(Gtk.ApplicationWindow):
         if header is not None:
             header.set_margin_top(6)
             header.set_margin_bottom(6)
+            header.set_style("dim-label")
 
         row.set_header(header)
 
@@ -4111,14 +4102,6 @@ class MainWindow(Gtk.ApplicationWindow):
             elif widget == self.menu_consoles.get_widget("favorite"):
                 self.__current_menu_row.console.favorite = \
                     not self.__current_menu_row.console.favorite
-
-                if self.__current_menu_row.console.favorite:
-                    self.__current_menu_row.image_status.set_from_icon_name(
-                        Icons.Symbolic.FAVORITE, Gtk.IconSize.MENU)
-
-                else:
-                    self.__current_menu_row.image_status.set_from_icon_name(
-                        None, Gtk.IconSize.MENU)
 
                 self.api.write_object(self.__current_menu_row.console)
 
