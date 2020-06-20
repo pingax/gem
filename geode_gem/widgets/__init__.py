@@ -26,7 +26,9 @@ from geode_gem.widgets.entry import GeodeGtkSearchEntry
 from geode_gem.widgets.frame import GeodeGtkFrame
 from geode_gem.widgets.headerbar import GeodeGtkHeaderBar
 from geode_gem.widgets.iconview import GeodeGtkIconView
+from geode_gem.widgets.image import GeodeGtkImage
 from geode_gem.widgets.infobar import GeodeGtkInfoBar
+from geode_gem.widgets.label import GeodeGtkLabel
 from geode_gem.widgets.listbox import (GeodeGtkListBox,
                                        GeodeGtkListBoxItem,
                                        GeodeGtkListBoxCheckItem)
@@ -56,7 +58,9 @@ class GeodeGtk:
     Frame = GeodeGtkFrame
     HeaderBar = GeodeGtkHeaderBar
     IconView = GeodeGtkIconView
+    Image = GeodeGtkImage
     InfoBar = GeodeGtkInfoBar
+    Label = GeodeGtkLabel
     ListBox = GeodeGtkListBox
     ListBoxCheckItem = GeodeGtkListBoxCheckItem
     ListBoxItem = GeodeGtkListBoxItem
