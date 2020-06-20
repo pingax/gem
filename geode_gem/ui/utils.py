@@ -46,6 +46,7 @@ from re import findall as re_findall
 
 # Translation
 from gettext import gettext as _
+from gettext import ngettext
 
 
 # ------------------------------------------------------------------------------
@@ -327,24 +328,16 @@ def string_from_time(time_object):
 
         hours += time_object.days * 24
 
-    if hours == 0:
-        if minutes == 0:
-            if seconds == 0:
-                return str()
-            elif seconds == 1:
-                return _("1 second")
+    if hours == 0 and minutes == 0 and seconds == 0:
+        return str()
 
-            return _("%d seconds") % seconds
+    elif hours == 0 and minutes == 0:
+        return ngettext(_("1 second"), _("%d seconds") % seconds, seconds)
 
-        elif minutes == 1:
-            return _("1 minute")
+    elif hours == 0:
+        return ngettext(_("1 minute"), _("%d minutes") % minutes, minutes)
 
-        return _("%d minutes") % minutes
-
-    elif hours == 1:
-        return _("1 hour")
-
-    return _("%d hours") % hours
+    return ngettext(_("1 hour"), _("%d hours") % hours, hours)
 
 
 def replace_for_markup(text):
