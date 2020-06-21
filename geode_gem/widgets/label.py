@@ -21,7 +21,7 @@
 from geode_gem.widgets.common import GeodeGtkCommon
 
 # GObject
-from gi.repository import Gtk
+from gi.repository import Gtk, Pango
 
 
 # ------------------------------------------------------------------------------
@@ -54,3 +54,5 @@ class GeodeGtkLabel(GeodeGtkCommon, Gtk.Label):
 
         self.set_use_markup(kwargs.get("use_markup", True))
         self.set_use_underline(kwargs.get("use_underline", True))
+        self.set_ellipsize(
+            kwargs.get("ellipsize", Pango.EllipsizeMode.NONE))
