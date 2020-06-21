@@ -64,7 +64,8 @@ class GeodeGtkToolbar(GeodeGtkCommon, Gtk.Box):
                 widget.set_expand(True)
                 widget.set_draw(False)
 
-                setattr(self, "identifier", f"{identifier}_separator_{index}")
+                setattr(
+                    widget, "identifier", f"{identifier}_separator_{index}")
 
                 expand = True
 
