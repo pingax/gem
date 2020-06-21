@@ -2588,31 +2588,19 @@ class MainWindow(Gtk.ApplicationWindow):
         if not game:
             return False
 
-        text = self.toolbar_games.get_widget("entry").get_text()
-
-        # No filter
-        if not text:
-            return True
-
         # ------------------------------------
         #   Check filter
         # ------------------------------------
-
-        found = False
 
         tags = [game.name]
         if game.tags:
             tags.extend(game.tags)
 
-        for element in tags:
+        text = self.toolbar_games.get_widget("entry").get_text().lower()
 
-            # Regex match game.name
-            if match(fr"{text}$", game.name) is not None:
-                found = True
-
-            # Lowercase filter match lowercase game.name
-            if text.lower() in game.name.lower():
-                found = True
+        found = any((
+            match(fr"{text}$", game.name.lower()) or text in game.name.lower()
+            for element in tags))
 
         # ------------------------------------
         #   Set status
