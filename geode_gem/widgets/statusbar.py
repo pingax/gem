@@ -30,69 +30,53 @@ from gi.repository import Gtk, Pango
 
 class GeodeGtkStatusbar(GeodeGtkCommon, Gtk.Statusbar):
 
-    pixbuf_widgets = ("savestates", "screenshots", "properties")
+    pixbuf_widgets = list()
 
-    def __init__(self):
+    def __init__(self, identifier, *args, **kwargs):
         """ Constructor
         """
 
-        GeodeGtkCommon.__init__(self)
+        GeodeGtkCommon.__init__(self, identifier)
         Gtk.Statusbar.__init__(self)
 
         self.inner_grid = self.get_message_area()
 
-        self.console = self.inner_grid.get_children()[0]
-        self.emulator = Gtk.Label.new(None)
-        self.game = Gtk.Label.new(None)
-        self.properties = Gtk.Image.new()
-        self.screenshots = Gtk.Image.new()
-        self.savestates = Gtk.Image.new()
-        self.progressbar = Gtk.ProgressBar.new()
+        # Ensure to remove the default label widget from legacy Gtk.Statusbar
+        label = self.inner_grid.get_children()[0]
+        self.inner_grid.remove(label)
+        label.destroy()
+
+        for index, widget in enumerate(args):
+            expand = False
+
+            if widget is None:
+                widget = Gtk.SeparatorToolItem.new()
+                widget.set_expand(True)
+                widget.set_draw(False)
+
+                setattr(
+                    widget, "identifier", f"{identifier}_separator_{index}")
+
+                expand = True
+
+            elif isinstance(widget, Gtk.Label):
+                widget.set_halign(Gtk.Align.START)
+
+            elif isinstance(widget, Gtk.Image):
+                self.pixbuf_widgets.append(widget.identifier)
+
+            self.append_widget(widget)
+            self.inner_grid.pack_start(widget, expand, expand, 0)
 
         # ------------------------------------
         #   Properties
         # ------------------------------------
 
-        self.inner_grid.set_spacing(12)
-        self.inner_grid.set_margin_top(0)
-        self.inner_grid.set_margin_end(0)
-        self.inner_grid.set_margin_start(0)
-        self.inner_grid.set_margin_bottom(0)
-
-        for widget in self.inner_widgets.values():
-
-            if type(widget) is Gtk.Label:
-                widget.set_use_markup(True)
-                widget.set_halign(Gtk.Align.START)
-                widget.set_valign(Gtk.Align.CENTER)
-
-            elif type(widget) is Gtk.Image:
-                widget.set_from_icon_name(None, Gtk.IconSize.LARGE_TOOLBAR)
-
-            elif type(widget) is Gtk.ProgressBar:
-                widget.set_no_show_all(True)
-                widget.set_show_text(True)
-
-        self.game.set_ellipsize(Pango.EllipsizeMode.END)
-        self.game.set_halign(Gtk.Align.START)
-
-        # ------------------------------------
-        #   Packing
-        # ------------------------------------
-
-        self.append_widget(self.console)
-        self.append_widget(self.emulator)
-        self.append_widget(self.game)
-
-        self.inner_grid.pack_start(self.emulator, False, False, 0)
-        self.inner_grid.pack_start(self.game, True, True, 0)
-
-        for name in ("progressbar", "savestates", "screenshots", "properties"):
-            widget = getattr(self, name, None)
-
-            if widget is not None:
-                self.append_widget(widget)
-                self.inner_grid.pack_end(widget, False, False, 0)
+        self.inner_grid.set_spacing(kwargs.get("spacing", 12))
+        self.inner_grid.set_margin_top(kwargs.get("margin", 0))
+        self.inner_grid.set_margin_end(kwargs.get("margin", 0))
+        self.inner_grid.set_margin_start(kwargs.get("margin", 0))
+        self.inner_grid.set_margin_bottom(kwargs.get("margin", 0))
 
     def set_widget_value(self, widget_key, **kwargs):
         """ Set an internal widget value
@@ -109,26 +93,30 @@ class GeodeGtkStatusbar(GeodeGtkCommon, Gtk.Statusbar):
             Internal widget keys, contains in self.__dict__
         """
 
-        widget = getattr(self, widget_key, None)
-        if widget is None:
-            raise KeyError(f"Cannot found {widget_key} in {type(self)}")
+        widget = self.get_widget(widget_key)
 
-        if type(widget) is Gtk.Label:
-            if "markup" in kwargs.keys():
-                widget.set_markup(kwargs.get("markup").strip())
-            elif "text" in kwargs.keys():
-                widget.set_text(kwargs.get("text").strip())
+        if isinstance(widget, Gtk.Label):
+            text = kwargs.get("text", str()).strip()
 
-        elif type(widget) is Gtk.Image:
+            if widget.get_use_markup():
+                widget.set_markup(text)
+            else:
+                widget.set_text(text)
+
+        elif isinstance(widget, Gtk.Image):
             widget.set_tooltip_text(kwargs.get("tooltip", str()).strip())
 
             value = kwargs.get("image", None)
-            if isinstance(value, tuple):
+            if isinstance(value, tuple) and value:
                 widget.set_from_icon_name(*value)
+                value = value[0]
             else:
                 widget.set_from_pixbuf(value)
 
-            widget.set_visible(value is not None)
+            if value is None:
+                widget.hide()
+            else:
+                widget.show()
 
         elif type(widget) is Gtk.ProgressBar:
             index = kwargs.get("index", int())

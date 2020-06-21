@@ -989,7 +989,40 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Statusbar
         # ------------------------------------
 
-        self.statusbar = GeodeGtk.Statusbar()
+        self.statusbar_progressbar = Gtk.ProgressBar.new()
+        self.statusbar_progressbar.set_show_text(True)
+        setattr(self.statusbar_progressbar, "identifier", "progressbar")
+
+        self.statusbar = GeodeGtk.Statusbar(
+            "statusbar",
+            GeodeGtk.Label(
+                "console",
+                use_markup=True,
+            ),
+            GeodeGtk.Label(
+                "emulator",
+                use_markup=True,
+            ),
+            GeodeGtk.Label(
+                "game",
+                ellipsize=Pango.EllipsizeMode.END,
+                use_markup=True,
+            ),
+            None,
+            self.statusbar_progressbar,
+            GeodeGtk.Image(
+                "properties",
+                from_icon_name=(None, Gtk.IconSize.MENU),
+            ),
+            GeodeGtk.Image(
+                "screenshots",
+                from_icon_name=(None, Gtk.IconSize.MENU),
+            ),
+            GeodeGtk.Image(
+                "savestates",
+                from_icon_name=(None, Gtk.IconSize.MENU),
+            ),
+        )
 
     def __init_packing(self):
         """ Initialize widgets packing in main window
@@ -2546,7 +2579,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.check_selection()
 
         # Update games length in headerbar subtitle
-        self.set_informations_headerbar()
+        self.set_informative_bars()
 
     def filters_reset(self, widget=None, events=None):
         """ Reset game filters
@@ -2691,7 +2724,7 @@ class MainWindow(Gtk.ApplicationWindow):
         game = self.views_games.get_selected_game()
 
         # Update headerbar and statusbar informations
-        self.set_informations_headerbar()
+        self.set_informative_bars()
 
         # ----------------------------------------
         #   Toolbar
@@ -2714,18 +2747,15 @@ class MainWindow(Gtk.ApplicationWindow):
         self.image_sidebar_screenshot.set_from_pixbuf(None)
 
         # ----------------------------------------
-        #   Statusbar
-        # ----------------------------------------
-
-        for widget_key in self.statusbar.pixbuf_widgets:
-            self.statusbar.set_widget_value(
-                widget_key, image=self.icons.blank(), tooltip=str())
-
-        # ----------------------------------------
         #   Update informations
         # ----------------------------------------
 
-        if game is not None:
+        if game is None:
+            for widget_key in self.statusbar.pixbuf_widgets:
+                self.statusbar.set_widget_value(
+                    widget_key, image=None, tooltip=str())
+
+        else:
             self.logger.debug(
                 f"Update informations on main interface for '{game.id}'")
 
@@ -3008,7 +3038,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.__unblock_signals()
 
-    def set_informations_headerbar(self):
+    def set_informative_bars(self):
         """ Update headerbar and statusbar informations from games list
         """
 
@@ -3935,7 +3965,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
             self.infobar.set_visible(False)
 
-            self.set_informations_headerbar()
+            self.set_informative_bars()
 
             self.__console_icon = self.get_pixbuf_from_cache(
                 "consoles", 96, row.console.id, row.console.icon)
@@ -4279,7 +4309,7 @@ class MainWindow(Gtk.ApplicationWindow):
             #   Append games
             # ------------------------------------
 
-            self.statusbar.progressbar.show()
+            self.statusbar_progressbar.show()
 
             for index, game in self.views_games.append_games(console, games):
 
@@ -4287,16 +4317,16 @@ class MainWindow(Gtk.ApplicationWindow):
                 if not current_thread_id == self.list_thread:
                     yield False
 
-                self.set_informations_headerbar()
+                self.set_informative_bars()
 
                 self.statusbar.set_widget_value(
                     "progressbar", index=index, length=len(games))
 
                 yield True
 
-            self.statusbar.progressbar.hide()
+            self.statusbar_progressbar.hide()
 
-            self.set_informations_headerbar()
+            self.set_informative_bars()
 
             # ------------------------------------
             #   Timer - Debug
@@ -6337,7 +6367,7 @@ class MainWindow(Gtk.ApplicationWindow):
             Gdk.Cursor.new_from_name(self.window_display, "wait"))
 
         self.statusbar.set_widget_value("progressbar")
-        self.statusbar.progressbar.show()
+        self.statusbar_progressbar.show()
 
         yield True
 
@@ -6422,7 +6452,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     # Add a new item to views
                     if self.views_games.append_game(console, game):
-                        self.set_informations_headerbar()
+                        self.set_informative_bars()
 
                         self.scroll_sidebar.set_visible(self.config.getboolean(
                             "gem", "show_sidebar", fallback=True))
@@ -6451,7 +6481,7 @@ class MainWindow(Gtk.ApplicationWindow):
         # Update consoles filters
         self.__on_update_consoles()
 
-        self.statusbar.progressbar.hide()
+        self.statusbar_progressbar.hide()
 
         yield False
 
