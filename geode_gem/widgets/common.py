@@ -190,6 +190,45 @@ class GeodeGtkCommon():
         elif self.has_widget(widget):
             self.get_widget(widget).set_sensitive(sensitive)
 
+    def get_visible(self, widget=None):
+        """ Returns the widget sensitivity
+
+        Parameters
+        ----------
+        widget : str, optionnal
+            Internal widget keys, contains in self.inner_widgets
+
+        Returns
+        -------
+        bool
+            True if the widget is visible, False otherwise
+        """
+
+        if widget is None:
+            return super().get_visible()
+
+        elif self.has_widget(widget):
+            return self.get_widget(widget).get_visible()
+
+        return True
+
+    def set_visible(self, visible, widget=None):
+        """ Set the widget sensitivity
+
+        Parameters
+        ----------
+        visible : bool
+            The new internal widget visible status
+        widget : str, optionnal
+            Internal widget keys, contains in self.inner_widgets
+        """
+
+        if widget is None:
+            super().set_visible(visible)
+
+        elif self.has_widget(widget):
+            self.get_widget(widget).set_visible(visible)
+
 
     def set_style(self, style=None, widget=None):
         """ Define a specific class for current button
