@@ -227,7 +227,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.treeview_icons = {
             Columns.List.FAVORITE: ("favorite", None),
             Columns.List.MULTIPLAYER: ("users", "avatar"),
-            Columns.List.FINISH: ("weather_clear", None),
+            Columns.List.FINISH: ("ok", None),
             Columns.List.SCORE: ("starred", "no_starred"),
             Columns.List.PARAMETER: ("properties", None),
             Columns.List.SCREENSHOT: ("camera", None),
