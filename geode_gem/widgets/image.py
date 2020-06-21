@@ -52,7 +52,7 @@ class GeodeGtkImage(GeodeGtkCommon, Gtk.Image):
             String to identify this object in internal container
         """
 
-        GeodeGtkCommon.__init__(self)
+        GeodeGtkCommon.__init__(self, identifier)
         Gtk.Image.__init__(self)
 
         # ------------------------------------

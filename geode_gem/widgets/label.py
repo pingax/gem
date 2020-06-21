@@ -39,7 +39,7 @@ class GeodeGtkLabel(GeodeGtkCommon, Gtk.Label):
             String to identify this object in internal container
         """
 
-        GeodeGtkCommon.__init__(self)
+        GeodeGtkCommon.__init__(self, identifier)
         Gtk.Label.__init__(self)
 
         # ------------------------------------
