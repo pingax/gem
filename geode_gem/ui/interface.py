@@ -5525,9 +5525,9 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.menubar_game.set_active(getattr(game, name), widget=name)
 
             # Game tags
-            if game.tags:
-                self.toolbar_games.get_widget("tags").set_sensitive(True)
+            self.toolbar_games.get_widget("tags").set_sensitive(game.tags)
 
+            if game.tags:
                 for tag in sorted(game.tags):
                     item = GeodeGtk.MenuItem(tag, tag)
                     item.connect("activate", self.__on_filter_tag)
