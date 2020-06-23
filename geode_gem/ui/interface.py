@@ -1161,7 +1161,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     {"method": self.__stop_interface},
                 ],
                 "key-press-event": [
-                    {"method": self.__on_manage_keys},
+                    {"method": self.on_events_manager},
                 ],
             },
             self.headerbar: {
@@ -1331,7 +1331,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     },
                 ] + [
                     {
-                        "method": self.update_game_flag,
+                        "method": self.set_game_flag,
                         "widget": widget,
                         "allow_block_signal": True,
                     } for widget in self.__flags_keys
@@ -1490,7 +1490,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     },
                 ] + [
                     {
-                        "method": self.update_game_flag,
+                        "method": self.set_game_flag,
                         "args": (widget,),
                         "widget": widget,
                         "allow_block_signal": True,
@@ -1576,7 +1576,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     {"method": self.on_show_game_menu_popup},
                 ],
                 "drag-data-get": [
-                    {"method": self.on_dnd_send_data},
+                    {"method": self.on_drag_data_to_external_application},
                 ],
                 "query-tooltip": [
                     {"method": self.on_generate_game_tooltip},
@@ -1599,7 +1599,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     {"method": self.on_show_game_menu_popup},
                 ],
                 "drag-data-get": [
-                    {"method": self.on_dnd_send_data},
+                    {"method": self.on_drag_data_to_external_application},
                 ],
                 "query-tooltip": [
                     {"method": self.on_generate_game_tooltip},
@@ -1641,7 +1641,7 @@ class MainWindow(Gtk.ApplicationWindow):
             },
             self.view_sidebar_screenshot: {
                 "drag-data-get": [
-                    {"method": self.on_dnd_send_data},
+                    {"method": self.on_drag_data_to_external_application},
                 ]
             },
             self.toolbar_games: {
@@ -3390,6 +3390,162 @@ class MainWindow(Gtk.ApplicationWindow):
         if path:
             self.clipboard.set_text(str(path), -1)
 
+    def on_drag_data_to_external_application(
+        self, widget, context, data, info, time):
+        """ Set rom file path uri
+
+        This function send rom file path uri when user drag a game from gem and
+        drop it to extern application
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        context : Gdk.DragContext
+            Drag context
+        data : Gtk.SelectionData
+            Received data
+        info : int
+            Info that has been registered with the target in the Gtk.TargetList
+        time : int
+            Timestamp at which the data was received
+        """
+
+        if type(widget) is Gtk.TreeView or type(widget) is Gtk.IconView:
+            game = self.views_games.get_selected_game()
+            if game is not None:
+                data.set_uris([f"file://{game.path}"])
+
+        elif type(widget) is Gtk.Viewport and self.sidebar_image:
+            data.set_uris([f"file://{self.sidebar_image}"])
+
+    def on_drag_data_to_main_interface(
+        self, widget, context, x, y, data, info, delta):
+        """ Manage drag & drop acquisition
+
+        This function receive drag files and install them into the correct
+        games folder. If a file extension can be find in multiple consoles,
+        a dialog appear to ask user where he want to put it.
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        context : Gdk.DragContext
+            Drag context
+        x : int
+            X coordinate where the drop happened
+        y : int
+            Y coordinate where the drop happened
+        data : Gtk.SelectionData
+            Received data
+        info : int
+            Info that has been registered with the target in the Gtk.TargetList
+        delta : int
+            Timestamp at which the data was received
+        """
+
+        GObject.signal_stop_emission_by_name(widget, "drag_data_received")
+
+        # Current acquisition not respect text/uri-list
+        if not info == 1337:
+            return
+
+        # Avoid to read data dropped from main interface
+        if Gtk.drag_get_source_widget(context) is not None:
+            return
+
+        self.logger.debug("Received data from drag & drop")
+
+        # ----------------------------------------
+        #   Check received URIs
+        # ----------------------------------------
+
+        filepaths = dict()
+
+        for uri in data.get_uris():
+            result = urlparse(uri)
+            if not result.scheme == "file":
+                continue
+
+            path = Path(url2pathname(result.path)).expanduser()
+            if path and path.exists():
+                filepaths[path] = list()
+
+        # ----------------------------------------
+        #   Retrieve consoles for every file
+        # ----------------------------------------
+
+        consoles = self.api.get_consoles()
+
+        for path in filepaths:
+            self.logger.debug(f"Receive {path.name}")
+
+            # Lowercase extension
+            extension = str()
+            # Only retrieve extensions and not part of the name
+            for subextension in path.suffixes:
+                if subextension not in path.stem:
+                    extension += subextension.lower()
+
+            # Remove the first dot to match console extensions system
+            if extension and extension[0] == '.':
+                extension = extension[1:]
+
+            # Check consoles which
+            for console in consoles:
+                if extension in console.extensions:
+                    filepaths[path].append(console)
+
+            # Move favorite console on first position
+            filepaths[path].sort(key=lambda console: console.favorite)
+
+        # ----------------------------------------
+        #   Drag and drop dialog
+        # ----------------------------------------
+
+        if filepaths:
+            self.on_show_drag_and_drop_dialog(filepaths)
+
+    def on_events_manager(self, widget, event):
+        """ Manage widgets for specific keymaps
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        event : Gdk.EventButton or Gdk.EventKey
+            Event which triggered this signal
+        """
+
+        # Give me more lifes, powerups or cookies konami code, I need more
+        konami_code = [Gdk.KEY_Up, Gdk.KEY_Up,
+                       Gdk.KEY_Down, Gdk.KEY_Down,
+                       Gdk.KEY_Left, Gdk.KEY_Right,
+                       Gdk.KEY_Left, Gdk.KEY_Right]
+
+        if event.keyval in konami_code:
+            self.keys.append(event.keyval)
+
+            if self.keys == konami_code:
+                dialog = GeodeDialog.Message(
+                    self,
+                    "Someone wrote the KONAMI CODE !",
+                    "Nice catch ! You have discover an easter-egg ! But, this "
+                    "kind of code is usefull in a game, not in an emulators "
+                    "manager !",
+                    Icons.Symbolic.MONKEY)
+
+                dialog.set_size_request(500, -1)
+
+                dialog.run()
+                dialog.destroy()
+
+                self.keys = list()
+
+            if not self.keys == konami_code[0:len(self.keys)]:
+                self.keys = list()
+
     def on_generate_console_header(self, row, before, *args):
         """ Update consoles listboxrow header based on console favorite status
 
@@ -3793,6 +3949,141 @@ class MainWindow(Gtk.ApplicationWindow):
             return False
 
         return True
+
+    @block_signals
+    def on_prepare_drag_and_drop_installation(self, data, options):
+        """ Install received file in user system
+
+        Parameters
+        ----------
+        data : dict
+            Received files
+        option : dict
+            User options from DND dialog
+
+        Notes
+        -----
+        Using yield to show a progressbar whitout freeze
+        """
+
+        # Update mouse cursor
+        self.get_window().set_cursor(
+            Gdk.Cursor.new_from_name(self.window_display, "wait"))
+
+        self.statusbar.set_widget_value("progressbar")
+        self.statusbar_progressbar.show()
+
+        yield True
+
+        validate_index = int()
+
+        # Manage files
+        for index, (path, console) in enumerate(data.items()):
+            self.statusbar.set_widget_value(
+                "progressbar", index=index, length=len(data))
+
+            yield True
+
+            # Lowercase extension
+            extension = str()
+            # Only retrieve extensions and not part of the name
+            for subextension in path.suffixes:
+                if subextension not in path.stem:
+                    extension += subextension.lower()
+
+            # Destination path
+            new_path = console.path.joinpath(
+                ''.join([path.stem, extension])).expanduser()
+
+            # Check consoles games subdirectory
+            if not new_path.parent.exists():
+
+                if options["create"]:
+                    new_path.parent.mkdir(mode=0o755, parents=True)
+
+                else:
+                    self.logger.warning(
+                        "%s directory not exists" % new_path.parent)
+
+            # Replace an existing file
+            if new_path.exists():
+                if new_path.is_file() and options["replace"]:
+                    new_path.unlink()
+
+            # Move or copy file to the correct location
+            if new_path.parent.exists() \
+               and new_path.parent.is_dir() \
+               and not new_path.exists():
+                validate_index += 1
+
+                copy(path, new_path)
+
+                if not options["copy"]:
+                    path.unlink()
+
+                game = console.get_game(generate_identifier(new_path))
+
+                # Add a new game to console storage if not exists
+                if game is None:
+                    game = console.add_game(new_path)
+
+                # Update installed time
+                else:
+                    game.installed = datetime.fromtimestamp(
+                        getctime(new_path)).date()
+
+                # Update console tooltip
+                if console.id in self.consoles_iter:
+                    row = self.consoles_iter[console.id]
+
+                    text = _("No game")
+                    if console.get_games():
+                        text = ngettext(
+                            _("1 game"),
+                            _("%d games") % len(console.get_games()),
+                            len(console.get_games()))
+
+                    row.set_tooltip_text(text)
+
+                # This file is owned by current selected console
+                if self.selection["console"] is not None \
+                   and console.id == self.selection["console"].id:
+
+                    # Remove an old entry in views
+                    self.views_games.remove_game(game.id)
+
+                    # Add a new item to views
+                    if self.views_games.append_game(console, game):
+                        self.set_statusbar_content()
+
+                        self.set_sidebar_visibility(
+                            self.show_sidebar, register_modification=False)
+
+                        self.views_games.set_view(
+                            self.views_games.visible_view)
+
+        # Reset mouse cursor
+        self.get_window().set_cursor(
+            Gdk.Cursor.new_from_name(self.window_display, "default"))
+
+        # Show an informative dialog
+        text = _("No game has been added")
+        if validate_index > 0:
+            text = ngettext(
+                _("1 game has been added"),
+                _("%d games have been added") % validate_index,
+                validate_index)
+
+        self.set_message(_("Games installation"),
+                         text,
+                         Icons.Symbolic.INFORMATION)
+
+        # Update consoles filters
+        self.on_reload_consoles()
+
+        self.statusbar_progressbar.hide()
+
+        yield False
 
     def on_redirect_to_external_link(self, widget, *args):
         """ Open an external link
@@ -4277,6 +4568,31 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.set_game_information()
 
         dialog.destroy()
+
+    @use_sensitivity
+    def on_show_drag_and_drop_dialog(self, filepaths):
+        """ Open drag and drop dialog
+
+        Parameters
+        ----------
+        filepaths : list
+            Dropped files as Path object list
+        """
+
+        data, options = None, None
+
+        dialog = GeodeDialog.DNDConsole(self, filepaths)
+        if dialog.run() == Gtk.ResponseType.APPLY:
+            data, options = dialog.get_data(), dialog.get_options()
+
+        dialog.destroy()
+
+        # Manage validate files
+        if not all(data, options):
+            return
+
+        GLib.idle_add(
+            self.on_prepare_drag_and_drop_installation(data, options).__next__)
 
     @block_signals
     @use_sensitivity
@@ -5440,6 +5756,54 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menubar_view.set_active(dark_theme_status, widget="dark_theme")
 
     @block_signals
+    def set_game_flag(self, widget, flag_name):
+        """ Update a specific flag for the selected game
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            object which received the signal
+        flag_name : str
+            flag label name used to retrieve current status from game object
+        """
+
+        game, status = self.views_games.get_selected_game(), False
+
+        if game is not None:
+            treeiter, griditer = self.views_games.get_iter_from_key(game.id)
+
+            # Reverse current game status
+            status = not getattr(game, flag_name, False)
+
+            # Update treeview icon
+            flag_column = getattr(Columns.List, flag_name.upper(), None)
+            if flag_column:
+                self.views_games.treeview.set_value(
+                    treeiter,
+                    flag_column,
+                    self.get_ui_icon(flag_column, status))
+
+            # Update game object in both games views storages
+            self.views_games.treeview.set_value(
+                treeiter, Columns.List.OBJECT, game)
+            self.views_games.iconview.set_value(
+                griditer, Columns.Grid.OBJECT, game)
+
+            self.logger.debug(
+                f"Set {flag_name} status for '{game.id}' to {status}")
+
+            # Update game from database
+            setattr(game, flag_name, status)
+            self.api.update_game(game)
+
+            self.check_game_selection()
+
+        self.menubar_game.set_active(status, widget=flag_name)
+        self.menu_game.set_active(status, widget=flag_name)
+
+        self.on_update_games_filters()
+
+    @block_signals
     def set_game_fullscreen(self, widget, *args):
         """ Update fullscreen button
 
@@ -6122,364 +6486,3 @@ class MainWindow(Gtk.ApplicationWindow):
         self.config.update()
 
         self.menubar_view.set_active(statusbar_status, widget="show_statusbar")
-
-    def __on_manage_keys(self, widget, event):
-        """ Manage widgets for specific keymaps
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        event : Gdk.EventButton or Gdk.EventKey
-            Event which triggered this signal
-        """
-
-        # Give me more lifes, powerups or cookies konami code, I need more
-        konami_code = [Gdk.KEY_Up, Gdk.KEY_Up,
-                       Gdk.KEY_Down, Gdk.KEY_Down,
-                       Gdk.KEY_Left, Gdk.KEY_Right,
-                       Gdk.KEY_Left, Gdk.KEY_Right]
-
-        if event.keyval in konami_code:
-            self.keys.append(event.keyval)
-
-            if self.keys == konami_code:
-                dialog = GeodeDialog.Message(
-                    self,
-                    "Someone wrote the KONAMI CODE !",
-                    "Nice catch ! You have discover an easter-egg ! But, this "
-                    "kind of code is usefull in a game, not in an emulators "
-                    "manager !",
-                    Icons.Symbolic.MONKEY)
-
-                dialog.set_size_request(500, -1)
-
-                dialog.run()
-                dialog.destroy()
-
-                self.keys = list()
-
-            if not self.keys == konami_code[0:len(self.keys)]:
-                self.keys = list()
-
-    @block_signals
-    def update_game_flag(self, widget, flag_name):
-        """ Update a specific flag for the selected game
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            object which received the signal
-        flag_name : str
-            flag label name used to retrieve current status from game object
-        """
-
-        game, status = self.views_games.get_selected_game(), False
-
-        if game is not None:
-            treeiter, griditer = self.views_games.get_iter_from_key(game.id)
-
-            # Reverse current game status
-            status = not getattr(game, flag_name, False)
-
-            # Update treeview icon
-            flag_column = getattr(Columns.List, flag_name.upper(), None)
-            if flag_column:
-                self.views_games.treeview.set_value(
-                    treeiter,
-                    flag_column,
-                    self.get_ui_icon(flag_column, status))
-
-            # Update game object in both games views storages
-            self.views_games.treeview.set_value(
-                treeiter, Columns.List.OBJECT, game)
-            self.views_games.iconview.set_value(
-                griditer, Columns.Grid.OBJECT, game)
-
-            self.logger.debug(
-                f"Set {flag_name} status for '{game.id}' to {status}")
-
-            # Update game from database
-            setattr(game, flag_name, status)
-            self.api.update_game(game)
-
-            self.check_game_selection()
-
-        self.menubar_game.set_active(status, widget=flag_name)
-        self.menu_game.set_active(status, widget=flag_name)
-
-        self.on_update_games_filters()
-
-    def on_dnd_send_data(self, widget, context, data, info, time):
-        """ Set rom file path uri
-
-        This function send rom file path uri when user drag a game from gem and
-        drop it to extern application
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        context : Gdk.DragContext
-            Drag context
-        data : Gtk.SelectionData
-            Received data
-        info : int
-            Info that has been registered with the target in the Gtk.TargetList
-        time : int
-            Timestamp at which the data was received
-        """
-
-        if type(widget) is Gtk.TreeView or type(widget) is Gtk.IconView:
-            game = self.views_games.get_selected_game()
-
-            if game is not None:
-                data.set_uris(["file://%s" % game.path])
-
-        elif type(widget) is Gtk.Viewport:
-
-            if self.sidebar_image is not None:
-                data.set_uris(["file://%s" % self.sidebar_image])
-
-    def on_dnd_received_data(self, widget, context, x, y, data, info, delta):
-        """ Manage drag & drop acquisition
-
-        This function receive drag files and install them into the correct
-        games folder. If a file extension can be find in multiple consoles,
-        a dialog appear to ask user where he want to put it.
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        context : Gdk.DragContext
-            Drag context
-        x : int
-            X coordinate where the drop happened
-        y : int
-            Y coordinate where the drop happened
-        data : Gtk.SelectionData
-            Received data
-        info : int
-            Info that has been registered with the target in the Gtk.TargetList
-        delta : int
-            Timestamp at which the data was received
-        """
-
-        GObject.signal_stop_emission_by_name(widget, "drag_data_received")
-
-        # Current acquisition not respect text/uri-list
-        if not info == 1337:
-            return
-
-        # Avoid to read data dropped from main interface
-        if Gtk.drag_get_source_widget(context) is not None:
-            return
-
-        self.logger.debug("Received data from drag & drop")
-
-        # ----------------------------------------
-        #   Check received URIs
-        # ----------------------------------------
-
-        filepaths = dict()
-
-        for uri in data.get_uris():
-            result = urlparse(uri)
-            if not result.scheme == "file":
-                continue
-
-            path = Path(url2pathname(result.path)).expanduser()
-            if path is not None and path.exists():
-                filepaths[path] = list()
-
-        # ----------------------------------------
-        #   Retrieve consoles for every file
-        # ----------------------------------------
-
-        consoles = self.api.get_consoles()
-
-        for path in filepaths:
-            self.logger.debug(f"Receive {path.name}")
-
-            # Lowercase extension
-            extension = str()
-            # Only retrieve extensions and not part of the name
-            for subextension in path.suffixes:
-                if subextension not in path.stem:
-                    extension += subextension.lower()
-
-            # Remove the first dot to match console extensions system
-            if extension and extension[0] == '.':
-                extension = extension[1:]
-
-            # Check consoles which
-            for console in consoles:
-                if extension in console.extensions:
-                    filepaths[path].append(console)
-
-            # Move favorite console on first position
-            filepaths[path].sort(key=lambda console: console.favorite)
-
-        # ----------------------------------------
-        #   Drag and drop dialog
-        # ----------------------------------------
-
-        if filepaths:
-            self.__on_dnd_show_dialog(filepaths)
-
-    @use_sensitivity
-    def __on_dnd_show_dialog(self, filepaths):
-        """
-        """
-
-        data, options = None, None
-
-        dialog = GeodeDialog.DNDConsole(self, filepaths)
-        if dialog.run() == Gtk.ResponseType.APPLY:
-            data, options = dialog.get_data(), dialog.get_options()
-
-        dialog.destroy()
-
-        # Manage validate files
-        if all((data, options)):
-            GLib.idle_add(self.__on_dnd_install_data(data, options).__next__)
-
-    @block_signals
-    def __on_dnd_install_data(self, data, options):
-        """ Install received file in user system
-
-        Parameters
-        ----------
-        data : dict
-            Received files
-        option : dict
-            User options from DND dialog
-
-        Notes
-        -----
-        Using yield to show a progressbar whitout freeze
-        """
-
-        # Update mouse cursor
-        self.get_window().set_cursor(
-            Gdk.Cursor.new_from_name(self.window_display, "wait"))
-
-        self.statusbar.set_widget_value("progressbar")
-        self.statusbar_progressbar.show()
-
-        yield True
-
-        validate_index, progress_index = int(), int()
-
-        # Manage files
-        for path, console in data.items():
-            progress_index += 1
-
-            self.statusbar.set_widget_value(
-                "progressbar", index=progress_index, length=len(data))
-
-            yield True
-
-            # Lowercase extension
-            extension = str()
-            # Only retrieve extensions and not part of the name
-            for subextension in path.suffixes:
-                if subextension not in path.stem:
-                    extension += subextension.lower()
-
-            # Destination path
-            new_path = console.path.joinpath(
-                ''.join([path.stem, extension])).expanduser()
-
-            # Check consoles games subdirectory
-            if not new_path.parent.exists():
-
-                if options["create"]:
-                    new_path.parent.mkdir(mode=0o755, parents=True)
-
-                else:
-                    self.logger.warning(
-                        "%s directory not exists" % new_path.parent)
-
-            # Replace an existing file
-            if new_path.exists():
-                if new_path.is_file() and options["replace"]:
-                    new_path.unlink()
-
-            # Move or copy file to the correct location
-            if new_path.parent.exists() \
-               and new_path.parent.is_dir() \
-               and not new_path.exists():
-                validate_index += 1
-
-                copy(path, new_path)
-
-                if not options["copy"]:
-                    path.unlink()
-
-                game = console.get_game(generate_identifier(new_path))
-
-                # Add a new game to console storage if not exists
-                if game is None:
-                    game = console.add_game(new_path)
-
-                # Update installed time
-                else:
-                    game.installed = datetime.fromtimestamp(
-                        getctime(new_path)).date()
-
-                # Update console tooltip
-                if console.id in self.consoles_iter:
-                    row = self.consoles_iter[console.id]
-
-                    text = _("No game")
-                    if console.get_games():
-                        text = ngettext(
-                            _("1 game"),
-                            _("%d games") % len(console.get_games()),
-                            len(console.get_games()))
-
-                    row.set_tooltip_text(text)
-
-                # This file is owned by current selected console
-                if self.selection["console"] is not None \
-                   and console.id == self.selection["console"].id:
-
-                    # Remove an old entry in views
-                    self.views_games.remove_game(game.id)
-
-                    # Add a new item to views
-                    if self.views_games.append_game(console, game):
-                        self.set_statusbar_content()
-
-                        self.set_sidebar_visibility(
-                            self.show_sidebar, register_modification=False)
-
-                        if self.toolbar_games.get_active("list"):
-                            self.views_games.set_view(GeodeGEM.Views.Name.LIST)
-                        else:
-                            self.views_games.set_view(GeodeGEM.Views.Name.GRID)
-
-        # Reset mouse cursor
-        self.get_window().set_cursor(
-            Gdk.Cursor.new_from_name(self.window_display, "default"))
-
-        # Show an informative dialog
-        text = _("No game has been added")
-        if validate_index > 0:
-            text = ngettext(
-                _("1 game has been added"),
-                _("%d games have been added") % validate_index,
-                validate_index)
-
-        self.set_message(_("Games installation"),
-                         text,
-                         Icons.Symbolic.INFORMATION)
-
-        # Update consoles filters
-        self.on_reload_consoles()
-
-        self.statusbar_progressbar.hide()
-
-        yield False

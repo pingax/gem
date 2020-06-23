@@ -212,7 +212,8 @@ class GeodeGEMViews(GeodeGtkCommon, Gtk.Box):
         #   Signals
         # ------------------------------------
 
-        self.connect("drag-data-received", interface.on_dnd_received_data)
+        self.connect(
+            "drag-data-received", interface.on_drag_data_to_main_interface)
 
         # ------------------------------------
         #   Packing
