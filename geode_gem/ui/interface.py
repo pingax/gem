@@ -2412,15 +2412,14 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Check filter
         # ------------------------------------
 
-        tags = [game.name]
+        tags = [game.name.lower()]
         if game.tags:
             tags.extend(game.tags)
 
         text = self.toolbar_games.get_widget("entry").get_text().lower()
 
-        found = any((
-            match(fr"{text}$", game.name.lower()) or text in game.name.lower()
-            for element in tags))
+        found = any(match(fr"{text}$", element) or text in element
+                    for element in tags)
 
         # ------------------------------------
         #   Set status
