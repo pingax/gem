@@ -226,13 +226,8 @@ class DuplicateDialog(CommonWindow):
         self.listbox_options.add(self.widget_screenshot)
         self.listbox_options.add(self.widget_note)
 
-        if self.game.emulator is not None:
-
-            # Check extension and emulator for GBA game on mednafen
-            if self.parent.get_mednafen_status() \
-               and self.game.extension == ".gba" \
-               and "mednafen" in str(self.game.emulator.binary):
-                self.listbox_options.add(self.widget_memory)
+        if self.parent.check_gba_game_use_mednafen(self.game):
+            self.listbox_options.add(self.widget_memory)
 
         self.scroll_options.add(self.listbox_options)
 
@@ -335,7 +330,7 @@ class DuplicateDialog(CommonWindow):
             # ------------------------------------
 
             if self.switch_memory.get_active():
-                path = self.parent.get_mednafen_memory_type(self.game)
+                path = self.parent.get_mednafen_memory_type_file(self.game)
 
                 if path.exists():
                     data["paths"].append(

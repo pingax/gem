@@ -822,7 +822,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.scroll_consoles.set_min_content_width(200)
 
-        self.listbox_consoles.set_filter_func(self.__on_filter_consoles)
+        self.listbox_consoles.set_filter_func(self.check_console_is_visible)
         self.listbox_consoles.set_sort_func(self.__on_sort_consoles)
         self.listbox_consoles.set_header_func(self.__on_header_consoles)
 
@@ -1151,13 +1151,13 @@ class MainWindow(Gtk.ApplicationWindow):
         signals = {
             self: {
                 "game-started": [
-                    {"method": self.__on_game_started},
+                    {"method": self.emit_game_started},
                 ],
                 "game-terminate": [
-                    {"method": self.__on_game_terminate},
+                    {"method": self.emit_game_terminated},
                 ],
                 "script-terminate": [
-                    {"method": self.__on_script_terminate},
+                    {"method": self.emit_game_script_terminated},
                 ],
                 "delete-event": [
                     {"method": self.__stop_interface},
@@ -1169,27 +1169,27 @@ class MainWindow(Gtk.ApplicationWindow):
             self.headerbar: {
                 "activate": [
                     {
-                        "method": self.__on_show_preferences,
+                        "method": self.on_show_preferences_dialog,
                         "widget": "preferences",
                     },
                     {
-                        "method": self.__on_show_log,
+                        "method": self.on_show_application_log_dialog,
                         "widget": "log",
                     },
                     {
-                        "method": self.__on_show_clean_cache,
+                        "method": self.on_show_clean_cache_dialog,
                         "widget": "clean_cache",
                     },
                     {
-                        "method": self.__on_show_external_link,
+                        "method": self.on_redirect_to_external_link,
                         "widget": "website",
                     },
                     {
-                        "method": self.__on_show_external_link,
+                        "method": self.on_redirect_to_external_link,
                         "widget": "report",
                     },
                     {
-                        "method": self.__on_show_about,
+                        "method": self.on_show_about_dialog,
                         "widget": "about",
                     },
                     {
@@ -1198,7 +1198,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     },
                 ] + [
                     {
-                        "method": self.__on_switch_column_visibility,
+                        "method": self.set_games_column_visibility,
                         "args": (widget,),
                         "widget": widget,
                         "allow_block_signal": True,
@@ -1206,37 +1206,37 @@ class MainWindow(Gtk.ApplicationWindow):
                 ],
                 "toggled": [
                     {
-                        "method": self.__on_activate_sidebar,
+                        "method": self.set_sidebar_visibility,
                         "widget": "show_sidebar",
                         "allow_block_signal": True,
                     },
                     {
-                        "method": self.__on_move_sidebar,
+                        "method": self.set_sidebar_position,
                         "widget": "right",
                         "allow_block_signal": True,
                     },
                     {
-                        "method": self.__on_move_sidebar,
+                        "method": self.set_sidebar_position,
                         "widget": "bottom",
                         "allow_block_signal": True,
                     },
                     {
-                        "method": self.__on_activate_dark_theme,
+                        "method": self.set_interface_theme,
                         "widget": "dark_theme",
                         "allow_block_signal": True,
                     },
                     {
-                        "method": self.__on_activate_statusbar,
+                        "method": self.set_statusbar_visibility,
                         "widget": "show_statusbar",
                         "allow_block_signal": True,
                     },
                     {
-                        "method": self.__on_switch_games_view,
+                        "method": self.on_switch_games_view,
                         "widget": "list",
                         "allow_block_signal": True,
                     },
                     {
-                        "method": self.__on_switch_games_view,
+                        "method": self.on_switch_games_view,
                         "widget": "grid",
                         "allow_block_signal": True,
                     },
@@ -1245,15 +1245,15 @@ class MainWindow(Gtk.ApplicationWindow):
             self.menubar_main: {
                 "activate": [
                     {
-                        "method": self.__on_show_preferences,
+                        "method": self.on_show_preferences_dialog,
                         "widget": "preferences",
                     },
                     {
-                        "method": self.__on_show_log,
+                        "method": self.on_show_application_log_dialog,
                         "widget": "log",
                     },
                     {
-                        "method": self.__on_show_clean_cache,
+                        "method": self.on_show_clean_cache_dialog,
                         "widget": "clean_cache",
                     },
                     {
@@ -1265,7 +1265,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.menubar_view: {
                 "activate": [
                     {
-                        "method": self.__on_switch_column_visibility,
+                        "method": self.set_games_column_visibility,
                         "args": (widget,),
                         "widget": widget,
                         "allow_block_signal": True,
@@ -1273,37 +1273,37 @@ class MainWindow(Gtk.ApplicationWindow):
                 ],
                 "toggled": [
                     {
-                        "method": self.__on_activate_sidebar,
+                        "method": self.set_sidebar_visibility,
                         "widget": "show_sidebar",
                         "allow_block_signal": True,
                     },
                     {
-                        "method": self.__on_move_sidebar,
+                        "method": self.set_sidebar_position,
                         "widget": "right",
                         "allow_block_signal": True,
                     },
                     {
-                        "method": self.__on_move_sidebar,
+                        "method": self.set_sidebar_position,
                         "widget": "bottom",
                         "allow_block_signal": True,
                     },
                     {
-                        "method": self.__on_activate_dark_theme,
+                        "method": self.set_interface_theme,
                         "widget": "dark_theme",
                         "allow_block_signal": True,
                     },
                     {
-                        "method": self.__on_activate_statusbar,
+                        "method": self.set_statusbar_visibility,
                         "widget": "show_statusbar",
                         "allow_block_signal": True,
                     },
                     {
-                        "method": self.__on_switch_games_view,
+                        "method": self.on_switch_games_view,
                         "widget": "list",
                         "allow_block_signal": True,
                     },
                     {
-                        "method": self.__on_switch_games_view,
+                        "method": self.on_switch_games_view,
                         "widget": "grid",
                         "allow_block_signal": True,
                     },
@@ -1312,23 +1312,23 @@ class MainWindow(Gtk.ApplicationWindow):
             self.menubar_game: {
                 "activate": [
                     {
-                        "method": self.__on_game_launch,
+                        "method": self.on_prepare_game_launch,
                         "widget": "launch",
                     },
                     {
-                        "method": self.__on_game_parameters,
+                        "method": self.on_show_game_properties_dialog,
                         "widget": "properties",
                     },
                     {
-                        "method": self.__on_show_viewer,
+                        "method": self.on_show_screenshots_viewer_dialog,
                         "widget": "screenshots",
                     },
                     {
-                        "method": self.__on_show_log,
+                        "method": self.on_show_application_log_dialog,
                         "widget": "game_log",
                     },
                     {
-                        "method": self.__on_show_notes,
+                        "method": self.on_show_game_note_dialog,
                         "widget": "notes",
                     },
                 ] + [
@@ -1340,7 +1340,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 ],
                 "toggled": [
                     {
-                        "method": self.__on_activate_fullscreen,
+                        "method": self.set_game_fullscreen,
                         "widget": "fullscreen",
                         "allow_block_signal": True,
                     },
@@ -1349,56 +1349,56 @@ class MainWindow(Gtk.ApplicationWindow):
             self.menubar_edit: {
                 "activate": [
                     {
-                        "method": self.__on_game_renamed,
+                        "method": self.on_show_game_renaming_dialog,
                         "widget": "rename",
                     },
                     {
-                        "method": self.__on_game_duplicate,
+                        "method": self.on_show_game_duplication_dialog,
                         "widget": "duplicate",
                     },
                     {
-                        "method": self.__on_game_edit_file,
+                        "method": self.on_show_game_editor_dialog,
                         "widget": "game_file",
                     },
                     {
-                        "method": self.__on_copy_path_to_clipboard,
+                        "method": self.on_copy_file_path,
                         "widget": "copy_path",
                     },
                     {
-                        "method": self.__on_open_directory,
+                        "method": self.on_open_file_path,
                         "widget": "open_path",
                     },
                     {
-                        "method": self.__on_game_generate_desktop,
+                        "method": self.on_generate_game_desktop_file,
                         "widget": "menu_entry",
                     },
                     {
-                        "method": self.__on_game_cover,
+                        "method": self.on_show_game_thumbnail_dialog,
                         "widget": "thumbnail",
                     },
                     {
-                        "method": self.__on_game_maintenance,
+                        "method": self.on_show_game_maintenance_dialog,
                         "widget": "maintenance",
                     },
                     {
-                        "method": self.__on_game_removed,
+                        "method": self.on_show_game_removing_dialog,
                         "widget": "remove",
                     },
                     {
-                        "method": self.__on_game_backup_memory,
+                        "method": self.on_show_game_backup_memory_dialog,
                         "widget": "memory_type",
                     },
                     {
-                        "method": self.__on_game_score,
+                        "method": self.set_game_score,
                         "widget": "increase",
                     },
                     {
-                        "method": self.__on_game_score,
+                        "method": self.set_game_score,
                         "widget": "decrease",
                     },
                 ] + [
                     {
-                        "method": self.__on_game_score,
+                        "method": self.set_game_score,
                         "args": (index,),
                         "widget": f"score_{index}",
                     } for index in range(0, 6)
@@ -1407,15 +1407,15 @@ class MainWindow(Gtk.ApplicationWindow):
             self.menubar_help: {
                 "activate": [
                     {
-                        "method": self.__on_show_external_link,
+                        "method": self.on_redirect_to_external_link,
                         "widget": "website",
                     },
                     {
-                        "method": self.__on_show_external_link,
+                        "method": self.on_redirect_to_external_link,
                         "widget": "report",
                     },
                     {
-                        "method": self.__on_show_about,
+                        "method": self.on_show_about_dialog,
                         "widget": "about",
                     },
                 ],
@@ -1423,71 +1423,71 @@ class MainWindow(Gtk.ApplicationWindow):
             self.menu_game: {
                 "activate": [
                     {
-                        "method": self.__on_game_launch,
+                        "method": self.on_prepare_game_launch,
                         "widget": "launch",
                     },
                     {
-                        "method": self.__on_game_parameters,
+                        "method": self.on_show_game_properties_dialog,
                         "widget": "properties",
                     },
                     {
-                        "method": self.__on_game_renamed,
+                        "method": self.on_show_game_renaming_dialog,
                         "widget": "rename",
                     },
                     {
-                        "method": self.__on_game_duplicate,
+                        "method": self.on_show_game_duplication_dialog,
                         "widget": "duplicate",
                     },
                     {
-                        "method": self.__on_game_edit_file,
+                        "method": self.on_show_game_editor_dialog,
                         "widget": "game_file",
                     },
                     {
-                        "method": self.__on_copy_path_to_clipboard,
+                        "method": self.on_copy_file_path,
                         "widget": "copy_path",
                     },
                     {
-                        "method": self.__on_open_directory,
+                        "method": self.on_open_file_path,
                         "widget": "open_path",
                     },
                     {
-                        "method": self.__on_game_cover,
+                        "method": self.on_show_game_thumbnail_dialog,
                         "widget": "thumbnail",
                     },
                     {
-                        "method": self.__on_game_maintenance,
+                        "method": self.on_show_game_maintenance_dialog,
                         "widget": "maintenance",
                     },
                     {
-                        "method": self.__on_game_removed,
+                        "method": self.on_show_game_removing_dialog,
                         "widget": "remove",
                     },
                     {
-                        "method": self.__on_game_score,
+                        "method": self.set_game_score,
                         "widget": "increase",
                     },
                     {
-                        "method": self.__on_game_score,
+                        "method": self.set_game_score,
                         "widget": "decrease",
                     },
                     {
-                        "method": self.__on_show_viewer,
+                        "method": self.on_show_screenshots_viewer_dialog,
                         "widget": "screenshots",
                     },
                     {
-                        "method": self.__on_game_log,
+                        "method": self.on_show_game_log_dialog,
                         "widget": "game_log",
                     },
                     {
-                        "method": self.__on_show_notes,
+                        "method": self.on_show_game_note_dialog,
                         "widget": "notes",
                     },
                     {
-                        "method": self.__on_game_generate_desktop,
+                        "method": self.on_generate_game_desktop_file,
                         "widget": "menu_entry",
                     },
                     {
-                        "method": self.__on_game_backup_memory,
+                        "method": self.on_show_game_backup_memory_dialog,
                         "widget": "memory_type",
                     },
                 ] + [
@@ -1499,7 +1499,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     } for widget in self.__flags_keys
                 ] + [
                     {
-                        "method": self.__on_game_score,
+                        "method": self.set_game_score,
                         "args": (index,),
                         "widget": f"score_{index}",
                     } for index in range(0, 6)
@@ -1508,40 +1508,40 @@ class MainWindow(Gtk.ApplicationWindow):
             self.menu_consoles: {
                 "activate": [
                     {
-                        "method": self.__on_show_console_editor,
+                        "method": self.on_show_console_editor_dialog,
                         "widget": "edit_console",
                     },
                     {
-                        "method": self.__on_remove_console,
+                        "method": self.on_show_console_remove_dialog,
                         "widget": "remove_console",
                     },
                     {
-                        "method": self.__on_show_emulator_editor,
+                        "method": self.on_show_emulator_editor_dialog,
                         "widget": "edit_emulator",
                     },
                     {
-                        "method": self.__on_show_emulator_config,
+                        "method": self.on_show_emulator_file_dialog,
                         "widget": "edit_file",
                     },
                     {
-                        "method": self.__on_copy_path_to_clipboard,
+                        "method": self.on_copy_file_path,
                         "widget": "copy_path",
                     },
                     {
-                        "method": self.__on_open_directory,
+                        "method": self.on_open_file_path,
                         "widget": "open_path",
                     },
                     {
-                        "method": self.__on_reload_games,
+                        "method": self.on_reload_console_games,
                         "widget": "reload",
                     },
                     {
-                        "method": self.__on_change_console_option,
+                        "method": self.on_update_consoles_filters,
                         "widget": "favorite",
                         "allow_block_signal": True,
                     },
                     {
-                        "method": self.__on_change_console_option,
+                        "method": self.on_update_consoles_filters,
                         "widget": "recursive",
                         "allow_block_signal": True,
                     },
@@ -1550,13 +1550,13 @@ class MainWindow(Gtk.ApplicationWindow):
             self.popover_filters: {
                 "clicked": [
                     {
-                        "method": self.filters_reset,
+                        "method": self.clear_game_filters,
                         "widget": "reset",
                     }
                 ],
                 "state-set": [
                     {
-                        "method": self.filters_update,
+                        "method": self.on_update_games_filters,
                         "widget": widget,
                     } for widget in self.__filters_keys
                 ],
@@ -1569,19 +1569,19 @@ class MainWindow(Gtk.ApplicationWindow):
                     },
                 ],
                 "row-activated": [
-                    {"method": self.__on_game_launch},
+                    {"method": self.on_prepare_game_launch},
                 ],
                 "button-press-event": [
-                    {"method": self.__on_game_menu_show},
+                    {"method": self.on_show_game_menu_popup},
                 ],
                 "key-release-event": [
-                    {"method": self.__on_game_menu_show},
+                    {"method": self.on_show_game_menu_popup},
                 ],
                 "drag-data-get": [
                     {"method": self.on_dnd_send_data},
                 ],
                 "query-tooltip": [
-                    {"method": self.__on_selected_game_tooltip},
+                    {"method": self.on_generate_game_tooltip},
                 ],
             },
             self.views_games.iconview: {
@@ -1592,19 +1592,19 @@ class MainWindow(Gtk.ApplicationWindow):
                     },
                 ],
                 "item-activated": [
-                    {"method": self.__on_game_launch},
+                    {"method": self.on_prepare_game_launch},
                 ],
                 "button-press-event": [
-                    {"method": self.__on_game_menu_show},
+                    {"method": self.on_show_game_menu_popup},
                 ],
                 "key-release-event": [
-                    {"method": self.__on_game_menu_show},
+                    {"method": self.on_show_game_menu_popup},
                 ],
                 "drag-data-get": [
                     {"method": self.on_dnd_send_data},
                 ],
                 "query-tooltip": [
-                    {"method": self.__on_selected_game_tooltip},
+                    {"method": self.on_generate_game_tooltip},
                 ],
             },
             self.listbox_consoles: {
@@ -1621,22 +1621,22 @@ class MainWindow(Gtk.ApplicationWindow):
             self.toolbar_consoles: {
                 "activate": [
                     {
-                        "method": self.__on_show_console_editor,
+                        "method": self.on_show_console_editor_dialog,
                         "widget": "add_console",
                     },
                     {
-                        "method": self.__on_show_emulator_editor,
+                        "method": self.on_show_emulator_editor_dialog,
                         "widget": "add_emulator",
                     },
                     {
-                        "method": self.__on_change_console_option,
+                        "method": self.on_update_consoles_filters,
                         "widget": "hide_empty",
                         "allow_block_signal": True,
                     },
                 ],
                 "changed": [
                     {
-                        "method": self.__on_update_consoles,
+                        "method": self.on_reload_consoles,
                         "widget": "entry",
                     },
                 ],
@@ -1649,45 +1649,45 @@ class MainWindow(Gtk.ApplicationWindow):
             self.toolbar_games: {
                 "clicked": [
                     {
-                        "method": self.__on_game_launch,
+                        "method": self.on_prepare_game_launch,
                         "widget": "launch",
                     },
                     {
-                        "method": self.__on_show_viewer,
+                        "method": self.on_show_screenshots_viewer_dialog,
                         "widget": "screenshots",
                     },
                     {
-                        "method": self.__on_game_log,
+                        "method": self.on_show_game_log_dialog,
                         "widget": "game_log",
                     },
                     {
-                        "method": self.__on_show_notes,
+                        "method": self.on_show_game_note_dialog,
                         "widget": "notes",
                     },
                     {
-                        "method": self.__on_game_parameters,
+                        "method": self.on_show_game_properties_dialog,
                         "widget": "parameters",
                     },
                 ],
                 "changed": [
                     {
-                        "method": self.filters_update,
+                        "method": self.on_update_games_filters,
                         "widget": "entry",
                     },
                 ],
                 "toggled": [
                     {
-                        "method": self.__on_activate_fullscreen,
+                        "method": self.set_game_fullscreen,
                         "widget": "fullscreen",
                         "allow_block_signal": True,
                     },
                     {
-                        "method": self.__on_switch_games_view,
+                        "method": self.on_switch_games_view,
                         "widget": "list",
                         "allow_block_signal": True,
                     },
                     {
-                        "method": self.__on_switch_games_view,
+                        "method": self.on_switch_games_view,
                         "widget": "grid",
                         "allow_block_signal": True,
                     },
@@ -2154,7 +2154,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.config.update()
 
         # Set default filters flag
-        self.filters_reset()
+        self.clear_game_filters()
 
     def __stop_interface(self, *args):
         """ Save data and stop interface
@@ -2182,7 +2182,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 thread.proc.terminate()
                 thread.join()
 
-                self.__on_game_terminate(None, thread)
+                self.emit_game_terminated(None, thread)
 
         # ------------------------------------
         #   Notes
@@ -2280,6 +2280,33 @@ class MainWindow(Gtk.ApplicationWindow):
             self.__block_signals()
             self.main_loop.quit()
 
+    def __block_signals(self):
+        """ Block check button signals to avoid stack overflow when toggled
+        """
+
+        for signal, widget in self.signals_storage.items():
+            widget.handler_block(signal)
+
+    def __unblock_signals(self):
+        """ Unblock check button signals
+        """
+
+        for signal, widget in self.signals_storage.items():
+            widget.handler_unblock(signal)
+
+    def block_signals(function):
+        """ Decorator to manage signals blocking behavior
+        """
+
+        def __function__(self, *args, **kwargs):
+            self.__block_signals()
+            results = function(self, *args, **kwargs)
+            self.__unblock_signals()
+
+            return results
+
+        return __function__
+
     def use_sensitivity(function):
         """ Decorator to manage main interface sensitivity
         """
@@ -2292,6 +2319,704 @@ class MainWindow(Gtk.ApplicationWindow):
             return results
 
         return __function__
+
+    def call_external_application(self, *command):
+        """ Call an external application from operating system
+
+        Parameters
+        ----------
+        command : list
+            Command execution parameters as string list
+
+        Returns
+        -------
+        str
+            Splited output if executed, None otherwise
+        """
+
+        if get_binary_path(command[0]):
+            proc = Popen(
+                command,
+                stdin=PIPE,
+                stdout=PIPE,
+                stderr=STDOUT,
+                universal_newlines=True)
+
+            output, error_output = proc.communicate()
+            if output:
+                return output.split('\n')[0]
+
+        return None
+
+    def check_console_is_visible(self, row, *args):
+        """ Filter list with consoles searchentry text
+
+        Parameters
+        ----------
+        row : gem.gtk.widgets.ListBoxSelectorItem
+            Activated row
+        """
+
+        if self.hide_empty_console and not row.console.get_games():
+            return False
+
+        widget = self.toolbar_consoles.get_widget("entry")
+        if not widget:
+            return False
+
+        filter_text = widget.get_text().strip().lower()
+        if not filter_text:
+            return True
+
+        return filter_text in row.console.name.lower()
+
+    def check_desktop(self, path):
+        """ Check user applications folder for specific desktop file
+
+        Parameters
+        ----------
+        path : pathlib.Path
+            Application path
+
+        Returns
+        -------
+        bool
+            Desktop file status
+
+        Examples
+        --------
+        >>> check_desktop("unavailable_file")
+        False
+
+        Notes
+        -----
+        In GNU/Linux desktop, the default folder for user applications is:
+
+            ~/.local/share/applications/
+        """
+
+        return Folders.APPLICATIONS.joinpath(f"{path.stem}.desktop").exists()
+
+    def check_game_is_editable(self, game):
+        """ Check if specified game is a text file and can be edited by user
+
+        Parameters
+        ----------
+        game : geode_gem.engine.game.Game
+            Game instance
+
+        Returns
+        -------
+        bool
+            True if game file is editable, False otherwise
+        """
+
+        if not magic_from_file(game.path, mime=True).startswith("text/"):
+            return False
+
+        return access(game.path, R_OK) and access(game.path, W_OK)
+
+    def check_game_is_visible(self, model, row, *args):
+        """ Check if a game is visible in both views based on user filters
+
+        Parameters
+        ----------
+        model : Gtk.TreeModel
+            Treeview model which receive signal
+        row : Gtk.TreeModelRow
+            Treeview current row
+        """
+
+        # Get game object from treeview
+        if model == self.views_games.treeview.list_model:
+            game = model.get_value(row, Columns.List.OBJECT)
+
+        elif model == self.views_games.iconview.list_model:
+            game = model.get_value(row, Columns.Grid.OBJECT)
+
+        if not game:
+            return False
+
+        # ------------------------------------
+        #   Check filter
+        # ------------------------------------
+
+        tags = [game.name]
+        if game.tags:
+            tags.extend(game.tags)
+
+        text = self.toolbar_games.get_widget("entry").get_text().lower()
+
+        found = any((
+            match(fr"{text}$", game.name.lower()) or text in game.name.lower()
+            for element in tags))
+
+        # ------------------------------------
+        #   Set status
+        # ------------------------------------
+
+        flags = [
+            ("favorite", "unfavorite", game.favorite),
+            ("multiplayer", "singleplayer", game.multiplayer),
+            ("finish", "unfinish", game.finish)
+        ]
+
+        for first, second, status in flags:
+            first = self.popover_filters.get_active(f"{first}_switch")
+            second = self.popover_filters.get_active(f"{second}_switch")
+
+            # Avoid to check both activated filters
+            if first and second:
+                continue
+
+            found = found and ((status and first) or (not status and second))
+
+        return found
+
+    def check_game_selection(self):
+        """ Check selected game
+
+        This function check if the selected game in the games treeview is the
+        same as the one stock in self.selection["game"]. If this is not the
+        case, the self.selection is reset
+
+        Returns
+        -------
+        bool
+            Check status
+        """
+
+        name = None
+
+        if self.selection["game"] is not None:
+            name = self.selection["game"].name
+
+        if name is not None:
+            model, treeiter = self.get_selected_treeiter_from_container(
+                self.views_games.treeview)
+
+            if treeiter is not None:
+                treeview_name = model.get_value(treeiter, Columns.List.NAME)
+
+                if not treeview_name == name:
+                    selection = self.views_games.treeview.get_selection()
+                    if selection is not None:
+                        selection.unselect_iter(treeiter)
+
+                    self.selection["game"] = None
+
+                    self.set_sensitive_interface()
+                    self.set_game_information()
+
+                    return False
+
+        return True
+
+    def check_gba_game_use_mednafen(self, game):
+        """ Check if specified game is a GBA rom which use Mednafen
+
+        Parameters
+        ----------
+        game : geode_gem.engine.game.Game
+            Game instance
+
+        Returns
+        -------
+        bool
+            True if game is a GBA rom using Mednafen, False otherwise
+        """
+
+        if not self.__mednafen_status or not game:
+            return False
+
+        emulator = game.emulator
+        return game.extension == ".gba" and "mednafen" in emulator.binary.name
+
+    def check_mednafen(self):
+        """ Check if Mednafen exists on user system
+
+        This function read the first line of mednafen default output and check
+        if this one match "Starting Mednafen [0-9+.?]+".
+
+        Returns
+        -------
+        bool
+            Mednafen exists status
+
+        Notes
+        -----
+        Still possible to troll this function with a script call mednafen which
+        send the match string as output. But, this problem only appear if a
+        user want to do that, so ...
+        """
+
+        output = self.call_external_application("mednafen")
+
+        return (output and
+                match(r'Starting Mednafen [\d+\.?]+', output.split('\n')[0]))
+
+    def check_version(self):
+        """ Check development version when debug mode is activate
+
+        This function allow the developper to know which hash version is
+        currently using
+
+        Returns
+        -------
+        str
+            Application version
+        """
+
+        version = Metadata.VERSION
+
+        if self.api.debug and Path(".git").exists():
+            output = self.call_external_application(
+                "git", "rev-parse", "--short", "HEAD")
+
+            if output and match(r'^[\d\w]+$', output):
+                return f"{version}-{output}"
+
+        return version
+
+    def clear_game_filters(self, widget=None, events=None):
+        """ Reset game filters
+
+        Parameters
+        ----------
+        widget : Gtk.Widget, optional
+            Object which receive signal (Default: None)
+        event : Gdk.EventButton or Gdk.EventKey, optional
+            Event which triggered this signal (Default: None)
+        """
+
+        for widget in self.__filters_keys:
+            self.popover_filters.set_active(True, widget=widget)
+
+        self.toolbar_games.set_style(widget="filters")
+
+    def emit(self, *args):
+        """ Override emit function
+
+        This override allow to use Interface function from another thread in
+        MainThread
+        """
+
+        GLib.idle_add(GObject.GObject.emit, self, *args)
+
+    def emit_game_note_response(self, widget, response, dialog, title, path):
+        """ Close notes dialog
+
+        This function close current notes dialog and save his textview buffer
+        to the game notes file
+
+        Parameters
+        ----------
+        widget : Gtk.Dialog
+            Dialog object
+        response : Gtk.ResponseType
+            Dialog object user response
+        dialog : Gtk.Dialog
+            Dialog editor object
+        title : str
+            Dialog title, it's game name by default
+        path : pathlib.Path
+            Notes path
+        """
+
+        if response == Gtk.ResponseType.APPLY:
+            text_buffer = dialog.buffer_editor.get_text(
+                dialog.buffer_editor.get_start_iter(),
+                dialog.buffer_editor.get_end_iter(), True)
+
+            if text_buffer:
+                with path.open('w') as pipe:
+                    pipe.write(text_buffer)
+
+                self.logger.info(f"Update note for {title}")
+
+            elif path.exists():
+                path.unlink()
+
+                self.logger.debug(f"Remove note for {title}")
+
+        self.config.modify("windows", "notes", "%dx%d" % dialog.get_size())
+        self.config.update()
+
+        dialog.destroy()
+
+        if str(path) in self.notes.keys():
+            del self.notes[str(path)]
+
+    def emit_game_started(self, widget, game):
+        """ The game processus has been started
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        game : gem.engine.game.Game
+            Game object
+        """
+
+        path = self.api.get_local("ongamestarted")
+        if path.exists() and access(path, X_OK):
+            thread = ScriptThread(self, path, game)
+            # Save thread references
+            self.scripts[game.id] = thread
+            # Launch thread
+            thread.start()
+
+    def emit_game_terminated(self, widget, thread):
+        """ Terminate the game processus and update data
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        thread : gem.widgets.game.GameThread
+            Game thread
+        """
+
+        game = thread.game
+
+        if not thread.error:
+            game.played += 1
+            game.play_time = thread.game.play_time + thread.delta
+            game.last_launch_time = thread.delta
+            game.last_launch_date = date.today()
+
+            # Update game from database
+            self.api.update_game(game)
+
+            # Update games views
+            treeiter, griditer = self.views_games.get_iter_from_key(game.id)
+
+            self.views_games.treeview.set_value(
+                treeiter, Columns.List.PLAYED, game.played)
+            self.views_games.treeview.set_value(
+                treeiter,
+                Columns.List.LAST_PLAY,
+                string_from_date(game.last_launch_date))
+            self.views_games.treeview.set_value(
+                treeiter,
+                Columns.List.LAST_TIME_PLAY,
+                string_from_time(game.last_launch_time))
+            self.views_games.treeview.set_value(
+                treeiter,
+                Columns.List.TIME_PLAY,
+                string_from_time(game.play_time))
+            self.views_games.treeview.set_value(
+                treeiter,
+                Columns.List.SCREENSHOT,
+                self.get_ui_icon(
+                    Columns.List.SCREENSHOT, game.screenshots))
+            self.views_games.treeview.set_value(
+                treeiter,
+                Columns.List.SAVESTATE,
+                self.get_ui_icon(
+                    Columns.List.SAVESTATE, game.savestates))
+
+            self.set_game_information()
+
+        # ----------------------------------------
+        #   Refresh widgets
+        # ----------------------------------------
+
+        select_console = self.selection.get("console", None)
+        select_game = self.views_games.get_selected_game()
+
+        if not select_console:
+            self.logger.debug(f"Restore widgets status for {game.name}")
+            self.set_sensitive_interface()
+
+        # Check if current selected file is the same as thread file
+        elif select_game and select_game.id == game.id:
+            self.logger.debug(f"Restore widgets status for {game.name}")
+            self.__current_tooltip = None
+
+            if self.check_gba_game_use_mednafen(game):
+                self.menu_game.set_sensitive(True, widget="memory_type")
+                self.menubar_edit.set_sensitive(True, widget="memory_type")
+
+        # ----------------------------------------
+        #   Manage thread
+        # ----------------------------------------
+
+        # Remove this game from threads list
+        if game.id in self.threads:
+            self.logger.debug(f"Remove {game.name} from process cache")
+            del self.threads[game.id]
+
+        if not self.threads:
+            self.headerbar.set_sensitive(True, widget="quit")
+            self.menubar_main.set_sensitive(True, widget="quit")
+
+        self.set_game_playing_status(game)
+
+        # ----------------------------------------
+        #   Manage script
+        # ----------------------------------------
+
+        # Remove this script from threads list
+        if game.id in self.scripts:
+            self.logger.debug(f"Remove {game.name} from scripts cache")
+            del self.scripts[game.id]
+
+        path = self.api.get_local("ongamestopped")
+        if path.exists() and access(path, X_OK):
+            thread = ScriptThread(self, path, game)
+            # Save thread references
+            self.scripts[game.id] = thread
+            # Launch thread
+            thread.start()
+
+    def emit_game_script_terminated(self, widget, thread):
+        """ Terminate the script processus
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        thread : gem.widgets.script.ScriptThread
+            Game thread
+        """
+
+        # Remove this script from threads list
+        if thread.game.id in self.scripts:
+            self.logger.debug(f"Remove {thread.game.name} from scripts cache")
+            del self.scripts[thread.game.id]
+
+    def get_game_log_file(self, game):
+        """ Check if a game has an output file available
+
+        Parameters
+        ----------
+        game : geode_gem.engine.game.Game
+            Game instance
+
+        Returns
+        -------
+        str or None
+            Output file path
+        """
+
+        if game:
+            log_path = self.api.get_local("logs", f"{game.id}.log")
+            if log_path.exists():
+                return log_path
+
+        return None
+
+    def get_icon_from_cache(self, *args):
+        """ Retrieve icon from cache folder
+
+        Returns
+        -------
+        str
+            Cached icon path
+        """
+
+        return self.__cache.joinpath(*args)
+
+    def get_pixbuf_from_cache(self,
+                              key, size, identifier, path, use_cache=True):
+        """ Retrieve an icon from cache or generate it
+
+        Parameters
+        ----------
+        key : str
+            Cache category folder
+        size : int
+            Pixbuf size in pixels
+        identifier : str
+            Icon identifier
+        path : pathlib.Path
+            Icon path
+        use_cache : bool, optional
+            Use cache directory and save new generated icons into cache
+
+        Returns
+        -------
+        Gdk.Pixbuf or None
+            New cached icon or None if no icon has been generated
+        """
+
+        cache_path = self.get_icon_from_cache(
+            key, f"{size}x{size}", f"{identifier}.png")
+
+        # Retrieve icon from cache folder
+        if use_cache and cache_path.exists() and cache_path.is_file():
+            return GdkPixbuf.Pixbuf.new_from_file(str(cache_path))
+
+        if path is None:
+            return None
+
+        icon, need_save = None, False
+
+        # Retrieve icon from specific collection
+        if not path.exists():
+
+            if key == "consoles":
+                collection_path = self.api.get_local("icons", f"{path}.png")
+
+                # Generate a new cache icon
+                if collection_path.exists() and collection_path.is_file():
+
+                    # Check the file mime-type to avoid non-image file
+                    if magic_from_file(collection_path,
+                                       mime=True).startswith("image/"):
+
+                        icon = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                            str(collection_path), size, size, True)
+
+                        need_save = True
+
+            elif key == "emulators" and self.icons.theme.has_icon(str(path)):
+                icon = self.icons.theme.load_icon(
+                    str(path), size, Gtk.IconLookupFlags.FORCE_SIZE)
+
+                need_save = True
+
+        # Generate a new cache icon
+        elif path.exists() and path.is_file():
+
+            # Check the file mime-type to avoid non-image file
+            if magic_from_file(path, mime=True).startswith("image/"):
+                icon = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                    str(path), size, size, True)
+
+                need_save = True
+
+        # Save generated icon to cache
+        if use_cache and need_save:
+            try:
+                self.logger.debug(f"Save generated icon to {cache_path}")
+
+                if not cache_path.parent.exists():
+                    cache_path.parent.mkdir(mode=0o755, parents=True)
+
+                icon.savev(str(cache_path), "png", list(), list())
+
+            except GLib.Error:
+                self.logger.exception("An error occur during cache generation")
+
+        return icon
+
+    def get_mednafen_memory_type_file(self, game):
+        """ Retrieve a memory type file for a specific game
+
+        Parameters
+        ----------
+        game : geode_gem.engine.game.Game
+            Game instance
+
+        Returns
+        -------
+        pathlib.Path
+            Memory type file path
+        """
+
+        return \
+            Path.home().joinpath(".mednafen", "sav", f"{game.path.stem}.type")
+
+    def get_screenshot_from_game(self, game):
+        """ Retrieve a screenshot from specified game
+
+        Parameters
+        ----------
+        game : geode_gem.engine.game.Game
+            Game instance
+
+        Returns
+        -------
+        pathlib.Path
+            Latest screenshot if found, None otherwise
+        """
+
+        if not game.screenshots:
+            return None
+
+        # Ordered game screenshots
+        if not self.use_random_screenshot:
+            screenshots = sorted(game.screenshots)
+
+        # Get a random file from game screenshots
+        else:
+            screenshots = game.screenshots
+            shuffle(screenshots)
+
+        return Path(screenshots[-1])
+
+    def get_selected_treeiter_from_container(self, widget):
+        """ Retrieve treeiter from container widget
+
+        Parameters
+        ----------
+        widget : Gtk.Container
+            Container widget
+
+        Returns
+        -------
+        Gtk.TreeStore, Gtk.TreeIter
+            Selected treeiter
+        """
+
+        return widget.get_model(), widget.get_selected_treeiter()
+
+    def get_window_size_from_configuration(self, window, width, height):
+        """ Retrieve size for a specific window from configuration
+
+        Parameters
+        ----------
+        window : str
+            Window name
+        width : int
+            Window width size
+        height : int
+            Window width height
+
+        Returns
+        -------
+        tuple
+            Window size as integer tuple
+        """
+
+        try:
+            return self.config.get(
+                "windows", window, fallback=f"{width}x{height}").split('x')
+
+        except ValueError:
+            return (width, height)
+
+    def get_ui_icon(self, column, status):
+        """ Retrieve an icon for a specific treeview column based on his status
+
+        Parameters
+        ----------
+        column : str
+            Column name based on Columns metadata class
+        status : bool
+            Activate status for icon
+
+        Returns
+        -------
+        str
+            Icon name if found in treeview_icons storage, None otherwise
+        """
+
+        if column not in self.treeview_icons:
+            return None
+
+        activate, unactivate = self.treeview_icons.get(column)
+
+        icon_name = activate if status else unactivate
+        if icon_name is None:
+            return None
+
+        if self.use_symbolic_icon:
+            return getattr(Icons.Symbolic, icon_name.upper(), None)
+
+        return getattr(Icons, icon_name.upper(), None)
 
     def load_configuration(self):
         """ Load main configuration file and store values
@@ -2388,10 +3113,10 @@ class MainWindow(Gtk.ApplicationWindow):
         # ------------------------------------
 
         # Avoid to have an empty string for last console value
-        if type(self.load_last_console) == 0 \
-           and len(self.load_last_console) == 0:
+        if not self.load_last_console:
             self.load_last_console = None
 
+    @block_signals
     def load_interface(self, init_interface=False):
         """ Load main interface
 
@@ -2403,8 +3128,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.logger.debug(
             "%s main interface" % ("Load" if init_interface else "Reload"))
-
-        self.__block_signals()
 
         self.api.init()
 
@@ -2426,7 +3149,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.infobar.set_visible(False)
 
-        self.sensitive_interface()
+        self.set_sensitive_interface()
 
         # Show window buttons into headerbar
         self.headerbar.set_show_close_button(self.show_headerbar_buttons)
@@ -2460,7 +3183,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.label_sidebar_title.set_line_wrap_mode(
                 Pango.WrapMode.WORD_CHAR)
 
-        self.__on_move_sidebar(init_interface=init_interface)
+        self.set_sidebar_position(init_interface=init_interface)
 
         # ------------------------------------
         #   Treeview
@@ -2524,32 +3247,1627 @@ class MainWindow(Gtk.ApplicationWindow):
         else:
             self.scroll_sidebar.set_visible(False)
 
-            self.set_informations()
+            self.set_game_information()
 
-        self.__unblock_signals()
-
-    def sensitive_interface(self, status=False):
-        """ Update sensitive status for main widgets
-
-        Parameters
-        ----------
-        status : bool, optional
-            Sensitive status (Default: False)
-        """
-
-        self.logger.debug(f"Reset widgets sensitivity status to {status}")
-
-        self.__on_game_launch_button_update(True)
-
-        for widget in self.__widgets_storage:
-            widget.set_sensitive(status)
-
-    def filters_update(self, widget, status=None):
-        """ Reload packages filter when user change filters from menu
+    def on_copy_file_path(self, widget):
+        """ Copy path to clipboard
 
         Parameters
         ----------
         widget : Gtk.Widget
+            object which received the signal
+        """
+
+        path = None
+
+        if widget == self.menu_consoles.get_widget("copy_path"):
+            if self.__current_menu_row:
+                path = self.__current_menu_row.console.path
+
+        elif widget.identifier == "copy_path":
+            game = self.views_games.get_selected_game()
+            if game and game.path.exists():
+                path = game.path
+
+        if path:
+            self.clipboard.set_text(str(path), -1)
+
+    @use_sensitivity
+    def on_generate_game_desktop_file(self, *args):
+        """ Generate application desktop file
+
+        This function generate a .desktop file to allow user to launch the game
+        from his favorite applications launcher
+        """
+
+        model, treeiter = self.get_selected_treeiter_from_container(
+            self.views_games.treeview)
+
+        console = self.selection.get("console", None)
+        game = self.views_games.get_selected_game()
+
+        if not all((treeiter, game, console)):
+            return
+
+        if not game.emulator or game.emulator.id not in self.api.emulators:
+            return
+
+        icon = str()
+        if game.cover and game.cover.exists():
+            icon = game.cover
+        elif console.icon:
+            if console.icon.exists():
+                icon = console.icon
+            else:
+                icon = self.api.get_local("icons", f"{console.icon}.png")
+
+        # Fill template
+        values = {
+            "%name%": game.name,
+            "%icon%": icon,
+            "%path%": game.path.parent,
+            "%command%": ' '.join(game.command())
+        }
+
+        # Put game path between quotes
+        values["%command%"] = \
+            values["%command%"].replace(str(game.path), f"\"{game.path}\"")
+
+        try:
+            # Read default template
+            template = get_data(
+                "data", "config", "template.desktop").read_text()
+
+            # Replace custom variables
+            for key, value in values.items():
+                template = template.replace(key, str(value))
+
+            # Check ~/.local/share/applications
+            if not Folders.APPLICATIONS.exists():
+                Folders.APPLICATIONS.mkdir(mode=0o755, parents=True)
+
+            # Write the new desktop file
+            file = Folders.APPLICATIONS.joinpath(f"{game.path.stem}.desktop")
+            file.write_text(template)
+
+            self.set_message(
+                _("Generate menu entry"),
+                _("%s was generated successfully") % file.name,
+                Icons.INFORMATION)
+
+        except OSError:
+            self.set_message(
+                _("Generate menu entry for %s") % game.name,
+                _("An error occur during generation, consult log for "
+                  "further details."),
+                Icons.ERROR)
+
+    def on_generate_game_tooltip(self, treeview, x, y, keyboard, tooltip):
+        """ Show game informations tooltip
+
+        Parameters
+        ----------
+        treeview : Gtk.TreeView
+            Widget which received the signal
+        x : int
+            X coordinate for mouse cursor position
+        y : int
+            Y coordinate for mouse cursor position
+        keyboard : bool
+            Set as True if the tooltip has been trigged by keyboard
+        tooltip : Gtk.Tooltip
+            Tooltip widget
+
+        Returns
+        -------
+        bool
+            Tooltip visible status
+        """
+
+        # Show a tooltip when the show_tooltip option is activate
+        if not self.config.getboolean("gem", "show_tooltip", fallback=True):
+            return False
+
+        # Show a tooltip when the main window is sentitive only
+        if not self.get_sensitive():
+            return False
+
+        # Get relative treerow position based on absolute cursor
+        # coordinates
+        x, y = treeview.convert_widget_to_bin_window_coords(x, y)
+
+        selection = treeview.get_path_at_pos(x, y)
+        # Using a tuple to mimic Gtk.TreeView behavior
+        if treeview == self.views_games.iconview and selection is not None:
+            selection = (selection)
+
+        if not selection:
+            return False
+
+        model = treeview.get_model()
+        treeiter = model.get_iter(selection[0])
+
+        column_id = Columns.Grid.OBJECT
+        if treeview == self.views_games.treeview:
+            column_id = Columns.List.OBJECT
+
+        game = model.get_value(treeiter, column_id)
+
+        # Reload tooltip when another game is hovered
+        if not self.__current_tooltip == game:
+            self.__current_tooltip = game
+            self.__current_tooltip_data = list()
+            self.__current_tooltip_pixbuf = None
+
+            return False
+
+        # Get new data from hovered game
+        if not self.__current_tooltip_data:
+            data = [f"<big><b>{replace_for_markup(game.name)}</b></big>"]
+
+            if not game.play_time == timedelta():
+                data.append(": ".join(
+                    [f"<b>{_('Play time')}</b>",
+                     parse_timedelta(game.play_time)]))
+
+            if not game.last_launch_time == timedelta():
+                data.append(": ".join(
+                    [f"<b>{_('Last launch')}</b>",
+                     parse_timedelta(game.last_launch_time)]))
+
+            # Fancy new line
+            if len(data) > 1:
+                data.insert(1, str())
+
+            self.__current_tooltip_data = data
+
+        console = self.selection["console"]
+
+        # Get new screenshots from hovered game
+        if console and not self.__current_tooltip_pixbuf:
+            image = None
+
+            # Retrieve user choice for tooltip image
+            tooltip_image = self.config.get(
+                "gem", "tooltip_image_type", fallback="screenshot")
+
+            if tooltip_image in ["both", "screenshot"]:
+                image = self.get_screenshot_from_game(game)
+
+            if not image and tooltip_image in ["both", "cover"]:
+                if game.cover and game.cover.exists():
+                    image = game.cover
+
+            # Check if image exists and is not a directory
+            if image and image.exists() and image.is_file():
+                try:
+                    image = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                        str(image), -1, 96, True)
+
+                except GLib.Error:
+                    self.logger.exception(
+                        "An error occur during tooltip generation")
+
+            else:
+                image = None
+
+            self.__current_tooltip_pixbuf = image
+
+        # Only show tooltip when data are available
+        if not self.__current_tooltip_data:
+            return False
+
+        tooltip.set_markup('\n'.join(self.__current_tooltip_data))
+        if self.__current_tooltip_pixbuf:
+            tooltip.set_icon(self.__current_tooltip_pixbuf)
+
+        self.__current_tooltip = game
+
+        return True
+
+    def on_open_file_path(self, widget):
+        """ Open directory into files manager
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            object which received the signal
+        """
+
+        path = None
+
+        if widget == self.menu_consoles.get_widget("open_path"):
+            if self.__current_menu_row:
+                path = self.__current_menu_row.console.path
+
+        elif widget.identifier == "open_path":
+            game = self.views_games.get_selected_game()
+            if game and game.path.parent.exists():
+                path = game.path.parent
+
+        if path and path.exists():
+            self.logger.debug(f"Open '{path}' directory in files manager")
+
+            try:
+                self.__xdg_open_instance.launch_uris([f"file://{path}"], None)
+
+            except GLib.Error:
+                self.logger.exception("Cannot open files manager")
+
+    def on_prepare_game_launch(self, widget=None, *args):
+        """ Prepare the game launch
+
+        This function prepare the game launch and start a thread when
+        everything are done
+
+        Parameters
+        ----------
+        widget : Gtk.Widget, optional
+            Object which receive signal (Default: None)
+        """
+
+        game = self.views_games.get_selected_game()
+        if not game or not game.emulator or not self.check_game_selection():
+            return False
+
+        if game.id in self.threads and widget and type(widget) is Gtk.Button:
+            self.threads[game.id].proc.terminate()
+            return False
+
+        console = self.selection.get("console", None)
+        if not console or not game.emulator:
+            return False
+
+        if game.emulator.id not in self.api.emulators:
+            return False
+
+        self.logger.info(f"Initialize {game.name}")
+
+        # Run game
+        try:
+            thread = GameThread(
+                self,
+                game,
+                fullscreen=self.toolbar_games.get_active("fullscreen"))
+
+            # Save thread references
+            self.threads[game.id] = thread
+            # Launch thread
+            thread.start()
+
+            self.set_game_playing_status(game)
+
+        except FileNotFoundError:
+            self.set_message(
+                _("Cannot launch game"),
+                _("%s binary cannot be found") % game.emulator.name)
+            return False
+
+        return True
+
+    def on_redirect_to_external_link(self, widget, *args):
+        """ Open an external link
+
+        Parameters
+        ----------
+        widget : Gtk.MenuItem
+            object which received the signal
+        """
+
+        try:
+            if widget.identifier == "website":
+                link = Metadata.WEBSITE
+            elif widget.identifier == "report":
+                link = Metadata.BUG_TRACKER
+
+            self.logger.debug(f"Open {link} in web navigator")
+            self.__xdg_open_instance.launch_uris([link], None)
+
+        except GLib.Error:
+            self.logger.exception("Cannot open external link")
+
+    def on_reload_consoles(self, *args):
+        """ Reload consoles list when user set a filter
+        """
+
+        self.listbox_consoles.invalidate_sort()
+        self.listbox_consoles.invalidate_filter()
+
+    def on_reload_console_games(self, *args):
+        """ Reload games list from selected console
+        """
+
+        row = self.listbox_consoles.get_selected_row()
+        if row:
+            self.__on_selected_console(None, row, force=True)
+
+    @use_sensitivity
+    def on_show_about_dialog(self, *args):
+        """ Show about dialog
+        """
+
+        about = Gtk.AboutDialog(use_header_bar=not self.use_classic_theme)
+        about.set_transient_for(self)
+        about.set_program_name(Metadata.NAME)
+        about.set_version(f"{self.__version} ({Metadata.CODE_NAME})")
+        about.set_comments(Metadata.DESCRIPTION)
+        about.set_copyright(Metadata.COPYLEFT)
+        about.set_website(Metadata.WEBSITE)
+        about.set_authors([
+            "Aurélien Lubert (PacMiam)"
+        ])
+        about.set_artists([
+            f"Evan-Amos {Metadata.EVAN_AMOS} - Public Domain"
+        ])
+        about.set_translator_credits('\n'.join([
+            "Anthony Jorion (Pingax)",
+            "Aurélien Lubert (PacMiam)",
+            "José Luis Lopez Castillo (DarkNekros)",
+        ]))
+        about.add_credit_section(_("Tested by"), [
+            "Bruno Visse (atralfalgar)",
+            "Herlief",
+        ])
+        about.set_license_type(Gtk.License.GPL_3_0)
+
+        # Strange case... With an headerbar, the AboutDialog got some useless
+        # buttons whitout any reasons. To avoid this, I remove any widget from
+        # headerbar which is not a Gtk.StackSwitcher.
+        if not self.use_classic_theme:
+            children = about.get_header_bar().get_children()
+
+            for child in children:
+                if type(child) is not Gtk.StackSwitcher:
+                    about.get_header_bar().remove(child)
+
+        about.run()
+        about.destroy()
+
+    @use_sensitivity
+    def on_show_application_log_dialog(self, *args):
+        """ Show gem log
+
+        This function show the gem log content in a non-editable dialog
+        """
+
+        if not self.api.log.exists():
+            return
+
+        dialog = GeodeDialog.Editor(
+            self,
+            _("Application log"),
+            self.api.log,
+            self.get_window_size_from_configuration("log", 800, 600),
+            Icons.Symbolic.TERMINAL,
+            editable=False)
+
+        dialog.run()
+
+        self.config.modify("windows", "log", "%dx%d" % dialog.get_size())
+        self.config.update()
+
+        dialog.destroy()
+
+    @use_sensitivity
+    def on_show_clean_cache_dialog(self, *args):
+        """ Clean icons cache directory
+        """
+
+        if not Folders.CACHE.exists():
+            return
+
+        success = False
+
+        dialog = GeodeDialog.CleanCache(self)
+
+        if dialog.run() == Gtk.ResponseType.YES:
+            # Remove cache directory
+            rmtree(str(Folders.CACHE))
+            # Generate directories
+            Folders.CACHE.mkdir(mode=0o755, parents=True)
+
+            for name in ("consoles", "emulators", "games"):
+                for size in getattr(Icons.Size, name.upper(), list()):
+                    path = Folders.CACHE.joinpath(name, f"{size}x{size}")
+                    if path.exists():
+                        continue
+
+                    self.logger.debug(f"Generate {path}")
+                    path.mkdir(mode=0o755, parents=True)
+
+            success = True
+
+        dialog.destroy()
+
+        if success:
+            self.set_message(
+                _("Clean icons cache"),
+                _("Icons cache directory has been succesfully cleaned."),
+                Icons.INFORMATION)
+
+    @block_signals
+    @use_sensitivity
+    def on_show_console_editor_dialog(self, widget, *args):
+        """ Open console editor dialog
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        selected_row = self.listbox_consoles.get_selected_row()
+
+        if widget == self.toolbar_consoles.get_widget("add_console"):
+            console = None
+
+        elif self.__current_menu_row is not None:
+            console = self.__current_menu_row.console
+            previous_id = console.id
+
+        dialog = GeodeDialog.Console(
+            self, console, self.api.consoles, self.api.emulators)
+        dialog_response = dialog.run()
+        dialog.destroy()
+
+        if not dialog_response == Gtk.ResponseType.APPLY:
+            return
+
+        data = dialog.save()
+        if not data:
+            return
+
+        if console:
+            self.logger.debug(f"Save {console.name} modifications")
+            self.api.delete_console(previous_id)
+
+            # Remove previous console storage
+            del self.consoles_iter[previous_id]
+            # Store row with the new identifier
+            self.consoles_iter[data["id"]] = self.__current_menu_row
+
+        console = self.api.add_console(data["name"], data.items())
+
+        # Write console data
+        self.api.write_data(GEM.Consoles)
+
+        # Load games list if the game directory exists
+        if console.path.exists():
+            try:
+                console.init_games()
+            except OSError as error:
+                self.logger.warning(error)
+
+        # Remove thumbnails from cache
+        for size in ("22x22", "24x24", "48x48", "64x64", "96x96"):
+            cache_path = self.get_icon_from_cache(
+                "consoles", size, f"{console.id}.png")
+            if cache_path.exists():
+                remove(cache_path)
+
+        # Update console row
+        if widget == self.toolbar_consoles.get_widget("add_console"):
+            console_data = self.__on_generate_console_row(console)
+
+            if console_data is not None:
+                row = self.__on_append_console_row(*console_data)
+                # Store console iter
+                self.consoles_iter[row.console.id] = row
+
+            self.set_message(
+                _("New console"),
+                _("%s has been correctly added to your configuration.") % (
+                    console.name),
+                Icons.Symbolic.INFORMATION)
+
+        else:
+            icon = self.get_pixbuf_from_cache(
+                "consoles", 24, console.id, console.icon)
+            if icon is None:
+                icon = self.icons.blank(24)
+
+            text = _("No game")
+            if console.get_games():
+                text = ngettext(
+                    _("1 game"),
+                    _("%d games") % len(console.get_games()),
+                    len(console.get_games()))
+
+            self.__current_menu_row.console = console
+            self.__current_menu_row.label.set_text(console.name)
+            self.__current_menu_row.image_icon.set_from_pixbuf(icon)
+            self.__current_menu_row.set_tooltip_text(text)
+
+            # Console flag selectors
+            self.menu_consoles.set_active(
+                console.favorite, widget="favorite")
+            self.menu_consoles.set_active(
+                console.recursive, widget="recursive")
+
+        # Refilter consoles list
+        self.on_reload_consoles()
+
+        # Reload games list
+        if selected_row == self.__current_menu_row:
+            self.selection["console"] = self.__current_menu_row.console
+
+            self.on_reload_console_games()
+
+    @block_signals
+    @use_sensitivity
+    def on_show_console_remove_dialog(self, *args):
+        """ Remove a console from user configuration
+        """
+
+        if not self.__current_menu_row:
+            return
+
+        console = self.__current_menu_row.console
+
+        dialog = GeodeDialog.Question(
+            self,
+            _("Remove a console"),
+            _("Are you sure you want to remove %s ?") % (
+                f"<b>{console.name}</b>"))
+
+        if dialog.run() == Gtk.ResponseType.YES:
+            # Remove console
+            self.api.delete_console(console.id)
+            # Write consoles data
+            self.api.write_data(GEM.Consoles)
+            # Remove row from listbox
+            self.listbox_consoles.remove(self.__current_menu_row)
+
+            selected_row = self.listbox_consoles.get_selected_row()
+
+            # Remove the current selected console
+            if selected_row == self.__current_menu_row:
+                self.selection["console"] = None
+
+                self.infobar.set_visible(False)
+                self.scroll_sidebar.set_visible(False)
+
+                self.views_games.clear()
+
+                self.set_game_information()
+
+        dialog.destroy()
+
+    @block_signals
+    @use_sensitivity
+    def on_show_emulator_editor_dialog(self, widget, *args):
+        """ Open console editor dialog
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        selected_row = self.listbox_consoles.get_selected_row()
+
+        if widget == self.toolbar_consoles.get_widget("add_emulator"):
+            emulator = None
+
+        elif self.__current_menu_row is not None:
+            emulator = self.__current_menu_row.console.emulator
+            previous_id = emulator.id
+            # Retrieve the correct emulator instance from api
+            emulator = self.api.get_emulator(previous_id)
+
+        dialog = GeodeDialog.Emulator(self, emulator, self.api.emulators)
+        dialog_response = dialog.run()
+        dialog.destroy()
+
+        if not dialog_response == Gtk.ResponseType.APPLY:
+            return
+
+        data = dialog.save()
+        if not data:
+            return
+
+        if emulator:
+            self.logger.debug("Save %s modifications" % emulator.name)
+            self.api.delete_emulator(previous_id)
+
+        emulator = self.api.add_emulator(data["name"], data.items())
+
+        if not widget == self.toolbar_consoles.get_widget("add_emulator"):
+            # Rename emulator identifier in consoles and games
+            if not emulator.id == previous_id:
+                self.api.rename_emulator(previous_id, emulator.id)
+
+        # Write console data
+        self.api.write_data(GEM.Emulators)
+
+        # Remove thumbnails from cache
+        for size in ("22x22", "48x48", "64x64"):
+            cache_path = self.get_icon_from_cache(
+                "emulators", size, f"{emulator.id}.png")
+            if cache_path.exists():
+                remove(cache_path)
+
+        # Update console row
+        if widget == self.toolbar_consoles.get_widget("add_emulator"):
+            self.set_message(
+                _("New emulator"),
+                _("%s has been correctly added to your configuration.") % (
+                    emulator.name),
+                Icons.Symbolic.INFORMATION)
+
+        else:
+            self.__current_menu_row.console.emulator = emulator
+
+            status = False
+            if emulator and emulator.configuration:
+                status = emulator.configuration.exists()
+
+            self.menu_consoles.set_sensitive(status, widget="edit_file")
+
+            # Reload games list
+            same_emulator = False
+
+            if selected_row:
+                identifier = selected_row.console.emulator.id
+                # Reload games list if selected console has the same
+                # emulator to avoid missing references
+                same_emulator = identifier == emulator.id
+
+            if selected_row == self.__current_menu_row:
+                self.selection["console"] = self.__current_menu_row.console
+                self.on_reload_console_games()
+
+            elif same_emulator:
+                self.on_reload_console_games()
+
+    @use_sensitivity
+    def on_show_emulator_file_dialog(self, *args):
+        """ Edit emulator configuration file
+        """
+
+        console = None
+        if self.__current_menu_row:
+            console = self.__current_menu_row.console
+
+        if not console:
+            return
+
+        emulator = console.emulator
+        if not emulator.configuration or not emulator.configuration.exists():
+            return
+
+        dialog = GeodeDialog.Editor(
+            self,
+            _("Edit %s configuration") % emulator.name,
+            emulator.configuration,
+            self.get_window_size_from_configuration("editor", 800, 600),
+            Icons.Symbolic.DOCUMENT)
+
+        if dialog.run() == Gtk.ResponseType.APPLY:
+            self.logger.info(f"Update {emulator.name} configuration file")
+
+            with emulator.configuration.open('w') as pipe:
+                pipe.write(dialog.buffer_editor.get_text(
+                    dialog.buffer_editor.get_start_iter(),
+                    dialog.buffer_editor.get_end_iter(), True))
+
+        self.config.modify("windows", "editor", "%dx%d" % dialog.get_size())
+        self.config.update()
+
+        dialog.destroy()
+
+    @use_sensitivity
+    def on_show_game_backup_memory_dialog(self, *args):
+        """ Manage game backup memory
+
+        This function can only be used with a GBA game and Mednafen emulator.
+        """
+
+        if not self.menu_game.get_sensitive(widget="memory_type"):
+            return
+
+        console = self.selection.get("console", None)
+        game = self.views_games.get_selected_game()
+
+        if not console or not game:
+            return
+
+        content = dict()
+
+        # Check if a type file already exist in mednafen sav folder
+        filepath = self.get_mednafen_memory_type_file(game)
+        if filepath.exists():
+
+            with filepath.open('r') as pipe:
+                for line in pipe.readlines():
+                    data = line.split()
+                    if len(data) == 2:
+                        content[data[0]] = int(data[1])
+
+        dialog = GeodeDialog.Mednafen(self, game.name, content)
+        dialog_response = dialog.run()
+        model = dialog.model
+
+        dialog.destroy()
+
+        if not dialog_response == Gtk.ResponseType.APPLY:
+            return
+
+        data = [' '.join([key, str(value)]) for key, value in model]
+
+        # Write data into type file
+        if data:
+            with filepath.open('w') as pipe:
+                pipe.write('\n'.join(data))
+
+        # Remove type file when no data are available
+        elif filepath.exists():
+            filepath.unlink()
+
+    @use_sensitivity
+    def on_show_game_duplication_dialog(self, *args):
+        """ Duplicate a game
+
+        This function allow the user to duplicate a game and his associate
+        data
+        """
+
+        game = self.views_games.get_selected_game()
+        if not game:
+            return
+
+        dialog = GeodeDialog.Duplicate(self, game)
+        dialog_response = dialog.run()
+        data = dialog.get_data()
+
+        dialog.destroy()
+
+        if not dialog_response == Gtk.ResponseType.APPLY:
+            return
+
+        self.logger.info(f"Duplicate {game.name}")
+
+        need_to_reload = False
+
+        if data:
+            # Duplicate game files
+            for original, path in data.get("paths"):
+                self.logger.debug(f"Copy {original}")
+
+                try:
+                    copy(original, path)
+
+                except Exception:
+                    self.logger.exception("An error occur during duplication")
+                    continue
+
+            need_to_reload = True
+
+            # Update game from database
+            if data.get("database"):
+                self.api.update_game(game.copy(data.get("filepath")))
+
+                need_to_reload = True
+
+        if need_to_reload:
+            self.on_reload_console_games()
+
+            self.set_message(
+                _("Duplicate a game"),
+                _("This game was duplicated successfully"),
+                Icons.INFORMATION)
+
+    @use_sensitivity
+    def on_show_game_editor_dialog(self, *args):
+        """ Edit game file
+
+        This function check if the game file mime type is text/
+        """
+
+        game = self.views_games.get_selected_game()
+        if not game:
+            return
+
+        if not self.check_game_is_editable(game):
+            return
+
+        dialog = GeodeDialog.Editor(
+            self,
+            game.name,
+            game.path,
+            self.get_window_size_from_configuration("game", 800, 600),
+            Icons.Symbolic.EDIT)
+
+        if dialog.run() == Gtk.ResponseType.APPLY:
+            game.path.write_text(dialog.buffer_editor.get_text(
+                dialog.buffer_editor.get_start_iter(),
+                dialog.buffer_editor.get_end_iter(), True))
+
+            game.update_installation_date()
+
+            self.views_games.treeview.set_value(
+                self.views_games.get_iter_from_key(game.id)[0],
+                Columns.List.INSTALLED,
+                string_from_date(game.installed))
+
+        self.config.modify("windows", "game", "%dx%d" % dialog.get_size())
+        self.config.update()
+
+        dialog.destroy()
+
+    @use_sensitivity
+    def on_show_game_log_dialog(self, *args):
+        """ Show game log
+
+        This function show the gem log content in a non-editable dialog
+        """
+
+        game = self.views_games.get_selected_game()
+        if not game:
+            return
+
+        path = self.get_game_log_file(game)
+        if not path or not path.exists():
+            return
+
+        dialog = GeodeDialog.Editor(
+            self,
+            game.name,
+            path,
+            self.get_window_size_from_configuration("log", 800, 600),
+            Icons.Symbolic.TERMINAL,
+            editable=False)
+
+        dialog.run()
+
+        self.config.modify("windows", "log", "%dx%d" % dialog.get_size())
+        self.config.update()
+
+        dialog.destroy()
+
+    @block_signals
+    @use_sensitivity
+    def on_show_game_maintenance_dialog(self, *args):
+        """ Set some maintenance for selected game
+        """
+
+        console = self.selection.get("console", None)
+        game = self.views_games.get_selected_game()
+
+        # Avoid trying to remove an executed game
+        if not console or not game or game.id in self.threads:
+            return
+
+        treeiter = self.views_games.get_iter_from_key(game.id)[0]
+
+        dialog = GeodeDialog.Maintenance(self, game)
+        dialog_response = dialog.run()
+        data = dialog.get_data()
+
+        dialog.destroy()
+
+        if not dialog_response == Gtk.ResponseType.APPLY:
+            return
+
+        self.logger.info(f"{game.name} maintenance")
+
+        need_to_reload = False
+
+        # Reload the games list
+        if data.get("paths"):
+
+            # Duplicate game files
+            for element in data.get("paths"):
+                self.logger.debug(f"Remove {element}")
+
+                try:
+                    remove(element)
+
+                except Exception:
+                    self.logger.exception("An error occur during removing")
+                    continue
+
+            need_to_reload = True
+
+        # Clean game from database
+        if data.get("database"):
+            game_data = {
+                Columns.List.FAVORITE:
+                    self.get_ui_icon(Columns.List.FAVORITE, False),
+                Columns.List.NAME: game.path.stem,
+                Columns.List.PLAYED: None,
+                Columns.List.LAST_PLAY: None,
+                Columns.List.TIME_PLAY: None,
+                Columns.List.LAST_TIME_PLAY: None,
+                Columns.List.SCORE: 0,
+                Columns.List.PARAMETER:
+                    self.get_ui_icon(Columns.List.PARAMETER, False),
+                Columns.List.MULTIPLAYER:
+                    self.get_ui_icon(Columns.List.MULTIPLAYER, False),
+            }
+
+            for key, value in game_data.items():
+                self.views_games.treeview.set_value(
+                    treeiter, key, value)
+
+            game.reset()
+
+            # Update game from database
+            self.api.update_game(game)
+
+            need_to_reload = True
+
+        # Remove environment variables from game
+        if data.get("environment"):
+            game.environment = dict()
+            # Update game from database
+            self.api.update_game(game)
+
+            need_to_reload = True
+
+        # Set game output buttons as unsensitive
+        if data.get("log"):
+            self.menu_game.set_sensitive(False, widget="game_log")
+            self.menubar_game.set_sensitive(False, widget="game_log")
+            self.toolbar_games.set_sensitive(False, widget="game_log")
+
+        for widget in ("favorite", "multiplayer", "finish"):
+            self.menu_game.set_active(False, widget=widget)
+            self.menubar_game.set_active(False, widget=widget)
+
+        if need_to_reload:
+            self.set_game_information()
+
+    def on_show_game_menu_popup(self, widget, event):
+        """ Open context menu
+
+        This function open context-menu when user right-click or use context
+        key on games views
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        event : Gdk.EventButton or Gdk.EventKey
+            Event which triggered this signal
+
+        Returns
+        -------
+        bool
+            Context menu popup status
+        """
+
+        treeiter = None
+
+        # Gdk.EventButton - Mouse
+        if event.type == Gdk.EventType.BUTTON_PRESS:
+            if not event.button == Gdk.BUTTON_SECONDARY:
+                return False
+
+            x, y = int(event.x), int(event.y)
+
+            # List view
+            if widget == self.views_games.treeview:
+                # Avoid to click on treeview header
+                if not event.window == widget.get_bin_window():
+                    return False
+
+                treeiter = widget.get_path_at_pos(x, y)
+                if not treeiter:
+                    return False
+
+                widget.set_cursor(treeiter[0], treeiter[1], False)
+
+            # Grid icons view
+            elif widget == self.views_games.iconview:
+                treeiter = widget.get_path_at_pos(x, y)
+                if not treeiter:
+                    return False
+
+                widget.select_path(treeiter)
+
+            widget.grab_focus()
+
+            self.menu_game.popup_at_pointer(event)
+            return True
+
+        # Gdk.EventKey - Keyboard
+        elif event.type == Gdk.EventType.KEY_RELEASE:
+            if not event.keyval == Gdk.KEY_Menu:
+                return False
+
+            model, treeiter = self.get_selected_treeiter_from_container(widget)
+            if treeiter:
+                self.menu_game.popup_at_pointer(event)
+                return True
+
+        return False
+
+    def on_show_game_note_dialog(self, *args):
+        """ Edit game notes
+
+        This function allow user to write some notes for a specific game. The
+        user can open as many notes he wants but cannot open a note already
+        open
+        """
+
+        game = self.views_games.get_selected_game()
+        if not game:
+            return
+
+        path = self.api.get_local("notes", f"{game.id}.txt")
+        if path and not str(path) in self.notes.keys():
+            dialog = GeodeDialog.Editor(
+                self,
+                game.name,
+                path,
+                self.get_window_size_from_configuration("notes", 800, 600),
+                Icons.Symbolic.DOCUMENT)
+
+            # Allow to launch games with open notes
+            dialog.set_modal(False)
+
+            dialog.window.connect(
+                "response",
+                self.emit_game_note_response,
+                dialog,
+                game.name,
+                path)
+
+            dialog.show_all()
+
+            # Save dialogs to close it properly when gem terminate and
+            # avoid to reopen existing one
+            self.notes[str(path)] = dialog
+
+        elif str(path) in self.notes.keys():
+            self.notes[str(path)].grab_focus()
+
+    @use_sensitivity
+    def on_show_game_properties_dialog(self, *args):
+        """ Manage game default parameters
+
+        This function allow the user to specify default emulator and default
+        emulator arguments for the selected game
+        """
+
+        console = self.selection.get("console", None)
+        game = self.views_games.get_selected_game()
+
+        if game is None or console is None:
+            return
+
+        dialog = GeodeDialog.Parameters(self, game)
+
+        if dialog.run() == Gtk.ResponseType.APPLY:
+            self.logger.info(f"Update {game.name} parameters")
+
+            # Retrieve values from dialog
+            game.emulator = self.api.get_emulator(dialog.combo.get_active_id())
+            game.default = dialog.entry_arguments.get_text().strip()
+            game.key = dialog.entry_key.get_text().strip()
+
+            game.tags = [tag.strip()
+                         for tag in dialog.entry_tags.get_text().split(',')]
+
+            game.environment.clear()
+            for row in dialog.store_environment:
+                key = dialog.store_environment.get_value(row.iter, 0)
+
+                if key:
+                    game.environment[key] = \
+                        dialog.store_environment.get_value(row.iter, 1)
+
+            # Update game from database
+            self.api.update_game(game)
+
+            # ----------------------------------------
+            #   Update games views
+            # ----------------------------------------
+
+            treeiter, griditer = self.views_games.get_iter_from_key(game.id)
+
+            # Custom properties
+            has_custom = \
+                not game.emulator == console.emulator or game.default
+
+            self.views_games.treeview.set_value(
+                treeiter,
+                Columns.List.PARAMETER,
+                Icons.Symbolic.PROPERTIES if has_custom else None)
+
+            # Screenshots
+            has_screenshots = len(game.screenshots) > 0
+
+            self.views_games.treeview.set_value(
+                treeiter,
+                Columns.List.SCREENSHOT,
+                Icons.Symbolic.CAMERA if has_screenshots else None)
+
+            self.menubar_game.set_sensitive(
+                has_screenshots, widget="screenshots")
+            self.toolbar_games.set_sensitive(
+                has_screenshots, widget="screenshots")
+
+            # Savestates
+            self.views_games.treeview.set_value(
+                treeiter,
+                Columns.List.SAVESTATE,
+                Icons.Symbolic.FLOPPY if len(game.savestates) > 0 else None)
+
+            # Objects
+            self.views_games.treeview.set_value(
+                treeiter, Columns.List.OBJECT, game)
+            self.views_games.iconview.set_value(
+                griditer, Columns.Grid.OBJECT, game)
+
+            self.set_game_information()
+
+        dialog.destroy()
+
+    @use_sensitivity
+    def on_show_game_renaming_dialog(self, *args):
+        """ Set a custom name for a specific game
+
+        Parameters
+        ----------
+        widget : Gtk.CellRendererText
+            object which received the signal
+        path : str
+            path identifying the edited cell
+        new_name : str
+            new name
+        """
+
+        game = self.views_games.get_selected_game()
+        if not game:
+            return
+
+        dialog = GeodeDialog.Rename(self, game)
+        dialog_response = dialog.run()
+        new_name = dialog.get_name().strip()
+
+        dialog.destroy()
+
+        if not dialog_response == Gtk.ResponseType.APPLY:
+            return
+
+        # Check if game name has been changed
+        if new_name == game.name:
+            return
+
+        self.logger.info(f"Rename '{game.name}' to '{new_name}'")
+        game.name = new_name
+
+        treeiter, griditer = self.views_games.get_iter_from_key(game.id)
+
+        # Update game name
+        self.views_games.treeview.set_value(
+            treeiter, Columns.List.NAME, str(new_name))
+        self.views_games.treeview.set_value(
+            treeiter, Columns.List.OBJECT, game)
+        self.views_games.iconview.set_value(
+            griditer, Columns.Grid.NAME, str(new_name))
+        self.views_games.iconview.set_value(
+            griditer, Columns.Grid.OBJECT, game)
+
+        # Update game from database
+        self.api.update_game(game)
+        # Store modified game
+        self.selection["game"] = game
+        self.__current_tooltip = None
+
+        # Restore focus to current game view
+        if self.toolbar_games.get_active("grid"):
+            self.views_games.iconview.grab_focus()
+        elif self.toolbar_games.get_active("list"):
+            self.views_games.treeview.grab_focus()
+
+        self.set_game_information()
+
+    @use_sensitivity
+    def on_show_game_removing_dialog(self, *args):
+        """ Remove a game
+
+        This function also remove files from user disk as screenshots,
+        savestates and game file.
+        """
+
+        console = self.selection.get("console", None)
+        game = self.views_games.get_selected_game()
+
+        # Avoid trying to remove an executed game
+        if not console or not game or game.id in self.threads:
+            return
+
+        identifier = game.id
+
+        # ----------------------------------------
+        #   Dialog
+        # ----------------------------------------
+
+        dialog = GeodeDialog.Delete(self, game)
+        dialog_response = dialog.run()
+        data = dialog.get_data()
+
+        dialog.destroy()
+
+        if not dialog_response == Gtk.ResponseType.APPLY:
+            return
+
+        self.logger.info(f"Remove {game.name}")
+
+        need_to_reload = False
+
+        # Reload the games list
+        if data.get("paths"):
+
+            # Remove specified game files
+            for element in data.get("paths"):
+
+                if not access(element, W_OK):
+                    self.logger.error(
+                        "Cannot remove {element}, operation not permitted")
+                    continue
+
+                self.logger.debug(f"Remove {element}")
+
+                try:
+                    remove(element)
+
+                except Exception:
+                    self.logger.exception("An error occur during removing")
+                    continue
+
+            need_to_reload = True
+
+        # Remove game from database
+        if data["database"]:
+            self.api.delete_game(game)
+
+            need_to_reload = True
+
+        # Remove game from console storage
+        console.delete_game(game)
+
+        # Update console tooltip
+        if console.id in self.consoles_iter:
+            row = self.consoles_iter[console.id]
+
+            games_length = len(console.get_games())
+
+            text = _("No game")
+            if games_length:
+                text = ngettext(
+                    _("1 game"), _("%d games") % games_length, games_length)
+
+            row.set_tooltip_text(text)
+
+        if need_to_reload:
+            # Remove an old entry in views
+            self.views_games.remove_game(identifier)
+            # Remove view selections
+            self.views_games.unselect_all()
+
+            self.set_game_information()
+
+            self.set_message(
+                _("Remove a game"),
+                _("This game was removed successfully"),
+                Icons.INFORMATION)
+
+    @use_sensitivity
+    def on_show_game_thumbnail_dialog(self, *args):
+        """ Set a new cover for selected game
+        """
+
+        game = self.views_games.get_selected_game()
+        if not game:
+            return
+
+        dialog = GeodeDialog.Cover(self, game)
+        dialog_response = dialog.run()
+        path = dialog.file_image_selector.get_filename()
+        dialog.destroy()
+
+        if not dialog_response == Gtk.ResponseType.APPLY:
+            return
+
+        # Avoid to update the database with same contents
+        if path == str(game.cover):
+            return
+
+        # Reset cover for current game
+        game.cover = None
+        if path:
+            game.cover = Path(path).expanduser()
+
+        # Update game from database
+        self.api.update_game(game)
+
+        viewiters = self.views_games.get_iter_from_key(game.id)
+
+        large_cache_path = \
+            self.get_icon_from_cache("games", "96x96", f"{game.id}.png")
+        thumbnail_cache_path = \
+            self.get_icon_from_cache("games", "22x22", f"{game.id}.png")
+
+        # A new icon is available so we regenerate icon cache
+        if game.cover and game.cover.exists():
+            try:
+                # Games grid view
+                large = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                    str(game.cover), 96, 96, True)
+                large.savev(
+                    str(large_cache_path), "png", list(), list())
+
+                # Games list view
+                thumbnail = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                    str(game.cover), 22, 22, True)
+                thumbnail.savev(
+                    str(thumbnail_cache_path), "png", list(), list())
+
+            except GLib.Error:
+                self.logger.exception("An error occur during cover generation")
+
+        # Remove previous cache icons
+        else:
+            large = self.__console_icon
+            if large_cache_path.exists():
+                remove(large_cache_path)
+
+            thumbnail = self.__console_thumbnail
+            if thumbnail_cache_path.exists():
+                remove(thumbnail_cache_path)
+
+        self.views_games.iconview.set_value(
+            viewiters[1], Columns.Grid.THUMBNAIL, large)
+        self.views_games.treeview.set_value(
+            viewiters[0], Columns.List.THUMBNAIL, thumbnail)
+
+        # Reset tooltip pixbuf
+        self.__current_tooltip_pixbuf = None
+
+    @use_sensitivity
+    def on_show_preferences_dialog(self, *args):
+        """ Show preferences window
+        """
+
+        dialog = GeodeDialog.Preferences(self.api, self)
+
+        if dialog.run() == Gtk.ResponseType.APPLY:
+            dialog.save_configuration()
+
+            self.logger.debug("Main interface need to be reload")
+            self.load_interface()
+
+        dialog.destroy()
+
+    @use_sensitivity
+    def on_show_screenshots_viewer_dialog(self, *args):
+        """ Show game screenshots
+
+        This function open game screenshots in a viewer. This viewer can be a
+        custom one or the gem native viewer. This choice can be do in gem
+        configuration file
+        """
+
+        console = self.selection.get("console", None)
+        game = self.views_games.get_selected_game()
+
+        if console is None or game is None or not game.screenshots:
+            return
+
+        # Get external viewer
+        viewer = Path(self.config.get("viewer", "binary")).expanduser()
+
+        screenshots_list = sorted(game.screenshots)
+
+        # Native viewer
+        if self.config.getboolean("viewer", "native", fallback=True):
+            dialog = GeodeDialog.Viewer(
+                self,
+                f"{game.name} ({console.name})",
+                self.get_window_size_from_configuration("viewer", 800, 600),
+                screenshots_list)
+            dialog.run()
+
+            self.config.modify(
+                "windows", "viewer", "%dx%d" % dialog.get_size())
+            self.config.update()
+
+            dialog.destroy()
+
+        # External viewer
+        elif viewer.exists():
+            # Retrieve viewer binary
+            command = shlex_split(str(viewer))
+
+            # Add arguments if available
+            parameters = self.config.item("viewer", "options")
+            if parameters:
+                command.append(parameters)
+
+            # Add game screenshot files
+            command.extend([str(path) for path in screenshots_list])
+
+            # Launch external viewer
+            try:
+                instance = Gio.AppInfo.create_from_commandline(
+                    ' '.join(command), None,
+                    Gio.AppInfoCreateFlags.SUPPORTS_URIS)
+                instance.launch(None, None)
+
+            except GLib.Error:
+                self.logger.exception(f"Cannot generate {viewer} instance")
+
+        # No available viewer
+        else:
+            self.set_message(_("Cannot open screenshots viewer"),
+                             _("Cannot find %s") % f"<b>{viewer.name}</b>",
+                             Icons.WARNING)
+
+        # External viewer can remove file, so we need to check again
+        if game.screenshots:
+            self.views_games.treeview.set_value(
+                self.views_games.get_iter_from_key(game.id)[0],
+                Columns.List.SCREENSHOT,
+                None)
+
+    def on_sort_games_view(self, model, row1, row2, column):
+        """ Sort games list for specific columns
+
+        Parameters
+        ----------
+        model : Gtk.TreeModel
+            Treeview model which receive signal
+        row1 : Gtk.TreeIter
+            First treeiter to compare with second one
+        row2 : Gtk.TreeIter
+            Second treeiter to compare with first one
+        column : int
+            Sorting column index
+
+        Returns
+        -------
+        int
+            Sorting comparaison result
+        """
+
+        data1 = model.get_value(row1, Columns.List.OBJECT)
+        data2 = model.get_value(row2, Columns.List.OBJECT)
+
+        # Column order
+        order = Gtk.SortType.ASCENDING
+        if column.identifier not in ("last_play", "time_play", "installed"):
+            order = self.views_games.treeview.get_widget(
+                column.identifier).get_sort_order()
+
+        # Object sorting references
+        first, second = None, None
+
+        if column.identifier == "favorite":
+            first, second = data1.favorite, data2.favorite
+
+        elif column.identifier == "multiplayer":
+            first, second = data1.multiplayer, data2.multiplayer
+
+        elif column.identifier == "finish":
+            first, second = data1.finish, data2.finish
+
+        elif column.identifier == "play":
+            first, second = data1.played, data2.played
+
+        elif column.identifier == "last_play":
+            first, second = data1.last_launch_date, data2.last_launch_date
+
+        elif column.identifier == "play_time":
+            first, second = data1.play_time, data2.play_time
+
+        elif column.identifier == "score":
+            first, second = data1.score, data2.score
+
+        elif column.identifier == "installed":
+            first, second = data1.installed, data2.installed
+
+        # ----------------------------------------
+        #   Compare
+        # ----------------------------------------
+
+        # Sort by name in the case where this games are never been launched
+        if not first and not second:
+
+            if data1.name.lower() < data2.name.lower():
+                return -1
+
+            elif data1.name.lower() == data2.name.lower():
+                return 0
+
+        # The second has been launched instead of first one
+        elif not first:
+            return -1
+
+        # The first has been launched instead of second one
+        elif not second:
+            return 1
+
+        elif first < second:
+            return -1
+
+        elif first == second:
+
+            if data1.name.lower() < data2.name.lower():
+
+                if order == Gtk.SortType.ASCENDING:
+                    return -1
+
+                elif order == Gtk.SortType.DESCENDING:
+                    return 1
+
+            elif data1.name.lower() == data2.name.lower():
+                return 0
+
+        return 1
+
+    @block_signals
+    def on_switch_games_view(self, widget):
+        """ Switch between the available games list view mode
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        games_view = GeodeGEM.Views.Name.GRID
+        if widget.identifier == "list":
+            games_view = GeodeGEM.Views.Name.LIST
+
+        # Update widgets status based on selected games view
+        self.headerbar.set_active(True, widget=games_view.value)
+        self.menubar_view.set_active(True, widget=games_view.value)
+        self.toolbar_games.get_widget("views").switch_to(games_view.value)
+
+        # Show activated games view when there are games available
+        if not self.views_games.placeholder.get_visible():
+            self.views_games.set_view(games_view)
+
+    def on_synchronize_game_selection(self, widget, game):
+        """ Synchronize grid and list views selection
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Games view currently selected
+        game : gem.engine.game.Game
+            Game instance
+        """
+
+        if not game or not self.views_games.has_game(game.id):
+            return
+
+        # Select the view to synchronise
+        if widget == self.views_games.iconview:
+            index, view = 0, self.views_games.treeview
+        elif widget == self.views_games.treeview:
+            index, view = 1, self.views_games.iconview
+
+        path = view.get_path_from_treeiter(
+            self.views_games.get_iter_from_key(game.id)[index])
+
+        if path is not None:
+            view.select_path_and_scroll(path)
+        else:
+            view.unselect_all()
+
+        self.logger.debug(f"Synchronize selection for game '{game.id}'")
+
+    def on_update_games_filters(self, widget=None, status=None):
+        """ Reload packages filter when user change filters from menu
+
+        Parameters
+        ----------
+        widget : Gtk.Widget, optional
             Object which receive signal
         status : bool or None, optional
             New status for current widget (Default: None)
@@ -2568,93 +4886,755 @@ class MainWindow(Gtk.ApplicationWindow):
                           for key in self.__filters_keys])
 
         # Add a style to menu button when a filter was enabled
-        if no_filters:
-            self.toolbar_games.set_style(widget="filters")
-        else:
-            self.toolbar_games.set_style("suggested-action", widget="filters")
+        self.toolbar_games.set_style(
+            None if no_filters else "suggested-action", widget="filters")
 
         # Refilter games views to update visible rows
         self.views_games.refilter()
 
-        self.check_selection()
+        self.check_game_selection()
 
         # Update games length in headerbar subtitle
-        self.set_informative_bars()
+        self.set_statusbar_content()
 
-    def filters_reset(self, widget=None, events=None):
-        """ Reset game filters
+    @block_signals
+    def on_update_consoles_filters(self, widget, *args):
+        """ Change a console option switch
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        if widget.identifier == "hide_empty":
+            self.hide_empty_console = not self.hide_empty_console
+
+            self.config.modify(
+                "gem", "hide_empty_console", self.hide_empty_console)
+            self.config.update()
+
+            self.toolbar_consoles.set_active(
+                self.hide_empty_console, widget="hide_empty")
+
+            self.on_reload_consoles()
+
+        elif self.__current_menu_row:
+            console = self.__current_menu_row.console
+
+            if widget.identifier == "recursive":
+                console.recursive = not console.recursive
+                self.api.write_object(console)
+
+            elif widget.identifier == "favorite":
+                console.favorite = not console.favorite
+                self.api.write_object(console)
+
+                self.on_reload_consoles()
+
+    @block_signals
+    def set_interface_theme(self, widget, status=False, *args):
+        """ Update dark theme status
+
+        This function alternate between dark and light theme when user use
+        dark theme entry in main menu
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        status : bool, optional
+            New switch status (Default: False)
+        """
+
+        dark_theme_status = \
+            not self.config.getboolean("gem", "dark_theme", fallback=False)
+
+        on_change_theme(dark_theme_status)
+
+        self.config.modify("gem", "dark_theme", dark_theme_status)
+        self.config.update()
+
+        self.menubar_view.set_active(dark_theme_status, widget="dark_theme")
+
+    @block_signals
+    def set_game_fullscreen(self, widget, *args):
+        """ Update fullscreen button
+
+        This function alternate fullscreen status between active and inactive
+        state when user use fullscreen button in toolbar
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        # Switch fullscreen status
+        self.__fullscreen_status = not self.__fullscreen_status
+
+        fullscreen_button = self.toolbar_games.get_widget("fullscreen")
+        fullscreen_image = self.toolbar_games.get_widget("fullscreen_image")
+
+        if not self.__fullscreen_status:
+            self.logger.debug("Switch game launch to windowed mode")
+
+            fullscreen_image.set_from_icon_name(Icons.Symbolic.RESTORE,
+                                                Gtk.IconSize.SMALL_TOOLBAR)
+            fullscreen_button.set_style()
+
+        else:
+            self.logger.debug("Switch game launch to fullscreen mode")
+
+            fullscreen_image.set_from_icon_name(Icons.Symbolic.FULLSCREEN,
+                                                Gtk.IconSize.SMALL_TOOLBAR)
+            fullscreen_button.set_style("suggested-action")
+
+        fullscreen_button.set_active(self.__fullscreen_status)
+        self.menubar_game.set_active(
+            self.__fullscreen_status, widget="fullscreen")
+
+    @block_signals
+    def set_game_information(self):
+        """ Update headerbar title and subtitle
+        """
+
+        self.sidebar_image = None
+
+        console = self.selection.get("console", None)
+        game = self.views_games.get_selected_game()
+
+        # Update headerbar and statusbar informations
+        self.set_statusbar_content()
+
+        # Remove tags list
+        self.menu_tags.clear()
+
+        # ----------------------------------------
+        #   Sidebar
+        # ----------------------------------------
+
+        # Hide sidebar widgets
+        self.grid_sidebar_score.set_visible(False)
+        self.grid_sidebar_informations.set_visible(False)
+        self.frame_sidebar_screenshot.set_visible(False)
+
+        # Reset sidebar informations
+        self.label_sidebar_title.set_text(str())
+        self.image_sidebar_screenshot.set_from_pixbuf(None)
+
+        # ----------------------------------------
+        #   Update informations
+        # ----------------------------------------
+
+        if game is None:
+            self.set_sensitive_interface(False)
+
+            for widget_key in self.statusbar.pixbuf_widgets:
+                self.statusbar.set_widget_value(
+                    widget_key, image=None, tooltip=str())
+
+        else:
+            self.logger.debug(
+                f"Update informations on main interface for '{game.id}'")
+
+            self.set_sensitive_interface(True)
+            self.set_game_playing_status(game)
+
+            # Game editable file
+            if not self.check_game_is_editable(game):
+                self.menu_game.set_sensitive(False, widget="game_file")
+                self.menubar_edit.set_sensitive(False, widget="game_file")
+
+            # Check extension and emulator for GBA game on mednafen
+            if not self.check_gba_game_use_mednafen(game):
+                self.menu_game.set_sensitive(False, widget="memory_type")
+                self.menubar_edit.set_sensitive(False, widget="memory_type")
+
+            # Check game log file
+            if self.get_game_log_file(game) is not None:
+                self.menu_game.set_sensitive(True, widget="game_log")
+                self.menubar_game.set_sensitive(True, widget="game_log")
+                self.toolbar_games.set_sensitive(True, widget="game_log")
+
+            # Game flags
+            for name in ("favorite", "multiplayer", "finish"):
+                self.menu_game.set_active(getattr(game, name), widget=name)
+                self.menubar_game.set_active(getattr(game, name), widget=name)
+
+            # Game tags
+            if game.tags:
+                self.toolbar_games.get_widget("tags").set_sensitive(True)
+
+                for tag in sorted(game.tags):
+                    item = GeodeGtk.MenuItem(tag, tag)
+                    item.connect("activate", self.__on_filter_tag)
+
+                    self.menu_tags.append(item)
+
+                self.menu_tags.show_all()
+
+            # Sidebar
+            self.grid_sidebar_score.set_visible(True)
+            self.grid_sidebar_informations.set_visible(True)
+
+            # Game screenshots
+            for name in ("menu_game", "menubar_game", "toolbar_games"):
+                getattr(self, name).set_sensitive(
+                    game.screenshots, widget="screenshots")
+
+            # Statusbar icons
+            for name in ("properties", "savestates", "screenshots"):
+                self.set_statusbar_icon_for_widget(name, console, game)
+
+            # Sidebar informations
+            self.set_sidebar_content(console, game)
+
+    def set_game_playing_status(self, game):
+        """ Update game launch button
+
+        Parameters
+        ----------
+        game : geode_gem.engine.game.Game
+            Game instance
+        """
+
+        if game is not None:
+            launch_button = self.toolbar_games.get_widget("launch")
+
+            is_played = game.id in self.threads
+            if not is_played:
+                label, tooltip_text = _("Play"), _("Launch selected game")
+                launch_button.set_style("suggested-action")
+            else:
+                label, tooltip_text = _("Stop"), _("Stop selected game")
+                launch_button.set_style("destructive-action")
+
+            for name in ("menu_game", "menubar_game", "toolbar_games"):
+                widget = getattr(self, name).get_widget("launch")
+                widget.set_label(label)
+                widget.set_tooltip_text(tooltip_text)
+                widget.set_sensitive(True)
+
+                getattr(self, name).set_sensitive(True, widget="game_log")
+
+            if game.path.exists() and access(game.path, W_OK):
+                self.menu_game.set_sensitive(not is_played, widget="remove")
+                self.menubar_edit.set_sensitive(not is_played, widget="remove")
+
+    def set_game_score(self, widget, score=None):
+        """ Manage selected game score
+
+        Parameters
+        ----------
+        widget : Gtk.MenuItem
+            object which received the signal
+        """
+
+        game = self.views_games.get_selected_game()
+        if not game:
+            return
+
+        modification = False
+        if widget.identifier == "increase" and game.score < 5:
+            game.score += 1
+            modification = True
+
+        elif widget.identifier == "decrease" and game.score > 0:
+            game.score -= 1
+            modification = True
+
+        elif score:
+            game.score = score
+            modification = True
+
+        if not modification:
+            treeiter, griditer = self.views_games.get_iter_from_key(game.id)
+
+            self.views_games.treeview.set_value(
+                treeiter, Columns.List.SCORE, game.score)
+            self.views_games.treeview.set_value(
+                treeiter, Columns.List.OBJECT, game)
+            self.views_games.iconview.set_value(
+                griditer, Columns.Grid.OBJECT, game)
+
+            self.api.update_game(game)
+
+            self.set_game_information()
+
+    @block_signals
+    def set_games_column_visibility(self, widget, key):
+        """ Manage games treeview columns visibility
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        key : str
+            Column key
+        """
+
+        if not self.config.has_option("columns", key):
+            return
+
+        self.config.modify("columns", key, widget.get_active())
+        if not self.views_games.treeview.has_widget(key):
+            return
+
+        column = self.views_games.treeview.get_widget(key)
+        column.set_visible(widget.get_active())
+
+        self.views_games.treeview.columns_autosize()
+
+        self.logger.debug(
+            f"Switch visibility for '{key}' column to {column.get_visible()}")
+
+    def set_message(self, title, message, icon=Icons.ERROR, popup=True):
+        """ Open a message dialog
+
+        This function open a dialog to inform user and write message to logger
+        output.
+
+        Parameters
+        ----------
+        title : str
+            Dialog title
+        message : str
+            Dialog message
+        icon : str, optional
+            Dialog icon, set also the logging mode (Default: Icons.ERROR)
+        popup : bool, optional
+            Show a popup dialog with specified message (Default: True)
+        """
+
+        if icon.startswith(Icons.ERROR):
+            self.logger.error(message)
+        elif icon.startswith(Icons.WARNING):
+            self.logger.warning(message)
+        else:
+            self.logger.info(message)
+
+        if popup:
+            dialog = GeodeDialog.Message(self, title, message, icon)
+            dialog.run()
+            dialog.destroy()
+
+    def set_sensitive_interface(self, status=False):
+        """ Update sensitive status for main widgets
+
+        Parameters
+        ----------
+        status : bool, optional
+            Sensitive status (Default: False)
+        """
+
+        self.logger.debug(f"Reset widgets sensitivity status to {status}")
+
+        for widget in self.__widgets_storage:
+            widget.set_sensitive(status)
+
+        self.set_game_playing_status(self.views_games.get_selected_game())
+
+    def set_sidebar_content(self, console, game):
+        """ Fill sidebar informations
+
+        Parameters
+        ----------
+        console : geode_gem.engine.console.Console
+            Console instance
+
+        game : geode_gem.engine.game.Game
+            Game instance
+        """
+
+        self.label_sidebar_title.set_markup(
+            f"<span weight='bold' size='large'>"
+            f"{replace_for_markup(game.name)}</span>")
+
+        if game.screenshots:
+            self.sidebar_image = self.get_screenshot_from_game(game)
+
+            if self.sidebar_image.exists() and self.sidebar_image.is_file():
+                height = 200
+                if self.__current_orientation == Gtk.Orientation.HORIZONTAL:
+                    height = 250
+
+                try:
+                    # Set sidebar screenshot
+                    self.image_sidebar_screenshot.set_from_pixbuf(
+                        GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                            str(self.sidebar_image),
+                            300,
+                            height,
+                            True))
+
+                    self.frame_sidebar_screenshot.set_visible(True)
+                    self.frame_sidebar_screenshot.show_all()
+
+                except GLib.Error:
+                    self.sidebar_image = None
+
+        widgets = [
+            {
+                "widget": self.label_sidebar_played_value,
+                "condition": game.played > 0,
+                "markup": str(game.played)
+            },
+            {
+                "widget": self.label_sidebar_play_time_value,
+                "condition": not game.play_time == timedelta(),
+                "markup": string_from_time(game.play_time),
+                "tooltip": parse_timedelta(game.play_time)
+            },
+            {
+                "widget": self.label_sidebar_last_play_value,
+                "condition": not game.last_launch_date.strftime(
+                    "%d%m%y") == "010101",
+                "markup": string_from_date(game.last_launch_date),
+                "tooltip": str(game.last_launch_date)
+            },
+            {
+                "widget": self.label_sidebar_last_time_value,
+                "condition": not game.last_launch_time == timedelta(),
+                "markup": string_from_time(game.last_launch_time),
+                "tooltip": parse_timedelta(game.last_launch_time)
+            },
+            {
+                "widget": self.label_sidebar_installed_value,
+                "condition": game.installed is not None,
+                "markup": string_from_date(game.installed),
+                "tooltip": str(game.installed)
+            },
+            {
+                "widget": self.grid_sidebar_score,
+                "markup": str(game.score)
+            },
+            {
+                "widget": self.label_sidebar_emulator_value,
+                "condition": game.emulator is not None,
+                "markup": getattr(game.emulator, "name", None)
+            }
+        ]
+
+        for data in widgets:
+
+            # Default label value widget
+            if "condition" in data:
+                data["widget"].set_markup(str())
+                data["widget"].set_tooltip_text(str())
+
+                if data["condition"]:
+
+                    if data["markup"] is not None:
+                        data["widget"].set_markup(data["markup"])
+
+                    # Set tooltip for current widget
+                    if "tooltip" in data:
+                        data["widget"].set_tooltip_text(data["tooltip"])
+
+            # Score case
+            elif data["widget"] == self.grid_sidebar_score:
+                children = data["widget"].get_children()
+
+                # Append star icons to sidebar
+                for child in children:
+                    is_starred = game.score >= children.index(child) + 1
+
+                    child.set_from_icon_name(
+                        self.get_ui_icon(
+                            Columns.List.SCORE, is_starred),
+                        Gtk.IconSize.LARGE_TOOLBAR)
+
+                    child.set_sensitive(is_starred)
+
+                # Show game score as tooltip
+                data["widget"].set_tooltip_text("%d/5" % game.score)
+
+    @block_signals
+    def set_sidebar_position(self, widget=None, init_interface=False):
+        """ Move sidebar based on user configuration value
 
         Parameters
         ----------
         widget : Gtk.Widget, optional
-            Object which receive signal (Default: None)
-        event : Gdk.EventButton or Gdk.EventKey, optional
-            Event which triggered this signal (Default: None)
+            Object which receive signal
+        init_interface : bool, optional
+            Interface first initialization (Default: False)
         """
 
-        for widget in self.__filters_keys:
-            self.popover_filters.set_active(True, widget=widget)
+        self.sidebar_image = None
 
-        self.toolbar_games.set_style(widget="filters")
+        # Retrieve current position and update configuration file
+        if widget is not None:
+            self.sidebar_orientation = "vertical"
+            if widget in (self.headerbar.get_widget("right"),
+                          self.menubar_view.get_widget("right")):
+                self.sidebar_orientation = "horizontal"
 
-    def filters_match(self, model, row, *args):
-        """ Update treeview rows
+            self.config.modify(
+                "gem", "sidebar_orientation", self.sidebar_orientation)
+            self.config.update()
 
-        This function update games treeview with filter entry content. A row is
-        visible if the content match the filter.
+        # Right-side sidebar
+        if self.sidebar_orientation == "horizontal" and \
+           not self.__current_orientation == Gtk.Orientation.HORIZONTAL:
+
+            self.label_sidebar_title.set_justify(Gtk.Justification.CENTER)
+            self.label_sidebar_title.set_halign(Gtk.Align.CENTER)
+            self.label_sidebar_title.set_xalign(0.5)
+
+            # Change game screenshot and score placement
+            self.grid_sidebar.remove(self.grid_sidebar_content)
+            self.grid_sidebar.attach(self.grid_sidebar_content, 0, 1, 1, 1)
+
+            self.grid_sidebar_content.set_orientation(Gtk.Orientation.VERTICAL)
+            self.grid_sidebar_content.set_margin_bottom(12)
+
+            self.grid_sidebar_informations.set_halign(Gtk.Align.FILL)
+            self.grid_sidebar_informations.set_column_homogeneous(True)
+            self.grid_sidebar_informations.set_orientation(
+                Gtk.Orientation.VERTICAL)
+
+            if not init_interface:
+                self.vpaned_games.remove(self.scroll_sidebar)
+
+            self.hpaned_games.pack2(self.scroll_sidebar, False, True)
+
+            self.scroll_sidebar.set_min_content_width(350)
+            self.scroll_sidebar.set_min_content_height(-1)
+
+            self.__current_orientation = Gtk.Orientation.HORIZONTAL
+
+        # Bottom-side sidebar
+        elif (self.sidebar_orientation == "vertical" and
+              not self.__current_orientation == Gtk.Orientation.VERTICAL):
+
+            self.label_sidebar_title.set_justify(Gtk.Justification.LEFT)
+            self.label_sidebar_title.set_halign(Gtk.Align.START)
+            self.label_sidebar_title.set_xalign(0.0)
+
+            # Change game screenshot and score placement
+            self.grid_sidebar.remove(self.grid_sidebar_content)
+            self.grid_sidebar.attach(self.grid_sidebar_content, 1, 0, 1, 3)
+
+            self.grid_sidebar_content.set_margin_bottom(0)
+
+            self.grid_sidebar_informations.set_halign(Gtk.Align.START)
+            self.grid_sidebar_informations.set_column_homogeneous(False)
+            self.grid_sidebar_informations.set_orientation(
+                Gtk.Orientation.HORIZONTAL)
+
+            if not init_interface:
+                self.hpaned_games.remove(self.scroll_sidebar)
+
+            self.vpaned_games.pack2(self.scroll_sidebar, False, True)
+
+            self.scroll_sidebar.set_min_content_width(-1)
+            self.scroll_sidebar.set_min_content_height(260)
+
+            self.__current_orientation = Gtk.Orientation.VERTICAL
+
+        # Update menu radio widgets
+        position = "right"
+        if self.__current_orientation == Gtk.Orientation.VERTICAL:
+            position = "bottom"
+
+        self.headerbar.set_active(True, widget=position)
+        self.menubar_view.set_active(True, widget=position)
+
+        self.logger.debug(f"Mode sidebar to {position} side")
+
+        if widget is not None:
+            self.set_game_information()
+
+    @block_signals
+    def set_sidebar_visibility(self, widget, status=False, *args):
+        """ Update sidebar status
 
         Parameters
         ----------
-        model : Gtk.TreeModel
-            Treeview model which receive signal
-        row : Gtk.TreeModelRow
-            Treeview current row
+        widget : Gtk.Widget
+            Object which receive signal
+        status : bool, optional
+            New switch status (Default: False)
         """
 
-        # Get game object from treeview
-        if model == self.views_games.treeview.list_model:
-            game = model.get_value(row, Columns.List.OBJECT)
+        sidebar_status = \
+            not self.config.getboolean("gem", "show_sidebar", fallback=True)
 
-        elif model == self.views_games.iconview.list_model:
-            game = model.get_value(row, Columns.Grid.OBJECT)
+        if sidebar_status and not self.views_games.placeholder.get_visible():
+            self.scroll_sidebar.show()
+        else:
+            self.scroll_sidebar.hide()
 
-        if not game:
-            return False
+        self.config.modify("gem", "show_sidebar", sidebar_status)
+        self.config.update()
 
-        # ------------------------------------
-        #   Check filter
-        # ------------------------------------
+        self.menubar_view.set_active(sidebar_status, widget="show_sidebar")
 
-        tags = [game.name]
-        if game.tags:
-            tags.extend(game.tags)
+    def set_statusbar_content(self):
+        """ Update headerbar and statusbar informations from games list
+        """
 
-        text = self.toolbar_games.get_widget("entry").get_text().lower()
+        texts = list()
 
-        found = any((
-            match(fr"{text}$", game.name.lower()) or text in game.name.lower()
-            for element in tags))
+        console = self.selection.get("console", None)
+        game = self.views_games.get_selected_game()
 
-        # ------------------------------------
-        #   Set status
-        # ------------------------------------
+        # Console
+        self.statusbar.set_visible(console, widget="console")
+        if self.statusbar.get_visible(widget="console"):
+            text = self.set_statusbar_text_for_widget("console", console)
+            texts.append(text)
 
-        flags = [
-            ("favorite", "unfavorite", game.favorite),
-            ("multiplayer", "singleplayer", game.multiplayer),
-            ("finish", "unfinish", game.finish)
-        ]
+        # Emulator
+        self.statusbar.set_visible(
+            console and console.emulator, widget="emulator")
+        if self.statusbar.get_visible(widget="emulator"):
+            self.set_statusbar_text_for_widget("emulator", console, game)
 
-        for first, second, status in flags:
-            first = self.popover_filters.get_active(f"{first}_switch")
-            second = self.popover_filters.get_active(f"{second}_switch")
+        # Game
+        self.statusbar.set_visible(console and game, widget="game")
+        if self.statusbar.get_visible(widget="game"):
+            text = self.set_statusbar_text_for_widget("game", console, game)
+            texts.append(text)
 
-            # Check if one of the two checkbox is not active
-            if not (first and second):
-                found = found and (
-                    (status and first) or (not status and second))
+        # Headerbar
+        if not self.use_classic_theme:
+            self.headerbar.set_subtitle(" - ".join(texts))
 
-        return found
+    def set_statusbar_icon_for_widget(self, widget_key, console, game):
+        """ Define the statusbar icon for a specific widget
+
+        Parameters
+        ----------
+        widget_key : str
+            Statusbar internal widget key
+        console : geode_gem.engine.console.Console
+            Console instance
+        game : geode_gem.engine.game.Game
+            Game instance
+        """
+
+        if widget_key == "screenshots":
+            image = self.get_ui_icon(Columns.List.SCREENSHOT, game.screenshots)
+
+            tooltip = _("No screenshot")
+            if game.screenshots:
+                tooltip = ngettext(_("1 screenshot"),
+                                   _("%d screenshots") % len(game.screenshots),
+                                   len(game.screenshots))
+
+        elif widget_key == "savestates":
+            image = self.get_ui_icon(Columns.List.SAVESTATE, game.savestates)
+
+            tooltip = _("No savestate")
+            if game.savestates:
+                tooltip = ngettext(_("1 savestate"),
+                                   _("%d savestates") % len(game.savestates),
+                                   len(game.savestates))
+
+        elif widget_key == "properties":
+            use_parameters = \
+                game.default or not game.emulator == console.emulator
+
+            image = self.get_ui_icon(Columns.List.PARAMETER, use_parameters)
+
+            tooltip = str()
+            if game.default:
+                tooltip = _("Use alternative arguments")
+            elif game.emulator == console.emulator:
+                tooltip = _("Use alternative emulator")
+
+        if self.statusbar.has_widget(widget_key):
+            self.statusbar.set_widget_value(
+                widget_key, image=(image, Gtk.IconSize.MENU), tooltip=tooltip)
+
+    def set_statusbar_text_for_widget(self, widget_key, console, game=None):
+        """ Define the statusbar text for a specific widget
+
+        Parameters
+        ----------
+        widget_key : str
+            Statusbar internal widget key
+        console : geode_gem.engine.console.Console
+            Console instance
+        game : geode_gem.engine.game.Game, optional
+            Game instance
+
+        Returns
+        -------
+        str
+            Dedicated text for specified widget
+        """
+
+        text = str()
+
+        # Console
+        if widget_key == "console":
+
+            if self.views_games.treeview.is_filterable:
+                games_length = len(self.views_games.treeview.filtered_model)
+            else:
+                games_length = len(self.views_games.treeview.list_model)
+
+            text = _("N/A")
+            if games_length:
+                text = ngettext(
+                    _("1 game available"),
+                    _("%d games available") % games_length,
+                    games_length)
+
+            text = replace_for_markup(text)
+
+            self.statusbar.set_widget_value(
+                "console", text=f"<b>{_('Console')}</b>: {text}")
+
+        # Emulator
+        elif widget_key == "emulator":
+            emulator_name = replace_for_markup(console.emulator.name)
+
+            if game and not game.emulator.id == console.emulator.id:
+                text = (f"<s>{emulator_name}</s> "
+                        f"{replace_for_markup(game.emulator.name)}")
+            else:
+                text = emulator_name
+
+            self.statusbar.set_widget_value(
+                "emulator", text=f"<b>{_('Emulator')}</b>: {text}")
+
+        # Game
+        elif widget_key == "game" and game:
+            text = replace_for_markup(game.name)
+
+            self.statusbar.set_widget_value("game", text=text)
+
+        return text
+
+    @block_signals
+    def set_statusbar_visibility(self, widget, status=False, *args):
+        """ Update statusbar status
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        status : bool, optional
+            New switch status (Default: False)
+        """
+
+        statusbar_status = \
+            not self.config.getboolean("gem", "show_statusbar", fallback=True)
+
+        if statusbar_status:
+            self.statusbar.show()
+        else:
+            self.statusbar.hide()
+
+        self.config.modify("gem", "show_statusbar", statusbar_status)
+        self.config.update()
+
+        self.menubar_view.set_active(statusbar_status, widget="show_statusbar")
 
     def __on_filter_tag(self, widget):
         """ Refilter games list with a new tag
@@ -2712,1098 +5692,6 @@ class MainWindow(Gtk.ApplicationWindow):
             if not self.keys == konami_code[0:len(self.keys)]:
                 self.keys = list()
 
-    def set_informations(self):
-        """ Update headerbar title and subtitle
-        """
-
-        self.__block_signals()
-
-        self.sidebar_image = None
-
-        console = self.selection.get("console", None)
-        game = self.views_games.get_selected_game()
-
-        # Update headerbar and statusbar informations
-        self.set_informative_bars()
-
-        # ----------------------------------------
-        #   Toolbar
-        # ----------------------------------------
-
-        # Remove tags list
-        self.menu_tags.clear()
-
-        # ----------------------------------------
-        #   Sidebar
-        # ----------------------------------------
-
-        # Hide sidebar widgets
-        self.grid_sidebar_score.set_visible(False)
-        self.grid_sidebar_informations.set_visible(False)
-        self.frame_sidebar_screenshot.set_visible(False)
-
-        # Reset sidebar informations
-        self.label_sidebar_title.set_text(str())
-        self.image_sidebar_screenshot.set_from_pixbuf(None)
-
-        # ----------------------------------------
-        #   Update informations
-        # ----------------------------------------
-
-        if game is None:
-            for widget_key in self.statusbar.pixbuf_widgets:
-                self.statusbar.set_widget_value(
-                    widget_key, image=None, tooltip=str())
-
-        else:
-            self.logger.debug(
-                f"Update informations on main interface for '{game.id}'")
-
-            # ----------------------------------------
-            #   Widgets
-            # ----------------------------------------
-
-            self.__on_game_launch_button_update(game.id not in self.threads)
-
-            self.toolbar_games.set_sensitive(True, widget="launch")
-
-            # This game is not running
-            if game.id not in self.threads:
-                self.menu_game.set_sensitive(True, widget="launch")
-                self.menubar_game.set_sensitive(True, widget="launch")
-
-                if game.path.exists() and access(game.path, W_OK):
-                    self.menu_game.set_sensitive(True, widget="remove")
-                    self.menubar_edit.set_sensitive(True, widget="remove")
-
-            # Menubar
-            for widget in ("favorite", "finish", "multiplayer", "notes",
-                           "properties"):
-                self.headerbar.set_sensitive(True, widget=widget)
-                self.menubar_game.set_sensitive(True, widget=widget)
-
-            for widget in ("copy_path", "open_path", "duplicate", "menu_entry",
-                           "maintenance", "rename", "thumbnail", "score"):
-                self.headerbar.set_sensitive(True, widget=widget)
-                self.menubar_edit.set_sensitive(True, widget=widget)
-
-            # Game menu
-            for widget in ("copy_path", "open_path", "duplicate", "menu_entry",
-                           "maintenance", "rename", "thumbnail", "notes",
-                           "favorite", "finish", "multiplayer"):
-                self.menu_game.set_sensitive(True, widget=widget)
-
-            # Toolbar
-            self.toolbar_games.set_sensitive(True, widget="notes")
-            self.toolbar_games.set_sensitive(True, widget="parameters")
-
-            # ----------------------------------------
-            #   Sidebar
-            # ----------------------------------------
-
-            self.grid_sidebar_score.set_visible(True)
-            self.grid_sidebar_informations.set_visible(True)
-
-            self.label_sidebar_title.set_markup(
-                "<span weight='bold' size='large'>%s</span>" % (
-                    replace_for_markup(game.name)))
-
-            # ----------------------------------------
-            #   Game special menu entries
-            # ----------------------------------------
-
-            # Game editable file
-            if magic_from_file(game.path, mime=True).startswith("text/"):
-                if access(game.path, R_OK) and access(game.path, W_OK):
-                    self.menu_game.set_sensitive(True, widget="game_file")
-                    self.menubar_edit.set_sensitive(True, widget="game_file")
-
-            # Check extension and emulator for GBA game on mednafen
-            if game.emulator and self.__mednafen_status:
-                binary = game.emulator.binary.name
-
-                if game.extension == ".gba" and "mednafen" in binary:
-                    self.menu_game.set_sensitive(True, widget="memory_type")
-                    self.menubar_edit.set_sensitive(True, widget="memory_type")
-
-            # ----------------------------------------
-            #   Game flags
-            # ----------------------------------------
-
-            for name in ("favorite", "multiplayer", "finish"):
-                self.menu_game.set_active(getattr(game, name), widget=name)
-                self.menubar_game.set_active(getattr(game, name), widget=name)
-
-            # ----------------------------------------
-            #   Game log
-            # ----------------------------------------
-
-            # Check game log file
-            if self.check_log() is not None:
-                self.menu_game.set_sensitive(True, widget="game_log")
-                self.menubar_game.set_sensitive(True, widget="game_log")
-                self.toolbar_games.set_sensitive(True, widget="game_log")
-
-            # ----------------------------------------
-            #   Game tags
-            # ----------------------------------------
-
-            if game.tags:
-                self.toolbar_games.get_widget("tags").set_sensitive(True)
-
-                # Append game tags
-                for tag in sorted(game.tags):
-                    item = GeodeGtk.MenuItem(tag, tag)
-                    item.connect("activate", self.__on_filter_tag)
-
-                    self.menu_tags.append(item)
-
-                self.menu_tags.show_all()
-
-            # ----------------------------------------
-            #   Game screenshots
-            # ----------------------------------------
-
-            image = (self.get_ui_icon(
-                         Columns.List.SCREENSHOT, game.screenshots),
-                     Gtk.IconSize.MENU)
-
-            tooltip = _("No screenshot")
-
-            # Check screenshots
-            if game.screenshots:
-                tooltip = ngettext(_("1 screenshot"),
-                                   _("%d screenshots") % len(game.screenshots),
-                                   len(game.screenshots))
-
-                # Ordered game screenshots
-                if not self.use_random_screenshot:
-                    screenshots = sorted(game.screenshots)
-
-                # Get a random file from game screenshots
-                else:
-                    screenshots = game.screenshots
-
-                    shuffle(screenshots)
-
-                self.sidebar_image = Path(screenshots[-1])
-
-                # Update sidebar screenshot
-                if self.sidebar_image.exists() \
-                   and self.sidebar_image.is_file():
-
-                    height = 200
-                    if self.__current_orientation == \
-                       Gtk.Orientation.HORIZONTAL:
-                        height = 250
-
-                    try:
-                        # Set sidebar screenshot
-                        self.image_sidebar_screenshot.set_from_pixbuf(
-                            GdkPixbuf.Pixbuf.new_from_file_at_scale(
-                                str(self.sidebar_image),
-                                300,
-                                height,
-                                True))
-
-                        self.frame_sidebar_screenshot.set_visible(True)
-                        self.frame_sidebar_screenshot.show_all()
-
-                    except GLib.Error:
-                        self.sidebar_image = None
-
-            self.statusbar.set_widget_value(
-                "screenshots", image=image, tooltip=tooltip)
-
-            for name in ("menu_game", "menubar_game", "toolbar_games"):
-                getattr(self, name).set_sensitive(
-                    game.screenshots, widget="screenshots")
-
-            # ----------------------------------------
-            #   Game savestates
-            # ----------------------------------------
-
-            image = (self.get_ui_icon(
-                         Columns.List.SAVESTATE, game.savestates),
-                     Gtk.IconSize.MENU)
-
-            tooltip = _("No savestate")
-            if game.savestates:
-                tooltip = ngettext(_("1 savestate"),
-                                   _("%d savestates") % len(game.savestates),
-                                   len(game.savestates))
-
-            self.statusbar.set_widget_value(
-                "savestates", image=image, tooltip=tooltip)
-
-            # ----------------------------------------
-            #   Game custom parameters
-            # ----------------------------------------
-
-            use_parameters = \
-                game.default or not game.emulator == console.emulator
-
-            image = (self.get_ui_icon(
-                         Columns.List.PARAMETER, use_parameters),
-                     Gtk.IconSize.MENU)
-
-            tooltip = str()
-            if game.default:
-                tooltip = _("Use alternative arguments")
-            elif game.emulator == console.emulator:
-                tooltip = _("Use alternative emulator")
-
-            self.statusbar.set_widget_value(
-                "properties", image=image, tooltip=tooltip)
-
-            # ----------------------------------------
-            #   Sidebar informations
-            # ----------------------------------------
-
-            widgets = [
-                {
-                    "widget": self.label_sidebar_played_value,
-                    "condition": game.played > 0,
-                    "markup": str(game.played)
-                },
-                {
-                    "widget": self.label_sidebar_play_time_value,
-                    "condition": not game.play_time == timedelta(),
-                    "markup": string_from_time(game.play_time),
-                    "tooltip": parse_timedelta(game.play_time)
-                },
-                {
-                    "widget": self.label_sidebar_last_play_value,
-                    "condition": not game.last_launch_date.strftime(
-                        "%d%m%y") == "010101",
-                    "markup": string_from_date(game.last_launch_date),
-                    "tooltip": str(game.last_launch_date)
-                },
-                {
-                    "widget": self.label_sidebar_last_time_value,
-                    "condition": not game.last_launch_time == timedelta(),
-                    "markup": string_from_time(game.last_launch_time),
-                    "tooltip": parse_timedelta(game.last_launch_time)
-                },
-                {
-                    "widget": self.label_sidebar_installed_value,
-                    "condition": game.installed is not None,
-                    "markup": string_from_date(game.installed),
-                    "tooltip": str(game.installed)
-                },
-                {
-                    "widget": self.grid_sidebar_score,
-                    "markup": str(game.score)
-                },
-                {
-                    "widget": self.label_sidebar_emulator_value,
-                    "condition": game.emulator is not None,
-                    "markup": getattr(game.emulator, "name", None)
-                }
-            ]
-
-            for data in widgets:
-
-                # Default label value widget
-                if "condition" in data:
-                    data["widget"].set_markup(str())
-                    data["widget"].set_tooltip_text(str())
-
-                    if data["condition"]:
-
-                        if data["markup"] is not None:
-                            data["widget"].set_markup(data["markup"])
-
-                        # Set tooltip for current widget
-                        if "tooltip" in data:
-                            data["widget"].set_tooltip_text(data["tooltip"])
-
-                # Score case
-                elif data["widget"] == self.grid_sidebar_score:
-                    children = data["widget"].get_children()
-
-                    # Append star icons to sidebar
-                    for child in children:
-                        is_starred = game.score >= children.index(child) + 1
-
-                        child.set_from_icon_name(
-                            self.get_ui_icon(
-                                Columns.List.SCORE, is_starred),
-                            Gtk.IconSize.LARGE_TOOLBAR)
-
-                        child.set_sensitive(is_starred)
-
-                    # Show game score as tooltip
-                    data["widget"].set_tooltip_text("%d/5" % game.score)
-
-        self.__unblock_signals()
-
-    def set_informative_bars(self):
-        """ Update headerbar and statusbar informations from games list
-        """
-
-        texts = list()
-
-        console = self.selection.get("console", None)
-        game = self.views_games.get_selected_game()
-
-        self.statusbar.console.set_visible(console)
-        self.statusbar.emulator.set_visible(console and console.emulator)
-        self.statusbar.game.set_visible(console and game)
-
-        # ----------------------------------------
-        #   Console
-        # ----------------------------------------
-
-        if self.statusbar.console.get_visible():
-
-            if self.views_games.treeview.is_filterable:
-                games_length = len(self.views_games.treeview.filtered_model)
-            else:
-                games_length = len(self.views_games.treeview.list_model)
-
-            text = _("N/A")
-            if games_length:
-                text = ngettext(
-                    _("1 game available"),
-                    _("%d games available") % games_length,
-                    games_length)
-
-            self.statusbar.set_widget_value(
-                "console",
-                markup=f"<b>{_('Console')}</b>: {replace_for_markup(text)}")
-            texts.append(text)
-
-            # ----------------------------------------
-            #   Emulator
-            # ----------------------------------------
-
-            if self.statusbar.emulator.get_visible():
-                emulator_name = replace_for_markup(console.emulator.name)
-
-                text = f"<b>{_('Emulator')}</b>: "
-
-                if game and not game.emulator.id == console.emulator.id:
-                    text += (f"<s>{emulator_name}</s> "
-                             f"{replace_for_markup(game.emulator.name)}")
-                else:
-                    text += emulator_name
-
-                self.statusbar.set_widget_value("emulator", markup=text)
-
-            # ----------------------------------------
-            #   Game
-            # ----------------------------------------
-
-            if self.statusbar.game.get_visible():
-                self.statusbar.set_widget_value("game", text=game.name)
-                texts.append(game.name)
-
-        # ----------------------------------------
-        #   Headerbar
-        # ----------------------------------------
-
-        if not self.use_classic_theme:
-            self.headerbar.set_subtitle(" - ".join(texts))
-
-    def set_message(self, title, message, icon=Icons.ERROR, popup=True):
-        """ Open a message dialog
-
-        This function open a dialog to inform user and write message to logger
-        output.
-
-        Parameters
-        ----------
-        title : str
-            Dialog title
-        message : str
-            Dialog message
-        icon : str, optional
-            Dialog icon, set also the logging mode (Default: Icons.ERROR)
-        popup : bool, optional
-            Show a popup dialog with specified message (Default: True)
-        """
-
-        if icon.startswith(Icons.ERROR):
-            self.logger.error(message)
-        elif icon.startswith(Icons.WARNING):
-            self.logger.warning(message)
-        else:
-            self.logger.info(message)
-
-        if popup:
-            dialog = GeodeDialog.Message(self, title, message, icon)
-
-            dialog.run()
-            dialog.destroy()
-
-    def __on_show_external_link(self, widget, *args):
-        """ Open an external link
-
-        Parameters
-        ----------
-        widget : Gtk.MenuItem
-            object which received the signal
-        """
-
-        try:
-            if widget in (self.headerbar.get_widget("website"),
-                          self.menubar_help.get_widget("website")):
-                link = Metadata.WEBSITE
-
-            elif widget in (self.headerbar.get_widget("report"),
-                            self.menubar_help.get_widget("report")):
-                link = Metadata.BUG_TRACKER
-
-            self.logger.debug(f"Open {link} in web navigator")
-
-            self.__xdg_open_instance.launch_uris([link], None)
-
-        except GLib.Error:
-            self.logger.exception("Cannot open external link")
-
-    @use_sensitivity
-    def __on_show_about(self, *args):
-        """ Show about dialog
-        """
-
-        about = Gtk.AboutDialog(use_header_bar=not self.use_classic_theme)
-
-        about.set_transient_for(self)
-
-        about.set_program_name(Metadata.NAME)
-        about.set_version("%s (%s)" % (self.__version, Metadata.CODE_NAME))
-        about.set_comments(Metadata.DESCRIPTION)
-        about.set_copyright(Metadata.COPYLEFT)
-        about.set_website(Metadata.WEBSITE)
-
-        about.set_authors([
-            "Aurélien Lubert (PacMiam)"
-        ])
-        about.set_artists([
-            "Evan-Amos %s - Public Domain" % Metadata.EVAN_AMOS
-        ])
-        about.set_translator_credits('\n'.join([
-            "Anthony Jorion (Pingax)",
-            "Aurélien Lubert (PacMiam)",
-            "José Luis Lopez Castillo (DarkNekros)",
-        ]))
-        about.add_credit_section(_("Tested by"), [
-            "Bruno Visse (atralfalgar)",
-            "Herlief",
-        ])
-        about.set_license_type(Gtk.License.GPL_3_0)
-
-        # Strange case... With an headerbar, the AboutDialog got some useless
-        # buttons whitout any reasons. To avoid this, I remove any widget from
-        # headerbar which is not a Gtk.StackSwitcher.
-        if not self.use_classic_theme:
-            children = about.get_header_bar().get_children()
-
-            for child in children:
-                if type(child) is not Gtk.StackSwitcher:
-                    about.get_header_bar().remove(child)
-
-        about.run()
-        about.destroy()
-
-    @use_sensitivity
-    def __on_show_viewer(self, *args):
-        """ Show game screenshots
-
-        This function open game screenshots in a viewer. This viewer can be a
-        custom one or the gem native viewer. This choice can be do in gem
-        configuration file
-        """
-
-        console = self.selection.get("console", None)
-        game = self.views_games.get_selected_game()
-
-        if game is None or console is None or len(game.screenshots) == 0:
-            return
-
-        # Get external viewer
-        viewer = Path(self.config.get("viewer", "binary")).expanduser()
-
-        screenshots_list = sorted(game.screenshots)
-
-        # Native viewer
-        if self.config.getboolean("viewer", "native", fallback=True):
-            try:
-                size = self.config.get(
-                    "windows", "viewer", fallback="800x600").split('x')
-
-            except ValueError:
-                size = (800, 600)
-
-            dialog = GeodeDialog.Viewer(
-                self, f"{game.name} ({console.name})", size, screenshots_list)
-            dialog.run()
-
-            self.config.modify(
-                "windows", "viewer", "%dx%d" % dialog.get_size())
-            self.config.update()
-
-            dialog.destroy()
-
-        # External viewer
-        elif viewer.exists():
-
-            # Retrieve viewer binary
-            command = shlex_split(str(viewer))
-
-            # Add arguments if available
-            parameters = self.config.item("viewer", "options")
-            if parameters is not None:
-                command.append(parameters)
-
-            # Add game screenshot files
-            command.extend([str(path) for path in screenshots_list])
-
-            # Launch external viewer
-            try:
-                instance = Gio.AppInfo.create_from_commandline(
-                    ' '.join(command), None,
-                    Gio.AppInfoCreateFlags.SUPPORTS_URIS)
-
-                instance.launch(None, None)
-
-            except GLib.Error:
-                self.logger.exception(
-                    "Cannot generate %s instance" % str(viewer))
-
-        # No available viewer
-        else:
-            self.set_message(_("Cannot open screenshots viewer"),
-                             _("Cannot find %s") % f"<b>{viewer.name}</b>",
-                             Icons.WARNING)
-
-        # External viewer can remove file, so we need to check again
-        if len(game.screenshots) == 0:
-            self.views_games.treeview.set_value(
-                game.id, Columns.List.SCREENSHOT, None)
-
-    @use_sensitivity
-    def __on_show_preferences(self, *args):
-        """ Show preferences window
-
-        This function show the gem preferences manager
-        """
-
-        dialog = GeodeDialog.Preferences(self.api, self)
-
-        if dialog.run() == Gtk.ResponseType.APPLY:
-            dialog.save_configuration()
-
-            self.logger.debug("Main interface need to be reload")
-            self.load_interface()
-
-        dialog.destroy()
-
-    @use_sensitivity
-    def __on_show_log(self, *args):
-        """ Show gem log
-
-        This function show the gem log content in a non-editable dialog
-        """
-
-        if self.api.log.exists():
-            try:
-                size = self.config.get(
-                    "windows", "log", fallback="800x600").split('x')
-
-            except ValueError:
-                size = (800, 600)
-
-            dialog = GeodeDialog.Editor(
-                self,
-                _("Application log"),
-                self.api.log,
-                size,
-                Icons.Symbolic.TERMINAL,
-                editable=False)
-
-            dialog.run()
-
-            self.config.modify("windows", "log", "%dx%d" % dialog.get_size())
-            self.config.update()
-
-            dialog.destroy()
-
-    @use_sensitivity
-    def __on_show_clean_cache(self, *args):
-        """ Clean icons cache directory
-
-        This function show a dialog to ask if the icons cache directory need to
-        be cleaned
-        """
-
-        if Folders.CACHE.exists():
-            success = False
-
-            dialog = GeodeDialog.CleanCache(self)
-
-            if dialog.run() == Gtk.ResponseType.YES:
-
-                # Remove cache directory
-                rmtree(str(Folders.CACHE))
-
-                # Generate directories
-                Folders.CACHE.mkdir(mode=0o755, parents=True)
-
-                for name in ("consoles", "emulators", "games"):
-                    sizes = getattr(Icons.Size, name.upper(), list())
-
-                    for size in sizes:
-                        path = Folders.CACHE.joinpath(
-                            name, "%sx%s" % (size, size))
-
-                        if not path.exists():
-                            self.logger.debug("Generate %s" % path)
-
-                            path.mkdir(mode=0o755, parents=True)
-
-                success = True
-
-            dialog.destroy()
-
-            if success:
-                self.set_message(
-                    _("Clean icons cache"),
-                    _("Icons cache directory has been succesfully cleaned."),
-                    Icons.INFORMATION)
-
-    def __on_show_notes(self, *args):
-        """ Edit game notes
-
-        This function allow user to write some notes for a specific game. The
-        user can open as many notes he wants but cannot open a note already
-        open
-        """
-
-        game = self.views_games.get_selected_game()
-
-        if game is not None:
-            path = self.api.get_local("notes", game.id + ".txt")
-
-            if path is not None and not str(path) in self.notes.keys():
-                try:
-                    size = self.config.get(
-                        "windows", "notes", fallback="800x600").split('x')
-
-                except ValueError:
-                    size = (800, 600)
-
-                dialog = GeodeDialog.Editor(
-                    self,
-                    game.name,
-                    path,
-                    size,
-                    Icons.Symbolic.DOCUMENT)
-
-                # Allow to launch games with open notes
-                dialog.set_modal(False)
-
-                dialog.window.connect(
-                    "response",
-                    self.__on_show_notes_response,
-                    dialog,
-                    game.name,
-                    path)
-
-                dialog.show_all()
-
-                # Save dialogs to close it properly when gem terminate and
-                # avoid to reopen existing one
-                self.notes[str(path)] = dialog
-
-            elif str(path) in self.notes.keys():
-                self.notes[str(path)].grab_focus()
-
-    def __on_show_notes_response(self, widget, response, dialog, title, path):
-        """ Close notes dialog
-
-        This function close current notes dialog and save his textview buffer
-        to the game notes file
-
-        Parameters
-        ----------
-        widget : Gtk.Dialog
-            Dialog object
-        response : Gtk.ResponseType
-            Dialog object user response
-        dialog : Gtk.Dialog
-            Dialog editor object
-        title : str
-            Dialog title, it's game name by default
-        path : pathlib.Path
-            Notes path
-        """
-
-        if response == Gtk.ResponseType.APPLY:
-            text_buffer = dialog.buffer_editor.get_text(
-                dialog.buffer_editor.get_start_iter(),
-                dialog.buffer_editor.get_end_iter(), True)
-
-            if len(text_buffer) > 0:
-
-                with path.open('w') as pipe:
-                    pipe.write(text_buffer)
-
-                self.logger.info("Update note for %s" % title)
-
-            elif path.exists():
-                path.unlink()
-
-                self.logger.debug("Remove note for %s" % title)
-
-        self.config.modify("windows", "notes", "%dx%d" % dialog.get_size())
-        self.config.update()
-
-        dialog.destroy()
-
-        if str(path) in self.notes.keys():
-            del self.notes[str(path)]
-
-    @use_sensitivity
-    def __on_show_console_editor(self, widget, *args):
-        """ Open console editor dialog
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        """
-
-        self.__block_signals()
-
-        selected_row = self.listbox_consoles.get_selected_row()
-
-        if widget == self.toolbar_consoles.get_widget("add_console"):
-            console = None
-
-        elif self.__current_menu_row is not None:
-            console = self.__current_menu_row.console
-
-            previous_id = console.id
-
-        dialog = GeodeDialog.Console(
-            self, console, self.api.consoles, self.api.emulators)
-
-        if dialog.run() == Gtk.ResponseType.APPLY:
-
-            if console is not None:
-                self.logger.debug("Save %s modifications" % console.name)
-
-            data = dialog.save()
-
-            if data is not None:
-
-                if console is not None:
-                    self.api.delete_console(previous_id)
-
-                    # Remove previous console storage
-                    del self.consoles_iter[previous_id]
-
-                    # Store row with the new identifier
-                    self.consoles_iter[data["id"]] = self.__current_menu_row
-
-                console = self.api.add_console(data["name"], data.items())
-
-                # Write console data
-                self.api.write_data(GEM.Consoles)
-
-                # Load games list if the game directory exists
-                if console.path.exists():
-
-                    try:
-                        console.init_games()
-
-                    except OSError as error:
-                        self.logger.warning(error)
-
-                # Remove thumbnails from cache
-                for size in ("22x22", "24x24", "48x48", "64x64", "96x96"):
-                    cache_path = self.get_icon_from_cache(
-                        "consoles", size, console.id + ".png")
-
-                    if cache_path.exists():
-                        remove(cache_path)
-
-                # ----------------------------------------
-                #   Update console row
-                # ----------------------------------------
-
-                if widget == self.toolbar_consoles.get_widget("add_console"):
-                    console_data = self.__on_generate_console_row(console)
-
-                    if console_data is not None:
-                        row = self.__on_append_console_row(*console_data)
-
-                        # Store console iter
-                        self.consoles_iter[row.console.id] = row
-
-                    self.set_message(
-                        _("New console"),
-                        _("%s has been correctly added to your "
-                          "configuration.") % console.name,
-                        Icons.Symbolic.INFORMATION)
-
-                else:
-
-                    self.__current_menu_row.console = console
-
-                    # Console name
-                    self.__current_menu_row.label.set_text(console.name)
-
-                    # Console icon
-                    icon = self.get_pixbuf_from_cache(
-                        "consoles", 24, console.id, console.icon)
-
-                    if icon is None:
-                        icon = self.icons.blank(24)
-
-                    self.__current_menu_row.image_icon.set_from_pixbuf(icon)
-
-                    # Console favorite status icon
-                    icon = None
-                    if console.favorite:
-                        icon = Icons.Symbolic.FAVORITE
-
-                    self.__current_menu_row.image_status.set_from_icon_name(
-                        icon, Gtk.IconSize.MENU)
-
-                    text = _("No game")
-                    if console.get_games():
-                        text = ngettext(
-                            _("1 game"),
-                            _("%d games") % len(console.get_games()),
-                            len(console.get_games()))
-
-                    self.__current_menu_row.set_tooltip_text(text)
-
-                    # Console flag selectors
-                    self.menu_consoles.set_active(
-                        console.favorite, widget="favorite")
-                    self.menu_consoles.set_active(
-                        console.recursive, widget="recursive")
-
-                # ----------------------------------------
-                #   Refilter consoles list
-                # ----------------------------------------
-
-                self.__on_update_consoles()
-
-                # ----------------------------------------
-                #   Reload games list
-                # ----------------------------------------
-
-                if selected_row == self.__current_menu_row:
-                    self.selection["console"] = self.__current_menu_row.console
-
-                    self.__on_reload_games()
-
-        dialog.destroy()
-
-        self.__unblock_signals()
-
-    @use_sensitivity
-    def __on_show_emulator_editor(self, widget, *args):
-        """ Open console editor dialog
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        """
-
-        self.__block_signals()
-
-        selected_row = self.listbox_consoles.get_selected_row()
-
-        if widget == self.toolbar_consoles.get_widget("add_emulator"):
-            emulator = None
-
-        elif self.__current_menu_row is not None:
-            emulator = self.__current_menu_row.console.emulator
-
-            previous_id = emulator.id
-
-            # Retrieve the correct emulator instance from api
-            emulator = self.api.get_emulator(previous_id)
-
-        dialog = GeodeDialog.Emulator(self, emulator, self.api.emulators)
-
-        if dialog.run() == Gtk.ResponseType.APPLY:
-
-            if emulator is not None:
-                self.logger.debug("Save %s modifications" % emulator.name)
-
-            data = dialog.save()
-
-            if data is not None:
-
-                if emulator is not None:
-                    self.api.delete_emulator(previous_id)
-
-                emulator = self.api.add_emulator(data["name"], data.items())
-
-                if not widget == self.toolbar_consoles.get_widget(
-                   "add_emulator"):
-
-                    # Rename emulator identifier in consoles and games
-                    if not emulator.id == previous_id:
-                        self.api.rename_emulator(previous_id, emulator.id)
-
-                # Write console data
-                self.api.write_data(GEM.Emulators)
-
-                # Remove thumbnails from cache
-                for size in ("22x22", "48x48", "64x64"):
-                    cache_path = self.get_icon_from_cache(
-                        "emulators", size, emulator.id + ".png")
-
-                    if cache_path.exists():
-                        remove(cache_path)
-
-                # ----------------------------------------
-                #   Update console row
-                # ----------------------------------------
-
-                if widget == self.toolbar_consoles.get_widget("add_emulator"):
-                    self.set_message(
-                        _("New emulator"),
-                        _("%s has been correctly added to your "
-                          "configuration.") % emulator.name,
-                        Icons.Symbolic.INFORMATION)
-
-                else:
-                    status = False
-
-                    self.__current_menu_row.console.emulator = emulator
-
-                    if emulator is not None \
-                       and emulator.configuration is not None:
-                        status = emulator.configuration.exists()
-
-                    self.menu_consoles.set_sensitive(
-                        status, widget="edit_file")
-
-                    # ----------------------------------------
-                    #   Reload games list
-                    # ----------------------------------------
-
-                    same_emulator = False
-
-                    if selected_row is not None:
-                        identifier = selected_row.console.emulator.id
-
-                        # Reload games list if selected console has the same
-                        # emulator to avoid missing references
-                        same_emulator = identifier == emulator.id
-
-                    if selected_row == self.__current_menu_row:
-                        self.selection["console"] = \
-                            self.__current_menu_row.console
-
-                        self.__on_reload_games()
-
-                    elif same_emulator:
-                        self.__on_reload_games()
-
-        dialog.destroy()
-
-        self.__unblock_signals()
-
-    @use_sensitivity
-    def __on_show_emulator_config(self, *args):
-        """ Edit emulator configuration file
-        """
-
-        console = None
-        if self.__current_menu_row is not None:
-            console = self.__current_menu_row.console
-
-        if console is not None:
-            emulator = console.emulator
-
-            if emulator.configuration is not None:
-                path = emulator.configuration
-
-                if path.exists():
-                    try:
-                        size = self.config.get(
-                            "windows", "editor", fallback="800x600").split('x')
-
-                    except ValueError:
-                        size = (800, 600)
-
-                    dialog = GeodeDialog.Editor(
-                        self,
-                        _("Edit %s configuration") % emulator.name,
-                        path,
-                        size,
-                        Icons.Symbolic.DOCUMENT)
-
-                    if dialog.run() == Gtk.ResponseType.APPLY:
-
-                        with path.open('w') as pipe:
-                            pipe.write(dialog.buffer_editor.get_text(
-                                dialog.buffer_editor.get_start_iter(),
-                                dialog.buffer_editor.get_end_iter(), True))
-
-                        self.logger.info(
-                            "Update %s configuration file" % emulator.name)
-
-                    self.config.modify(
-                        "windows", "editor", "%dx%d" % dialog.get_size())
-                    self.config.update()
-
-                    dialog.destroy()
-
-    def __on_remove_console(self, *args):
-        """ Remove a console from user configuration
-        """
-
-        self.__block_signals()
-
-        selected_row = self.listbox_consoles.get_selected_row()
-
-        if self.__current_menu_row is not None:
-            console = self.__current_menu_row.console
-
-            dialog = GeodeDialog.Question(
-                self,
-                _("Remove a console"),
-                _("Are you sure you want to remove <b>%s</b> ?") % (
-                    console.name))
-
-            if dialog.run() == Gtk.ResponseType.YES:
-
-                # Remove console
-                self.api.delete_console(console.id)
-
-                # Write consoles data
-                self.api.write_data(GEM.Consoles)
-
-                # Remove row from listbox
-                self.listbox_consoles.remove(self.__current_menu_row)
-
-                # Remove the current selected console
-                if selected_row == self.__current_menu_row:
-                    self.selection["console"] = None
-
-                    self.infobar.set_visible(False)
-                    self.scroll_sidebar.set_visible(False)
-
-                    self.views_games.clear()
-
-                    self.set_informations()
-
-            dialog.destroy()
-
-        self.__unblock_signals()
-
     def append_consoles(self):
         """ Append to consoles lisbox all available consoles
 
@@ -3836,7 +5724,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
             self.logger.debug(f"Append console '{row.console.id}'")
 
-        self.__on_update_consoles()
+        self.on_reload_consoles()
 
         if len(self.listbox_consoles) > 0:
             self.scroll_sidebar.set_visible(self.show_sidebar)
@@ -3936,6 +5824,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         return row_console
 
+    @block_signals
     def __on_selected_console(self, widget, row, force=False):
         """ Select a console
 
@@ -3954,8 +5843,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Avoid to reload the same console
         if force or not self.selection.get("console") == row.console:
-            self.__block_signals()
-
             self.logger.debug(f"Select {row.console.name} console")
 
             self.selection = {
@@ -3965,7 +5852,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
             self.infobar.set_visible(False)
 
-            self.set_informative_bars()
+            self.set_statusbar_content()
 
             self.__console_icon = self.get_pixbuf_from_cache(
                 "consoles", 96, row.console.id, row.console.icon)
@@ -3986,12 +5873,10 @@ class MainWindow(Gtk.ApplicationWindow):
             #   Check data
             # ------------------------------------
 
-            self.sensitive_interface()
+            self.set_sensitive_interface()
 
             # Set console informations into button grid widgets
             # self.listbox_consoles.select_row(row)
-
-            self.__unblock_signals()
 
             # ------------------------------------
             #   Load game list
@@ -4020,33 +5905,6 @@ class MainWindow(Gtk.ApplicationWindow):
                 second_row.console.name.lower()
 
         return first_row.console.favorite < second_row.console.favorite
-
-    def __on_filter_consoles(self, row, *args):
-        """ Filter list with consoles searchentry text
-
-        Parameters
-        ----------
-        row : gem.gtk.widgets.ListBoxSelectorItem
-            Activated row
-        """
-
-        try:
-            widget = self.toolbar_consoles.get_widget("entry")
-            if widget is None:
-                return False
-
-            filter_text = widget.get_text().strip().lower()
-
-            if self.hide_empty_console and len(row.console.get_games()) == 0:
-                return False
-
-            if len(filter_text) == 0:
-                return True
-
-            return filter_text in row.console.name.lower()
-
-        except Exception:
-            return False
 
     def __on_header_consoles(self, row, before, *args):
         """ Update consoles listboxrow header based on console favorite status
@@ -4077,56 +5935,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         row.set_header(header)
 
-    def __on_update_consoles(self, *args):
-        """ Reload consoles list when user set a filter
-        """
-
-        self.listbox_consoles.invalidate_sort()
-        self.listbox_consoles.invalidate_filter()
-
-    def __on_change_console_option(self, widget, *args):
-        """ Change a console option switch
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        """
-
-        self.__block_signals()
-
-        if widget == self.toolbar_consoles.get_widget("hide_empty"):
-
-            self.hide_empty_console = not self.config.getboolean(
-                "gem", "hide_empty_console", fallback=False)
-
-            self.config.modify(
-                "gem", "hide_empty_console", self.hide_empty_console)
-            self.config.update()
-
-            self.toolbar_consoles.set_active(
-                self.hide_empty_console, widget="hide_empty")
-
-            self.__on_update_consoles()
-
-        elif self.__current_menu_row is not None:
-
-            if widget == self.menu_consoles.get_widget("recursive"):
-                self.__current_menu_row.console.recursive = \
-                    not self.__current_menu_row.console.recursive
-
-                self.api.write_object(self.__current_menu_row.console)
-
-            elif widget == self.menu_consoles.get_widget("favorite"):
-                self.__current_menu_row.console.favorite = \
-                    not self.__current_menu_row.console.favorite
-
-                self.api.write_object(self.__current_menu_row.console)
-
-                self.__on_update_consoles()
-
-        self.__unblock_signals()
-
+    @block_signals
     def __on_console_menu_show(self, widget, event):
         """ Open context menu
 
@@ -4161,8 +5970,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         if row is None:
             return False
-
-        self.__block_signals()
 
         self.menu_consoles.set_active(
             row.console.favorite, widget="favorite")
@@ -4201,8 +6008,6 @@ class MainWindow(Gtk.ApplicationWindow):
             self.menu_consoles.popup_at_widget(
                 row, Gdk.Gravity.CENTER, Gdk.Gravity.NORTH, event)
 
-        self.__unblock_signals()
-
         return True
 
     def append_games(self, console):
@@ -4226,14 +6031,12 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.logger.debug(f"Start to append games for console {console.name}")
 
-        self.__block_signals()
-
         # Clean interface
         self.infobar.set_visible(False)
 
         self.views_games.clear()
 
-        self.set_informations()
+        self.set_game_information()
 
         # ------------------------------------
         #   Check console
@@ -4297,6 +6100,8 @@ class MainWindow(Gtk.ApplicationWindow):
             # Ordered games by name
             games.sort(key=lambda game: game.name.lower().replace(' ', ''))
 
+            self.__block_signals()
+
             self.scroll_sidebar.set_visible(
                 self.config.getboolean("gem", "show_sidebar", fallback=True))
 
@@ -4317,7 +6122,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 if not current_thread_id == self.list_thread:
                     yield False
 
-                self.set_informative_bars()
+                self.set_statusbar_content()
 
                 self.statusbar.set_widget_value(
                     "progressbar", index=index, length=len(games))
@@ -4326,7 +6131,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
             self.statusbar_progressbar.hide()
 
-            self.set_informative_bars()
+            self.set_statusbar_content()
 
             # ------------------------------------
             #   Timer - Debug
@@ -4350,6 +6155,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         yield False
 
+    @block_signals
     def __on_selected_game(self, widget):
         """ Select a game
 
@@ -4361,8 +6167,6 @@ class MainWindow(Gtk.ApplicationWindow):
             Object which receive signal
         """
 
-        self.__block_signals()
-
         # Current selected game
         game = self.views_games.get_selected_game()
 
@@ -4372,1176 +6176,24 @@ class MainWindow(Gtk.ApplicationWindow):
             self.views_games.unselect_all()
 
             # Reset sidebar widgets and menus entries
-            self.sensitive_interface()
-            self.set_informations()
+            self.set_sensitive_interface()
+            self.set_game_information()
 
         # A new game has been selected
         elif not self.selection["game"] == game:
             self.logger.debug(f"Select game '{game.id}'")
 
             # Synchronize selection between both games views
-            self.__on_synchronize_game_selection(widget, game)
+            self.on_synchronize_game_selection(widget, game)
 
             # Update game informations and widgets
-            self.sensitive_interface()
-            self.set_informations()
+            self.set_sensitive_interface()
+            self.set_game_information()
 
         # Store game instance
         self.selection["game"] = game
 
-        self.__unblock_signals()
-
-    def __on_selected_game_tooltip(self, treeview, x, y, keyboard, tooltip):
-        """ Show game informations tooltip
-
-        Parameters
-        ----------
-        treeview : Gtk.TreeView
-            Widget which received the signal
-        x : int
-            X coordinate for mouse cursor position
-        y : int
-            Y coordinate for mouse cursor position
-        keyboard : bool
-            Set as True if the tooltip has been trigged by keyboard
-        tooltip : Gtk.Tooltip
-            Tooltip widget
-
-        Returns
-        -------
-        bool
-            Tooltip visible status
-        """
-
-        # Show a tooltip when the show_tooltip option is activate
-        if not self.config.getboolean("gem", "show_tooltip", fallback=True):
-            return False
-
-        # Show a tooltip when the main window is sentitive only
-        if not self.get_sensitive():
-            return False
-
-        # Get relative treerow position based on absolute cursor
-        # coordinates
-        x, y = treeview.convert_widget_to_bin_window_coords(x, y)
-
-        selection = treeview.get_path_at_pos(x, y)
-        # Using a tuple to mimic Gtk.TreeView behavior
-        if treeview == self.views_games.iconview and selection is not None:
-            selection = (selection)
-
-        if selection is not None:
-            model = treeview.get_model()
-            treeiter = model.get_iter(selection[0])
-
-            column_id = Columns.Grid.OBJECT
-            if treeview == self.views_games.treeview:
-                column_id = Columns.List.OBJECT
-
-            game = model.get_value(treeiter, column_id)
-
-            # Reload tooltip when another game is hovered
-            if not self.__current_tooltip == game:
-                self.__current_tooltip = game
-                self.__current_tooltip_data = list()
-                self.__current_tooltip_pixbuf = None
-
-                return False
-
-            # Get new data from hovered game
-            if len(self.__current_tooltip_data) == 0:
-                data = list()
-
-                data.append(
-                    "<big><b>%s</b></big>" % replace_for_markup(game.name))
-
-                if not game.play_time == timedelta():
-                    data.append(
-                        ": ".join(
-                            [
-                                "<b>%s</b>" % _("Play time"),
-                                parse_timedelta(game.play_time)
-                            ]
-                        )
-                    )
-
-                if not game.last_launch_time == timedelta():
-                    data.append(
-                        ": ".join(
-                            [
-                                "<b>%s</b>" % _("Last launch"),
-                                parse_timedelta(game.last_launch_time)
-                            ]
-                        )
-                    )
-
-                # Fancy new line
-                if len(data) > 1:
-                    data.insert(1, str())
-
-                self.__current_tooltip_data = data
-
-            console = self.selection["console"]
-
-            # Get new screenshots from hovered game
-            if console is not None \
-               and self.__current_tooltip_pixbuf is None:
-
-                image = None
-
-                # Retrieve user choice for tooltip image
-                tooltip_image = self.config.get(
-                    "gem", "tooltip_image_type", fallback="screenshot")
-
-                if not tooltip_image == "none":
-
-                    if tooltip_image in ["both", "cover"]:
-
-                        if game.cover is not None and game.cover.exists():
-                            image = game.cover
-
-                    if tooltip_image in ["both", "screenshot"]:
-
-                        # Ordered game screenshots
-                        if not self.use_random_screenshot:
-                            screenshots = sorted(game.screenshots)
-
-                        # Get a random file from game screenshots
-                        else:
-                            screenshots = game.screenshots
-
-                            shuffle(screenshots)
-
-                        if len(game.screenshots) > 0:
-                            image = Path(screenshots[-1])
-
-                    # Check if image exists and is not a directory
-                    if image is not None \
-                       and image.exists() and image.is_file():
-
-                        try:
-                            # Resize pixbuf to have a 96 pixels height
-                            pixbuf = \
-                                GdkPixbuf.Pixbuf.new_from_file_at_scale(
-                                    str(image), -1, 96, True)
-
-                            self.__current_tooltip_pixbuf = pixbuf
-
-                        except GLib.Error:
-                            self.__current_tooltip_pixbuf = None
-
-                else:
-                    self.__current_tooltip_pixbuf = None
-
-            # Only show tooltip when data are available
-            if len(self.__current_tooltip_data) > 0:
-                tooltip.set_markup('\n'.join(self.__current_tooltip_data))
-
-                if self.__current_tooltip_pixbuf is not None:
-                    tooltip.set_icon(self.__current_tooltip_pixbuf)
-
-                self.__current_tooltip = game
-
-                return True
-
-        return False
-
-    def __on_synchronize_game_selection(self, widget, game):
-        """ Synchronize grid and list views selection
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Games view currently selected
-        game : gem.engine.game.Game
-            Game instance
-        """
-
-        if game is not None and self.views_games.has_game(game.id):
-
-            # Select the view to synchronise
-            if widget == self.views_games.iconview:
-                index, view = 0, self.views_games.treeview
-            elif widget == self.views_games.treeview:
-                index, view = 1, self.views_games.iconview
-
-            path = view.get_path_from_treeiter(
-                self.views_games.get_iter_from_key(game.id)[index])
-
-            if path is not None:
-                view.select_path_and_scroll(path)
-            else:
-                view.unselect_all()
-
-            self.logger.debug(f"Synchronize selection for game '{game.id}'")
-
-    def __on_reload_games(self, *args):
-        """ Reload games list from selected console
-        """
-
-        row = self.listbox_consoles.get_selected_row()
-
-        if row is not None:
-            self.__on_selected_console(None, row, force=True)
-
-    def on_sort_games(self, model, row1, row2, column):
-        """ Sort games list for specific columns
-
-        Parameters
-        ----------
-        model : Gtk.TreeModel
-            Treeview model which receive signal
-        row1 : Gtk.TreeIter
-            First treeiter to compare with second one
-        row2 : Gtk.TreeIter
-            Second treeiter to compare with first one
-        column : int
-            Sorting column index
-
-        Returns
-        -------
-        int
-            Sorting comparaison result
-        """
-
-        data1 = model.get_value(row1, Columns.List.OBJECT)
-        data2 = model.get_value(row2, Columns.List.OBJECT)
-
-        # Column order
-        order = Gtk.SortType.ASCENDING
-        if column.identifier not in ("last_play", "time_play", "installed"):
-            order = self.views_games.treeview.get_widget(
-                column.identifier).get_sort_order()
-
-        # Object sorting references
-        first, second = None, None
-
-        if column.identifier == "favorite":
-            first, second = data1.favorite, data2.favorite
-
-        elif column.identifier == "multiplayer":
-            first, second = data1.multiplayer, data2.multiplayer
-
-        elif column.identifier == "finish":
-            first, second = data1.finish, data2.finish
-
-        elif column.identifier == "play":
-            first, second = data1.played, data2.played
-
-        elif column.identifier == "last_play":
-            first, second = data1.last_launch_date, data2.last_launch_date
-
-        elif column.identifier == "play_time":
-            first, second = data1.play_time, data2.play_time
-
-        elif column.identifier == "score":
-            first, second = data1.score, data2.score
-
-        elif column.identifier == "installed":
-            first, second = data1.installed, data2.installed
-
-        # ----------------------------------------
-        #   Compare
-        # ----------------------------------------
-
-        # Sort by name in the case where this games are never been launched
-        if first is None and second is None:
-
-            if data1.name.lower() < data2.name.lower():
-                return -1
-
-            elif data1.name.lower() == data2.name.lower():
-                return 0
-
-        # The second has been launched instead of first one
-        elif first is None:
-            return -1
-
-        # The first has been launched instead of second one
-        elif second is None:
-            return 1
-
-        elif first < second:
-            return -1
-
-        elif first == second:
-
-            if data1.name.lower() < data2.name.lower():
-
-                if order == Gtk.SortType.ASCENDING:
-                    return -1
-
-                elif order == Gtk.SortType.DESCENDING:
-                    return 1
-
-            elif data1.name.lower() == data2.name.lower():
-                return 0
-
-        return 1
-
-    def __on_switch_games_view(self, widget):
-        """ Switch between the available games list view mode
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        """
-
-        self.__block_signals()
-
-        games_view = GeodeGEM.Views.Name.GRID
-        if widget in (self.headerbar.get_widget("list"),
-                      self.menubar_view.get_widget("list"),
-                      self.toolbar_games.get_widget("list")):
-            games_view = GeodeGEM.Views.Name.LIST
-
-        # Update widgets status based on selected games view
-        self.headerbar.set_active(True, widget=games_view.value)
-        self.menubar_view.set_active(True, widget=games_view.value)
-        self.toolbar_games.get_widget("views").switch_to(games_view.value)
-
-        # Show activated games view when there are games available
-        if not self.views_games.placeholder.get_visible():
-            self.views_games.set_view(games_view)
-
-        self.__unblock_signals()
-
-    def __on_switch_column_visibility(self, widget, key):
-        """ Manage games treeview columns visibility
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        key : str
-            Column key
-        """
-
-        self.__block_signals()
-
-        if self.config.has_option("columns", key):
-            self.config.modify("columns", key, widget.get_active())
-
-            if self.views_games.treeview.has_widget(key):
-                column = self.views_games.treeview.get_widget(key)
-                column.set_visible(widget.get_active())
-
-                self.views_games.treeview.columns_autosize()
-
-                self.logger.debug(f"Switch visibility for '{key}' column to "
-                                  f"{column.get_visible()}")
-
-        self.__unblock_signals()
-
-    def check_selection(self):
-        """ Check selected game
-
-        This function check if the selected game in the games treeview is the
-        same as the one stock in self.selection["game"]. If this is not the
-        case, the self.selection is reset
-
-        Returns
-        -------
-        bool
-            Check status
-        """
-
-        name = None
-
-        if self.selection["game"] is not None:
-            name = self.selection["game"].name
-
-        if name is not None:
-            model, treeiter = self.get_selected_treeiter_from_container(
-                self.views_games.treeview)
-
-            if treeiter is not None:
-                treeview_name = model.get_value(treeiter, Columns.List.NAME)
-
-                if not treeview_name == name:
-                    selection = self.views_games.treeview.get_selection()
-                    if selection is not None:
-                        selection.unselect_iter(treeiter)
-
-                    self.selection["game"] = None
-
-                    self.sensitive_interface()
-                    self.set_informations()
-
-                    return False
-
-        return True
-
-    def get_selected_treeiter_from_container(self, widget):
-        """ Retrieve treeiter from container widget
-
-        Parameters
-        ----------
-        widget : Gtk.Container
-            Container widget
-
-        Returns
-        -------
-        Gtk.TreeStore, Gtk.TreeIter
-            Selected treeiter
-        """
-
-        return widget.get_model(), widget.get_selected_treeiter()
-
-    def __on_game_launch_button_update(self, status):
-        """ Update game launch button
-
-        Parameters
-        ----------
-        status : bool
-            The game status
-        """
-
-        launch_button = self.toolbar_games.get_widget("launch")
-        launch_style = launch_button.current_style
-
-        if status and not launch_style == "suggested-action":
-            launch_button.set_label(_("Play"))
-            launch_button.set_style("suggested-action")
-            launch_button.set_tooltip_text(_("Launch selected game"))
-
-        elif not status and not launch_style == "destructive-action":
-            launch_button.set_label(_("Stop"))
-            launch_button.set_style("destructive-action")
-            launch_button.set_tooltip_text(_("Stop selected game"))
-
-    def __on_game_launch(self, widget=None, *args):
-        """ Prepare the game launch
-
-        This function prepare the game launch and start a thread when
-        everything are done
-
-        Parameters
-        ----------
-        widget : Gtk.Widget, optional
-            Object which receive signal (Default: None)
-        """
-
-        # ----------------------------------------
-        #   Check selection
-        # ----------------------------------------
-
-        game = self.views_games.get_selected_game()
-
-        if game is None or game.emulator is None:
-            return False
-
-        if not self.check_selection():
-            return False
-
-        if game.id in self.threads:
-            if widget is not None and type(widget) is Gtk.Button:
-                self.threads[game.id].proc.terminate()
-
-            return False
-
-        # ----------------------------------------
-        #   Check emulator
-        # ----------------------------------------
-
-        console = self.selection.get("console", None)
-
-        if console is not None and game.emulator is not None:
-
-            if game.emulator.id in self.api.emulators:
-                self.logger.info("Initialize %s" % game.name)
-
-                # ----------------------------------------
-                #   Run game
-                # ----------------------------------------
-
-                try:
-                    thread = GameThread(
-                        self,
-                        game,
-                        fullscreen=self.toolbar_games.get_active("fullscreen"))
-
-                    # Save thread references
-                    self.threads[game.id] = thread
-
-                    # Launch thread
-                    thread.start()
-
-                    self.__on_game_launch_button_update(False)
-                    self.toolbar_games.set_sensitive(True, widget="launch")
-
-                    self.menu_game.set_sensitive(True, widget="game_log")
-                    self.menubar_game.set_sensitive(True, widget="game_log")
-                    self.toolbar_games.set_sensitive(True, widget="game_log")
-
-                    return True
-
-                except FileNotFoundError:
-                    self.set_message(
-                        _("Cannot launch game"),
-                        _("%s binary cannot be found") % game.emulator.name)
-
-                    return False
-
-        return False
-
-    def __on_game_started(self, widget, game):
-        """ The game processus has been started
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        game : gem.engine.game.Game
-            Game object
-        """
-
-        path = self.api.get_local("ongamestarted")
-
-        if path.exists() and access(path, X_OK):
-            thread = ScriptThread(self, path, game)
-
-            # Save thread references
-            self.scripts[game.id] = thread
-
-            # Launch thread
-            thread.start()
-
-    def __on_script_terminate(self, widget, thread):
-        """ Terminate the script processus
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        thread : gem.widgets.script.ScriptThread
-            Game thread
-        """
-
-        # Remove this script from threads list
-        if thread.game.id in self.scripts:
-            self.logger.debug(
-                "Remove %s from scripts cache" % thread.game.name)
-
-            del self.scripts[thread.game.id]
-
-    def __on_game_terminate(self, widget, thread):
-        """ Terminate the game processus and update data
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        thread : gem.widgets.game.GameThread
-            Game thread
-        """
-
-        # ----------------------------------------
-        #   Save game data
-        # ----------------------------------------
-
-        # Get the last occurence from database
-        game = thread.game
-
-        if not thread.error:
-
-            treeiter, griditer = \
-                self.views_games.get_iter_from_key(game.id)
-
-            # ----------------------------------------
-            #   Update data
-            # ----------------------------------------
-
-            # Play data
-            game.played += 1
-            game.play_time = thread.game.play_time + thread.delta
-            game.last_launch_time = thread.delta
-            game.last_launch_date = date.today()
-
-            # Update game from database
-            self.api.update_game(game)
-
-            # Played
-            self.views_games.treeview.set_value(
-                treeiter, Columns.List.PLAYED, game.played)
-
-            # Last played
-            self.views_games.treeview.set_value(
-                treeiter,
-                Columns.List.LAST_PLAY,
-                string_from_date(game.last_launch_date))
-
-            # Last time played
-            self.views_games.treeview.set_value(
-                treeiter,
-                Columns.List.LAST_TIME_PLAY,
-                string_from_time(game.last_launch_time))
-
-            # Play time
-            self.views_games.treeview.set_value(
-                treeiter,
-                Columns.List.TIME_PLAY,
-                string_from_time(game.play_time))
-
-            # Screenshots
-            self.views_games.treeview.set_value(
-                treeiter,
-                Columns.List.SCREENSHOT,
-                self.get_ui_icon(
-                    Columns.List.SCREENSHOT, game.screenshots))
-
-            # Save state
-            self.views_games.treeview.set_value(
-                treeiter,
-                Columns.List.SAVESTATE,
-                self.get_ui_icon(
-                    Columns.List.SAVESTATE, game.savestates))
-
-            self.set_informations()
-
-        # ----------------------------------------
-        #   Refresh widgets
-        # ----------------------------------------
-
-        select_console = self.selection.get("console", None)
-        select_game = self.views_games.get_selected_game()
-
-        if select_console is None:
-            self.logger.debug("Restore widgets status for %s" % game.name)
-
-            self.sensitive_interface()
-
-        # Check if current selected file is the same as thread file
-        elif select_game is not None and select_game.id == game.id:
-            self.logger.debug("Restore widgets status for %s" % game.name)
-
-            self.__on_game_launch_button_update(True)
-            self.toolbar_games.set_sensitive(True, widget="launch")
-
-            self.menu_game.set_sensitive(True, widget="launch")
-            self.menu_game.set_sensitive(True, widget="remove")
-
-            self.menubar_game.set_sensitive(True, widget="launch")
-            self.menubar_edit.set_sensitive(True, widget="remove")
-
-            self.__current_tooltip = None
-
-            # Check extension and emulator for GBA game on mednafen
-            if game.emulator and self.__mednafen_status:
-                binary = game.emulator.binary.name
-
-                if game.extension == ".gba" and "mednafen" in binary:
-                    self.menu_game.set_sensitive(True, widget="memory_type")
-                    self.menubar_edit.set_sensitive(True, widget="memory_type")
-
-        # ----------------------------------------
-        #   Manage thread
-        # ----------------------------------------
-
-        # Remove this game from threads list
-        if game.id in self.threads:
-            self.logger.debug("Remove %s from process cache" % game.name)
-
-            del self.threads[game.id]
-
-        if len(self.threads) == 0:
-            self.headerbar.set_sensitive(True, widget="quit")
-            self.menubar_main.set_sensitive(True, widget="quit")
-
-        # ----------------------------------------
-        #   Manage script
-        # ----------------------------------------
-
-        # Remove this script from threads list
-        if game.id in self.scripts:
-            self.logger.debug("Remove %s from scripts cache" % game.name)
-
-            del self.scripts[game.id]
-
-        path = self.api.get_local("ongamestopped")
-
-        if path.exists() and access(path, X_OK):
-            thread = ScriptThread(self, path, game)
-
-            # Save thread references
-            self.scripts[game.id] = thread
-
-            # Launch thread
-            thread.start()
-
-    @use_sensitivity
-    def __on_game_renamed(self, *args):
-        """ Set a custom name for a specific game
-
-        Parameters
-        ----------
-        widget : Gtk.CellRendererText
-            object which received the signal
-        path : str
-            path identifying the edited cell
-        new_name : str
-            new name
-        """
-
-        game = self.views_games.get_selected_game()
-
-        if game is not None:
-            dialog = GeodeDialog.Rename(self, game)
-
-            if dialog.run() == Gtk.ResponseType.APPLY:
-
-                new_name = dialog.get_name().strip()
-
-                # Check if game name has been changed
-                if not new_name == game.name:
-                    self.logger.info("Rename \"%(old)s\" to \"%(new)s\"" % {
-                        "old": game.name,
-                        "new": new_name
-                    })
-
-                    game.name = new_name
-
-                    treeiter, griditer = \
-                        self.views_games.get_iter_from_key(game.id)
-
-                    # Update game name
-                    self.views_games.treeview.set_value(
-                        treeiter, Columns.List.NAME, str(new_name))
-                    self.views_games.treeview.set_value(
-                        treeiter, Columns.List.OBJECT, game)
-
-                    self.views_games.iconview.set_value(
-                        griditer, Columns.Grid.NAME, str(new_name))
-                    self.views_games.iconview.set_value(
-                        griditer, Columns.Grid.OBJECT, game)
-
-                    # Update game from database
-                    self.api.update_game(game)
-
-                    # Store modified game
-                    self.selection["game"] = game
-
-                    # Restore focus to current game view
-                    if self.toolbar_games.get_active("grid"):
-                        self.views_games.iconview.grab_focus()
-
-                    elif self.toolbar_games.get_active("list"):
-                        self.views_games.treeview.grab_focus()
-
-                    self.__current_tooltip = None
-
-                    self.set_informations()
-
-            dialog.destroy()
-
-    @use_sensitivity
-    def __on_game_maintenance(self, *args):
-        """ Set some maintenance for selected game
-        """
-
-        console = self.selection.get("console", None)
-        game = self.views_games.get_selected_game()
-
-        if game is not None and console is not None:
-
-            # Avoid trying to remove an executed game
-            if game.id not in self.threads:
-                treeiter = self.views_games.get_iter_from_key(game.id)[0]
-
-                need_to_reload = False
-
-                # ----------------------------------------
-                #   Dialog
-                # ----------------------------------------
-
-                dialog = GeodeDialog.Maintenance(self, game)
-
-                if dialog.run() == Gtk.ResponseType.APPLY:
-                    try:
-                        self.logger.info("%s maintenance" % game.name)
-
-                        data = dialog.get_data()
-
-                        # Reload the games list
-                        if len(data["paths"]) > 0:
-
-                            # Duplicate game files
-                            for element in data["paths"]:
-                                self.logger.debug("Remove %s" % element)
-
-                                remove(element)
-
-                            need_to_reload = True
-
-                        # Clean game from database
-                        if data["database"]:
-                            game_data = {
-                                Columns.List.FAVORITE:
-                                    self.icons.get_translucent("favorite"),
-                                Columns.List.NAME: game.path.stem,
-                                Columns.List.PLAYED: None,
-                                Columns.List.LAST_PLAY: None,
-                                Columns.List.TIME_PLAY: None,
-                                Columns.List.LAST_TIME_PLAY: None,
-                                Columns.List.SCORE: 0,
-                                Columns.List.PARAMETER:
-                                    self.icons.get_translucent("parameter"),
-                                Columns.List.MULTIPLAYER:
-                                    self.icons.get_translucent("multiplayer"),
-                            }
-
-                            for key, value in game_data.items():
-                                self.views_games.treeview.set_value(
-                                    treeiter, key, value)
-
-                            game.reset()
-
-                            # Update game from database
-                            self.api.update_game(game)
-
-                            need_to_reload = True
-
-                        # Remove environment variables from game
-                        elif data["environment"]:
-                            game.environment = dict()
-
-                            # Update game from database
-                            self.api.update_game(game)
-
-                            need_to_reload = True
-
-                        # Set game output buttons as unsensitive
-                        if data["log"]:
-                            self.toolbar_games.set_sensitive(
-                                False, widget="game_log")
-                            self.menu_game.set_sensitive(
-                                False, widget="game_log")
-                            self.menubar_game.set_sensitive(
-                                False, widget="game_log")
-
-                        for widget in ("favorite", "multiplayer", "finish"):
-                            self.menu_game.set_active(False, widget=widget)
-                            self.menubar_game.set_active(False, widget=widget)
-
-                    except Exception:
-                        self.logger.exception("An error occur during removing")
-
-                dialog.destroy()
-
-                if need_to_reload:
-                    self.set_informations()
-
-    @use_sensitivity
-    def __on_game_removed(self, *args):
-        """ Remove a game
-
-        This function also remove files from user disk as screenshots,
-        savestates and game file.
-        """
-
-        console = self.selection.get("console", None)
-        game = self.views_games.get_selected_game()
-
-        if game is not None and console is not None:
-
-            # Avoid trying to remove an executed game
-            if game.id not in self.threads:
-                identifier = game.id
-
-                need_to_reload = False
-
-                # ----------------------------------------
-                #   Dialog
-                # ----------------------------------------
-
-                dialog = GeodeDialog.Delete(self, game)
-
-                if dialog.run() == Gtk.ResponseType.YES:
-                    self.logger.info("Remove %s" % game.name)
-
-                    try:
-                        data = dialog.get_data()
-
-                        # Reload the games list
-                        if len(data["paths"]) > 0:
-
-                            # Remove specified game files
-                            for element in data["paths"]:
-
-                                if access(element, W_OK):
-                                    self.logger.debug("Remove %s" % element)
-
-                                    remove(element)
-
-                                else:
-                                    self.logger.error(
-                                        "Cannot remove %s, "
-                                        "operation not permitted" % element)
-
-                            need_to_reload = True
-
-                        # Remove game from database
-                        if data["database"]:
-                            self.api.delete_game(game)
-
-                            need_to_reload = True
-
-                        # Remove game from console storage
-                        console.delete_game(game)
-
-                        # Update console tooltip
-                        if console.id in self.consoles_iter:
-                            row = self.consoles_iter[console.id]
-
-                            text = _("No game")
-                            if console.get_games():
-                                text = ngettext(
-                                    _("1 game"),
-                                    _("%d games") % len(console.get_games()),
-                                    len(console.get_games()))
-
-                            row.set_tooltip_text(text)
-
-                    except Exception:
-                        self.logger.exception("An error occur during removing")
-
-                dialog.destroy()
-
-                if need_to_reload:
-                    # Remove an old entry in views
-                    self.views_games.remove_game(identifier)
-                    # Remove view selections
-                    self.views_games.unselect_all()
-
-                    self.sensitive_interface()
-
-                    self.set_informations()
-
-                    self.set_message(
-                        _("Remove a game"),
-                        _("This game was removed successfully"),
-                        Icons.INFORMATION)
-
-    @use_sensitivity
-    def __on_game_duplicate(self, *args):
-        """ Duplicate a game
-
-        This function allow the user to duplicate a game and his associate
-        data
-        """
-
-        game = self.views_games.get_selected_game()
-
-        if game is not None:
-            need_to_reload = False
-
-            # ----------------------------------------
-            #   Dialog
-            # ----------------------------------------
-
-            dialog = GeodeDialog.Duplicate(self, game)
-
-            if dialog.run() == Gtk.ResponseType.APPLY:
-                self.logger.info("Duplicate %s" % game.name)
-
-                try:
-                    data = dialog.get_data()
-
-                    if data is not None:
-
-                        # Duplicate game files
-                        for original, path in data["paths"]:
-                            self.logger.debug("Copy %s" % original)
-
-                            copy(original, path)
-
-                            need_to_reload = True
-
-                        # Update game from database
-                        if data["database"]:
-                            self.api.update_game(game.copy(data["filepath"]))
-
-                            need_to_reload = True
-
-                except Exception:
-                    self.logger.exception("An error occur during duplication")
-
-            dialog.destroy()
-
-            if need_to_reload:
-                self.__on_reload_games()
-
-                self.set_message(
-                    _("Duplicate a game"),
-                    _("This game was duplicated successfully"),
-                    Icons.INFORMATION)
-
-    @use_sensitivity
-    def __on_game_parameters(self, *args):
-        """ Manage game default parameters
-
-        This function allow the user to specify default emulator and default
-        emulator arguments for the selected game
-        """
-
-        console = self.selection.get("console", None)
-        game = self.views_games.get_selected_game()
-
-        if game is None or console is None:
-            return
-
-        dialog = GeodeDialog.Parameters(self, game)
-
-        if dialog.run() == Gtk.ResponseType.APPLY:
-            self.logger.info(f"Update {game.name} parameters")
-
-            # Retrieve values from dialog
-            game.emulator = self.api.get_emulator(dialog.combo.get_active_id())
-            game.default = dialog.entry_arguments.get_text().strip()
-            game.key = dialog.entry_key.get_text().strip()
-
-            game.tags = [tag.strip()
-                         for tag in dialog.entry_tags.get_text().split(',')]
-
-            game.environment.clear()
-            for row in dialog.store_environment:
-                key = dialog.store_environment.get_value(row.iter, 0)
-
-                if len(key) > 0:
-                    game.environment[key] = \
-                        dialog.store_environment.get_value(row.iter, 1)
-
-            # Update game from database
-            self.api.update_game(game)
-
-            # ----------------------------------------
-            #   Update games views
-            # ----------------------------------------
-
-            # Custom properties
-            has_custom = \
-                not game.emulator == console.emulator or game.default
-
-            self.views_games.treeview.set_value(
-                game.id,
-                Columns.List.PARAMETER,
-                Icons.Symbolic.PROPERTIES if has_custom else None)
-
-            # Screenshots
-            has_screenshots = len(game.screenshots) > 0
-
-            self.views_games.treeview.set_value(
-                game.id,
-                Columns.List.SCREENSHOT,
-                Icons.Symbolic.CAMERA if has_screenshots else None)
-
-            self.menubar_game.set_sensitive(
-                has_screenshots, widget="screenshots")
-            self.toolbar_games.set_sensitive(
-                has_screenshots, widget="screenshots")
-
-            # Savestates
-            self.views_games.treeview.set_value(
-                game.id,
-                Columns.List.SAVESTATE,
-                Icons.Symbolic.FLOPPY if len(game.savestates) > 0 else None)
-
-            # Objects
-            self.views_games.treeview.set_value(
-                game.id, Columns.List.OBJECT, game)
-            self.views_games.iconview.set_value(
-                game.id, Columns.Grid.OBJECT, game)
-
-            self.set_informations()
-
-        dialog.destroy()
-
-    @use_sensitivity
-    def __on_game_log(self, *args):
-        """ Show game log
-
-        This function show the gem log content in a non-editable dialog
-        """
-
-        path = self.check_log()
-
-        if path is not None and path.exists():
-            game = self.views_games.get_selected_game()
-
-            try:
-                size = self.config.get(
-                    "windows", "log", fallback="800x600").split('x')
-
-            except ValueError:
-                size = (800, 600)
-
-            dialog = GeodeDialog.Editor(
-                self,
-                game.name,
-                path,
-                size,
-                Icons.Symbolic.TERMINAL,
-                editable=False)
-
-            dialog.run()
-
-            self.config.modify("windows", "log", "%dx%d" % dialog.get_size())
-            self.config.update()
-
-            dialog.destroy()
-
-    @use_sensitivity
-    def __on_game_backup_memory(self, *args):
-        """ Manage game backup memory
-
-        This function can only be used with a GBA game and Mednafen emulator.
-        """
-
-        if self.menu_game.get_sensitive(widget="memory_type"):
-
-            console = self.selection.get("console", None)
-            game = self.views_games.get_selected_game()
-
-            if game is not None and console is not None:
-                content = dict()
-
-                filepath = self.get_mednafen_memory_type(game)
-
-                # Check if a type file already exist in mednafen sav folder
-                if filepath.exists():
-
-                    with filepath.open('r') as pipe:
-
-                        for line in pipe.readlines():
-                            data = line.split()
-
-                            if len(data) == 2:
-                                content[data[0]] = int(data[1])
-
-                # ----------------------------------------
-                #   Dialog
-                # ----------------------------------------
-
-                dialog = GeodeDialog.Mednafen(self, game.name, content)
-
-                if dialog.run() == Gtk.ResponseType.APPLY:
-                    data = list()
-                    for key, value in dialog.model:
-                        data.append(' '.join([key, str(value)]))
-
-                    # Write data into type file
-                    if len(data) > 0:
-
-                        with filepath.open('w') as pipe:
-                            pipe.write('\n'.join(data))
-
-                    # Remove type file when no data are available
-                    elif filepath.exists():
-                        filepath.unlink()
-
-                dialog.destroy()
-
+    @block_signals
     def update_game_flag(self, widget, flag_name):
         """ Update a specific flag for the selected game
 
@@ -5553,8 +6205,6 @@ class MainWindow(Gtk.ApplicationWindow):
             flag label name used to retrieve current status from game object
         """
 
-        self.__block_signals()
-
         game, status = self.views_games.get_selected_game(), False
 
         if game is not None:
@@ -5565,11 +6215,11 @@ class MainWindow(Gtk.ApplicationWindow):
 
             # Update treeview icon
             flag_column = getattr(Columns.List, flag_name.upper(), None)
-            if flag_column is not None:
-                icon = self.get_ui_icon(flag_column, status)
-
+            if flag_column:
                 self.views_games.treeview.set_value(
-                    treeiter, flag_column, icon)
+                    treeiter,
+                    flag_column,
+                    self.get_ui_icon(flag_column, status))
 
             # Update game object in both games views storages
             self.views_games.treeview.set_value(
@@ -5584,633 +6234,12 @@ class MainWindow(Gtk.ApplicationWindow):
             setattr(game, flag_name, status)
             self.api.update_game(game)
 
-            self.check_selection()
+            self.check_game_selection()
 
         self.menubar_game.set_active(status, widget=flag_name)
         self.menu_game.set_active(status, widget=flag_name)
 
-        self.filters_update(None)
-
-        self.__unblock_signals()
-
-    def __on_game_score(self, widget, score=None):
-        """ Manage selected game score
-
-        Parameters
-        ----------
-        widget : Gtk.MenuItem
-            object which received the signal
-        """
-
-        modification = False
-
-        game = self.views_games.get_selected_game()
-
-        if game is not None:
-
-            if widget in [self.menubar_edit.get_widget("increase"),
-                          self.menu_game.get_widget("increase")]:
-
-                if game.score < 5:
-                    game.score += 1
-
-                    modification = True
-
-            elif widget in [self.menubar_edit.get_widget("decrease"),
-                            self.menu_game.get_widget("decrease")]:
-
-                if game.score > 0:
-                    game.score -= 1
-
-                    modification = True
-
-            elif score is not None:
-                game.score = score
-
-                modification = True
-
-        if modification:
-            treeiter, griditer = self.views_games.get_iter_from_key(game.id)
-
-            self.views_games.treeview.set_value(
-                treeiter, Columns.List.SCORE, game.score)
-            self.views_games.treeview.set_value(
-                treeiter, Columns.List.OBJECT, game)
-            self.views_games.iconview.set_value(
-                griditer, Columns.Grid.OBJECT, game)
-
-            self.api.update_game(game)
-
-            self.set_informations()
-
-    @use_sensitivity
-    def __on_game_edit_file(self, *args):
-        """ Edit game file
-
-        This function check if the game file mime type is text/
-        """
-
-        game = self.views_games.get_selected_game()
-
-        if game is not None:
-
-            if magic_from_file(game.path, mime=True).startswith("text/"):
-
-                try:
-                    size = self.config.get(
-                        "windows", "game", fallback="800x600").split('x')
-
-                except ValueError:
-                    size = (800, 600)
-
-                dialog = GeodeDialog.Editor(
-                    self,
-                    game.name,
-                    game.path,
-                    size,
-                    Icons.Symbolic.EDIT)
-
-                if dialog.run() == Gtk.ResponseType.APPLY:
-                    game.path.write_text(dialog.buffer_editor.get_text(
-                        dialog.buffer_editor.get_start_iter(),
-                        dialog.buffer_editor.get_end_iter(), True))
-
-                    game.update_installation_date()
-
-                    self.views_games.treeview.set_value(
-                        game.id,
-                        Columns.List.INSTALLED,
-                        string_from_date(game.installed))
-
-                self.config.modify(
-                    "windows", "game", "%dx%d" % dialog.get_size())
-                self.config.update()
-
-                dialog.destroy()
-
-    def __on_game_copy(self, *args):
-        """ Copy path folder which contains selected game to clipboard
-        """
-
-        game = self.views_games.get_selected_game()
-
-        if game is not None:
-            self.clipboard.set_text(str(game.path), -1)
-
-    @use_sensitivity
-    def __on_game_cover(self, *args):
-        """ Set a new cover for selected game
-        """
-
-        game = self.views_games.get_selected_game()
-
-        if game is not None:
-            dialog = GeodeDialog.Cover(self, game)
-
-            response = dialog.run()
-
-            if response == Gtk.ResponseType.APPLY:
-                path = dialog.file_image_selector.get_filename()
-
-                # Avoid to update the database with same contents
-                if not path == str(game.cover):
-
-                    # Reset cover for current game
-                    game.cover = None
-
-                    if path is not None:
-                        game.cover = Path(path).expanduser()
-
-                    # Update game from database
-                    self.api.update_game(game)
-
-                    viewiters = self.views_games.get_iter_from_key(game.id)
-
-                    large_cache_path = self.get_icon_from_cache(
-                        "games", "96x96", game.id + ".png")
-
-                    thumbnail_cache_path = self.get_icon_from_cache(
-                        "games", "22x22", game.id + ".png")
-
-                    # A new icon is available so we regenerate icon cache
-                    if game.cover is not None and game.cover.exists():
-
-                        # ----------------------------------------
-                        #   Large grid icon
-                        # ----------------------------------------
-
-                        try:
-                            large = GdkPixbuf.Pixbuf.new_from_file_at_scale(
-                                str(game.cover), 96, 96, True)
-
-                            large.savev(str(large_cache_path),
-                                        "png",
-                                        list(),
-                                        list())
-
-                        except GLib.Error:
-                            self.logger.exception(
-                                "An error occur during cover generation")
-
-                        # ----------------------------------------
-                        #   Thumbnail icon
-                        # ----------------------------------------
-
-                        try:
-                            thumbnail = \
-                                GdkPixbuf.Pixbuf.new_from_file_at_scale(
-                                    str(game.cover), 22, 22, True)
-
-                            thumbnail.savev(str(thumbnail_cache_path),
-                                            "png",
-                                            list(),
-                                            list())
-
-                        except GLib.Error:
-                            self.logger.exception(
-                                "An error occur during cover generation")
-
-                    # Remove previous cache icons
-                    else:
-                        large = self.__console_icon
-
-                        thumbnail = self.__console_thumbnail
-
-                        if large_cache_path.exists():
-                            remove(large_cache_path)
-
-                        if thumbnail_cache_path.exists():
-                            remove(thumbnail_cache_path)
-
-                    self.views_games.iconview.set_value(
-                        viewiters[1], Columns.Grid.THUMBNAIL, large)
-
-                    self.views_games.treeview.set_value(
-                        viewiters[0], Columns.List.THUMBNAIL, thumbnail)
-
-                    # Reset tooltip pixbuf
-                    self.__current_tooltip_pixbuf = None
-
-            dialog.destroy()
-
-    @use_sensitivity
-    def __on_game_generate_desktop(self, *args):
-        """ Generate application desktop file
-
-        This function generate a .desktop file to allow user to launch the game
-        from his favorite applications launcher
-        """
-
-        model, treeiter = self.get_selected_treeiter_from_container(
-            self.views_games.treeview)
-
-        console = self.selection.get("console", None)
-        game = self.views_games.get_selected_game()
-
-        if not all((treeiter, game, console)):
-            return
-
-        if not game.emulator or game.emulator.id not in self.api.emulators:
-            return
-
-        # ----------------------------------------
-        #   Fill template
-        # ----------------------------------------
-
-        values = {
-            "%name%": game.name,
-            "%icon%": (console.icon if console.icon.exists()
-                       else self.api.get_local("icons", f"{icon}.png")),
-            "%path%": game.path.parent,
-            "%command%": ' '.join(game.command())
-        }
-
-        # Put game path between quotes
-        values["%command%"] = \
-            values["%command%"].replace(str(game.path), f"\"{game.path}\"")
-
-        try:
-            # Read default template
-            template = get_data(
-                "data", "config", "template.desktop").read_text()
-
-            # Replace custom variables
-            for key, value in values.items():
-                template = template.replace(key, str(value))
-
-            # Check ~/.local/share/applications
-            if not Folders.APPLICATIONS.exists():
-                Folders.APPLICATIONS.mkdir(mode=0o755, parents=True)
-
-            # Write the new desktop file
-            file = Folders.APPLICATIONS.joinpath(f"{game.path.stem}.desktop")
-            file.write_text(template)
-
-            self.set_message(
-                _("Generate menu entry"),
-                _("%s was generated successfully") % file.name,
-                Icons.INFORMATION)
-
-        except OSError:
-            self.set_message(
-                _("Generate menu entry for %s") % game.name,
-                _("An error occur during generation, consult log for "
-                  "further details."), Icons.ERROR)
-
-    def __on_game_menu_show(self, widget, event):
-        """ Open context menu
-
-        This function open context-menu when user right-click or use context
-        key on games views
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        event : Gdk.EventButton or Gdk.EventKey
-            Event which triggered this signal
-
-        Returns
-        -------
-        bool
-            Context menu popup status
-        """
-
-        treeiter = None
-
-        # Gdk.EventButton - Mouse
-        if event.type == Gdk.EventType.BUTTON_PRESS:
-            if event.button == Gdk.BUTTON_SECONDARY:
-                selection = False
-
-                x, y = int(event.x), int(event.y)
-
-                # List view
-                if widget == self.views_games.treeview:
-
-                    # Avoid to click on treeview header
-                    if event.window == widget.get_bin_window():
-                        treeiter = widget.get_path_at_pos(x, y)
-
-                        if treeiter is not None:
-                            widget.set_cursor(treeiter[0], treeiter[1], False)
-
-                            selection = True
-
-                # Grid icons view
-                if widget == self.views_games.iconview:
-                    treeiter = widget.get_path_at_pos(x, y)
-
-                    if treeiter is not None:
-                        widget.select_path(treeiter)
-
-                        selection = True
-
-                if selection:
-                    widget.grab_focus()
-
-                    self.menu_game.popup_at_pointer(event)
-
-                    return True
-
-        # Gdk.EventKey - Keyboard
-        elif event.type == Gdk.EventType.KEY_RELEASE:
-            if event.keyval == Gdk.KEY_Menu:
-                model, treeiter = self.get_selected_treeiter_from_container(
-                    widget)
-
-                if treeiter is not None:
-                    self.menu_game.popup_at_pointer(event)
-
-                    return True
-
-        return False
-
-    def __on_activate_fullscreen(self, widget, *args):
-        """ Update fullscreen button
-
-        This function alternate fullscreen status between active and inactive
-        state when user use fullscreen button in toolbar
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        """
-
-        self.__block_signals()
-
-        # Switch fullscreen status
-        self.__fullscreen_status = not self.__fullscreen_status
-
-        fullscreen_button = self.toolbar_games.get_widget("fullscreen")
-        fullscreen_image = self.toolbar_games.get_widget("fullscreen_image")
-
-        if not self.__fullscreen_status:
-            self.logger.debug("Switch game launch to windowed mode")
-
-            fullscreen_image.set_from_icon_name(Icons.Symbolic.RESTORE,
-                                                Gtk.IconSize.SMALL_TOOLBAR)
-            fullscreen_button.set_style()
-
-        else:
-            self.logger.debug("Switch game launch to fullscreen mode")
-
-            fullscreen_image.set_from_icon_name(Icons.Symbolic.FULLSCREEN,
-                                                Gtk.IconSize.SMALL_TOOLBAR)
-            fullscreen_button.set_style("suggested-action")
-
-        fullscreen_button.set_active(self.__fullscreen_status)
-        self.menubar_game.set_active(
-            self.__fullscreen_status, widget="fullscreen")
-
-        self.__unblock_signals()
-
-    def __on_activate_dark_theme(self, widget, status=False, *args):
-        """ Update dark theme status
-
-        This function alternate between dark and light theme when user use
-        dark theme entry in main menu
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        status : bool, optional
-            New switch status (Default: False)
-        """
-
-        self.__block_signals()
-
-        dark_theme_status = not self.config.getboolean(
-            "gem", "dark_theme", fallback=False)
-
-        on_change_theme(dark_theme_status)
-
-        self.config.modify("gem", "dark_theme", dark_theme_status)
-        self.config.update()
-
-        self.menubar_view.set_active(
-            dark_theme_status, widget="dark_theme")
-
-        self.__unblock_signals()
-
-    def __on_activate_sidebar(self, widget, status=False, *args):
-        """ Update sidebar status
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        status : bool, optional
-            New switch status (Default: False)
-        """
-
-        self.__block_signals()
-
-        sidebar_status = not self.config.getboolean(
-            "gem", "show_sidebar", fallback=True)
-
-        if sidebar_status and not self.views_games.placeholder.get_visible():
-            self.scroll_sidebar.show()
-
-        else:
-            self.scroll_sidebar.hide()
-
-        self.config.modify("gem", "show_sidebar", sidebar_status)
-        self.config.update()
-
-        self.menubar_view.set_active(
-            sidebar_status, widget="show_sidebar")
-
-        self.__unblock_signals()
-
-    def __on_move_sidebar(self, widget=None, init_interface=False):
-        """ Move sidebar based on user configuration value
-
-        Parameters
-        ----------
-        widget : Gtk.Widget, optional
-            Object which receive signal
-        init_interface : bool, optional
-            Interface first initialization (Default: False)
-        """
-
-        self.__block_signals()
-
-        self.sidebar_image = None
-
-        # Retrieve current position and update configuration file
-        if widget is not None:
-            self.sidebar_orientation = "vertical"
-            if widget in (self.headerbar.get_widget("right"),
-                          self.menubar_view.get_widget("right")):
-                self.sidebar_orientation = "horizontal"
-
-            self.config.modify(
-                "gem", "sidebar_orientation", self.sidebar_orientation)
-            self.config.update()
-
-        # Right-side sidebar
-        if self.sidebar_orientation == "horizontal" and \
-           not self.__current_orientation == Gtk.Orientation.HORIZONTAL:
-
-            self.label_sidebar_title.set_justify(Gtk.Justification.CENTER)
-            self.label_sidebar_title.set_halign(Gtk.Align.CENTER)
-            self.label_sidebar_title.set_xalign(0.5)
-
-            # Change game screenshot and score placement
-            self.grid_sidebar.remove(self.grid_sidebar_content)
-            self.grid_sidebar.attach(self.grid_sidebar_content, 0, 1, 1, 1)
-
-            self.grid_sidebar_content.set_orientation(Gtk.Orientation.VERTICAL)
-            self.grid_sidebar_content.set_margin_bottom(12)
-
-            self.grid_sidebar_informations.set_halign(Gtk.Align.FILL)
-            self.grid_sidebar_informations.set_column_homogeneous(True)
-            self.grid_sidebar_informations.set_orientation(
-                Gtk.Orientation.VERTICAL)
-
-            if not init_interface:
-                self.vpaned_games.remove(self.scroll_sidebar)
-
-            self.hpaned_games.pack2(self.scroll_sidebar, False, True)
-
-            self.scroll_sidebar.set_min_content_width(350)
-            self.scroll_sidebar.set_min_content_height(-1)
-
-            self.__current_orientation = Gtk.Orientation.HORIZONTAL
-
-        # Bottom-side sidebar
-        elif (self.sidebar_orientation == "vertical" and
-              not self.__current_orientation == Gtk.Orientation.VERTICAL):
-
-            self.label_sidebar_title.set_justify(Gtk.Justification.LEFT)
-            self.label_sidebar_title.set_halign(Gtk.Align.START)
-            self.label_sidebar_title.set_xalign(0.0)
-
-            # Change game screenshot and score placement
-            self.grid_sidebar.remove(self.grid_sidebar_content)
-            self.grid_sidebar.attach(self.grid_sidebar_content, 1, 0, 1, 3)
-
-            self.grid_sidebar_content.set_margin_bottom(0)
-
-            self.grid_sidebar_informations.set_halign(Gtk.Align.START)
-            self.grid_sidebar_informations.set_column_homogeneous(False)
-            self.grid_sidebar_informations.set_orientation(
-                Gtk.Orientation.HORIZONTAL)
-
-            if not init_interface:
-                self.hpaned_games.remove(self.scroll_sidebar)
-
-            self.vpaned_games.pack2(self.scroll_sidebar, False, True)
-
-            self.scroll_sidebar.set_min_content_width(-1)
-            self.scroll_sidebar.set_min_content_height(260)
-
-            self.__current_orientation = Gtk.Orientation.VERTICAL
-
-        # Update menu radio widgets
-        position = "right"
-        if self.__current_orientation == Gtk.Orientation.VERTICAL:
-            position = "bottom"
-
-        self.headerbar.set_active(True, widget=position)
-        self.menubar_view.set_active(True, widget=position)
-
-        self.logger.debug(f"Mode sidebar to {position} side")
-
-        self.__unblock_signals()
-
-        if widget is not None:
-            self.set_informations()
-
-    def __on_activate_statusbar(self, widget, status=False, *args):
-        """ Update statusbar status
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        status : bool, optional
-            New switch status (Default: False)
-        """
-
-        self.__block_signals()
-
-        statusbar_status = not self.config.getboolean(
-            "gem", "show_statusbar", fallback=True)
-
-        if statusbar_status:
-            self.statusbar.show()
-        else:
-            self.statusbar.hide()
-
-        self.config.modify("gem", "show_statusbar", statusbar_status)
-        self.config.update()
-
-        self.menubar_view.set_active(statusbar_status, widget="show_statusbar")
-
-        self.__unblock_signals()
-
-    def __on_copy_path_to_clipboard(self, widget):
-        """ Copy path to clipboard
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            object which received the signal
-        """
-
-        path = None
-
-        if widget in (self.menubar_edit.get_widget("copy_path"),
-                      self.menu_game.get_widget("copy_path")):
-            game = self.views_games.get_selected_game()
-
-            if game is not None and game.path.parent.exists():
-                path = game.path
-
-        elif widget == self.menu_consoles.get_widget("copy_path"):
-
-            if self.__current_menu_row is not None:
-                path = self.__current_menu_row.console.path
-
-        if path is not None:
-            self.clipboard.set_text(str(path), -1)
-
-    def __on_open_directory(self, widget):
-        """ Open directory into files manager
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            object which received the signal
-        """
-
-        path = None
-
-        if widget in (self.menubar_edit.get_widget("open_path"),
-                      self.menu_game.get_widget("open_path")):
-            game = self.views_games.get_selected_game()
-
-            if game is not None and game.path.parent.exists():
-                path = game.path.parent
-
-        elif widget == self.menu_consoles.get_widget("open_path"):
-
-            if self.__current_menu_row is not None:
-                path = self.__current_menu_row.console.path
-
-        if path is not None and path.exists():
-            self.logger.debug("Open '%s' directory in files manager" % path)
-
-            try:
-                self.__xdg_open_instance.launch_uris(
-                    ["file://%s" % path], None)
-
-            except GLib.Error:
-                self.logger.exception("Cannot open files manager")
+        self.on_update_games_filters()
 
     def on_dnd_send_data(self, widget, context, data, info, time):
         """ Set rom file path uri
@@ -6452,7 +6481,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     # Add a new item to views
                     if self.views_games.append_game(console, game):
-                        self.set_informative_bars()
+                        self.set_statusbar_content()
 
                         self.scroll_sidebar.set_visible(self.config.getboolean(
                             "gem", "show_sidebar", fallback=True))
@@ -6479,313 +6508,8 @@ class MainWindow(Gtk.ApplicationWindow):
                          Icons.Symbolic.INFORMATION)
 
         # Update consoles filters
-        self.__on_update_consoles()
+        self.on_reload_consoles()
 
         self.statusbar_progressbar.hide()
 
         yield False
-
-    def __block_signals(self):
-        """ Block check button signals to avoid stack overflow when toggled
-        """
-
-        for signal, widget in self.signals_storage.items():
-            widget.handler_block(signal)
-
-    def __unblock_signals(self):
-        """ Unblock check button signals
-        """
-
-        for signal, widget in self.signals_storage.items():
-            widget.handler_unblock(signal)
-
-    def check_desktop(self, path):
-        """ Check user applications folder for specific desktop file
-
-        Parameters
-        ----------
-        path : pathlib.Path
-            Application path
-
-        Returns
-        -------
-        bool
-            Desktop file status
-
-        Examples
-        --------
-        >>> check_desktop("unavailable_file")
-        False
-
-        Notes
-        -----
-        In GNU/Linux desktop, the default folder for user applications is:
-
-            ~/.local/share/applications/
-        """
-
-        return Folders.APPLICATIONS.joinpath("%s.desktop" % path.stem).exists()
-
-    def check_log(self):
-        """ Check if a game has an output file available
-
-        Returns
-        -------
-        str or None
-            Output file path
-        """
-
-        game = self.views_games.get_selected_game()
-
-        if game is not None:
-            log_path = self.api.get_local("logs", game.id + ".log")
-
-            if log_path.exists():
-                return log_path
-
-        return None
-
-    def check_mednafen(self):
-        """ Check if Mednafen exists on user system
-
-        This function read the first line of mednafen default output and check
-        if this one match "Starting Mednafen [0-9+.?]+".
-
-        Returns
-        -------
-        bool
-            Mednafen exists status
-
-        Notes
-        -----
-        Still possible to troll this function with a script call mednafen which
-        send the match string as output. But, this problem only appear if a
-        user want to do that, so ...
-        """
-
-        if len(get_binary_path("mednafen")) > 0:
-            proc = Popen(
-                ["mednafen"],
-                stdin=PIPE,
-                stdout=PIPE,
-                stderr=STDOUT,
-                universal_newlines=True)
-
-            output, error_output = proc.communicate()
-
-            if output is not None:
-                result = match(
-                    r'Starting Mednafen [\d+\.?]+', output.split('\n')[0])
-
-                if result is not None:
-                    return True
-
-        return False
-
-    def check_version(self):
-        """ Check development version when debug mode is activate
-
-        This function allow the developper to know which hash version is
-        currently using
-
-        Returns
-        -------
-        str
-            Application version
-        """
-
-        version = Metadata.VERSION
-
-        if self.api.debug:
-
-            if len(get_binary_path("git")) > 0:
-                path = Path(".git")
-
-                if path.exists():
-                    proc = Popen(
-                        ["git", "rev-parse", "--short", "HEAD"],
-                        stdin=PIPE,
-                        stdout=PIPE,
-                        stderr=STDOUT,
-                        universal_newlines=True)
-
-                    output, error_output = proc.communicate()
-
-                    if output is not None:
-                        output = output.split('\n')[0]
-
-                        if match(r'^[\d\w]+$', output) is not None:
-                            return "%s-%s" % (version, output)
-
-        return version
-
-    def get_icon_from_cache(self, *args):
-        """ Retrieve icon from cache folder
-
-        Returns
-        -------
-        str
-            Cached icon path
-        """
-
-        return self.__cache.joinpath(*args)
-
-    def get_pixbuf_from_cache(self,
-                              key, size, identifier, path, use_cache=True):
-        """ Retrieve an icon from cache or generate it
-
-        Parameters
-        ----------
-        key : str
-            Cache category folder
-        size : int
-            Pixbuf size in pixels
-        identifier : str
-            Icon identifier
-        path : pathlib.Path
-            Icon path
-        use_cache : bool, optional
-            Use cache directory and save new generated icons into cache
-
-        Returns
-        -------
-        Gdk.Pixbuf or None
-            New cached icon or None if no icon has been generated
-        """
-
-        icon = None
-        need_save = False
-
-        cache_path = self.get_icon_from_cache(
-            key, "%dx%d" % (size, size), identifier + ".png")
-
-        # Retrieve icon from cache folder
-        if use_cache and cache_path.exists() and cache_path.is_file():
-            return GdkPixbuf.Pixbuf.new_from_file(str(cache_path))
-
-        # Generate a new cache icon
-        elif path is not None:
-
-            # Retrieve icon from specific collection
-            if not path.exists():
-
-                if key == "consoles":
-                    collection_path = self.api.get_local(
-                        "icons", "%s.png" % path)
-
-                    # Generate a new cache icon
-                    if collection_path.exists() and collection_path.is_file():
-
-                        # Check the file mime-type to avoid non-image file
-                        if magic_from_file(collection_path,
-                                           mime=True).startswith("image/"):
-
-                            icon = GdkPixbuf.Pixbuf.new_from_file_at_scale(
-                                str(collection_path), size, size, True)
-
-                            need_save = True
-
-                elif key == "emulators":
-
-                    if self.icons.theme.has_icon(str(path)):
-                        icon = self.icons.theme.load_icon(
-                            str(path), size, Gtk.IconLookupFlags.FORCE_SIZE)
-
-                        need_save = True
-
-            # Generate a new cache icon
-            elif path.exists() and path.is_file():
-
-                # Check the file mime-type to avoid non-image file
-                if magic_from_file(path, mime=True).startswith("image/"):
-                    icon = GdkPixbuf.Pixbuf.new_from_file_at_scale(
-                        str(path), size, size, True)
-
-                    need_save = True
-
-            # Save generated icon to cache
-            if use_cache and need_save:
-                try:
-                    self.logger.debug(
-                        "Save generated icon to %s" % cache_path)
-
-                    if not cache_path.parent.exists():
-                        cache_path.parent.mkdir(mode=0o755, parents=True)
-
-                    icon.savev(str(cache_path), "png", list(), list())
-
-                except GLib.Error:
-                    self.logger.exception(
-                        "An error occur during cache generation")
-
-            return icon
-
-        return None
-
-    def get_mednafen_status(self):
-        """ Retrieve mednafen status
-
-        Returns
-        -------
-        bool
-            Mednafen status
-        """
-
-        return self.__mednafen_status
-
-    def get_mednafen_memory_type(self, game):
-        """ Retrieve a memory type file for a specific game
-
-        Parameters
-        ----------
-        game : gem.engine.game.Game
-            Game object
-
-        Returns
-        -------
-        pathlib.Path
-            Memory type file path
-        """
-
-        # FIXME: Maybe a better way to determine type file
-        return Path.home().joinpath(
-            ".mednafen", "sav", game.path.stem + ".type")
-
-    def get_ui_icon(self, column, status):
-        """ Retrieve an icon for a specific treeview column based on his status
-
-        Parameters
-        ----------
-        column : str
-            Column name based on Columns metadata class
-        status : bool
-            Activate status for icon
-
-        Returns
-        -------
-        str
-            Icon name if found in treeview_icons storage, None otherwise
-        """
-
-        if column not in self.treeview_icons:
-            return None
-
-        activate, unactivate = self.treeview_icons.get(column)
-
-        icon_name = activate if status else unactivate
-        if icon_name is None:
-            return None
-
-        if self.use_symbolic_icon:
-            return getattr(Icons.Symbolic, icon_name.upper(), None)
-
-        return getattr(Icons, icon_name.upper(), None)
-
-    def emit(self, *args):
-        """ Override emit function
-
-        This override allow to use Interface function from another thread in
-        MainThread
-        """
-
-        GLib.idle_add(GObject.GObject.emit, self, *args)

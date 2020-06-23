@@ -624,8 +624,8 @@ class GeodeGEMTreeView(CommonGamesView):
                 search_column=Columns.List.NAME,
                 show_expanders=False,
                 sorterable=True,
-                sort_func=interface.on_sort_games,
-                visible_func=interface.filters_match,
+                sort_func=interface.on_sort_games_view,
+                visible_func=interface.check_game_is_visible,
             )
         )
 
@@ -737,7 +737,7 @@ class GeodeGEMIconView(CommonGamesView):
                 has_tooltip=True,
                 sorterable=False,
                 sorting_column=1,
-                visible_func=interface.filters_match,
+                visible_func=interface.check_game_is_visible,
             )
         )
 
