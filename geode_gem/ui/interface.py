@@ -5540,8 +5540,10 @@ class MainWindow(Gtk.ApplicationWindow):
             self.grid_sidebar_score.set_visible(True)
             self.grid_sidebar_informations.set_visible(True)
 
-            # Game screenshots
+            # Game log and screenshots
             for name in ("menu_game", "menubar_game", "toolbar_games"):
+                getattr(self, name).set_sensitive(
+                    self.get_game_log_file(game), widget="game_log")
                 getattr(self, name).set_sensitive(
                     game.screenshots, widget="screenshots")
 
