@@ -1322,7 +1322,7 @@ class MainWindow(Gtk.ApplicationWindow):
                         "widget": "screenshots",
                     },
                     {
-                        "method": self.on_show_application_log_dialog,
+                        "method": self.on_show_game_log_dialog,
                         "widget": "game_log",
                     },
                     {
