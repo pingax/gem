@@ -21,6 +21,9 @@
 from datetime import date
 from datetime import timedelta
 
+# Geode
+from geode_gem.engine.utils import get_binary_path
+
 # GObject
 try:
     from gi import require_version
@@ -36,9 +39,7 @@ except ImportError as error:
     exit("Cannot found python3-gobject module: %s" % str(error))
 
 # Processus
-from subprocess import PIPE
-from subprocess import Popen
-from subprocess import STDOUT
+from subprocess import PIPE, Popen, STDOUT
 
 # Regex
 from re import escape as re_escape
@@ -52,6 +53,35 @@ from gettext import ngettext
 # ------------------------------------------------------------------------------
 #   Misc functions
 # ------------------------------------------------------------------------------
+
+def call_external_application(*command):
+    """ Call an external application from operating system
+
+    Parameters
+    ----------
+    command : list
+        Command execution parameters as string list
+
+    Returns
+    -------
+    str
+        Splited output if executed, None otherwise
+    """
+
+    if get_binary_path(command[0]):
+        proc = Popen(
+            command,
+            stdin=PIPE,
+            stdout=PIPE,
+            stderr=STDOUT,
+            universal_newlines=True)
+
+        output, error_output = proc.communicate()
+        if output:
+            return output.split('\n')[0]
+
+    return None
+
 
 def icon_from_data(path, fallback=None, width=24, height=24):
     """ Load an icon from path
@@ -384,19 +414,15 @@ def magic_from_file(filename, mime=False):
 
     # Use dereference to follow symlink
     commands = ["file", "--dereference", str(filename)]
-
     if mime:
         commands.insert(1, "--mime-type")
 
-    with Popen(commands, stdout=PIPE, stdin=PIPE, stderr=STDOUT,
-               universal_newlines=True) as pipe:
+    output = call_external_application(*commands)
+    if output:
+        output = output[:-1]
 
-        output, error_output = pipe.communicate()
-
-    result = re_findall(
-        r"^%s\:\s+(.*)$" % re_escape(str(filename)), output[:-1])
-
-    if len(result) > 0:
-        return result[0]
+        result = re_findall(fr"^{re_escape(str(filename))}\:\s+(.*)$", output)
+        if result:
+            return result[0]
 
     return str()

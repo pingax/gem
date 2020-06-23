@@ -37,7 +37,8 @@ from geode_gem.engine.console import Console
 from geode_gem.engine.lib.configuration import Configuration
 
 from geode_gem.ui.data import Icons, Columns, Folders, Metadata
-from geode_gem.ui.utils import (magic_from_file,
+from geode_gem.ui.utils import (call_external_application,
+                                magic_from_file,
                                 on_change_theme,
                                 string_from_date,
                                 string_from_time,
@@ -60,9 +61,6 @@ try:
 except ImportError as error:
     from sys import exit
     exit("Cannot found python3-gobject module: %s" % str(error))
-
-# Processus
-from subprocess import PIPE, Popen, STDOUT
 
 # Random
 from random import shuffle
@@ -2320,34 +2318,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         return __function__
 
-    def call_external_application(self, *command):
-        """ Call an external application from operating system
-
-        Parameters
-        ----------
-        command : list
-            Command execution parameters as string list
-
-        Returns
-        -------
-        str
-            Splited output if executed, None otherwise
-        """
-
-        if get_binary_path(command[0]):
-            proc = Popen(
-                command,
-                stdin=PIPE,
-                stdout=PIPE,
-                stderr=STDOUT,
-                universal_newlines=True)
-
-            output, error_output = proc.communicate()
-            if output:
-                return output.split('\n')[0]
-
-        return None
-
     def check_console_is_visible(self, row, *args):
         """ Filter list with consoles searchentry text
 
@@ -2550,7 +2520,7 @@ class MainWindow(Gtk.ApplicationWindow):
         user want to do that, so ...
         """
 
-        output = self.call_external_application("mednafen")
+        output = call_external_application("mednafen")
 
         return (output and
                 match(r'Starting Mednafen [\d+\.?]+', output.split('\n')[0]))
@@ -2570,7 +2540,7 @@ class MainWindow(Gtk.ApplicationWindow):
         version = Metadata.VERSION
 
         if self.api.debug and Path(".git").exists():
-            output = self.call_external_application(
+            output = call_external_application(
                 "git", "rev-parse", "--short", "HEAD")
 
             if output and match(r'^[\d\w]+$', output):
