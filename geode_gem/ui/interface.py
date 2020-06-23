@@ -5323,6 +5323,41 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.logger.debug(f"Synchronize selection for game '{game.id}'")
 
+    @block_signals
+    def on_update_consoles_filters(self, widget, *args):
+        """ Change a console option switch
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        if widget.identifier == "hide_empty":
+            self.hide_empty_console = not self.hide_empty_console
+
+            self.config.modify(
+                "gem", "hide_empty_console", self.hide_empty_console)
+            self.config.update()
+
+            self.toolbar_consoles.set_active(
+                self.hide_empty_console, widget="hide_empty")
+
+            self.on_reload_consoles()
+
+        elif self.__current_menu_row:
+            console = self.__current_menu_row.console
+
+            if widget.identifier == "recursive":
+                console.recursive = not console.recursive
+                self.api.write_object(console)
+
+            elif widget.identifier == "favorite":
+                console.favorite = not console.favorite
+                self.api.write_object(console)
+
+                self.on_reload_consoles()
+
     def on_update_games_filters(self, widget=None, status=None):
         """ Reload packages filter when user change filters from menu
 
@@ -5359,8 +5394,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.set_statusbar_content()
 
     @block_signals
-    def on_update_consoles_filters(self, widget, *args):
-        """ Change a console option switch
+    def on_update_game_tag_filter(self, widget):
+        """ Refilter games list with a new tag
 
         Parameters
         ----------
@@ -5368,30 +5403,16 @@ class MainWindow(Gtk.ApplicationWindow):
             Object which receive signal
         """
 
-        if widget.identifier == "hide_empty":
-            self.hide_empty_console = not self.hide_empty_console
+        entry_widget = self.toolbar_games.get_widget("entry")
 
-            self.config.modify(
-                "gem", "hide_empty_console", self.hide_empty_console)
-            self.config.update()
+        text = str()
+        if not entry_widget.get_text() == widget.get_label():
+            text = widget.get_label()
 
-            self.toolbar_consoles.set_active(
-                self.hide_empty_console, widget="hide_empty")
+        entry_widget.set_text(text)
 
-            self.on_reload_consoles()
-
-        elif self.__current_menu_row:
-            console = self.__current_menu_row.console
-
-            if widget.identifier == "recursive":
-                console.recursive = not console.recursive
-                self.api.write_object(console)
-
-            elif widget.identifier == "favorite":
-                console.favorite = not console.favorite
-                self.api.write_object(console)
-
-                self.on_reload_consoles()
+        # Refilter games views to update visible rows
+        self.views_games.refilter()
 
     @block_signals
     def set_interface_theme(self, widget, status=False, *args):
@@ -5529,7 +5550,7 @@ class MainWindow(Gtk.ApplicationWindow):
             if game.tags:
                 for tag in sorted(game.tags):
                     item = GeodeGtk.MenuItem(tag, tag)
-                    item.connect("activate", self.__on_filter_tag)
+                    item.connect("activate", self.on_update_game_tag_filter)
 
                     self.menu_tags.append(item)
 
@@ -6101,23 +6122,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.config.update()
 
         self.menubar_view.set_active(statusbar_status, widget="show_statusbar")
-
-    def __on_filter_tag(self, widget):
-        """ Refilter games list with a new tag
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        """
-
-        entry_widget = self.toolbar_games.get_widget("entry")
-
-        text = str()
-        if not entry_widget.get_text() == widget.get_label():
-            text = widget.get_label()
-
-        entry_widget.set_text(text)
 
     def __on_manage_keys(self, widget, event):
         """ Manage widgets for specific keymaps
