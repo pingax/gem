@@ -18,25 +18,13 @@
 # ------------------------------------------------------------------------------
 
 # Datetime
-from datetime import date
-from datetime import timedelta
+from datetime import date, timedelta
 
 # Geode
 from geode_gem.engine.utils import get_binary_path
 
 # GObject
-try:
-    from gi import require_version
-
-    require_version("Gtk", "3.0")
-
-    from gi.repository import Gtk
-    from gi.repository import GdkPixbuf
-
-except ImportError as error:
-    from sys import exit
-
-    exit("Cannot found python3-gobject module: %s" % str(error))
+from gi.repository import GdkPixbuf, Gtk
 
 # Processus
 from subprocess import PIPE, Popen, STDOUT
@@ -175,6 +163,139 @@ def icon_load(name, size=16, fallback="image-missing"):
         "image-missing", size, Gtk.IconLookupFlags.FORCE_SVG)
 
 
+def on_activate_listboxrow(listbox, row):
+    """ Activate internal widget when a row has been activated
+
+    Parameters
+    ----------
+    listbox : Gtk.ListBox
+        Object which receive signal
+    row : gem.widgets.widgets.ListBoxItem
+        Activated row
+    """
+
+    widget = row.get_widget()
+
+    if type(widget) == Gtk.ComboBox:
+        widget.popup()
+
+    elif type(widget) == Gtk.Entry:
+        widget.grab_focus()
+
+    elif type(widget) == Gtk.FileChooserButton:
+        widget.activate()
+
+    elif type(widget) in [Gtk.Button, Gtk.FontButton]:
+        widget.clicked()
+
+    elif type(widget) == Gtk.SpinButton:
+        widget.grab_focus()
+
+    elif type(widget) == Gtk.Switch:
+        widget.set_active(not widget.get_active())
+
+
+def on_change_theme(status=False):
+    """ Change dark status of interface theme
+
+    Parameters
+    ----------
+    status : bool, optional
+        Use dark theme (Default: False)
+    """
+
+    settings = Gtk.Settings.get_default()
+    if settings:
+        settings.set_property("gtk-application-prefer-dark-theme", status)
+
+
+def on_entry_clear(widget, pos, event):
+    """ Reset an entry widget when secondary icon is clicked
+
+    Parameters
+    ----------
+    widget : Gtk.Entry
+        Entry widget
+    pos : Gtk.EntryIconPosition
+        Position of the clicked icon
+    event : Gdk.EventButton or Gdk.EventKey
+        Event which triggered this signal
+
+    Returns
+    -------
+    bool
+        Function state
+    """
+
+    if type(widget) is not Gtk.Entry:
+        return False
+
+    if pos == Gtk.EntryIconPosition.SECONDARY and widget.get_text():
+        widget.set_text(str())
+
+        return True
+
+    return False
+
+
+def magic_from_file(filename, mime=False):
+    """ Fallback function to retrieve file type when python-magic is missing
+
+    Parameters
+    ----------
+    filename : str
+        File path to read
+    mime : bool
+        Retrieve the file mimetype, otherwise a readable name (Default: False)
+
+    Returns
+    -------
+    str
+        File type result as human readable name or mimetype
+    """
+
+    # Use dereference to follow symlink
+    commands = ["file", "--dereference", str(filename)]
+    if mime:
+        commands.insert(1, "--mime-type")
+
+    output = call_external_application(*commands)
+    if output:
+        output = output[:-1]
+
+        result = re_findall(fr"^{re_escape(str(filename))}\:\s+(.*)$", output)
+        if result:
+            return result[0]
+
+    return str()
+
+
+def replace_for_markup(text):
+    """ Replace some characters in text for markup compatibility
+
+    Parameters
+    ----------
+    text : str
+        Text to parser
+
+    Returns
+    -------
+    str
+        Replaced text
+    """
+
+    characters = {
+        '&': "&amp;",
+        '<': "&lt;",
+        '>': "&gt;",
+    }
+
+    for key, value in characters.items():
+        text = text.replace(key, value)
+
+    return text
+
+
 def set_pixbuf_opacity(pixbuf, opacity):
     """ Changes the opacity of pixbuf
 
@@ -210,80 +331,6 @@ def set_pixbuf_opacity(pixbuf, opacity):
         pass
 
     return new_pixbuf
-
-
-def on_change_theme(status=False):
-    """ Change dark status of interface theme
-
-    Parameters
-    ----------
-    status : bool, optional
-        Use dark theme (Default: False)
-    """
-
-    Gtk.Settings.get_default().set_property(
-        "gtk-application-prefer-dark-theme", status)
-
-
-def on_entry_clear(widget, pos, event):
-    """ Reset an entry widget when secondary icon is clicked
-
-    Parameters
-    ----------
-    widget : Gtk.Entry
-        Entry widget
-    pos : Gtk.EntryIconPosition
-        Position of the clicked icon
-    event : Gdk.EventButton or Gdk.EventKey
-        Event which triggered this signal
-
-    Returns
-    -------
-    bool
-        Function state
-    """
-
-    if type(widget) is not Gtk.Entry:
-        return False
-
-    if pos == Gtk.EntryIconPosition.SECONDARY and len(widget.get_text()) > 0:
-        widget.set_text(str())
-
-        return True
-
-    return False
-
-
-def on_activate_listboxrow(listbox, row):
-    """ Activate internal widget when a row has been activated
-
-    Parameters
-    ----------
-    listbox : Gtk.ListBox
-        Object which receive signal
-    row : gem.widgets.widgets.ListBoxItem
-        Activated row
-    """
-
-    widget = row.get_widget()
-
-    if type(widget) == Gtk.ComboBox:
-        widget.popup()
-
-    elif type(widget) == Gtk.Entry:
-        widget.grab_focus()
-
-    elif type(widget) == Gtk.FileChooserButton:
-        widget.activate()
-
-    elif type(widget) in [Gtk.Button, Gtk.FontButton]:
-        widget.clicked()
-
-    elif type(widget) == Gtk.SpinButton:
-        widget.grab_focus()
-
-    elif type(widget) == Gtk.Switch:
-        widget.set_active(not widget.get_active())
 
 
 def string_from_date(date_object):
@@ -368,61 +415,3 @@ def string_from_time(time_object):
         return ngettext(_("1 minute"), _("%d minutes") % minutes, minutes)
 
     return ngettext(_("1 hour"), _("%d hours") % hours, hours)
-
-
-def replace_for_markup(text):
-    """ Replace some characters in text for markup compatibility
-
-    Parameters
-    ----------
-    text : str
-        Text to parser
-
-    Returns
-    -------
-    str
-        Replaced text
-    """
-
-    characters = {
-        '&': "&amp;",
-        '<': "&lt;",
-        '>': "&gt;",
-    }
-
-    for key, value in characters.items():
-        text = text.replace(key, value)
-
-    return text
-
-
-def magic_from_file(filename, mime=False):
-    """ Fallback function to retrieve file type when python-magic is missing
-
-    Parameters
-    ----------
-    filename : str
-        File path to read
-    mime : bool
-        Retrieve the file mimetype, otherwise a readable name (Default: False)
-
-    Returns
-    -------
-    str
-        File type result as human readable name or mimetype
-    """
-
-    # Use dereference to follow symlink
-    commands = ["file", "--dereference", str(filename)]
-    if mime:
-        commands.insert(1, "--mime-type")
-
-    output = call_external_application(*commands)
-    if output:
-        output = output[:-1]
-
-        result = re_findall(fr"^{re_escape(str(filename))}\:\s+(.*)$", output)
-        if result:
-            return result[0]
-
-    return str()
