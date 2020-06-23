@@ -269,14 +269,10 @@ class GeodeGEMViews(GeodeGtkCommon, Gtk.Box):
         self.games_identifier_storage.clear()
 
         self.logger.debug("Clear games treeview content")
-        self.treeview.clear()
+        self.view_list.clear()
 
         self.logger.debug("Clear games iconview content")
-        self.iconview.clear()
-
-        self.view_list.hide()
-        self.view_grid.hide()
-        self.view_placeholder.show_all()
+        self.view_grid.clear()
 
     def append_games(self, console, games):
         """ Append games in both views
@@ -288,14 +284,6 @@ class GeodeGEMViews(GeodeGtkCommon, Gtk.Box):
         games : list
             Games object list
         """
-
-        if games:
-            self.view_placeholder.hide()
-
-            if self.visible_view is GeodeGEMViews.Name.LIST:
-                self.view_list.show_all()
-            else:
-                self.view_grid.show_all()
 
         self.treeview.freeze_child_notify()
 
@@ -405,6 +393,24 @@ class GeodeGEMViews(GeodeGtkCommon, Gtk.Box):
 
         self.view_list.remove_item(identifier)
         self.view_grid.remove_item(identifier)
+
+    def set_placeholder_visibility(self, is_visible):
+        """ Define placeholder visibility
+
+        Parameters
+        ----------
+        is_visible : bool
+            Placeholder visibility status
+        """
+
+        if is_visible:
+            self.view_list.hide()
+            self.view_grid.hide()
+            self.view_placeholder.show_all()
+
+        else:
+            self.set_view(self.visible_view)
+            self.view_placeholder.hide()
 
     def set_view(self, identifier):
         """ Set the games view to show

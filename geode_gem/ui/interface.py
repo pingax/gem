@@ -821,8 +821,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.scroll_consoles.set_min_content_width(200)
 
         self.listbox_consoles.set_filter_func(self.check_console_is_visible)
-        self.listbox_consoles.set_sort_func(self.__on_sort_consoles)
-        self.listbox_consoles.set_header_func(self.__on_header_consoles)
+        self.listbox_consoles.set_sort_func(self.on_sort_consoles_list)
+        self.listbox_consoles.set_header_func(self.on_generate_console_header)
 
         # ------------------------------------
         #   Sidebar - Game
@@ -1562,7 +1562,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.views_games.treeview: {
                 "cursor-changed": [
                     {
-                        "method": self.__on_selected_game,
+                        "method": self.on_select_game_from_list,
                         "allow_block_signal": True,
                     },
                 ],
@@ -1585,7 +1585,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.views_games.iconview: {
                 "selection-changed": [
                     {
-                        "method": self.__on_selected_game,
+                        "method": self.on_select_game_from_list,
                         "allow_block_signal": True,
                     },
                 ],
@@ -1607,13 +1607,13 @@ class MainWindow(Gtk.ApplicationWindow):
             },
             self.listbox_consoles: {
                 "row-activated": [
-                    {"method": self.__on_selected_console},
+                    {"method": self.on_select_console_from_list},
                 ],
                 "button-press-event": [
-                    {"method": self.__on_console_menu_show},
+                    {"method": self.on_show_console_menu_popup},
                 ],
                 "key-release-event": [
-                    {"method": self.__on_console_menu_show},
+                    {"method": self.on_show_console_menu_popup},
                 ],
             },
             self.toolbar_consoles: {
@@ -2055,8 +2055,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.menu_game.show_all()
         self.toolbar_consoles.show_all()
 
-        # Manage sidebar visibility
-        self.scroll_sidebar.set_visible(self.show_sidebar)
+        self.set_sidebar_visibility(
+            self.show_sidebar, register_modification=False)
 
         self.grid_sidebar_score.set_visible(False)
         self.grid_sidebar_informations.set_visible(False)
@@ -2118,7 +2118,8 @@ class MainWindow(Gtk.ApplicationWindow):
                     # Set console combobox active iter
                     self.listbox_consoles.select_row(row)
 
-                    self.__on_selected_console(self.listbox_consoles, row)
+                    self.on_select_console_from_list(
+                        self.listbox_consoles, row)
 
                     # Set Console object as selected
                     self.selection["console"] = row.console
@@ -2889,6 +2890,56 @@ class MainWindow(Gtk.ApplicationWindow):
         return \
             Path.home().joinpath(".mednafen", "sav", f"{game.path.stem}.type")
 
+    def get_new_console_row(self, console, icon):
+        """ Append console row in consoles list
+
+        Parameters
+        ----------
+        console : gem.engine.console.Console
+            Console instance
+        icon : GdkPixbuf.Pixbuf
+            Console icon
+
+        Returns
+        -------
+        Gtk.ListBoxRow
+            New console row
+        """
+
+        grid_console = Gtk.Box.new(Gtk.Orientation.HORIZONTAL, 8)
+        grid_console.set_border_width(6)
+
+        row_console = Gtk.ListBoxRow()
+        row_console.add(grid_console)
+
+        image_console = Gtk.Image.new_from_pixbuf(icon)
+
+        label_console = Gtk.Label.new(console.name)
+        label_console.set_ellipsize(Pango.EllipsizeMode.END)
+        label_console.set_halign(Gtk.Align.START)
+
+        text = _("No game")
+        if console.get_games():
+            text = ngettext(
+                _("1 game"),
+                _("%d games") % len(console.get_games()),
+                len(console.get_games()))
+
+        row_console.set_tooltip_text(text)
+
+        grid_console.pack_start(image_console, False, False, 0)
+        grid_console.pack_start(label_console, True, True, 0)
+
+        row_console.show_all()
+
+        setattr(row_console, "label", label_console)
+        setattr(row_console, "console", console)
+        setattr(row_console, "image_icon", image_console)
+
+        self.listbox_consoles.add(row_console)
+
+        return row_console
+
     def get_screenshot_from_game(self, game):
         """ Retrieve a screenshot from specified game
 
@@ -3183,7 +3234,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.toolbar_consoles.set_active(
             self.hide_empty_console, widget="hide_empty")
 
-        self.append_consoles()
+        self.on_append_consoles()
 
         selected_row = None
 
@@ -3209,15 +3260,113 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Load console games
         if selected_row is not None:
-            self.scroll_sidebar.set_visible(self.show_sidebar)
+            self.set_sidebar_visibility(
+                self.show_sidebar, register_modification=False)
 
             self.listbox_consoles.select_row(selected_row)
 
         # Manage default widgets visibility when no console selected
         else:
-            self.scroll_sidebar.set_visible(False)
+            self.set_sidebar_visibility(False, register_modification=False)
 
             self.set_game_information()
+
+    def on_append_consoles(self):
+        """ Append to consoles lisbox all available consoles
+
+        This function add every consoles into consoles listbox and inform user
+        when an emulator binary is missing
+        """
+
+        self.logger.debug("Append consoles to main interface")
+
+        # Reset consoles caches
+        self.consoles_iter.clear()
+        # Remove previous consoles objects
+        for child in self.listbox_consoles.get_children():
+            self.listbox_consoles.remove(child)
+
+        # Reset games view content
+        self.views_games.clear()
+
+        # Retrieve available consoles
+        for console in self.api.consoles:
+            console_data = self.on_generate_console_row(console)
+            if not console_data:
+                continue
+
+            row = self.get_new_console_row(*console_data)
+
+            # Store console iter
+            self.consoles_iter[row.console.id] = row
+
+            self.logger.debug(f"Append console '{row.console.id}'")
+
+        self.on_reload_consoles()
+
+        if self.listbox_consoles:
+            self.set_sidebar_visibility(
+                self.show_sidebar, register_modification=False)
+
+            self.logger.info(
+                f"{len(self.listbox_consoles)} console(s) has been added")
+
+        # Show games placeholder when no console available
+        else:
+            self.set_sidebar_visibility(False, register_modification=False)
+
+    def on_append_games(self, console, games):
+        """ Append to games treeview all games from console
+
+        This function add every games which match console extensions to games
+        treeview
+
+        Parameters
+        ----------
+        console : gem.engine.console.Console
+            Console object
+
+        Notes
+        -----
+        Using yield avoid an UI freeze when append a lot of games
+        """
+
+        # Get current thread id
+        current_thread_id = self.list_thread
+
+        # Start a timer for debug purpose
+        started = datetime.now()
+
+        # Append games
+        self.statusbar_progressbar.show()
+
+        for index, game in self.views_games.append_games(console, games):
+
+            # Another thread has been called by user, close this one
+            if not current_thread_id == self.list_thread:
+                yield False
+
+            self.set_statusbar_content()
+
+            self.statusbar.set_widget_value(
+                "progressbar", index=index, length=len(games))
+
+            yield True
+
+        self.set_statusbar_content()
+
+        # End the timer
+        delta = (datetime.now() - started).total_seconds()
+
+        self.logger.debug(
+            f"Append game(s) for '{console.id}' in {delta} second(s)")
+
+        self.statusbar_progressbar.hide()
+
+        # Close thread
+        self.list_thread = int()
+
+        yield False
 
     def on_copy_file_path(self, widget):
         """ Copy path to clipboard
@@ -3241,6 +3390,69 @@ class MainWindow(Gtk.ApplicationWindow):
 
         if path:
             self.clipboard.set_text(str(path), -1)
+
+    def on_generate_console_header(self, row, before, *args):
+        """ Update consoles listboxrow header based on console favorite status
+
+        Parameters
+        ----------
+        row : Gtk.ListBoxRow
+            Row to update
+        before : Gtk.ListBoxRow
+            Previous row, None if row is the first one
+        """
+
+        header = None
+
+        if before is None and row.console.favorite:
+            header = GeodeGtk.Label("label_favorite",
+                                    text=f"<b>{_('Favorite')}</b>")
+
+        elif (not row.console.favorite and (
+              not before or before.console.favorite)):
+            header = GeodeGtk.Label("label_consoles",
+                                    text=f"<b>{_('Consoles')}</b>")
+
+        if header is not None:
+            header.set_margin_top(6)
+            header.set_margin_bottom(6)
+            header.set_style("dim-label")
+
+        row.set_header(header)
+
+    def on_generate_console_row(self, console):
+        """ Generate console row data from a specific console
+
+        Parameters
+        ----------
+        console : gem.engine.console.Console or str
+            Console instance or identifier
+
+        Returns
+        -------
+        tuple or None
+            Generation results
+        """
+
+        if not isinstance(console, Console):
+            console = self.api.get_console(console)
+
+        if console.path.exists():
+            try:
+                console.init_games()
+
+            except OSError as error:
+                self.logger.warning(error)
+        else:
+            self.logger.warning(
+                f"Cannot found games directory for {console.name}")
+
+        icon = self.get_pixbuf_from_cache(
+            "consoles", 24, console.id, console.icon)
+        if not icon:
+            icon = self.icons.blank(24)
+
+        return (console, icon)
 
     @use_sensitivity
     def on_generate_game_desktop_file(self, *args):
@@ -3464,6 +3676,74 @@ class MainWindow(Gtk.ApplicationWindow):
             except GLib.Error:
                 self.logger.exception("Cannot open files manager")
 
+    @block_signals
+    def on_prepare_games_adding(self, console):
+        """ Prepare the games adding process
+
+        Parameters
+        ----------
+        console : gem.engine.console.Console
+            Console object
+        """
+
+        self.infobar.set_visible(False)
+
+        self.views_games.clear()
+
+        self.set_game_information()
+
+        # ------------------------------------
+        #   Check console
+        # ------------------------------------
+
+        self.selection["console"] = console
+
+        error_message = None
+
+        # Load games list if the game directory exists
+        try:
+            console.init_games()
+
+        except FileNotFoundError as error:
+            self.logger.error(error)
+            error_message = \
+                _("Cannot retrieve console path '%s'") % console.path
+
+        except NotADirectoryError as error:
+            self.logger.error(error)
+            error_message = \
+                _("Console path '%' is not a directory") % console.path
+
+        except PermissionError as error:
+            self.logger.error(error)
+            error_message = \
+                _("Cannot read console path '%s'") % console.path
+
+        if error_message is not None:
+            self.infobar.set_message(Gtk.MessageType.ERROR, error_message)
+            return False
+
+        # ------------------------------------
+        #   Check emulator
+        # ------------------------------------
+
+        if console.emulator is None:
+            self.logger.warning(f"Cannot find emulator for {console.name}")
+
+            self.infobar.set_message(
+                Gtk.MessageType.WARNING,
+                _("There is no default emulator set for this console"))
+
+        elif not console.emulator.exists:
+            self.logger.warning(f"{console.emulator.name} is not available")
+
+            self.infobar.set_message(
+                Gtk.MessageType.ERROR,
+                _("%s cannot been found on your system") % (
+                    f"<b>{console.emulator.name}</b>"))
+
+        return True
+
     def on_prepare_game_launch(self, widget=None, *args):
         """ Prepare the game launch
 
@@ -3549,7 +3829,128 @@ class MainWindow(Gtk.ApplicationWindow):
 
         row = self.listbox_consoles.get_selected_row()
         if row:
-            self.__on_selected_console(None, row, force=True)
+            self.on_select_console_from_list(None, row, force=True)
+
+    @block_signals
+    def on_select_console_from_list(self, widget, row, force=False):
+        """ Select a console
+
+        This function occurs when the user select a console in the consoles
+        listbox
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        row : gem.gtk.widgets.ListBoxSelectorItem
+            Activated row
+        force : bool
+            Force console selection even if this is the same console
+        """
+
+        # Avoid to reload the same console
+        if self.selection.get("console") == row.console and not force:
+            return
+
+        self.logger.debug(f"Select {row.console.name} console")
+
+        self.selection = {
+            "game": None,
+            "console": row.console,
+        }
+
+        self.infobar.set_visible(False)
+
+        self.set_statusbar_content()
+
+        self.__console_icon = self.get_pixbuf_from_cache(
+            "consoles", 96, row.console.id, row.console.icon)
+        if self.__console_icon is None:
+            self.__console_icon = self.icons.blank(96)
+
+        self.__console_thumbnail = self.get_pixbuf_from_cache(
+            "consoles", 22, row.console.id, row.console.icon)
+        if self.__console_thumbnail is None:
+            self.__console_thumbnail = self.icons.blank(22)
+
+        self.icons_games_views = {
+            "treeview": self.__console_thumbnail,
+            "iconview": self.__console_icon,
+        }
+
+        # ------------------------------------
+        #   Load game list
+        # ------------------------------------
+
+        self.set_sensitive_interface()
+
+        if not self.list_thread == 0:
+            GLib.source_remove(self.list_thread)
+
+        status = self.on_prepare_games_adding(row.console)
+        if not status:
+            self.views_games.set_placeholder_visibility(True)
+            return
+
+        games = row.console.get_games()
+        self.views_games.set_placeholder_visibility(not games)
+
+        if games:
+            self.logger.info(
+                f"Found {len(games)} game(s) for {row.console.name}")
+
+            self.set_sidebar_visibility(
+                self.show_sidebar, register_modification=False)
+
+            # Ordered games by name
+            games.sort(key=lambda game: game.name.lower().replace(' ', ''))
+
+            self.list_thread = GLib.idle_add(
+                self.on_append_games(row.console, games).__next__)
+
+        else:
+            self.logger.info(f"No game available for {row.console.name}")
+            self.views_games.set_placeholder_visibility(True)
+
+            self.set_sidebar_visibility(False, register_modification=False)
+
+    @block_signals
+    def on_select_game_from_list(self, widget):
+        """ Select a game
+
+        This function occurs when the user select a game in the games treeview
+
+        Parameters
+        ----------
+        widget : Gtk.Widget
+            Object which receive signal
+        """
+
+        # Current selected game
+        game = self.views_games.get_selected_game()
+
+        # No game has been choosen (when the user click in the empty view area)
+        if not game:
+            # Unselect both games views
+            self.views_games.unselect_all()
+
+            # Reset sidebar widgets and menus entries
+            self.set_sensitive_interface()
+            self.set_game_information()
+
+        # A new game has been selected
+        elif not self.selection["game"] == game:
+            self.logger.debug(f"Select game '{game.id}'")
+
+            # Synchronize selection between both games views
+            self.on_synchronize_game_selection(widget, game)
+
+            # Update game informations and widgets
+            self.set_sensitive_interface()
+            self.set_game_information()
+
+        # Store game instance
+        self.selection["game"] = game
 
     @use_sensitivity
     def on_show_about_dialog(self, *args):
@@ -3717,10 +4118,10 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Update console row
         if widget == self.toolbar_consoles.get_widget("add_console"):
-            console_data = self.__on_generate_console_row(console)
+            console_data = self.on_generate_console_row(console)
 
             if console_data is not None:
-                row = self.__on_append_console_row(*console_data)
+                row = self.get_new_console_row(*console_data)
                 # Store console iter
                 self.consoles_iter[row.console.id] = row
 
@@ -3764,6 +4165,81 @@ class MainWindow(Gtk.ApplicationWindow):
             self.on_reload_console_games()
 
     @block_signals
+    def on_show_console_menu_popup(self, widget, event):
+        """ Open context menu
+
+        This function open context-menu when user right-click or use context
+        key on games treeview
+
+        Parameters
+        ----------
+        widget : Gtk.ListBox
+            Object which receive signal
+        event : Gdk.EventButton or Gdk.EventKey
+            Event which triggered this signal
+
+        Returns
+        -------
+        bool
+            Context menu popup status
+        """
+
+        row = None
+
+        # Mouse
+        if event.type == Gdk.EventType.BUTTON_PRESS:
+            if event.button == Gdk.BUTTON_SECONDARY:
+                row = widget.get_row_at_y(int(event.y))
+        # Keyboard
+        elif event.type == Gdk.EventType.KEY_RELEASE:
+            if event.keyval == Gdk.KEY_Menu:
+                row = widget.get_selected_row()
+
+        self.__current_menu_row = row
+
+        if row is None:
+            return False
+
+        self.menu_consoles.set_active(
+            row.console.favorite, widget="favorite")
+        self.menu_consoles.set_active(
+            row.console.recursive, widget="recursive")
+
+        # Allow to reload games list only for the current viewed console
+        current_console = self.selection.get("console", None)
+        self.menu_consoles.set_sensitive(
+            current_console or current_console.id == row.console.id,
+            widget="reload")
+
+        # Check console emulator
+        if row.console.emulator:
+            configuration = row.console.emulator.configuration
+
+            # Check emulator configurator
+            self.menu_consoles.set_sensitive(
+                configuration and configuration.exists(),
+                widget="edit_file")
+
+        else:
+            self.menu_consoles.set_sensitive(False, widget="edit_file")
+
+        # Check console paths
+        if row.console.path:
+            self.menu_consoles.set_sensitive(
+                row.console.path.exists(), widget="copy_path")
+            self.menu_consoles.set_sensitive(
+                row.console.path.exists(), widget="open_path")
+
+        # Popup menu
+        if event.type == Gdk.EventType.BUTTON_PRESS:
+            self.menu_consoles.popup_at_pointer(event)
+        elif event.type == Gdk.EventType.KEY_RELEASE:
+            self.menu_consoles.popup_at_widget(
+                row, Gdk.Gravity.CENTER, Gdk.Gravity.NORTH, event)
+
+        return True
+
+    @block_signals
     @use_sensitivity
     def on_show_console_remove_dialog(self, *args):
         """ Remove a console from user configuration
@@ -3795,7 +4271,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.selection["console"] = None
 
                 self.infobar.set_visible(False)
-                self.scroll_sidebar.set_visible(False)
+                self.set_sidebar_visibility(False, register_modification=False)
 
                 self.views_games.clear()
 
@@ -4684,6 +5160,22 @@ class MainWindow(Gtk.ApplicationWindow):
                 Columns.List.SCREENSHOT,
                 None)
 
+    def on_sort_consoles_list(self, first_row, second_row, *args):
+        """ Sort consoles to reorganize them
+
+        Parameters
+        ----------
+        first_row : gem.gtk.widgets.ListBoxSelectorItem
+            First row to compare
+        second_row : gem.gtk.widgets.ListBoxSelectorItem
+            Second row to compare
+        """
+
+        if not first_row.console.favorite == second_row.console.favorite:
+            return first_row.console.favorite < second_row.console.favorite
+
+        return first_row.console.name.lower() > second_row.console.name.lower()
+
     def on_sort_games_view(self, model, row1, row2, column):
         """ Sort games list for specific columns
 
@@ -5418,29 +5910,32 @@ class MainWindow(Gtk.ApplicationWindow):
             self.set_game_information()
 
     @block_signals
-    def set_sidebar_visibility(self, widget, status=False, *args):
+    def set_sidebar_visibility(self, status, register_modification=True):
         """ Update sidebar status
 
         Parameters
         ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        status : bool, optional
-            New switch status (Default: False)
+        status : bool or Gtk.Widget
+            New status value, emited widget otherwise
+        register_modification : bool, optional
+            Register sidebar visibility changes into main configuration file
         """
 
-        sidebar_status = \
-            not self.config.getboolean("gem", "show_sidebar", fallback=True)
+        if not isinstance(status, bool):
+            status = status.get_active()
 
-        if sidebar_status and not self.views_games.placeholder.get_visible():
-            self.scroll_sidebar.show()
+        if register_modification:
+            self.show_sidebar = status
+
+            self.config.modify("gem", "show_sidebar", self.show_sidebar)
+            self.config.update()
+
+            self.menubar_view.set_active(status, widget="show_sidebar")
+
+        if status and not self.views_games.placeholder.get_visible():
+            self.scroll_sidebar.set_visible(True)
         else:
-            self.scroll_sidebar.hide()
-
-        self.config.modify("gem", "show_sidebar", sidebar_status)
-        self.config.update()
-
-        self.menubar_view.set_active(sidebar_status, widget="show_sidebar")
+            self.scroll_sidebar.set_visible(False)
 
     def set_statusbar_content(self):
         """ Update headerbar and statusbar informations from games list
@@ -5662,507 +6157,6 @@ class MainWindow(Gtk.ApplicationWindow):
             if not self.keys == konami_code[0:len(self.keys)]:
                 self.keys = list()
 
-    def append_consoles(self):
-        """ Append to consoles lisbox all available consoles
-
-        This function add every consoles into consoles listbox and inform user
-        when an emulator binary is missing
-        """
-
-        self.logger.debug("Append consoles to main interface")
-
-        # Reset consoles caches
-        self.consoles_iter.clear()
-
-        # Remove previous consoles objects
-        for child in self.listbox_consoles.get_children():
-            self.listbox_consoles.remove(child)
-
-        # Reset games view content
-        self.views_games.clear()
-
-        # Retrieve available consoles
-        for console in self.api.consoles:
-            console_data = self.__on_generate_console_row(console)
-            if console_data is None:
-                continue
-
-            row = self.__on_append_console_row(*console_data)
-
-            # Store console iter
-            self.consoles_iter[row.console.id] = row
-
-            self.logger.debug(f"Append console '{row.console.id}'")
-
-        self.on_reload_consoles()
-
-        if len(self.listbox_consoles) > 0:
-            self.scroll_sidebar.set_visible(self.show_sidebar)
-
-            self.logger.info(
-                "%d console(s) has been added" % len(self.listbox_consoles))
-
-        # Show games placeholder when no console available
-        else:
-            self.scroll_sidebar.set_visible(False)
-
-    def __on_generate_console_row(self, console):
-        """ Generate console row data from a specific console
-
-        Parameters
-        ----------
-        console : gem.engine.console.Console or str
-            Console instance or identifier
-
-        Returns
-        -------
-        tuple or None
-            Generation results
-        """
-
-        if not isinstance(console, Console):
-            console = self.api.get_console(console)
-
-        # Load games list if the game directory exists
-        if console.path.exists():
-
-            try:
-                console.init_games()
-
-            except OSError as error:
-                self.logger.warning(error)
-
-        else:
-            self.logger.warning(
-                "Cannot found games directory for %s" % console.name)
-
-        icon = self.get_pixbuf_from_cache(
-            "consoles", 24, console.id, console.icon)
-
-        if icon is None:
-            icon = self.icons.blank(24)
-
-        return (console, icon)
-
-    def __on_append_console_row(self, console, icon):
-        """ Append console row in consoles list
-
-        Parameters
-        ----------
-        console : gem.engine.console.Console
-            Console instance
-        icon : GdkPixbuf.Pixbuf
-            Console icon
-
-        Returns
-        -------
-        Gtk.ListBoxRow
-            New console row
-        """
-
-        grid_console = Gtk.Box.new(Gtk.Orientation.HORIZONTAL, 8)
-        grid_console.set_border_width(6)
-
-        row_console = Gtk.ListBoxRow()
-        row_console.add(grid_console)
-
-        image_console = Gtk.Image.new_from_pixbuf(icon)
-
-        label_console = Gtk.Label.new(console.name)
-        label_console.set_ellipsize(Pango.EllipsizeMode.END)
-        label_console.set_halign(Gtk.Align.START)
-
-        text = _("No game")
-        if console.get_games():
-            text = ngettext(
-                _("1 game"),
-                _("%d games") % len(console.get_games()),
-                len(console.get_games()))
-
-        row_console.set_tooltip_text(text)
-
-        grid_console.pack_start(image_console, False, False, 0)
-        grid_console.pack_start(label_console, True, True, 0)
-
-        row_console.show_all()
-
-        setattr(row_console, "label", label_console)
-        setattr(row_console, "console", console)
-        setattr(row_console, "image_icon", image_console)
-
-        self.listbox_consoles.add(row_console)
-
-        return row_console
-
-    @block_signals
-    def __on_selected_console(self, widget, row, force=False):
-        """ Select a console
-
-        This function occurs when the user select a console in the consoles
-        listbox
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        row : gem.gtk.widgets.ListBoxSelectorItem
-            Activated row
-        force : bool
-            Force console selection even if this is the same console
-        """
-
-        # Avoid to reload the same console
-        if force or not self.selection.get("console") == row.console:
-            self.logger.debug(f"Select {row.console.name} console")
-
-            self.selection = {
-                "game": None,
-                "console": row.console,
-            }
-
-            self.infobar.set_visible(False)
-
-            self.set_statusbar_content()
-
-            self.__console_icon = self.get_pixbuf_from_cache(
-                "consoles", 96, row.console.id, row.console.icon)
-            if self.__console_icon is None:
-                self.__console_icon = self.icons.blank(96)
-
-            self.__console_thumbnail = self.get_pixbuf_from_cache(
-                "consoles", 22, row.console.id, row.console.icon)
-            if self.__console_thumbnail is None:
-                self.__console_thumbnail = self.icons.blank(22)
-
-            self.icons_games_views = {
-                "treeview": self.__console_thumbnail,
-                "iconview": self.__console_icon,
-            }
-
-            # ------------------------------------
-            #   Check data
-            # ------------------------------------
-
-            self.set_sensitive_interface()
-
-            # Set console informations into button grid widgets
-            # self.listbox_consoles.select_row(row)
-
-            # ------------------------------------
-            #   Load game list
-            # ------------------------------------
-
-            if not self.list_thread == 0:
-                GLib.source_remove(self.list_thread)
-
-            self.list_thread = GLib.idle_add(
-                self.append_games(row.console).__next__)
-
-    def __on_sort_consoles(self, first_row, second_row, *args):
-        """ Sort consoles to reorganize them
-
-        Parameters
-        ----------
-        first_row : gem.gtk.widgets.ListBoxSelectorItem
-            First row to compare
-        second_row : gem.gtk.widgets.ListBoxSelectorItem
-            Second row to compare
-        """
-
-        # Sort by name when favorite status are identical
-        if first_row.console.favorite == second_row.console.favorite:
-            return first_row.console.name.lower() > \
-                second_row.console.name.lower()
-
-        return first_row.console.favorite < second_row.console.favorite
-
-    def __on_header_consoles(self, row, before, *args):
-        """ Update consoles listboxrow header based on console favorite status
-
-        Parameters
-        ----------
-        row : Gtk.ListBoxRow
-            Row to update
-        before : Gtk.ListBoxRow
-            Previous row, None if row is the first one
-        """
-
-        header = None
-
-        if before is None and row.console.favorite:
-            header = GeodeGtk.Label("label_favorite",
-                                    text=f"<b>{_('Favorite')}</b>")
-
-        elif (not row.console.favorite and (
-              not before or before.console.favorite)):
-            header = GeodeGtk.Label("label_consoles",
-                                    text=f"<b>{_('Consoles')}</b>")
-
-        if header is not None:
-            header.set_margin_top(6)
-            header.set_margin_bottom(6)
-            header.set_style("dim-label")
-
-        row.set_header(header)
-
-    @block_signals
-    def __on_console_menu_show(self, widget, event):
-        """ Open context menu
-
-        This function open context-menu when user right-click or use context
-        key on games treeview
-
-        Parameters
-        ----------
-        widget : Gtk.ListBox
-            Object which receive signal
-        event : Gdk.EventButton or Gdk.EventKey
-            Event which triggered this signal
-
-        Returns
-        -------
-        bool
-            Context menu popup status
-        """
-
-        row = None
-
-        # Mouse
-        if event.type == Gdk.EventType.BUTTON_PRESS:
-            if event.button == Gdk.BUTTON_SECONDARY:
-                row = widget.get_row_at_y(int(event.y))
-        # Keyboard
-        elif event.type == Gdk.EventType.KEY_RELEASE:
-            if event.keyval == Gdk.KEY_Menu:
-                row = widget.get_selected_row()
-
-        self.__current_menu_row = row
-
-        if row is None:
-            return False
-
-        self.menu_consoles.set_active(
-            row.console.favorite, widget="favorite")
-        self.menu_consoles.set_active(
-            row.console.recursive, widget="recursive")
-
-        # Allow to reload games list only for the current viewed console
-        current_console = self.selection.get("console", None)
-        self.menu_consoles.set_sensitive(
-            current_console is None or current_console.id == row.console.id,
-            widget="reload")
-
-        # Check console emulator
-        if row.console.emulator is not None:
-            configuration = row.console.emulator.configuration
-
-            # Check emulator configurator
-            self.menu_consoles.set_sensitive(
-                configuration is not None and configuration.exists(),
-                widget="edit_file")
-
-        else:
-            self.menu_consoles.set_sensitive(False, widget="edit_file")
-
-        # Check console paths
-        if row.console.path is not None:
-            self.menu_consoles.set_sensitive(
-                row.console.path.exists(), widget="copy_path")
-            self.menu_consoles.set_sensitive(
-                row.console.path.exists(), widget="open_path")
-
-        # Popup menu
-        if event.type == Gdk.EventType.BUTTON_PRESS:
-            self.menu_consoles.popup_at_pointer(event)
-        elif event.type == Gdk.EventType.KEY_RELEASE:
-            self.menu_consoles.popup_at_widget(
-                row, Gdk.Gravity.CENTER, Gdk.Gravity.NORTH, event)
-
-        return True
-
-    def append_games(self, console):
-        """ Append to games treeview all games from console
-
-        This function add every games which match console extensions to games
-        treeview
-
-        Parameters
-        ----------
-        console : gem.engine.console.Console
-            Console object
-
-        Notes
-        -----
-        Using yield avoid an UI freeze when append a lot of games
-        """
-
-        # Get current thread id
-        current_thread_id = self.list_thread
-
-        self.logger.debug(f"Start to append games for console {console.name}")
-
-        # Clean interface
-        self.infobar.set_visible(False)
-
-        self.views_games.clear()
-
-        self.set_game_information()
-
-        # ------------------------------------
-        #   Check console
-        # ------------------------------------
-
-        self.selection["console"] = console
-
-        error_message = None
-
-        # Load games list if the game directory exists
-        try:
-            console.init_games()
-
-        except FileNotFoundError as error:
-            self.logger.error(error)
-            error_message = \
-                _("Cannot retrieve console path '%s'") % console.path
-
-        except NotADirectoryError as error:
-            self.logger.error(error)
-            error_message = \
-                _("Console path '%' is not a directory") % console.path
-
-        except PermissionError as error:
-            self.logger.error(error)
-            error_message = \
-                _("Cannot read console path '%s'") % console.path
-
-        if error_message is not None:
-            self.infobar.set_message(Gtk.MessageType.ERROR, error_message)
-            yield False
-
-        # ------------------------------------
-        #   Check emulator
-        # ------------------------------------
-
-        if console.emulator is None:
-            self.logger.warning(f"Cannot find emulator for {console.name}")
-
-            self.infobar.set_message(
-                Gtk.MessageType.WARNING,
-                _("There is no default emulator set for this console"))
-
-        elif not console.emulator.exists:
-            self.logger.warning(f"{console.emulator.name} is not available")
-
-            self.infobar.set_message(
-                Gtk.MessageType.ERROR,
-                _("%s cannot been found on your system") % (
-                    f"<b>{console.emulator.name}</b>"))
-
-        # ------------------------------------
-        #   Load games
-        # ------------------------------------
-
-        games = console.get_games()
-
-        if games:
-            self.logger.info(f"Found {len(games)} game(s) for {console.name}")
-
-            # Ordered games by name
-            games.sort(key=lambda game: game.name.lower().replace(' ', ''))
-
-            self.__block_signals()
-
-            self.scroll_sidebar.set_visible(
-                self.config.getboolean("gem", "show_sidebar", fallback=True))
-
-            self.__unblock_signals()
-
-            # Start a timer for debug purpose
-            started = datetime.now()
-
-            # ------------------------------------
-            #   Append games
-            # ------------------------------------
-
-            self.statusbar_progressbar.show()
-
-            for index, game in self.views_games.append_games(console, games):
-
-                # Another thread has been called by user, close this one
-                if not current_thread_id == self.list_thread:
-                    yield False
-
-                self.set_statusbar_content()
-
-                self.statusbar.set_widget_value(
-                    "progressbar", index=index, length=len(games))
-
-                yield True
-
-            self.statusbar_progressbar.hide()
-
-            self.set_statusbar_content()
-
-            # ------------------------------------
-            #   Timer - Debug
-            # ------------------------------------
-
-            delta = (datetime.now() - started).total_seconds()
-
-            self.logger.debug(
-                f"Append game(s) for '{console.id}' in {delta} second(s)")
-
-        else:
-            self.logger.info(f"No game available for {console.name}")
-
-            self.scroll_sidebar.set_visible(False)
-
-        # ------------------------------------
-        #   Close thread
-        # ------------------------------------
-
-        self.list_thread = int()
-
-        yield False
-
-    @block_signals
-    def __on_selected_game(self, widget):
-        """ Select a game
-
-        This function occurs when the user select a game in the games treeview
-
-        Parameters
-        ----------
-        widget : Gtk.Widget
-            Object which receive signal
-        """
-
-        # Current selected game
-        game = self.views_games.get_selected_game()
-
-        # No game has been choosen (when the user click in the empty view area)
-        if game is None:
-            # Unselect both games views
-            self.views_games.unselect_all()
-
-            # Reset sidebar widgets and menus entries
-            self.set_sensitive_interface()
-            self.set_game_information()
-
-        # A new game has been selected
-        elif not self.selection["game"] == game:
-            self.logger.debug(f"Select game '{game.id}'")
-
-            # Synchronize selection between both games views
-            self.on_synchronize_game_selection(widget, game)
-
-            # Update game informations and widgets
-            self.set_sensitive_interface()
-            self.set_game_information()
-
-        # Store game instance
-        self.selection["game"] = game
-
     @block_signals
     def update_game_flag(self, widget, flag_name):
         """ Update a specific flag for the selected game
@@ -6346,6 +6340,7 @@ class MainWindow(Gtk.ApplicationWindow):
         if all((data, options)):
             GLib.idle_add(self.__on_dnd_install_data(data, options).__next__)
 
+    @block_signals
     def __on_dnd_install_data(self, data, options):
         """ Install received file in user system
 
@@ -6453,8 +6448,8 @@ class MainWindow(Gtk.ApplicationWindow):
                     if self.views_games.append_game(console, game):
                         self.set_statusbar_content()
 
-                        self.scroll_sidebar.set_visible(self.config.getboolean(
-                            "gem", "show_sidebar", fallback=True))
+                        self.set_sidebar_visibility(
+                            self.show_sidebar, register_modification=False)
 
                         if self.toolbar_games.get_active("list"):
                             self.views_games.set_view(GeodeGEM.Views.Name.LIST)
