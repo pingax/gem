@@ -3002,11 +3002,13 @@ class MainWindow(Gtk.ApplicationWindow):
         """
 
         try:
-            return self.config.get(
+            size = self.config.get(
                 "windows", window, fallback=f"{width}x{height}").split('x')
 
         except ValueError:
-            return (width, height)
+            size = (width, height)
+
+        return tuple(map(int, size))
 
     def get_ui_icon(self, column, status):
         """ Retrieve an icon for a specific treeview column based on his status
@@ -5469,7 +5471,7 @@ class MainWindow(Gtk.ApplicationWindow):
                              Icons.WARNING)
 
         # External viewer can remove file, so we need to check again
-        if game.screenshots:
+        if not game.screenshots:
             self.views_games.treeview.set_value(
                 self.views_games.get_iter_from_key(game.id)[0],
                 Columns.List.SCREENSHOT,
