@@ -4,6 +4,16 @@ GEM Changelog
 Version 0.11.0 - Bounty Hunter
 ------------------------------
 
+### New
+
+* Add an header in consoles listbox to separate favorites consoles
+* Allow to switch between normal and symbolic icons for treeview and statusbar
+
+### Remove
+
+* Remove favorite icon from consoles listbox
+* Remove translucent icons
+
 ### Fix
 
 * Fix a PermissionError when a binaries directory cannot be readed by user
