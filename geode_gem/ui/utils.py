@@ -20,6 +20,9 @@
 # Datetime
 from datetime import date, timedelta
 
+# Filesystem
+from os import R_OK, W_OK, access
+
 # Geode
 from geode_gem.engine.utils import get_binary_path
 
@@ -30,6 +33,7 @@ from gi.repository import GdkPixbuf, Gtk
 from subprocess import PIPE, Popen, STDOUT
 
 # Regex
+from re import match as re_match
 from re import escape as re_escape
 from re import findall as re_findall
 
@@ -69,6 +73,48 @@ def call_external_application(*command):
             return output.split('\n')[0]
 
     return None
+
+def check_game_is_editable(game):
+    """ Check if specified game is a text file and can be edited by user
+
+    Parameters
+    ----------
+    game : geode_gem.engine.game.Game
+        Game instance
+
+    Returns
+    -------
+    bool
+        True if game file is editable, False otherwise
+    """
+
+    if not magic_from_file(game.path, mime=True).startswith("text/"):
+        return False
+
+    return access(game.path, R_OK) and access(game.path, W_OK)
+
+def check_mednafen():
+    """ Check if Mednafen exists on user system
+
+    This function read the first line of mednafen default output and check
+    if this one match "Starting Mednafen [0-9+.?]+".
+
+    Returns
+    -------
+    bool
+        Mednafen exists status
+
+    Notes
+    -----
+    Still possible to troll this function with a script call mednafen which
+    send the match string as output. But, this problem only appear if a
+    user want to do that, so ...
+    """
+
+    output = call_external_application("mednafen")
+
+    return (output and
+            re_match(r'Starting Mednafen [\d+\.?]+', output.split('\n')[0]))
 
 
 def icon_from_data(path, fallback=None, width=24, height=24):

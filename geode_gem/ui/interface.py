@@ -21,33 +21,23 @@
 from datetime import date, datetime, timedelta
 
 # Filesystem
-from os import R_OK, W_OK, X_OK, access, remove
+from os import W_OK, X_OK, access, remove
 from os.path import getctime
 from pathlib import Path
 from shutil import rmtree
 
 # GEM
-from geode_gem.engine.utils import (copy,
-                                    get_data,
-                                    get_binary_path,
-                                    parse_timedelta,
-                                    generate_identifier)
+from geode_gem.engine import utils as engine_utils
 from geode_gem.engine.api import GEM
 from geode_gem.engine.console import Console
 from geode_gem.engine.lib.configuration import Configuration
 
+from geode_gem.ui import GeodeGEM
+from geode_gem.ui import utils as ui_utils
 from geode_gem.ui.data import Icons, Columns, Folders, Metadata
-from geode_gem.ui.utils import (call_external_application,
-                                magic_from_file,
-                                on_change_theme,
-                                string_from_date,
-                                string_from_time,
-                                replace_for_markup)
 from geode_gem.ui.widgets.game import GameThread
 from geode_gem.ui.widgets.script import ScriptThread
 from geode_gem.ui.widgets.widgets import IconsGenerator
-
-from geode_gem.ui import GeodeGEM
 from geode_gem.ui.dialog import GeodeDialog
 from geode_gem.widgets import GeodeGtk
 
@@ -193,7 +183,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.__current_menu_row = None
 
         # Check mednafen status
-        self.__mednafen_status = self.check_mednafen()
+        self.__mednafen_status = ui_utils.check_mednafen()
 
         # Manage game flags
         self.__flags_keys = ("favorite", "multiplayer", "finish")
@@ -299,7 +289,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.set_title(self.title)
 
         self.set_default_icon_from_file(
-            str(get_data("data", "desktop", "gem.svg")))
+            str(engine_utils.get_data("data", "desktop", "gem.svg")))
 
         self.set_position(Gtk.WindowPosition.CENTER)
 
@@ -1849,7 +1839,8 @@ class MainWindow(Gtk.ApplicationWindow):
             self.shortcuts_group.disconnect_key(key, mod)
 
         # Retrieve shortcuts metadata from GeodeGEM project
-        shortcuts = Configuration(get_data("data", "config", "shortcuts.conf"))
+        shortcuts = Configuration(
+            engine_utils.get_data("data", "config", "shortcuts.conf"))
 
         for section in shortcuts.sections():
             shortcut = self.config.item(
@@ -1939,7 +1930,7 @@ class MainWindow(Gtk.ApplicationWindow):
         # ------------------------------------
 
         # Update design colorscheme
-        on_change_theme(self.use_dark_theme)
+        ui_utils.on_change_theme(self.use_dark_theme)
 
         self.headerbar.set_active(self.use_dark_theme, widget="dark_theme")
         self.menubar_view.set_active(self.use_dark_theme, widget="dark_theme")
@@ -2108,7 +2099,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 # Check if this console use the old console name value (< 0.8)
                 if console not in self.api.consoles.keys():
-                    console = generate_identifier(console)
+                    console = engine_utils.generate_identifier(console)
 
                 # Check if current identifier exists
                 if console in self.api.consoles.keys() \
@@ -2368,25 +2359,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         return Folders.APPLICATIONS.joinpath(f"{path.stem}.desktop").exists()
 
-    def check_game_is_editable(self, game):
-        """ Check if specified game is a text file and can be edited by user
-
-        Parameters
-        ----------
-        game : geode_gem.engine.game.Game
-            Game instance
-
-        Returns
-        -------
-        bool
-            True if game file is editable, False otherwise
-        """
-
-        if not magic_from_file(game.path, mime=True).startswith("text/"):
-            return False
-
-        return access(game.path, R_OK) and access(game.path, W_OK)
-
     def check_game_is_visible(self, model, row, *args):
         """ Check if a game is visible in both views based on user filters
 
@@ -2502,29 +2474,6 @@ class MainWindow(Gtk.ApplicationWindow):
         emulator = game.emulator
         return game.extension == ".gba" and "mednafen" in emulator.binary.name
 
-    def check_mednafen(self):
-        """ Check if Mednafen exists on user system
-
-        This function read the first line of mednafen default output and check
-        if this one match "Starting Mednafen [0-9+.?]+".
-
-        Returns
-        -------
-        bool
-            Mednafen exists status
-
-        Notes
-        -----
-        Still possible to troll this function with a script call mednafen which
-        send the match string as output. But, this problem only appear if a
-        user want to do that, so ...
-        """
-
-        output = call_external_application("mednafen")
-
-        return (output and
-                match(r'Starting Mednafen [\d+\.?]+', output.split('\n')[0]))
-
     def check_version(self):
         """ Check development version when debug mode is activate
 
@@ -2540,7 +2489,7 @@ class MainWindow(Gtk.ApplicationWindow):
         version = Metadata.VERSION
 
         if self.api.debug and Path(".git").exists():
-            output = call_external_application(
+            output = ui_utils.call_external_application(
                 "git", "rev-parse", "--short", "HEAD")
 
             if output and match(r'^[\d\w]+$', output):
@@ -2666,15 +2615,15 @@ class MainWindow(Gtk.ApplicationWindow):
             self.views_games.treeview.set_value(
                 treeiter,
                 Columns.List.LAST_PLAY,
-                string_from_date(game.last_launch_date))
+                ui_utils.string_from_date(game.last_launch_date))
             self.views_games.treeview.set_value(
                 treeiter,
                 Columns.List.LAST_TIME_PLAY,
-                string_from_time(game.last_launch_time))
+                ui_utils.string_from_time(game.last_launch_time))
             self.views_games.treeview.set_value(
                 treeiter,
                 Columns.List.TIME_PLAY,
-                string_from_time(game.play_time))
+                ui_utils.string_from_time(game.play_time))
             self.views_games.treeview.set_value(
                 treeiter,
                 Columns.List.SCREENSHOT,
@@ -2833,7 +2782,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 if collection_path.exists() and collection_path.is_file():
 
                     # Check the file mime-type to avoid non-image file
-                    if magic_from_file(collection_path,
+                    if ui_utils.magic_from_file(collection_path,
                                        mime=True).startswith("image/"):
 
                         icon = GdkPixbuf.Pixbuf.new_from_file_at_scale(
@@ -2851,7 +2800,7 @@ class MainWindow(Gtk.ApplicationWindow):
         elif path.exists() and path.is_file():
 
             # Check the file mime-type to avoid non-image file
-            if magic_from_file(path, mime=True).startswith("image/"):
+            if ui_utils.magic_from_file(path, mime=True).startswith("image/"):
                 icon = GdkPixbuf.Pixbuf.new_from_file_at_scale(
                     str(path), size, size, True)
 
@@ -3050,7 +2999,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
             # Get missing keys from config/gem.conf
             self.config.add_missing_data(
-                get_data("data", "config", "gem.conf"))
+                engine_utils.get_data("data", "config", "gem.conf"))
 
         else:
             self.logger.debug("Reload configuration file")
@@ -3654,7 +3603,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         try:
             # Read default template
-            template = get_data(
+            template = engine_utils.get_data(
                 "data", "config", "template.desktop").read_text()
 
             # Replace custom variables
@@ -3742,17 +3691,18 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Get new data from hovered game
         if not self.__current_tooltip_data:
-            data = [f"<big><b>{replace_for_markup(game.name)}</b></big>"]
+            data = [
+                f"<big><b>{ui_utils.replace_for_markup(game.name)}</b></big>"]
 
             if not game.play_time == timedelta():
                 data.append(": ".join(
                     [f"<b>{_('Play time')}</b>",
-                     parse_timedelta(game.play_time)]))
+                     engine_utils.parse_timedelta(game.play_time)]))
 
             if not game.last_launch_time == timedelta():
                 data.append(": ".join(
                     [f"<b>{_('Last launch')}</b>",
-                     parse_timedelta(game.last_launch_time)]))
+                     engine_utils.parse_timedelta(game.last_launch_time)]))
 
             # Fancy new line
             if len(data) > 1:
@@ -4018,12 +3968,13 @@ class MainWindow(Gtk.ApplicationWindow):
                and not new_path.exists():
                 validate_index += 1
 
-                copy(path, new_path)
+                engine_utils.copy(path, new_path)
 
                 if not options["copy"]:
                     path.unlink()
 
-                game = console.get_game(generate_identifier(new_path))
+                game = console.get_game(
+                    engine_utils.generate_identifier(new_path))
 
                 # Add a new game to console storage if not exists
                 if game is None:
@@ -4798,7 +4749,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.logger.debug(f"Copy {original}")
 
                 try:
-                    copy(original, path)
+                    engine_utils.copy(original, path)
 
                 except Exception:
                     self.logger.exception("An error occur during duplication")
@@ -4831,7 +4782,7 @@ class MainWindow(Gtk.ApplicationWindow):
         if not game:
             return
 
-        if not self.check_game_is_editable(game):
+        if not ui_utils.check_game_is_editable(game):
             return
 
         dialog = GeodeDialog.Editor(
@@ -4851,7 +4802,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.views_games.treeview.set_value(
                 self.views_games.get_iter_from_key(game.id)[0],
                 Columns.List.INSTALLED,
-                string_from_date(game.installed))
+                ui_utils.string_from_date(game.installed))
 
         self.config.modify("windows", "game", "%dx%d" % dialog.get_size())
         self.config.update()
@@ -5477,21 +5428,21 @@ class MainWindow(Gtk.ApplicationWindow):
                 Columns.List.SCREENSHOT,
                 None)
 
-    def on_sort_consoles_list(self, first_row, second_row, *args):
+    def on_sort_consoles_list(self, first, second, *args):
         """ Sort consoles to reorganize them
 
         Parameters
         ----------
-        first_row : gem.gtk.widgets.ListBoxSelectorItem
+        first : gem.gtk.widgets.ListBoxSelectorItem
             First row to compare
-        second_row : gem.gtk.widgets.ListBoxSelectorItem
+        second : gem.gtk.widgets.ListBoxSelectorItem
             Second row to compare
         """
 
-        if not first_row.console.favorite == second_row.console.favorite:
-            return first_row.console.favorite < second_row.console.favorite
+        if not first.console.favorite == second.console.favorite:
+            return first.console.favorite < second.console.favorite
 
-        return first_row.console.name.lower() > second_row.console.name.lower()
+        return first.console.name.lower() > second.console.name.lower()
 
     def on_sort_games_view(self, model, row1, row2, column):
         """ Sort games list for specific columns
@@ -5750,7 +5701,7 @@ class MainWindow(Gtk.ApplicationWindow):
         dark_theme_status = \
             not self.config.getboolean("gem", "dark_theme", fallback=False)
 
-        on_change_theme(dark_theme_status)
+        ui_utils.on_change_theme(dark_theme_status)
 
         self.config.modify("gem", "dark_theme", dark_theme_status)
         self.config.update()
@@ -5890,7 +5841,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.set_game_playing_status(game)
 
             # Game editable file
-            if not self.check_game_is_editable(game):
+            if not ui_utils.check_game_is_editable(game):
                 self.menu_game.set_sensitive(False, widget="game_file")
                 self.menubar_edit.set_sensitive(False, widget="game_file")
 
@@ -6099,7 +6050,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.label_sidebar_title.set_markup(
             f"<span weight='bold' size='large'>"
-            f"{replace_for_markup(game.name)}</span>")
+            f"{ui_utils.replace_for_markup(game.name)}</span>")
 
         if game.screenshots:
             self.sidebar_image = self.get_screenshot_from_game(game)
@@ -6133,26 +6084,26 @@ class MainWindow(Gtk.ApplicationWindow):
             {
                 "widget": self.label_sidebar_play_time_value,
                 "condition": not game.play_time == timedelta(),
-                "markup": string_from_time(game.play_time),
-                "tooltip": parse_timedelta(game.play_time)
+                "markup": ui_utils.string_from_time(game.play_time),
+                "tooltip": engine_utils.parse_timedelta(game.play_time)
             },
             {
                 "widget": self.label_sidebar_last_play_value,
                 "condition": not game.last_launch_date.strftime(
                     "%d%m%y") == "010101",
-                "markup": string_from_date(game.last_launch_date),
+                "markup": ui_utils.string_from_date(game.last_launch_date),
                 "tooltip": str(game.last_launch_date)
             },
             {
                 "widget": self.label_sidebar_last_time_value,
                 "condition": not game.last_launch_time == timedelta(),
-                "markup": string_from_time(game.last_launch_time),
-                "tooltip": parse_timedelta(game.last_launch_time)
+                "markup": ui_utils.string_from_time(game.last_launch_time),
+                "tooltip": engine_utils.parse_timedelta(game.last_launch_time)
             },
             {
                 "widget": self.label_sidebar_installed_value,
                 "condition": game.installed is not None,
-                "markup": string_from_date(game.installed),
+                "markup": ui_utils.string_from_date(game.installed),
                 "tooltip": str(game.installed)
             },
             {
@@ -6438,18 +6389,18 @@ class MainWindow(Gtk.ApplicationWindow):
                     _("%d games available") % games_length,
                     games_length)
 
-            text = replace_for_markup(text)
+            text = ui_utils.replace_for_markup(text)
 
             self.statusbar.set_widget_value(
                 "console", text=f"<b>{_('Console')}</b>: {text}")
 
         # Emulator
         elif widget_key == "emulator":
-            emulator_name = replace_for_markup(console.emulator.name)
+            emulator_name = ui_utils.replace_for_markup(console.emulator.name)
 
             if game and not game.emulator.id == console.emulator.id:
                 text = (f"<s>{emulator_name}</s> "
-                        f"{replace_for_markup(game.emulator.name)}")
+                        f"{ui_utils.replace_for_markup(game.emulator.name)}")
             else:
                 text = emulator_name
 
@@ -6458,7 +6409,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Game
         elif widget_key == "game" and game:
-            text = replace_for_markup(game.name)
+            text = ui_utils.replace_for_markup(game.name)
 
             self.statusbar.set_widget_value("game", text=text)
 
