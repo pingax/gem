@@ -134,8 +134,8 @@ class MainWindow(Gtk.ApplicationWindow):
         # ------------------------------------
 
         # Generate a title from GEM informations
-        self.title = "%s - %s (%s)" % (
-            Metadata.NAME, self.__version, Metadata.CODE_NAME)
+        self.title = \
+            f"{Metadata.NAME} - {self.__version} ({Metadata.CODE_NAME})"
 
         # Store thread id for game listing
         self.list_thread = int()
@@ -2019,50 +2019,40 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.hide()
         self.unrealize()
-
         self.show_all()
 
-        self.infobar.show()
-
         self.grid_sidebar.show_all()
+        self.grid_sidebar_informations.show_all()
+        self.infobar.show_all()
+        self.menu_consoles.show_all()
+        self.menu_game.show_all()
+        self.menubar_edit.show_all()
+        self.menubar_game.show_all()
+        self.menubar_help.show_all()
+        self.menubar_main.show_all()
+        self.menubar_view.show_all()
         self.scroll_sidebar.show_all()
         self.scroll_sidebar_informations.show_all()
+        self.toolbar_consoles.show_all()
 
         # Manage window template
         if self.use_classic_theme:
             self.menubar.show_all()
             self.headerbar.hide()
-
         else:
             self.headerbar.show_all()
             self.menubar.hide()
-
-        self.menubar_main.show_all()
-        self.menubar_view.show_all()
-        self.menubar_game.show_all()
-        self.menubar_edit.show_all()
-        self.menubar_help.show_all()
-        self.menu_consoles.show_all()
-        self.menu_game.show_all()
-        self.toolbar_consoles.show_all()
-
-        self.set_sidebar_visibility(
-            self.show_sidebar, register_modification=False)
 
         self.grid_sidebar_score.set_visible(False)
         self.grid_sidebar_informations.set_visible(False)
         self.frame_sidebar_screenshot.set_visible(False)
 
-        if self.show_sidebar:
-            self.frame_sidebar_screenshot.set_visible(False)
+        self.set_infobar_visibility(False)
+        self.set_sidebar_visibility(
+            self.show_sidebar, register_modification=False)
+        self.set_statusbar_visibility(
+            self.show_statusbar, register_modification=False)
 
-            self.grid_sidebar_informations.show_all()
-
-        # Manage statusbar visibility
-        if self.show_statusbar:
-            self.statusbar.show()
-        else:
-            self.statusbar.hide()
 
     def __start_interface(self):
         """ Load data and start interface
@@ -3118,7 +3108,7 @@ class MainWindow(Gtk.ApplicationWindow):
         #   Widgets
         # ------------------------------------
 
-        self.infobar.set_visible(False)
+        self.set_infobar_visibility(False)
 
         self.set_sensitive_interface()
 
@@ -3793,7 +3783,7 @@ class MainWindow(Gtk.ApplicationWindow):
             Console object
         """
 
-        self.infobar.set_visible(False)
+        self.set_infobar_visibility(False)
 
         self.views_games.clear()
 
@@ -3827,7 +3817,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 _("Cannot read console path '%s'") % console.path
 
         if error_message is not None:
-            self.infobar.set_message(Gtk.MessageType.ERROR, error_message)
+            self.set_infobar_content(error_message, icon=Gtk.MessageType.ERROR)
             return False
 
         # ------------------------------------
@@ -3837,17 +3827,17 @@ class MainWindow(Gtk.ApplicationWindow):
         if console.emulator is None:
             self.logger.warning(f"Cannot find emulator for {console.name}")
 
-            self.infobar.set_message(
-                Gtk.MessageType.WARNING,
-                _("There is no default emulator set for this console"))
+            self.set_infobar_content(
+                _("There is no default emulator set for this console"),
+                icon=Gtk.MessageType.WARNING)
 
         elif not console.emulator.exists:
             self.logger.warning(f"{console.emulator.name} is not available")
 
-            self.infobar.set_message(
-                Gtk.MessageType.ERROR,
+            self.set_infobar_content(
                 _("%s cannot been found on your system") % (
-                    f"<b>{console.emulator.name}</b>"))
+                    f"<b>{console.emulator.name}</b>"),
+                icon=Gtk.MessageType.ERROR)
 
         return True
 
@@ -4102,7 +4092,7 @@ class MainWindow(Gtk.ApplicationWindow):
             "console": row.console,
         }
 
-        self.infobar.set_visible(False)
+        self.set_infobar_visibility(False)
 
         self.set_statusbar_content()
 
@@ -4513,7 +4503,7 @@ class MainWindow(Gtk.ApplicationWindow):
             if selected_row == self.__current_menu_row:
                 self.selection["console"] = None
 
-                self.infobar.set_visible(False)
+                self.set_infobar_visibility(False)
                 self.set_sidebar_visibility(False, register_modification=False)
 
                 self.views_games.clear()
@@ -5683,6 +5673,28 @@ class MainWindow(Gtk.ApplicationWindow):
         # Refilter games views to update visible rows
         self.views_games.refilter()
 
+    def set_infobar_content(self, message, icon=Gtk.MessageType.INFO):
+        """ Fill infobar informations
+
+        Parameters
+        ----------
+        """
+
+        self.infobar.set_message(icon, message)
+
+        self.set_infobar_visibility(message and not self.infobar.get_visible())
+
+    def set_infobar_visibility(self, status):
+        """ Update infobar status
+
+        Parameters
+        ----------
+        status : bool
+            New status value
+        """
+
+        self.infobar.set_visible(status)
+
     @block_signals
     def set_interface_theme(self, widget, status=False, *args):
         """ Update dark theme status
@@ -6043,7 +6055,6 @@ class MainWindow(Gtk.ApplicationWindow):
         ----------
         console : geode_gem.engine.console.Console
             Console instance
-
         game : geode_gem.engine.game.Game
             Game instance
         """
@@ -6271,10 +6282,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
             self.menubar_view.set_active(status, widget="show_sidebar")
 
-        if status and not self.views_games.placeholder.get_visible():
-            self.scroll_sidebar.set_visible(True)
-        else:
-            self.scroll_sidebar.set_visible(False)
+        self.scroll_sidebar.set_visible(
+            status and not self.views_games.placeholder.get_visible())
 
     def set_statusbar_content(self):
         """ Update headerbar and statusbar informations from games list
@@ -6416,7 +6425,7 @@ class MainWindow(Gtk.ApplicationWindow):
         return text
 
     @block_signals
-    def set_statusbar_visibility(self, widget, status=False, *args):
+    def set_statusbar_visibility(self, status, register_modification=True):
         """ Update statusbar status
 
         Parameters
@@ -6427,15 +6436,16 @@ class MainWindow(Gtk.ApplicationWindow):
             New switch status (Default: False)
         """
 
-        statusbar_status = \
-            not self.config.getboolean("gem", "show_statusbar", fallback=True)
+        if not isinstance(status, bool):
+            status = status.get_active()
 
-        if statusbar_status:
-            self.statusbar.show()
-        else:
-            self.statusbar.hide()
+        if register_modification:
+            self.show_statusbar = status
 
-        self.config.modify("gem", "show_statusbar", statusbar_status)
-        self.config.update()
+            self.config.modify("gem", "show_statusbar", self.show_statusbar)
+            self.config.update()
 
-        self.menubar_view.set_active(statusbar_status, widget="show_statusbar")
+            self.menubar_view.set_active(
+                self.show_statusbar, widget="show_statusbar")
+
+        self.statusbar.set_visible(self.show_statusbar)
