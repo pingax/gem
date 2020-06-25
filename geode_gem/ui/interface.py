@@ -2322,33 +2322,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         return filter_text in row.console.name.lower()
 
-    def check_desktop(self, path):
-        """ Check user applications folder for specific desktop file
-
-        Parameters
-        ----------
-        path : pathlib.Path
-            Application path
-
-        Returns
-        -------
-        bool
-            Desktop file status
-
-        Examples
-        --------
-        >>> check_desktop("unavailable_file")
-        False
-
-        Notes
-        -----
-        In GNU/Linux desktop, the default folder for user applications is:
-
-            ~/.local/share/applications/
-        """
-
-        return Folders.APPLICATIONS.joinpath(f"{path.stem}.desktop").exists()
-
     def check_game_is_visible(self, model, row, *args):
         """ Check if a game is visible in both views based on user filters
 
@@ -2694,6 +2667,33 @@ class MainWindow(Gtk.ApplicationWindow):
         if thread.game.id in self.scripts:
             self.logger.debug(f"Remove {thread.game.name} from scripts cache")
             del self.scripts[thread.game.id]
+
+    def get_game_desktop_file(self, game):
+        """ Check user applications folder for specific desktop file
+
+        Parameters
+        ----------
+        game : geode_gem.engine.game.Game
+            Game instance
+
+        Returns
+        -------
+        bool
+            Desktop file status
+
+        Examples
+        --------
+        >>> get_game_desktop_file("unavailable_file")
+        False
+
+        Notes
+        -----
+        In GNU/Linux desktop, the default folder for user applications is:
+
+            ~/.local/share/applications/
+        """
+
+        return Folders.APPLICATIONS.joinpath(f"{game.path.stem}.desktop")
 
     def get_game_log_file(self, game):
         """ Check if a game has an output file available
@@ -3605,7 +3605,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 Folders.APPLICATIONS.mkdir(mode=0o755, parents=True)
 
             # Write the new desktop file
-            file = Folders.APPLICATIONS.joinpath(f"{game.path.stem}.desktop")
+            file = self.get_game_desktop_file(game)
             file.write_text(template)
 
             self.set_message(
