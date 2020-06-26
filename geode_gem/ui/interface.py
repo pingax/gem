@@ -5742,7 +5742,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
             # Update treeview icon
             flag_column = getattr(Columns.List, flag_name.upper(), None)
-            if flag_column:
+            if flag_column is not None:
                 self.views_games.treeview.set_value(
                     treeiter,
                     flag_column,
@@ -5957,11 +5957,11 @@ class MainWindow(Gtk.ApplicationWindow):
             game.score -= 1
             modification = True
 
-        elif score:
+        elif score is not None:
             game.score = score
             modification = True
 
-        if not modification:
+        if modification:
             treeiter, griditer = self.views_games.get_iter_from_key(game.id)
 
             self.views_games.treeview.set_value(
