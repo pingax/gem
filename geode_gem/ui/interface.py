@@ -4135,8 +4135,11 @@ class MainWindow(Gtk.ApplicationWindow):
             self.set_sidebar_visibility(
                 self.show_sidebar, register_modification=False)
 
-            # Ordered games by name
-            games.sort(key=lambda game: game.name.lower().replace(' ', ''))
+            column, order = \
+                self.views_games.treeview.sorted_model.get_sort_column_id()
+
+            self.set_games_order_from_column(
+                games, column, reverse=(order == Gtk.SortType.DESCENDING))
 
             self.list_thread = GLib.idle_add(
                 self.on_append_games(row.console, games).__next__)
@@ -5434,7 +5437,44 @@ class MainWindow(Gtk.ApplicationWindow):
 
         return first.console.name.lower() > second.console.name.lower()
 
-    def on_sort_games_view(self, model, row1, row2, column):
+    def on_sort_games_iconview(self, model, row1, row2, column):
+        """ Sort games list for specific columns
+
+        Parameters
+        ----------
+        model : Gtk.TreeModel
+            Treeview model which receive signal
+        row1 : Gtk.TreeIter
+            First treeiter to compare with second one
+        row2 : Gtk.TreeIter
+            Second treeiter to compare with first one
+        column : int
+            Sorting column index
+
+        Returns
+        -------
+        int
+            Sorting comparaison result
+        """
+
+        data1 = model.get_value(row1, Columns.Grid.OBJECT)
+        data2 = model.get_value(row2, Columns.Grid.OBJECT)
+
+        order = self.views_games.iconview.get_widget(
+            column.identifier).get_sort_order()
+
+        if data1.name.lower() < data2.name.lower():
+
+            if order == Gtk.SortType.ASCENDING:
+                return -1
+
+            elif order == Gtk.SortType.DESCENDING:
+                return 1
+
+        elif data1.name.lower() == data2.name.lower():
+            return 0
+
+    def on_sort_games_treeview(self, model, row1, row2, column):
         """ Sort games list for specific columns
 
         Parameters
@@ -6001,6 +6041,47 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.logger.debug(
             f"Switch visibility for '{key}' column to {column.get_visible()}")
+
+    def set_games_order_from_column(self, games, column, reverse=False):
+        """ Sort the games list based on the current sorted treeview column
+
+        Parameters
+        ----------
+        games : list
+            Game instances list
+        column : int
+            Column index from treeview
+        reverse : bool, optional
+            Sorted reverse status
+        """
+
+        if column == Columns.List.FAVORITE:
+            games.sort(key=lambda game: game.favorite, reverse=reverse)
+
+        elif column == Columns.List.MULTIPLAYER:
+            games.sort(key=lambda game: game.multiplayer, reverse=reverse)
+
+        elif column == Columns.List.FINISH:
+            games.sort(key=lambda game: game.finish, reverse=reverse)
+
+        elif column == Columns.List.PLAYED:
+            games.sort(key=lambda game: game.played, reverse=reverse)
+
+        elif column == Columns.List.LAST_PLAY:
+            games.sort(key=lambda game: game.last_launch_date, reverse=reverse)
+
+        elif column == Columns.List.TIME_PLAY:
+            games.sort(key=lambda game: game.play_time, reverse=reverse)
+
+        elif column == Columns.List.SCORE:
+            games.sort(key=lambda game: game.score, reverse=reverse)
+
+        elif column == Columns.List.INSTALLED:
+            games.sort(key=lambda game: game.installed, reverse=reverse)
+
+        else:
+            games.sort(key=lambda game: game.name.lower().replace(' ', ''),
+                       reverse=reverse)
 
     def set_message(self, title, message, icon=Icons.ERROR, popup=True):
         """ Open a message dialog
