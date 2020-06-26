@@ -4531,7 +4531,7 @@ class MainWindow(Gtk.ApplicationWindow):
         dialog.destroy()
 
         # Manage validate files
-        if not all(data, options):
+        if not data or not options:
             return
 
         GLib.idle_add(
