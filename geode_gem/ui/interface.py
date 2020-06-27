@@ -6068,8 +6068,7 @@ class MainWindow(Gtk.ApplicationWindow):
             games.sort(key=lambda game: game.installed, reverse=reverse)
 
         else:
-            games.sort(key=lambda game: game.name.lower().replace(' ', ''),
-                       reverse=reverse)
+            games.sort(key=lambda game: game.name.lower(), reverse=reverse)
 
     def set_message(self, title, message, icon=Icons.ERROR, popup=True):
         """ Open a message dialog
