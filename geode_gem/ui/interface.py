@@ -6131,28 +6131,7 @@ class MainWindow(Gtk.ApplicationWindow):
             f"<span weight='bold' size='large'>"
             f"{ui_utils.replace_for_markup(game.name)}</span>")
 
-        if game.screenshots:
-            self.sidebar_image = self.get_screenshot_from_game(game)
-
-            if self.sidebar_image.exists() and self.sidebar_image.is_file():
-                height = 200
-                if self.__current_orientation == Gtk.Orientation.HORIZONTAL:
-                    height = 250
-
-                try:
-                    # Set sidebar screenshot
-                    self.image_sidebar_screenshot.set_from_pixbuf(
-                        GdkPixbuf.Pixbuf.new_from_file_at_scale(
-                            str(self.sidebar_image),
-                            300,
-                            height,
-                            True))
-
-                    self.frame_sidebar_screenshot.set_visible(True)
-                    self.frame_sidebar_screenshot.show_all()
-
-                except GLib.Error:
-                    self.sidebar_image = None
+        self.set_sidebar_image(game)
 
         widgets = [
             {
@@ -6229,6 +6208,45 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 # Show game score as tooltip
                 data["widget"].set_tooltip_text("%d/5" % game.score)
+
+    def set_sidebar_image(self, game):
+        """ Define the game image shown in sidebar
+
+        Parameters
+        ----------
+        game : geode_gem.engine.game.Game
+            Game instance
+        """
+
+        if game.screenshots:
+            self.sidebar_image = self.get_screenshot_from_game(game)
+            widht, height = 300, 200
+
+            if self.__current_orientation == Gtk.Orientation.HORIZONTAL:
+                height = 250
+
+            self.frame_sidebar_screenshot.set_shadow_type(Gtk.ShadowType.IN)
+
+        elif game.cover:
+            self.sidebar_image = game.cover
+            widht, height = 128, 128
+
+            self.frame_sidebar_screenshot.set_shadow_type(Gtk.ShadowType.NONE)
+
+        else:
+            self.sidebar_image = None
+            return
+
+        try:
+            self.image_sidebar_screenshot.set_from_pixbuf(
+                GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                    str(self.sidebar_image), widht, height, True))
+
+            self.frame_sidebar_screenshot.set_visible(True)
+
+        except GLib.Error:
+            self.sidebar_image = None
+            self.frame_sidebar_screenshot.set_visible(False)
 
     @block_signals
     def set_sidebar_position(self, widget=None, init_interface=False):
