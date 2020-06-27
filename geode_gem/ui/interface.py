@@ -5460,19 +5460,7 @@ class MainWindow(Gtk.ApplicationWindow):
         data1 = model.get_value(row1, Columns.Grid.OBJECT)
         data2 = model.get_value(row2, Columns.Grid.OBJECT)
 
-        order = self.views_games.iconview.get_widget(
-            column.identifier).get_sort_order()
-
-        if data1.name.lower() < data2.name.lower():
-
-            if order == Gtk.SortType.ASCENDING:
-                return -1
-
-            elif order == Gtk.SortType.DESCENDING:
-                return 1
-
-        elif data1.name.lower() == data2.name.lower():
-            return 0
+        return data1.name.lower() > data2.name.lower()
 
     def on_sort_games_treeview(self, model, row1, row2, column):
         """ Sort games list for specific columns

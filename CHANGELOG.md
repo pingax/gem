@@ -8,6 +8,7 @@ Version 0.11.0 - Bounty Hunter
 
 * Add an header in consoles listbox to separate favorites consoles
 * Allow to switch between normal and symbolic icons for treeview and statusbar
+* Grid icons view is now always sorted by game name
 
 ### Remove
 
