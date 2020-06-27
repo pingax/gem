@@ -649,7 +649,7 @@ class GeodeGEMTreeView(CommonGamesView):
 
         thumbnail = self.interface.get_pixbuf_from_cache(
             "games", 22, game.id, game.cover)
-        if thumbnail is None:
+        if not thumbnail or (game.cover and not game.cover.exists()):
             thumbnail = self.interface.icons_games_views.get("treeview")
 
         row_data = [
@@ -762,7 +762,7 @@ class GeodeGEMIconView(CommonGamesView):
 
         thumbnail = self.interface.get_pixbuf_from_cache(
             "games", 96, game.id, game.cover)
-        if thumbnail is None:
+        if not thumbnail or (game.cover and not game.cover.exists()):
             thumbnail = self.interface.icons_games_views.get("iconview")
 
         return super().append_item(game.id, [thumbnail, game.name, game])
