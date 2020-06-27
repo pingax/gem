@@ -17,32 +17,9 @@
 #  MA 02110-1301, USA.
 # ------------------------------------------------------------------------------
 
-from geode_gem.widgets.button import (GeodeGtkButton,
-                                      GeodeGtkMenuButton,
-                                      GeodeGtkToggleButton)
-from geode_gem.widgets.cellrenderer import (GeodeGtkCellRendererPixbuf,
-                                            GeodeGtkCellRendererText)
-from geode_gem.widgets.entry import GeodeGtkSearchEntry
-from geode_gem.widgets.frame import GeodeGtkFrame
-from geode_gem.widgets.headerbar import GeodeGtkHeaderBar
-from geode_gem.widgets.iconview import GeodeGtkIconView
-from geode_gem.widgets.image import GeodeGtkImage
-from geode_gem.widgets.infobar import GeodeGtkInfoBar
-from geode_gem.widgets.label import GeodeGtkLabel
-from geode_gem.widgets.listbox import (GeodeGtkListBox,
-                                       GeodeGtkListBoxItem,
-                                       GeodeGtkListBoxCheckItem)
-from geode_gem.widgets.menu import (GeodeGtkCheckMenuItem,
-                                    GeodeGtkMenu,
-                                    GeodeGtkMenuItem,
-                                    GeodeGtkRadioMenuItem)
-from geode_gem.widgets.popover import GeodeGtkPopover
-from geode_gem.widgets.statusbar import GeodeGtkStatusbar
-from geode_gem.widgets.toolbar import (GeodeGtkToolbar,
-                                       GeodeGtkToolbarBox,
-                                       GeodeGtkToolbarSwitch)
-from geode_gem.widgets.treeview import (GeodeGtkTreeView,
-                                           GeodeGtkTreeViewColumn)
+from geode_gem.widgets import (button, cellrenderer, entry, frame, headerbar,
+                               iconview, image, infobar, label, listbox, menu,
+                               popover, statusbar, toolbar, treeview)
 
 
 # ------------------------------------------------------------------------------
@@ -53,29 +30,29 @@ class GeodeGtk:
     """ Custom widgets for Geode-GEM applications
     """
 
-    Button = GeodeGtkButton
-    CheckMenuItem = GeodeGtkCheckMenuItem
-    Frame = GeodeGtkFrame
-    HeaderBar = GeodeGtkHeaderBar
-    IconView = GeodeGtkIconView
-    Image = GeodeGtkImage
-    InfoBar = GeodeGtkInfoBar
-    Label = GeodeGtkLabel
-    ListBox = GeodeGtkListBox
-    ListBoxCheckItem = GeodeGtkListBoxCheckItem
-    ListBoxItem = GeodeGtkListBoxItem
-    Menu = GeodeGtkMenu
-    MenuButton = GeodeGtkMenuButton
-    MenuItem = GeodeGtkMenuItem
-    Popover = GeodeGtkPopover
-    RadioMenuItem = GeodeGtkRadioMenuItem
-    SearchEntry = GeodeGtkSearchEntry
-    Statusbar = GeodeGtkStatusbar
-    ToggleButton = GeodeGtkToggleButton
-    Toolbar = GeodeGtkToolbar
-    ToolbarBox = GeodeGtkToolbarBox
-    ToolbarSwitch = GeodeGtkToolbarSwitch
-    TreeView = GeodeGtkTreeView
-    CellRendererPixbuf = GeodeGtkCellRendererPixbuf
-    CellRendererText = GeodeGtkCellRendererText
-    TreeViewColumn = GeodeGtkTreeViewColumn
+    Button = button.GeodeGtkButton
+    CheckMenuItem = menu.GeodeGtkCheckMenuItem
+    Frame = frame.GeodeGtkFrame
+    HeaderBar = headerbar.GeodeGtkHeaderBar
+    IconView = iconview.GeodeGtkIconView
+    Image = image.GeodeGtkImage
+    InfoBar = infobar.GeodeGtkInfoBar
+    Label = label.GeodeGtkLabel
+    ListBox = listbox.GeodeGtkListBox
+    ListBoxCheckItem = listbox.GeodeGtkListBoxCheckItem
+    ListBoxItem = listbox.GeodeGtkListBoxItem
+    Menu = menu.GeodeGtkMenu
+    MenuButton = button.GeodeGtkMenuButton
+    MenuItem = menu.GeodeGtkMenuItem
+    Popover = popover.GeodeGtkPopover
+    RadioMenuItem = menu.GeodeGtkRadioMenuItem
+    SearchEntry = entry.GeodeGtkSearchEntry
+    Statusbar = statusbar.GeodeGtkStatusbar
+    ToggleButton = button.GeodeGtkToggleButton
+    Toolbar = toolbar.GeodeGtkToolbar
+    ToolbarBox = toolbar.GeodeGtkToolbarBox
+    ToolbarSwitch = toolbar.GeodeGtkToolbarSwitch
+    TreeView = treeview.GeodeGtkTreeView
+    CellRendererPixbuf = cellrenderer.GeodeGtkCellRendererPixbuf
+    CellRendererText = cellrenderer.GeodeGtkCellRendererText
+    TreeViewColumn = treeview.GeodeGtkTreeViewColumn
