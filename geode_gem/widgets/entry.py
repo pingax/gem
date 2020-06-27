@@ -28,6 +28,45 @@ from gi.repository import Gtk
 #   Class
 # ------------------------------------------------------------------------------
 
+class GeodeGtkEntryCompletion(GeodeGtkCommon, Gtk.EntryCompletion):
+
+    def __init__(self, identifier, model, *args, **kwargs):
+        """ Constructor
+
+        Parameters
+        ----------
+        identifier : str
+            String to identify this object in internal container
+        model : Gtk.TreeStore
+            Completion model
+        """
+
+        GeodeGtkCommon.__init__(self, identifier)
+        Gtk.EntryCompletion.__init__(self)
+
+        self.list_model = model
+
+        # ------------------------------------
+        #   Properties
+        # ------------------------------------
+
+        self.set_popup_completion(kwargs.get("popup_completion", True))
+        self.set_popup_single_match(kwargs.get("popup_single_match", True))
+
+        if "text_column" in kwargs:
+            self.set_text_column(kwargs.get("text_column"))
+
+        self.sort_func = kwargs.get("match_func", None)
+        if self.sort_func:
+            self.set_match_func(self.sort_func)
+
+        # ------------------------------------
+        #   Settings
+        # ------------------------------------
+
+        self.set_model(model)
+
+
 class GeodeGtkSearchEntry(GeodeGtkCommon, Gtk.SearchEntry):
 
     def __init__(self, identifier, *args, **kwargs):
@@ -42,6 +81,37 @@ class GeodeGtkSearchEntry(GeodeGtkCommon, Gtk.SearchEntry):
         GeodeGtkCommon.__init__(self, identifier)
         Gtk.SearchEntry.__init__(self)
 
-        # Properties
+        # ------------------------------------
+        #   Properties
+        # ------------------------------------
+
         self.set_hexpand(kwargs.get("expand", False))
         self.set_placeholder_text(kwargs.get("placeholder", str()))
+
+        # ------------------------------------
+        #   Packing
+        # ------------------------------------
+
+        for element in args:
+            self.append_widget(element)
+
+            if isinstance(element, GeodeGtkEntryCompletion):
+                self.set_completion(element)
+
+    def set_completion_data(self, identifier, *args):
+        """ Set entry completion data
+
+        Parameters
+        ----------
+        identifier : str
+            String to identify this object in internal container
+        """
+
+        if not self.get_completion() or not self.has_widget(identifier):
+            return
+
+        widget = self.get_widget(identifier)
+
+        widget.list_model.clear()
+        for element in args:
+            widget.list_model.append([element])

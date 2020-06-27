@@ -32,6 +32,7 @@ class GeodeGtk:
 
     Button = button.GeodeGtkButton
     CheckMenuItem = menu.GeodeGtkCheckMenuItem
+    EntryCompletion = entry.GeodeGtkEntryCompletion
     Frame = frame.GeodeGtkFrame
     HeaderBar = headerbar.GeodeGtkHeaderBar
     IconView = iconview.GeodeGtkIconView
