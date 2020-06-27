@@ -137,6 +137,10 @@ class MainWindow(Gtk.ApplicationWindow):
         self.title = \
             f"{Metadata.NAME} - {self.__version} ({Metadata.CODE_NAME})"
 
+        self.storages = {
+            "tags": set(),
+        }
+
         # Store thread id for game listing
         self.list_thread = int()
 
@@ -731,6 +735,13 @@ class MainWindow(Gtk.ApplicationWindow):
                 "filters_box",
                 GeodeGtk.SearchEntry(
                     "entry",
+                    GeodeGtk.EntryCompletion(
+                        "completion",
+                        Gtk.ListStore(
+                            str,    # Tag name
+                        ),
+                        text_column=0,
+                    ),
                     placeholder=_("Filter…"),
                 ),
                 GeodeGtk.MenuButton(
@@ -4132,6 +4143,8 @@ class MainWindow(Gtk.ApplicationWindow):
             self.logger.info(
                 f"Found {len(games)} game(s) for {row.console.name}")
 
+            self.set_games_filter_completion_from_console(row.console)
+
             self.set_sidebar_visibility(
                 self.show_sidebar, register_modification=False)
 
@@ -5064,6 +5077,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
             # Update game from database
             self.api.update_game(game)
+
+            # Update tags
+            self.set_games_filter_completion_from_console(console)
 
             # ----------------------------------------
             #   Update games views
@@ -6067,6 +6083,21 @@ class MainWindow(Gtk.ApplicationWindow):
 
         else:
             games.sort(key=lambda game: game.name.lower(), reverse=reverse)
+
+    def set_games_filter_completion_from_console(self, console):
+        """ Add games tags from a specific console into entry completion model
+
+        Parameters
+        ----------
+        console : gem.engine.console.Console
+            Console instance
+        """
+
+        self.storages["tags"] = \
+            set([tag for game in console.get_games() for tag in game.tags])
+
+        self.toolbar_games.get_widget("entry").set_completion_data(
+            "completion", *sorted(self.storages.get("tags")))
 
     def set_message(self, title, message, icon=Icons.ERROR, popup=True):
         """ Open a message dialog
