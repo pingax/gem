@@ -2551,13 +2551,7 @@ class MainWindow(Gtk.ApplicationWindow):
             Game object
         """
 
-        path = self.api.get_local("ongamestarted")
-        if path.exists() and access(path, X_OK):
-            thread = ScriptThread(self, path, game)
-            # Save thread references
-            self.scripts[game.id] = thread
-            # Launch thread
-            thread.start()
+        self.on_execute_script_thread("ongamestarted", game)
 
     def emit_game_terminated(self, widget, thread):
         """ Terminate the game processus and update data
@@ -2655,13 +2649,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.logger.debug(f"Remove {game.name} from scripts cache")
             del self.scripts[game.id]
 
-        path = self.api.get_local("ongamestopped")
-        if path.exists() and access(path, X_OK):
-            thread = ScriptThread(self, path, game)
-            # Save thread references
-            self.scripts[game.id] = thread
-            # Launch thread
-            thread.start()
+        self.on_execute_script_thread("ongamestopped", game)
 
     def emit_game_script_terminated(self, widget, thread):
         """ Terminate the script processus
@@ -3497,6 +3485,24 @@ class MainWindow(Gtk.ApplicationWindow):
 
             if not self.keys == konami_code[0:len(self.keys)]:
                 self.keys = list()
+
+    def on_execute_script_thread(self, script, game):
+        """ Execute a script in a dedicated thread for a specific game
+
+        Paremeters
+        ----------
+        script : str
+            Script name
+        game : geode_gem.engine.game.Game
+            Game instance
+        """
+
+        path = self.api.get_local(script)
+        if not path.exists() or not access(path, X_OK):
+            return
+
+        self.scripts[game.id] = ScriptThread(self, path, game)
+        self.scripts[game.id].start()
 
     def on_generate_console_header(self, row, before, *args):
         """ Update consoles listboxrow header based on console favorite status

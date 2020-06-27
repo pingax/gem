@@ -4,9 +4,15 @@ GEM Changelog
 Version 0.11.0 - Bounty Hunter
 ------------------------------
 
+### Fix
+
+* Fix a PermissionError when a binaries directory cannot be readed by user
+* Fix avoid to call widget signals when closing main interface
+
 ### New
 
 * Add an header in consoles listbox to separate favorites consoles
+* Add a completion system to games filter entry which list available tags
 * Allow to switch between normal and symbolic icons for treeview and statusbar
 * Grid icons view is now always sorted by game name
 
@@ -14,11 +20,6 @@ Version 0.11.0 - Bounty Hunter
 
 * Remove favorite icon from consoles listbox
 * Remove translucent icons
-
-### Fix
-
-* Fix a PermissionError when a binaries directory cannot be readed by user
-* Fix avoid to call widget signals when closing main interface
 
 Version 0.10.3 - Gracie (30 Apr, 2020)
 --------------------------------------
