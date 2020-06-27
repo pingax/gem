@@ -4315,13 +4315,11 @@ class MainWindow(Gtk.ApplicationWindow):
         dialog = GeodeDialog.Console(
             self, console, self.api.consoles, self.api.emulators)
         dialog_response = dialog.run()
+        data = dialog.save()
+
         dialog.destroy()
 
-        if not dialog_response == Gtk.ResponseType.APPLY:
-            return
-
-        data = dialog.save()
-        if not data:
+        if not dialog_response == Gtk.ResponseType.APPLY or not data:
             return
 
         if console:
@@ -4353,7 +4351,8 @@ class MainWindow(Gtk.ApplicationWindow):
                 remove(cache_path)
 
         # Update console row
-        if widget == self.toolbar_consoles.get_widget("add_console"):
+        print(widget.identifier)
+        if widget.identifier == "add_console":
             console_data = self.on_generate_console_row(console)
 
             if console_data is not None:
@@ -4564,13 +4563,11 @@ class MainWindow(Gtk.ApplicationWindow):
 
         dialog = GeodeDialog.Emulator(self, emulator, self.api.emulators)
         dialog_response = dialog.run()
+        data = dialog.save()
+
         dialog.destroy()
 
-        if not dialog_response == Gtk.ResponseType.APPLY:
-            return
-
-        data = dialog.save()
-        if not data:
+        if not dialog_response == Gtk.ResponseType.APPLY or not data:
             return
 
         if emulator:
@@ -5275,6 +5272,7 @@ class MainWindow(Gtk.ApplicationWindow):
         dialog = GeodeDialog.Cover(self, game)
         dialog_response = dialog.run()
         path = dialog.file_image_selector.get_filename()
+
         dialog.destroy()
 
         if not dialog_response == Gtk.ResponseType.APPLY:
