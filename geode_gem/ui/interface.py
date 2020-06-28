@@ -5352,6 +5352,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.views_games.treeview.set_value(
             viewiters[0], Columns.List.THUMBNAIL, thumbnail)
 
+        self.set_sidebar_image(game)
+
         # Reset tooltip pixbuf
         self.__current_tooltip_pixbuf = None
 
