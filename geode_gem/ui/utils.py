@@ -18,7 +18,7 @@
 # ------------------------------------------------------------------------------
 
 # Datetime
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 
 # Filesystem
 from os import R_OK, W_OK, access
@@ -398,7 +398,12 @@ def string_from_date(date_object):
     if date_object is None:
         return None
 
-    days = (date.today() - date_object).days
+    if isinstance(date_object, datetime):
+        today = datetime.today()
+    else:
+        today = date.today()
+
+    days = (today - date_object).days
 
     if days == 0:
         return _("Today")

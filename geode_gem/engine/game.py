@@ -18,7 +18,7 @@
 # ------------------------------------------------------------------------------
 
 # Datetime
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 
 # Filesystem
 from pathlib import Path
@@ -51,7 +51,7 @@ class Game(object):
         "play_time": timedelta,
         "last_launch_time": timedelta,
         "last_launch_date": date,
-        "installed": date,
+        "installed": datetime,
         "tags": list,
         "environment": dict,
         "favorite": bool,
@@ -114,7 +114,7 @@ class Game(object):
             if key_type is Emulator or key_type is Path:
                 setattr(self, key, None)
 
-            elif key_type is date and key == "installed":
+            elif key_type is datetime and key == "installed":
                 setattr(self, key, None)
 
             elif key_type is date:
@@ -127,10 +127,8 @@ class Game(object):
                 setattr(self, key, key_type())
 
         setattr(self, "id", generate_identifier(self.__path))
-
         setattr(self, "name", self.__path.stem)
-
-        setattr(self, "installed", get_creation_datetime(self.__path).date())
+        setattr(self, "installed", get_creation_datetime(self.__path))
 
         self.environment.clear()
         if self.__parent is not None:
@@ -362,4 +360,4 @@ class Game(object):
         """ Reload installation date from game file
         """
 
-        setattr(self, "installed", get_creation_datetime(self.__path).date())
+        setattr(self, "installed", get_creation_datetime(self.__path))
