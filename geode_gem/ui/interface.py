@@ -17,6 +17,9 @@
 #  MA 02110-1301, USA.
 # ------------------------------------------------------------------------------
 
+# Configuration
+from configparser import ExtendedInterpolation
+
 # Datetime
 from datetime import date, datetime, timedelta
 
@@ -2984,7 +2987,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
         if getattr(self, "config", None) is None:
             self.config = Configuration(
-                self.api.get_config("gem.conf"), strict=False)
+                self.api.get_config("gem.conf"),
+                interpolation=ExtendedInterpolation(),
+                strict=False)
 
             # Get missing keys from config/gem.conf
             self.config.add_missing_data(
@@ -3067,6 +3072,11 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.use_symbolic_icon = self.config.getboolean(
             "treeview", "use_symbolic_icon", fallback=False)
+
+        self.date_format = self.config.get(
+            "date", "date_format", fallback="%%x").replace("%%", '%')
+        self.datetime_format = self.config.get(
+            "date", "datetime_format", fallback="%%x %%X").replace("%%", '%')
 
         # ------------------------------------
         #   Configuration operations
@@ -6187,7 +6197,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 "condition": not game.last_launch_date.strftime(
                     "%d%m%y") == "010101",
                 "markup": ui_utils.string_from_date(game.last_launch_date),
-                "tooltip": str(game.last_launch_date)
+                "tooltip": game.last_launch_date.strftime(self.date_format)
             },
             {
                 "widget": self.label_sidebar_last_time_value,
@@ -6199,7 +6209,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 "widget": self.label_sidebar_installed_value,
                 "condition": game.installed is not None,
                 "markup": ui_utils.string_from_date(game.installed),
-                "tooltip": str(game.installed)
+                "tooltip": game.installed.strftime(self.datetime_format)
             },
             {
                 "widget": self.grid_sidebar_score,
