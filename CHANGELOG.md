@@ -15,6 +15,7 @@ Version 0.11.0 - Bounty Hunter
 * Add a completion system to games filter entry which list available tags
 * Allow to switch between normal and symbolic icons for treeview and statusbar
 * Grid icons view is now always sorted by game name
+* Show game thumbnail icon in game sidebar when no screenshot available
 
 ### Remove
 
