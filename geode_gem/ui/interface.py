@@ -4150,6 +4150,7 @@ class MainWindow(Gtk.ApplicationWindow):
         status = self.on_prepare_games_adding(row.console)
         if not status:
             self.views_games.set_placeholder_visibility(True)
+            self.set_sidebar_visibility(False, register_modification=False)
             return
 
         games = row.console.get_games()
