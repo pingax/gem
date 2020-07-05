@@ -3560,15 +3560,11 @@ class MainWindow(Gtk.ApplicationWindow):
         if not isinstance(console, Console):
             console = self.api.get_console(console)
 
-        if console.path.exists():
-            try:
-                console.init_games()
+        try:
+            console.init_games()
 
-            except OSError as error:
-                self.logger.warning(error)
-        else:
-            self.logger.warning(
-                f"Cannot found games directory for {console.name}")
+        except OSError as error:
+            self.logger.warning(error)
 
         icon = self.get_pixbuf_from_cache(
             "consoles", 24, console.id, console.icon)
