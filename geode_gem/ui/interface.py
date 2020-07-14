@@ -2066,6 +2066,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.show_sidebar, register_modification=False)
         self.set_statusbar_visibility(
             self.show_statusbar, register_modification=False)
+        self.statusbar_progressbar.hide()
 
 
     def __start_interface(self):
@@ -3188,7 +3189,7 @@ class MainWindow(Gtk.ApplicationWindow):
         selected_row = None
 
         # A console already has been selected
-        if self.selection["console"] is not None:
+        if self.selection["console"]:
 
             if self.selection["console"].id in self.consoles_iter.keys():
                 selected_row = self.consoles_iter[self.selection["console"].id]
@@ -3197,7 +3198,7 @@ class MainWindow(Gtk.ApplicationWindow):
         elif self.load_console_at_startup:
 
             # Load first available console in consoles list
-            if len(self.listbox_consoles) > 0:
+            if self.listbox_consoles:
                 selected_row = self.listbox_consoles.get_row_at_index(0)
 
             # Load latest selected console
@@ -3208,14 +3209,18 @@ class MainWindow(Gtk.ApplicationWindow):
                     selected_row = self.consoles_iter[self.load_last_console]
 
         # Load console games
-        if selected_row is not None:
+        if selected_row:
             self.set_sidebar_visibility(
                 self.show_sidebar, register_modification=False)
 
             self.listbox_consoles.select_row(selected_row)
 
+            self.on_select_console_from_list(
+                self.listbox_consoles, selected_row, force=True)
+
         # Manage default widgets visibility when no console selected
         else:
+            self.views_games.set_placeholder_visibility(True)
             self.set_sidebar_visibility(False, register_modification=False)
 
             self.set_game_information()
@@ -3228,6 +3233,10 @@ class MainWindow(Gtk.ApplicationWindow):
         """
 
         self.logger.debug("Append consoles to main interface")
+
+        current_selection = None
+        if self.selection["console"]:
+            current_selection = self.selection["console"].id
 
         # Reset consoles caches
         self.consoles_iter.clear()
@@ -3248,6 +3257,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
             # Store console iter
             self.consoles_iter[row.console.id] = row
+
+            if row.console.id == current_selection:
+                self.selection["console"] = row.console
 
             self.logger.debug(f"Append console '{row.console.id}'")
 
@@ -5674,6 +5686,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
                 self.on_reload_consoles()
 
+    @block_signals
     def on_update_games_filters(self, widget=None, status=None):
         """ Reload packages filter when user change filters from menu
 
