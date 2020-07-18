@@ -2,15 +2,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.4\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-07-18 22:12+0200\n"
-"Last-Translator: José Luis LOPEZ CASTILLO <darknekros@gmail.com>\n"
-"Language-Team: Spanish\n"
-"Language: es_ES\n"
+"PO-Revision-Date: 2020-07-18 23:42+0000\n"
+"Last-Translator: Weblate Admin <admin@example.com>\n"
+"Language-Team: Spanish <http://192.168.1.230:8000/projects/geode/gem/es/>\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Geany / PoHelper 1.35\n"
+"X-Generator: Weblate 4.1.1\n"
 
 # File: gem/interface.py, line: 2123
 #, python-format
@@ -828,9 +828,9 @@ msgstr "Pantalla completa"
 
 #
 # File: gem/main.py, line: 148
-#, fuzzy, python-format
+#, python-format
 msgid "GEM is already running with PID %s"
-msgstr "GEM ya se está ejecutando con el PID %d"
+msgstr "GEM ya se está ejecutando con el PID %s"
 
 #
 # File: gem/preferences.py, line: 113
